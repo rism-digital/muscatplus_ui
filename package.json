@@ -1,0 +1,14 @@
+{
+  "dependencies": {},
+  "name": "muscatplus_search_ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "elm-live": "^4.0.2"
+  },
+  "scripts": {
+    "develop:run": "elm-live src/Main.elm --port 8001 --dir=./dev -- --output=dev/app.js --debug",
+    "production:build": "elm make src/Main.elm --optimize --output=dist/app.js"
+  }
+}
