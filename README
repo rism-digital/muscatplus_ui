@@ -1,0 +1,12 @@
+The only JavaScript dependency is "elm-live", a live-reloading server for Elm development. Dependency management
+happens with `yarn`, so:
+
+$ yarn install
+
+Then:
+
+$ yarn run develop:run
+
+This will start up the development server and watch for changes.
+
+The elm dependencies are installed automatically when the application is first compiled. 
