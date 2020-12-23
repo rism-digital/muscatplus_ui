@@ -1,4 +1,4 @@
-module DataTypes exposing (..)
+module Search.DataTypes exposing (..)
 
 import Api.Search exposing (ApiResponse(..), SearchResponse)
 import Http

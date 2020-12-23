@@ -1,11 +1,12 @@
 module Api.Search exposing (..)
 
+import Api.DataTypes exposing (RecordType(..), recordTypeFromJsonType, typeDecoder)
 import Api.Request exposing (createRequest)
 import Config as C
 import Http
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, nullable, string)
 import Json.Decode.Pipeline exposing (optional, required)
-import Language exposing (Language(..), LanguageMap, LanguageValues(..), parseLocaleToLanguage)
+import Language exposing (Language(..), LanguageMap, LanguageValues(..), languageMapDecoder)
 import Url.Builder
 
 
@@ -38,16 +39,10 @@ type alias SearchPagination =
     }
 
 
-type SearchRecordType
-    = Source
-    | Person
-    | Institution
-
-
 type alias SearchResult =
     { id : String
     , label : LanguageMap
-    , type_ : SearchRecordType
+    , type_ : RecordType
     , typeLabel : LanguageMap
     }
 
@@ -59,42 +54,6 @@ resultDecoder =
         |> required "label" labelDecoder
         |> required "type" typeDecoder
         |> required "typeLabel" labelDecoder
-
-
-typeDecoder : Decoder SearchRecordType
-typeDecoder =
-    Decode.string
-        |> andThen (\str -> Decode.succeed (recordTypeFromJsonType str))
-
-
-languageDecoder : String -> Decoder Language
-languageDecoder locale =
-    let
-        lang =
-            parseLocaleToLanguage locale
-    in
-    Decode.succeed lang
-
-
-languageValuesDecoder : ( String, List String ) -> Decoder LanguageValues
-languageValuesDecoder ( locale, translations ) =
-    languageDecoder locale
-        |> Decode.map (\lang -> LanguageValues lang translations)
-
-
-{-|
-
-    A custom decoder that takes a JSON-LD Language Map and produces a list of
-    LanguageValues Language (List String), representing each of the translations
-    available for this particular field.
-
--}
-languageMapDecoder : List ( String, List String ) -> Decoder LanguageMap
-languageMapDecoder json =
-    List.foldl
-        (\map maps -> Decode.map2 (::) (languageValuesDecoder map) maps)
-        (Decode.succeed [])
-        json
 
 
 labelDecoder : Decoder LanguageMap
@@ -111,22 +70,6 @@ searchPaginationDecoder =
         |> required "first" string
         |> optional "last" (nullable string) Nothing
         |> required "totalPages" int
-
-
-recordTypeFromJsonType : String -> SearchRecordType
-recordTypeFromJsonType jsonType =
-    case jsonType of
-        "rism:Source" ->
-            Source
-
-        "rism:Person" ->
-            Person
-
-        "rism:Institution" ->
-            Institution
-
-        _ ->
-            Source
 
 
 searchResponseDecoder : Decoder SearchResponse

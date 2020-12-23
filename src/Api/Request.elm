@@ -8,7 +8,7 @@ createRequest : (Result Http.Error a -> msg) -> Decoder a -> String -> Cmd msg
 createRequest responseMsg responseDecoder url =
     Http.request
         { method = "GET"
-        , headers = [ Http.header "Accept" "application/json" ]
+        , headers = [ Http.header "Accept" "application/ld+json" ]
         , url = url
         , body = Http.emptyBody
         , expect = Http.expectJson responseMsg responseDecoder

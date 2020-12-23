@@ -1,4 +1,16 @@
-module Language exposing (Language(..), LanguageMap, LanguageValues(..), extractLabelFromLanguageMap, parseLanguageToLocale, parseLocaleToLanguage)
+module Language exposing
+    ( Language(..)
+    , LanguageMap
+    , LanguageValues(..)
+    , extractLabelFromLanguageMap
+    , languageDecoder
+    , languageMapDecoder
+    , languageValuesDecoder
+    , parseLanguageToLocale
+    , parseLocaleToLanguage
+    )
+
+import Json.Decode as Decode exposing (Decoder)
 
 
 type Language
@@ -113,3 +125,33 @@ extractLabelFromLanguageMap lang langMap =
                             lastResort
     in
     String.join "; " chosenLangValues
+
+
+languageDecoder : String -> Decoder Language
+languageDecoder locale =
+    let
+        lang =
+            parseLocaleToLanguage locale
+    in
+    Decode.succeed lang
+
+
+languageValuesDecoder : ( String, List String ) -> Decoder LanguageValues
+languageValuesDecoder ( locale, translations ) =
+    languageDecoder locale
+        |> Decode.map (\lang -> LanguageValues lang translations)
+
+
+{-|
+
+    A custom decoder that takes a JSON-LD Language Map and produces a list of
+    LanguageValues Language (List String), representing each of the translations
+    available for this particular field.
+
+-}
+languageMapDecoder : List ( String, List String ) -> Decoder LanguageMap
+languageMapDecoder json =
+    List.foldl
+        (\map maps -> Decode.map2 (::) (languageValuesDecoder map) maps)
+        (Decode.succeed [])
+        json

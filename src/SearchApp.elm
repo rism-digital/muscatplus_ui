@@ -1,14 +1,14 @@
-module Main exposing (..)
+module SearchApp exposing (..)
 
 import Api.Search exposing (ApiResponse(..), SearchQueryArgs, searchRequest)
 import Browser
 import Config
-import DataTypes exposing (Model, Msg(..))
+import Search.DataTypes exposing (Model, Msg(..))
 import Element as E
 import Element.Input as Input
 import Http exposing (Error(..))
 import Language exposing (Language, parseLocaleToLanguage)
-import UI.View exposing (renderBody)
+import Search.Views exposing (renderBody)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

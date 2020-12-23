@@ -9,4 +9,4 @@ $ yarn run develop:run
 
 This will start up the development server and watch for changes.
 
-The elm dependencies are installed automatically when the application is first compiled. 
+The elm dependencies are installed automatically when the application is first compiled.

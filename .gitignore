@@ -2,3 +2,5 @@ node_modules
 elm-stuff
 .idea
 muscatplus_search_ui.iml
+.DS_Store
+yarn-error.log

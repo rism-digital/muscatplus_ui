@@ -3,7 +3,7 @@ module Config exposing (..)
 
 serverUrl : String
 serverUrl =
-    "http://localhost:8000"
+    "http://dev.rism.online"
 
 
 minimumQueryLength : Int

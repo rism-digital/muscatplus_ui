@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Main</title>
+  <style>body { padding: 0; margin: 0; }</style>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Roboto+Slab&display=swap" rel="stylesheet">
+  <script src="/static/search/app.min.js"></script>
+</head>
+
+<body>
+
+<div id="elm"></div>
+<script>
+  const detectLanguage = () =>
+  {
+    return navigator.language.split("-")[0];
+  }
+
+  var app = Elm.SearchApp.init({
+    node: document.getElementById('elm'),
+    flags: {
+      locale: detectLanguage()
+    }
+  });
+</script>
+</body>
+</html>

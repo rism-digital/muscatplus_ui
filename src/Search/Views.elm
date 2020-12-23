@@ -1,7 +1,7 @@
-module UI.View exposing (..)
+module Search.Views exposing (..)
 
 import Api.Search exposing (ApiResponse(..), SearchRecordType(..), SearchResult)
-import DataTypes exposing (Model, Msg(..))
+import Search.DataTypes exposing (Model, Msg(..))
 import Element exposing (..)
 import Element.Font as Font
 import Element.Input as Input
@@ -146,7 +146,7 @@ paginatorPreviousLink prevLink =
 
 paginatorFirstLink : String -> Element Msg
 paginatorFirstLink firstLink =
-    link [] { url = firstLink, label = text "First" }
+    link [] { url = firstLink, label = text "First!" }
 
 
 paginatorTotalPages : Int -> Element Msg
