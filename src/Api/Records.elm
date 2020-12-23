@@ -79,6 +79,27 @@ type alias SourceBody =
 type alias PersonBody =
     { id : String
     , label : LanguageMap
+    , sources : Maybe PersonSources
+    , nameVariants : Maybe PersonNameVariants
+    , externalReferences : Maybe (List PersonExternalReferences)
+    }
+
+
+type alias PersonSources =
+    { id : String
+    , totalItems : Int
+    }
+
+
+type alias PersonNameVariants =
+    { label : LanguageMap
+    , values : LanguageMap
+    }
+
+
+type alias PersonExternalReferences =
+    { id : String
+    , type_ : String
     }
 
 
@@ -166,6 +187,27 @@ incipitDecoder =
         |> required "workNumber" string
 
 
+personSourcesDecoder : Decoder PersonSources
+personSourcesDecoder =
+    Decode.succeed PersonSources
+        |> required "id" string
+        |> required "totalItems" int
+
+
+personNameVariantsDecoder : Decoder PersonNameVariants
+personNameVariantsDecoder =
+    Decode.succeed PersonNameVariants
+        |> required "label" labelDecoder
+        |> required "values" labelDecoder
+
+
+personExternalReferencesDecoder : Decoder PersonExternalReferences
+personExternalReferencesDecoder =
+    Decode.succeed PersonExternalReferences
+        |> required "id" string
+        |> required "type" string
+
+
 personResponseDecoder : Decoder RecordResponse
 personResponseDecoder =
     Decode.map PersonResponse personBodyDecoder
@@ -176,6 +218,9 @@ personBodyDecoder =
     Decode.succeed PersonBody
         |> required "id" string
         |> required "label" labelDecoder
+        |> optional "sources" (Decode.maybe personSourcesDecoder) Nothing
+        |> optional "nameVariants" (Decode.maybe personNameVariantsDecoder) Nothing
+        |> optional "seeAlso" (Decode.maybe (list personExternalReferencesDecoder)) Nothing
 
 
 institutionBodyDecoder : Decoder InstitutionBody
