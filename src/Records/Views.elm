@@ -2,7 +2,6 @@ module Records.Views exposing (..)
 
 import Api.Records exposing (ApiResponse(..), RecordResponse(..))
 import Element exposing (..)
-import Element.Border as Border
 import Html
 import Records.DataTypes exposing (Model, Msg)
 

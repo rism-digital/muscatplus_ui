@@ -1,13 +1,13 @@
 module Api.Records exposing (..)
 
-import Api.DataTypes exposing (RecordType(..), recordTypeFromJsonType, typeDecoder)
+import Api.DataTypes exposing (RecordType(..), recordTypeFromJsonType)
 import Api.Request exposing (createRequest)
 import Api.Search exposing (labelDecoder)
 import Config as C
 import Http
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (optional, optionalAt, required, requiredAt)
-import Language exposing (LanguageMap, LanguageValues, languageValuesDecoder)
+import Json.Decode.Pipeline exposing (optional, required, requiredAt)
+import Language exposing (LanguageMap, LanguageValues)
 import Url.Builder
 
 

@@ -1,6 +1,6 @@
 module Api.Search exposing (..)
 
-import Api.DataTypes exposing (RecordType(..), recordTypeFromJsonType, typeDecoder)
+import Api.DataTypes exposing (RecordType(..), typeDecoder)
 import Api.Request exposing (createRequest)
 import Config as C
 import Http

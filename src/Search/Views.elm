@@ -1,12 +1,12 @@
 module Search.Views exposing (..)
 
-import Api.Search exposing (ApiResponse(..), SearchRecordType(..), SearchResult)
-import Search.DataTypes exposing (Model, Msg(..))
+import Api.Search exposing (ApiResponse(..), SearchResult)
 import Element exposing (..)
 import Element.Font as Font
 import Element.Input as Input
 import Html
 import Language exposing (Language(..), LanguageMap, LanguageValues(..), extractLabelFromLanguageMap)
+import Search.DataTypes exposing (Model, Msg(..))
 
 
 renderSearchBarArea : Model -> List (Element Msg)
