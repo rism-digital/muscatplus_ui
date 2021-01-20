@@ -64,13 +64,6 @@ subscriptions model =
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags initialUrl key =
-    let
-        _ =
-            Debug.log "URL: " initialUrl
-
-        _ =
-            Debug.log "key: " key
-    in
     ( Model key initialUrl Loading "", recordRequest ReceivedRecordResponse initialUrl.path )
 
 
