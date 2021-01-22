@@ -4,6 +4,7 @@ import Api.Records exposing (ApiResponse(..), RecordResponse)
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
 import Http
+import Language exposing (Language)
 import Url exposing (Url)
 import Url.Parser as P exposing ((</>), s)
 
@@ -20,6 +21,7 @@ type alias Model =
     , url : Url
     , response : ApiResponse
     , errorMessage : String
+    , language : Language
     }
 
 

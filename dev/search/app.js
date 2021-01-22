@@ -11046,7 +11046,7 @@ var $author$project$Api$Request$createRequest = F3(
 				expect: A2($elm$http$Http$expectJson, responseMsg, responseDecoder),
 				headers: _List_fromArray(
 					[
-						A2($elm$http$Http$header, 'Accept', 'application/json')
+						A2($elm$http$Http$header, 'Accept', 'application/ld+json')
 					]),
 				method: 'GET',
 				timeout: $elm$core$Maybe$Nothing,
@@ -11074,11 +11074,11 @@ var $author$project$Language$LanguageValues = F2(
 	function (a, b) {
 		return {$: 'LanguageValues', a: a, b: b};
 	});
-var $author$project$Api$Search$languageDecoder = function (locale) {
+var $author$project$Language$languageDecoder = function (locale) {
 	var lang = $author$project$Language$parseLocaleToLanguage(locale);
 	return $elm$json$Json$Decode$succeed(lang);
 };
-var $author$project$Api$Search$languageValuesDecoder = function (_v0) {
+var $author$project$Language$languageValuesDecoder = function (_v0) {
 	var locale = _v0.a;
 	var translations = _v0.b;
 	return A2(
@@ -11086,9 +11086,9 @@ var $author$project$Api$Search$languageValuesDecoder = function (_v0) {
 		function (lang) {
 			return A2($author$project$Language$LanguageValues, lang, translations);
 		},
-		$author$project$Api$Search$languageDecoder(locale));
+		$author$project$Language$languageDecoder(locale));
 };
-var $author$project$Api$Search$languageMapDecoder = function (json) {
+var $author$project$Language$languageMapDecoder = function (json) {
 	return A3(
 		$elm$core$List$foldl,
 		F2(
@@ -11096,7 +11096,7 @@ var $author$project$Api$Search$languageMapDecoder = function (json) {
 				return A3(
 					$elm$json$Json$Decode$map2,
 					$elm$core$List$cons,
-					$author$project$Api$Search$languageValuesDecoder(map),
+					$author$project$Language$languageValuesDecoder(map),
 					maps);
 			}),
 		$elm$json$Json$Decode$succeed(_List_Nil),
@@ -11104,29 +11104,29 @@ var $author$project$Api$Search$languageMapDecoder = function (json) {
 };
 var $author$project$Api$Search$labelDecoder = A2(
 	$elm$json$Json$Decode$andThen,
-	$author$project$Api$Search$languageMapDecoder,
+	$author$project$Language$languageMapDecoder,
 	$elm$json$Json$Decode$keyValuePairs(
 		$elm$json$Json$Decode$list($elm$json$Json$Decode$string)));
-var $author$project$Api$Search$Institution = {$: 'Institution'};
-var $author$project$Api$Search$Person = {$: 'Person'};
-var $author$project$Api$Search$Source = {$: 'Source'};
-var $author$project$Api$Search$recordTypeFromJsonType = function (jsonType) {
+var $author$project$Api$DataTypes$Institution = {$: 'Institution'};
+var $author$project$Api$DataTypes$Person = {$: 'Person'};
+var $author$project$Api$DataTypes$Source = {$: 'Source'};
+var $author$project$Api$DataTypes$recordTypeFromJsonType = function (jsonType) {
 	switch (jsonType) {
 		case 'rism:Source':
-			return $author$project$Api$Search$Source;
+			return $author$project$Api$DataTypes$Source;
 		case 'rism:Person':
-			return $author$project$Api$Search$Person;
+			return $author$project$Api$DataTypes$Person;
 		case 'rism:Institution':
-			return $author$project$Api$Search$Institution;
+			return $author$project$Api$DataTypes$Institution;
 		default:
-			return $author$project$Api$Search$Source;
+			return $author$project$Api$DataTypes$Source;
 	}
 };
-var $author$project$Api$Search$typeDecoder = A2(
+var $author$project$Api$DataTypes$typeDecoder = A2(
 	$elm$json$Json$Decode$andThen,
 	function (str) {
 		return $elm$json$Json$Decode$succeed(
-			$author$project$Api$Search$recordTypeFromJsonType(str));
+			$author$project$Api$DataTypes$recordTypeFromJsonType(str));
 	},
 	$elm$json$Json$Decode$string);
 var $author$project$Api$Search$resultDecoder = A3(
@@ -11136,7 +11136,7 @@ var $author$project$Api$Search$resultDecoder = A3(
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'type',
-		$author$project$Api$Search$typeDecoder,
+		$author$project$Api$DataTypes$typeDecoder,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'label',
@@ -11260,7 +11260,7 @@ var $elm$url$Url$Builder$crossOrigin = F3(
 	function (prePath, pathSegments, parameters) {
 		return prePath + ('/' + (A2($elm$core$String$join, '/', pathSegments) + $elm$url$Url$Builder$toQuery(parameters)));
 	});
-var $author$project$Config$serverUrl = 'http://localhost:8000';
+var $author$project$Config$serverUrl = 'http://dev.rism.online';
 var $elm$url$Url$Builder$QueryParameter = F2(
 	function (a, b) {
 		return {$: 'QueryParameter', a: a, b: b};
@@ -18689,4 +18689,4 @@ _Platform_export({'SearchApp':{'init':$author$project$SearchApp$main(
 			return $elm$json$Json$Decode$succeed(
 				{locale: locale});
 		},
-		A2($elm$json$Json$Decode$field, 'locale', $elm$json$Json$Decode$string)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.Search.SearchRecordType, typeLabel : Language.LanguageMap }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["String.String"],"SearchSubmit":[],"NoOp":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Api.Search.SearchRecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'locale', $elm$json$Json$Decode$string)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["String.String"],"SearchSubmit":[],"NoOp":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));

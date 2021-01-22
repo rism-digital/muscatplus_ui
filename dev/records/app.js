@@ -10719,14 +10719,43 @@ var $elm$core$Basics$never = function (_v0) {
 };
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Api$Records$Loading = {$: 'Loading'};
-var $author$project$Records$DataTypes$Model = F4(
-	function (key, url, response, errorMessage) {
-		return {errorMessage: errorMessage, key: key, response: response, url: url};
+var $author$project$Records$DataTypes$Model = F5(
+	function (key, url, response, errorMessage, language) {
+		return {errorMessage: errorMessage, key: key, language: language, response: response, url: url};
 	});
 var $author$project$Records$DataTypes$ReceivedRecordResponse = function (a) {
 	return {$: 'ReceivedRecordResponse', a: a};
 };
-var $elm$core$Debug$log = _Debug_log;
+var $author$project$Language$English = {$: 'English'};
+var $author$project$Language$French = {$: 'French'};
+var $author$project$Language$German = {$: 'German'};
+var $author$project$Language$Italian = {$: 'Italian'};
+var $author$project$Language$None = {$: 'None'};
+var $author$project$Language$Polish = {$: 'Polish'};
+var $author$project$Language$Portugese = {$: 'Portugese'};
+var $author$project$Language$Spanish = {$: 'Spanish'};
+var $author$project$Language$parseLocaleToLanguage = function (locale) {
+	switch (locale) {
+		case 'en':
+			return $author$project$Language$English;
+		case 'de':
+			return $author$project$Language$German;
+		case 'fr':
+			return $author$project$Language$French;
+		case 'it':
+			return $author$project$Language$Italian;
+		case 'es':
+			return $author$project$Language$Spanish;
+		case 'pt':
+			return $author$project$Language$Portugese;
+		case 'pl':
+			return $author$project$Language$Polish;
+		case 'none':
+			return $author$project$Language$None;
+		default:
+			return $author$project$Language$English;
+	}
+};
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
 		return {$: 'BadStatus_', a: a, b: b};
@@ -11003,36 +11032,6 @@ var $author$project$Language$LanguageValues = F2(
 	function (a, b) {
 		return {$: 'LanguageValues', a: a, b: b};
 	});
-var $author$project$Language$English = {$: 'English'};
-var $author$project$Language$French = {$: 'French'};
-var $author$project$Language$German = {$: 'German'};
-var $author$project$Language$Italian = {$: 'Italian'};
-var $author$project$Language$None = {$: 'None'};
-var $author$project$Language$Polish = {$: 'Polish'};
-var $author$project$Language$Portugese = {$: 'Portugese'};
-var $author$project$Language$Spanish = {$: 'Spanish'};
-var $author$project$Language$parseLocaleToLanguage = function (locale) {
-	switch (locale) {
-		case 'en':
-			return $author$project$Language$English;
-		case 'de':
-			return $author$project$Language$German;
-		case 'fr':
-			return $author$project$Language$French;
-		case 'it':
-			return $author$project$Language$Italian;
-		case 'es':
-			return $author$project$Language$Spanish;
-		case 'pt':
-			return $author$project$Language$Portugese;
-		case 'pl':
-			return $author$project$Language$Polish;
-		case 'none':
-			return $author$project$Language$None;
-		default:
-			return $author$project$Language$English;
-	}
-};
 var $author$project$Language$languageDecoder = function (locale) {
 	var lang = $author$project$Language$parseLocaleToLanguage(locale);
 	return $elm$json$Json$Decode$succeed(lang);
@@ -11453,10 +11452,9 @@ var $author$project$Api$Records$recordRequest = F2(
 	});
 var $author$project$RecordsApp$init = F3(
 	function (flags, initialUrl, key) {
-		var _v0 = A2($elm$core$Debug$log, 'URL: ', initialUrl);
-		var _v1 = A2($elm$core$Debug$log, 'key: ', key);
+		var language = $author$project$Language$parseLocaleToLanguage(flags.locale);
 		return _Utils_Tuple2(
-			A4($author$project$Records$DataTypes$Model, key, initialUrl, $author$project$Api$Records$Loading, ''),
+			A5($author$project$Records$DataTypes$Model, key, initialUrl, $author$project$Api$Records$Loading, '', language),
 			A2($author$project$Api$Records$recordRequest, $author$project$Records$DataTypes$ReceivedRecordResponse, initialUrl.path));
 	});
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -17303,13 +17301,61 @@ var $author$project$Records$Views$renderError = function (model) {
 			[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
 		$mdgriffith$elm_ui$Element$text('Error'));
 };
-var $author$project$Records$Views$renderInstitution = function (model) {
-	return A2(
-		$mdgriffith$elm_ui$Element$el,
-		_List_fromArray(
-			[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
-		$mdgriffith$elm_ui$Element$text('Institution Record!'));
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
 };
+var $author$project$Language$extractLabelFromLanguageMap = F2(
+	function (lang, langMap) {
+		var lastResort = _List_fromArray(
+			['[No language value found]']);
+		var firstChoice = $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (_v5) {
+					var l = _v5.a;
+					return _Utils_eq(l, lang);
+				},
+				langMap));
+		var fallback = $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (_v4) {
+					var l = _v4.a;
+					return _Utils_eq(l, $author$project$Language$None);
+				},
+				langMap));
+		var chosenLangValues = function () {
+			if (firstChoice.$ === 'Just') {
+				var _v1 = firstChoice.a;
+				var t = _v1.b;
+				return t;
+			} else {
+				if (fallback.$ === 'Just') {
+					var _v3 = fallback.a;
+					var t = _v3.b;
+					return t;
+				} else {
+					return lastResort;
+				}
+			}
+		}();
+		return A2($elm$core$String$join, '; ', chosenLangValues);
+	});
+var $author$project$Records$Views$renderInstitution = F2(
+	function (body, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
+			$mdgriffith$elm_ui$Element$text(
+				A2($author$project$Language$extractLabelFromLanguageMap, language, body.label)));
+	});
 var $mdgriffith$elm_ui$Internal$Model$AsRow = {$: 'AsRow'};
 var $mdgriffith$elm_ui$Internal$Model$asRow = $mdgriffith$elm_ui$Internal$Model$AsRow;
 var $mdgriffith$elm_ui$Element$row = F2(
@@ -17357,29 +17403,30 @@ var $author$project$Records$Views$renderLoading = function (model) {
 					]))
 			]));
 };
-var $author$project$Records$Views$renderPerson = function (model) {
-	return A2(
-		$mdgriffith$elm_ui$Element$el,
-		_List_fromArray(
-			[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
-		$mdgriffith$elm_ui$Element$text('Person Record!'));
-};
-var $author$project$Records$Views$renderSource = function (model) {
-	return A2(
-		$mdgriffith$elm_ui$Element$column,
-		_List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-				$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$el,
-				_List_Nil,
-				$mdgriffith$elm_ui$Element$text('Source Record'))
-			]));
-};
+var $author$project$Records$Views$renderPerson = F2(
+	function (body, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
+			$mdgriffith$elm_ui$Element$text(
+				A2($author$project$Language$extractLabelFromLanguageMap, language, body.label)));
+	});
+var $author$project$Records$Views$renderSource = F2(
+	function (body, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$column,
+			_List_fromArray(
+				[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_Nil,
+					$mdgriffith$elm_ui$Element$text(
+						A2($author$project$Language$extractLabelFromLanguageMap, language, body.label)))
+				]));
+	});
 var $author$project$Records$Views$renderBody = function (model) {
 	var body = function () {
 		var _v0 = model.response;
@@ -17390,11 +17437,14 @@ var $author$project$Records$Views$renderBody = function (model) {
 				var apiResponse = _v0.a;
 				switch (apiResponse.$) {
 					case 'SourceResponse':
-						return $author$project$Records$Views$renderSource(model);
+						var sourcebody = apiResponse.a;
+						return A2($author$project$Records$Views$renderSource, sourcebody, model.language);
 					case 'PersonResponse':
-						return $author$project$Records$Views$renderPerson(model);
+						var personbody = apiResponse.a;
+						return A2($author$project$Records$Views$renderPerson, personbody, model.language);
 					default:
-						return $author$project$Records$Views$renderInstitution(model);
+						var institutionbody = apiResponse.a;
+						return A2($author$project$Records$Views$renderInstitution, institutionbody, model.language);
 				}
 			default:
 				return $author$project$Records$Views$renderError(model);

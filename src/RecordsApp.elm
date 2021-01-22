@@ -5,6 +5,7 @@ import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html)
 import Http exposing (Error(..))
+import Language exposing (parseLocaleToLanguage)
 import Records.DataTypes exposing (Model, Msg(..), parseUrl)
 import Records.Views exposing (renderBody)
 import Url exposing (Url)
@@ -64,7 +65,12 @@ subscriptions model =
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags initialUrl key =
-    ( Model key initialUrl Loading "", recordRequest ReceivedRecordResponse initialUrl.path )
+    let
+        language =
+            flags.locale
+                |> parseLocaleToLanguage
+    in
+    ( Model key initialUrl Loading "" language, recordRequest ReceivedRecordResponse initialUrl.path )
 
 
 main : Program Flags Model Msg

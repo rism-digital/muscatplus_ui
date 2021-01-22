@@ -1,8 +1,9 @@
 module Records.Views exposing (..)
 
-import Api.Records exposing (ApiResponse(..), RecordResponse(..))
+import Api.Records exposing (ApiResponse(..), InstitutionBody, PersonBody, RecordResponse(..), SourceBody)
 import Element exposing (..)
 import Html
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Records.DataTypes exposing (Model, Msg)
 
 
@@ -29,14 +30,14 @@ renderBody model =
 
                 Response apiResponse ->
                     case apiResponse of
-                        SourceResponse _ ->
-                            renderSource model
+                        SourceResponse sourcebody ->
+                            renderSource sourcebody model.language
 
-                        PersonResponse _ ->
-                            renderPerson model
+                        PersonResponse personbody ->
+                            renderPerson personbody model.language
 
-                        InstitutionResponse _ ->
-                            renderInstitution model
+                        InstitutionResponse institutionbody ->
+                            renderInstitution institutionbody model.language
 
                 ApiError ->
                     renderError model
@@ -50,16 +51,16 @@ renderBody model =
     ]
 
 
-renderSource : Model -> Element Msg
-renderSource model =
-    column [ width fill, height fill ] [ el [] (text "Source Record") ]
+renderSource : SourceBody -> Language -> Element Msg
+renderSource body language =
+    column [ centerX, centerY ] [ el [] (text (extractLabelFromLanguageMap language body.label)) ]
 
 
-renderInstitution : Model -> Element Msg
-renderInstitution model =
-    el [ centerX, centerY ] (text "Institution Record!")
+renderInstitution : InstitutionBody -> Language -> Element Msg
+renderInstitution body language =
+    el [ centerX, centerY ] (text (extractLabelFromLanguageMap language body.label))
 
 
-renderPerson : Model -> Element Msg
-renderPerson model =
-    el [ centerX, centerY ] (text "Person Record!")
+renderPerson : PersonBody -> Language -> Element Msg
+renderPerson body language =
+    el [ centerX, centerY ] (text (extractLabelFromLanguageMap language body.label))
