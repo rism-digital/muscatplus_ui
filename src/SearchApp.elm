@@ -3,11 +3,9 @@ module SearchApp exposing (..)
 import Api.Search exposing (ApiResponse(..), SearchQueryArgs, searchRequest)
 import Browser
 import Config
-import Search.DataTypes exposing (Model, Msg(..))
-import Element as E
-import Element.Input as Input
 import Http exposing (Error(..))
 import Language exposing (Language, parseLocaleToLanguage)
+import Search.DataTypes exposing (Model, Msg(..))
 import Search.Views exposing (renderBody)
 
 
@@ -48,28 +46,15 @@ update msg model =
                 q =
                     SearchQueryArgs model.keywordQuery [] ""
             in
-            ( model, searchRequest ReceivedSearchResponse q )
+            ( { model | response = Loading }, searchRequest ReceivedSearchResponse q )
 
         NoOp ->
             ( model, Cmd.none )
 
 
-renderSearchBarArea : Model -> Msg -> List (E.Element Msg)
-renderSearchBarArea model msg =
-    [ E.column [ E.width E.fill ]
-        [ Input.text [ E.width E.fill ]
-            { label = Input.labelHidden "Search"
-            , onChange = \input -> msg
-            , placeholder = Just (Input.placeholder [] (E.text "Search"))
-            , text = model.keywordQuery
-            }
-        ]
-    ]
-
-
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Hello World"
+    { title = "RISM Online"
     , body =
         renderBody model
     }
@@ -92,7 +77,7 @@ init flags =
         initialErrorMessage =
             ""
     in
-    ( Model language initialQuery Loading initialErrorMessage, Cmd.none )
+    ( Model language initialQuery NoResponseToShow initialErrorMessage, Cmd.none )
 
 
 subscriptions : Model -> Sub msg

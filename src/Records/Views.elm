@@ -2,9 +2,13 @@ module Records.Views exposing (..)
 
 import Api.Records exposing (ApiResponse(..), InstitutionBody, PersonBody, RecordResponse(..), SourceBody)
 import Element exposing (..)
+import Element.Background as Background exposing (color)
+import Element.Border as Border
+import Element.Font as Font
 import Html
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Records.DataTypes exposing (Model, Msg)
+import UI.Style exposing (bodyFont, minMaxFill, renderTopBar, rismBlue)
 
 
 renderLoading : Model -> Element Msg
@@ -22,8 +26,19 @@ renderError model =
 
 renderBody : Model -> List (Html.Html Msg)
 renderBody model =
+    [ layout [ width fill, bodyFont ]
+        (column [ centerX, width fill, height fill ]
+            [ renderTopBar
+            , renderContent model
+            ]
+        )
+    ]
+
+
+renderContent : Model -> Element Msg
+renderContent model =
     let
-        body =
+        content =
             case model.response of
                 Loading ->
                     renderLoading model
@@ -42,25 +57,43 @@ renderBody model =
                 ApiError ->
                     renderError model
     in
-    [ layout [ width fill ]
-        (column [ width (fill |> minimum 800 |> maximum 1200), centerX, height fill ]
-            [ row [ width fill, height fill ]
-                [ body ]
+    row [ width minMaxFill, height (fillPortion 15), centerX ]
+        [ column [ width fill, height fill ]
+            [ row [ width fill, height (fillPortion 15), alignLeft ] [ content ]
             ]
-        )
-    ]
+        ]
 
 
 renderSource : SourceBody -> Language -> Element Msg
 renderSource body language =
-    column [ centerX, centerY ] [ el [] (text (extractLabelFromLanguageMap language body.label)) ]
+    column []
+        [ row [ width fill, height (fillPortion 1) ]
+            [ el [] (text (extractLabelFromLanguageMap language body.label))
+            ]
+        , row [ width fill, height (fillPortion 15) ] []
+        ]
 
 
 renderInstitution : InstitutionBody -> Language -> Element Msg
 renderInstitution body language =
-    el [ centerX, centerY ] (text (extractLabelFromLanguageMap language body.label))
+    column [] [ el [] (text (extractLabelFromLanguageMap language body.label)) ]
 
 
 renderPerson : PersonBody -> Language -> Element Msg
 renderPerson body language =
-    el [ centerX, centerY ] (text (extractLabelFromLanguageMap language body.label))
+    column [ alignTop, width fill, height fill ]
+        [ row [ width fill, height (fillPortion 2), centerY, Border.color (rgb255 193 125 65), Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 } ]
+            [ el [ centerY, Font.size 24, Font.semiBold ] (text (extractLabelFromLanguageMap language body.label))
+            ]
+        , row [ width fill, height (fillPortion 1), centerY, Border.color (rgb255 255 198 110), Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 } ]
+            [ el [ Font.size 14, paddingXY 10 10, Font.color (rgb255 255 255 255), Background.color (rgb255 193 125 65), height fill, centerY ] (text "Biographical Details")
+            , el [ Font.size 14, paddingXY 10 10, Font.color (rgb255 255 255 255), Background.color (rgb255 193 125 65), height fill, centerY ] (text "Sources")
+            , el [ Font.size 14, paddingXY 10 10, Font.color (rgb255 255 255 255), Background.color (rgb255 193 125 65), height fill, centerY ] (text "Secondary Literature")
+            ]
+        , row [ width fill, height (fillPortion 13), alignTop, paddingEach { bottom = 0, left = 0, right = 0, top = 20 } ]
+            [ column []
+                [ row [] []
+                , row [] []
+                ]
+            ]
+        ]

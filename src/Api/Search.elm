@@ -5,7 +5,7 @@ import Api.Request exposing (createRequest)
 import Config as C
 import Http
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (optional, required)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (Language(..), LanguageMap, LanguageValues(..), languageMapDecoder)
 import Url.Builder
 
@@ -14,12 +14,14 @@ type ApiResponse
     = Loading
     | Response SearchResponse
     | ApiError
+    | NoResponseToShow
 
 
 type alias SearchResponse =
     { id : String
     , items : List SearchResult
     , view : SearchPagination
+    , facets : FacetList
     }
 
 
@@ -44,6 +46,25 @@ type alias SearchResult =
     , label : LanguageMap
     , type_ : RecordType
     , typeLabel : LanguageMap
+    }
+
+
+type alias FacetList =
+    { items : List Facet }
+
+
+type alias Facet =
+    { alias : String
+    , label : LanguageMap
+    , items : List FacetItem
+    }
+
+
+type alias FacetItem =
+    { value : String
+    , label : LanguageMap
+    , selected : Bool
+    , count : Int
     }
 
 
@@ -72,12 +93,36 @@ searchPaginationDecoder =
         |> required "totalPages" int
 
 
+facetListDecoder : Decoder FacetList
+facetListDecoder =
+    Decode.succeed FacetList
+        |> required "items" (Decode.list facetDecoder)
+
+
+facetDecoder : Decoder Facet
+facetDecoder =
+    Decode.succeed Facet
+        |> required "alias" string
+        |> required "label" labelDecoder
+        |> required "items" (Decode.list facetItemDecoder)
+
+
+facetItemDecoder : Decoder FacetItem
+facetItemDecoder =
+    Decode.succeed FacetItem
+        |> required "value" string
+        |> required "label" labelDecoder
+        |> hardcoded False
+        |> required "count" int
+
+
 searchResponseDecoder : Decoder SearchResponse
 searchResponseDecoder =
     Decode.succeed SearchResponse
         |> required "id" string
         |> required "items" (Decode.list resultDecoder)
         |> required "view" searchPaginationDecoder
+        |> required "facets" facetListDecoder
 
 
 searchUrl : SearchQueryArgs -> String

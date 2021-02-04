@@ -5,8 +5,10 @@ import Element exposing (..)
 import Element.Font as Font
 import Element.Input as Input
 import Html
+import Html.Attributes
 import Language exposing (Language(..), LanguageMap, LanguageValues(..), extractLabelFromLanguageMap)
 import Search.DataTypes exposing (Model, Msg(..))
+import UI.Style exposing (bodyFont, minMaxFill, renderTopBar)
 
 
 renderSearchBarArea : Model -> List (Element Msg)
@@ -14,7 +16,7 @@ renderSearchBarArea model =
     [ column [ width fill, height fill ]
         [ row [ width fill, height fill ]
             [ column [ width (fillPortion 8) ]
-                [ Input.text [ width fill ]
+                [ Input.search [ width fill, htmlAttribute (Html.Attributes.autocomplete False) ]
                     { label = Input.labelHidden "Search"
                     , onChange = SearchInput
                     , placeholder = Just (Input.placeholder [] (text "Search"))
@@ -34,42 +36,60 @@ renderSearchBarArea model =
 
 renderBody : Model -> List (Html.Html Msg)
 renderBody model =
-    [ layout [ paddingXY 10 10, Font.family [ Font.typeface "Inter UI" ] ]
-        (column [ width fill, height fill ]
-            [ row [ width fill, height <| fillPortion 1, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ]
-                [ column [ width <| fillPortion 5, height fill ]
-                    [ row [ width fill, height fill ]
-                        [ el [ centerX, centerY, Font.family [ Font.typeface "Roboto Slab" ], Font.size 24, Font.bold ] (text "RISM Online") ]
-                    ]
-                , column [ width <| fillPortion 20, height fill ]
-                    [ row [ width fill, height fill ] (renderSearchBarArea model)
-                    ]
-                ]
-            , row [ width fill, height <| fillPortion 10 ]
-                [ column [ width (fillPortion 5), height fill, alignLeft, alignTop ]
-                    [ el [] (text "sidebar") ]
-                , column [ width (fillPortion 20), height fill ] (renderSearchResults model)
-                ]
-            , responsePaginator model
+    [ layout [ width fill, bodyFont ]
+        (column [ centerX, width fill, height fill ]
+            [ renderTopBar
+            , renderSearchBar model
+            , renderContents model
+            , renderResponsePaginator model
             ]
         )
     ]
 
 
-renderSearchResults : Model -> List (Element Msg)
+renderSearchBar : Model -> Element Msg
+renderSearchBar model =
+    row [ width minMaxFill, height (fillPortion 2), centerX, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ]
+        [ column [ width fill, height fill ]
+            [ row [ width fill, height fill ] (renderSearchBarArea model)
+            ]
+        ]
+
+
+renderContents : Model -> Element Msg
+renderContents model =
+    row [ width minMaxFill, height (fillPortion 11), centerX ]
+        [ column [ alignTop, width (fillPortion 3) ]
+            [ renderSideBar model ]
+        , column [ alignTop, width (fillPortion 13) ]
+            [ renderSearchResults model ]
+        ]
+
+
+renderSideBar : Model -> Element Msg
+renderSideBar model =
+    el [] (text "Sidebar")
+
+
+renderSearchResults : Model -> Element Msg
 renderSearchResults model =
     let
         responseItems =
             case model.response of
                 Response resp ->
-                    resp.items
+                    List.map (renderSearchResult model.language) resp.items
 
-                _ ->
-                    []
+                Loading ->
+                    [ el [] (text "Loading") ]
+
+                NoResponseToShow ->
+                    [ el [] (text "No results") ]
+
+                ApiError ->
+                    [ el [] (text model.errorMessage) ]
     in
-    [ row []
-        [ column [] (List.map (renderSearchResult model.language) responseItems) ]
-    ]
+    row [ width fill, height fill ]
+        [ column [] responseItems ]
 
 
 renderSearchResult : Language -> SearchResult -> Element Msg
@@ -78,7 +98,7 @@ renderSearchResult lang result =
         recordType =
             extractLabelFromLanguageMap lang result.typeLabel
     in
-    row [ width fill, height fill, paddingXY 0 10 ]
+    row [ width fill, paddingXY 0 10 ]
         [ column [ width fill, height fill ]
             [ row [ width fill ]
                 [ link [ Font.size 24 ]
@@ -92,15 +112,15 @@ renderSearchResult lang result =
         ]
 
 
-responsePaginator : Model -> Element Msg
-responsePaginator model =
+renderResponsePaginator : Model -> Element Msg
+renderResponsePaginator model =
     case model.response of
         Response resp ->
             let
                 respPaginator =
                     resp.view
             in
-            row [ width fill, height <| fillPortion 1 ]
+            row [ width fill ]
                 [ column [ centerX, centerY, paddingXY 0 20 ]
                     [ paginatorFirstLink respPaginator.first
                     , paginatorPreviousLink respPaginator.previous
@@ -118,7 +138,7 @@ paginatorNextLink : Maybe String -> Element Msg
 paginatorNextLink nextLink =
     case nextLink of
         Just url ->
-            link [] { url = url, label = text "Next!" }
+            link [] { url = url, label = text "Next" }
 
         Nothing ->
             none
@@ -128,7 +148,7 @@ paginatorLastLink : Maybe String -> Element Msg
 paginatorLastLink lastLink =
     case lastLink of
         Just url ->
-            link [] { url = url, label = text "Last!" }
+            link [] { url = url, label = text "Last" }
 
         Nothing ->
             none
@@ -138,7 +158,7 @@ paginatorPreviousLink : Maybe String -> Element Msg
 paginatorPreviousLink prevLink =
     case prevLink of
         Just url ->
-            link [] { url = url, label = text "Previous!" }
+            link [] { url = url, label = text "Previous" }
 
         Nothing ->
             none
