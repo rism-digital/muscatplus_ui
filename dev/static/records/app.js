@@ -17286,7 +17286,7 @@ var $mdgriffith$elm_ui$Element$minimum = F2(
 	function (i, l) {
 		return A2($mdgriffith$elm_ui$Internal$Model$Min, i, l);
 	});
-var $author$project$UI$Style$minMaxFill = A2(
+var $author$project$UI$Style$minMaxFillDesktop = A2(
 	$mdgriffith$elm_ui$Element$maximum,
 	1200,
 	A2($mdgriffith$elm_ui$Element$minimum, 800, $mdgriffith$elm_ui$Element$fill));
@@ -17775,7 +17775,7 @@ var $author$project$Records$Views$renderContent = function (model) {
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
 			[
-				$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFill),
+				$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
 				$mdgriffith$elm_ui$Element$height(
 				$mdgriffith$elm_ui$Element$fillPortion(15)),
 				$mdgriffith$elm_ui$Element$centerX
@@ -17805,45 +17805,6 @@ var $author$project$Records$Views$renderContent = function (model) {
 					]))
 			]));
 };
-var $author$project$UI$Style$rismBlue = $mdgriffith$elm_ui$Element$Background$color(
-	A3($mdgriffith$elm_ui$Element$rgb255, 27, 78, 125));
-var $author$project$UI$Style$renderTopBar = A2(
-	$mdgriffith$elm_ui$Element$row,
-	_List_fromArray(
-		[
-			$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-			$mdgriffith$elm_ui$Element$height(
-			$mdgriffith$elm_ui$Element$fillPortion(1)),
-			$author$project$UI$Style$rismBlue
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$mdgriffith$elm_ui$Element$column,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFill),
-					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-					$mdgriffith$elm_ui$Element$centerX
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$row,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-							$mdgriffith$elm_ui$Element$Font$color(
-							A3($mdgriffith$elm_ui$Element$rgb255, 255, 255, 255)),
-							$mdgriffith$elm_ui$Element$Font$semiBold
-						]),
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$text('RISM Online')
-						]))
-				]))
-		]));
 var $author$project$Records$Views$renderBody = function (model) {
 	return _List_fromArray(
 		[
@@ -17864,7 +17825,6 @@ var $author$project$Records$Views$renderBody = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$UI$Style$renderTopBar,
 						$author$project$Records$Views$renderContent(model)
 					])))
 		]);

@@ -8,7 +8,7 @@ import Element.Font as Font
 import Html
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Records.DataTypes exposing (Model, Msg)
-import UI.Style exposing (bodyFont, minMaxFill, renderTopBar, rismBlue)
+import UI.Style exposing (bodyFont, minMaxFillDesktop)
 
 
 renderLoading : Model -> Element Msg
@@ -28,8 +28,7 @@ renderBody : Model -> List (Html.Html Msg)
 renderBody model =
     [ layout [ width fill, bodyFont ]
         (column [ centerX, width fill, height fill ]
-            [ renderTopBar
-            , renderContent model
+            [ renderContent model
             ]
         )
     ]
@@ -57,7 +56,7 @@ renderContent model =
                 ApiError ->
                     renderError model
     in
-    row [ width minMaxFill, height (fillPortion 15), centerX ]
+    row [ width minMaxFillDesktop, height (fillPortion 15), centerX ]
         [ column [ width fill, height fill ]
             [ row [ width fill, height (fillPortion 15), alignLeft ] [ content ]
             ]
