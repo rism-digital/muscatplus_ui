@@ -5,18 +5,14 @@ import Element.Background as Background
 import Element.Font as Font
 
 
-renderTopBar : Element msg
-renderTopBar =
-    row [ width fill, height (fillPortion 1), rismBlue ]
-        [ column [ width minMaxFill, height fill, centerX ]
-            [ row [ width fill, height fill, Font.color (rgb255 255 255 255), Font.semiBold ] [ text "RISM Online" ]
-            ]
-        ]
-
-
-minMaxFill : Length
-minMaxFill =
+minMaxFillDesktop : Length
+minMaxFillDesktop =
     fill |> minimum 800 |> maximum 1200
+
+
+minMaxFillMobile : Length
+minMaxFillMobile =
+    fill |> minimum 400 |> maximum 800
 
 
 bodyFont : Attribute msg

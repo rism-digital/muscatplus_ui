@@ -21,7 +21,9 @@
   var app = Elm.SearchApp.init({
     node: document.getElementById('elm'),
     flags: {
-      locale: detectLanguage()
+      locale: detectLanguage(),
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
     }
   });
 </script>

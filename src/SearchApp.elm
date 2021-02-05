@@ -2,11 +2,13 @@ module SearchApp exposing (..)
 
 import Api.Search exposing (ApiResponse(..), SearchQueryArgs, searchRequest)
 import Browser
+import Browser.Events exposing (onResize)
 import Config
 import Http exposing (Error(..))
 import Language exposing (Language, parseLocaleToLanguage)
 import Search.DataTypes exposing (Model, Msg(..))
-import Search.Views exposing (renderBody)
+import Search.Views exposing (viewSearchBody)
+import UI.Layout exposing (detectDevice)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -27,26 +29,32 @@ update msg model =
             in
             ( { model | errorMessage = errorMessage, response = ApiError }, Cmd.none )
 
-        SearchInput input ->
-            if String.length model.keywordQuery > Config.minimumQueryLength then
-                let
-                    q =
-                        SearchQueryArgs input [] ""
-                in
-                ( { model | keywordQuery = input }, Cmd.none )
+        SearchInput { query } ->
+            let
+                newq =
+                    SearchQueryArgs query [] ""
+            in
+            if String.length query > Config.minimumQueryLength then
+                ( { model | query = newq }, Cmd.none )
 
-            else if String.length input == 0 then
-                ( { model | keywordQuery = input }, Cmd.none )
+            else if String.length query == 0 then
+                ( { model | query = newq }, Cmd.none )
 
             else
-                ( { model | keywordQuery = input }, Cmd.none )
+                ( model, Cmd.none )
 
         SearchSubmit ->
             let
+                queryModel =
+                    model.query
+
                 q =
-                    SearchQueryArgs model.keywordQuery [] ""
+                    SearchQueryArgs queryModel.q [] ""
             in
             ( { model | response = Loading }, searchRequest ReceivedSearchResponse q )
+
+        OnWindowResize device ->
+            ( { model | viewingDevice = device }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -56,12 +64,15 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "RISM Online"
     , body =
-        renderBody model
+        viewSearchBody model
     }
 
 
 type alias Flags =
-    { locale : String }
+    { locale : String
+    , windowWidth : Int
+    , windowHeight : Int
+    }
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -72,17 +83,26 @@ init flags =
                 |> parseLocaleToLanguage
 
         initialQuery =
-            ""
+            { q = "*:*"
+            , filter = []
+            , sort = []
+            }
 
         initialErrorMessage =
             ""
+
+        initialDevice =
+            detectDevice flags.windowWidth flags.windowHeight
     in
-    ( Model language initialQuery NoResponseToShow initialErrorMessage, Cmd.none )
+    ( Model language initialQuery NoResponseToShow initialErrorMessage initialDevice, Cmd.none )
 
 
-subscriptions : Model -> Sub msg
+subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Sub.batch
+        [ onResize <|
+            \width height -> OnWindowResize (detectDevice width height)
+        ]
 
 
 main : Program Flags Model Msg
