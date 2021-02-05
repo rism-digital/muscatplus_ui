@@ -10,8 +10,8 @@
     "uglify-js": "^3.12.2"
   },
   "scripts": {
-    "develop:search": "elm-live src/SearchApp.elm -u --port 8001 --dir=./dev/search -- --output=dev/static/search/app.js --debug",
-    "develop:records": "elm-live src/RecordsApp.elm -u --port 8002 --dir=./dev/records -- --output=dev/static/records/app.js --debug",
+    "develop:search": "elm-live src/SearchApp.elm -u --port 8001 --dir=./dev -- --output=dev/static/search/app.js --debug",
+    "develop:records": "elm-live src/RecordsApp.elm -u --port 8002 --dir=./dev -- --output=dev/static/records/app.js --debug",
     "production:search:build": "elm make src/SearchApp.elm --optimize --output=dist/search/app.js",
     "production:records:build": "elm make src/RecordsApp.elm --optimize --output=dist/records/app.js",
     "production:search:deploy": "./optimize.sh src/SearchApp.elm dist/static/search/app.js dist/static/search/app.min.js",
