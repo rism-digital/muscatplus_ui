@@ -47,11 +47,8 @@ update msg model =
             let
                 queryModel =
                     model.query
-
-                q =
-                    SearchQueryArgs queryModel.q [] ""
             in
-            ( { model | response = Loading }, searchRequest ReceivedSearchResponse q )
+            ( { model | response = Loading }, searchRequest ReceivedSearchResponse queryModel )
 
         OnWindowResize device ->
             ( { model | viewingDevice = device }, Cmd.none )
@@ -83,10 +80,7 @@ init flags =
                 |> parseLocaleToLanguage
 
         initialQuery =
-            { q = "*:*"
-            , filter = []
-            , sort = []
-            }
+            SearchQueryArgs "*:*" [] ""
 
         initialErrorMessage =
             ""

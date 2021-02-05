@@ -10734,6 +10734,10 @@ var $author$project$Search$DataTypes$Model = F5(
 		return {errorMessage: errorMessage, language: language, query: query, response: response, viewingDevice: viewingDevice};
 	});
 var $author$project$Api$Search$NoResponseToShow = {$: 'NoResponseToShow'};
+var $author$project$Api$Search$SearchQueryArgs = F3(
+	function (query, filters, sort) {
+		return {filters: filters, query: query, sort: sort};
+	});
 var $mdgriffith$elm_ui$Element$BigDesktop = {$: 'BigDesktop'};
 var $mdgriffith$elm_ui$Element$Desktop = {$: 'Desktop'};
 var $mdgriffith$elm_ui$Element$Landscape = {$: 'Landscape'};
@@ -10791,7 +10795,7 @@ var $author$project$Language$parseLocaleToLanguage = function (locale) {
 };
 var $author$project$SearchApp$init = function (flags) {
 	var language = $author$project$Language$parseLocaleToLanguage(flags.locale);
-	var initialQuery = {filter: _List_Nil, q: '*:*', sort: _List_Nil};
+	var initialQuery = A3($author$project$Api$Search$SearchQueryArgs, '*:*', _List_Nil, '');
 	var initialErrorMessage = '';
 	var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
 	return _Utils_Tuple2(
@@ -11009,10 +11013,6 @@ var $author$project$Search$DataTypes$ReceivedSearchResponse = function (a) {
 var $author$project$Api$Search$Response = function (a) {
 	return {$: 'Response', a: a};
 };
-var $author$project$Api$Search$SearchQueryArgs = F3(
-	function (query, filters, sort) {
-		return {filters: filters, query: query, sort: sort};
-	});
 var $author$project$Config$minimumQueryLength = 3;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -11592,32 +11592,26 @@ var $author$project$SearchApp$update = F2(
 						$elm$core$Platform$Cmd$none);
 				}
 			case 'SearchInput':
-				var q = msg.a.q;
-				if (_Utils_cmp(
-					$elm$core$String$length(q),
-					$author$project$Config$minimumQueryLength) > 0) {
-					var qobj = {filter: _List_Nil, q: q, sort: _List_Nil};
-					var newq = A3($author$project$Api$Search$SearchQueryArgs, q, _List_Nil, '');
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{query: qobj}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					if (!$elm$core$String$length(q)) {
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-					} else {
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-					}
-				}
+				var query = msg.a.query;
+				var newq = A3($author$project$Api$Search$SearchQueryArgs, query, _List_Nil, '');
+				return (_Utils_cmp(
+					$elm$core$String$length(query),
+					$author$project$Config$minimumQueryLength) > 0) ? _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{query: newq}),
+					$elm$core$Platform$Cmd$none) : ((!$elm$core$String$length(query)) ? _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{query: newq}),
+					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
 			case 'SearchSubmit':
 				var queryModel = model.query;
-				var q = A3($author$project$Api$Search$SearchQueryArgs, queryModel.q, _List_Nil, '');
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{response: $author$project$Api$Search$Loading}),
-					A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, q));
+					A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, queryModel));
 			case 'OnWindowResize':
 				var device = msg.a;
 				return _Utils_Tuple2(
@@ -17586,4 +17580,4 @@ _Platform_export({'SearchApp':{'init':$author$project$SearchApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, items : List.List Api.Search.FacetItem }"},"Api.Search.FacetItem":{"args":[],"type":"{ value : String.String, label : Language.LanguageMap, selected : Basics.Bool, count : Basics.Int }"},"Api.Search.FacetList":{"args":[],"type":"{ items : List.List Api.Search.Facet }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Search.DataTypes.Query":{"args":[],"type":"{ q : String.String, filter : List.List String.String, sort : List.List String.String }"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : Api.Search.FacetList }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["Search.DataTypes.Query"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"NoOp":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, items : List.List Api.Search.FacetItem }"},"Api.Search.FacetItem":{"args":[],"type":"{ value : String.String, label : Language.LanguageMap, selected : Basics.Bool, count : Basics.Int }"},"Api.Search.FacetList":{"args":[],"type":"{ items : List.List Api.Search.Facet }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchQueryArgs":{"args":[],"type":"{ query : String.String, filters : List.List String.String, sort : String.String }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : Api.Search.FacetList }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["Api.Search.SearchQueryArgs"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"NoOp":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
