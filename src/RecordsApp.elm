@@ -36,7 +36,7 @@ update msg model =
             in
             ( { model | response = ApiError, errorMessage = errorMessage }, Cmd.none )
 
-        LinkClicked urlRequest ->
+        UrlRequest urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
                     ( model, Nav.pushUrl model.key (Url.toString url) )
@@ -81,5 +81,5 @@ main =
         , update = update
         , subscriptions = subscriptions
         , onUrlChange = UrlChanged
-        , onUrlRequest = LinkClicked
+        , onUrlRequest = UrlRequest
         }

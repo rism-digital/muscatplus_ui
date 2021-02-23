@@ -7,9 +7,10 @@ import Element.Input as Input
 import Html
 import Html.Attributes
 import Language exposing (Language(..), LanguageMap, LanguageValues(..), extractLabelFromLanguageMap)
+import Records.Views exposing (renderBody)
 import Search.DataTypes exposing (Model, Msg(..))
 import UI.Layout exposing (renderBody)
-import UI.Style exposing (bodyFont, minMaxFill)
+import UI.Style exposing (bodyFont, minMaxFill, minMaxFillDesktop)
 
 
 renderSearchBarArea : Model -> List (Element Msg)
@@ -18,10 +19,10 @@ renderSearchBarArea model =
         [ row [ width fill, height fill ]
             [ column [ width (fillPortion 8) ]
                 [ Input.search [ width fill, htmlAttribute (Html.Attributes.autocomplete False) ]
-                    { label = Input.labelHidden "Search"
-                    , onChange = SearchInput
+                    { onChange = SearchInput
                     , placeholder = Just (Input.placeholder [] (text "Search"))
                     , text = model.keywordQuery
+                    , label = Input.labelHidden "Search"
                     }
                 ]
             , column [ width (fillPortion 2), height fill ]
@@ -42,7 +43,7 @@ renderSearchBody model =
 
 renderSearchBar : Model -> Element Msg
 renderSearchBar model =
-    row [ width minMaxFill, height (fillPortion 2), centerX, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ]
+    row [ width minMaxFillDesktop, height (fillPortion 2), centerX, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ]
         [ column [ width fill, height fill ]
             [ row [ width fill, height fill ] (renderSearchBarArea model)
             ]

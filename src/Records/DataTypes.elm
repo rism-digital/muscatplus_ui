@@ -11,7 +11,7 @@ import Url.Parser as P exposing ((</>), s)
 
 type Msg
     = ReceivedRecordResponse (Result Http.Error RecordResponse)
-    | LinkClicked UrlRequest
+    | UrlRequest UrlRequest
     | UrlChanged Url
     | NoOp
 
