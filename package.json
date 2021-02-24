@@ -3,15 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
+    "chokidar": "^3.5.1",
+    "chokidar-cli": "^2.1.0",
     "elm-live": "^4.0.2",
     "uglify-js": "^3.12.2"
   },
   "scripts": {
     "develop:search": "elm-live src/SearchApp.elm -u --port 8001 --dir=./dev -- --output=dev/static/search/app.js --debug",
     "develop:records": "elm-live src/RecordsApp.elm -u --port 8002 --dir=./dev -- --output=dev/static/records/app.js --debug",
+    "develop:records:build": "chokidar '**/*.elm' -c 'elm make src/RecordsApp.elm --debug --output=dist/static/records/app.js'",
+    "develop:search:build": "chokidar '**/*.elm' -c 'elm make src/SearchApp.elm --debug --output=dist/static/search/app.js'",
     "production:search:build": "elm make src/SearchApp.elm --optimize --output=dist/search/app.js",
     "production:records:build": "elm make src/RecordsApp.elm --optimize --output=dist/records/app.js",
     "production:search:deploy": "./optimize.sh src/SearchApp.elm dist/static/search/app.js dist/static/search/app.min.js",
