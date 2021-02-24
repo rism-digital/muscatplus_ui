@@ -17,6 +17,12 @@ type ApiResponse
     | ApiError
 
 
+type IncipitFormat
+    = RenderedSVG
+    | RenderedMIDI
+    | UnknownFormat
+
+
 type alias BasicSourceBody =
     { id : String
     , label : LanguageMap
@@ -49,12 +55,17 @@ type alias NoteList =
     }
 
 
+type alias RenderedIncipit =
+    { format : IncipitFormat
+    , data : String
+    }
+
+
 type alias Incipit =
     { id : String
-    , title : Maybe String
-    , pae : Maybe String
-    , text : Maybe String
-    , work : String
+    , label : LanguageMap
+    , textIncipit : Maybe LanguageMap
+    , rendered : Maybe (List RenderedIncipit)
     }
 
 
@@ -181,10 +192,33 @@ incipitDecoder : Decoder Incipit
 incipitDecoder =
     Decode.succeed Incipit
         |> required "id" string
-        |> optional "title" (nullable string) Nothing
-        |> optional "musicIncipit" (nullable string) Nothing
-        |> optional "textIncipit" (nullable string) Nothing
-        |> required "workNumber" string
+        |> required "label" labelDecoder
+        |> optional "textIncipit" (Decode.maybe labelDecoder) Nothing
+        |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
+
+
+incipitFormatDecoder : Decoder IncipitFormat
+incipitFormatDecoder =
+    Decode.string
+        |> Decode.andThen
+            (\mimetype ->
+                case mimetype of
+                    "audio/midi" ->
+                        Decode.succeed RenderedMIDI
+
+                    "image/svg+xml" ->
+                        Decode.succeed RenderedSVG
+
+                    _ ->
+                        Decode.succeed UnknownFormat
+            )
+
+
+renderedIncipitDecoder : Decoder RenderedIncipit
+renderedIncipitDecoder =
+    Decode.succeed RenderedIncipit
+        |> required "format" incipitFormatDecoder
+        |> required "data" string
 
 
 personSourcesDecoder : Decoder PersonSources
