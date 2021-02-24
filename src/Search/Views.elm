@@ -30,7 +30,7 @@ viewNotFound =
 
 viewSearchFrontDesktop : Model -> Element Msg
 viewSearchFrontDesktop model =
-    row [ width fill, height fill ]
+    row [ width fill, height fill, centerX, centerY ]
         [ column [ width fill, height fill, centerX, centerY ]
             [ row [ width fill, height (px 60), centerX, centerY ]
                 [ column [ width minMaxFillDesktop, height fill, centerX, centerY ]

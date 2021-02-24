@@ -40,7 +40,7 @@ layoutBody bodyView device =
                 _ ->
                     Style.desktopMaxWidth
     in
-    [ layout [ width (fill |> maximum maxWidth), bodyFont ]
+    [ layout [ width fill, bodyFont ]
         (column [ centerX, width fill, height fill ]
             [ layoutTopBar
             , bodyView
