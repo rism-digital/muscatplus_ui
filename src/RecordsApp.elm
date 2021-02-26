@@ -2,17 +2,21 @@ module RecordsApp exposing (..)
 
 import Api.Records exposing (ApiResponse(..), recordRequest)
 import Browser
+import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
-import Html exposing (Html)
 import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
-import Records.DataTypes exposing (Model, Msg(..), parseUrl)
-import Records.Views exposing (renderBody)
+import Records.DataTypes exposing (Model, Msg(..))
+import Records.Views exposing (viewRecordBody)
+import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
 
 
 type alias Flags =
-    { locale : String }
+    { locale : String
+    , windowWidth : Int
+    , windowHeight : Int
+    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -47,6 +51,9 @@ update msg model =
         UrlChanged url ->
             ( { model | url = url }, Cmd.none )
 
+        OnWindowResize device ->
+            ( { model | viewingDevice = device }, Cmd.none )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -54,13 +61,16 @@ update msg model =
 view : Model -> Browser.Document Msg
 view model =
     { title = "Hello Records!"
-    , body = renderBody model
+    , body = viewRecordBody model
     }
 
 
-subscriptions : Model -> Sub msg
+subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Sub.batch
+        [ onResize <|
+            \width height -> OnWindowResize (detectDevice width height)
+        ]
 
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -69,8 +79,11 @@ init flags initialUrl key =
         language =
             flags.locale
                 |> parseLocaleToLanguage
+
+        initialDevice =
+            detectDevice flags.windowWidth flags.windowHeight
     in
-    ( Model key initialUrl Loading "" language, recordRequest ReceivedRecordResponse initialUrl.path )
+    ( Model key initialUrl Loading "" language initialDevice, recordRequest ReceivedRecordResponse initialUrl.path )
 
 
 main : Program Flags Model Msg

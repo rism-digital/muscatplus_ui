@@ -90,31 +90,40 @@ greyBackground =
     Background.color lightGrey
 
 
+
+-- Based on the 'Major Third' scales given at https://type-scale.com/
+
+
+fontBaseSize : Attr decorative msg
+fontBaseSize =
+    Font.size 16
+
+
 headingXXL : Attr decorative msg
 headingXXL =
-    Font.size 64
+    Font.size 49
 
 
 headingXL : Attr decorative msg
 headingXL =
-    Font.size 56
+    Font.size 39
 
 
 headingLG : Attr decorative msg
 headingLG =
-    Font.size 48
+    Font.size 31
 
 
 headingMD : Attr decorative msg
 headingMD =
-    Font.size 40
+    Font.size 25
 
 
 headingSM : Attr decorative msg
 headingSM =
-    Font.size 32
+    Font.size 20
 
 
 headingXS : Attr decorative msg
 headingXS =
-    Font.size 24
+    Font.size 16

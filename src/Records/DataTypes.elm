@@ -3,6 +3,7 @@ module Records.DataTypes exposing (Model, Msg(..), Route(..), parseUrl)
 import Api.Records exposing (ApiResponse(..), RecordResponse)
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
+import Element exposing (Device)
 import Http
 import Language exposing (Language)
 import Url exposing (Url)
@@ -13,6 +14,7 @@ type Msg
     = ReceivedRecordResponse (Result Http.Error RecordResponse)
     | UrlRequest UrlRequest
     | UrlChanged Url
+    | OnWindowResize Device
     | NoOp
 
 
@@ -22,6 +24,7 @@ type alias Model =
     , response : ApiResponse
     , errorMessage : String
     , language : Language
+    , viewingDevice : Device
     }
 
 

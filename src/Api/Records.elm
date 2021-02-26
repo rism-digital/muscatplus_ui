@@ -55,10 +55,8 @@ type alias NoteList =
     }
 
 
-type alias RenderedIncipit =
-    { format : IncipitFormat
-    , data : String
-    }
+type RenderedIncipit
+    = RenderedIncipit IncipitFormat String
 
 
 type alias Incipit =
