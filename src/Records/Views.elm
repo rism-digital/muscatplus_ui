@@ -172,7 +172,7 @@ viewIncipitList incipitlist language =
             [ row
                 []
                 [ column
-                    []
+                    [ headingMD ]
                     [ text (extractLabelFromLanguageMap language incipitlist.label) ]
                 ]
             , row
@@ -196,7 +196,7 @@ viewSingleIncipit language incipit =
                 Nothing ->
                     Element.none
     in
-    row []
+    row [ width fill, paddingXY 0 10, Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 } ]
         [ column
             []
             [ row
