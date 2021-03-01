@@ -233,9 +233,6 @@ viewSVGRenderedIncipit incipitData =
         svgData =
             SvgParser.parse incipitData
 
-        _ =
-            Debug.log "SVG output" svgData
-
         svgResponse =
             case svgData of
                 Ok html ->
