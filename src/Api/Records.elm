@@ -43,7 +43,7 @@ type alias Subject =
     }
 
 
-type alias Note =
+type alias LabelValue =
     { label : LanguageMap
     , value : LanguageMap
     }
@@ -51,7 +51,7 @@ type alias Note =
 
 type alias NoteList =
     { label : LanguageMap
-    , notes : List Note
+    , notes : List LabelValue
     }
 
 
@@ -62,6 +62,7 @@ type RenderedIncipit
 type alias Incipit =
     { id : String
     , label : LanguageMap
+    , summary : List LabelValue
     , textIncipit : Maybe LanguageMap
     , rendered : Maybe (List RenderedIncipit)
     }
@@ -76,6 +77,7 @@ type alias IncipitList =
 type alias SourceBody =
     { id : String
     , label : LanguageMap
+    , summary : List LabelValue
     , sourceType : LanguageMap
     , partOf : Maybe (List BasicSourceBody)
     , creator : Maybe SourceRelationship
@@ -134,6 +136,7 @@ sourceBodyDecoder =
     Decode.succeed SourceBody
         |> required "id" string
         |> required "label" labelDecoder
+        |> required "summary" (list noteDecoder)
         |> required "sourceType" labelDecoder
         |> optional "partOf" (Decode.maybe (list basicSourceBodyDecoder)) Nothing
         |> optional "creator" (Decode.maybe sourceRelationshipDecoder) Nothing
@@ -172,9 +175,9 @@ noteListDecoder =
         |> required "items" (list noteDecoder)
 
 
-noteDecoder : Decoder Note
+noteDecoder : Decoder LabelValue
 noteDecoder =
-    Decode.succeed Note
+    Decode.succeed LabelValue
         |> required "label" labelDecoder
         |> required "value" labelDecoder
 
@@ -191,6 +194,7 @@ incipitDecoder =
     Decode.succeed Incipit
         |> required "id" string
         |> required "label" labelDecoder
+        |> required "summary" (list noteDecoder)
         |> optional "textIncipit" (Decode.maybe labelDecoder) Nothing
         |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
 

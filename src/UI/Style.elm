@@ -65,6 +65,13 @@ roundedButton =
     ]
 
 
+borderBottom : List (Attribute msg)
+borderBottom =
+    [ Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+    , Border.color red
+    ]
+
+
 minMaxFillDesktop : Length
 minMaxFillDesktop =
     fill |> minimum 800 |> maximum 1200
@@ -127,3 +134,23 @@ headingSM =
 headingXS : Attr decorative msg
 headingXS =
     Font.size 16
+
+
+bodyRegular : Attr decorative msg
+bodyRegular =
+    fontBaseSize
+
+
+bodySM : Attr decorative msg
+bodySM =
+    Font.size 13
+
+
+bodyXS : Attr decorative msg
+bodyXS =
+    Font.size 10
+
+
+bodyXXS : Attr decorative msg
+bodyXXS =
+    Font.size 8

@@ -11353,9 +11353,9 @@ var $author$project$Api$DataTypes$recordTypeFromJsonType = function (jsonType) {
 var $author$project$Api$Records$SourceResponse = function (a) {
 	return {$: 'SourceResponse', a: a};
 };
-var $author$project$Api$Records$SourceBody = F8(
-	function (id, label, sourceType, partOf, creator, subjects, notes, incipits) {
-		return {creator: creator, id: id, incipits: incipits, label: label, notes: notes, partOf: partOf, sourceType: sourceType, subjects: subjects};
+var $author$project$Api$Records$SourceBody = F9(
+	function (id, label, summary, sourceType, partOf, creator, subjects, notes, incipits) {
+		return {creator: creator, id: id, incipits: incipits, label: label, notes: notes, partOf: partOf, sourceType: sourceType, subjects: subjects, summary: summary};
 	});
 var $author$project$Api$Records$BasicSourceBody = F3(
 	function (id, label, sourceType) {
@@ -11378,10 +11378,23 @@ var $author$project$Api$Records$IncipitList = F2(
 	function (label, incipits) {
 		return {incipits: incipits, label: label};
 	});
-var $author$project$Api$Records$Incipit = F4(
-	function (id, label, textIncipit, rendered) {
-		return {id: id, label: label, rendered: rendered, textIncipit: textIncipit};
+var $author$project$Api$Records$Incipit = F5(
+	function (id, label, summary, textIncipit, rendered) {
+		return {id: id, label: label, rendered: rendered, summary: summary, textIncipit: textIncipit};
 	});
+var $author$project$Api$Records$LabelValue = F2(
+	function (label, value) {
+		return {label: label, value: value};
+	});
+var $author$project$Api$Records$noteDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'value',
+	$author$project$Api$Search$labelDecoder,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$LabelValue)));
 var $author$project$Api$Records$RenderedIncipit = F2(
 	function (a, b) {
 		return {$: 'RenderedIncipit', a: a, b: b};
@@ -11424,13 +11437,17 @@ var $author$project$Api$Records$incipitDecoder = A4(
 		$elm$core$Maybe$Nothing,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'label',
-			$author$project$Api$Search$labelDecoder,
+			'summary',
+			$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'id',
-				$elm$json$Json$Decode$string,
-				$elm$json$Json$Decode$succeed($author$project$Api$Records$Incipit)))));
+				'label',
+				$author$project$Api$Search$labelDecoder,
+				A3(
+					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+					'id',
+					$elm$json$Json$Decode$string,
+					$elm$json$Json$Decode$succeed($author$project$Api$Records$Incipit))))));
 var $author$project$Api$Records$incipitListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
@@ -11444,19 +11461,6 @@ var $author$project$Api$Records$NoteList = F2(
 	function (label, notes) {
 		return {label: label, notes: notes};
 	});
-var $author$project$Api$Records$Note = F2(
-	function (label, value) {
-		return {label: label, value: value};
-	});
-var $author$project$Api$Records$noteDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'value',
-	$author$project$Api$Search$labelDecoder,
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$Note)));
 var $author$project$Api$Records$noteListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
@@ -11537,13 +11541,17 @@ var $author$project$Api$Records$sourceBodyDecoder = A4(
 						$author$project$Api$Search$labelDecoder,
 						A3(
 							$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-							'label',
-							$author$project$Api$Search$labelDecoder,
+							'summary',
+							$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
 							A3(
 								$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-								'id',
-								$elm$json$Json$Decode$string,
-								$elm$json$Json$Decode$succeed($author$project$Api$Records$SourceBody)))))))));
+								'label',
+								$author$project$Api$Search$labelDecoder,
+								A3(
+									$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+									'id',
+									$elm$json$Json$Decode$string,
+									$elm$json$Json$Decode$succeed($author$project$Api$Records$SourceBody))))))))));
 var $author$project$Api$Records$sourceResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Api$Records$SourceResponse, $author$project$Api$Records$sourceBodyDecoder);
 var $author$project$Api$Records$recordResponseConverter = function (typevalue) {
 	var _v0 = $author$project$Api$DataTypes$recordTypeFromJsonType(typevalue);
@@ -17824,7 +17832,7 @@ var $mdgriffith$elm_ui$Element$el = F2(
 				_List_fromArray(
 					[child])));
 	});
-var $author$project$Records$Views$viewErrorMessage = function (model) {
+var $author$project$Records$Views$Shared$viewErrorMessage = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$el,
 		_List_fromArray(
@@ -17877,7 +17885,7 @@ var $author$project$Language$extractLabelFromLanguageMap = F2(
 		}();
 		return A2($elm$core$String$join, '; ', chosenLangValues);
 	});
-var $author$project$Records$Views$viewInstitutionRecord = F2(
+var $author$project$Records$Views$Institution$viewInstitutionRecord = F2(
 	function (body, language) {
 		return A2(
 			$mdgriffith$elm_ui$Element$column,
@@ -17891,7 +17899,7 @@ var $author$project$Records$Views$viewInstitutionRecord = F2(
 						A2($author$project$Language$extractLabelFromLanguageMap, language, body.label)))
 				]));
 	});
-var $author$project$Records$Views$viewLoadingSpinner = function (model) {
+var $author$project$Records$Views$Shared$viewLoadingSpinner = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_Nil,
@@ -18056,7 +18064,7 @@ var $mdgriffith$elm_ui$Element$Border$widthEach = function (_v0) {
 			bottom,
 			left));
 };
-var $author$project$Records$Views$viewPersonRecord = F2(
+var $author$project$Records$Views$Person$viewPersonRecord = F2(
 	function (body, language) {
 		return A2(
 			$mdgriffith$elm_ui$Element$column,
@@ -18176,12 +18184,36 @@ var $author$project$Records$Views$viewPersonRecord = F2(
 						]))
 				]));
 	});
-var $author$project$UI$Style$headingLG = $mdgriffith$elm_ui$Element$Font$size(31);
+var $author$project$UI$Components$headingHelper = F3(
+	function (size, language, heading) {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[size]),
+			$mdgriffith$elm_ui$Element$text(
+				A2($author$project$Language$extractLabelFromLanguageMap, language, heading)));
+	});
+var $author$project$UI$Style$headingXL = $mdgriffith$elm_ui$Element$Font$size(39);
+var $author$project$UI$Components$h2 = F2(
+	function (language, heading) {
+		return A3($author$project$UI$Components$headingHelper, $author$project$UI$Style$headingXL, language, heading);
+	});
 var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
 var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
+var $author$project$UI$Style$headingMD = $mdgriffith$elm_ui$Element$Font$size(25);
+var $author$project$UI$Components$h4 = F2(
+	function (language, heading) {
+		return A3($author$project$UI$Components$headingHelper, $author$project$UI$Style$headingMD, language, heading);
+	});
+var $author$project$UI$Style$red = A3($mdgriffith$elm_ui$Element$rgb255, 249, 57, 67);
+var $author$project$UI$Style$borderBottom = _List_fromArray(
+	[
+		$mdgriffith$elm_ui$Element$Border$widthEach(
+		{bottom: 1, left: 0, right: 0, top: 0}),
+		$mdgriffith$elm_ui$Element$Border$color($author$project$UI$Style$red)
+	]);
 var $mdgriffith$elm_ui$Internal$Model$unstyled = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Unstyled, $elm$core$Basics$always);
 var $mdgriffith$elm_ui$Element$html = $mdgriffith$elm_ui$Internal$Model$unstyled;
-var $elm$core$Debug$log = _Debug_log;
 var $elm$core$Result$andThen = F2(
 	function (callback, result) {
 		if (result.$ === 'Ok') {
@@ -18858,7 +18890,7 @@ var $Garados007$elm_svg_parser$SvgParser$parse = function (input) {
 		toHtml,
 		$Garados007$elm_svg_parser$SvgParser$parseToNode(input));
 };
-var $author$project$Records$Views$viewSVGRenderedIncipit = function (incipitData) {
+var $author$project$Records$Views$Source$viewSVGRenderedIncipit = function (incipitData) {
 	var svgData = $Garados007$elm_svg_parser$SvgParser$parse(incipitData);
 	var svgResponse = function () {
 		if (svgData.$ === 'Ok') {
@@ -18869,71 +18901,221 @@ var $author$project$Records$Views$viewSVGRenderedIncipit = function (incipitData
 			return $mdgriffith$elm_ui$Element$text('Could not parse SVG');
 		}
 	}();
-	var _v0 = A2($elm$core$Debug$log, 'SVG output', svgData);
 	return svgResponse;
 };
-var $author$project$Records$Views$viewRenderedIncipits = function (incipitlist) {
-	var els = A2(
+var $author$project$Records$Views$Source$viewRenderedIncipits = function (incipitlist) {
+	var incipitSVG = A2(
 		$elm$core$List$map,
 		function (rendered) {
 			if (rendered.a.$ === 'RenderedSVG') {
 				var _v1 = rendered.a;
 				var svgdata = rendered.b;
-				return $author$project$Records$Views$viewSVGRenderedIncipit(svgdata);
+				return $author$project$Records$Views$Source$viewSVGRenderedIncipit(svgdata);
 			} else {
 				return $mdgriffith$elm_ui$Element$none;
 			}
 		},
 		incipitlist);
-	return A2($mdgriffith$elm_ui$Element$row, _List_Nil, els);
+	return A2(
+		$mdgriffith$elm_ui$Element$row,
+		_List_fromArray(
+			[
+				A2($mdgriffith$elm_ui$Element$paddingXY, 0, 5)
+			]),
+		incipitSVG);
 };
-var $author$project$Records$Views$viewSingleIncipit = F2(
+var $author$project$UI$Style$fontBaseSize = $mdgriffith$elm_ui$Element$Font$size(16);
+var $author$project$UI$Style$bodyRegular = $author$project$UI$Style$fontBaseSize;
+var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
+var $author$project$UI$Components$label = F2(
+	function (language, langmap) {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[$mdgriffith$elm_ui$Element$Font$bold, $author$project$UI$Style$bodyRegular]),
+			$mdgriffith$elm_ui$Element$text(
+				A2($author$project$Language$extractLabelFromLanguageMap, language, langmap)));
+	});
+var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
+	return {$: 'Describe', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Model$Paragraph = {$: 'Paragraph'};
+var $mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
+	function (a, b, c) {
+		return {$: 'SpacingStyle', a: a, b: b, c: c};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$spacing = $mdgriffith$elm_ui$Internal$Flag$flag(3);
+var $mdgriffith$elm_ui$Internal$Model$spacingName = F2(
+	function (x, y) {
+		return 'spacing-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y)));
+	});
+var $mdgriffith$elm_ui$Element$spacing = function (x) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$spacing,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
+			A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
+			x,
+			x));
+};
+var $mdgriffith$elm_ui$Element$paragraph = F2(
+	function (attrs, children) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asParagraph,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Paragraph),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$spacing(5),
+						attrs))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
+	});
+var $author$project$UI$Components$value = F2(
+	function (language, langmap) {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[$author$project$UI$Style$bodyRegular]),
+			A2(
+				$mdgriffith$elm_ui$Element$paragraph,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					]),
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$text(
+						A2($author$project$Language$extractLabelFromLanguageMap, language, langmap))
+					])));
+	});
+var $author$project$Records$Views$Shared$viewSummaryField = F2(
+	function (field, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					A2(
+						$elm$core$List$map,
+						function (f) {
+							return A2(
+								$mdgriffith$elm_ui$Element$row,
+								_List_fromArray(
+									[
+										$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+										A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$mdgriffith$elm_ui$Element$el,
+										_List_fromArray(
+											[
+												$mdgriffith$elm_ui$Element$width(
+												$mdgriffith$elm_ui$Element$fillPortion(4)),
+												$mdgriffith$elm_ui$Element$alignTop
+											]),
+										A2($author$project$UI$Components$label, language, f.label)),
+										A2(
+										$mdgriffith$elm_ui$Element$el,
+										_List_fromArray(
+											[
+												$mdgriffith$elm_ui$Element$width(
+												$mdgriffith$elm_ui$Element$fillPortion(8)),
+												$mdgriffith$elm_ui$Element$alignTop
+											]),
+										A2($author$project$UI$Components$value, language, f.value))
+									]));
+						},
+						field))
+				]));
+	});
+var $author$project$Records$Views$Source$viewSingleIncipit = F2(
 	function (language, incipit) {
-		var renderedIncipit = function () {
+		var renderedIncipits = function () {
 			var _v0 = incipit.rendered;
 			if (_v0.$ === 'Just') {
 				var renderedIncipitList = _v0.a;
-				return $author$project$Records$Views$viewRenderedIncipits(renderedIncipitList);
+				return $author$project$Records$Views$Source$viewRenderedIncipits(renderedIncipitList);
 			} else {
 				return $mdgriffith$elm_ui$Element$none;
 			}
 		}();
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
-			_List_Nil,
+			A2(
+				$elm$core$List$append,
+				$author$project$UI$Style$borderBottom,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+						A2($mdgriffith$elm_ui$Element$paddingXY, 0, 20)
+					])),
 			_List_fromArray(
 				[
 					A2(
 					$mdgriffith$elm_ui$Element$column,
-					_List_Nil,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
 					_List_fromArray(
 						[
 							A2(
 							$mdgriffith$elm_ui$Element$row,
-							_List_Nil,
 							_List_fromArray(
 								[
-									$mdgriffith$elm_ui$Element$text(
-									A2($author$project$Language$extractLabelFromLanguageMap, language, incipit.label))
-								])),
-							A2(
-							$mdgriffith$elm_ui$Element$row,
-							_List_Nil,
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
 							_List_fromArray(
-								[renderedIncipit]))
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									_List_fromArray(
+										[
+											A2($author$project$Records$Views$Shared$viewSummaryField, incipit.summary, language),
+											renderedIncipits
+										]))
+								]))
 						]))
 				]));
 	});
-var $author$project$Records$Views$viewIncipitList = F2(
+var $author$project$Records$Views$Source$viewIncipitList = F2(
 	function (incipitlist, language) {
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
-			_List_Nil,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
 			_List_fromArray(
 				[
 					A2(
 					$mdgriffith$elm_ui$Element$column,
-					_List_Nil,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
 					_List_fromArray(
 						[
 							A2(
@@ -18946,33 +19128,38 @@ var $author$project$Records$Views$viewIncipitList = F2(
 									_List_Nil,
 									_List_fromArray(
 										[
-											$mdgriffith$elm_ui$Element$text(
-											A2($author$project$Language$extractLabelFromLanguageMap, language, incipitlist.label))
+											A2($author$project$UI$Components$h4, language, incipitlist.label)
 										]))
 								])),
 							A2(
 							$mdgriffith$elm_ui$Element$row,
-							_List_Nil,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
 							_List_fromArray(
 								[
 									A2(
 									$mdgriffith$elm_ui$Element$column,
-									_List_Nil,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
 									A2(
 										$elm$core$List$map,
-										$author$project$Records$Views$viewSingleIncipit(language),
+										$author$project$Records$Views$Source$viewSingleIncipit(language),
 										incipitlist.incipits))
 								]))
 						]))
 				]));
 	});
-var $author$project$Records$Views$viewIncipits = F2(
+var $author$project$Records$Views$Source$viewIncipits = F2(
 	function (source, language) {
 		var incipitDisplay = function () {
 			var _v0 = source.incipits;
 			if (_v0.$ === 'Just') {
 				var incipitList = _v0.a;
-				return A2($author$project$Records$Views$viewIncipitList, incipitList, language);
+				return A2($author$project$Records$Views$Source$viewIncipitList, incipitList, language);
 			} else {
 				return A2(
 					$mdgriffith$elm_ui$Element$column,
@@ -18983,33 +19170,67 @@ var $author$project$Records$Views$viewIncipits = F2(
 		}();
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
-			_List_Nil,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
 			_List_fromArray(
 				[incipitDisplay]));
 	});
-var $author$project$Records$Views$viewIncipitSection = F2(
+var $author$project$Records$Views$Source$viewIncipitSection = F2(
 	function (body, language) {
 		var incipitSection = function () {
 			var _v0 = body.incipits;
 			if (_v0.$ === 'Just') {
-				return A2($author$project$Records$Views$viewIncipits, body, language);
+				return A2($author$project$Records$Views$Source$viewIncipits, body, language);
 			} else {
 				return $mdgriffith$elm_ui$Element$none;
 			}
 		}();
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
-			_List_Nil,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
 			_List_fromArray(
 				[
 					A2(
 					$mdgriffith$elm_ui$Element$column,
-					_List_Nil,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
 					_List_fromArray(
 						[incipitSection]))
 				]));
 	});
-var $author$project$Records$Views$viewSourceRecord = F2(
+var $author$project$Records$Views$Source$viewSummarySection = F2(
+	function (body, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			A2(
+				$elm$core$List$append,
+				$author$project$UI$Style$borderBottom,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					])),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2($author$project$Records$Views$Shared$viewSummaryField, body.summary, language)
+						]))
+				]));
+	});
+var $author$project$Records$Views$Source$viewSourceRecord = F2(
 	function (body, language) {
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
@@ -19032,12 +19253,7 @@ var $author$project$Records$Views$viewSourceRecord = F2(
 								]),
 							_List_fromArray(
 								[
-									A2(
-									$mdgriffith$elm_ui$Element$el,
-									_List_fromArray(
-										[$author$project$UI$Style$headingLG]),
-									$mdgriffith$elm_ui$Element$text(
-										A2($author$project$Language$extractLabelFromLanguageMap, language, body.label)))
+									A2($author$project$UI$Components$h2, language, body.label)
 								])),
 							A2(
 							$mdgriffith$elm_ui$Element$row,
@@ -19054,33 +19270,34 @@ var $author$project$Records$Views$viewSourceRecord = F2(
 									_List_Nil,
 									_List_fromArray(
 										[
-											A2($author$project$Records$Views$viewIncipitSection, body, language)
+											A2($author$project$Records$Views$Source$viewSummarySection, body, language),
+											A2($author$project$Records$Views$Source$viewIncipitSection, body, language)
 										]))
 								]))
 						]))
 				]));
 	});
-var $author$project$Records$Views$viewRecordContentDesktop = function (model) {
+var $author$project$Records$Views$View$viewRecordContentDesktop = function (model) {
 	var content = function () {
 		var _v0 = model.response;
 		switch (_v0.$) {
 			case 'Loading':
-				return $author$project$Records$Views$viewLoadingSpinner(model);
+				return $author$project$Records$Views$Shared$viewLoadingSpinner(model);
 			case 'Response':
 				var apiResponse = _v0.a;
 				switch (apiResponse.$) {
 					case 'SourceResponse':
 						var sourcebody = apiResponse.a;
-						return A2($author$project$Records$Views$viewSourceRecord, sourcebody, model.language);
+						return A2($author$project$Records$Views$Source$viewSourceRecord, sourcebody, model.language);
 					case 'PersonResponse':
 						var personbody = apiResponse.a;
-						return A2($author$project$Records$Views$viewPersonRecord, personbody, model.language);
+						return A2($author$project$Records$Views$Person$viewPersonRecord, personbody, model.language);
 					default:
 						var institutionbody = apiResponse.a;
-						return A2($author$project$Records$Views$viewInstitutionRecord, institutionbody, model.language);
+						return A2($author$project$Records$Views$Institution$viewInstitutionRecord, institutionbody, model.language);
 				}
 			default:
-				return $author$project$Records$Views$viewErrorMessage(model);
+				return $author$project$Records$Views$Shared$viewErrorMessage(model);
 		}
 	}();
 	return A2(
@@ -19117,17 +19334,17 @@ var $author$project$Records$Views$viewRecordContentDesktop = function (model) {
 					]))
 			]));
 };
-var $author$project$Records$Views$viewRecordContentMobile = function (model) {
+var $author$project$Records$Views$View$viewRecordContentMobile = function (model) {
 	return A2($mdgriffith$elm_ui$Element$row, _List_Nil, _List_Nil);
 };
-var $author$project$Records$Views$viewRecordBody = function (model) {
+var $author$project$Records$Views$View$viewRecordBody = function (model) {
 	var device = model.viewingDevice;
 	var deviceView = function () {
 		var _v0 = device._class;
 		if (_v0.$ === 'Phone') {
-			return $author$project$Records$Views$viewRecordContentMobile;
+			return $author$project$Records$Views$View$viewRecordContentMobile;
 		} else {
-			return $author$project$Records$Views$viewRecordContentDesktop;
+			return $author$project$Records$Views$View$viewRecordContentDesktop;
 		}
 	}();
 	return A2(
@@ -19137,7 +19354,7 @@ var $author$project$Records$Views$viewRecordBody = function (model) {
 };
 var $author$project$RecordsApp$view = function (model) {
 	return {
-		body: $author$project$Records$Views$viewRecordBody(model),
+		body: $author$project$Records$Views$View$viewRecordBody(model),
 		title: 'Hello Records!'
 	};
 };
@@ -19160,4 +19377,4 @@ _Platform_export({'RecordsApp':{'init':$author$project$RecordsApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Records.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Api.Records.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, textIncipit : Maybe.Maybe Language.LanguageMap, rendered : Maybe.Maybe (List.List Api.Records.RenderedIncipit) }"},"Api.Records.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Api.Records.Incipit }"},"Api.Records.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Records.Note":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Api.Records.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Api.Records.Note }"},"Api.Records.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Api.Records.PersonSources, nameVariants : Maybe.Maybe Api.Records.PersonNameVariants, externalReferences : Maybe.Maybe (List.List Api.Records.PersonExternalReferences) }"},"Api.Records.PersonExternalReferences":{"args":[],"type":"{ id : String.String, type_ : String.String }"},"Api.Records.PersonNameVariants":{"args":[],"type":"{ label : Language.LanguageMap, values : Language.LanguageMap }"},"Api.Records.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Api.Records.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Api.Records.BasicSourceBody), creator : Maybe.Maybe Api.Records.SourceRelationship, subjects : Maybe.Maybe (List.List Api.Records.Subject), notes : Maybe.Maybe Api.Records.NoteList, incipits : Maybe.Maybe Api.Records.IncipitList }"},"Api.Records.SourceRelationship":{"args":[],"type":"{ id : String.String, role : Language.LanguageMap, person : Api.Records.PersonBody }"},"Api.Records.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Api.Records.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.Records.RecordResponse":{"args":[],"tags":{"SourceResponse":["Api.Records.SourceBody"],"PersonResponse":["Api.Records.PersonBody"],"InstitutionResponse":["Api.Records.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Api.Records.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Api.Records.IncipitFormat","String.String"]}},"Api.Records.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Records.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Api.Records.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, textIncipit : Maybe.Maybe Language.LanguageMap, rendered : Maybe.Maybe (List.List Api.Records.RenderedIncipit) }"},"Api.Records.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Api.Records.Incipit }"},"Api.Records.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap }"},"Api.Records.LabelValue":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Records.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Api.Records.LabelValue }"},"Api.Records.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Api.Records.PersonSources, nameVariants : Maybe.Maybe Api.Records.PersonNameVariants, externalReferences : Maybe.Maybe (List.List Api.Records.PersonExternalReferences) }"},"Api.Records.PersonExternalReferences":{"args":[],"type":"{ id : String.String, type_ : String.String }"},"Api.Records.PersonNameVariants":{"args":[],"type":"{ label : Language.LanguageMap, values : Language.LanguageMap }"},"Api.Records.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Api.Records.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Api.Records.BasicSourceBody), creator : Maybe.Maybe Api.Records.SourceRelationship, subjects : Maybe.Maybe (List.List Api.Records.Subject), notes : Maybe.Maybe Api.Records.NoteList, incipits : Maybe.Maybe Api.Records.IncipitList }"},"Api.Records.SourceRelationship":{"args":[],"type":"{ id : String.String, role : Language.LanguageMap, person : Api.Records.PersonBody }"},"Api.Records.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Api.Records.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.Records.RecordResponse":{"args":[],"tags":{"SourceResponse":["Api.Records.SourceBody"],"PersonResponse":["Api.Records.PersonBody"],"InstitutionResponse":["Api.Records.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Api.Records.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Api.Records.IncipitFormat","String.String"]}},"Api.Records.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
