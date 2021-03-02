@@ -19172,7 +19172,7 @@ var $author$project$Records$Views$Source$viewSingleIncipit = F2(
 						]))
 				]));
 	});
-var $author$project$Records$Views$Source$viewIncipitList = F2(
+var $author$project$Records$Views$Source$viewIncipits = F2(
 	function (incipitlist, language) {
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
@@ -19225,57 +19225,15 @@ var $author$project$Records$Views$Source$viewIncipitList = F2(
 						]))
 				]));
 	});
-var $author$project$Records$Views$Source$viewIncipits = F2(
-	function (source, language) {
-		var incipitDisplay = function () {
-			var _v0 = source.incipits;
-			if (_v0.$ === 'Just') {
-				var incipitList = _v0.a;
-				return A2($author$project$Records$Views$Source$viewIncipitList, incipitList, language);
-			} else {
-				return A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_Nil,
-					_List_fromArray(
-						[$mdgriffith$elm_ui$Element$none]));
-			}
-		}();
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[incipitDisplay]));
-	});
 var $author$project$Records$Views$Source$viewIncipitSection = F2(
 	function (body, language) {
-		var incipitSection = function () {
-			var _v0 = body.incipits;
-			if (_v0.$ === 'Just') {
-				return A2($author$project$Records$Views$Source$viewIncipits, body, language);
-			} else {
-				return $mdgriffith$elm_ui$Element$none;
-			}
-		}();
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[incipitSection]))
-				]));
+		var _v0 = body.incipits;
+		if (_v0.$ === 'Just') {
+			var incipitList = _v0.a;
+			return A2($author$project$Records$Views$Source$viewIncipits, incipitList, language);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
 	});
 var $author$project$Records$Views$Source$viewNotes = F2(
 	function (notelist, language) {
@@ -19315,54 +19273,7 @@ var $author$project$Records$Views$Source$viewNotes = F2(
 											A2($author$project$UI$Components$h4, language, notelist.label)
 										]))
 								])),
-							A2(
-							$mdgriffith$elm_ui$Element$row,
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$mdgriffith$elm_ui$Element$column,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-										]),
-									A2(
-										$elm$core$List$map,
-										function (note) {
-											return A2(
-												$mdgriffith$elm_ui$Element$row,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-														A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
-													]),
-												_List_fromArray(
-													[
-														A2(
-														$mdgriffith$elm_ui$Element$el,
-														_List_fromArray(
-															[
-																$mdgriffith$elm_ui$Element$width(
-																$mdgriffith$elm_ui$Element$fillPortion(4)),
-																$mdgriffith$elm_ui$Element$alignTop
-															]),
-														A2($author$project$UI$Components$label, language, note.label)),
-														A2(
-														$mdgriffith$elm_ui$Element$el,
-														_List_fromArray(
-															[
-																$mdgriffith$elm_ui$Element$width(
-																$mdgriffith$elm_ui$Element$fillPortion(8)),
-																$mdgriffith$elm_ui$Element$alignTop
-															]),
-														A2($author$project$UI$Components$value, language, note.value))
-													]));
-										},
-										notelist.notes))
-								]))
+							A2($author$project$Records$Views$Shared$viewSummaryField, notelist.notes, language)
 						]))
 				]));
 	});

@@ -70,65 +70,23 @@ viewNotes notelist language =
                     []
                     [ h4 language notelist.label ]
                 ]
-            , row
-                [ width fill ]
-                [ column
-                    [ width fill ]
-                    (List.map
-                        (\note ->
-                            row
-                                [ width fill, paddingXY 0 10 ]
-                                [ el
-                                    [ width (fillPortion 4), alignTop ]
-                                    (label language note.label)
-                                , el
-                                    [ width (fillPortion 8), alignTop ]
-                                    (value language note.value)
-                                ]
-                        )
-                        notelist.notes
-                    )
-                ]
+            , viewSummaryField notelist.notes language
             ]
         ]
 
 
 viewIncipitSection : SourceBody -> Language -> Element Msg
 viewIncipitSection body language =
-    let
-        incipitSection =
-            case body.incipits of
-                Just _ ->
-                    viewIncipits body language
+    case body.incipits of
+        Just incipitList ->
+            viewIncipits incipitList language
 
-                Nothing ->
-                    Element.none
-    in
-    row
-        [ width fill ]
-        [ column
-            [ width fill ]
-            [ incipitSection ]
-        ]
+        Nothing ->
+            Element.none
 
 
-viewIncipits : SourceBody -> Language -> Element Msg
-viewIncipits source language =
-    let
-        incipitDisplay =
-            case source.incipits of
-                Just incipitList ->
-                    viewIncipitList incipitList language
-
-                Nothing ->
-                    column [] [ Element.none ]
-    in
-    row [ width fill ]
-        [ incipitDisplay ]
-
-
-viewIncipitList : IncipitList -> Language -> Element Msg
-viewIncipitList incipitlist language =
+viewIncipits : IncipitList -> Language -> Element Msg
+viewIncipits incipitlist language =
     row
         [ width fill ]
         [ column
