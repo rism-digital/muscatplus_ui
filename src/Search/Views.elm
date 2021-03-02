@@ -131,5 +131,8 @@ viewSearchBody model =
 
                 _ ->
                     viewSearchDesktop
+
+        message =
+            \s -> NoOp
     in
-    layoutBody (deviceView model) device
+    layoutBody message (deviceView model) device

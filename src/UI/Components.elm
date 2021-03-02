@@ -1,9 +1,12 @@
 module UI.Components exposing (..)
 
-import Element exposing (Attr, Attribute, Element, el, fill, paragraph, text, width)
+import Element exposing (Attr, Attribute, Element, el, fill, html, paragraph, text, width)
 import Element.Font as Font
+import Html as HT
+import Html.Attributes as HA
+import Html.Events as HE
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
-import UI.Style exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
+import UI.Style exposing (bodyRegular, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
 
 
 
@@ -53,3 +56,19 @@ label language langmap =
 value : Language -> LanguageMap -> Element msg
 value language langmap =
     el [ bodyRegular ] (paragraph [ width fill ] [ text (extractLabelFromLanguageMap language langmap) ])
+
+
+languageSelect : (String -> msg) -> Element msg
+languageSelect msg =
+    html
+        (HT.select
+            [ HE.onInput msg ]
+            [ HT.option [ HA.value "en" ] [ HT.text "English" ]
+            , HT.option [ HA.value "fr" ] [ HT.text "Français" ]
+            , HT.option [ HA.value "de" ] [ HT.text "Deutsch" ]
+            , HT.option [ HA.value "it" ] [ HT.text "Italiano" ]
+            , HT.option [ HA.value "es" ] [ HT.text "Espanol" ]
+            , HT.option [ HA.value "pt" ] [ HT.text "Portugese" ]
+            , HT.option [ HA.value "pl" ] [ HT.text "Polish" ]
+            ]
+        )

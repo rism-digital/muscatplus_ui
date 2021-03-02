@@ -3,7 +3,7 @@ module Records.Views.View exposing (..)
 import Api.Records exposing (ApiResponse(..), RecordResponse(..))
 import Element exposing (DeviceClass(..), Element, alignLeft, centerX, column, fill, fillPortion, height, row, width)
 import Html
-import Records.DataTypes exposing (Model, Msg)
+import Records.DataTypes exposing (Model, Msg(..))
 import Records.Views.Institution exposing (viewInstitutionRecord)
 import Records.Views.Person exposing (viewPersonRecord)
 import Records.Views.Shared exposing (viewErrorMessage, viewLoadingSpinner)
@@ -25,8 +25,11 @@ viewRecordBody model =
 
                 _ ->
                     viewRecordContentDesktop
+
+        message =
+            LanguageSelectChanged
     in
-    layoutBody (deviceView model) device
+    layoutBody message (deviceView model) device
 
 
 viewRecordContentDesktop : Model -> Element Msg

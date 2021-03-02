@@ -21,6 +21,11 @@ phoneMaxWidth =
     375
 
 
+{-|
+
+    https://coolors.co/445e93-7eb2dd-f93943-fcb0b3-fcecc9-f1f4f9
+
+-}
 darkBlue : Color
 darkBlue =
     rgb255 68 94 147

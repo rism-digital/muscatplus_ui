@@ -1,13 +1,12 @@
 module Records.Views.Source exposing (..)
 
 import Api.Records exposing (Incipit, IncipitFormat(..), IncipitList, RenderedIncipit(..), SourceBody)
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, paddingXY, px, row, text, width)
-import Element.Border as Border
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Element exposing (Element, alignTop, column, fill, fillPortion, height, paddingXY, px, row, spacing, text, width)
+import Language exposing (Language)
 import Records.DataTypes exposing (Msg)
 import Records.Views.Shared exposing (viewSummaryField)
 import SvgParser
-import UI.Components exposing (h1, h2, h3, h4, h5)
+import UI.Components exposing (h2, h4)
 import UI.Style exposing (borderBottom)
 
 
@@ -27,7 +26,9 @@ viewSourceRecord body language =
                 , height (fillPortion 10)
                 ]
                 [ column
-                    []
+                    [ width fill
+                    , spacing 20
+                    ]
                     [ viewSummarySection body language
                     , viewIncipitSection body language
                     ]
@@ -39,7 +40,7 @@ viewSourceRecord body language =
 viewSummarySection : SourceBody -> Language -> Element Msg
 viewSummarySection body language =
     row
-        (List.append borderBottom [ width fill ])
+        (List.append borderBottom [ width fill, paddingXY 0 10 ])
         [ column
             [ width fill ]
             [ viewSummaryField body.summary language ]

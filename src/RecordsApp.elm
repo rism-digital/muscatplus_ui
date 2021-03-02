@@ -54,6 +54,9 @@ update msg model =
         OnWindowResize device ->
             ( { model | viewingDevice = device }, Cmd.none )
 
+        LanguageSelectChanged str ->
+            ( { model | language = parseLocaleToLanguage str }, Cmd.none )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -83,7 +86,15 @@ init flags initialUrl key =
         initialDevice =
             detectDevice flags.windowWidth flags.windowHeight
     in
-    ( Model key initialUrl Loading "" language initialDevice, recordRequest ReceivedRecordResponse initialUrl.path )
+    ( { key = key
+      , url = initialUrl
+      , response = Loading
+      , errorMessage = ""
+      , language = language
+      , viewingDevice = initialDevice
+      }
+    , recordRequest ReceivedRecordResponse initialUrl.path
+    )
 
 
 main : Program Flags Model Msg

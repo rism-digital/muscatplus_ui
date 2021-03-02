@@ -5,11 +5,13 @@ module Language exposing
     , extractLabelFromLanguageMap
     , languageDecoder
     , languageMapDecoder
+    , languageOptions
     , languageValuesDecoder
     , parseLanguageToLocale
     , parseLocaleToLanguage
     )
 
+import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)
 
 
@@ -24,6 +26,24 @@ type Language
     | None
 
 
+{-|
+
+    A simple list of the language options supported by the site.
+
+-}
+languageOptions : List ( String, Language )
+languageOptions =
+    [ ( "en", English )
+    , ( "de", German )
+    , ( "fr", French )
+    , ( "it", Italian )
+    , ( "es", Spanish )
+    , ( "pt", Portugese )
+    , ( "pl", Polish )
+    , ( "none", None )
+    ]
+
+
 type LanguageValues
     = LanguageValues Language (List String)
 
@@ -35,61 +55,19 @@ type alias LanguageMap =
 parseLocaleToLanguage : String -> Language
 parseLocaleToLanguage locale =
     -- defaults to English if no language is detected
-    case locale of
-        "en" ->
-            English
-
-        "de" ->
-            German
-
-        "fr" ->
-            French
-
-        "it" ->
-            Italian
-
-        "es" ->
-            Spanish
-
-        "pt" ->
-            Portugese
-
-        "pl" ->
-            Polish
-
-        "none" ->
-            None
-
-        _ ->
-            English
+    Dict.fromList languageOptions
+        |> Dict.get locale
+        |> Maybe.withDefault English
 
 
 parseLanguageToLocale : Language -> String
 parseLanguageToLocale lang =
-    case lang of
-        English ->
-            "en"
-
-        German ->
-            "de"
-
-        French ->
-            "fr"
-
-        Italian ->
-            "it"
-
-        Spanish ->
-            "es"
-
-        Portugese ->
-            "pt"
-
-        Polish ->
-            "pl"
-
-        None ->
-            "none"
+    -- it's unlikely that a language will get passed in that doesn't exist,
+    -- but this will use English as the default language if that ever happens
+    List.filter (\l -> Tuple.second l == lang) languageOptions
+        |> List.head
+        |> Maybe.withDefault ( "en", English )
+        |> Tuple.first
 
 
 extractLabelFromLanguageMap : Language -> LanguageMap -> String
