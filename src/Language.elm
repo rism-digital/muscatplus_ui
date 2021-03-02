@@ -31,16 +31,16 @@ type Language
     A simple list of the language options supported by the site.
 
 -}
-languageOptions : List ( String, Language )
+languageOptions : List ( String, String, Language )
 languageOptions =
-    [ ( "en", English )
-    , ( "de", German )
-    , ( "fr", French )
-    , ( "it", Italian )
-    , ( "es", Spanish )
-    , ( "pt", Portugese )
-    , ( "pl", Polish )
-    , ( "none", None )
+    [ ( "en", "English", English )
+    , ( "de", "Deutsch", German )
+    , ( "fr", "Français", French )
+    , ( "it", "Italiano", Italian )
+    , ( "es", "Español", Spanish )
+    , ( "pt", "Português", Portugese )
+    , ( "pl", "Polskie", Polish )
+    , ( "none", "None", None )
     ]
 
 
@@ -55,7 +55,8 @@ type alias LanguageMap =
 parseLocaleToLanguage : String -> Language
 parseLocaleToLanguage locale =
     -- defaults to English if no language is detected
-    Dict.fromList languageOptions
+    List.map (\( l, _, s ) -> ( l, s )) languageOptions
+        |> Dict.fromList
         |> Dict.get locale
         |> Maybe.withDefault English
 
@@ -64,7 +65,9 @@ parseLanguageToLocale : Language -> String
 parseLanguageToLocale lang =
     -- it's unlikely that a language will get passed in that doesn't exist,
     -- but this will use English as the default language if that ever happens
-    List.filter (\l -> Tuple.second l == lang) languageOptions
+    -- creates a new list with just the locale and language type, then filters
+    List.map (\( l, _, s ) -> ( l, s )) languageOptions
+        |> List.filter (\( _, sym ) -> sym == lang)
         |> List.head
         |> Maybe.withDefault ( "en", English )
         |> Tuple.first
