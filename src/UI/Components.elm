@@ -58,17 +58,16 @@ value language langmap =
     el [ bodyRegular ] (paragraph [ width fill ] [ text (extractLabelFromLanguageMap language langmap) ])
 
 
-languageSelect : (String -> msg) -> Element msg
-languageSelect msg =
+{-|
+
+    Expects a message type to return when a value has been chosen, and a list of
+    values to fill out the options, e.g., [("en", "English"), ("fr", "French")]
+
+-}
+languageSelect : (String -> msg) -> List ( String, String ) -> Element msg
+languageSelect msg options =
     html
         (HT.select
             [ HE.onInput msg ]
-            [ HT.option [ HA.value "en" ] [ HT.text "English" ]
-            , HT.option [ HA.value "fr" ] [ HT.text "Français" ]
-            , HT.option [ HA.value "de" ] [ HT.text "Deutsch" ]
-            , HT.option [ HA.value "it" ] [ HT.text "Italiano" ]
-            , HT.option [ HA.value "es" ] [ HT.text "Espanol" ]
-            , HT.option [ HA.value "pt" ] [ HT.text "Portugese" ]
-            , HT.option [ HA.value "pl" ] [ HT.text "Polish" ]
-            ]
+            (List.map (\( val, name ) -> HT.option [ HA.value val ] [ HT.text name ]) options)
         )
