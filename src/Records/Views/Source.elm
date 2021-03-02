@@ -1,12 +1,12 @@
 module Records.Views.Source exposing (..)
 
-import Api.Records exposing (Incipit, IncipitFormat(..), IncipitList, RenderedIncipit(..), SourceBody)
-import Element exposing (Element, alignTop, column, fill, fillPortion, height, paddingXY, px, row, spacing, text, width)
+import Api.Records exposing (Incipit, IncipitFormat(..), IncipitList, NoteList, RenderedIncipit(..), SourceBody)
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, paddingXY, px, row, spacing, text, width)
 import Language exposing (Language)
 import Records.DataTypes exposing (Msg)
 import Records.Views.Shared exposing (viewSummaryField)
 import SvgParser
-import UI.Components exposing (h2, h4)
+import UI.Components exposing (h2, h4, label, value)
 import UI.Style exposing (borderBottom)
 
 
@@ -30,6 +30,7 @@ viewSourceRecord body language =
                     , spacing 20
                     ]
                     [ viewSummarySection body language
+                    , viewNotesSection body language
                     , viewIncipitSection body language
                     ]
                 ]
@@ -44,6 +45,51 @@ viewSummarySection body language =
         [ column
             [ width fill ]
             [ viewSummaryField body.summary language ]
+        ]
+
+
+viewNotesSection : SourceBody -> Language -> Element Msg
+viewNotesSection body language =
+    case body.notes of
+        Just notelist ->
+            viewNotes notelist language
+
+        Nothing ->
+            Element.none
+
+
+viewNotes : NoteList -> Language -> Element Msg
+viewNotes notelist language =
+    row
+        (List.append borderBottom [ width fill, paddingXY 0 10 ])
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ column
+                    []
+                    [ h4 language notelist.label ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    (List.map
+                        (\note ->
+                            row
+                                [ width fill, paddingXY 0 10 ]
+                                [ el
+                                    [ width (fillPortion 4), alignTop ]
+                                    (label language note.label)
+                                , el
+                                    [ width (fillPortion 8), alignTop ]
+                                    (value language note.value)
+                                ]
+                        )
+                        notelist.notes
+                    )
+                ]
+            ]
         ]
 
 
