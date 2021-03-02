@@ -12,8 +12,8 @@ detectDevice width height =
     classifyDevice { height = height, width = width }
 
 
-layoutTopBar : (String -> msg) -> Element msg
-layoutTopBar message =
+layoutTopBar : (String -> msg) -> List ( String, String ) -> Element msg
+layoutTopBar message langOptions =
     row [ width fill, height (px 60), greyBackground ]
         [ column [ width minMaxFillDesktop, height fill, centerX ]
             [ row
@@ -23,7 +23,7 @@ layoutTopBar message =
                     [ text "RISM Online" ]
                 , column
                     [ width (fillPortion 2) ]
-                    [ languageSelect message ]
+                    [ languageSelect message langOptions ]
                 ]
             ]
         ]
@@ -38,8 +38,13 @@ layoutFooter =
         ]
 
 
-layoutBody : (String -> msg) -> Element msg -> Device -> List (Html.Html msg)
-layoutBody message bodyView device =
+layoutBody :
+    (String -> msg)
+    -> List ( String, String )
+    -> Element msg
+    -> Device
+    -> List (Html.Html msg)
+layoutBody message langOptions bodyView device =
     let
         maxWidth =
             case device.class of
@@ -51,7 +56,7 @@ layoutBody message bodyView device =
     in
     [ layout [ width fill, bodyFont ]
         (column [ centerX, width fill, height fill ]
-            [ layoutTopBar message
+            [ layoutTopBar message langOptions
             , bodyView
             , layoutFooter
             ]

@@ -5652,14 +5652,14 @@ var $author$project$Language$Portugese = 4;
 var $author$project$Language$Spanish = 5;
 var $author$project$Language$languageOptions = _List_fromArray(
 	[
-		_Utils_Tuple2('en', 0),
-		_Utils_Tuple2('de', 2),
-		_Utils_Tuple2('fr', 1),
-		_Utils_Tuple2('it', 3),
-		_Utils_Tuple2('es', 5),
-		_Utils_Tuple2('pt', 4),
-		_Utils_Tuple2('pl', 6),
-		_Utils_Tuple2('none', 7)
+		_Utils_Tuple3('en', 'English', 0),
+		_Utils_Tuple3('de', 'Deutsch', 2),
+		_Utils_Tuple3('fr', 'Français', 1),
+		_Utils_Tuple3('it', 'Italiano', 3),
+		_Utils_Tuple3('es', 'Español', 5),
+		_Utils_Tuple3('pt', 'Português', 4),
+		_Utils_Tuple3('pl', 'Polskie', 6),
+		_Utils_Tuple3('none', 'None', 7)
 	]);
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
@@ -5677,7 +5677,15 @@ var $author$project$Language$parseLocaleToLanguage = function (locale) {
 		A2(
 			$elm$core$Dict$get,
 			locale,
-			$elm$core$Dict$fromList($author$project$Language$languageOptions)));
+			$elm$core$Dict$fromList(
+				A2(
+					$elm$core$List$map,
+					function (_v0) {
+						var l = _v0.a;
+						var s = _v0.c;
+						return _Utils_Tuple2(l, s);
+					},
+					$author$project$Language$languageOptions))));
 };
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -7231,6 +7239,17 @@ var $author$project$RecordsApp$update = F2(
 var $author$project$Records$DataTypes$LanguageSelectChanged = function (a) {
 	return {$: 4, a: a};
 };
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
 var $mdgriffith$elm_ui$Internal$Model$FontFamily = F2(
 	function (a, b) {
 		return {$: 1, a: a, b: b};
@@ -10627,17 +10646,6 @@ var $mdgriffith$elm_ui$Internal$Model$adjust = F3(
 	function (size, height, vertical) {
 		return {cI: height / size, bB: size, bK: vertical};
 	});
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
 var $elm$core$List$maximum = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -13156,120 +13164,96 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 var $elm$html$Html$option = _VirtualDom_node('option');
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
-var $author$project$UI$Components$languageSelect = function (msg) {
-	return $mdgriffith$elm_ui$Element$html(
-		A2(
-			$elm$html$Html$select,
+var $author$project$UI$Components$languageSelect = F2(
+	function (msg, options) {
+		return $mdgriffith$elm_ui$Element$html(
+			A2(
+				$elm$html$Html$select,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onInput(msg)
+					]),
+				A2(
+					$elm$core$List$map,
+					function (_v0) {
+						var val = _v0.a;
+						var name = _v0.b;
+						return A2(
+							$elm$html$Html$option,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$value(val)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(name)
+								]));
+					},
+					options)));
+	});
+var $author$project$UI$Layout$layoutTopBar = F2(
+	function (message, langOptions) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
 			_List_fromArray(
 				[
-					$elm$html$Html$Events$onInput(msg)
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$height(
+					$mdgriffith$elm_ui$Element$px(60)),
+					$author$project$UI$Style$greyBackground
 				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$option,
+					$mdgriffith$elm_ui$Element$column,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$value('en')
+							$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+							$mdgriffith$elm_ui$Element$centerX
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('English')
-						])),
-					A2(
-					$elm$html$Html$option,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$value('fr')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Français')
-						])),
-					A2(
-					$elm$html$Html$option,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$value('de')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Deutsch')
-						])),
-					A2(
-					$elm$html$Html$option,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$value('it')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Italiano')
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$fillPortion(10)),
+											$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue),
+											$mdgriffith$elm_ui$Element$Font$semiBold
+										]),
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$text('RISM Online')
+										])),
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$fillPortion(2))
+										]),
+									_List_fromArray(
+										[
+											A2($author$project$UI$Components$languageSelect, message, langOptions)
+										]))
+								]))
 						]))
-				])));
-};
-var $author$project$UI$Layout$layoutTopBar = function (message) {
-	return A2(
-		$mdgriffith$elm_ui$Element$row,
-		_List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-				$mdgriffith$elm_ui$Element$height(
-				$mdgriffith$elm_ui$Element$px(60)),
-				$author$project$UI$Style$greyBackground
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$column,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
-						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-						$mdgriffith$elm_ui$Element$centerX
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-								$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$column,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$width(
-										$mdgriffith$elm_ui$Element$fillPortion(10)),
-										$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue),
-										$mdgriffith$elm_ui$Element$Font$semiBold
-									]),
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$text('RISM Online')
-									])),
-								A2(
-								$mdgriffith$elm_ui$Element$column,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$width(
-										$mdgriffith$elm_ui$Element$fillPortion(2))
-									]),
-								_List_fromArray(
-									[
-										$author$project$UI$Components$languageSelect(message)
-									]))
-							]))
-					]))
-			]));
-};
+				]));
+	});
 var $author$project$UI$Style$phoneMaxWidth = 375;
-var $author$project$UI$Layout$layoutBody = F3(
-	function (message, bodyView, device) {
+var $author$project$UI$Layout$layoutBody = F4(
+	function (message, langOptions, bodyView, device) {
 		var maxWidth = function () {
 			var _v0 = device.ci;
 			if (!_v0) {
@@ -13297,7 +13281,7 @@ var $author$project$UI$Layout$layoutBody = F3(
 						]),
 					_List_fromArray(
 						[
-							$author$project$UI$Layout$layoutTopBar(message),
+							A2($author$project$UI$Layout$layoutTopBar, message, langOptions),
 							bodyView,
 							$author$project$UI$Layout$layoutFooter
 						])))
@@ -14828,6 +14812,20 @@ var $author$project$Records$Views$View$viewRecordContentMobile = function (model
 };
 var $author$project$Records$Views$View$viewRecordBody = function (model) {
 	var message = $author$project$Records$DataTypes$LanguageSelectChanged;
+	var langOptions = A2(
+		$elm$core$List$filter,
+		function (_v2) {
+			var l = _v2.a;
+			return l !== 'none';
+		},
+		A2(
+			$elm$core$List$map,
+			function (_v1) {
+				var l = _v1.a;
+				var n = _v1.b;
+				return _Utils_Tuple2(l, n);
+			},
+			$author$project$Language$languageOptions));
 	var device = model.ed;
 	var deviceView = function () {
 		var _v0 = device.ci;
@@ -14837,9 +14835,10 @@ var $author$project$Records$Views$View$viewRecordBody = function (model) {
 			return $author$project$Records$Views$View$viewRecordContentDesktop;
 		}
 	}();
-	return A3(
+	return A4(
 		$author$project$UI$Layout$layoutBody,
 		message,
+		langOptions,
 		deviceView(model),
 		device);
 };

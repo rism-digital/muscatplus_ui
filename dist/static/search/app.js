@@ -10779,14 +10779,14 @@ var $author$project$Language$Portugese = {$: 'Portugese'};
 var $author$project$Language$Spanish = {$: 'Spanish'};
 var $author$project$Language$languageOptions = _List_fromArray(
 	[
-		_Utils_Tuple2('en', $author$project$Language$English),
-		_Utils_Tuple2('de', $author$project$Language$German),
-		_Utils_Tuple2('fr', $author$project$Language$French),
-		_Utils_Tuple2('it', $author$project$Language$Italian),
-		_Utils_Tuple2('es', $author$project$Language$Spanish),
-		_Utils_Tuple2('pt', $author$project$Language$Portugese),
-		_Utils_Tuple2('pl', $author$project$Language$Polish),
-		_Utils_Tuple2('none', $author$project$Language$None)
+		_Utils_Tuple3('en', 'English', $author$project$Language$English),
+		_Utils_Tuple3('de', 'Deutsch', $author$project$Language$German),
+		_Utils_Tuple3('fr', 'Français', $author$project$Language$French),
+		_Utils_Tuple3('it', 'Italiano', $author$project$Language$Italian),
+		_Utils_Tuple3('es', 'Español', $author$project$Language$Spanish),
+		_Utils_Tuple3('pt', 'Português', $author$project$Language$Portugese),
+		_Utils_Tuple3('pl', 'Polskie', $author$project$Language$Polish),
+		_Utils_Tuple3('none', 'None', $author$project$Language$None)
 	]);
 var $author$project$Language$parseLocaleToLanguage = function (locale) {
 	return A2(
@@ -10795,7 +10795,15 @@ var $author$project$Language$parseLocaleToLanguage = function (locale) {
 		A2(
 			$elm$core$Dict$get,
 			locale,
-			$elm$core$Dict$fromList($author$project$Language$languageOptions)));
+			$elm$core$Dict$fromList(
+				A2(
+					$elm$core$List$map,
+					function (_v0) {
+						var l = _v0.a;
+						var s = _v0.c;
+						return _Utils_Tuple2(l, s);
+					},
+					$author$project$Language$languageOptions))));
 };
 var $author$project$Search$DataTypes$NotFound = {$: 'NotFound'};
 var $elm$url$Url$Parser$State = F5(
