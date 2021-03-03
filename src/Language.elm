@@ -6,6 +6,7 @@ module Language exposing
     , languageDecoder
     , languageMapDecoder
     , languageOptions
+    , languageOptionsForDisplay
     , languageValuesDecoder
     , parseLanguageToLocale
     , parseLocaleToLanguage
@@ -26,6 +27,14 @@ type Language
     | None
 
 
+type LanguageValues
+    = LanguageValues Language (List String)
+
+
+type alias LanguageMap =
+    List LanguageValues
+
+
 {-|
 
     A simple list of the language options supported by the site.
@@ -44,12 +53,19 @@ languageOptions =
     ]
 
 
-type LanguageValues
-    = LanguageValues Language (List String)
+{-|
 
+    For display (e.g., the dropdown list) we just need
+    a list of the languages that removes the type and
+    filters out the 'none' value ('none' is used to indicate
+    no declared linguistic content in the server response, but it's
+    confusing if we show that to our users.)
 
-type alias LanguageMap =
-    List LanguageValues
+-}
+languageOptionsForDisplay : List ( String, String )
+languageOptionsForDisplay =
+    List.map (\( l, n, _ ) -> ( l, n )) languageOptions
+        |> List.filter (\( l, _ ) -> l /= "none")
 
 
 parseLocaleToLanguage : String -> Language
