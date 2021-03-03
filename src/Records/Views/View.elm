@@ -3,7 +3,7 @@ module Records.Views.View exposing (..)
 import Api.Records exposing (ApiResponse(..), RecordResponse(..))
 import Element exposing (DeviceClass(..), Element, alignLeft, centerX, column, fill, fillPortion, height, row, width)
 import Html
-import Language exposing (languageOptions)
+import Language exposing (languageOptions, languageOptionsForDisplay)
 import Records.DataTypes exposing (Model, Msg(..))
 import Records.Views.Institution exposing (viewInstitutionRecord)
 import Records.Views.Person exposing (viewPersonRecord)
@@ -31,8 +31,7 @@ viewRecordBody model =
             LanguageSelectChanged
 
         langOptions =
-            List.map (\( l, n, _ ) -> ( l, n )) languageOptions
-                |> List.filter (\( l, _ ) -> l /= "none")
+            languageOptionsForDisplay
     in
     layoutBody message langOptions (deviceView model) device
 
