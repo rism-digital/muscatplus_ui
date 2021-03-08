@@ -63,6 +63,9 @@ update msg model =
         UrlChange url ->
             ( { model | url = url }, Cmd.none )
 
+        LanguageSelectChanged str ->
+            ( { model | language = parseLocaleToLanguage str }, Cmd.none )
+
         NoOp ->
             ( model, Cmd.none )
 

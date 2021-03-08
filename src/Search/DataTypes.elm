@@ -17,6 +17,7 @@ type Msg
     | OnWindowResize Device
     | UrlChange Url
     | UrlRequest UrlRequest
+    | LanguageSelectChanged String
     | NoOp
 
 

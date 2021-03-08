@@ -5,6 +5,7 @@ import Element exposing (..)
 import Element.Input as Input
 import Html
 import Html.Attributes
+import Language exposing (languageOptionsForDisplay)
 import Search.DataTypes exposing (Model, Msg(..), Route(..))
 import UI.Layout exposing (layoutBody)
 import UI.Style as Style exposing (greyBackground, minMaxFillDesktop, minMaxFillMobile, roundedBorder, roundedButton)
@@ -133,6 +134,9 @@ viewSearchBody model =
                     viewSearchDesktop
 
         message =
-            \s -> NoOp
+            LanguageSelectChanged
+
+        langOptions =
+            languageOptionsForDisplay
     in
-    layoutBody message (deviceView model) device
+    layoutBody message langOptions (deviceView model) device
