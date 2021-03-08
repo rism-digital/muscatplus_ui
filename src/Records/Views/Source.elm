@@ -1,21 +1,24 @@
 module Records.Views.Source exposing (..)
 
-import Api.Records exposing (Incipit, IncipitFormat(..), IncipitList, NoteList, RenderedIncipit(..), SourceBody)
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, paddingXY, px, row, spacing, text, width)
-import Language exposing (Language)
+import Api.Records exposing (Incipit, IncipitFormat(..), IncipitList, MaterialGroup, MaterialGroupList, NoteList, RenderedIncipit(..), SourceBody, SourceRelationship, SourceRelationshipList)
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, none, paddingXY, paragraph, px, row, spacing, text, width)
+import Element.Border as Border
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Records.DataTypes exposing (Msg)
 import Records.Views.Shared exposing (viewSummaryField)
 import SvgParser
-import UI.Components exposing (h2, h4, label, value)
-import UI.Style exposing (borderBottom)
+import UI.Components exposing (h2, h4, h5, label, styledLink, value)
+import UI.Style exposing (bodyRegular, borderBottom)
 
 
 viewSourceRecord : SourceBody -> Language -> Element Msg
 viewSourceRecord body language =
     row
-        [ alignTop ]
+        [ alignTop
+        , width fill
+        ]
         [ column
-            []
+            [ width fill ]
             [ row
                 [ width fill
                 , height (px 120)
@@ -29,10 +32,18 @@ viewSourceRecord body language =
                     [ width fill
                     , spacing 20
                     ]
-                    [ viewSummarySection body language
-                    , viewNotesSection body language
-                    , viewIncipitSection body language
-                    ]
+                    (List.map (\viewSection -> viewSection body language)
+                        [ viewSummarySection
+                        , viewNotesSection
+                        , viewIncipitSection
+                        , viewDistributionSection
+                        , viewMaterialDescriptionSection
+                        , viewFurtherInformationSection
+                        , viewReferencesSection
+                        , viewIndexTermsSection
+                        , viewExemplarsSection
+                        ]
+                    )
                 ]
             ]
         ]
@@ -41,7 +52,7 @@ viewSourceRecord body language =
 viewSummarySection : SourceBody -> Language -> Element Msg
 viewSummarySection body language =
     row
-        (List.append borderBottom [ width fill, paddingXY 0 10 ])
+        [ width fill, paddingXY 0 10 ]
         [ column
             [ width fill ]
             [ viewSummaryField body.summary language ]
@@ -61,14 +72,12 @@ viewNotesSection body language =
 viewNotes : NoteList -> Language -> Element Msg
 viewNotes notelist language =
     row
-        (List.append borderBottom [ width fill, paddingXY 0 10 ])
+        [ width fill, paddingXY 0 10 ]
         [ column
             [ width fill ]
             [ row
                 [ width fill ]
-                [ column
-                    []
-                    [ h4 language notelist.label ]
+                [ h4 language notelist.label
                 ]
             , viewSummaryField notelist.notes language
             ]
@@ -92,9 +101,9 @@ viewIncipits incipitlist language =
         [ column
             [ width fill ]
             [ row
-                []
+                [ width fill ]
                 [ column
-                    []
+                    [ width fill ]
                     [ h4 language incipitlist.label ]
                 ]
             , row
@@ -118,23 +127,21 @@ viewSingleIncipit language incipit =
                 Nothing ->
                     Element.none
     in
-    row (List.append borderBottom [ width fill, paddingXY 0 20 ])
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
             [ width fill ]
-            [ row
-                [ width fill ]
-                [ column
-                    [ width fill ]
-                    [ viewSummaryField incipit.summary language
-                    , renderedIncipits
-                    ]
-                ]
+            [ viewSummaryField incipit.summary language
+            , renderedIncipits
             ]
         ]
 
 
 viewRenderedIncipits : List RenderedIncipit -> Element Msg
-viewRenderedIncipits incipitlist =
+viewRenderedIncipits incipitList =
     let
         incipitSVG =
             List.map
@@ -146,13 +153,21 @@ viewRenderedIncipits incipitlist =
                         _ ->
                             Element.none
                 )
-                incipitlist
+                incipitList
     in
     row
-        [ paddingXY 0 5 ]
+        [ paddingXY 0 10
+        , width fill
+        ]
         incipitSVG
 
 
+{-|
+
+    Parses an Elm SVG tree (returns Html) from the JSON incipit data.
+    Converts it to an elm-ui structure to match the other view functions
+
+-}
 viewSVGRenderedIncipit : String -> Element Msg
 viewSVGRenderedIncipit incipitData =
     let
@@ -168,3 +183,145 @@ viewSVGRenderedIncipit incipitData =
                     text "Could not parse SVG"
     in
     svgResponse
+
+
+viewDistributionSection : SourceBody -> Language -> Element Msg
+viewDistributionSection body language =
+    none
+
+
+viewMaterialDescriptionSection : SourceBody -> Language -> Element Msg
+viewMaterialDescriptionSection body language =
+    case body.materialgroups of
+        Just materialgroups ->
+            viewMaterialDescriptions materialgroups language
+
+        Nothing ->
+            none
+
+
+viewMaterialDescriptions : MaterialGroupList -> Language -> Element Msg
+viewMaterialDescriptions materialgroups language =
+    row
+        [ width fill
+        , paddingXY 0 10
+        ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ h4 language materialgroups.label ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    (List.map (\gp -> viewMaterialGroup gp language) materialgroups.items)
+                ]
+            ]
+        ]
+
+
+viewMaterialGroup : MaterialGroup -> Language -> Element Msg
+viewMaterialGroup materialgroup language =
+    let
+        relatedPeople =
+            case materialgroup.related of
+                Just related ->
+                    viewRelatedPeople related language
+
+                Nothing ->
+                    none
+    in
+    row
+        [ width fill
+        , paddingXY 0 10
+        , Border.widthEach { top = 0, left = 0, bottom = 1, right = 0 }
+        ]
+        [ column
+            [ width fill ]
+            [ row
+                []
+                [ h5 language materialgroup.label ]
+            , viewSummaryField materialgroup.summary language
+            , relatedPeople
+            ]
+        ]
+
+
+viewRelatedPeople : SourceRelationshipList -> Language -> Element Msg
+viewRelatedPeople related language =
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill
+                , paddingXY 0 10
+                ]
+                [ h5 language related.label ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    (List.map (\p -> viewRelatedPerson p language) related.items)
+                ]
+            ]
+        ]
+
+
+viewRelatedPerson : SourceRelationship -> Language -> Element Msg
+viewRelatedPerson relationship language =
+    let
+        relationshipRole =
+            case relationship.role of
+                Just role ->
+                    "[" ++ extractLabelFromLanguageMap language role ++ "]"
+
+                Nothing ->
+                    ""
+
+        relationshipQualifier =
+            case relationship.qualifier of
+                Just qual ->
+                    "[" ++ extractLabelFromLanguageMap language qual ++ "]"
+
+                Nothing ->
+                    ""
+
+        person =
+            relationship.person
+
+        relatedPerson =
+            styledLink person.id (extractLabelFromLanguageMap language person.label)
+    in
+    row
+        [ width fill
+        , paddingXY 10 5
+        ]
+        [ paragraph
+            [ bodyRegular ]
+            [ relatedPerson
+            , text (" " ++ relationshipRole)
+            , text (" " ++ relationshipQualifier)
+            ]
+        ]
+
+
+viewFurtherInformationSection : SourceBody -> Language -> Element Msg
+viewFurtherInformationSection body language =
+    none
+
+
+viewReferencesSection : SourceBody -> Language -> Element Msg
+viewReferencesSection body language =
+    none
+
+
+viewIndexTermsSection : SourceBody -> Language -> Element Msg
+viewIndexTermsSection body language =
+    none
+
+
+viewExemplarsSection : SourceBody -> Language -> Element Msg
+viewExemplarsSection body language =
+    none

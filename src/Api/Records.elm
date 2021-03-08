@@ -6,7 +6,7 @@ import Api.Search exposing (labelDecoder)
 import Config as C
 import Http
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (optional, required, requiredAt)
+import Json.Decode.Pipeline exposing (hardcoded, optional, optionalAt, required, requiredAt)
 import Language exposing (LanguageMap, LanguageValues)
 import Url.Builder
 
@@ -31,9 +31,17 @@ type alias BasicSourceBody =
 
 
 type alias SourceRelationship =
-    { id : String
-    , role : LanguageMap
+    { id : Maybe String
+    , role : Maybe LanguageMap
+    , qualifier : Maybe LanguageMap
     , person : PersonBody
+    }
+
+
+type alias SourceRelationshipList =
+    { id : Maybe String
+    , label : LanguageMap
+    , items : List SourceRelationship
     }
 
 
@@ -74,6 +82,20 @@ type alias IncipitList =
     }
 
 
+type alias MaterialGroupList =
+    { label : LanguageMap
+    , items : List MaterialGroup
+    }
+
+
+type alias MaterialGroup =
+    { id : String
+    , label : LanguageMap
+    , summary : List LabelValue
+    , related : Maybe SourceRelationshipList
+    }
+
+
 type alias SourceBody =
     { id : String
     , label : LanguageMap
@@ -81,9 +103,11 @@ type alias SourceBody =
     , sourceType : LanguageMap
     , partOf : Maybe (List BasicSourceBody)
     , creator : Maybe SourceRelationship
+    , related : Maybe SourceRelationshipList
     , subjects : Maybe (List Subject)
     , notes : Maybe NoteList
     , incipits : Maybe IncipitList
+    , materialgroups : Maybe MaterialGroupList
     }
 
 
@@ -140,9 +164,11 @@ sourceBodyDecoder =
         |> required "sourceType" labelDecoder
         |> optional "partOf" (Decode.maybe (list basicSourceBodyDecoder)) Nothing
         |> optional "creator" (Decode.maybe sourceRelationshipDecoder) Nothing
+        |> optional "related" (Decode.maybe sourceRelationshipListDecoder) Nothing
         |> optional "subjects" (Decode.maybe (list subjectDecoder)) Nothing
         |> optional "notes" (Decode.maybe noteListDecoder) Nothing
         |> optional "incipits" (Decode.maybe incipitListDecoder) Nothing
+        |> optional "materials" (Decode.maybe materialGroupListDecoder) Nothing
 
 
 basicSourceBodyDecoder : Decoder BasicSourceBody
@@ -156,9 +182,18 @@ basicSourceBodyDecoder =
 sourceRelationshipDecoder : Decoder SourceRelationship
 sourceRelationshipDecoder =
     Decode.succeed SourceRelationship
-        |> required "id" string
-        |> requiredAt [ "role", "label" ] labelDecoder
+        |> optional "id" (Decode.maybe string) Nothing
+        |> optionalAt [ "role", "label" ] (Decode.maybe labelDecoder) Nothing
+        |> optionalAt [ "qualifier", "label" ] (Decode.maybe labelDecoder) Nothing
         |> required "relatedTo" personBodyDecoder
+
+
+sourceRelationshipListDecoder : Decoder SourceRelationshipList
+sourceRelationshipListDecoder =
+    Decode.succeed SourceRelationshipList
+        |> optional "id" (Decode.maybe string) Nothing
+        |> required "label" labelDecoder
+        |> required "items" (list sourceRelationshipDecoder)
 
 
 subjectDecoder : Decoder Subject
@@ -180,6 +215,22 @@ noteDecoder =
     Decode.succeed LabelValue
         |> required "label" labelDecoder
         |> required "value" labelDecoder
+
+
+materialGroupListDecoder : Decoder MaterialGroupList
+materialGroupListDecoder =
+    Decode.succeed MaterialGroupList
+        |> required "label" labelDecoder
+        |> required "items" (list materialGroupDecoder)
+
+
+materialGroupDecoder : Decoder MaterialGroup
+materialGroupDecoder =
+    Decode.succeed MaterialGroup
+        |> required "id" string
+        |> required "label" labelDecoder
+        |> required "summary" (list noteDecoder)
+        |> optional "related" (Decode.maybe sourceRelationshipListDecoder) Nothing
 
 
 incipitListDecoder : Decoder IncipitList

@@ -1,12 +1,12 @@
 module UI.Components exposing (..)
 
-import Element exposing (Attr, Attribute, Element, el, fill, html, paragraph, text, width)
+import Element exposing (Attr, Attribute, Element, el, fill, html, link, paragraph, text, width)
 import Element.Font as Font
 import Html as HT
 import Html.Attributes as HA
 import Html.Events as HE
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
-import UI.Style exposing (bodyRegular, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
+import UI.Style exposing (bodyRegular, darkBlue, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
 
 
 
@@ -56,6 +56,18 @@ label language langmap =
 value : Language -> LanguageMap -> Element msg
 value language langmap =
     el [ bodyRegular ] (paragraph [ width fill ] [ text (extractLabelFromLanguageMap language langmap) ])
+
+
+styledLink : String -> String -> Element msg
+styledLink url labelString =
+    link
+        [ bodyRegular
+        , Font.underline
+        , Font.color darkBlue
+        ]
+        { url = url
+        , label = text labelString
+        }
 
 
 {-|

@@ -1,6 +1,7 @@
 module Records.Views.View exposing (..)
 
 import Api.Records exposing (ApiResponse(..), RecordResponse(..))
+import Browser
 import Element exposing (DeviceClass(..), Element, alignLeft, centerX, column, fill, fillPortion, height, row, width)
 import Html
 import Language exposing (languageOptions, languageOptionsForDisplay)
@@ -11,6 +12,13 @@ import Records.Views.Shared exposing (viewErrorMessage, viewLoadingSpinner)
 import Records.Views.Source exposing (viewSourceRecord)
 import UI.Layout exposing (layoutBody)
 import UI.Style exposing (minMaxFillDesktop)
+
+
+view : Model -> Browser.Document Msg
+view model =
+    { title = "Hello Records!"
+    , body = viewRecordBody model
+    }
 
 
 viewRecordBody : Model -> List (Html.Html Msg)

@@ -7,7 +7,7 @@ import Browser.Navigation as Nav
 import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
 import Records.DataTypes exposing (Model, Msg(..))
-import Records.Views.View exposing (viewRecordBody)
+import Records.Views.View as View exposing (viewRecordBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
 
@@ -63,9 +63,7 @@ update msg model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Hello Records!"
-    , body = viewRecordBody model
-    }
+    View.view model
 
 
 subscriptions : Model -> Sub Msg

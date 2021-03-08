@@ -46,10 +46,10 @@ viewSummaryField field language =
                     row
                         [ width fill, paddingXY 0 10 ]
                         [ el
-                            [ width (fillPortion 4), alignTop ]
+                            [ width (fillPortion 2), alignTop ]
                             (label language f.label)
                         , el
-                            [ width (fillPortion 8), alignTop ]
+                            [ width (fillPortion 4), alignTop ]
                             (value language f.value)
                         ]
                 )
