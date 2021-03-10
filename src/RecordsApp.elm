@@ -49,7 +49,7 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | url = url }, Cmd.none )
+            ( { model | url = url }, recordRequest ReceivedRecordResponse url.path )
 
         OnWindowResize device ->
             ( { model | viewingDevice = device }, Cmd.none )
