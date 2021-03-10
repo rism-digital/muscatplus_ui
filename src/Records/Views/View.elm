@@ -16,7 +16,7 @@ import UI.Style exposing (minMaxFillDesktop)
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Hello Records!"
+    { title = "Record View"
     , body = viewRecordBody model
     }
 
