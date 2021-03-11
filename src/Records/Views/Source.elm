@@ -1,14 +1,14 @@
 module Records.Views.Source exposing (..)
 
-import Api.Records exposing (Incipit, IncipitFormat(..), IncipitList, MaterialGroup, MaterialGroupList, NoteList, RenderedIncipit(..), SourceBody, SourceRelationship, SourceRelationshipList)
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, none, paddingXY, paragraph, px, row, spacing, text, width)
+import Api.Records exposing (Exemplar, ExemplarsList, Incipit, IncipitFormat(..), IncipitList, MaterialGroup, MaterialGroupList, NoteList, RenderedIncipit(..), SourceBody, SourceRelationship, SourceRelationshipList)
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacing, text, width)
 import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Records.DataTypes exposing (Msg)
 import Records.Views.Shared exposing (viewSummaryField)
 import SvgParser
 import UI.Components exposing (h2, h4, h5, label, styledLink, value)
-import UI.Style exposing (bodyRegular, borderBottom)
+import UI.Style exposing (bodyRegular, borderBottom, lightBlue, red)
 
 
 viewSourceRecord : SourceBody -> Language -> Element Msg
@@ -99,7 +99,8 @@ viewIncipits incipitlist language =
     row
         [ width fill ]
         [ column
-            [ width fill ]
+            [ width fill
+            ]
             [ row
                 [ width fill ]
                 [ column
@@ -158,6 +159,7 @@ viewRenderedIncipits incipitList =
     row
         [ paddingXY 0 10
         , width fill
+        , height fill
         ]
         incipitSVG
 
@@ -207,7 +209,8 @@ viewMaterialDescriptions materialgroups language =
         , paddingXY 0 10
         ]
         [ column
-            [ width fill ]
+            [ width fill
+            ]
             [ row
                 [ width fill ]
                 [ h4 language materialgroups.label ]
@@ -235,7 +238,6 @@ viewMaterialGroup materialgroup language =
     row
         [ width fill
         , paddingXY 0 10
-        , Border.widthEach { top = 0, left = 0, bottom = 1, right = 0 }
         ]
         [ column
             [ width fill ]
@@ -324,4 +326,69 @@ viewIndexTermsSection body language =
 
 viewExemplarsSection : SourceBody -> Language -> Element Msg
 viewExemplarsSection body language =
-    none
+    case body.exemplars of
+        Just hold ->
+            viewExemplars hold language
+
+        Nothing ->
+            none
+
+
+viewExemplars : ExemplarsList -> Language -> Element Msg
+viewExemplars exemplarlist language =
+    row
+        [ width fill
+        , paddingXY 0 10
+        ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ h4 language exemplarlist.label ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    (List.map (\e -> viewSingleExemplar e language) exemplarlist.items)
+                ]
+            ]
+        ]
+
+
+viewSingleExemplar : Exemplar -> Language -> Element Msg
+viewSingleExemplar exemplar language =
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ viewHeldByInstitution exemplar language
+            , viewSummaryField exemplar.summary language
+            ]
+        ]
+
+
+viewHeldByInstitution : Exemplar -> Language -> Element Msg
+viewHeldByInstitution exemplar language =
+    let
+        heldByInstitution =
+            exemplar.heldBy
+
+        institutionSiglum =
+            "(" ++ extractLabelFromLanguageMap language heldByInstitution.siglum ++ ")"
+
+        heldByLink =
+            styledLink heldByInstitution.id (extractLabelFromLanguageMap language heldByInstitution.label)
+    in
+    row
+        [ width fill
+        , paddingXY 10 5
+        ]
+        [ column
+            [ width fill ]
+            [ paragraph
+                [ bodyRegular ]
+                [ heldByLink
+                , text (" " ++ institutionSiglum)
+                ]
+            ]
+        ]

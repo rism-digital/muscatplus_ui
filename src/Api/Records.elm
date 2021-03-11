@@ -71,7 +71,6 @@ type alias Incipit =
     { id : String
     , label : LanguageMap
     , summary : List LabelValue
-    , textIncipit : Maybe LanguageMap
     , rendered : Maybe (List RenderedIncipit)
     }
 
@@ -96,6 +95,20 @@ type alias MaterialGroup =
     }
 
 
+type alias ExemplarsList =
+    { id : String
+    , label : LanguageMap
+    , items : List Exemplar
+    }
+
+
+type alias Exemplar =
+    { id : String
+    , summary : List LabelValue
+    , heldBy : InstitutionBody
+    }
+
+
 type alias SourceBody =
     { id : String
     , label : LanguageMap
@@ -108,6 +121,7 @@ type alias SourceBody =
     , notes : Maybe NoteList
     , incipits : Maybe IncipitList
     , materialgroups : Maybe MaterialGroupList
+    , exemplars : Maybe ExemplarsList
     }
 
 
@@ -141,6 +155,7 @@ type alias PersonExternalReferences =
 type alias InstitutionBody =
     { id : String
     , label : LanguageMap
+    , siglum : LanguageMap
     }
 
 
@@ -169,6 +184,7 @@ sourceBodyDecoder =
         |> optional "notes" (Decode.maybe noteListDecoder) Nothing
         |> optional "incipits" (Decode.maybe incipitListDecoder) Nothing
         |> optional "materials" (Decode.maybe materialGroupListDecoder) Nothing
+        |> optional "exemplars" (Decode.maybe exemplarListDecoder) Nothing
 
 
 basicSourceBodyDecoder : Decoder BasicSourceBody
@@ -246,7 +262,6 @@ incipitDecoder =
         |> required "id" string
         |> required "label" labelDecoder
         |> required "summary" (list noteDecoder)
-        |> optional "textIncipit" (Decode.maybe labelDecoder) Nothing
         |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
 
 
@@ -272,6 +287,22 @@ renderedIncipitDecoder =
     Decode.succeed RenderedIncipit
         |> required "format" incipitFormatDecoder
         |> required "data" string
+
+
+exemplarListDecoder : Decoder ExemplarsList
+exemplarListDecoder =
+    Decode.succeed ExemplarsList
+        |> required "id" string
+        |> required "label" labelDecoder
+        |> required "items" (list exemplarDecoder)
+
+
+exemplarDecoder : Decoder Exemplar
+exemplarDecoder =
+    Decode.succeed Exemplar
+        |> required "id" string
+        |> required "summary" (list noteDecoder)
+        |> required "heldBy" institutionBodyDecoder
 
 
 personSourcesDecoder : Decoder PersonSources
@@ -315,6 +346,7 @@ institutionBodyDecoder =
     Decode.succeed InstitutionBody
         |> required "id" string
         |> required "label" labelDecoder
+        |> required "siglum" labelDecoder
 
 
 institutionResponseDecoder : Decoder RecordResponse

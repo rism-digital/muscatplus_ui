@@ -60,12 +60,13 @@ type alias Facet =
     }
 
 
-type alias FacetItem =
-    { value : String
-    , label : LanguageMap
-    , selected : Bool
-    , count : Int
-    }
+{-|
+
+    FacetItem is a query value, a label, whether or not it is selected, and the number of documents
+
+-}
+type FacetItem
+    = FacetItem String LanguageMap Bool Int
 
 
 resultDecoder : Decoder SearchResult

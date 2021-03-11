@@ -11152,9 +11152,9 @@ var $author$project$Api$Request$createRequest = F3(
 var $author$project$Api$Records$InstitutionResponse = function (a) {
 	return {$: 'InstitutionResponse', a: a};
 };
-var $author$project$Api$Records$InstitutionBody = F2(
-	function (id, label) {
-		return {id: id, label: label};
+var $author$project$Api$Records$InstitutionBody = F3(
+	function (id, label, siglum) {
+		return {id: id, label: label, siglum: siglum};
 	});
 var $author$project$Language$LanguageValues = F2(
 	function (a, b) {
@@ -11203,13 +11203,17 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 	});
 var $author$project$Api$Records$institutionBodyDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'label',
+	'siglum',
 	$author$project$Api$Search$labelDecoder,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'id',
-		$elm$json$Json$Decode$string,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$InstitutionBody)));
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'id',
+			$elm$json$Json$Decode$string,
+			$elm$json$Json$Decode$succeed($author$project$Api$Records$InstitutionBody))));
 var $author$project$Api$Records$institutionResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Api$Records$InstitutionResponse, $author$project$Api$Records$institutionBodyDecoder);
 var $author$project$Api$Records$PersonResponse = function (a) {
 	return {$: 'PersonResponse', a: a};
@@ -11366,7 +11370,9 @@ var $author$project$Api$Records$SourceBody = function (id) {
 								return function (notes) {
 									return function (incipits) {
 										return function (materialgroups) {
-											return {creator: creator, id: id, incipits: incipits, label: label, materialgroups: materialgroups, notes: notes, partOf: partOf, related: related, sourceType: sourceType, subjects: subjects, summary: summary};
+											return function (exemplars) {
+												return {creator: creator, exemplars: exemplars, id: id, incipits: incipits, label: label, materialgroups: materialgroups, notes: notes, partOf: partOf, related: related, sourceType: sourceType, subjects: subjects, summary: summary};
+											};
 										};
 									};
 								};
@@ -11395,13 +11401,13 @@ var $author$project$Api$Records$basicSourceBodyDecoder = A3(
 			'id',
 			$elm$json$Json$Decode$string,
 			$elm$json$Json$Decode$succeed($author$project$Api$Records$BasicSourceBody))));
-var $author$project$Api$Records$IncipitList = F2(
-	function (label, incipits) {
-		return {incipits: incipits, label: label};
+var $author$project$Api$Records$ExemplarsList = F3(
+	function (id, label, items) {
+		return {id: id, items: items, label: label};
 	});
-var $author$project$Api$Records$Incipit = F5(
-	function (id, label, summary, textIncipit, rendered) {
-		return {id: id, label: label, rendered: rendered, summary: summary, textIncipit: textIncipit};
+var $author$project$Api$Records$Exemplar = F3(
+	function (id, summary, heldBy) {
+		return {heldBy: heldBy, id: id, summary: summary};
 	});
 var $author$project$Api$Records$LabelValue = F2(
 	function (label, value) {
@@ -11416,6 +11422,40 @@ var $author$project$Api$Records$noteDecoder = A3(
 		'label',
 		$author$project$Api$Search$labelDecoder,
 		$elm$json$Json$Decode$succeed($author$project$Api$Records$LabelValue)));
+var $author$project$Api$Records$exemplarDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'heldBy',
+	$author$project$Api$Records$institutionBodyDecoder,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'summary',
+		$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'id',
+			$elm$json$Json$Decode$string,
+			$elm$json$Json$Decode$succeed($author$project$Api$Records$Exemplar))));
+var $author$project$Api$Records$exemplarListDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Api$Records$exemplarDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'id',
+			$elm$json$Json$Decode$string,
+			$elm$json$Json$Decode$succeed($author$project$Api$Records$ExemplarsList))));
+var $author$project$Api$Records$IncipitList = F2(
+	function (label, incipits) {
+		return {incipits: incipits, label: label};
+	});
+var $author$project$Api$Records$Incipit = F4(
+	function (id, label, summary, rendered) {
+		return {id: id, label: label, rendered: rendered, summary: summary};
+	});
 var $author$project$Api$Records$RenderedIncipit = F2(
 	function (a, b) {
 		return {$: 'RenderedIncipit', a: a, b: b};
@@ -11451,24 +11491,19 @@ var $author$project$Api$Records$incipitDecoder = A4(
 	$elm$json$Json$Decode$maybe(
 		$elm$json$Json$Decode$list($author$project$Api$Records$renderedIncipitDecoder)),
 	$elm$core$Maybe$Nothing,
-	A4(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-		'textIncipit',
-		$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
-		$elm$core$Maybe$Nothing,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'summary',
+		$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'summary',
-			$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
+			'label',
+			$author$project$Api$Search$labelDecoder,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'label',
-				$author$project$Api$Search$labelDecoder,
-				A3(
-					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-					'id',
-					$elm$json$Json$Decode$string,
-					$elm$json$Json$Decode$succeed($author$project$Api$Records$Incipit))))));
+				'id',
+				$elm$json$Json$Decode$string,
+				$elm$json$Json$Decode$succeed($author$project$Api$Records$Incipit)))));
 var $author$project$Api$Records$incipitListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
@@ -11596,58 +11631,63 @@ var $author$project$Api$Records$subjectDecoder = A3(
 		$elm$json$Json$Decode$succeed($author$project$Api$Records$Subject)));
 var $author$project$Api$Records$sourceBodyDecoder = A4(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-	'materials',
-	$elm$json$Json$Decode$maybe($author$project$Api$Records$materialGroupListDecoder),
+	'exemplars',
+	$elm$json$Json$Decode$maybe($author$project$Api$Records$exemplarListDecoder),
 	$elm$core$Maybe$Nothing,
 	A4(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-		'incipits',
-		$elm$json$Json$Decode$maybe($author$project$Api$Records$incipitListDecoder),
+		'materials',
+		$elm$json$Json$Decode$maybe($author$project$Api$Records$materialGroupListDecoder),
 		$elm$core$Maybe$Nothing,
 		A4(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-			'notes',
-			$elm$json$Json$Decode$maybe($author$project$Api$Records$noteListDecoder),
+			'incipits',
+			$elm$json$Json$Decode$maybe($author$project$Api$Records$incipitListDecoder),
 			$elm$core$Maybe$Nothing,
 			A4(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-				'subjects',
-				$elm$json$Json$Decode$maybe(
-					$elm$json$Json$Decode$list($author$project$Api$Records$subjectDecoder)),
+				'notes',
+				$elm$json$Json$Decode$maybe($author$project$Api$Records$noteListDecoder),
 				$elm$core$Maybe$Nothing,
 				A4(
 					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-					'related',
-					$elm$json$Json$Decode$maybe($author$project$Api$Records$sourceRelationshipListDecoder),
+					'subjects',
+					$elm$json$Json$Decode$maybe(
+						$elm$json$Json$Decode$list($author$project$Api$Records$subjectDecoder)),
 					$elm$core$Maybe$Nothing,
 					A4(
 						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-						'creator',
-						$elm$json$Json$Decode$maybe($author$project$Api$Records$sourceRelationshipDecoder),
+						'related',
+						$elm$json$Json$Decode$maybe($author$project$Api$Records$sourceRelationshipListDecoder),
 						$elm$core$Maybe$Nothing,
 						A4(
 							$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-							'partOf',
-							$elm$json$Json$Decode$maybe(
-								$elm$json$Json$Decode$list($author$project$Api$Records$basicSourceBodyDecoder)),
+							'creator',
+							$elm$json$Json$Decode$maybe($author$project$Api$Records$sourceRelationshipDecoder),
 							$elm$core$Maybe$Nothing,
-							A3(
-								$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-								'sourceType',
-								$author$project$Api$Search$labelDecoder,
+							A4(
+								$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+								'partOf',
+								$elm$json$Json$Decode$maybe(
+									$elm$json$Json$Decode$list($author$project$Api$Records$basicSourceBodyDecoder)),
+								$elm$core$Maybe$Nothing,
 								A3(
 									$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-									'summary',
-									$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
+									'sourceType',
+									$author$project$Api$Search$labelDecoder,
 									A3(
 										$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-										'label',
-										$author$project$Api$Search$labelDecoder,
+										'summary',
+										$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
 										A3(
 											$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-											'id',
-											$elm$json$Json$Decode$string,
-											$elm$json$Json$Decode$succeed($author$project$Api$Records$SourceBody))))))))))));
+											'label',
+											$author$project$Api$Search$labelDecoder,
+											A3(
+												$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+												'id',
+												$elm$json$Json$Decode$string,
+												$elm$json$Json$Decode$succeed($author$project$Api$Records$SourceBody)))))))))))));
 var $author$project$Api$Records$sourceResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Api$Records$SourceResponse, $author$project$Api$Records$sourceBodyDecoder);
 var $author$project$Api$Records$recordResponseConverter = function (typevalue) {
 	var _v0 = $author$project$Api$DataTypes$recordTypeFromJsonType(typevalue);
@@ -17511,7 +17551,6 @@ var $mdgriffith$elm_ui$Element$column = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
-var $author$project$UI$Style$desktopMaxWidth = 1440;
 var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 	return {$: 'Fill', a: a};
 };
@@ -17860,167 +17899,6 @@ var $author$project$UI$Layout$layoutFooter = A2(
 						]))
 				]))
 		]));
-var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
-var $author$project$UI$Style$lightGrey = A3($mdgriffith$elm_ui$Element$rgb255, 241, 244, 249);
-var $author$project$UI$Style$greyBackground = $mdgriffith$elm_ui$Element$Background$color($author$project$UI$Style$lightGrey);
-var $mdgriffith$elm_ui$Internal$Model$unstyled = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Unstyled, $elm$core$Basics$always);
-var $mdgriffith$elm_ui$Element$html = $mdgriffith$elm_ui$Internal$Model$unstyled;
-var $elm$html$Html$option = _VirtualDom_node('option');
-var $elm$html$Html$select = _VirtualDom_node('select');
-var $author$project$UI$Components$languageSelect = F2(
-	function (msg, options) {
-		return $mdgriffith$elm_ui$Element$html(
-			A2(
-				$elm$html$Html$select,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onInput(msg)
-					]),
-				A2(
-					$elm$core$List$map,
-					function (_v0) {
-						var val = _v0.a;
-						var name = _v0.b;
-						return A2(
-							$elm$html$Html$option,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$value(val)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(name)
-								]));
-					},
-					options)));
-	});
-var $author$project$UI$Layout$layoutTopBar = F2(
-	function (message, langOptions) {
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-					$mdgriffith$elm_ui$Element$height(
-					$mdgriffith$elm_ui$Element$px(60)),
-					$author$project$UI$Style$greyBackground
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
-							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-							$mdgriffith$elm_ui$Element$centerX
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$row,
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-									$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$mdgriffith$elm_ui$Element$column,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$width(
-											$mdgriffith$elm_ui$Element$fillPortion(10)),
-											$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue),
-											$mdgriffith$elm_ui$Element$Font$semiBold
-										]),
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$text('RISM Online')
-										])),
-									A2(
-									$mdgriffith$elm_ui$Element$column,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$width(
-											$mdgriffith$elm_ui$Element$fillPortion(2))
-										]),
-									_List_fromArray(
-										[
-											A2($author$project$UI$Components$languageSelect, message, langOptions)
-										]))
-								]))
-						]))
-				]));
-	});
-var $author$project$UI$Style$phoneMaxWidth = 375;
-var $author$project$UI$Layout$layoutBody = F4(
-	function (message, langOptions, bodyView, device) {
-		var maxWidth = function () {
-			var _v0 = device._class;
-			if (_v0.$ === 'Phone') {
-				return $author$project$UI$Style$phoneMaxWidth;
-			} else {
-				return $author$project$UI$Style$desktopMaxWidth;
-			}
-		}();
-		return _List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$layout,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-						$author$project$UI$Style$bodyFont
-					]),
-				A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$centerX,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[
-							A2($author$project$UI$Layout$layoutTopBar, message, langOptions),
-							bodyView,
-							$author$project$UI$Layout$layoutFooter
-						])))
-			]);
-	});
-var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
-var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
-var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
-	return {$: 'AlignY', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Model$CenterY = {$: 'CenterY'};
-var $mdgriffith$elm_ui$Element$centerY = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$CenterY);
-var $mdgriffith$elm_ui$Element$el = F2(
-	function (attrs, child) {
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asEl,
-			$mdgriffith$elm_ui$Internal$Model$div,
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-					attrs)),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-				_List_fromArray(
-					[child])));
-	});
-var $author$project$Records$Views$Shared$viewErrorMessage = function (model) {
-	return A2(
-		$mdgriffith$elm_ui$Element$el,
-		_List_fromArray(
-			[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
-		$mdgriffith$elm_ui$Element$text(model.errorMessage));
-};
 var $elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -18067,6 +17945,247 @@ var $author$project$Language$extractLabelFromLanguageMap = F2(
 		}();
 		return A2($elm$core$String$join, '; ', chosenLangValues);
 	});
+var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
+var $author$project$UI$Style$lightGrey = A3($mdgriffith$elm_ui$Element$rgb255, 241, 244, 249);
+var $author$project$UI$Style$greyBackground = $mdgriffith$elm_ui$Element$Background$color($author$project$UI$Style$lightGrey);
+var $mdgriffith$elm_ui$Internal$Model$unstyled = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Unstyled, $elm$core$Basics$always);
+var $mdgriffith$elm_ui$Element$html = $mdgriffith$elm_ui$Internal$Model$unstyled;
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $author$project$UI$Components$languageSelect = F2(
+	function (msg, options) {
+		return $mdgriffith$elm_ui$Element$html(
+			A2(
+				$elm$html$Html$select,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onInput(msg)
+					]),
+				A2(
+					$elm$core$List$map,
+					function (_v0) {
+						var val = _v0.a;
+						var name = _v0.b;
+						return A2(
+							$elm$html$Html$option,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$value(val)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(name)
+								]));
+					},
+					options)));
+	});
+var $elm$html$Html$Attributes$rel = _VirtualDom_attribute('rel');
+var $mdgriffith$elm_ui$Element$link = F2(
+	function (attrs, _v0) {
+		var url = _v0.url;
+		var label = _v0.label;
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asEl,
+			$mdgriffith$elm_ui$Internal$Model$NodeName('a'),
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$Attr(
+					$elm$html$Html$Attributes$href(url)),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Internal$Model$Attr(
+						$elm$html$Html$Attributes$rel('noopener noreferrer')),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+						A2(
+							$elm$core$List$cons,
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+							A2(
+								$elm$core$List$cons,
+								$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentCenterX + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.link)))),
+								attrs))))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+				_List_fromArray(
+					[label])));
+	});
+var $author$project$Language$localTranslations = {
+	search: _List_fromArray(
+		[
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$English,
+			_List_fromArray(
+				['Search'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$German,
+			_List_fromArray(
+				['Suche'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$French,
+			_List_fromArray(
+				['Chercher'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Italian,
+			_List_fromArray(
+				['Cerca'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Spanish,
+			_List_fromArray(
+				['Búsqueda'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Portugese,
+			_List_fromArray(
+				['Busca'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Polish,
+			_List_fromArray(
+				['Wyszukiwanie']))
+		])
+};
+var $author$project$UI$Layout$layoutTopBar = F3(
+	function (message, langOptions, currentLanguage) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$height(
+					$mdgriffith$elm_ui$Element$px(60)),
+					$author$project$UI$Style$greyBackground
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+							$mdgriffith$elm_ui$Element$centerX
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$fillPortion(2)),
+											$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue),
+											$mdgriffith$elm_ui$Element$Font$semiBold
+										]),
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$text('RISM Online')
+										])),
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$fillPortion(8))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$mdgriffith$elm_ui$Element$link,
+											_List_Nil,
+											{
+												label: $mdgriffith$elm_ui$Element$text(
+													A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.search)),
+												url: '/search'
+											})
+										])),
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$fillPortion(2))
+										]),
+									_List_fromArray(
+										[
+											A2($author$project$UI$Components$languageSelect, message, langOptions)
+										]))
+								]))
+						]))
+				]));
+	});
+var $author$project$UI$Layout$layoutBody = F5(
+	function (message, langOptions, bodyView, device, currentLanguage) {
+		return _List_fromArray(
+			[
+				A2(
+				$mdgriffith$elm_ui$Element$layout,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+						$author$project$UI$Style$bodyFont
+					]),
+				A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$centerX,
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A3($author$project$UI$Layout$layoutTopBar, message, langOptions, currentLanguage),
+							bodyView,
+							$author$project$UI$Layout$layoutFooter
+						])))
+			]);
+	});
+var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
+var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
+var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
+	return {$: 'AlignY', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Model$CenterY = {$: 'CenterY'};
+var $mdgriffith$elm_ui$Element$centerY = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$CenterY);
+var $mdgriffith$elm_ui$Element$el = F2(
+	function (attrs, child) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asEl,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+					attrs)),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+				_List_fromArray(
+					[child])));
+	});
+var $author$project$Records$Views$Shared$viewErrorMessage = function (model) {
+	return A2(
+		$mdgriffith$elm_ui$Element$el,
+		_List_fromArray(
+			[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
+		$mdgriffith$elm_ui$Element$text(model.errorMessage));
+};
 var $author$project$Records$Views$Institution$viewInstitutionRecord = F2(
 	function (body, language) {
 		return A2(
@@ -18084,7 +18203,10 @@ var $author$project$Records$Views$Institution$viewInstitutionRecord = F2(
 var $author$project$Records$Views$Shared$viewLoadingSpinner = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
-		_List_Nil,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+			]),
 		_List_fromArray(
 			[
 				A2(
@@ -18116,14 +18238,58 @@ var $author$project$Records$Views$Shared$viewLoadingSpinner = function (model) {
 };
 var $mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
 var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
+var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
+	return {$: 'Describe', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Model$Paragraph = {$: 'Paragraph'};
+var $mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
+	function (a, b, c) {
+		return {$: 'SpacingStyle', a: a, b: b, c: c};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$spacing = $mdgriffith$elm_ui$Internal$Flag$flag(3);
+var $mdgriffith$elm_ui$Internal$Model$spacingName = F2(
+	function (x, y) {
+		return 'spacing-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y)));
+	});
+var $mdgriffith$elm_ui$Element$spacing = function (x) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$spacing,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
+			A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
+			x,
+			x));
+};
+var $mdgriffith$elm_ui$Element$paragraph = F2(
+	function (attrs, children) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asParagraph,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Paragraph),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$spacing(5),
+						attrs))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
+	});
 var $author$project$UI$Components$headingHelper = F3(
 	function (size, language, heading) {
 		return A2(
-			$mdgriffith$elm_ui$Element$el,
+			$mdgriffith$elm_ui$Element$paragraph,
 			_List_fromArray(
 				[size]),
-			$mdgriffith$elm_ui$Element$text(
-				A2($author$project$Language$extractLabelFromLanguageMap, language, heading)));
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$text(
+					A2($author$project$Language$extractLabelFromLanguageMap, language, heading))
+				]));
 	});
 var $mdgriffith$elm_ui$Element$Font$size = function (i) {
 	return A2(
@@ -18170,36 +18336,9 @@ var $author$project$Records$Views$Person$viewPersonRecord = F2(
 						]))
 				]));
 	});
-var $mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
-	function (a, b, c) {
-		return {$: 'SpacingStyle', a: a, b: b, c: c};
-	});
-var $mdgriffith$elm_ui$Internal$Flag$spacing = $mdgriffith$elm_ui$Internal$Flag$flag(3);
-var $mdgriffith$elm_ui$Internal$Model$spacingName = F2(
-	function (x, y) {
-		return 'spacing-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y)));
-	});
-var $mdgriffith$elm_ui$Element$spacing = function (x) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$spacing,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
-			A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
-			x,
-			x));
-};
 var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
 var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
 var $author$project$Records$Views$Source$viewDistributionSection = F2(
-	function (body, language) {
-		return $mdgriffith$elm_ui$Element$none;
-	});
-var $author$project$Records$Views$Source$viewExemplarsSection = F2(
-	function (body, language) {
-		return $mdgriffith$elm_ui$Element$none;
-	});
-var $author$project$Records$Views$Source$viewFurtherInformationSection = F2(
 	function (body, language) {
 		return $mdgriffith$elm_ui$Element$none;
 	});
@@ -18241,6 +18380,230 @@ var $mdgriffith$elm_ui$Element$paddingXY = F2(
 					yFloat,
 					xFloat));
 		}
+	});
+var $author$project$UI$Style$fontBaseSize = $mdgriffith$elm_ui$Element$Font$size(16);
+var $author$project$UI$Style$bodyRegular = $author$project$UI$Style$fontBaseSize;
+var $mdgriffith$elm_ui$Element$Font$underline = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.underline);
+var $author$project$UI$Components$styledLink = F2(
+	function (url, labelString) {
+		return A2(
+			$mdgriffith$elm_ui$Element$link,
+			_List_fromArray(
+				[
+					$author$project$UI$Style$bodyRegular,
+					$mdgriffith$elm_ui$Element$Font$underline,
+					$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue)
+				]),
+			{
+				label: $mdgriffith$elm_ui$Element$text(labelString),
+				url: url
+			});
+	});
+var $author$project$Records$Views$Source$viewHeldByInstitution = F2(
+	function (exemplar, language) {
+		var heldByInstitution = exemplar.heldBy;
+		var heldByLink = A2(
+			$author$project$UI$Components$styledLink,
+			heldByInstitution.id,
+			A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.label));
+		var institutionSiglum = '(' + (A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.siglum) + ')');
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 10, 5)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$paragraph,
+							_List_fromArray(
+								[$author$project$UI$Style$bodyRegular]),
+							_List_fromArray(
+								[
+									heldByLink,
+									$mdgriffith$elm_ui$Element$text(' ' + institutionSiglum)
+								]))
+						]))
+				]));
+	});
+var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
+var $author$project$UI$Components$label = F2(
+	function (language, langmap) {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[$mdgriffith$elm_ui$Element$Font$bold, $author$project$UI$Style$bodyRegular]),
+			$mdgriffith$elm_ui$Element$text(
+				A2($author$project$Language$extractLabelFromLanguageMap, language, langmap)));
+	});
+var $author$project$UI$Components$value = F2(
+	function (language, langmap) {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[$author$project$UI$Style$bodyRegular]),
+			A2(
+				$mdgriffith$elm_ui$Element$paragraph,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					]),
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$text(
+						A2($author$project$Language$extractLabelFromLanguageMap, language, langmap))
+					])));
+	});
+var $author$project$Records$Views$Shared$viewSummaryField = F2(
+	function (field, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					A2(
+						$elm$core$List$map,
+						function (f) {
+							return A2(
+								$mdgriffith$elm_ui$Element$row,
+								_List_fromArray(
+									[
+										$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+										A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$mdgriffith$elm_ui$Element$el,
+										_List_fromArray(
+											[
+												$mdgriffith$elm_ui$Element$width(
+												$mdgriffith$elm_ui$Element$fillPortion(2)),
+												$mdgriffith$elm_ui$Element$alignTop
+											]),
+										A2($author$project$UI$Components$label, language, f.label)),
+										A2(
+										$mdgriffith$elm_ui$Element$el,
+										_List_fromArray(
+											[
+												$mdgriffith$elm_ui$Element$width(
+												$mdgriffith$elm_ui$Element$fillPortion(4)),
+												$mdgriffith$elm_ui$Element$alignTop
+											]),
+										A2($author$project$UI$Components$value, language, f.value))
+									]));
+						},
+						field))
+				]));
+	});
+var $author$project$Records$Views$Source$viewSingleExemplar = F2(
+	function (exemplar, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2($author$project$Records$Views$Source$viewHeldByInstitution, exemplar, language),
+							A2($author$project$Records$Views$Shared$viewSummaryField, exemplar.summary, language)
+						]))
+				]));
+	});
+var $author$project$Records$Views$Source$viewExemplars = F2(
+	function (exemplarlist, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h4, language, exemplarlist.label)
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									A2(
+										$elm$core$List$map,
+										function (e) {
+											return A2($author$project$Records$Views$Source$viewSingleExemplar, e, language);
+										},
+										exemplarlist.items))
+								]))
+						]))
+				]));
+	});
+var $author$project$Records$Views$Source$viewExemplarsSection = F2(
+	function (body, language) {
+		var _v0 = body.exemplars;
+		if (_v0.$ === 'Just') {
+			var hold = _v0.a;
+			return A2($author$project$Records$Views$Source$viewExemplars, hold, language);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
+	});
+var $author$project$Records$Views$Source$viewFurtherInformationSection = F2(
+	function (body, language) {
+		return $mdgriffith$elm_ui$Element$none;
 	});
 var $elm$core$Result$andThen = F2(
 	function (callback, result) {
@@ -18949,113 +19312,11 @@ var $author$project$Records$Views$Source$viewRenderedIncipits = function (incipi
 		_List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10),
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
 			]),
 		incipitSVG);
 };
-var $author$project$UI$Style$fontBaseSize = $mdgriffith$elm_ui$Element$Font$size(16);
-var $author$project$UI$Style$bodyRegular = $author$project$UI$Style$fontBaseSize;
-var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
-var $author$project$UI$Components$label = F2(
-	function (language, langmap) {
-		return A2(
-			$mdgriffith$elm_ui$Element$el,
-			_List_fromArray(
-				[$mdgriffith$elm_ui$Element$Font$bold, $author$project$UI$Style$bodyRegular]),
-			$mdgriffith$elm_ui$Element$text(
-				A2($author$project$Language$extractLabelFromLanguageMap, language, langmap)));
-	});
-var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
-	return {$: 'Describe', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Model$Paragraph = {$: 'Paragraph'};
-var $mdgriffith$elm_ui$Element$paragraph = F2(
-	function (attrs, children) {
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asParagraph,
-			$mdgriffith$elm_ui$Internal$Model$div,
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Paragraph),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Element$spacing(5),
-						attrs))),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
-	});
-var $author$project$UI$Components$value = F2(
-	function (language, langmap) {
-		return A2(
-			$mdgriffith$elm_ui$Element$el,
-			_List_fromArray(
-				[$author$project$UI$Style$bodyRegular]),
-			A2(
-				$mdgriffith$elm_ui$Element$paragraph,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$text(
-						A2($author$project$Language$extractLabelFromLanguageMap, language, langmap))
-					])));
-	});
-var $author$project$Records$Views$Shared$viewSummaryField = F2(
-	function (field, language) {
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					A2(
-						$elm$core$List$map,
-						function (f) {
-							return A2(
-								$mdgriffith$elm_ui$Element$row,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-										A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$mdgriffith$elm_ui$Element$el,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$width(
-												$mdgriffith$elm_ui$Element$fillPortion(2)),
-												$mdgriffith$elm_ui$Element$alignTop
-											]),
-										A2($author$project$UI$Components$label, language, f.label)),
-										A2(
-										$mdgriffith$elm_ui$Element$el,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$width(
-												$mdgriffith$elm_ui$Element$fillPortion(4)),
-												$mdgriffith$elm_ui$Element$alignTop
-											]),
-										A2($author$project$UI$Components$value, language, f.value))
-									]));
-						},
-						field))
-				]));
-	});
 var $author$project$Records$Views$Source$viewSingleIncipit = F2(
 	function (language, incipit) {
 		var renderedIncipits = function () {
@@ -19168,53 +19429,6 @@ var $author$project$UI$Components$h5 = F2(
 	function (language, heading) {
 		return A3($author$project$UI$Components$headingHelper, $author$project$UI$Style$headingSM, language, heading);
 	});
-var $elm$html$Html$Attributes$rel = _VirtualDom_attribute('rel');
-var $mdgriffith$elm_ui$Element$link = F2(
-	function (attrs, _v0) {
-		var url = _v0.url;
-		var label = _v0.label;
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asEl,
-			$mdgriffith$elm_ui$Internal$Model$NodeName('a'),
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Internal$Model$Attr(
-					$elm$html$Html$Attributes$href(url)),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Internal$Model$Attr(
-						$elm$html$Html$Attributes$rel('noopener noreferrer')),
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-							A2(
-								$elm$core$List$cons,
-								$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentCenterX + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.link)))),
-								attrs))))),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-				_List_fromArray(
-					[label])));
-	});
-var $mdgriffith$elm_ui$Element$Font$underline = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.underline);
-var $author$project$UI$Components$styledLink = F2(
-	function (url, labelString) {
-		return A2(
-			$mdgriffith$elm_ui$Element$link,
-			_List_fromArray(
-				[
-					$author$project$UI$Style$bodyRegular,
-					$mdgriffith$elm_ui$Element$Font$underline,
-					$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue)
-				]),
-			{
-				label: $mdgriffith$elm_ui$Element$text(labelString),
-				url: url
-			});
-	});
 var $author$project$Records$Views$Source$viewRelatedPerson = F2(
 	function (relationship, language) {
 		var relationshipRole = function () {
@@ -19314,51 +19528,6 @@ var $author$project$Records$Views$Source$viewRelatedPeople = F2(
 						]))
 				]));
 	});
-var $mdgriffith$elm_ui$Internal$Model$BorderWidth = F5(
-	function (a, b, c, d, e) {
-		return {$: 'BorderWidth', a: a, b: b, c: c, d: d, e: e};
-	});
-var $mdgriffith$elm_ui$Element$Border$width = function (v) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$borderWidth,
-		A5(
-			$mdgriffith$elm_ui$Internal$Model$BorderWidth,
-			'b-' + $elm$core$String$fromInt(v),
-			v,
-			v,
-			v,
-			v));
-};
-var $mdgriffith$elm_ui$Element$Border$widthXY = F2(
-	function (x, y) {
-		return A2(
-			$mdgriffith$elm_ui$Internal$Model$StyleClass,
-			$mdgriffith$elm_ui$Internal$Flag$borderWidth,
-			A5(
-				$mdgriffith$elm_ui$Internal$Model$BorderWidth,
-				'b-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y))),
-				y,
-				x,
-				y,
-				x));
-	});
-var $mdgriffith$elm_ui$Element$Border$widthEach = function (_v0) {
-	var bottom = _v0.bottom;
-	var top = _v0.top;
-	var left = _v0.left;
-	var right = _v0.right;
-	return (_Utils_eq(top, bottom) && _Utils_eq(left, right)) ? (_Utils_eq(top, right) ? $mdgriffith$elm_ui$Element$Border$width(top) : A2($mdgriffith$elm_ui$Element$Border$widthXY, left, top)) : A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$borderWidth,
-		A5(
-			$mdgriffith$elm_ui$Internal$Model$BorderWidth,
-			'b-' + ($elm$core$String$fromInt(top) + ('-' + ($elm$core$String$fromInt(right) + ('-' + ($elm$core$String$fromInt(bottom) + ('-' + $elm$core$String$fromInt(left))))))),
-			top,
-			right,
-			bottom,
-			left));
-};
 var $author$project$Records$Views$Source$viewMaterialGroup = F2(
 	function (materialgroup, language) {
 		var relatedPeople = function () {
@@ -19375,9 +19544,7 @@ var $author$project$Records$Views$Source$viewMaterialGroup = F2(
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10),
-					$mdgriffith$elm_ui$Element$Border$widthEach(
-					{bottom: 1, left: 0, right: 0, top: 0})
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
 				]),
 			_List_fromArray(
 				[
@@ -19665,12 +19832,14 @@ var $author$project$Records$Views$View$viewRecordBody = function (model) {
 			return $author$project$Records$Views$View$viewRecordContentDesktop;
 		}
 	}();
-	return A4(
+	var currentLanguage = model.language;
+	return A5(
 		$author$project$UI$Layout$layoutBody,
 		message,
 		langOptions,
 		deviceView(model),
-		device);
+		device,
+		currentLanguage);
 };
 var $author$project$Records$Views$View$view = function (model) {
 	return {
@@ -19700,4 +19869,4 @@ _Platform_export({'RecordsApp':{'init':$author$project$RecordsApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Records.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Api.Records.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, textIncipit : Maybe.Maybe Language.LanguageMap, rendered : Maybe.Maybe (List.List Api.Records.RenderedIncipit) }"},"Api.Records.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Api.Records.Incipit }"},"Api.Records.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap }"},"Api.Records.LabelValue":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Records.MaterialGroup":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, related : Maybe.Maybe Api.Records.SourceRelationshipList }"},"Api.Records.MaterialGroupList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.MaterialGroup }"},"Api.Records.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Api.Records.LabelValue }"},"Api.Records.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Api.Records.PersonSources, nameVariants : Maybe.Maybe Api.Records.PersonNameVariants, externalReferences : Maybe.Maybe (List.List Api.Records.PersonExternalReferences) }"},"Api.Records.PersonExternalReferences":{"args":[],"type":"{ id : String.String, type_ : String.String }"},"Api.Records.PersonNameVariants":{"args":[],"type":"{ label : Language.LanguageMap, values : Language.LanguageMap }"},"Api.Records.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Api.Records.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Api.Records.BasicSourceBody), creator : Maybe.Maybe Api.Records.SourceRelationship, related : Maybe.Maybe Api.Records.SourceRelationshipList, subjects : Maybe.Maybe (List.List Api.Records.Subject), notes : Maybe.Maybe Api.Records.NoteList, incipits : Maybe.Maybe Api.Records.IncipitList, materialgroups : Maybe.Maybe Api.Records.MaterialGroupList }"},"Api.Records.SourceRelationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, person : Api.Records.PersonBody }"},"Api.Records.SourceRelationshipList":{"args":[],"type":"{ id : Maybe.Maybe String.String, label : Language.LanguageMap, items : List.List Api.Records.SourceRelationship }"},"Api.Records.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Api.Records.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.Records.RecordResponse":{"args":[],"tags":{"SourceResponse":["Api.Records.SourceBody"],"PersonResponse":["Api.Records.PersonBody"],"InstitutionResponse":["Api.Records.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Api.Records.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Api.Records.IncipitFormat","String.String"]}},"Api.Records.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Records.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Api.Records.Exemplar":{"args":[],"type":"{ id : String.String, summary : List.List Api.Records.LabelValue, heldBy : Api.Records.InstitutionBody }"},"Api.Records.ExemplarsList":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, items : List.List Api.Records.Exemplar }"},"Api.Records.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, rendered : Maybe.Maybe (List.List Api.Records.RenderedIncipit) }"},"Api.Records.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Api.Records.Incipit }"},"Api.Records.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, siglum : Language.LanguageMap }"},"Api.Records.LabelValue":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Records.MaterialGroup":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, related : Maybe.Maybe Api.Records.SourceRelationshipList }"},"Api.Records.MaterialGroupList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.MaterialGroup }"},"Api.Records.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Api.Records.LabelValue }"},"Api.Records.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Api.Records.PersonSources, nameVariants : Maybe.Maybe Api.Records.PersonNameVariants, externalReferences : Maybe.Maybe (List.List Api.Records.PersonExternalReferences) }"},"Api.Records.PersonExternalReferences":{"args":[],"type":"{ id : String.String, type_ : String.String }"},"Api.Records.PersonNameVariants":{"args":[],"type":"{ label : Language.LanguageMap, values : Language.LanguageMap }"},"Api.Records.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Api.Records.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Api.Records.BasicSourceBody), creator : Maybe.Maybe Api.Records.SourceRelationship, related : Maybe.Maybe Api.Records.SourceRelationshipList, subjects : Maybe.Maybe (List.List Api.Records.Subject), notes : Maybe.Maybe Api.Records.NoteList, incipits : Maybe.Maybe Api.Records.IncipitList, materialgroups : Maybe.Maybe Api.Records.MaterialGroupList, exemplars : Maybe.Maybe Api.Records.ExemplarsList }"},"Api.Records.SourceRelationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, person : Api.Records.PersonBody }"},"Api.Records.SourceRelationshipList":{"args":[],"type":"{ id : Maybe.Maybe String.String, label : Language.LanguageMap, items : List.List Api.Records.SourceRelationship }"},"Api.Records.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Api.Records.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.Records.RecordResponse":{"args":[],"tags":{"SourceResponse":["Api.Records.SourceBody"],"PersonResponse":["Api.Records.PersonBody"],"InstitutionResponse":["Api.Records.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Api.Records.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Api.Records.IncipitFormat","String.String"]}},"Api.Records.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));

@@ -55,3 +55,8 @@ routeParser =
         [ P.map FrontPageRoute P.top
         , P.map SearchPageRoute (s "search")
         ]
+
+
+routeMatches : Url -> Maybe Route
+routeMatches url =
+    P.parse routeParser url

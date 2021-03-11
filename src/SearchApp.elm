@@ -7,7 +7,7 @@ import Browser.Navigation as Nav
 import Config
 import Http exposing (Error(..))
 import Language exposing (Language, parseLocaleToLanguage)
-import Search.DataTypes exposing (Model, Msg(..), parseUrl)
+import Search.DataTypes exposing (Model, Msg(..), Route(..), parseUrl, routeMatches)
 import Search.Views exposing (viewSearchBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
@@ -47,7 +47,12 @@ update msg model =
                 queryModel =
                     model.query
             in
-            ( { model | response = Loading }, searchRequest ReceivedSearchResponse queryModel )
+            ( { model | response = Loading }
+            , Cmd.batch
+                [ searchRequest ReceivedSearchResponse queryModel
+                , Nav.pushUrl model.key "/search"
+                ]
+            )
 
         OnWindowResize device ->
             ( { model | viewingDevice = device }, Cmd.none )
@@ -55,13 +60,22 @@ update msg model =
         UrlRequest urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
-                    ( model, Nav.pushUrl model.key (Url.toString url) )
+                    let
+                        cmd =
+                            case routeMatches url of
+                                Just _ ->
+                                    Nav.pushUrl model.key (Url.toString url)
+
+                                Nothing ->
+                                    Nav.load (Url.toString url)
+                    in
+                    ( model, cmd )
 
                 Browser.External href ->
                     ( model, Nav.load href )
 
         UrlChange url ->
-            ( { model | url = url }, Cmd.none )
+            ( { model | url = url, currentRoute = parseUrl url }, Cmd.none )
 
         LanguageSelectChanged str ->
             ( { model | language = parseLocaleToLanguage str }, Cmd.none )
@@ -72,7 +86,7 @@ update msg model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "RISM Online"
+    { title = "Search RISM Online"
     , body =
         viewSearchBody model
     }
@@ -104,7 +118,17 @@ init flags initialUrl key =
         initialRoute =
             parseUrl initialUrl
     in
-    ( Model key initialUrl initialQuery NoResponseToShow initialErrorMessage initialDevice language initialRoute, Cmd.none )
+    ( { key = key
+      , url = initialUrl
+      , response = Loading
+      , errorMessage = initialErrorMessage
+      , viewingDevice = initialDevice
+      , language = language
+      , currentRoute = initialRoute
+      , query = initialQuery
+      }
+    , searchRequest ReceivedSearchResponse initialQuery
+    )
 
 
 subscriptions : Model -> Sub Msg

@@ -15,7 +15,7 @@ import UI.Style exposing (bodyRegular, darkBlue, headingLG, headingMD, headingSM
 
 headingHelper : Attribute msg -> Language -> LanguageMap -> Element msg
 headingHelper size language heading =
-    el [ size ] (text (extractLabelFromLanguageMap language heading))
+    paragraph [ size ] [ text (extractLabelFromLanguageMap language heading) ]
 
 
 h1 : Language -> LanguageMap -> Element msg

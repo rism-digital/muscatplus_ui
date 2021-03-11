@@ -11,7 +11,7 @@ import UI.Style exposing (bodyRegular, bodySM)
 viewLoadingSpinner : Model -> Element Msg
 viewLoadingSpinner model =
     row
-        []
+        [ width fill ]
         [ column
             [ width fill
             , height fill

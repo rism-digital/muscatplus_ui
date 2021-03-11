@@ -10735,11 +10735,10 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Search$DataTypes$Model = F8(
-	function (key, url, query, response, errorMessage, viewingDevice, language, currentRoute) {
-		return {currentRoute: currentRoute, errorMessage: errorMessage, key: key, language: language, query: query, response: response, url: url, viewingDevice: viewingDevice};
-	});
-var $author$project$Api$Search$NoResponseToShow = {$: 'NoResponseToShow'};
+var $author$project$Api$Search$Loading = {$: 'Loading'};
+var $author$project$Search$DataTypes$ReceivedSearchResponse = function (a) {
+	return {$: 'ReceivedSearchResponse', a: a};
+};
 var $author$project$Api$Search$SearchQueryArgs = F3(
 	function (query, filters, sort) {
 		return {filters: filters, query: query, sort: sort};
@@ -11023,231 +11022,6 @@ var $author$project$Search$DataTypes$parseUrl = function (url) {
 		return $author$project$Search$DataTypes$NotFound;
 	}
 };
-var $author$project$SearchApp$init = F3(
-	function (flags, initialUrl, key) {
-		var language = $author$project$Language$parseLocaleToLanguage(flags.locale);
-		var initialRoute = $author$project$Search$DataTypes$parseUrl(initialUrl);
-		var initialQuery = A3($author$project$Api$Search$SearchQueryArgs, '', _List_Nil, '');
-		var initialErrorMessage = '';
-		var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
-		return _Utils_Tuple2(
-			A8($author$project$Search$DataTypes$Model, key, initialUrl, initialQuery, $author$project$Api$Search$NoResponseToShow, initialErrorMessage, initialDevice, language, initialRoute),
-			$elm$core$Platform$Cmd$none);
-	});
-var $author$project$Search$DataTypes$OnWindowResize = function (a) {
-	return {$: 'OnWindowResize', a: a};
-};
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$browser$Browser$Events$Window = {$: 'Window'};
-var $elm$browser$Browser$Events$MySub = F3(
-	function (a, b, c) {
-		return {$: 'MySub', a: a, b: b, c: c};
-	});
-var $elm$browser$Browser$Events$State = F2(
-	function (subs, pids) {
-		return {pids: pids, subs: subs};
-	});
-var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
-	A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
-var $elm$browser$Browser$Events$nodeToKey = function (node) {
-	if (node.$ === 'Document') {
-		return 'd_';
-	} else {
-		return 'w_';
-	}
-};
-var $elm$browser$Browser$Events$addKey = function (sub) {
-	var node = sub.a;
-	var name = sub.b;
-	return _Utils_Tuple2(
-		_Utils_ap(
-			$elm$browser$Browser$Events$nodeToKey(node),
-			name),
-		sub);
-};
-var $elm$core$Process$kill = _Scheduler_kill;
-var $elm$browser$Browser$Events$Event = F2(
-	function (key, event) {
-		return {event: event, key: key};
-	});
-var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
-var $elm$browser$Browser$Events$spawn = F3(
-	function (router, key, _v0) {
-		var node = _v0.a;
-		var name = _v0.b;
-		var actualNode = function () {
-			if (node.$ === 'Document') {
-				return _Browser_doc;
-			} else {
-				return _Browser_window;
-			}
-		}();
-		return A2(
-			$elm$core$Task$map,
-			function (value) {
-				return _Utils_Tuple2(key, value);
-			},
-			A3(
-				_Browser_on,
-				actualNode,
-				name,
-				function (event) {
-					return A2(
-						$elm$core$Platform$sendToSelf,
-						router,
-						A2($elm$browser$Browser$Events$Event, key, event));
-				}));
-	});
-var $elm$core$Dict$union = F2(
-	function (t1, t2) {
-		return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
-	});
-var $elm$browser$Browser$Events$onEffects = F3(
-	function (router, subs, state) {
-		var stepRight = F3(
-			function (key, sub, _v6) {
-				var deads = _v6.a;
-				var lives = _v6.b;
-				var news = _v6.c;
-				return _Utils_Tuple3(
-					deads,
-					lives,
-					A2(
-						$elm$core$List$cons,
-						A3($elm$browser$Browser$Events$spawn, router, key, sub),
-						news));
-			});
-		var stepLeft = F3(
-			function (_v4, pid, _v5) {
-				var deads = _v5.a;
-				var lives = _v5.b;
-				var news = _v5.c;
-				return _Utils_Tuple3(
-					A2($elm$core$List$cons, pid, deads),
-					lives,
-					news);
-			});
-		var stepBoth = F4(
-			function (key, pid, _v2, _v3) {
-				var deads = _v3.a;
-				var lives = _v3.b;
-				var news = _v3.c;
-				return _Utils_Tuple3(
-					deads,
-					A3($elm$core$Dict$insert, key, pid, lives),
-					news);
-			});
-		var newSubs = A2($elm$core$List$map, $elm$browser$Browser$Events$addKey, subs);
-		var _v0 = A6(
-			$elm$core$Dict$merge,
-			stepLeft,
-			stepBoth,
-			stepRight,
-			state.pids,
-			$elm$core$Dict$fromList(newSubs),
-			_Utils_Tuple3(_List_Nil, $elm$core$Dict$empty, _List_Nil));
-		var deadPids = _v0.a;
-		var livePids = _v0.b;
-		var makeNewPids = _v0.c;
-		return A2(
-			$elm$core$Task$andThen,
-			function (pids) {
-				return $elm$core$Task$succeed(
-					A2(
-						$elm$browser$Browser$Events$State,
-						newSubs,
-						A2(
-							$elm$core$Dict$union,
-							livePids,
-							$elm$core$Dict$fromList(pids))));
-			},
-			A2(
-				$elm$core$Task$andThen,
-				function (_v1) {
-					return $elm$core$Task$sequence(makeNewPids);
-				},
-				$elm$core$Task$sequence(
-					A2($elm$core$List$map, $elm$core$Process$kill, deadPids))));
-	});
-var $elm$browser$Browser$Events$onSelfMsg = F3(
-	function (router, _v0, state) {
-		var key = _v0.key;
-		var event = _v0.event;
-		var toMessage = function (_v2) {
-			var subKey = _v2.a;
-			var _v3 = _v2.b;
-			var node = _v3.a;
-			var name = _v3.b;
-			var decoder = _v3.c;
-			return _Utils_eq(subKey, key) ? A2(_Browser_decodeEvent, decoder, event) : $elm$core$Maybe$Nothing;
-		};
-		var messages = A2($elm$core$List$filterMap, toMessage, state.subs);
-		return A2(
-			$elm$core$Task$andThen,
-			function (_v1) {
-				return $elm$core$Task$succeed(state);
-			},
-			$elm$core$Task$sequence(
-				A2(
-					$elm$core$List$map,
-					$elm$core$Platform$sendToApp(router),
-					messages)));
-	});
-var $elm$browser$Browser$Events$subMap = F2(
-	function (func, _v0) {
-		var node = _v0.a;
-		var name = _v0.b;
-		var decoder = _v0.c;
-		return A3(
-			$elm$browser$Browser$Events$MySub,
-			node,
-			name,
-			A2($elm$json$Json$Decode$map, func, decoder));
-	});
-_Platform_effectManagers['Browser.Events'] = _Platform_createManager($elm$browser$Browser$Events$init, $elm$browser$Browser$Events$onEffects, $elm$browser$Browser$Events$onSelfMsg, 0, $elm$browser$Browser$Events$subMap);
-var $elm$browser$Browser$Events$subscription = _Platform_leaf('Browser.Events');
-var $elm$browser$Browser$Events$on = F3(
-	function (node, name, decoder) {
-		return $elm$browser$Browser$Events$subscription(
-			A3($elm$browser$Browser$Events$MySub, node, name, decoder));
-	});
-var $elm$browser$Browser$Events$onResize = function (func) {
-	return A3(
-		$elm$browser$Browser$Events$on,
-		$elm$browser$Browser$Events$Window,
-		'resize',
-		A2(
-			$elm$json$Json$Decode$field,
-			'target',
-			A3(
-				$elm$json$Json$Decode$map2,
-				func,
-				A2($elm$json$Json$Decode$field, 'innerWidth', $elm$json$Json$Decode$int),
-				A2($elm$json$Json$Decode$field, 'innerHeight', $elm$json$Json$Decode$int))));
-};
-var $author$project$SearchApp$subscriptions = function (model) {
-	return $elm$core$Platform$Sub$batch(
-		_List_fromArray(
-			[
-				$elm$browser$Browser$Events$onResize(
-				F2(
-					function (width, height) {
-						return $author$project$Search$DataTypes$OnWindowResize(
-							A2($author$project$UI$Layout$detectDevice, width, height));
-					}))
-			]));
-};
-var $author$project$Api$Search$ApiError = {$: 'ApiError'};
-var $author$project$Api$Search$Loading = {$: 'Loading'};
-var $author$project$Search$DataTypes$ReceivedSearchResponse = function (a) {
-	return {$: 'ReceivedSearchResponse', a: a};
-};
-var $author$project$Api$Search$Response = function (a) {
-	return {$: 'Response', a: a};
-};
-var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $author$project$Config$minimumQueryLength = 3;
-var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
 		return {$: 'BadStatus_', a: a, b: b};
@@ -11274,6 +11048,7 @@ var $elm$core$Maybe$isJust = function (maybe) {
 		return false;
 	}
 };
+var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
 var $elm$http$Http$emptyBody = _Http_emptyBody;
 var $elm$http$Http$expectStringResponse = F2(
 	function (toMsg, toResult) {
@@ -11355,6 +11130,7 @@ var $elm$http$Http$State = F2(
 	});
 var $elm$http$Http$init = $elm$core$Task$succeed(
 	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
+var $elm$core$Process$kill = _Scheduler_kill;
 var $elm$core$Process$spawn = _Scheduler_spawn;
 var $elm$http$Http$updateReqs = F3(
 	function (router, cmds, reqs) {
@@ -11523,8 +11299,8 @@ var $author$project$Api$Search$Facet = F3(
 		return {alias: alias, items: items, label: label};
 	});
 var $author$project$Api$Search$FacetItem = F4(
-	function (value, label, selected, count) {
-		return {count: count, label: label, selected: selected, value: value};
+	function (a, b, c, d) {
+		return {$: 'FacetItem', a: a, b: b, c: c, d: d};
 	});
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$hardcoded = A2($elm$core$Basics$composeR, $elm$json$Json$Decode$succeed, $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom);
@@ -11796,6 +11572,228 @@ var $author$project$Api$Search$searchRequest = F2(
 		var responseDecoder = $author$project$Api$Search$searchResponseDecoder;
 		return A3($author$project$Api$Request$createRequest, responseMsg, responseDecoder, url);
 	});
+var $author$project$SearchApp$init = F3(
+	function (flags, initialUrl, key) {
+		var language = $author$project$Language$parseLocaleToLanguage(flags.locale);
+		var initialRoute = $author$project$Search$DataTypes$parseUrl(initialUrl);
+		var initialQuery = A3($author$project$Api$Search$SearchQueryArgs, '', _List_Nil, '');
+		var initialErrorMessage = '';
+		var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
+		return _Utils_Tuple2(
+			{currentRoute: initialRoute, errorMessage: initialErrorMessage, key: key, language: language, query: initialQuery, response: $author$project$Api$Search$Loading, url: initialUrl, viewingDevice: initialDevice},
+			A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, initialQuery));
+	});
+var $author$project$Search$DataTypes$OnWindowResize = function (a) {
+	return {$: 'OnWindowResize', a: a};
+};
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$browser$Browser$Events$Window = {$: 'Window'};
+var $elm$browser$Browser$Events$MySub = F3(
+	function (a, b, c) {
+		return {$: 'MySub', a: a, b: b, c: c};
+	});
+var $elm$browser$Browser$Events$State = F2(
+	function (subs, pids) {
+		return {pids: pids, subs: subs};
+	});
+var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
+	A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
+var $elm$browser$Browser$Events$nodeToKey = function (node) {
+	if (node.$ === 'Document') {
+		return 'd_';
+	} else {
+		return 'w_';
+	}
+};
+var $elm$browser$Browser$Events$addKey = function (sub) {
+	var node = sub.a;
+	var name = sub.b;
+	return _Utils_Tuple2(
+		_Utils_ap(
+			$elm$browser$Browser$Events$nodeToKey(node),
+			name),
+		sub);
+};
+var $elm$browser$Browser$Events$Event = F2(
+	function (key, event) {
+		return {event: event, key: key};
+	});
+var $elm$browser$Browser$Events$spawn = F3(
+	function (router, key, _v0) {
+		var node = _v0.a;
+		var name = _v0.b;
+		var actualNode = function () {
+			if (node.$ === 'Document') {
+				return _Browser_doc;
+			} else {
+				return _Browser_window;
+			}
+		}();
+		return A2(
+			$elm$core$Task$map,
+			function (value) {
+				return _Utils_Tuple2(key, value);
+			},
+			A3(
+				_Browser_on,
+				actualNode,
+				name,
+				function (event) {
+					return A2(
+						$elm$core$Platform$sendToSelf,
+						router,
+						A2($elm$browser$Browser$Events$Event, key, event));
+				}));
+	});
+var $elm$core$Dict$union = F2(
+	function (t1, t2) {
+		return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
+	});
+var $elm$browser$Browser$Events$onEffects = F3(
+	function (router, subs, state) {
+		var stepRight = F3(
+			function (key, sub, _v6) {
+				var deads = _v6.a;
+				var lives = _v6.b;
+				var news = _v6.c;
+				return _Utils_Tuple3(
+					deads,
+					lives,
+					A2(
+						$elm$core$List$cons,
+						A3($elm$browser$Browser$Events$spawn, router, key, sub),
+						news));
+			});
+		var stepLeft = F3(
+			function (_v4, pid, _v5) {
+				var deads = _v5.a;
+				var lives = _v5.b;
+				var news = _v5.c;
+				return _Utils_Tuple3(
+					A2($elm$core$List$cons, pid, deads),
+					lives,
+					news);
+			});
+		var stepBoth = F4(
+			function (key, pid, _v2, _v3) {
+				var deads = _v3.a;
+				var lives = _v3.b;
+				var news = _v3.c;
+				return _Utils_Tuple3(
+					deads,
+					A3($elm$core$Dict$insert, key, pid, lives),
+					news);
+			});
+		var newSubs = A2($elm$core$List$map, $elm$browser$Browser$Events$addKey, subs);
+		var _v0 = A6(
+			$elm$core$Dict$merge,
+			stepLeft,
+			stepBoth,
+			stepRight,
+			state.pids,
+			$elm$core$Dict$fromList(newSubs),
+			_Utils_Tuple3(_List_Nil, $elm$core$Dict$empty, _List_Nil));
+		var deadPids = _v0.a;
+		var livePids = _v0.b;
+		var makeNewPids = _v0.c;
+		return A2(
+			$elm$core$Task$andThen,
+			function (pids) {
+				return $elm$core$Task$succeed(
+					A2(
+						$elm$browser$Browser$Events$State,
+						newSubs,
+						A2(
+							$elm$core$Dict$union,
+							livePids,
+							$elm$core$Dict$fromList(pids))));
+			},
+			A2(
+				$elm$core$Task$andThen,
+				function (_v1) {
+					return $elm$core$Task$sequence(makeNewPids);
+				},
+				$elm$core$Task$sequence(
+					A2($elm$core$List$map, $elm$core$Process$kill, deadPids))));
+	});
+var $elm$browser$Browser$Events$onSelfMsg = F3(
+	function (router, _v0, state) {
+		var key = _v0.key;
+		var event = _v0.event;
+		var toMessage = function (_v2) {
+			var subKey = _v2.a;
+			var _v3 = _v2.b;
+			var node = _v3.a;
+			var name = _v3.b;
+			var decoder = _v3.c;
+			return _Utils_eq(subKey, key) ? A2(_Browser_decodeEvent, decoder, event) : $elm$core$Maybe$Nothing;
+		};
+		var messages = A2($elm$core$List$filterMap, toMessage, state.subs);
+		return A2(
+			$elm$core$Task$andThen,
+			function (_v1) {
+				return $elm$core$Task$succeed(state);
+			},
+			$elm$core$Task$sequence(
+				A2(
+					$elm$core$List$map,
+					$elm$core$Platform$sendToApp(router),
+					messages)));
+	});
+var $elm$browser$Browser$Events$subMap = F2(
+	function (func, _v0) {
+		var node = _v0.a;
+		var name = _v0.b;
+		var decoder = _v0.c;
+		return A3(
+			$elm$browser$Browser$Events$MySub,
+			node,
+			name,
+			A2($elm$json$Json$Decode$map, func, decoder));
+	});
+_Platform_effectManagers['Browser.Events'] = _Platform_createManager($elm$browser$Browser$Events$init, $elm$browser$Browser$Events$onEffects, $elm$browser$Browser$Events$onSelfMsg, 0, $elm$browser$Browser$Events$subMap);
+var $elm$browser$Browser$Events$subscription = _Platform_leaf('Browser.Events');
+var $elm$browser$Browser$Events$on = F3(
+	function (node, name, decoder) {
+		return $elm$browser$Browser$Events$subscription(
+			A3($elm$browser$Browser$Events$MySub, node, name, decoder));
+	});
+var $elm$browser$Browser$Events$onResize = function (func) {
+	return A3(
+		$elm$browser$Browser$Events$on,
+		$elm$browser$Browser$Events$Window,
+		'resize',
+		A2(
+			$elm$json$Json$Decode$field,
+			'target',
+			A3(
+				$elm$json$Json$Decode$map2,
+				func,
+				A2($elm$json$Json$Decode$field, 'innerWidth', $elm$json$Json$Decode$int),
+				A2($elm$json$Json$Decode$field, 'innerHeight', $elm$json$Json$Decode$int))));
+};
+var $author$project$SearchApp$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$batch(
+		_List_fromArray(
+			[
+				$elm$browser$Browser$Events$onResize(
+				F2(
+					function (width, height) {
+						return $author$project$Search$DataTypes$OnWindowResize(
+							A2($author$project$UI$Layout$detectDevice, width, height));
+					}))
+			]));
+};
+var $author$project$Api$Search$ApiError = {$: 'ApiError'};
+var $author$project$Api$Search$Response = function (a) {
+	return {$: 'Response', a: a};
+};
+var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $author$project$Config$minimumQueryLength = 3;
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $author$project$Search$DataTypes$routeMatches = function (url) {
+	return A2($elm$url$Url$Parser$parse, $author$project$Search$DataTypes$routeParser, url);
+};
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -11889,7 +11887,12 @@ var $author$project$SearchApp$update = F2(
 					_Utils_update(
 						model,
 						{response: $author$project$Api$Search$Loading}),
-					A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, queryModel));
+					$elm$core$Platform$Cmd$batch(
+						_List_fromArray(
+							[
+								A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, queryModel),
+								A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/search')
+							])));
 			case 'OnWindowResize':
 				var device = msg.a;
 				return _Utils_Tuple2(
@@ -11901,12 +11904,19 @@ var $author$project$SearchApp$update = F2(
 				var urlRequest = msg.a;
 				if (urlRequest.$ === 'Internal') {
 					var url = urlRequest.a;
-					return _Utils_Tuple2(
-						model,
-						A2(
-							$elm$browser$Browser$Navigation$pushUrl,
-							model.key,
-							$elm$url$Url$toString(url)));
+					var cmd = function () {
+						var _v3 = $author$project$Search$DataTypes$routeMatches(url);
+						if (_v3.$ === 'Just') {
+							return A2(
+								$elm$browser$Browser$Navigation$pushUrl,
+								model.key,
+								$elm$url$Url$toString(url));
+						} else {
+							return $elm$browser$Browser$Navigation$load(
+								$elm$url$Url$toString(url));
+						}
+					}();
+					return _Utils_Tuple2(model, cmd);
 				} else {
 					var href = urlRequest.a;
 					return _Utils_Tuple2(
@@ -11918,7 +11928,10 @@ var $author$project$SearchApp$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{url: url}),
+						{
+							currentRoute: $author$project$Search$DataTypes$parseUrl(url),
+							url: url
+						}),
 					$elm$core$Platform$Cmd$none);
 			case 'LanguageSelectChanged':
 				var str = msg.a;
@@ -17412,7 +17425,6 @@ var $mdgriffith$elm_ui$Element$column = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
-var $author$project$UI$Style$desktopMaxWidth = 1440;
 var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 	return {$: 'Fill', a: a};
 };
@@ -17761,6 +17773,52 @@ var $author$project$UI$Layout$layoutFooter = A2(
 						]))
 				]))
 		]));
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Language$extractLabelFromLanguageMap = F2(
+	function (lang, langMap) {
+		var lastResort = _List_fromArray(
+			['[No language value found]']);
+		var firstChoice = $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (_v5) {
+					var l = _v5.a;
+					return _Utils_eq(l, lang);
+				},
+				langMap));
+		var fallback = $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (_v4) {
+					var l = _v4.a;
+					return _Utils_eq(l, $author$project$Language$None);
+				},
+				langMap));
+		var chosenLangValues = function () {
+			if (firstChoice.$ === 'Just') {
+				var _v1 = firstChoice.a;
+				var t = _v1.b;
+				return t;
+			} else {
+				if (fallback.$ === 'Just') {
+					var _v3 = fallback.a;
+					var t = _v3.b;
+					return t;
+				} else {
+					return lastResort;
+				}
+			}
+		}();
+		return A2($elm$core$String$join, '; ', chosenLangValues);
+	});
 var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
 var $author$project$UI$Style$lightGrey = A3($mdgriffith$elm_ui$Element$rgb255, 241, 244, 249);
 var $author$project$UI$Style$greyBackground = $mdgriffith$elm_ui$Element$Background$color($author$project$UI$Style$lightGrey);
@@ -17795,8 +17853,79 @@ var $author$project$UI$Components$languageSelect = F2(
 					},
 					options)));
 	});
-var $author$project$UI$Layout$layoutTopBar = F2(
-	function (message, langOptions) {
+var $elm$html$Html$Attributes$rel = _VirtualDom_attribute('rel');
+var $mdgriffith$elm_ui$Element$link = F2(
+	function (attrs, _v0) {
+		var url = _v0.url;
+		var label = _v0.label;
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asEl,
+			$mdgriffith$elm_ui$Internal$Model$NodeName('a'),
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$Attr(
+					$elm$html$Html$Attributes$href(url)),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Internal$Model$Attr(
+						$elm$html$Html$Attributes$rel('noopener noreferrer')),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+						A2(
+							$elm$core$List$cons,
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+							A2(
+								$elm$core$List$cons,
+								$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentCenterX + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.link)))),
+								attrs))))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+				_List_fromArray(
+					[label])));
+	});
+var $author$project$Language$localTranslations = {
+	search: _List_fromArray(
+		[
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$English,
+			_List_fromArray(
+				['Search'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$German,
+			_List_fromArray(
+				['Suche'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$French,
+			_List_fromArray(
+				['Chercher'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Italian,
+			_List_fromArray(
+				['Cerca'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Spanish,
+			_List_fromArray(
+				['Búsqueda'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Portugese,
+			_List_fromArray(
+				['Busca'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Polish,
+			_List_fromArray(
+				['Wyszukiwanie']))
+		])
+};
+var $author$project$UI$Layout$layoutTopBar = F3(
+	function (message, langOptions, currentLanguage) {
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
 			_List_fromArray(
@@ -17832,13 +17961,31 @@ var $author$project$UI$Layout$layoutTopBar = F2(
 									_List_fromArray(
 										[
 											$mdgriffith$elm_ui$Element$width(
-											$mdgriffith$elm_ui$Element$fillPortion(10)),
+											$mdgriffith$elm_ui$Element$fillPortion(2)),
 											$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue),
 											$mdgriffith$elm_ui$Element$Font$semiBold
 										]),
 									_List_fromArray(
 										[
 											$mdgriffith$elm_ui$Element$text('RISM Online')
+										])),
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width(
+											$mdgriffith$elm_ui$Element$fillPortion(8))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$mdgriffith$elm_ui$Element$link,
+											_List_Nil,
+											{
+												label: $mdgriffith$elm_ui$Element$text(
+													A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.search)),
+												url: '/search'
+											})
 										])),
 									A2(
 									$mdgriffith$elm_ui$Element$column,
@@ -17855,17 +18002,8 @@ var $author$project$UI$Layout$layoutTopBar = F2(
 						]))
 				]));
 	});
-var $author$project$UI$Style$phoneMaxWidth = 375;
-var $author$project$UI$Layout$layoutBody = F4(
-	function (message, langOptions, bodyView, device) {
-		var maxWidth = function () {
-			var _v0 = device._class;
-			if (_v0.$ === 'Phone') {
-				return $author$project$UI$Style$phoneMaxWidth;
-			} else {
-				return $author$project$UI$Style$desktopMaxWidth;
-			}
-		}();
+var $author$project$UI$Layout$layoutBody = F5(
+	function (message, langOptions, bodyView, device, currentLanguage) {
 		return _List_fromArray(
 			[
 				A2(
@@ -17885,7 +18023,7 @@ var $author$project$UI$Layout$layoutBody = F4(
 						]),
 					_List_fromArray(
 						[
-							A2($author$project$UI$Layout$layoutTopBar, message, langOptions),
+							A3($author$project$UI$Layout$layoutTopBar, message, langOptions, currentLanguage),
 							bodyView,
 							$author$project$UI$Layout$layoutFooter
 						])))
@@ -17942,10 +18080,10 @@ var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
 };
 var $mdgriffith$elm_ui$Internal$Model$CenterY = {$: 'CenterY'};
 var $mdgriffith$elm_ui$Element$centerY = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$CenterY);
-var $author$project$Search$DataTypes$NoOp = {$: 'NoOp'};
 var $author$project$Search$DataTypes$SearchInput = function (a) {
 	return {$: 'SearchInput', a: a};
 };
+var $author$project$Search$DataTypes$SearchSubmit = {$: 'SearchSubmit'};
 var $elm$html$Html$Attributes$autocomplete = function (bool) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -18079,6 +18217,7 @@ var $mdgriffith$elm_ui$Element$Input$button = F2(
 				_List_fromArray(
 					[label])));
 	});
+var $author$project$UI$Style$desktopMaxWidth = 1440;
 var $author$project$UI$Style$desktopMinWidth = 800;
 var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
 var $mdgriffith$elm_ui$Element$Input$HiddenLabel = function (a) {
@@ -18366,15 +18505,6 @@ var $mdgriffith$elm_ui$Element$Input$getHeight = function (attr) {
 	if (attr.$ === 'Height') {
 		var h = attr.a;
 		return $elm$core$Maybe$Just(h);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
 	} else {
 		return $elm$core$Maybe$Nothing;
 	}
@@ -19127,7 +19257,7 @@ var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
 								[$author$project$UI$Style$roundedButton, _List_Nil])),
 						{
 							label: $mdgriffith$elm_ui$Element$text('Search'),
-							onPress: $elm$core$Maybe$Just($author$project$Search$DataTypes$NoOp)
+							onPress: $elm$core$Maybe$Just($author$project$Search$DataTypes$SearchSubmit)
 						})
 					]))
 			]));
@@ -19224,7 +19354,86 @@ var $author$project$Search$Views$viewSearchFrontDesktop = function (model) {
 };
 var $mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
 var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
+var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
+var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
+var $mdgriffith$elm_ui$Internal$Model$Paragraph = {$: 'Paragraph'};
+var $mdgriffith$elm_ui$Element$paragraph = F2(
+	function (attrs, children) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asParagraph,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Paragraph),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$spacing(5),
+						attrs))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
+	});
+var $author$project$UI$Components$headingHelper = F3(
+	function (size, language, heading) {
+		return A2(
+			$mdgriffith$elm_ui$Element$paragraph,
+			_List_fromArray(
+				[size]),
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$text(
+					A2($author$project$Language$extractLabelFromLanguageMap, language, heading))
+				]));
+	});
+var $mdgriffith$elm_ui$Element$Font$size = function (i) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$fontSize,
+		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
+};
+var $author$project$UI$Style$headingMD = $mdgriffith$elm_ui$Element$Font$size(25);
+var $author$project$UI$Components$h4 = F2(
+	function (language, heading) {
+		return A3($author$project$UI$Components$headingHelper, $author$project$UI$Style$headingMD, language, heading);
+	});
+var $author$project$Search$Views$viewResult = F2(
+	function (result, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$link,
+					_List_Nil,
+					{
+						label: A2($author$project$UI$Components$h4, language, result.label),
+						url: result.id
+					})
+				]));
+	});
 var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
+	var language = model.language;
+	var templatedResults = function () {
+		var _v0 = model.response;
+		if (_v0.$ === 'Response') {
+			var results = _v0.a;
+			return A2(
+				$elm$core$List$map,
+				function (r) {
+					return A2($author$project$Search$Views$viewResult, r, language);
+				},
+				results.items);
+		} else {
+			return _List_fromArray(
+				[$mdgriffith$elm_ui$Element$none]);
+		}
+	}();
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
@@ -19304,7 +19513,8 @@ var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
 												_List_fromArray(
 													[
 														$mdgriffith$elm_ui$Element$width(
-														$mdgriffith$elm_ui$Element$fillPortion(3))
+														$mdgriffith$elm_ui$Element$fillPortion(3)),
+														$mdgriffith$elm_ui$Element$alignTop
 													]),
 												_List_fromArray(
 													[
@@ -19317,10 +19527,7 @@ var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
 														$mdgriffith$elm_ui$Element$width(
 														$mdgriffith$elm_ui$Element$fillPortion(9))
 													]),
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$text('Body')
-													]))
+												templatedResults)
 											]))
 									]))
 							]))
@@ -19350,17 +19557,19 @@ var $author$project$Search$Views$viewSearchBody = function (model) {
 			return $author$project$Search$Views$viewSearchDesktop;
 		}
 	}();
-	return A4(
+	var currentLanguage = model.language;
+	return A5(
 		$author$project$UI$Layout$layoutBody,
 		message,
 		langOptions,
 		deviceView(model),
-		device);
+		device,
+		currentLanguage);
 };
 var $author$project$SearchApp$view = function (model) {
 	return {
 		body: $author$project$Search$Views$viewSearchBody(model),
-		title: 'RISM Online'
+		title: 'Search RISM Online'
 	};
 };
 var $author$project$SearchApp$main = $elm$browser$Browser$application(
@@ -19382,4 +19591,4 @@ _Platform_export({'SearchApp':{'init':$author$project$SearchApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, items : List.List Api.Search.FacetItem }"},"Api.Search.FacetItem":{"args":[],"type":"{ value : String.String, label : Language.LanguageMap, selected : Basics.Bool, count : Basics.Int }"},"Api.Search.FacetList":{"args":[],"type":"{ items : List.List Api.Search.Facet }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchQueryArgs":{"args":[],"type":"{ query : String.String, filters : List.List String.String, sort : String.String }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : Api.Search.FacetList }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["Api.Search.SearchQueryArgs"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"UrlChange":["Url.Url"],"UrlRequest":["Browser.UrlRequest"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, items : List.List Api.Search.FacetItem }"},"Api.Search.FacetList":{"args":[],"type":"{ items : List.List Api.Search.Facet }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchQueryArgs":{"args":[],"type":"{ query : String.String, filters : List.List String.String, sort : String.String }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : Api.Search.FacetList }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["Api.Search.SearchQueryArgs"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"UrlChange":["Url.Url"],"UrlRequest":["Browser.UrlRequest"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Api.Search.FacetItem":{"args":[],"tags":{"FacetItem":["String.String","Language.LanguageMap","Basics.Bool","Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));

@@ -8,6 +8,7 @@ module Language exposing
     , languageOptions
     , languageOptionsForDisplay
     , languageValuesDecoder
+    , localTranslations
     , parseLanguageToLocale
     , parseLocaleToLanguage
     )
@@ -91,9 +92,12 @@ parseLanguageToLocale lang =
 
 extractLabelFromLanguageMap : Language -> LanguageMap -> String
 extractLabelFromLanguageMap lang langMap =
-    -- if there is a language value that matches one in the language map, return the string value of the concatenated list.
-    -- if there is no language value that matches the language map, but there is a "None" language, return the string value of the concatenated list
-    -- if there is no language value matching the language map, and there is no None language in the map, return the string value of the concatenated list for English.
+    {-
+       if there is a language value that matches one in the language map, return the string value of the concatenated list.
+       if there is no language value that matches the language map, but there is a "None" language, return the string value of the concatenated list
+       if there is no language value matching the language map, and there is no None language in the map, return the string value of the concatenated list for English.
+       When there are multiple values in the list of strings, join them with a semicolon.
+    -}
     let
         firstChoice =
             langMap
@@ -152,3 +156,22 @@ languageMapDecoder json =
         (\map maps -> Decode.map2 (::) (languageValuesDecoder map) maps)
         (Decode.succeed [])
         json
+
+
+{-|
+
+    Local translations that do not come from the server
+
+-}
+localTranslations : { search : List LanguageValues }
+localTranslations =
+    { search =
+        [ LanguageValues English [ "Search" ]
+        , LanguageValues German [ "Suche" ]
+        , LanguageValues French [ "Chercher" ]
+        , LanguageValues Italian [ "Cerca" ]
+        , LanguageValues Spanish [ "Búsqueda" ]
+        , LanguageValues Portugese [ "Busca" ]
+        , LanguageValues Polish [ "Wyszukiwanie" ]
+        ]
+    }

@@ -40,8 +40,11 @@ viewRecordBody model =
 
         langOptions =
             languageOptionsForDisplay
+
+        currentLanguage =
+            model.language
     in
-    layoutBody message langOptions (deviceView model) device
+    layoutBody message langOptions (deviceView model) device currentLanguage
 
 
 viewRecordContentDesktop : Model -> Element Msg
