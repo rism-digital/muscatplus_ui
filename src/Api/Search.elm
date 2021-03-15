@@ -7,7 +7,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, nullable, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (Language(..), LanguageMap, LanguageValues(..), languageMapDecoder)
-import Url.Builder
+import Url.Builder exposing (QueryParameter)
 
 
 type ApiResponse
@@ -15,6 +15,10 @@ type ApiResponse
     | Response SearchResponse
     | ApiError
     | NoResponseToShow
+
+
+type Filter
+    = Filter String String
 
 
 type alias SearchResponse =
@@ -26,9 +30,10 @@ type alias SearchResponse =
 
 
 type alias SearchQueryArgs =
-    { query : String
-    , filters : List String
-    , sort : String
+    { query : Maybe String
+    , filters : List Filter
+    , sort : Maybe String
+    , page : Int
     }
 
 
@@ -50,7 +55,8 @@ type alias SearchResult =
 
 
 type alias FacetList =
-    { items : List Facet }
+    { items : List Facet
+    }
 
 
 type alias Facet =
@@ -62,7 +68,8 @@ type alias Facet =
 
 {-|
 
-    FacetItem is a query value, a label, whether or not it is selected, and the number of documents
+    FacetItem is a query value, a label (language map), whether or not it is selected,
+    and the count of documents in the response
 
 -}
 type FacetItem
@@ -126,13 +133,45 @@ searchResponseDecoder =
         |> required "facets" facetListDecoder
 
 
+buildQueryParameters : SearchQueryArgs -> List QueryParameter
+buildQueryParameters queryArgs =
+    let
+        qParam =
+            case queryArgs.query of
+                Just q ->
+                    [ Url.Builder.string "q" q ]
+
+                Nothing ->
+                    []
+
+        fqParams =
+            List.map
+                (\f ->
+                    let
+                        (Filter field value) =
+                            f
+                    in
+                    Url.Builder.string field value
+                )
+                queryArgs.filters
+
+        pageParam =
+            [ Url.Builder.string "page" (String.fromInt queryArgs.page) ]
+
+        sortParam =
+            case queryArgs.sort of
+                Just s ->
+                    [ Url.Builder.string "sort" s ]
+
+                Nothing ->
+                    []
+    in
+    List.concat [ qParam, fqParams, pageParam, sortParam ]
+
+
 searchUrl : SearchQueryArgs -> String
 searchUrl queryArgs =
-    let
-        qstring =
-            Url.Builder.string "q" queryArgs.query
-    in
-    Url.Builder.crossOrigin C.serverUrl [ "search/" ] [ qstring ]
+    Url.Builder.crossOrigin C.serverUrl [ "search/" ] (buildQueryParameters queryArgs)
 
 
 searchRequest : (Result Http.Error SearchResponse -> msg) -> SearchQueryArgs -> Cmd msg

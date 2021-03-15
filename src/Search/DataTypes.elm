@@ -1,18 +1,19 @@
 module Search.DataTypes exposing (..)
 
-import Api.Search exposing (ApiResponse(..), SearchQueryArgs, SearchResponse)
+import Api.Search exposing (ApiResponse(..), Filter(..), SearchQueryArgs, SearchResponse)
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
 import Element exposing (Device)
 import Http
 import Language exposing (Language)
 import Url exposing (Url)
-import Url.Parser as P exposing ((</>), s)
+import Url.Parser as P exposing ((</>), (<?>), s)
+import Url.Parser.Query as Q
 
 
 type Msg
     = ReceivedSearchResponse (Result Http.Error SearchResponse)
-    | SearchInput SearchQueryArgs
+    | SearchInput String
     | SearchSubmit
     | OnWindowResize Device
     | UrlChange Url
@@ -23,7 +24,7 @@ type Msg
 
 type Route
     = FrontPageRoute
-    | SearchPageRoute
+    | SearchPageRoute SearchQueryArgs
     | NotFound
 
 
@@ -53,8 +54,50 @@ routeParser : P.Parser (Route -> a) a
 routeParser =
     P.oneOf
         [ P.map FrontPageRoute P.top
-        , P.map SearchPageRoute (s "search")
+        , P.map SearchPageRoute (s "search" <?> queryParamsParser)
         ]
+
+
+queryParamsParser : Q.Parser SearchQueryArgs
+queryParamsParser =
+    Q.map4 SearchQueryArgs (Q.string "q") fqParamParser (Q.string "sort") pageParamParser
+
+
+fqParamParser : Q.Parser (List Filter)
+fqParamParser =
+    Q.custom "fq" (\a -> filterQueryStringToFilter a)
+
+
+filterQueryStringToFilter : List String -> List Filter
+filterQueryStringToFilter fqlist =
+    -- discards any filters that do not conform to the expected values
+    -- TODO: Convert this to a parser that can handle colons in the 'values'
+    List.concat
+        (List.map
+            (\a ->
+                case String.split ":" a of
+                    [ field, value ] ->
+                        [ Filter field value ]
+
+                    _ ->
+                        []
+            )
+            fqlist
+        )
+
+
+pageParamParser : Q.Parser Int
+pageParamParser =
+    -- returns 1 if the page parameter cannot be parsed to an int.
+    Q.custom "page"
+        (\stringList ->
+            case stringList of
+                [ str ] ->
+                    Maybe.withDefault 1 (String.toInt str)
+
+                _ ->
+                    1
+        )
 
 
 routeMatches : Url -> Maybe Route

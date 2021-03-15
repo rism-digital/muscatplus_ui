@@ -1,6 +1,6 @@
 module SearchApp exposing (..)
 
-import Api.Search exposing (ApiResponse(..), SearchQueryArgs, searchRequest)
+import Api.Search exposing (ApiResponse(..), SearchQueryArgs, buildQueryParameters, searchRequest)
 import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
@@ -11,6 +11,7 @@ import Search.DataTypes exposing (Model, Msg(..), Route(..), parseUrl, routeMatc
 import Search.Views exposing (viewSearchBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
+import Url.Builder as Builder
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -31,16 +32,23 @@ update msg model =
             in
             ( { model | errorMessage = errorMessage, response = ApiError }, Cmd.none )
 
-        SearchInput { query } ->
+        SearchInput textInput ->
             let
-                newq =
-                    SearchQueryArgs query [] ""
-            in
-            if String.length query > Config.minimumQueryLength then
-                ( { model | query = newq }, Cmd.none )
+                currentQ =
+                    model.query
 
-            else
-                ( { model | query = newq }, Cmd.none )
+                newInp =
+                    case String.isEmpty textInput of
+                        True ->
+                            Nothing
+
+                        False ->
+                            Just textInput
+
+                newQ =
+                    SearchQueryArgs newInp currentQ.filters currentQ.sort currentQ.page
+            in
+            ( { model | query = newQ }, Cmd.none )
 
         SearchSubmit ->
             let
@@ -50,7 +58,7 @@ update msg model =
             ( { model | response = Loading }
             , Cmd.batch
                 [ searchRequest ReceivedSearchResponse queryModel
-                , Nav.pushUrl model.key "/search"
+                , Nav.pushUrl model.key ("/search" ++ Builder.toQuery (buildQueryParameters model.query))
                 ]
             )
 
@@ -59,8 +67,16 @@ update msg model =
 
         UrlRequest urlRequest ->
             case urlRequest of
+                -- Elm will assume that any host name that starts with the same host name
+                -- as the current page is an internal URL. This causes problems for switching
+                -- pages that are not handled by Elm. So, when Elm detects an 'Internal' URL
+                -- we check it against our defined routes. If it matches, then we treat it
+                -- as an internal URL; if it doesn't match, we treat it as an external one.
                 Browser.Internal url ->
                     let
+                        _ =
+                            Debug.log "Internal URL!" url
+
                         cmd =
                             case routeMatches url of
                                 Just _ ->
@@ -107,7 +123,7 @@ init flags initialUrl key =
                 |> parseLocaleToLanguage
 
         initialQuery =
-            SearchQueryArgs "" [] ""
+            SearchQueryArgs Nothing [] Nothing 1
 
         initialErrorMessage =
             ""

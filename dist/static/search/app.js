@@ -10739,9 +10739,9 @@ var $author$project$Api$Search$Loading = {$: 'Loading'};
 var $author$project$Search$DataTypes$ReceivedSearchResponse = function (a) {
 	return {$: 'ReceivedSearchResponse', a: a};
 };
-var $author$project$Api$Search$SearchQueryArgs = F3(
-	function (query, filters, sort) {
-		return {filters: filters, query: query, sort: sort};
+var $author$project$Api$Search$SearchQueryArgs = F4(
+	function (query, filters, sort, page) {
+		return {filters: filters, page: page, query: query, sort: sort};
 	});
 var $mdgriffith$elm_ui$Element$BigDesktop = {$: 'BigDesktop'};
 var $mdgriffith$elm_ui$Element$Desktop = {$: 'Desktop'};
@@ -10925,7 +10925,9 @@ var $elm$url$Url$Parser$parse = F2(
 					$elm$core$Basics$identity)));
 	});
 var $author$project$Search$DataTypes$FrontPageRoute = {$: 'FrontPageRoute'};
-var $author$project$Search$DataTypes$SearchPageRoute = {$: 'SearchPageRoute'};
+var $author$project$Search$DataTypes$SearchPageRoute = function (a) {
+	return {$: 'SearchPageRoute', a: a};
+};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
 };
@@ -10973,6 +10975,141 @@ var $elm$url$Url$Parser$oneOf = function (parsers) {
 				parsers);
 		});
 };
+var $elm$url$Url$Parser$Internal$Parser = function (a) {
+	return {$: 'Parser', a: a};
+};
+var $elm$url$Url$Parser$Query$custom = F2(
+	function (key, func) {
+		return $elm$url$Url$Parser$Internal$Parser(
+			function (dict) {
+				return func(
+					A2(
+						$elm$core$Maybe$withDefault,
+						_List_Nil,
+						A2($elm$core$Dict$get, key, dict)));
+			});
+	});
+var $author$project$Api$Search$Filter = F2(
+	function (a, b) {
+		return {$: 'Filter', a: a, b: b};
+	});
+var $author$project$Search$DataTypes$filterQueryStringToFilter = function (fqlist) {
+	return $elm$core$List$concat(
+		A2(
+			$elm$core$List$map,
+			function (a) {
+				var _v0 = A2($elm$core$String$split, ':', a);
+				if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
+					var field = _v0.a;
+					var _v1 = _v0.b;
+					var value = _v1.a;
+					return _List_fromArray(
+						[
+							A2($author$project$Api$Search$Filter, field, value)
+						]);
+				} else {
+					return _List_Nil;
+				}
+			},
+			fqlist));
+};
+var $author$project$Search$DataTypes$fqParamParser = A2(
+	$elm$url$Url$Parser$Query$custom,
+	'fq',
+	function (a) {
+		return $author$project$Search$DataTypes$filterQueryStringToFilter(a);
+	});
+var $elm$url$Url$Parser$Query$map4 = F5(
+	function (func, _v0, _v1, _v2, _v3) {
+		var a = _v0.a;
+		var b = _v1.a;
+		var c = _v2.a;
+		var d = _v3.a;
+		return $elm$url$Url$Parser$Internal$Parser(
+			function (dict) {
+				return A4(
+					func,
+					a(dict),
+					b(dict),
+					c(dict),
+					d(dict));
+			});
+	});
+var $author$project$Search$DataTypes$pageParamParser = A2(
+	$elm$url$Url$Parser$Query$custom,
+	'page',
+	function (stringList) {
+		if (stringList.b && (!stringList.b.b)) {
+			var str = stringList.a;
+			return A2(
+				$elm$core$Maybe$withDefault,
+				1,
+				$elm$core$String$toInt(str));
+		} else {
+			return 1;
+		}
+	});
+var $elm$url$Url$Parser$Query$string = function (key) {
+	return A2(
+		$elm$url$Url$Parser$Query$custom,
+		key,
+		function (stringList) {
+			if (stringList.b && (!stringList.b.b)) {
+				var str = stringList.a;
+				return $elm$core$Maybe$Just(str);
+			} else {
+				return $elm$core$Maybe$Nothing;
+			}
+		});
+};
+var $author$project$Search$DataTypes$queryParamsParser = A5(
+	$elm$url$Url$Parser$Query$map4,
+	$author$project$Api$Search$SearchQueryArgs,
+	$elm$url$Url$Parser$Query$string('q'),
+	$author$project$Search$DataTypes$fqParamParser,
+	$elm$url$Url$Parser$Query$string('sort'),
+	$author$project$Search$DataTypes$pageParamParser);
+var $elm$url$Url$Parser$query = function (_v0) {
+	var queryParser = _v0.a;
+	return $elm$url$Url$Parser$Parser(
+		function (_v1) {
+			var visited = _v1.visited;
+			var unvisited = _v1.unvisited;
+			var params = _v1.params;
+			var frag = _v1.frag;
+			var value = _v1.value;
+			return _List_fromArray(
+				[
+					A5(
+					$elm$url$Url$Parser$State,
+					visited,
+					unvisited,
+					params,
+					frag,
+					value(
+						queryParser(params)))
+				]);
+		});
+};
+var $elm$url$Url$Parser$slash = F2(
+	function (_v0, _v1) {
+		var parseBefore = _v0.a;
+		var parseAfter = _v1.a;
+		return $elm$url$Url$Parser$Parser(
+			function (state) {
+				return A2(
+					$elm$core$List$concatMap,
+					parseAfter,
+					parseBefore(state));
+			});
+	});
+var $elm$url$Url$Parser$questionMark = F2(
+	function (parser, queryParser) {
+		return A2(
+			$elm$url$Url$Parser$slash,
+			parser,
+			$elm$url$Url$Parser$query(queryParser));
+	});
 var $elm$url$Url$Parser$s = function (str) {
 	return $elm$url$Url$Parser$Parser(
 		function (_v0) {
@@ -11011,7 +11148,10 @@ var $author$project$Search$DataTypes$routeParser = $elm$url$Url$Parser$oneOf(
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Search$DataTypes$SearchPageRoute,
-			$elm$url$Url$Parser$s('search'))
+			A2(
+				$elm$url$Url$Parser$questionMark,
+				$elm$url$Url$Parser$s('search'),
+				$author$project$Search$DataTypes$queryParamsParser))
 		]));
 var $author$project$Search$DataTypes$parseUrl = function (url) {
 	var _v0 = A2($elm$url$Url$Parser$parse, $author$project$Search$DataTypes$routeParser, url);
@@ -11524,6 +11664,63 @@ var $author$project$Api$Search$searchResponseDecoder = A3(
 				'id',
 				$elm$json$Json$Decode$string,
 				$elm$json$Json$Decode$succeed($author$project$Api$Search$SearchResponse)))));
+var $elm$url$Url$Builder$QueryParameter = F2(
+	function (a, b) {
+		return {$: 'QueryParameter', a: a, b: b};
+	});
+var $elm$url$Url$percentEncode = _Url_percentEncode;
+var $elm$url$Url$Builder$string = F2(
+	function (key, value) {
+		return A2(
+			$elm$url$Url$Builder$QueryParameter,
+			$elm$url$Url$percentEncode(key),
+			$elm$url$Url$percentEncode(value));
+	});
+var $author$project$Api$Search$buildQueryParameters = function (queryArgs) {
+	var sortParam = function () {
+		var _v2 = queryArgs.sort;
+		if (_v2.$ === 'Just') {
+			var s = _v2.a;
+			return _List_fromArray(
+				[
+					A2($elm$url$Url$Builder$string, 'sort', s)
+				]);
+		} else {
+			return _List_Nil;
+		}
+	}();
+	var qParam = function () {
+		var _v1 = queryArgs.query;
+		if (_v1.$ === 'Just') {
+			var q = _v1.a;
+			return _List_fromArray(
+				[
+					A2($elm$url$Url$Builder$string, 'q', q)
+				]);
+		} else {
+			return _List_Nil;
+		}
+	}();
+	var pageParam = _List_fromArray(
+		[
+			A2(
+			$elm$url$Url$Builder$string,
+			'page',
+			$elm$core$String$fromInt(queryArgs.page))
+		]);
+	var fqParams = A2(
+		$elm$core$List$map,
+		function (f) {
+			var _v0 = f;
+			var field = _v0.a;
+			var value = _v0.b;
+			return A2($elm$url$Url$Builder$string, field, value);
+		},
+		queryArgs.filters);
+	return $elm$core$List$concat(
+		_List_fromArray(
+			[qParam, fqParams, pageParam, sortParam]));
+};
 var $elm$url$Url$Builder$toQueryPair = function (_v0) {
 	var key = _v0.a;
 	var value = _v0.b;
@@ -11544,27 +11741,13 @@ var $elm$url$Url$Builder$crossOrigin = F3(
 		return prePath + ('/' + (A2($elm$core$String$join, '/', pathSegments) + $elm$url$Url$Builder$toQuery(parameters)));
 	});
 var $author$project$Config$serverUrl = 'http://dev.rism.offline';
-var $elm$url$Url$Builder$QueryParameter = F2(
-	function (a, b) {
-		return {$: 'QueryParameter', a: a, b: b};
-	});
-var $elm$url$Url$percentEncode = _Url_percentEncode;
-var $elm$url$Url$Builder$string = F2(
-	function (key, value) {
-		return A2(
-			$elm$url$Url$Builder$QueryParameter,
-			$elm$url$Url$percentEncode(key),
-			$elm$url$Url$percentEncode(value));
-	});
 var $author$project$Api$Search$searchUrl = function (queryArgs) {
-	var qstring = A2($elm$url$Url$Builder$string, 'q', queryArgs.query);
 	return A3(
 		$elm$url$Url$Builder$crossOrigin,
 		$author$project$Config$serverUrl,
 		_List_fromArray(
 			['search/']),
-		_List_fromArray(
-			[qstring]));
+		$author$project$Api$Search$buildQueryParameters(queryArgs));
 };
 var $author$project$Api$Search$searchRequest = F2(
 	function (responseMsg, queryArgs) {
@@ -11576,7 +11759,7 @@ var $author$project$SearchApp$init = F3(
 	function (flags, initialUrl, key) {
 		var language = $author$project$Language$parseLocaleToLanguage(flags.locale);
 		var initialRoute = $author$project$Search$DataTypes$parseUrl(initialUrl);
-		var initialQuery = A3($author$project$Api$Search$SearchQueryArgs, '', _List_Nil, '');
+		var initialQuery = A4($author$project$Api$Search$SearchQueryArgs, $elm$core$Maybe$Nothing, _List_Nil, $elm$core$Maybe$Nothing, 1);
 		var initialErrorMessage = '';
 		var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
 		return _Utils_Tuple2(
@@ -11789,7 +11972,7 @@ var $author$project$Api$Search$Response = function (a) {
 	return {$: 'Response', a: a};
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $author$project$Config$minimumQueryLength = 3;
+var $elm$core$Debug$log = _Debug_log;
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $author$project$Search$DataTypes$routeMatches = function (url) {
 	return A2($elm$url$Url$Parser$parse, $author$project$Search$DataTypes$routeParser, url);
@@ -11868,18 +12051,21 @@ var $author$project$SearchApp$update = F2(
 						$elm$core$Platform$Cmd$none);
 				}
 			case 'SearchInput':
-				var query = msg.a.query;
-				var newq = A3($author$project$Api$Search$SearchQueryArgs, query, _List_Nil, '');
-				return (_Utils_cmp(
-					$elm$core$String$length(query),
-					$author$project$Config$minimumQueryLength) > 0) ? _Utils_Tuple2(
+				var textInput = msg.a;
+				var newInp = function () {
+					var _v2 = $elm$core$String$isEmpty(textInput);
+					if (_v2) {
+						return $elm$core$Maybe$Nothing;
+					} else {
+						return $elm$core$Maybe$Just(textInput);
+					}
+				}();
+				var currentQ = model.query;
+				var newQ = A4($author$project$Api$Search$SearchQueryArgs, newInp, currentQ.filters, currentQ.sort, currentQ.page);
+				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{query: newq}),
-					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{query: newq}),
+						{query: newQ}),
 					$elm$core$Platform$Cmd$none);
 			case 'SearchSubmit':
 				var queryModel = model.query;
@@ -11891,7 +12077,11 @@ var $author$project$SearchApp$update = F2(
 						_List_fromArray(
 							[
 								A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, queryModel),
-								A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/search')
+								A2(
+								$elm$browser$Browser$Navigation$pushUrl,
+								model.key,
+								'/search' + $elm$url$Url$Builder$toQuery(
+									$author$project$Api$Search$buildQueryParameters(model.query)))
 							])));
 			case 'OnWindowResize':
 				var device = msg.a;
@@ -11905,8 +12095,8 @@ var $author$project$SearchApp$update = F2(
 				if (urlRequest.$ === 'Internal') {
 					var url = urlRequest.a;
 					var cmd = function () {
-						var _v3 = $author$project$Search$DataTypes$routeMatches(url);
-						if (_v3.$ === 'Just') {
+						var _v5 = $author$project$Search$DataTypes$routeMatches(url);
+						if (_v5.$ === 'Just') {
 							return A2(
 								$elm$browser$Browser$Navigation$pushUrl,
 								model.key,
@@ -11916,6 +12106,7 @@ var $author$project$SearchApp$update = F2(
 								$elm$url$Url$toString(url));
 						}
 					}();
+					var _v4 = A2($elm$core$Debug$log, 'Internal URL!', url);
 					return _Utils_Tuple2(model, cmd);
 				} else {
 					var href = urlRequest.a;
@@ -19192,6 +19383,7 @@ var $mdgriffith$elm_ui$Element$Input$text = $mdgriffith$elm_ui$Element$Input$tex
 	});
 var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
 	var queryObj = model.query;
+	var qText = A2($elm$core$Maybe$withDefault, '', queryObj.query);
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
@@ -19230,15 +19422,14 @@ var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
 						{
 							label: $mdgriffith$elm_ui$Element$Input$labelHidden('Search'),
 							onChange: function (inp) {
-								return $author$project$Search$DataTypes$SearchInput(
-									A3($author$project$Api$Search$SearchQueryArgs, inp, _List_Nil, ''));
+								return $author$project$Search$DataTypes$SearchInput(inp);
 							},
 							placeholder: $elm$core$Maybe$Just(
 								A2(
 									$mdgriffith$elm_ui$Element$Input$placeholder,
 									_List_Nil,
 									$mdgriffith$elm_ui$Element$text('Enter your query'))),
-							text: queryObj.query
+							text: qText
 						})
 					])),
 				A2(
@@ -19356,6 +19547,112 @@ var $mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
 var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
 var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
 var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
+var $author$project$Search$Views$viewPaginatorFirstLink = function (firstLink) {
+	return A2(
+		$mdgriffith$elm_ui$Element$el,
+		_List_Nil,
+		A2(
+			$mdgriffith$elm_ui$Element$link,
+			_List_Nil,
+			{
+				label: $mdgriffith$elm_ui$Element$text('First'),
+				url: firstLink
+			}));
+};
+var $author$project$Search$Views$viewPaginatorLastLink = function (lastLink) {
+	if (lastLink.$ === 'Just') {
+		var url = lastLink.a;
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_Nil,
+			A2(
+				$mdgriffith$elm_ui$Element$link,
+				_List_Nil,
+				{
+					label: $mdgriffith$elm_ui$Element$text('Last'),
+					url: url
+				}));
+	} else {
+		return $mdgriffith$elm_ui$Element$none;
+	}
+};
+var $author$project$Search$Views$viewPaginatorNextLink = function (nextLink) {
+	if (nextLink.$ === 'Just') {
+		var url = nextLink.a;
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_Nil,
+			A2(
+				$mdgriffith$elm_ui$Element$link,
+				_List_Nil,
+				{
+					label: $mdgriffith$elm_ui$Element$text('Next'),
+					url: url
+				}));
+	} else {
+		return $mdgriffith$elm_ui$Element$none;
+	}
+};
+var $author$project$Search$Views$viewPaginatorPreviousLink = function (prevLink) {
+	if (prevLink.$ === 'Just') {
+		var url = prevLink.a;
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_Nil,
+			A2(
+				$mdgriffith$elm_ui$Element$link,
+				_List_Nil,
+				{
+					label: $mdgriffith$elm_ui$Element$text('Previous'),
+					url: url
+				}));
+	} else {
+		return $mdgriffith$elm_ui$Element$none;
+	}
+};
+var $author$project$Search$Views$viewPaginatorTotalPages = function (pages) {
+	return A2(
+		$mdgriffith$elm_ui$Element$el,
+		_List_Nil,
+		$mdgriffith$elm_ui$Element$text(
+			$elm$core$String$fromInt(pages)));
+};
+var $author$project$Search$Views$viewResponsePaginator = function (pagination) {
+	return A2(
+		$mdgriffith$elm_ui$Element$row,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$mdgriffith$elm_ui$Element$column,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$centerX,
+						$mdgriffith$elm_ui$Element$centerY,
+						A2($mdgriffith$elm_ui$Element$paddingXY, 0, 20)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$mdgriffith$elm_ui$Element$row,
+						_List_fromArray(
+							[
+								A2($mdgriffith$elm_ui$Element$spacingXY, 20, 20)
+							]),
+						_List_fromArray(
+							[
+								$author$project$Search$Views$viewPaginatorFirstLink(pagination.first),
+								$author$project$Search$Views$viewPaginatorPreviousLink(pagination.previous),
+								$author$project$Search$Views$viewPaginatorTotalPages(pagination.totalPages),
+								$author$project$Search$Views$viewPaginatorNextLink(pagination.next),
+								$author$project$Search$Views$viewPaginatorLastLink(pagination.last)
+							]))
+					]))
+			]));
+};
 var $mdgriffith$elm_ui$Internal$Model$Paragraph = {$: 'Paragraph'};
 var $mdgriffith$elm_ui$Element$paragraph = F2(
 	function (attrs, children) {
@@ -19417,23 +19714,75 @@ var $author$project$Search$Views$viewResult = F2(
 					})
 				]));
 	});
+var $author$project$Search$Views$viewResultList = F2(
+	function (model, language) {
+		var templatedResults = function () {
+			var _v1 = model.response;
+			if (_v1.$ === 'Response') {
+				var results = _v1.a;
+				return A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$column,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							A2(
+								$elm$core$List$map,
+								function (r) {
+									return A2($author$project$Search$Views$viewResult, r, language);
+								},
+								results.items))
+						]));
+			} else {
+				return A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$text('No results to show.')
+						]));
+			}
+		}();
+		var paginator = function () {
+			var _v0 = model.response;
+			if (_v0.$ === 'Response') {
+				var resp = _v0.a;
+				return $author$project$Search$Views$viewResponsePaginator(resp.view);
+			} else {
+				return $mdgriffith$elm_ui$Element$none;
+			}
+		}();
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[templatedResults, paginator]))
+				]));
+	});
 var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
 	var language = model.language;
-	var templatedResults = function () {
-		var _v0 = model.response;
-		if (_v0.$ === 'Response') {
-			var results = _v0.a;
-			return A2(
-				$elm$core$List$map,
-				function (r) {
-					return A2($author$project$Search$Views$viewResult, r, language);
-				},
-				results.items);
-		} else {
-			return _List_fromArray(
-				[$mdgriffith$elm_ui$Element$none]);
-		}
-	}();
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
@@ -19527,7 +19876,10 @@ var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
 														$mdgriffith$elm_ui$Element$width(
 														$mdgriffith$elm_ui$Element$fillPortion(9))
 													]),
-												templatedResults)
+												_List_fromArray(
+													[
+														A2($author$project$Search$Views$viewResultList, model, language)
+													]))
 											]))
 									]))
 							]))
@@ -19591,4 +19943,4 @@ _Platform_export({'SearchApp':{'init':$author$project$SearchApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, items : List.List Api.Search.FacetItem }"},"Api.Search.FacetList":{"args":[],"type":"{ items : List.List Api.Search.Facet }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchQueryArgs":{"args":[],"type":"{ query : String.String, filters : List.List String.String, sort : String.String }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : Api.Search.FacetList }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["Api.Search.SearchQueryArgs"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"UrlChange":["Url.Url"],"UrlRequest":["Browser.UrlRequest"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Api.Search.FacetItem":{"args":[],"tags":{"FacetItem":["String.String","Language.LanguageMap","Basics.Bool","Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, items : List.List Api.Search.FacetItem }"},"Api.Search.FacetList":{"args":[],"type":"{ items : List.List Api.Search.Facet }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : Api.Search.FacetList }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["String.String"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"UrlChange":["Url.Url"],"UrlRequest":["Browser.UrlRequest"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Api.Search.FacetItem":{"args":[],"tags":{"FacetItem":["String.String","Language.LanguageMap","Basics.Bool","Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));

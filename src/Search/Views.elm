@@ -1,6 +1,6 @@
 module Search.Views exposing (viewSearchBody)
 
-import Api.Search exposing (ApiResponse(..), SearchQueryArgs, SearchResult)
+import Api.Search exposing (ApiResponse(..), SearchPagination, SearchQueryArgs, SearchResult)
 import Element exposing (..)
 import Element.Input as Input
 import Html
@@ -18,7 +18,7 @@ viewSearchDesktop model =
         FrontPageRoute ->
             viewSearchFrontDesktop model
 
-        SearchPageRoute ->
+        SearchPageRoute _ ->
             viewSearchResultsDesktop model
 
         NotFound ->
@@ -88,6 +88,9 @@ viewSearchKeywordInput model =
     let
         queryObj =
             model.query
+
+        qText =
+            Maybe.withDefault "" queryObj.query
     in
     row
         [ centerX
@@ -109,9 +112,9 @@ viewSearchKeywordInput model =
                 , roundedBorder
                 , htmlAttribute (Html.Attributes.autocomplete False)
                 ]
-                { onChange = \inp -> SearchInput (SearchQueryArgs inp [] "")
+                { onChange = \inp -> SearchInput inp
                 , placeholder = Just (Input.placeholder [] (text "Enter your query"))
-                , text = queryObj.query
+                , text = qText
                 , label = Input.labelHidden "Search"
                 }
             ]
@@ -130,14 +133,6 @@ viewSearchResultsDesktop model =
     let
         language =
             model.language
-
-        templatedResults =
-            case model.response of
-                Response results ->
-                    List.map (\r -> viewResult r language) results.items
-
-                _ ->
-                    [ none ]
     in
     row
         [ width fill
@@ -183,10 +178,44 @@ viewSearchResultsDesktop model =
                             [ text "Sidebar" ]
                         , column
                             [ width (fillPortion 9) ]
-                            templatedResults
+                            [ viewResultList model language ]
                         ]
                     ]
                 ]
+            ]
+        ]
+
+
+viewResultList : Model -> Language -> Element Msg
+viewResultList model language =
+    let
+        templatedResults =
+            case model.response of
+                Response results ->
+                    row
+                        [ width fill ]
+                        [ column
+                            [ width fill ]
+                            (List.map (\r -> viewResult r language) results.items)
+                        ]
+
+                _ ->
+                    row [ width fill ] [ text "No results to show." ]
+
+        paginator =
+            case model.response of
+                Response resp ->
+                    viewResponsePaginator resp.view
+
+                _ ->
+                    none
+    in
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ templatedResults
+            , paginator
             ]
         ]
 
@@ -247,3 +276,66 @@ viewSearchBody model =
             model.language
     in
     layoutBody message langOptions (deviceView model) device currentLanguage
+
+
+viewResponsePaginator : SearchPagination -> Element Msg
+viewResponsePaginator pagination =
+    row [ width fill ]
+        [ column
+            [ centerX
+            , centerY
+            , paddingXY 0 20
+            ]
+            [ row
+                [ spacingXY 20 20 ]
+                [ viewPaginatorFirstLink pagination.first
+                , viewPaginatorPreviousLink pagination.previous
+                , viewPaginatorTotalPages pagination.totalPages
+                , viewPaginatorNextLink pagination.next
+                , viewPaginatorLastLink pagination.last
+                ]
+            ]
+        ]
+
+
+viewPaginatorNextLink : Maybe String -> Element Msg
+viewPaginatorNextLink nextLink =
+    case nextLink of
+        Just url ->
+            el [] (link [] { url = url, label = text "Next" })
+
+        Nothing ->
+            none
+
+
+viewPaginatorLastLink : Maybe String -> Element Msg
+viewPaginatorLastLink lastLink =
+    case lastLink of
+        Just url ->
+            el [] (link [] { url = url, label = text "Last" })
+
+        Nothing ->
+            none
+
+
+viewPaginatorPreviousLink : Maybe String -> Element Msg
+viewPaginatorPreviousLink prevLink =
+    case prevLink of
+        Just url ->
+            el [] (link [] { url = url, label = text "Previous" })
+
+        Nothing ->
+            none
+
+
+viewPaginatorFirstLink : String -> Element Msg
+viewPaginatorFirstLink firstLink =
+    el [] (link [] { url = firstLink, label = text "First" })
+
+
+viewPaginatorTotalPages : Int -> Element Msg
+viewPaginatorTotalPages pages =
+    el []
+        (String.fromInt pages
+            |> text
+        )
