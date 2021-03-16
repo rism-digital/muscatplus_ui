@@ -74,18 +74,26 @@ update msg model =
                 -- as an internal URL; if it doesn't match, we treat it as an external one.
                 Browser.Internal url ->
                     let
-                        _ =
-                            Debug.log "Internal URL!" url
+                        query =
+                            case parseUrl url of
+                                SearchPageRoute qp ->
+                                    qp
+
+                                _ ->
+                                    model.query
 
                         cmd =
                             case routeMatches url of
                                 Just _ ->
-                                    Nav.pushUrl model.key (Url.toString url)
+                                    Cmd.batch
+                                        [ searchRequest ReceivedSearchResponse query
+                                        , Nav.pushUrl model.key (Url.toString url)
+                                        ]
 
                                 Nothing ->
                                     Nav.load (Url.toString url)
                     in
-                    ( model, cmd )
+                    ( { model | url = url, currentRoute = parseUrl url, query = query }, cmd )
 
                 Browser.External href ->
                     ( model, Nav.load href )
@@ -122,8 +130,16 @@ init flags initialUrl key =
             flags.locale
                 |> parseLocaleToLanguage
 
+        route =
+            parseUrl initialUrl
+
         initialQuery =
-            SearchQueryArgs Nothing [] Nothing 1
+            case route of
+                SearchPageRoute queryargs ->
+                    queryargs
+
+                _ ->
+                    SearchQueryArgs Nothing [] Nothing 1
 
         initialErrorMessage =
             ""

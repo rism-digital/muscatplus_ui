@@ -199,6 +199,9 @@ viewResultList model language =
                             (List.map (\r -> viewResult r language) results.items)
                         ]
 
+                ApiError ->
+                    row [ width fill ] [ text model.errorMessage ]
+
                 _ ->
                     row [ width fill ] [ text "No results to show." ]
 

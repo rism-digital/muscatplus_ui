@@ -11757,9 +11757,17 @@ var $author$project$Api$Search$searchRequest = F2(
 	});
 var $author$project$SearchApp$init = F3(
 	function (flags, initialUrl, key) {
+		var route = $author$project$Search$DataTypes$parseUrl(initialUrl);
 		var language = $author$project$Language$parseLocaleToLanguage(flags.locale);
 		var initialRoute = $author$project$Search$DataTypes$parseUrl(initialUrl);
-		var initialQuery = A4($author$project$Api$Search$SearchQueryArgs, $elm$core$Maybe$Nothing, _List_Nil, $elm$core$Maybe$Nothing, 1);
+		var initialQuery = function () {
+			if (route.$ === 'SearchPageRoute') {
+				var queryargs = route.a;
+				return queryargs;
+			} else {
+				return A4($author$project$Api$Search$SearchQueryArgs, $elm$core$Maybe$Nothing, _List_Nil, $elm$core$Maybe$Nothing, 1);
+			}
+		}();
 		var initialErrorMessage = '';
 		var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
 		return _Utils_Tuple2(
@@ -11972,7 +11980,6 @@ var $author$project$Api$Search$Response = function (a) {
 	return {$: 'Response', a: a};
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $elm$core$Debug$log = _Debug_log;
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $author$project$Search$DataTypes$routeMatches = function (url) {
 	return A2($elm$url$Url$Parser$parse, $author$project$Search$DataTypes$routeParser, url);
@@ -12094,20 +12101,41 @@ var $author$project$SearchApp$update = F2(
 				var urlRequest = msg.a;
 				if (urlRequest.$ === 'Internal') {
 					var url = urlRequest.a;
+					var query = function () {
+						var _v5 = $author$project$Search$DataTypes$parseUrl(url);
+						if (_v5.$ === 'SearchPageRoute') {
+							var qp = _v5.a;
+							return qp;
+						} else {
+							return model.query;
+						}
+					}();
 					var cmd = function () {
-						var _v5 = $author$project$Search$DataTypes$routeMatches(url);
-						if (_v5.$ === 'Just') {
-							return A2(
-								$elm$browser$Browser$Navigation$pushUrl,
-								model.key,
-								$elm$url$Url$toString(url));
+						var _v4 = $author$project$Search$DataTypes$routeMatches(url);
+						if (_v4.$ === 'Just') {
+							return $elm$core$Platform$Cmd$batch(
+								_List_fromArray(
+									[
+										A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, query),
+										A2(
+										$elm$browser$Browser$Navigation$pushUrl,
+										model.key,
+										$elm$url$Url$toString(url))
+									]));
 						} else {
 							return $elm$browser$Browser$Navigation$load(
 								$elm$url$Url$toString(url));
 						}
 					}();
-					var _v4 = A2($elm$core$Debug$log, 'Internal URL!', url);
-					return _Utils_Tuple2(model, cmd);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								currentRoute: $author$project$Search$DataTypes$parseUrl(url),
+								query: query,
+								url: url
+							}),
+						cmd);
 				} else {
 					var href = urlRequest.a;
 					return _Utils_Tuple2(
@@ -19718,40 +19746,52 @@ var $author$project$Search$Views$viewResultList = F2(
 	function (model, language) {
 		var templatedResults = function () {
 			var _v1 = model.response;
-			if (_v1.$ === 'Response') {
-				var results = _v1.a;
-				return A2(
-					$mdgriffith$elm_ui$Element$row,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$column,
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-								]),
-							A2(
-								$elm$core$List$map,
-								function (r) {
-									return A2($author$project$Search$Views$viewResult, r, language);
-								},
-								results.items))
-						]));
-			} else {
-				return A2(
-					$mdgriffith$elm_ui$Element$row,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$text('No results to show.')
-						]));
+			switch (_v1.$) {
+				case 'Response':
+					var results = _v1.a;
+					return A2(
+						$mdgriffith$elm_ui$Element$row,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$mdgriffith$elm_ui$Element$column,
+								_List_fromArray(
+									[
+										$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+									]),
+								A2(
+									$elm$core$List$map,
+									function (r) {
+										return A2($author$project$Search$Views$viewResult, r, language);
+									},
+									results.items))
+							]));
+				case 'ApiError':
+					return A2(
+						$mdgriffith$elm_ui$Element$row,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+							]),
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$text(model.errorMessage)
+							]));
+				default:
+					return A2(
+						$mdgriffith$elm_ui$Element$row,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+							]),
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$text('No results to show.')
+							]));
 			}
 		}();
 		var paginator = function () {
