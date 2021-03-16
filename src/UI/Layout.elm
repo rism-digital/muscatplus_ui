@@ -32,7 +32,7 @@ layoutTopBar message langOptions currentLanguage =
                     [ text "RISM Online" ]
                 , column
                     [ width (fillPortion 8) ]
-                    [ link [] { url = "/search", label = text (extractLabelFromLanguageMap currentLanguage localTranslations.search) } ]
+                    [ link [] { url = "/", label = text (extractLabelFromLanguageMap currentLanguage localTranslations.home) } ]
                 , column
                     [ width (fillPortion 2) ]
                     [ languageSelect message langOptions ]

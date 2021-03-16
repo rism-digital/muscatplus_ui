@@ -18104,6 +18104,44 @@ var $mdgriffith$elm_ui$Element$link = F2(
 					[label])));
 	});
 var $author$project$Language$localTranslations = {
+	home: _List_fromArray(
+		[
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$English,
+			_List_fromArray(
+				['Home'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$German,
+			_List_fromArray(
+				['Startseite'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$French,
+			_List_fromArray(
+				['Accueil'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Italian,
+			_List_fromArray(
+				['Home'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Spanish,
+			_List_fromArray(
+				['Página principal'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Portugese,
+			_List_fromArray(
+				['Início'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Polish,
+			_List_fromArray(
+				['Strona główna']))
+		]),
 	search: _List_fromArray(
 		[
 			A2(
@@ -18202,8 +18240,8 @@ var $author$project$UI$Layout$layoutTopBar = F3(
 											_List_Nil,
 											{
 												label: $mdgriffith$elm_ui$Element$text(
-													A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.search)),
-												url: '/search'
+													A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.home)),
+												url: '/'
 											})
 										])),
 									A2(

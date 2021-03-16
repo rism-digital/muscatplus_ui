@@ -163,7 +163,10 @@ languageMapDecoder json =
     Local translations that do not come from the server
 
 -}
-localTranslations : { search : List LanguageValues }
+localTranslations :
+    { search : List LanguageValues
+    , home : List LanguageValues
+    }
 localTranslations =
     { search =
         [ LanguageValues English [ "Search" ]
@@ -173,5 +176,14 @@ localTranslations =
         , LanguageValues Spanish [ "Búsqueda" ]
         , LanguageValues Portugese [ "Busca" ]
         , LanguageValues Polish [ "Wyszukiwanie" ]
+        ]
+    , home =
+        [ LanguageValues English [ "Home" ]
+        , LanguageValues German [ "Startseite" ]
+        , LanguageValues French [ "Accueil" ]
+        , LanguageValues Italian [ "Home" ]
+        , LanguageValues Spanish [ "Página principal" ]
+        , LanguageValues Portugese [ "Início" ]
+        , LanguageValues Polish [ "Strona główna" ]
         ]
     }
