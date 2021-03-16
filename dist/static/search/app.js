@@ -19784,6 +19784,17 @@ var $author$project$Search$Views$viewResultList = F2(
 							[
 								$mdgriffith$elm_ui$Element$text(model.errorMessage)
 							]));
+				case 'Loading':
+					return A2(
+						$mdgriffith$elm_ui$Element$row,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+							]),
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$text('Loading results...')
+							]));
 				default:
 					return A2(
 						$mdgriffith$elm_ui$Element$row,

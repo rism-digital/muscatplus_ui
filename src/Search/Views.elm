@@ -205,6 +205,9 @@ viewResultList model language =
                 ApiError ->
                     row [ width fill ] [ text model.errorMessage ]
 
+                Loading ->
+                    row [ width fill ] [ text "Loading results..." ]
+
                 _ ->
                     row [ width fill ] [ text "No results to show." ]
 
