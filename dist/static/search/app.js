@@ -19412,6 +19412,7 @@ var $mdgriffith$elm_ui$Element$Input$text = $mdgriffith$elm_ui$Element$Input$tex
 var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
 	var queryObj = model.query;
 	var qText = A2($elm$core$Maybe$withDefault, '', queryObj.query);
+	var currentLanguage = model.language;
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
@@ -19448,7 +19449,8 @@ var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
 								$elm$html$Html$Attributes$autocomplete(false))
 							]),
 						{
-							label: $mdgriffith$elm_ui$Element$Input$labelHidden('Search'),
+							label: $mdgriffith$elm_ui$Element$Input$labelHidden(
+								A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.search)),
 							onChange: function (inp) {
 								return $author$project$Search$DataTypes$SearchInput(inp);
 							},
@@ -19475,7 +19477,8 @@ var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
 							_List_fromArray(
 								[$author$project$UI$Style$roundedButton, _List_Nil])),
 						{
-							label: $mdgriffith$elm_ui$Element$text('Search'),
+							label: $mdgriffith$elm_ui$Element$text(
+								A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.search)),
 							onPress: $elm$core$Maybe$Just($author$project$Search$DataTypes$SearchSubmit)
 						})
 					]))

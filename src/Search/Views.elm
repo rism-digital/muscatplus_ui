@@ -5,7 +5,7 @@ import Element exposing (..)
 import Element.Input as Input
 import Html
 import Html.Attributes
-import Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay)
+import Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
 import Search.DataTypes exposing (Model, Msg(..), Route(..))
 import UI.Components exposing (h4)
 import UI.Layout exposing (layoutBody)
@@ -91,6 +91,9 @@ viewSearchKeywordInput model =
 
         qText =
             Maybe.withDefault "" queryObj.query
+
+        currentLanguage =
+            model.language
     in
     row
         [ centerX
@@ -115,14 +118,14 @@ viewSearchKeywordInput model =
                 { onChange = \inp -> SearchInput inp
                 , placeholder = Just (Input.placeholder [] (text "Enter your query"))
                 , text = qText
-                , label = Input.labelHidden "Search"
+                , label = Input.labelHidden (extractLabelFromLanguageMap currentLanguage localTranslations.search)
                 }
             ]
         , column
             [ width (fillPortion 2) ]
             [ Input.button (List.concat [ roundedButton, [] ])
                 { onPress = Just SearchSubmit
-                , label = text "Search"
+                , label = text (extractLabelFromLanguageMap currentLanguage localTranslations.search)
                 }
             ]
         ]
