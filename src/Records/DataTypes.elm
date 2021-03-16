@@ -1,4 +1,4 @@
-module Records.DataTypes exposing (Model, Msg(..), Route(..), parseUrl)
+module Records.DataTypes exposing (Model, Msg(..), Route(..), parseUrl, routeMatches)
 
 import Api.Records exposing (ApiResponse(..), RecordResponse)
 import Browser exposing (UrlRequest)
@@ -53,3 +53,8 @@ routeParser =
         , P.map PersonRoute (s "people" </> P.int)
         , P.map InstitutionRoute (s "institutions" </> P.int)
         ]
+
+
+routeMatches : Url -> Maybe Route
+routeMatches url =
+    P.parse routeParser url

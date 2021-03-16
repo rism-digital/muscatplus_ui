@@ -6,7 +6,7 @@ import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
-import Records.DataTypes exposing (Model, Msg(..))
+import Records.DataTypes exposing (Model, Msg(..), routeMatches)
 import Records.Views.View as View exposing (viewRecordBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
@@ -43,7 +43,16 @@ update msg model =
         UrlRequest urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
-                    ( model, Nav.pushUrl model.key (Url.toString url) )
+                    let
+                        cmd =
+                            case routeMatches url of
+                                Just _ ->
+                                    Nav.pushUrl model.key (Url.toString url)
+
+                                Nothing ->
+                                    Nav.load (Url.toString url)
+                    in
+                    ( model, cmd )
 
                 Browser.External href ->
                     ( model, Nav.load href )

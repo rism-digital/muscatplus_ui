@@ -5115,6 +5115,23 @@ function _Http_track(router, xhr, tracker)
 	});
 }
 
+function _Url_percentEncode(string)
+{
+	return encodeURIComponent(string);
+}
+
+function _Url_percentDecode(string)
+{
+	try
+	{
+		return $elm$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch (e)
+	{
+		return $elm$core$Maybe$Nothing;
+	}
+}
+
 // CREATE
 
 var _Regex_never = /.^/;
@@ -11952,6 +11969,281 @@ var $author$project$Api$Records$Response = function (a) {
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $elm$url$Url$Parser$State = F5(
+	function (visited, unvisited, params, frag, value) {
+		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
+	});
+var $elm$url$Url$Parser$getFirstMatch = function (states) {
+	getFirstMatch:
+	while (true) {
+		if (!states.b) {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			var state = states.a;
+			var rest = states.b;
+			var _v1 = state.unvisited;
+			if (!_v1.b) {
+				return $elm$core$Maybe$Just(state.value);
+			} else {
+				if ((_v1.a === '') && (!_v1.b.b)) {
+					return $elm$core$Maybe$Just(state.value);
+				} else {
+					var $temp$states = rest;
+					states = $temp$states;
+					continue getFirstMatch;
+				}
+			}
+		}
+	}
+};
+var $elm$url$Url$Parser$removeFinalEmpty = function (segments) {
+	if (!segments.b) {
+		return _List_Nil;
+	} else {
+		if ((segments.a === '') && (!segments.b.b)) {
+			return _List_Nil;
+		} else {
+			var segment = segments.a;
+			var rest = segments.b;
+			return A2(
+				$elm$core$List$cons,
+				segment,
+				$elm$url$Url$Parser$removeFinalEmpty(rest));
+		}
+	}
+};
+var $elm$url$Url$Parser$preparePath = function (path) {
+	var _v0 = A2($elm$core$String$split, '/', path);
+	if (_v0.b && (_v0.a === '')) {
+		var segments = _v0.b;
+		return $elm$url$Url$Parser$removeFinalEmpty(segments);
+	} else {
+		var segments = _v0;
+		return $elm$url$Url$Parser$removeFinalEmpty(segments);
+	}
+};
+var $elm$url$Url$Parser$addToParametersHelp = F2(
+	function (value, maybeList) {
+		if (maybeList.$ === 'Nothing') {
+			return $elm$core$Maybe$Just(
+				_List_fromArray(
+					[value]));
+		} else {
+			var list = maybeList.a;
+			return $elm$core$Maybe$Just(
+				A2($elm$core$List$cons, value, list));
+		}
+	});
+var $elm$url$Url$percentDecode = _Url_percentDecode;
+var $elm$url$Url$Parser$addParam = F2(
+	function (segment, dict) {
+		var _v0 = A2($elm$core$String$split, '=', segment);
+		if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
+			var rawKey = _v0.a;
+			var _v1 = _v0.b;
+			var rawValue = _v1.a;
+			var _v2 = $elm$url$Url$percentDecode(rawKey);
+			if (_v2.$ === 'Nothing') {
+				return dict;
+			} else {
+				var key = _v2.a;
+				var _v3 = $elm$url$Url$percentDecode(rawValue);
+				if (_v3.$ === 'Nothing') {
+					return dict;
+				} else {
+					var value = _v3.a;
+					return A3(
+						$elm$core$Dict$update,
+						key,
+						$elm$url$Url$Parser$addToParametersHelp(value),
+						dict);
+				}
+			}
+		} else {
+			return dict;
+		}
+	});
+var $elm$url$Url$Parser$prepareQuery = function (maybeQuery) {
+	if (maybeQuery.$ === 'Nothing') {
+		return $elm$core$Dict$empty;
+	} else {
+		var qry = maybeQuery.a;
+		return A3(
+			$elm$core$List$foldr,
+			$elm$url$Url$Parser$addParam,
+			$elm$core$Dict$empty,
+			A2($elm$core$String$split, '&', qry));
+	}
+};
+var $elm$url$Url$Parser$parse = F2(
+	function (_v0, url) {
+		var parser = _v0.a;
+		return $elm$url$Url$Parser$getFirstMatch(
+			parser(
+				A5(
+					$elm$url$Url$Parser$State,
+					_List_Nil,
+					$elm$url$Url$Parser$preparePath(url.path),
+					$elm$url$Url$Parser$prepareQuery(url.query),
+					url.fragment,
+					$elm$core$Basics$identity)));
+	});
+var $author$project$Records$DataTypes$InstitutionRoute = function (a) {
+	return {$: 'InstitutionRoute', a: a};
+};
+var $author$project$Records$DataTypes$PersonRoute = function (a) {
+	return {$: 'PersonRoute', a: a};
+};
+var $author$project$Records$DataTypes$SourceRoute = function (a) {
+	return {$: 'SourceRoute', a: a};
+};
+var $elm$url$Url$Parser$Parser = function (a) {
+	return {$: 'Parser', a: a};
+};
+var $elm$url$Url$Parser$custom = F2(
+	function (tipe, stringToSomething) {
+		return $elm$url$Url$Parser$Parser(
+			function (_v0) {
+				var visited = _v0.visited;
+				var unvisited = _v0.unvisited;
+				var params = _v0.params;
+				var frag = _v0.frag;
+				var value = _v0.value;
+				if (!unvisited.b) {
+					return _List_Nil;
+				} else {
+					var next = unvisited.a;
+					var rest = unvisited.b;
+					var _v2 = stringToSomething(next);
+					if (_v2.$ === 'Just') {
+						var nextValue = _v2.a;
+						return _List_fromArray(
+							[
+								A5(
+								$elm$url$Url$Parser$State,
+								A2($elm$core$List$cons, next, visited),
+								rest,
+								params,
+								frag,
+								value(nextValue))
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}
+			});
+	});
+var $elm$url$Url$Parser$int = A2($elm$url$Url$Parser$custom, 'NUMBER', $elm$core$String$toInt);
+var $elm$url$Url$Parser$mapState = F2(
+	function (func, _v0) {
+		var visited = _v0.visited;
+		var unvisited = _v0.unvisited;
+		var params = _v0.params;
+		var frag = _v0.frag;
+		var value = _v0.value;
+		return A5(
+			$elm$url$Url$Parser$State,
+			visited,
+			unvisited,
+			params,
+			frag,
+			func(value));
+	});
+var $elm$url$Url$Parser$map = F2(
+	function (subValue, _v0) {
+		var parseArg = _v0.a;
+		return $elm$url$Url$Parser$Parser(
+			function (_v1) {
+				var visited = _v1.visited;
+				var unvisited = _v1.unvisited;
+				var params = _v1.params;
+				var frag = _v1.frag;
+				var value = _v1.value;
+				return A2(
+					$elm$core$List$map,
+					$elm$url$Url$Parser$mapState(value),
+					parseArg(
+						A5($elm$url$Url$Parser$State, visited, unvisited, params, frag, subValue)));
+			});
+	});
+var $elm$url$Url$Parser$oneOf = function (parsers) {
+	return $elm$url$Url$Parser$Parser(
+		function (state) {
+			return A2(
+				$elm$core$List$concatMap,
+				function (_v0) {
+					var parser = _v0.a;
+					return parser(state);
+				},
+				parsers);
+		});
+};
+var $elm$url$Url$Parser$s = function (str) {
+	return $elm$url$Url$Parser$Parser(
+		function (_v0) {
+			var visited = _v0.visited;
+			var unvisited = _v0.unvisited;
+			var params = _v0.params;
+			var frag = _v0.frag;
+			var value = _v0.value;
+			if (!unvisited.b) {
+				return _List_Nil;
+			} else {
+				var next = unvisited.a;
+				var rest = unvisited.b;
+				return _Utils_eq(next, str) ? _List_fromArray(
+					[
+						A5(
+						$elm$url$Url$Parser$State,
+						A2($elm$core$List$cons, next, visited),
+						rest,
+						params,
+						frag,
+						value)
+					]) : _List_Nil;
+			}
+		});
+};
+var $elm$url$Url$Parser$slash = F2(
+	function (_v0, _v1) {
+		var parseBefore = _v0.a;
+		var parseAfter = _v1.a;
+		return $elm$url$Url$Parser$Parser(
+			function (state) {
+				return A2(
+					$elm$core$List$concatMap,
+					parseAfter,
+					parseBefore(state));
+			});
+	});
+var $author$project$Records$DataTypes$routeParser = $elm$url$Url$Parser$oneOf(
+	_List_fromArray(
+		[
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Records$DataTypes$SourceRoute,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('sources'),
+				$elm$url$Url$Parser$int)),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Records$DataTypes$PersonRoute,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('people'),
+				$elm$url$Url$Parser$int)),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Records$DataTypes$InstitutionRoute,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('institutions'),
+				$elm$url$Url$Parser$int))
+		]));
+var $author$project$Records$DataTypes$routeMatches = function (url) {
+	return A2($elm$url$Url$Parser$parse, $author$project$Records$DataTypes$routeParser, url);
+};
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -12033,12 +12325,19 @@ var $author$project$RecordsApp$update = F2(
 				var urlRequest = msg.a;
 				if (urlRequest.$ === 'Internal') {
 					var url = urlRequest.a;
-					return _Utils_Tuple2(
-						model,
-						A2(
-							$elm$browser$Browser$Navigation$pushUrl,
-							model.key,
-							$elm$url$Url$toString(url)));
+					var cmd = function () {
+						var _v3 = $author$project$Records$DataTypes$routeMatches(url);
+						if (_v3.$ === 'Just') {
+							return A2(
+								$elm$browser$Browser$Navigation$pushUrl,
+								model.key,
+								$elm$url$Url$toString(url));
+						} else {
+							return $elm$browser$Browser$Navigation$load(
+								$elm$url$Url$toString(url));
+						}
+					}();
+					return _Utils_Tuple2(model, cmd);
 				} else {
 					var href = urlRequest.a;
 					return _Utils_Tuple2(
@@ -18011,6 +18310,44 @@ var $mdgriffith$elm_ui$Element$link = F2(
 					[label])));
 	});
 var $author$project$Language$localTranslations = {
+	home: _List_fromArray(
+		[
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$English,
+			_List_fromArray(
+				['Home'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$German,
+			_List_fromArray(
+				['Startseite'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$French,
+			_List_fromArray(
+				['Accueil'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Italian,
+			_List_fromArray(
+				['Home'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Spanish,
+			_List_fromArray(
+				['Página principal'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Portugese,
+			_List_fromArray(
+				['Início'])),
+			A2(
+			$author$project$Language$LanguageValues,
+			$author$project$Language$Polish,
+			_List_fromArray(
+				['Strona główna']))
+		]),
 	search: _List_fromArray(
 		[
 			A2(
@@ -18109,8 +18446,8 @@ var $author$project$UI$Layout$layoutTopBar = F3(
 											_List_Nil,
 											{
 												label: $mdgriffith$elm_ui$Element$text(
-													A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.search)),
-												url: '/search'
+													A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.home)),
+												url: '/'
 											})
 										])),
 									A2(
