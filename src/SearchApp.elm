@@ -4,11 +4,10 @@ import Api.Search exposing (ApiResponse(..), SearchQueryArgs, buildQueryParamete
 import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
-import Config
 import Http exposing (Error(..))
 import Language exposing (Language, parseLocaleToLanguage)
 import Search.DataTypes exposing (Model, Msg(..), Route(..), parseUrl, routeMatches)
-import Search.Views exposing (viewSearchBody)
+import Search.Views.View as View exposing (viewSearchBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
 import Url.Builder as Builder

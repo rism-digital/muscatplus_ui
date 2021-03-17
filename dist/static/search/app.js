@@ -18290,7 +18290,7 @@ var $author$project$UI$Style$minMaxFillMobile = A2(
 	$mdgriffith$elm_ui$Element$maximum,
 	800,
 	A2($mdgriffith$elm_ui$Element$minimum, 400, $mdgriffith$elm_ui$Element$fill));
-var $author$project$Search$Views$viewSearchContentMobile = function (model) {
+var $author$project$Search$Views$View$viewSearchContentMobile = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
@@ -18325,7 +18325,7 @@ var $author$project$Search$Views$viewSearchContentMobile = function (model) {
 					]))
 			]));
 };
-var $author$project$Search$Views$viewNotFound = A2(
+var $author$project$Search$Views$View$viewNotFound = A2(
 	$mdgriffith$elm_ui$Element$row,
 	_List_Nil,
 	_List_fromArray(
@@ -18481,6 +18481,18 @@ var $mdgriffith$elm_ui$Element$Input$HiddenLabel = function (a) {
 	return {$: 'HiddenLabel', a: a};
 };
 var $mdgriffith$elm_ui$Element$Input$labelHidden = $mdgriffith$elm_ui$Element$Input$HiddenLabel;
+var $author$project$Search$Views$Shared$onEnter = function (msg) {
+	return $mdgriffith$elm_ui$Element$htmlAttribute(
+		A2(
+			$elm$html$Html$Events$on,
+			'keyup',
+			A2(
+				$elm$json$Json$Decode$andThen,
+				function (key) {
+					return (key === 'Enter') ? $elm$json$Json$Decode$succeed(msg) : $elm$json$Json$Decode$fail('Not the enter key');
+				},
+				A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string))));
+};
 var $mdgriffith$elm_ui$Element$Input$Placeholder = F2(
 	function (a, b) {
 		return {$: 'Placeholder', a: a, b: b};
@@ -19447,7 +19459,7 @@ var $mdgriffith$elm_ui$Element$Input$text = $mdgriffith$elm_ui$Element$Input$tex
 		spellchecked: false,
 		type_: $mdgriffith$elm_ui$Element$Input$TextInputNode('text')
 	});
-var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
+var $author$project$Search$Views$View$viewSearchKeywordInput = function (model) {
 	var queryObj = model.query;
 	var qText = A2($elm$core$Maybe$withDefault, '', queryObj.query);
 	var currentLanguage = model.language;
@@ -19484,7 +19496,8 @@ var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
 								A2($mdgriffith$elm_ui$Element$spacingXY, 0, 4),
 								$author$project$UI$Style$roundedBorder,
 								$mdgriffith$elm_ui$Element$htmlAttribute(
-								$elm$html$Html$Attributes$autocomplete(false))
+								$elm$html$Html$Attributes$autocomplete(false)),
+								$author$project$Search$Views$Shared$onEnter($author$project$Search$DataTypes$SearchSubmit)
 							]),
 						{
 							label: $mdgriffith$elm_ui$Element$Input$labelHidden(
@@ -19522,7 +19535,7 @@ var $author$project$Search$Views$viewSearchKeywordInput = function (model) {
 					]))
 			]));
 };
-var $author$project$Search$Views$viewSearchFrontDesktop = function (model) {
+var $author$project$Search$Views$View$viewSearchFrontDesktop = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
@@ -19606,7 +19619,7 @@ var $author$project$Search$Views$viewSearchFrontDesktop = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$author$project$Search$Views$viewSearchKeywordInput(model)
+										$author$project$Search$Views$View$viewSearchKeywordInput(model)
 									]))
 							]))
 					]))
@@ -19616,7 +19629,7 @@ var $mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
 var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
 var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
 var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
-var $author$project$Search$Views$viewPaginatorFirstLink = function (firstLink) {
+var $author$project$Search$Views$Results$viewPaginatorFirstLink = function (firstLink) {
 	return A2(
 		$mdgriffith$elm_ui$Element$el,
 		_List_Nil,
@@ -19628,7 +19641,7 @@ var $author$project$Search$Views$viewPaginatorFirstLink = function (firstLink) {
 				url: firstLink
 			}));
 };
-var $author$project$Search$Views$viewPaginatorLastLink = function (lastLink) {
+var $author$project$Search$Views$Results$viewPaginatorLastLink = function (lastLink) {
 	if (lastLink.$ === 'Just') {
 		var url = lastLink.a;
 		return A2(
@@ -19645,7 +19658,7 @@ var $author$project$Search$Views$viewPaginatorLastLink = function (lastLink) {
 		return $mdgriffith$elm_ui$Element$none;
 	}
 };
-var $author$project$Search$Views$viewPaginatorNextLink = function (nextLink) {
+var $author$project$Search$Views$Results$viewPaginatorNextLink = function (nextLink) {
 	if (nextLink.$ === 'Just') {
 		var url = nextLink.a;
 		return A2(
@@ -19662,7 +19675,7 @@ var $author$project$Search$Views$viewPaginatorNextLink = function (nextLink) {
 		return $mdgriffith$elm_ui$Element$none;
 	}
 };
-var $author$project$Search$Views$viewPaginatorPreviousLink = function (prevLink) {
+var $author$project$Search$Views$Results$viewPaginatorPreviousLink = function (prevLink) {
 	if (prevLink.$ === 'Just') {
 		var url = prevLink.a;
 		return A2(
@@ -19679,14 +19692,14 @@ var $author$project$Search$Views$viewPaginatorPreviousLink = function (prevLink)
 		return $mdgriffith$elm_ui$Element$none;
 	}
 };
-var $author$project$Search$Views$viewPaginatorTotalPages = function (pages) {
+var $author$project$Search$Views$Results$viewPaginatorTotalPages = function (pages) {
 	return A2(
 		$mdgriffith$elm_ui$Element$el,
 		_List_Nil,
 		$mdgriffith$elm_ui$Element$text(
 			$elm$core$String$fromInt(pages)));
 };
-var $author$project$Search$Views$viewResponsePaginator = function (pagination) {
+var $author$project$Search$Views$Results$viewResponsePaginator = function (pagination) {
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
@@ -19713,11 +19726,11 @@ var $author$project$Search$Views$viewResponsePaginator = function (pagination) {
 							]),
 						_List_fromArray(
 							[
-								$author$project$Search$Views$viewPaginatorFirstLink(pagination.first),
-								$author$project$Search$Views$viewPaginatorPreviousLink(pagination.previous),
-								$author$project$Search$Views$viewPaginatorTotalPages(pagination.totalPages),
-								$author$project$Search$Views$viewPaginatorNextLink(pagination.next),
-								$author$project$Search$Views$viewPaginatorLastLink(pagination.last)
+								$author$project$Search$Views$Results$viewPaginatorFirstLink(pagination.first),
+								$author$project$Search$Views$Results$viewPaginatorPreviousLink(pagination.previous),
+								$author$project$Search$Views$Results$viewPaginatorTotalPages(pagination.totalPages),
+								$author$project$Search$Views$Results$viewPaginatorNextLink(pagination.next),
+								$author$project$Search$Views$Results$viewPaginatorLastLink(pagination.last)
 							]))
 					]))
 			]));
@@ -19764,7 +19777,7 @@ var $author$project$UI$Components$h4 = F2(
 	function (language, heading) {
 		return A3($author$project$UI$Components$headingHelper, $author$project$UI$Style$headingMD, language, heading);
 	});
-var $author$project$Search$Views$viewResult = F2(
+var $author$project$Search$Views$Results$viewResult = F2(
 	function (result, language) {
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
@@ -19783,7 +19796,7 @@ var $author$project$Search$Views$viewResult = F2(
 					})
 				]));
 	});
-var $author$project$Search$Views$viewResultList = F2(
+var $author$project$Search$Views$Results$viewResultList = F2(
 	function (model, language) {
 		var templatedResults = function () {
 			var _v1 = model.response;
@@ -19807,7 +19820,7 @@ var $author$project$Search$Views$viewResultList = F2(
 								A2(
 									$elm$core$List$map,
 									function (r) {
-										return A2($author$project$Search$Views$viewResult, r, language);
+										return A2($author$project$Search$Views$Results$viewResult, r, language);
 									},
 									results.items))
 							]));
@@ -19850,7 +19863,7 @@ var $author$project$Search$Views$viewResultList = F2(
 			var _v0 = model.response;
 			if (_v0.$ === 'Response') {
 				var resp = _v0.a;
-				return $author$project$Search$Views$viewResponsePaginator(resp.view);
+				return $author$project$Search$Views$Results$viewResponsePaginator(resp.view);
 			} else {
 				return $mdgriffith$elm_ui$Element$none;
 			}
@@ -19873,7 +19886,7 @@ var $author$project$Search$Views$viewResultList = F2(
 						[templatedResults, paginator]))
 				]));
 	});
-var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
+var $author$project$Search$Views$View$viewSearchResultsDesktop = function (model) {
 	var language = model.language;
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
@@ -19915,7 +19928,7 @@ var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$author$project$Search$Views$viewSearchKeywordInput(model)
+										$author$project$Search$Views$View$viewSearchKeywordInput(model)
 									]))
 							])),
 						A2(
@@ -19970,7 +19983,7 @@ var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
 													]),
 												_List_fromArray(
 													[
-														A2($author$project$Search$Views$viewResultList, model, language)
+														A2($author$project$Search$Views$Results$viewResultList, model, language)
 													]))
 											]))
 									]))
@@ -19978,27 +19991,27 @@ var $author$project$Search$Views$viewSearchResultsDesktop = function (model) {
 					]))
 			]));
 };
-var $author$project$Search$Views$viewSearchDesktop = function (model) {
+var $author$project$Search$Views$View$viewSearchDesktop = function (model) {
 	var _v0 = model.currentRoute;
 	switch (_v0.$) {
 		case 'FrontPageRoute':
-			return $author$project$Search$Views$viewSearchFrontDesktop(model);
+			return $author$project$Search$Views$View$viewSearchFrontDesktop(model);
 		case 'SearchPageRoute':
-			return $author$project$Search$Views$viewSearchResultsDesktop(model);
+			return $author$project$Search$Views$View$viewSearchResultsDesktop(model);
 		default:
-			return $author$project$Search$Views$viewNotFound;
+			return $author$project$Search$Views$View$viewNotFound;
 	}
 };
-var $author$project$Search$Views$viewSearchBody = function (model) {
+var $author$project$Search$Views$View$viewSearchBody = function (model) {
 	var message = $author$project$Search$DataTypes$LanguageSelectChanged;
 	var langOptions = $author$project$Language$languageOptionsForDisplay;
 	var device = model.viewingDevice;
 	var deviceView = function () {
 		var _v0 = device._class;
 		if (_v0.$ === 'Phone') {
-			return $author$project$Search$Views$viewSearchContentMobile;
+			return $author$project$Search$Views$View$viewSearchContentMobile;
 		} else {
-			return $author$project$Search$Views$viewSearchDesktop;
+			return $author$project$Search$Views$View$viewSearchDesktop;
 		}
 	}();
 	var currentLanguage = model.language;
@@ -20012,7 +20025,7 @@ var $author$project$Search$Views$viewSearchBody = function (model) {
 };
 var $author$project$SearchApp$view = function (model) {
 	return {
-		body: $author$project$Search$Views$viewSearchBody(model),
+		body: $author$project$Search$Views$View$viewSearchBody(model),
 		title: 'Search RISM Online'
 	};
 };
