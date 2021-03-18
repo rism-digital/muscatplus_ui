@@ -56,6 +56,7 @@ type alias SearchResult =
 
 type alias FacetList =
     { items : List Facet
+    , expanded : Bool -- facet is showing more than 10 items
     }
 
 
@@ -105,6 +106,7 @@ facetListDecoder : Decoder FacetList
 facetListDecoder =
     Decode.succeed FacetList
         |> required "items" (Decode.list facetDecoder)
+        |> hardcoded False
 
 
 facetDecoder : Decoder Facet
