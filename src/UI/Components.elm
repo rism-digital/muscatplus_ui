@@ -13,6 +13,12 @@ import UI.Style exposing (bodyRegular, darkBlue, headingLG, headingMD, headingSM
 -- HEADINGS
 
 
+{-|
+
+    Implements headings with the 'paragraph' tag to ensure that they wrap if the
+    lines are too long.
+
+-}
 headingHelper : Attribute msg -> Language -> LanguageMap -> Element msg
 headingHelper size language heading =
     paragraph [ size ] [ text (extractLabelFromLanguageMap language heading) ]
