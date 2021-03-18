@@ -1,21 +1,44 @@
 module Search.Views.Results exposing (..)
 
 import Api.Search exposing (ApiResponse(..), SearchPagination, SearchResult)
-import Element exposing (Element, centerX, centerY, column, el, fill, link, none, paddingXY, row, spacingXY, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacingXY, text, width)
+import Element.Font as Font
 import Language exposing (Language)
 import Search.DataTypes exposing (Model, Msg)
-import UI.Components exposing (h4)
+import UI.Components exposing (h4, h5)
+import UI.Style exposing (darkBlue, lightBlue, red)
 
 
 viewResult : SearchResult -> Language -> Element Msg
 viewResult result language =
     row
-        [ width fill ]
-        [ link
-            []
-            { url = result.id
-            , label = h4 language result.label
-            }
+        [ width fill
+        , height (px 120)
+        ]
+        [ column
+            [ width fill
+            , alignTop
+            ]
+            [ paragraph
+                [ width fill
+                , alignTop
+                ]
+                [ link
+                    [ alignTop
+                    , paddingEach { top = 0, left = 0, right = 10, bottom = 0 }
+                    , Font.color darkBlue
+                    , Font.underline
+                    ]
+                    { url = result.id
+                    , label = h5 language result.label
+                    }
+                , paragraph
+                    [ width fill
+                    , Font.color red
+                    ]
+                    [ h5 language result.typeLabel ]
+                ]
+            ]
         ]
 
 
@@ -61,22 +84,30 @@ viewResultList model language =
 
 viewResponsePaginator : SearchPagination -> Element Msg
 viewResponsePaginator pagination =
-    row [ width fill ]
-        [ column
-            [ centerX
-            , centerY
-            , paddingXY 0 20
-            ]
-            [ row
-                [ spacingXY 20 20 ]
-                [ viewPaginatorFirstLink pagination.first
-                , viewPaginatorPreviousLink pagination.previous
-                , viewPaginatorTotalPages pagination.totalPages
-                , viewPaginatorNextLink pagination.next
-                , viewPaginatorLastLink pagination.last
-                ]
-            ]
-        ]
+    let
+        paginator =
+            if pagination.totalPages > 1 then
+                row [ width fill ]
+                    [ column
+                        [ centerX
+                        , centerY
+                        , paddingXY 0 20
+                        ]
+                        [ row
+                            [ spacingXY 20 20 ]
+                            [ viewPaginatorFirstLink pagination.first
+                            , viewPaginatorPreviousLink pagination.previous
+                            , viewPaginatorTotalPages pagination.totalPages
+                            , viewPaginatorNextLink pagination.next
+                            , viewPaginatorLastLink pagination.last
+                            ]
+                        ]
+                    ]
+
+            else
+                none
+    in
+    paginator
 
 
 viewPaginatorNextLink : Maybe String -> Element Msg
@@ -118,5 +149,6 @@ viewPaginatorTotalPages : Int -> Element Msg
 viewPaginatorTotalPages pages =
     el []
         (String.fromInt pages
+            |> (++) "Page "
             |> text
         )
