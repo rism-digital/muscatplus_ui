@@ -81,18 +81,20 @@ update msg model =
                                 _ ->
                                     model.query
 
-                        cmd =
+                        state =
                             case routeMatches url of
                                 Just _ ->
-                                    Cmd.batch
+                                    ( { model | url = url, currentRoute = parseUrl url, query = query }
+                                    , Cmd.batch
                                         [ searchRequest ReceivedSearchResponse query
                                         , Nav.pushUrl model.key (Url.toString url)
                                         ]
+                                    )
 
                                 Nothing ->
-                                    Nav.load (Url.toString url)
+                                    ( model, Nav.load (Url.toString url) )
                     in
-                    ( { model | url = url, currentRoute = parseUrl url, query = query }, cmd )
+                    state
 
                 Browser.External href ->
                     ( model, Nav.load href )
