@@ -1,6 +1,6 @@
 module Search.DataTypes exposing (..)
 
-import Api.Search exposing (ApiResponse(..), Filter(..), SearchQueryArgs, SearchResponse)
+import Api.Search exposing (ApiResponse(..), FacetItem(..), Filter(..), SearchQueryArgs, SearchResponse)
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
 import Element exposing (Device)
@@ -19,6 +19,7 @@ type Msg
     | UrlChange Url
     | UrlRequest UrlRequest
     | LanguageSelectChanged String
+    | FacetChecked String FacetItem Bool
     | NoOp
 
 
@@ -37,6 +38,7 @@ type alias Model =
     , viewingDevice : Device
     , language : Language
     , currentRoute : Route
+    , selectedFacets : List FacetItem
     }
 
 
@@ -103,3 +105,12 @@ pageParamParser =
 routeMatches : Url -> Maybe Route
 routeMatches url =
     P.parse routeParser url
+
+
+convertFacetToFilter : String -> FacetItem -> Filter
+convertFacetToFilter name facet =
+    let
+        (FacetItem qval label count) =
+            facet
+    in
+    Filter name qval

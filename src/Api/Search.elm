@@ -4,8 +4,8 @@ import Api.DataTypes exposing (RecordType(..), typeDecoder)
 import Api.Request exposing (createRequest)
 import Config as C
 import Http
-import Json.Decode as Decode exposing (Decoder, andThen, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (hardcoded, optional, required)
+import Json.Decode as Decode exposing (Decoder, andThen, at, int, list, nullable, string)
+import Json.Decode.Pipeline exposing (hardcoded, optional, optionalAt, required, requiredAt)
 import Language exposing (Language(..), LanguageMap, LanguageValues(..), languageMapDecoder)
 import Url.Builder exposing (QueryParameter)
 
@@ -17,6 +17,13 @@ type ApiResponse
     | NoResponseToShow
 
 
+{-|
+
+    A filter represents a selected filter query; The values are the
+    field name and the value, e.g., "Filter type source". This will then
+    get converted to a list of URL parameters, `fq=type:source`.
+
+-}
 type Filter
     = Filter String String
 
@@ -25,7 +32,7 @@ type alias SearchResponse =
     { id : String
     , items : List SearchResult
     , view : SearchPagination
-    , facets : FacetList
+    , facets : List Facet
     }
 
 
@@ -56,25 +63,29 @@ type alias SearchResult =
 
 type alias FacetList =
     { items : List Facet
-    , expanded : Bool -- facet is showing more than 10 items
     }
 
 
 type alias Facet =
     { alias : String
     , label : LanguageMap
+    , expanded : Bool -- facet is showing more than 10 items
     , items : List FacetItem
     }
 
 
 {-|
 
-    FacetItem is a query value, a label (language map), whether or not it is selected,
-    and the count of documents in the response
+    FacetItem is a facet name, a query value, a label (language map),
+    and the count of documents in the response.
+
+    E.g.,
+
+    FacetItem "source" {'none': {'some label'}} 123
 
 -}
 type FacetItem
-    = FacetItem String LanguageMap Bool Int
+    = FacetItem String LanguageMap Int
 
 
 resultDecoder : Decoder SearchResult
@@ -106,7 +117,6 @@ facetListDecoder : Decoder FacetList
 facetListDecoder =
     Decode.succeed FacetList
         |> required "items" (Decode.list facetDecoder)
-        |> hardcoded False
 
 
 facetDecoder : Decoder Facet
@@ -114,6 +124,7 @@ facetDecoder =
     Decode.succeed Facet
         |> required "alias" string
         |> required "label" labelDecoder
+        |> hardcoded False
         |> required "items" (Decode.list facetItemDecoder)
 
 
@@ -122,7 +133,6 @@ facetItemDecoder =
     Decode.succeed FacetItem
         |> required "value" string
         |> required "label" labelDecoder
-        |> hardcoded False
         |> required "count" int
 
 
@@ -130,9 +140,9 @@ searchResponseDecoder : Decoder SearchResponse
 searchResponseDecoder =
     Decode.succeed SearchResponse
         |> required "id" string
-        |> required "items" (Decode.list resultDecoder)
+        |> optional "items" (Decode.list resultDecoder) []
         |> required "view" searchPaginationDecoder
-        |> required "facets" facetListDecoder
+        |> optionalAt [ "facets", "items" ] (Decode.list facetDecoder) []
 
 
 buildQueryParameters : SearchQueryArgs -> List QueryParameter
@@ -153,7 +163,7 @@ buildQueryParameters queryArgs =
                         (Filter field value) =
                             f
                     in
-                    Url.Builder.string field value
+                    Url.Builder.string "fq" (field ++ ":" ++ value)
                 )
                 queryArgs.filters
 

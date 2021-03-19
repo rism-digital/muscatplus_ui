@@ -7,6 +7,7 @@ import Html
 import Html.Attributes
 import Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
 import Search.DataTypes exposing (Model, Msg(..), Route(..))
+import Search.Views.Facets exposing (viewSidebarFacets, viewTypeFacet)
 import Search.Views.Results exposing (viewResultList)
 import Search.Views.Shared exposing (onEnter)
 import UI.Layout exposing (layoutBody)
@@ -133,12 +134,91 @@ viewSearchKeywordInput model =
         ]
 
 
+viewSearchBarSection : Model -> Element Msg
+viewSearchBarSection model =
+    row
+        [ width fill
+        , height (px 120)
+        , greyBackground
+        ]
+        [ column
+            [ width minMaxFillDesktop
+            , height fill
+            , centerX
+            ]
+            [ viewSearchKeywordInput model ]
+        ]
+
+
+viewSearchResultsSection : Model -> Element Msg
+viewSearchResultsSection model =
+    let
+        resp =
+            model.response
+
+        itemCount =
+            case resp of
+                Response searchResponse ->
+                    List.length searchResponse.items
+
+                _ ->
+                    0
+
+        viewResults =
+            if itemCount > 0 then
+                viewHasSearchResults model
+
+            else
+                viewHasNoSearchResults model
+    in
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            [ width minMaxFillDesktop
+            , height fill
+            , centerX
+            , alignTop
+            ]
+            viewResults
+        ]
+
+
+viewHasNoSearchResults : Model -> List (Element Msg)
+viewHasNoSearchResults model =
+    [ row
+        [ width fill ]
+        [ text "No results were returned" ]
+    ]
+
+
+viewHasSearchResults : Model -> List (Element Msg)
+viewHasSearchResults model =
+    [ viewTypeFacet model
+    , row
+        [ width fill
+        , alignTop
+        , spacingXY 20 20
+        , paddingEach { top = 20, bottom = 0, left = 0, right = 0 }
+        ]
+        [ column
+            [ width (fillPortion 3)
+            , alignTop
+            ]
+            [ viewSidebarFacets model ]
+        , column
+            [ width (fillPortion 9)
+            , alignTop
+            ]
+            [ viewResultList model ]
+        ]
+    ]
+
+
 viewSearchResultsDesktop : Model -> Element Msg
 viewSearchResultsDesktop model =
-    let
-        language =
-            model.language
-    in
     row
         [ width fill
         , height fill
@@ -148,45 +228,8 @@ viewSearchResultsDesktop model =
             , height fill
             , centerX
             ]
-            [ row
-                [ width fill
-                , height (px 120)
-                , greyBackground
-                ]
-                [ column
-                    [ width minMaxFillDesktop
-                    , height fill
-                    , centerX
-                    ]
-                    [ viewSearchKeywordInput model ]
-                ]
-            , row
-                [ width fill
-                , height fill
-                , alignTop
-                ]
-                [ column
-                    [ width minMaxFillDesktop
-                    , height fill
-                    , centerX
-                    , alignTop
-                    ]
-                    [ row
-                        [ width fill
-                        , alignTop
-                        , paddingXY 0 20
-                        ]
-                        [ column
-                            [ width (fillPortion 3)
-                            , alignTop
-                            ]
-                            [ text "Sidebar" ]
-                        , column
-                            [ width (fillPortion 9) ]
-                            [ viewResultList model language ]
-                        ]
-                    ]
-                ]
+            [ viewSearchBarSection model
+            , viewSearchResultsSection model
             ]
         ]
 

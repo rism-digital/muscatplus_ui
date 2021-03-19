@@ -42,9 +42,12 @@ viewResult result language =
         ]
 
 
-viewResultList : Model -> Language -> Element Msg
-viewResultList model language =
+viewResultList : Model -> Element Msg
+viewResultList model =
     let
+        language =
+            model.language
+
         templatedResults =
             case model.response of
                 Response results ->

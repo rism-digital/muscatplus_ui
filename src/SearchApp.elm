@@ -6,8 +6,9 @@ import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Http exposing (Error(..))
 import Language exposing (Language, parseLocaleToLanguage)
-import Search.DataTypes exposing (Model, Msg(..), Route(..), parseUrl, routeMatches)
-import Search.Views.View as View exposing (viewSearchBody)
+import List.Extra as LE
+import Search.DataTypes exposing (Model, Msg(..), Route(..), convertFacetToFilter, parseUrl, routeMatches)
+import Search.Views.View exposing (viewSearchBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
 import Url.Builder as Builder
@@ -105,6 +106,39 @@ update msg model =
         LanguageSelectChanged str ->
             ( { model | language = parseLocaleToLanguage str }, Cmd.none )
 
+        FacetChecked facetname itm checked ->
+            let
+                currentlySelected =
+                    model.selectedFacets
+
+                newSelected =
+                    if List.member itm currentlySelected then
+                        LE.remove itm currentlySelected
+
+                    else
+                        itm :: currentlySelected
+
+                converted =
+                    convertFacetToFilter facetname itm
+
+                currentQuery =
+                    model.query
+
+                currentFilters =
+                    currentQuery.filters
+
+                newFilters =
+                    if checked then
+                        converted :: currentFilters
+
+                    else
+                        LE.remove converted currentFilters
+
+                newQuery =
+                    { currentQuery | filters = newFilters }
+            in
+            update SearchSubmit { model | query = newQuery, selectedFacets = newSelected }
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -159,6 +193,7 @@ init flags initialUrl key =
       , language = language
       , currentRoute = initialRoute
       , query = initialQuery
+      , selectedFacets = []
       }
     , searchRequest ReceivedSearchResponse initialQuery
     )

@@ -5130,7 +5130,108 @@ function _Http_track(router, xhr, tracker)
 			size: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
-}var $author$project$Search$DataTypes$UrlChange = function (a) {
+}
+
+// CREATE
+
+var _Regex_never = /.^/;
+
+var _Regex_fromStringWith = F2(function(options, string)
+{
+	var flags = 'g';
+	if (options.multiline) { flags += 'm'; }
+	if (options.caseInsensitive) { flags += 'i'; }
+
+	try
+	{
+		return $elm$core$Maybe$Just(new RegExp(string, flags));
+	}
+	catch(error)
+	{
+		return $elm$core$Maybe$Nothing;
+	}
+});
+
+
+// USE
+
+var _Regex_contains = F2(function(re, string)
+{
+	return string.match(re) !== null;
+});
+
+
+var _Regex_findAtMost = F3(function(n, re, str)
+{
+	var out = [];
+	var number = 0;
+	var string = str;
+	var lastIndex = re.lastIndex;
+	var prevLastIndex = -1;
+	var result;
+	while (number++ < n && (result = re.exec(string)))
+	{
+		if (prevLastIndex == re.lastIndex) break;
+		var i = result.length - 1;
+		var subs = new Array(i);
+		while (i > 0)
+		{
+			var submatch = result[i];
+			subs[--i] = submatch
+				? $elm$core$Maybe$Just(submatch)
+				: $elm$core$Maybe$Nothing;
+		}
+		out.push(A4($elm$regex$Regex$Match, result[0], result.index, number, _List_fromArray(subs)));
+		prevLastIndex = re.lastIndex;
+	}
+	re.lastIndex = lastIndex;
+	return _List_fromArray(out);
+});
+
+
+var _Regex_replaceAtMost = F4(function(n, re, replacer, string)
+{
+	var count = 0;
+	function jsReplacer(match)
+	{
+		if (count++ >= n)
+		{
+			return match;
+		}
+		var i = arguments.length - 3;
+		var submatches = new Array(i);
+		while (i > 0)
+		{
+			var submatch = arguments[i];
+			submatches[--i] = submatch
+				? $elm$core$Maybe$Just(submatch)
+				: $elm$core$Maybe$Nothing;
+		}
+		return replacer(A4($elm$regex$Regex$Match, match, arguments[arguments.length - 2], count, _List_fromArray(submatches)));
+	}
+	return string.replace(re, jsReplacer);
+});
+
+var _Regex_splitAtMost = F3(function(n, re, str)
+{
+	var string = str;
+	var out = [];
+	var start = re.lastIndex;
+	var restoreLastIndex = re.lastIndex;
+	while (n--)
+	{
+		var result = re.exec(string);
+		if (!result) break;
+		out.push(string.slice(start, result.index));
+		start = re.lastIndex;
+	}
+	out.push(string.slice(start));
+	re.lastIndex = restoreLastIndex;
+	return _List_fromArray(out);
+});
+
+var _Regex_infinity = Infinity;
+var $author$project$Search$DataTypes$UrlChange = function (a) {
 	return {$: 'UrlChange', a: a};
 };
 var $author$project$Search$DataTypes$UrlRequest = function (a) {
@@ -11431,19 +11532,14 @@ var $author$project$Api$Search$SearchResponse = F4(
 	function (id, items, view, facets) {
 		return {facets: facets, id: id, items: items, view: view};
 	});
-var $author$project$Api$Search$FacetList = function (items) {
-	return {items: items};
-};
-var $author$project$Api$Search$Facet = F3(
-	function (alias, label, items) {
-		return {alias: alias, items: items, label: label};
+var $author$project$Api$Search$Facet = F4(
+	function (alias, label, expanded, items) {
+		return {alias: alias, expanded: expanded, items: items, label: label};
 	});
-var $author$project$Api$Search$FacetItem = F4(
-	function (a, b, c, d) {
-		return {$: 'FacetItem', a: a, b: b, c: c, d: d};
+var $author$project$Api$Search$FacetItem = F3(
+	function (a, b, c) {
+		return {$: 'FacetItem', a: a, b: b, c: c};
 	});
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$hardcoded = A2($elm$core$Basics$composeR, $elm$json$Json$Decode$succeed, $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom);
 var $author$project$Language$LanguageValues = F2(
 	function (a, b) {
 		return {$: 'LanguageValues', a: a, b: b};
@@ -11481,6 +11577,7 @@ var $author$project$Api$Search$labelDecoder = A2(
 	$author$project$Language$languageMapDecoder,
 	$elm$json$Json$Decode$keyValuePairs(
 		$elm$json$Json$Decode$list($elm$json$Json$Decode$string)));
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 	function (key, valDecoder, decoder) {
 		return A2(
@@ -11492,6 +11589,20 @@ var $author$project$Api$Search$facetItemDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'count',
 	$elm$json$Json$Decode$int,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'value',
+			$elm$json$Json$Decode$string,
+			$elm$json$Json$Decode$succeed($author$project$Api$Search$FacetItem))));
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$hardcoded = A2($elm$core$Basics$composeR, $elm$json$Json$Decode$succeed, $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom);
+var $author$project$Api$Search$facetDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Api$Search$facetItemDecoder),
 	A2(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$hardcoded,
 		false,
@@ -11501,27 +11612,66 @@ var $author$project$Api$Search$facetItemDecoder = A3(
 			$author$project$Api$Search$labelDecoder,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'value',
+				'alias',
 				$elm$json$Json$Decode$string,
-				$elm$json$Json$Decode$succeed($author$project$Api$Search$FacetItem)))));
-var $author$project$Api$Search$facetDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Search$facetItemDecoder),
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'label',
-		$author$project$Api$Search$labelDecoder,
-		A3(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'alias',
-			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$Api$Search$Facet))));
-var $author$project$Api$Search$facetListDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Search$facetDecoder),
-	$elm$json$Json$Decode$succeed($author$project$Api$Search$FacetList));
+				$elm$json$Json$Decode$succeed($author$project$Api$Search$Facet)))));
+var $elm$json$Json$Decode$fail = _Json_fail;
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder = F3(
+	function (pathDecoder, valDecoder, fallback) {
+		var nullOr = function (decoder) {
+			return $elm$json$Json$Decode$oneOf(
+				_List_fromArray(
+					[
+						decoder,
+						$elm$json$Json$Decode$null(fallback)
+					]));
+		};
+		var handleResult = function (input) {
+			var _v0 = A2($elm$json$Json$Decode$decodeValue, pathDecoder, input);
+			if (_v0.$ === 'Ok') {
+				var rawValue = _v0.a;
+				var _v1 = A2(
+					$elm$json$Json$Decode$decodeValue,
+					nullOr(valDecoder),
+					rawValue);
+				if (_v1.$ === 'Ok') {
+					var finalResult = _v1.a;
+					return $elm$json$Json$Decode$succeed(finalResult);
+				} else {
+					var finalErr = _v1.a;
+					return $elm$json$Json$Decode$fail(
+						$elm$json$Json$Decode$errorToString(finalErr));
+				}
+			} else {
+				return $elm$json$Json$Decode$succeed(fallback);
+			}
+		};
+		return A2($elm$json$Json$Decode$andThen, handleResult, $elm$json$Json$Decode$value);
+	});
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional = F4(
+	function (key, valDecoder, fallback, decoder) {
+		return A2(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder,
+				A2($elm$json$Json$Decode$field, key, $elm$json$Json$Decode$value),
+				valDecoder,
+				fallback),
+			decoder);
+	});
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt = F4(
+	function (path, valDecoder, fallback, decoder) {
+		return A2(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder,
+				A2($elm$json$Json$Decode$at, path, $elm$json$Json$Decode$value),
+				valDecoder,
+				fallback),
+			decoder);
+	});
 var $author$project$Api$Search$SearchResult = F4(
 	function (id, label, type_, typeLabel) {
 		return {id: id, label: label, typeLabel: typeLabel, type_: type_};
@@ -11569,8 +11719,6 @@ var $author$project$Api$Search$SearchPagination = F5(
 	function (next, previous, first, last, totalPages) {
 		return {first: first, last: last, next: next, previous: previous, totalPages: totalPages};
 	});
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$json$Json$Decode$nullable = function (decoder) {
 	return $elm$json$Json$Decode$oneOf(
 		_List_fromArray(
@@ -11579,50 +11727,6 @@ var $elm$json$Json$Decode$nullable = function (decoder) {
 				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
 			]));
 };
-var $elm$json$Json$Decode$fail = _Json_fail;
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder = F3(
-	function (pathDecoder, valDecoder, fallback) {
-		var nullOr = function (decoder) {
-			return $elm$json$Json$Decode$oneOf(
-				_List_fromArray(
-					[
-						decoder,
-						$elm$json$Json$Decode$null(fallback)
-					]));
-		};
-		var handleResult = function (input) {
-			var _v0 = A2($elm$json$Json$Decode$decodeValue, pathDecoder, input);
-			if (_v0.$ === 'Ok') {
-				var rawValue = _v0.a;
-				var _v1 = A2(
-					$elm$json$Json$Decode$decodeValue,
-					nullOr(valDecoder),
-					rawValue);
-				if (_v1.$ === 'Ok') {
-					var finalResult = _v1.a;
-					return $elm$json$Json$Decode$succeed(finalResult);
-				} else {
-					var finalErr = _v1.a;
-					return $elm$json$Json$Decode$fail(
-						$elm$json$Json$Decode$errorToString(finalErr));
-				}
-			} else {
-				return $elm$json$Json$Decode$succeed(fallback);
-			}
-		};
-		return A2($elm$json$Json$Decode$andThen, handleResult, $elm$json$Json$Decode$value);
-	});
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional = F4(
-	function (key, valDecoder, fallback, decoder) {
-		return A2(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
-			A3(
-				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder,
-				A2($elm$json$Json$Decode$field, key, $elm$json$Json$Decode$value),
-				valDecoder,
-				fallback),
-			decoder);
-	});
 var $author$project$Api$Search$searchPaginationDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'totalPages',
@@ -11647,18 +11751,21 @@ var $author$project$Api$Search$searchPaginationDecoder = A3(
 					$elm$json$Json$Decode$nullable($elm$json$Json$Decode$string),
 					$elm$core$Maybe$Nothing,
 					$elm$json$Json$Decode$succeed($author$project$Api$Search$SearchPagination))))));
-var $author$project$Api$Search$searchResponseDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'facets',
-	$author$project$Api$Search$facetListDecoder,
+var $author$project$Api$Search$searchResponseDecoder = A4(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt,
+	_List_fromArray(
+		['facets', 'items']),
+	$elm$json$Json$Decode$list($author$project$Api$Search$facetDecoder),
+	_List_Nil,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'view',
 		$author$project$Api$Search$searchPaginationDecoder,
-		A3(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		A4(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 			'items',
 			$elm$json$Json$Decode$list($author$project$Api$Search$resultDecoder),
+			_List_Nil,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 				'id',
@@ -11714,7 +11821,7 @@ var $author$project$Api$Search$buildQueryParameters = function (queryArgs) {
 			var _v0 = f;
 			var field = _v0.a;
 			var value = _v0.b;
-			return A2($elm$url$Url$Builder$string, field, value);
+			return A2($elm$url$Url$Builder$string, 'fq', field + (':' + value));
 		},
 		queryArgs.filters);
 	return $elm$core$List$concat(
@@ -11771,7 +11878,7 @@ var $author$project$SearchApp$init = F3(
 		var initialErrorMessage = '';
 		var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
 		return _Utils_Tuple2(
-			{currentRoute: initialRoute, errorMessage: initialErrorMessage, key: key, language: language, query: initialQuery, response: $author$project$Api$Search$Loading, url: initialUrl, viewingDevice: initialDevice},
+			{currentRoute: initialRoute, errorMessage: initialErrorMessage, key: key, language: language, query: initialQuery, response: $author$project$Api$Search$Loading, selectedFacets: _List_Nil, url: initialUrl, viewingDevice: initialDevice},
 			A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, initialQuery));
 	});
 var $author$project$Search$DataTypes$OnWindowResize = function (a) {
@@ -11979,8 +12086,60 @@ var $author$project$Api$Search$ApiError = {$: 'ApiError'};
 var $author$project$Api$Search$Response = function (a) {
 	return {$: 'Response', a: a};
 };
+var $author$project$Search$DataTypes$SearchSubmit = {$: 'SearchSubmit'};
+var $author$project$Search$DataTypes$convertFacetToFilter = F2(
+	function (name, facet) {
+		var _v0 = facet;
+		var qval = _v0.a;
+		var label = _v0.b;
+		var count = _v0.c;
+		return A2($author$project$Api$Search$Filter, name, qval);
+	});
 var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $elm_community$list_extra$List$Extra$remove = F2(
+	function (x, xs) {
+		if (!xs.b) {
+			return _List_Nil;
+		} else {
+			var y = xs.a;
+			var ys = xs.b;
+			return _Utils_eq(x, y) ? ys : A2(
+				$elm$core$List$cons,
+				y,
+				A2($elm_community$list_extra$List$Extra$remove, x, ys));
+		}
+	});
 var $author$project$Search$DataTypes$routeMatches = function (url) {
 	return A2($elm$url$Url$Parser$parse, $author$project$Search$DataTypes$routeParser, url);
 };
@@ -12030,139 +12189,164 @@ var $elm$url$Url$toString = function (url) {
 };
 var $author$project$SearchApp$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 'ReceivedSearchResponse':
-				if (msg.a.$ === 'Ok') {
-					var response = msg.a.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								response: $author$project$Api$Search$Response(response)
-							}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					var error = msg.a.a;
-					var errorMessage = function () {
-						if (error.$ === 'BadUrl') {
-							var url = error.a;
-							return 'A Bad URL was supplied: ' + url;
-						} else {
-							return 'A problem happened with the request';
-						}
-					}();
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{errorMessage: errorMessage, response: $author$project$Api$Search$ApiError}),
-						$elm$core$Platform$Cmd$none);
-				}
-			case 'SearchInput':
-				var textInput = msg.a;
-				var newInp = function () {
-					var _v2 = $elm$core$String$isEmpty(textInput);
-					if (_v2) {
-						return $elm$core$Maybe$Nothing;
+		update:
+		while (true) {
+			switch (msg.$) {
+				case 'ReceivedSearchResponse':
+					if (msg.a.$ === 'Ok') {
+						var response = msg.a.a;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									response: $author$project$Api$Search$Response(response)
+								}),
+							$elm$core$Platform$Cmd$none);
 					} else {
-						return $elm$core$Maybe$Just(textInput);
+						var error = msg.a.a;
+						var errorMessage = function () {
+							if (error.$ === 'BadUrl') {
+								var url = error.a;
+								return 'A Bad URL was supplied: ' + url;
+							} else {
+								return 'A problem happened with the request';
+							}
+						}();
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{errorMessage: errorMessage, response: $author$project$Api$Search$ApiError}),
+							$elm$core$Platform$Cmd$none);
 					}
-				}();
-				var currentQ = model.query;
-				var newQ = A4($author$project$Api$Search$SearchQueryArgs, newInp, currentQ.filters, currentQ.sort, currentQ.page);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{query: newQ}),
-					$elm$core$Platform$Cmd$none);
-			case 'SearchSubmit':
-				var queryModel = model.query;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{response: $author$project$Api$Search$Loading}),
-					$elm$core$Platform$Cmd$batch(
-						_List_fromArray(
-							[
-								A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, queryModel),
-								A2(
-								$elm$browser$Browser$Navigation$pushUrl,
-								model.key,
-								'/search' + $elm$url$Url$Builder$toQuery(
-									$author$project$Api$Search$buildQueryParameters(model.query)))
-							])));
-			case 'OnWindowResize':
-				var device = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{viewingDevice: device}),
-					$elm$core$Platform$Cmd$none);
-			case 'UrlRequest':
-				var urlRequest = msg.a;
-				if (urlRequest.$ === 'Internal') {
-					var url = urlRequest.a;
-					var query = function () {
-						var _v5 = $author$project$Search$DataTypes$parseUrl(url);
-						if (_v5.$ === 'SearchPageRoute') {
-							var qp = _v5.a;
-							return qp;
+				case 'SearchInput':
+					var textInput = msg.a;
+					var newInp = function () {
+						var _v2 = $elm$core$String$isEmpty(textInput);
+						if (_v2) {
+							return $elm$core$Maybe$Nothing;
 						} else {
-							return model.query;
+							return $elm$core$Maybe$Just(textInput);
 						}
 					}();
-					var cmd = function () {
-						var _v4 = $author$project$Search$DataTypes$routeMatches(url);
-						if (_v4.$ === 'Just') {
-							return $elm$core$Platform$Cmd$batch(
-								_List_fromArray(
-									[
-										A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, query),
-										A2(
-										$elm$browser$Browser$Navigation$pushUrl,
-										model.key,
-										$elm$url$Url$toString(url))
-									]));
-						} else {
-							return $elm$browser$Browser$Navigation$load(
-								$elm$url$Url$toString(url));
-						}
-					}();
+					var currentQ = model.query;
+					var newQ = A4($author$project$Api$Search$SearchQueryArgs, newInp, currentQ.filters, currentQ.sort, currentQ.page);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{query: newQ}),
+						$elm$core$Platform$Cmd$none);
+				case 'SearchSubmit':
+					var queryModel = model.query;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{response: $author$project$Api$Search$Loading}),
+						$elm$core$Platform$Cmd$batch(
+							_List_fromArray(
+								[
+									A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, queryModel),
+									A2(
+									$elm$browser$Browser$Navigation$pushUrl,
+									model.key,
+									'/search' + $elm$url$Url$Builder$toQuery(
+										$author$project$Api$Search$buildQueryParameters(model.query)))
+								])));
+				case 'OnWindowResize':
+					var device = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{viewingDevice: device}),
+						$elm$core$Platform$Cmd$none);
+				case 'UrlRequest':
+					var urlRequest = msg.a;
+					if (urlRequest.$ === 'Internal') {
+						var url = urlRequest.a;
+						var query = function () {
+							var _v5 = $author$project$Search$DataTypes$parseUrl(url);
+							if (_v5.$ === 'SearchPageRoute') {
+								var qp = _v5.a;
+								return qp;
+							} else {
+								return model.query;
+							}
+						}();
+						var state = function () {
+							var _v4 = $author$project$Search$DataTypes$routeMatches(url);
+							if (_v4.$ === 'Just') {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											currentRoute: $author$project$Search$DataTypes$parseUrl(url),
+											query: query,
+											url: url
+										}),
+									$elm$core$Platform$Cmd$batch(
+										_List_fromArray(
+											[
+												A2($author$project$Api$Search$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, query),
+												A2(
+												$elm$browser$Browser$Navigation$pushUrl,
+												model.key,
+												$elm$url$Url$toString(url))
+											])));
+							} else {
+								return _Utils_Tuple2(
+									model,
+									$elm$browser$Browser$Navigation$load(
+										$elm$url$Url$toString(url)));
+							}
+						}();
+						return state;
+					} else {
+						var href = urlRequest.a;
+						return _Utils_Tuple2(
+							model,
+							$elm$browser$Browser$Navigation$load(href));
+					}
+				case 'UrlChange':
+					var url = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
 								currentRoute: $author$project$Search$DataTypes$parseUrl(url),
-								query: query,
 								url: url
 							}),
-						cmd);
-				} else {
-					var href = urlRequest.a;
+						$elm$core$Platform$Cmd$none);
+				case 'LanguageSelectChanged':
+					var str = msg.a;
 					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								language: $author$project$Language$parseLocaleToLanguage(str)
+							}),
+						$elm$core$Platform$Cmd$none);
+				case 'FacetChecked':
+					var facetname = msg.a;
+					var itm = msg.b;
+					var checked = msg.c;
+					var currentlySelected = model.selectedFacets;
+					var newSelected = A2($elm$core$List$member, itm, currentlySelected) ? A2($elm_community$list_extra$List$Extra$remove, itm, currentlySelected) : A2($elm$core$List$cons, itm, currentlySelected);
+					var currentQuery = model.query;
+					var currentFilters = currentQuery.filters;
+					var converted = A2($author$project$Search$DataTypes$convertFacetToFilter, facetname, itm);
+					var newFilters = checked ? A2($elm$core$List$cons, converted, currentFilters) : A2($elm_community$list_extra$List$Extra$remove, converted, currentFilters);
+					var newQuery = _Utils_update(
+						currentQuery,
+						{filters: newFilters});
+					var $temp$msg = $author$project$Search$DataTypes$SearchSubmit,
+						$temp$model = _Utils_update(
 						model,
-						$elm$browser$Browser$Navigation$load(href));
-				}
-			case 'UrlChange':
-				var url = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							currentRoute: $author$project$Search$DataTypes$parseUrl(url),
-							url: url
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'LanguageSelectChanged':
-				var str = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							language: $author$project$Language$parseLocaleToLanguage(str)
-						}),
-					$elm$core$Platform$Cmd$none);
-			default:
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						{query: newQuery, selectedFacets: newSelected});
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
+				default:
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			}
 		}
 	});
 var $author$project$Search$DataTypes$LanguageSelectChanged = function (a) {
@@ -14797,27 +14981,6 @@ var $mdgriffith$elm_ui$Internal$Model$staticRoot = function (opts) {
 				_List_Nil);
 	}
 };
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
 var $mdgriffith$elm_ui$Internal$Model$fontName = function (font) {
 	switch (font.$) {
 		case 'Serif':
@@ -18340,7 +18503,6 @@ var $mdgriffith$elm_ui$Element$centerY = $mdgriffith$elm_ui$Internal$Model$Align
 var $author$project$Search$DataTypes$SearchInput = function (a) {
 	return {$: 'SearchInput', a: a};
 };
-var $author$project$Search$DataTypes$SearchSubmit = {$: 'SearchSubmit'};
 var $elm$html$Html$Attributes$autocomplete = function (bool) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -19625,8 +19787,49 @@ var $author$project$Search$Views$View$viewSearchFrontDesktop = function (model) 
 					]))
 			]));
 };
+var $author$project$Search$Views$View$viewSearchBarSection = function (model) {
+	return A2(
+		$mdgriffith$elm_ui$Element$row,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$mdgriffith$elm_ui$Element$height(
+				$mdgriffith$elm_ui$Element$px(120)),
+				$author$project$UI$Style$greyBackground
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$mdgriffith$elm_ui$Element$column,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
+						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$centerX
+					]),
+				_List_fromArray(
+					[
+						$author$project$Search$Views$View$viewSearchKeywordInput(model)
+					]))
+			]));
+};
 var $mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
 var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
+var $author$project$Search$Views$View$viewHasNoSearchResults = function (model) {
+	return _List_fromArray(
+		[
+			A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$text('No results were returned')
+				]))
+		]);
+};
 var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
 var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
 var $author$project$Search$Views$Results$viewPaginatorFirstLink = function (firstLink) {
@@ -19697,10 +19900,10 @@ var $author$project$Search$Views$Results$viewPaginatorTotalPages = function (pag
 		$mdgriffith$elm_ui$Element$el,
 		_List_Nil,
 		$mdgriffith$elm_ui$Element$text(
-			$elm$core$String$fromInt(pages)));
+			'Page ' + $elm$core$String$fromInt(pages)));
 };
 var $author$project$Search$Views$Results$viewResponsePaginator = function (pagination) {
-	return A2(
+	var paginator = (pagination.totalPages > 1) ? A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
 			[
@@ -19733,7 +19936,8 @@ var $author$project$Search$Views$Results$viewResponsePaginator = function (pagin
 								$author$project$Search$Views$Results$viewPaginatorLastLink(pagination.last)
 							]))
 					]))
-			]));
+			])) : $mdgriffith$elm_ui$Element$none;
+	return paginator;
 };
 var $mdgriffith$elm_ui$Internal$Model$Paragraph = {$: 'Paragraph'};
 var $mdgriffith$elm_ui$Element$paragraph = F2(
@@ -19755,11 +19959,10 @@ var $mdgriffith$elm_ui$Element$paragraph = F2(
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
 var $author$project$UI$Components$headingHelper = F3(
-	function (size, language, heading) {
+	function (attrib, language, heading) {
 		return A2(
 			$mdgriffith$elm_ui$Element$paragraph,
-			_List_fromArray(
-				[size]),
+			attrib,
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$text(
@@ -19772,13 +19975,596 @@ var $mdgriffith$elm_ui$Element$Font$size = function (i) {
 		$mdgriffith$elm_ui$Internal$Flag$fontSize,
 		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
 };
-var $author$project$UI$Style$headingMD = $mdgriffith$elm_ui$Element$Font$size(25);
-var $author$project$UI$Components$h4 = F2(
+var $author$project$UI$Style$headingSM = $mdgriffith$elm_ui$Element$Font$size(20);
+var $author$project$UI$Components$h5 = F2(
 	function (language, heading) {
-		return A3($author$project$UI$Components$headingHelper, $author$project$UI$Style$headingMD, language, heading);
+		return A3(
+			$author$project$UI$Components$headingHelper,
+			_List_fromArray(
+				[$author$project$UI$Style$headingSM]),
+			language,
+			heading);
 	});
+var $author$project$UI$Style$red = A3($mdgriffith$elm_ui$Element$rgb255, 249, 57, 67);
+var $mdgriffith$elm_ui$Element$Font$underline = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.underline);
 var $author$project$Search$Views$Results$viewResult = F2(
 	function (result, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$height(
+					$mdgriffith$elm_ui$Element$px(120))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+							$mdgriffith$elm_ui$Element$alignTop
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$paragraph,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$alignTop
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$link,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$alignTop,
+											$mdgriffith$elm_ui$Element$paddingEach(
+											{bottom: 0, left: 0, right: 10, top: 0}),
+											$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue),
+											$mdgriffith$elm_ui$Element$Font$underline
+										]),
+									{
+										label: A2($author$project$UI$Components$h5, language, result.label),
+										url: result.id
+									}),
+									A2(
+									$mdgriffith$elm_ui$Element$paragraph,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+											$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$red)
+										]),
+									_List_fromArray(
+										[
+											A2($author$project$UI$Components$h5, language, result.typeLabel)
+										]))
+								]))
+						]))
+				]));
+	});
+var $author$project$Search$Views$Results$viewResultList = function (model) {
+	var paginator = function () {
+		var _v1 = model.response;
+		if (_v1.$ === 'Response') {
+			var resp = _v1.a;
+			return $author$project$Search$Views$Results$viewResponsePaginator(resp.view);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
+	}();
+	var language = model.language;
+	var templatedResults = function () {
+		var _v0 = model.response;
+		switch (_v0.$) {
+			case 'Response':
+				var results = _v0.a;
+				return A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$column,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							A2(
+								$elm$core$List$map,
+								function (r) {
+									return A2($author$project$Search$Views$Results$viewResult, r, language);
+								},
+								results.items))
+						]));
+			case 'ApiError':
+				return A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$text(model.errorMessage)
+						]));
+			case 'Loading':
+				return A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$text('Loading results...')
+						]));
+			default:
+				return A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$text('No results to show.')
+						]));
+		}
+	}();
+	return A2(
+		$mdgriffith$elm_ui$Element$row,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$mdgriffith$elm_ui$Element$column,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					]),
+				_List_fromArray(
+					[templatedResults, paginator]))
+			]));
+};
+var $elm$core$List$partition = F2(
+	function (pred, list) {
+		var step = F2(
+			function (x, _v0) {
+				var trues = _v0.a;
+				var falses = _v0.b;
+				return pred(x) ? _Utils_Tuple2(
+					A2($elm$core$List$cons, x, trues),
+					falses) : _Utils_Tuple2(
+					trues,
+					A2($elm$core$List$cons, x, falses));
+			});
+		return A3(
+			$elm$core$List$foldr,
+			step,
+			_Utils_Tuple2(_List_Nil, _List_Nil),
+			list);
+	});
+var $author$project$Search$Views$Facets$partitionFacetList = function (facetList) {
+	return A2(
+		$elm$core$List$partition,
+		function (f) {
+			return f.alias === 'type';
+		},
+		facetList);
+};
+var $author$project$UI$Style$headingXS = $mdgriffith$elm_ui$Element$Font$size(16);
+var $author$project$UI$Components$h6 = F2(
+	function (language, heading) {
+		return A3(
+			$author$project$UI$Components$headingHelper,
+			_List_fromArray(
+				[$author$project$UI$Style$headingXS, $mdgriffith$elm_ui$Element$Font$semiBold]),
+			language,
+			heading);
+	});
+var $elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2($elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return $elm$core$List$reverse(
+			A3($elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var $elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _v0 = _Utils_Tuple2(n, list);
+			_v0$1:
+			while (true) {
+				_v0$5:
+				while (true) {
+					if (!_v0.b.b) {
+						return list;
+					} else {
+						if (_v0.b.b.b) {
+							switch (_v0.a) {
+								case 1:
+									break _v0$1;
+								case 2:
+									var _v2 = _v0.b;
+									var x = _v2.a;
+									var _v3 = _v2.b;
+									var y = _v3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_v0.b.b.b.b) {
+										var _v4 = _v0.b;
+										var x = _v4.a;
+										var _v5 = _v4.b;
+										var y = _v5.a;
+										var _v6 = _v5.b;
+										var z = _v6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _v0$5;
+									}
+								default:
+									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
+										var _v7 = _v0.b;
+										var x = _v7.a;
+										var _v8 = _v7.b;
+										var y = _v8.a;
+										var _v9 = _v8.b;
+										var z = _v9.a;
+										var _v10 = _v9.b;
+										var w = _v10.a;
+										var tl = _v10.b;
+										return (ctr > 1000) ? A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _v0$5;
+									}
+							}
+						} else {
+							if (_v0.a === 1) {
+								break _v0$1;
+							} else {
+								break _v0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _v1 = _v0.b;
+			var x = _v1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var $elm$core$List$take = F2(
+	function (n, list) {
+		return A3($elm$core$List$takeFast, 0, n, list);
+	});
+var $author$project$Search$DataTypes$FacetChecked = F3(
+	function (a, b, c) {
+		return {$: 'FacetChecked', a: a, b: b, c: c};
+	});
+var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
+var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
+var $mdgriffith$elm_ui$Internal$Model$Right = {$: 'Right'};
+var $mdgriffith$elm_ui$Element$alignRight = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Right);
+var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
+var $author$project$UI$Style$fontBaseSize = $mdgriffith$elm_ui$Element$Font$size(16);
+var $author$project$UI$Style$bodyRegular = $author$project$UI$Style$fontBaseSize;
+var $mdgriffith$elm_ui$Element$Input$tabindex = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Attributes$tabindex);
+var $mdgriffith$elm_ui$Element$Input$checkbox = F2(
+	function (attrs, _v0) {
+		var label = _v0.label;
+		var icon = _v0.icon;
+		var checked = _v0.checked;
+		var onChange = _v0.onChange;
+		var attributes = _Utils_ap(
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$Input$isHiddenLabel(label) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Element$spacing(6),
+					$mdgriffith$elm_ui$Internal$Model$Attr(
+					$elm$html$Html$Events$onClick(
+						onChange(!checked))),
+					$mdgriffith$elm_ui$Element$Region$announce,
+					$mdgriffith$elm_ui$Element$Input$onKeyLookup(
+					function (code) {
+						return _Utils_eq(code, $mdgriffith$elm_ui$Element$Input$enter) ? $elm$core$Maybe$Just(
+							onChange(!checked)) : (_Utils_eq(code, $mdgriffith$elm_ui$Element$Input$space) ? $elm$core$Maybe$Just(
+							onChange(!checked)) : $elm$core$Maybe$Nothing);
+					}),
+					$mdgriffith$elm_ui$Element$Input$tabindex(0),
+					$mdgriffith$elm_ui$Element$pointer,
+					$mdgriffith$elm_ui$Element$alignLeft,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			attrs);
+		return A3(
+			$mdgriffith$elm_ui$Element$Input$applyLabel,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$Attr(
+					A2($elm$html$Html$Attributes$attribute, 'role', 'checkbox')),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Internal$Model$Attr(
+						A2(
+							$elm$html$Html$Attributes$attribute,
+							'aria-checked',
+							checked ? 'true' : 'false')),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$Input$hiddenLabelAttribute(label),
+						attributes))),
+			label,
+			A4(
+				$mdgriffith$elm_ui$Internal$Model$element,
+				$mdgriffith$elm_ui$Internal$Model$asEl,
+				$mdgriffith$elm_ui$Internal$Model$div,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$centerY,
+						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink)
+					]),
+				$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+					_List_fromArray(
+						[
+							icon(checked)
+						]))));
+	});
+var $mdgriffith$elm_ui$Internal$Flag$fontAlignment = $mdgriffith$elm_ui$Internal$Flag$flag(12);
+var $mdgriffith$elm_ui$Element$Font$center = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontAlignment, $mdgriffith$elm_ui$Internal$Style$classes.textCenter);
+var $elm$core$Basics$pi = _Basics_pi;
+var $elm$core$Basics$degrees = function (angleInDegrees) {
+	return (angleInDegrees * $elm$core$Basics$pi) / 180;
+};
+var $mdgriffith$elm_ui$Internal$Model$Rotate = F2(
+	function (a, b) {
+		return {$: 'Rotate', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$rotate = $mdgriffith$elm_ui$Internal$Flag$flag(24);
+var $mdgriffith$elm_ui$Element$rotate = function (angle) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$TransformComponent,
+		$mdgriffith$elm_ui$Internal$Flag$rotate,
+		A2(
+			$mdgriffith$elm_ui$Internal$Model$Rotate,
+			_Utils_Tuple3(0, 0, 1),
+			angle));
+};
+var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[
+				shadow.inset ? 'box-inset' : 'box-',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.size) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
+			]));
+};
+var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
+var $mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
+	var shade = {blur: almostShade.blur, color: almostShade.color, inset: false, offset: almostShade.offset, size: almostShade.size};
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$shadows,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Single,
+			$mdgriffith$elm_ui$Internal$Model$boxShadowClass(shade),
+			'box-shadow',
+			$mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
+};
+var $mdgriffith$elm_ui$Element$transparent = function (on) {
+	return on ? A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$transparency,
+		A2($mdgriffith$elm_ui$Internal$Model$Transparency, 'transparent', 1.0)) : A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$transparency,
+		A2($mdgriffith$elm_ui$Internal$Model$Transparency, 'visible', 0.0));
+};
+var $mdgriffith$elm_ui$Element$Border$widthXY = F2(
+	function (x, y) {
+		return A2(
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$borderWidth,
+			A5(
+				$mdgriffith$elm_ui$Internal$Model$BorderWidth,
+				'b-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y))),
+				y,
+				x,
+				y,
+				x));
+	});
+var $mdgriffith$elm_ui$Element$Border$widthEach = function (_v0) {
+	var bottom = _v0.bottom;
+	var top = _v0.top;
+	var left = _v0.left;
+	var right = _v0.right;
+	return (_Utils_eq(top, bottom) && _Utils_eq(left, right)) ? (_Utils_eq(top, right) ? $mdgriffith$elm_ui$Element$Border$width(top) : A2($mdgriffith$elm_ui$Element$Border$widthXY, left, top)) : A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$borderWidth,
+		A5(
+			$mdgriffith$elm_ui$Internal$Model$BorderWidth,
+			'b-' + ($elm$core$String$fromInt(top) + ('-' + ($elm$core$String$fromInt(right) + ('-' + ($elm$core$String$fromInt(bottom) + ('-' + $elm$core$String$fromInt(left))))))),
+			top,
+			right,
+			bottom,
+			left));
+};
+var $mdgriffith$elm_ui$Element$Input$defaultCheckbox = function (checked) {
+	return A2(
+		$mdgriffith$elm_ui$Element$el,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Internal$Model$htmlClass('focusable'),
+				$mdgriffith$elm_ui$Element$width(
+				$mdgriffith$elm_ui$Element$px(14)),
+				$mdgriffith$elm_ui$Element$height(
+				$mdgriffith$elm_ui$Element$px(14)),
+				$mdgriffith$elm_ui$Element$Font$color($mdgriffith$elm_ui$Element$Input$white),
+				$mdgriffith$elm_ui$Element$centerY,
+				$mdgriffith$elm_ui$Element$Font$size(9),
+				$mdgriffith$elm_ui$Element$Font$center,
+				$mdgriffith$elm_ui$Element$Border$rounded(3),
+				$mdgriffith$elm_ui$Element$Border$color(
+				checked ? A3($mdgriffith$elm_ui$Element$rgb, 59 / 255, 153 / 255, 252 / 255) : A3($mdgriffith$elm_ui$Element$rgb, 211 / 255, 211 / 255, 211 / 255)),
+				$mdgriffith$elm_ui$Element$Border$shadow(
+				{
+					blur: 1,
+					color: checked ? A4($mdgriffith$elm_ui$Element$rgba, 238 / 255, 238 / 255, 238 / 255, 0) : A3($mdgriffith$elm_ui$Element$rgb, 238 / 255, 238 / 255, 238 / 255),
+					offset: _Utils_Tuple2(0, 0),
+					size: 1
+				}),
+				$mdgriffith$elm_ui$Element$Background$color(
+				checked ? A3($mdgriffith$elm_ui$Element$rgb, 59 / 255, 153 / 255, 252 / 255) : $mdgriffith$elm_ui$Element$Input$white),
+				$mdgriffith$elm_ui$Element$Border$width(
+				checked ? 0 : 1),
+				$mdgriffith$elm_ui$Element$inFront(
+				A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$Border$color($mdgriffith$elm_ui$Element$Input$white),
+							$mdgriffith$elm_ui$Element$height(
+							$mdgriffith$elm_ui$Element$px(6)),
+							$mdgriffith$elm_ui$Element$width(
+							$mdgriffith$elm_ui$Element$px(9)),
+							$mdgriffith$elm_ui$Element$rotate(
+							$elm$core$Basics$degrees(-45)),
+							$mdgriffith$elm_ui$Element$centerX,
+							$mdgriffith$elm_ui$Element$centerY,
+							$mdgriffith$elm_ui$Element$moveUp(1),
+							$mdgriffith$elm_ui$Element$transparent(!checked),
+							$mdgriffith$elm_ui$Element$Border$widthEach(
+							{bottom: 2, left: 2, right: 0, top: 0})
+						]),
+					$mdgriffith$elm_ui$Element$none))
+			]),
+		$mdgriffith$elm_ui$Element$none);
+};
+var $mdgriffith$elm_ui$Element$Input$Label = F3(
+	function (a, b, c) {
+		return {$: 'Label', a: a, b: b, c: c};
+	});
+var $mdgriffith$elm_ui$Element$Input$OnRight = {$: 'OnRight'};
+var $mdgriffith$elm_ui$Element$Input$labelRight = $mdgriffith$elm_ui$Element$Input$Label($mdgriffith$elm_ui$Element$Input$OnRight);
+var $elm$core$String$append = _String_append;
+var $elm$regex$Regex$Match = F4(
+	function (match, index, number, submatches) {
+		return {index: index, match: match, number: number, submatches: submatches};
+	});
+var $elm$regex$Regex$findAtMost = _Regex_findAtMost;
+var $elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
+var $elm$regex$Regex$fromString = function (string) {
+	return A2(
+		$elm$regex$Regex$fromStringWith,
+		{caseInsensitive: false, multiline: false},
+		string);
+};
+var $elm$regex$Regex$never = _Regex_never;
+var $elm_community$string_extra$String$Extra$regexFromString = A2(
+	$elm$core$Basics$composeR,
+	$elm$regex$Regex$fromString,
+	$elm$core$Maybe$withDefault($elm$regex$Regex$never));
+var $elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
+var $elm_community$string_extra$String$Extra$softBreakRegexp = function (width) {
+	return $elm_community$string_extra$String$Extra$regexFromString(
+		'.{1,' + ($elm$core$String$fromInt(width) + '}(\\s+|$)|\\S+?(\\s+|$)'));
+};
+var $elm_community$string_extra$String$Extra$softEllipsis = F2(
+	function (howLong, string) {
+		return (_Utils_cmp(
+			$elm$core$String$length(string),
+			howLong) < 1) ? string : function (a) {
+			return A2($elm$core$String$append, a, '...');
+		}(
+			A3(
+				$elm$regex$Regex$replace,
+				$elm_community$string_extra$String$Extra$regexFromString('([\\.,;:\\s])+$'),
+				$elm$core$Basics$always(''),
+				A2(
+					$elm$core$String$join,
+					'',
+					A2(
+						$elm$core$List$map,
+						function ($) {
+							return $.match;
+						},
+						A3(
+							$elm$regex$Regex$findAtMost,
+							1,
+							$elm_community$string_extra$String$Extra$softBreakRegexp(howLong),
+							string)))));
+	});
+var $author$project$Search$Views$Facets$viewSidebarFacetItem = F4(
+	function (currentlySelected, facetfield, fitem, language) {
+		var shouldBeChecked = A2($elm$core$List$member, fitem, currentlySelected);
+		var _v0 = fitem;
+		var value = _v0.a;
+		var label = _v0.b;
+		var count = _v0.c;
+		var fullLabel = A2($author$project$Language$extractLabelFromLanguageMap, language, label);
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
 			_List_fromArray(
@@ -19788,91 +20574,44 @@ var $author$project$Search$Views$Results$viewResult = F2(
 			_List_fromArray(
 				[
 					A2(
-					$mdgriffith$elm_ui$Element$link,
-					_List_Nil,
+					$mdgriffith$elm_ui$Element$Input$checkbox,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$htmlAttribute(
+							$elm$html$Html$Attributes$alt(fullLabel)),
+							$mdgriffith$elm_ui$Element$alignLeft
+						]),
 					{
-						label: A2($author$project$UI$Components$h4, language, result.label),
-						url: result.id
-					})
+						checked: shouldBeChecked,
+						icon: $mdgriffith$elm_ui$Element$Input$defaultCheckbox,
+						label: A2(
+							$mdgriffith$elm_ui$Element$Input$labelRight,
+							_List_fromArray(
+								[$author$project$UI$Style$bodyRegular]),
+							$mdgriffith$elm_ui$Element$text(
+								A2($elm_community$string_extra$String$Extra$softEllipsis, 30, fullLabel))),
+						onChange: function (selected) {
+							return A3($author$project$Search$DataTypes$FacetChecked, facetfield, fitem, selected);
+						}
+					}),
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[$mdgriffith$elm_ui$Element$alignRight, $author$project$UI$Style$bodyRegular]),
+					$mdgriffith$elm_ui$Element$text(
+						'(' + ($elm$core$String$fromInt(count) + ')')))
 				]));
 	});
-var $author$project$Search$Views$Results$viewResultList = F2(
-	function (model, language) {
-		var templatedResults = function () {
-			var _v1 = model.response;
-			switch (_v1.$) {
-				case 'Response':
-					var results = _v1.a;
-					return A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$column,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-									]),
-								A2(
-									$elm$core$List$map,
-									function (r) {
-										return A2($author$project$Search$Views$Results$viewResult, r, language);
-									},
-									results.items))
-							]));
-				case 'ApiError':
-					return A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-							]),
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$text(model.errorMessage)
-							]));
-				case 'Loading':
-					return A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-							]),
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$text('Loading results...')
-							]));
-				default:
-					return A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-							]),
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$text('No results to show.')
-							]));
-			}
-		}();
-		var paginator = function () {
-			var _v0 = model.response;
-			if (_v0.$ === 'Response') {
-				var resp = _v0.a;
-				return $author$project$Search$Views$Results$viewResponsePaginator(resp.view);
-			} else {
-				return $mdgriffith$elm_ui$Element$none;
-			}
-		}();
+var $author$project$Search$Views$Facets$viewSidebarFacet = F3(
+	function (currentlySelected, facet, language) {
+		var facetItems = facet.expanded ? facet.items : A2($elm$core$List$take, 10, facet.items);
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
 			_List_fromArray(
 				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$paddingEach(
+					{bottom: 20, left: 0, right: 0, top: 0})
 				]),
 			_List_fromArray(
 				[
@@ -19883,11 +20622,240 @@ var $author$project$Search$Views$Results$viewResultList = F2(
 							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
 						]),
 					_List_fromArray(
-						[templatedResults, paginator]))
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h6, language, facet.label)
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									A2(
+										$elm$core$List$map,
+										function (t) {
+											return A4($author$project$Search$Views$Facets$viewSidebarFacetItem, currentlySelected, facet.alias, t, language);
+										},
+										facetItems))
+								]))
+						]))
 				]));
 	});
-var $author$project$Search$Views$View$viewSearchResultsDesktop = function (model) {
+var $author$project$Search$Views$Facets$viewSidebarFacets = function (model) {
 	var language = model.language;
+	var currentlySelected = model.selectedFacets;
+	var templatedResults = function () {
+		var _v0 = model.response;
+		if (_v0.$ === 'Response') {
+			var results = _v0.a;
+			var sidebarFacetList = $author$project$Search$Views$Facets$partitionFacetList(results.facets).b;
+			var sidebarFacets = A2(
+				$elm$core$List$map,
+				function (f) {
+					return A3($author$project$Search$Views$Facets$viewSidebarFacet, currentlySelected, f, language);
+				},
+				sidebarFacetList);
+			return sidebarFacets;
+		} else {
+			return _List_fromArray(
+				[$mdgriffith$elm_ui$Element$none]);
+		}
+	}();
+	return A2(
+		$mdgriffith$elm_ui$Element$row,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$mdgriffith$elm_ui$Element$column,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					]),
+				templatedResults)
+			]));
+};
+var $author$project$UI$Style$pink = A3($mdgriffith$elm_ui$Element$rgb255, 252, 176, 179);
+var $author$project$Search$DataTypes$NoOp = {$: 'NoOp'};
+var $mdgriffith$elm_ui$Element$Input$OnLeft = {$: 'OnLeft'};
+var $mdgriffith$elm_ui$Element$Input$labelLeft = $mdgriffith$elm_ui$Element$Input$Label($mdgriffith$elm_ui$Element$Input$OnLeft);
+var $author$project$Search$Views$Facets$viewTypeFacetItem = F2(
+	function (fitem, language) {
+		var _v0 = fitem;
+		var value = _v0.a;
+		var label = _v0.b;
+		var count = _v0.c;
+		var fullLabel = A2($author$project$Language$extractLabelFromLanguageMap, language, label);
+		return A2(
+			$mdgriffith$elm_ui$Element$column,
+			_List_fromArray(
+				[$mdgriffith$elm_ui$Element$centerX]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$Input$checkbox,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$alignLeft,
+							A2($mdgriffith$elm_ui$Element$spacingXY, 20, 0)
+						]),
+					{
+						checked: false,
+						icon: function (b) {
+							return $mdgriffith$elm_ui$Element$none;
+						},
+						label: A2(
+							$mdgriffith$elm_ui$Element$Input$labelLeft,
+							_List_fromArray(
+								[$author$project$UI$Style$bodyRegular, $mdgriffith$elm_ui$Element$alignLeft]),
+							$mdgriffith$elm_ui$Element$text(
+								fullLabel + (' (' + ($elm$core$String$fromInt(count) + ')')))),
+						onChange: function (t) {
+							return $author$project$Search$DataTypes$NoOp;
+						}
+					})
+				]));
+	});
+var $author$project$Search$Views$Facets$viewTypeFacetItems = F2(
+	function (typeFacet, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$Border$widthEach(
+					{bottom: 1, left: 0, right: 0, top: 0}),
+					$mdgriffith$elm_ui$Element$Border$color($author$project$UI$Style$pink),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10),
+					$mdgriffith$elm_ui$Element$centerX,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			A2(
+				$elm$core$List$map,
+				function (t) {
+					return A2($author$project$Search$Views$Facets$viewTypeFacetItem, t, language);
+				},
+				typeFacet.items));
+	});
+var $author$project$Search$Views$Facets$viewTypeFacet = function (model) {
+	var language = model.language;
+	var templatedResults = function () {
+		var _v0 = model.response;
+		if (_v0.$ === 'Response') {
+			var results = _v0.a;
+			var typeFacet = $elm$core$List$head(
+				$author$project$Search$Views$Facets$partitionFacetList(results.facets).a);
+			var typeFacetItems = function () {
+				if (typeFacet.$ === 'Just') {
+					var tf = typeFacet.a;
+					return A2($author$project$Search$Views$Facets$viewTypeFacetItems, tf, language);
+				} else {
+					return $mdgriffith$elm_ui$Element$none;
+				}
+			}();
+			return typeFacetItems;
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
+	}();
+	return templatedResults;
+};
+var $author$project$Search$Views$View$viewHasSearchResults = function (model) {
+	return _List_fromArray(
+		[
+			$author$project$Search$Views$Facets$viewTypeFacet(model),
+			A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$alignTop,
+					A2($mdgriffith$elm_ui$Element$spacingXY, 20, 20),
+					$mdgriffith$elm_ui$Element$paddingEach(
+					{bottom: 0, left: 0, right: 0, top: 20})
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width(
+							$mdgriffith$elm_ui$Element$fillPortion(3)),
+							$mdgriffith$elm_ui$Element$alignTop
+						]),
+					_List_fromArray(
+						[
+							$author$project$Search$Views$Facets$viewSidebarFacets(model)
+						])),
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width(
+							$mdgriffith$elm_ui$Element$fillPortion(9)),
+							$mdgriffith$elm_ui$Element$alignTop
+						]),
+					_List_fromArray(
+						[
+							$author$project$Search$Views$Results$viewResultList(model)
+						]))
+				]))
+		]);
+};
+var $author$project$Search$Views$View$viewSearchResultsSection = function (model) {
+	var resp = model.response;
+	var itemCount = function () {
+		if (resp.$ === 'Response') {
+			var searchResponse = resp.a;
+			return $elm$core$List$length(searchResponse.items);
+		} else {
+			return 0;
+		}
+	}();
+	var viewResults = (itemCount > 0) ? $author$project$Search$Views$View$viewHasSearchResults(model) : $author$project$Search$Views$View$viewHasNoSearchResults(model);
+	return A2(
+		$mdgriffith$elm_ui$Element$row,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+				$mdgriffith$elm_ui$Element$alignTop
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$mdgriffith$elm_ui$Element$column,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
+						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$centerX,
+						$mdgriffith$elm_ui$Element$alignTop
+					]),
+				viewResults)
+			]));
+};
+var $author$project$Search$Views$View$viewSearchResultsDesktop = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
@@ -19907,87 +20875,8 @@ var $author$project$Search$Views$View$viewSearchResultsDesktop = function (model
 					]),
 				_List_fromArray(
 					[
-						A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-								$mdgriffith$elm_ui$Element$height(
-								$mdgriffith$elm_ui$Element$px(120)),
-								$author$project$UI$Style$greyBackground
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$column,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
-										$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-										$mdgriffith$elm_ui$Element$centerX
-									]),
-								_List_fromArray(
-									[
-										$author$project$Search$Views$View$viewSearchKeywordInput(model)
-									]))
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-								$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-								$mdgriffith$elm_ui$Element$alignTop
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$column,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$width($author$project$UI$Style$minMaxFillDesktop),
-										$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-										$mdgriffith$elm_ui$Element$centerX,
-										$mdgriffith$elm_ui$Element$alignTop
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$mdgriffith$elm_ui$Element$row,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-												$mdgriffith$elm_ui$Element$alignTop,
-												A2($mdgriffith$elm_ui$Element$paddingXY, 0, 20)
-											]),
-										_List_fromArray(
-											[
-												A2(
-												$mdgriffith$elm_ui$Element$column,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$width(
-														$mdgriffith$elm_ui$Element$fillPortion(3)),
-														$mdgriffith$elm_ui$Element$alignTop
-													]),
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$text('Sidebar')
-													])),
-												A2(
-												$mdgriffith$elm_ui$Element$column,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$width(
-														$mdgriffith$elm_ui$Element$fillPortion(9))
-													]),
-												_List_fromArray(
-													[
-														A2($author$project$Search$Views$Results$viewResultList, model, language)
-													]))
-											]))
-									]))
-							]))
+						$author$project$Search$Views$View$viewSearchBarSection(model),
+						$author$project$Search$Views$View$viewSearchResultsSection(model)
 					]))
 			]));
 };
@@ -20048,4 +20937,4 @@ _Platform_export({'SearchApp':{'init':$author$project$SearchApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, items : List.List Api.Search.FacetItem }"},"Api.Search.FacetList":{"args":[],"type":"{ items : List.List Api.Search.Facet }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : Api.Search.FacetList }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["String.String"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"UrlChange":["Url.Url"],"UrlRequest":["Browser.UrlRequest"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Api.Search.FacetItem":{"args":[],"tags":{"FacetItem":["String.String","Language.LanguageMap","Basics.Bool","Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, expanded : Basics.Bool, items : List.List Api.Search.FacetItem }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : List.List Api.Search.Facet }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["String.String"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"UrlChange":["Url.Url"],"UrlRequest":["Browser.UrlRequest"],"LanguageSelectChanged":["String.String"],"FacetChecked":["String.String","Api.Search.FacetItem","Basics.Bool"],"NoOp":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Api.Search.FacetItem":{"args":[],"tags":{"FacetItem":["String.String","Language.LanguageMap","Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
