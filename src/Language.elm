@@ -3,6 +3,7 @@ module Language exposing
     , LanguageMap
     , LanguageValues(..)
     , extractLabelFromLanguageMap
+    , extractTextFromLanguageMap
     , languageDecoder
     , languageMapDecoder
     , languageOptions
@@ -15,6 +16,7 @@ module Language exposing
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)
+import List.Extra as LE
 
 
 type Language
@@ -93,10 +95,20 @@ parseLanguageToLocale lang =
 extractLabelFromLanguageMap : Language -> LanguageMap -> String
 extractLabelFromLanguageMap lang langMap =
     {-
+       Returns a single string from a language map. Multiple values for a single language are
+       concatenated together with a semicolon.
+    -}
+    String.join "; " (extractTextFromLanguageMap lang langMap)
+
+
+extractTextFromLanguageMap : Language -> LanguageMap -> List String
+extractTextFromLanguageMap lang langMap =
+    {-
        if there is a language value that matches one in the language map, return the string value of the concatenated list.
        if there is no language value that matches the language map, but there is a "None" language, return the string value of the concatenated list
        if there is no language value matching the language map, and there is no None language in the map, return the string value of the concatenated list for English.
-       When there are multiple values in the list of strings, join them with a semicolon.
+
+       Return a list of the strings, which can either be concatenated together or marked up in paragraphs.
     -}
     let
         firstChoice =
@@ -125,7 +137,7 @@ extractLabelFromLanguageMap lang langMap =
                         Nothing ->
                             lastResort
     in
-    String.join "; " chosenLangValues
+    chosenLangValues
 
 
 languageDecoder : String -> Decoder Language
