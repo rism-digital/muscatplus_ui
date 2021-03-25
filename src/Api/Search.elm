@@ -162,8 +162,11 @@ buildQueryParameters queryArgs =
                     let
                         (Filter field value) =
                             f
+
+                        fieldValue =
+                            field ++ ":" ++ value
                     in
-                    Url.Builder.string "fq" (field ++ ":" ++ value)
+                    Url.Builder.string "fq" fieldValue
                 )
                 queryArgs.filters
 
