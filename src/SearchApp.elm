@@ -44,7 +44,7 @@ update msg model =
                         Just textInput
 
                 newQ =
-                    SearchQueryArgs newInp currentQ.filters currentQ.sort currentQ.page
+                    SearchQueryArgs newInp currentQ.filters currentQ.sort 1
             in
             ( { model | query = newQ }, Cmd.none )
 
@@ -133,7 +133,7 @@ update msg model =
                         LE.remove converted currentFilters
 
                 newQuery =
-                    { currentQuery | filters = newFilters }
+                    { currentQuery | filters = newFilters, page = 1 }
             in
             update SearchSubmit { model | query = newQuery, selectedFacets = newSelected }
 
