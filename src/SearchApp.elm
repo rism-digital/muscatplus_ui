@@ -135,7 +135,7 @@ update msg model =
                         LE.remove converted currentFilters
 
                 newQuery =
-                    { currentQuery | filters = newFilters }
+                    { currentQuery | filters = newFilters, page = 1 }
             in
             update SearchSubmit { model | query = newQuery, selectedFacets = newSelected }
 
