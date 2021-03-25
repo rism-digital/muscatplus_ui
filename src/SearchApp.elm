@@ -38,12 +38,10 @@ update msg model =
                     model.query
 
                 newInp =
-                    case String.isEmpty textInput of
-                        True ->
-                            Nothing
-
-                        False ->
-                            Just textInput
+                    if String.isEmpty textInput then
+                        Nothing 
+                    else 
+                        Just textInput
 
                 newQ =
                     SearchQueryArgs newInp currentQ.filters currentQ.sort 1
