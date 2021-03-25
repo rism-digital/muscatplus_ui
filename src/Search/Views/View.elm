@@ -156,20 +156,19 @@ viewSearchResultsSection model =
         resp =
             model.response
 
-        itemCount =
+        viewResults =
             case resp of
                 Response searchResponse ->
-                    List.length searchResponse.items
+                    viewHasSearchResults model
+
+                ApiError ->
+                    viewSearchResultsError model
+
+                Loading ->
+                    viewSearchResultsLoading model
 
                 _ ->
-                    0
-
-        viewResults =
-            if itemCount > 0 then
-                viewHasSearchResults model
-
-            else
-                viewHasNoSearchResults model
+                    viewHasNoSearchResults model
     in
     row
         [ width fill
@@ -186,11 +185,27 @@ viewSearchResultsSection model =
         ]
 
 
+viewSearchResultsError : Model -> List (Element Msg)
+viewSearchResultsError model =
+    [ row
+        [ width fill ]
+        [ text model.errorMessage ]
+    ]
+
+
 viewHasNoSearchResults : Model -> List (Element Msg)
 viewHasNoSearchResults model =
     [ row
         [ width fill ]
         [ text "No results were returned" ]
+    ]
+
+
+viewSearchResultsLoading : Model -> List (Element Msg)
+viewSearchResultsLoading model =
+    [ row
+        [ width fill ]
+        [ text "Loading results" ]
     ]
 
 
