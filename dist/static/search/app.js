@@ -11821,7 +11821,8 @@ var $author$project$Api$Search$buildQueryParameters = function (queryArgs) {
 			var _v0 = f;
 			var field = _v0.a;
 			var value = _v0.b;
-			return A2($elm$url$Url$Builder$string, 'fq', field + (':' + value));
+			var fieldValue = field + (':' + value);
+			return A2($elm$url$Url$Builder$string, 'fq', fieldValue);
 		},
 		queryArgs.filters);
 	return $elm$core$List$concat(
@@ -18164,7 +18165,7 @@ var $elm$core$List$head = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $author$project$Language$extractLabelFromLanguageMap = F2(
+var $author$project$Language$extractTextFromLanguageMap = F2(
 	function (lang, langMap) {
 		var lastResort = _List_fromArray(
 			['[No language value found]']);
@@ -18199,7 +18200,14 @@ var $author$project$Language$extractLabelFromLanguageMap = F2(
 				}
 			}
 		}();
-		return A2($elm$core$String$join, '; ', chosenLangValues);
+		return chosenLangValues;
+	});
+var $author$project$Language$extractLabelFromLanguageMap = F2(
+	function (lang, langMap) {
+		return A2(
+			$elm$core$String$join,
+			'; ',
+			A2($author$project$Language$extractTextFromLanguageMap, lang, langMap));
 	});
 var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
 var $author$project$UI$Style$lightGrey = A3($mdgriffith$elm_ui$Element$rgb255, 241, 244, 249);
@@ -20822,17 +20830,51 @@ var $author$project$Search$Views$View$viewHasSearchResults = function (model) {
 				]))
 		]);
 };
+var $author$project$Search$Views$View$viewSearchResultsError = function (model) {
+	return _List_fromArray(
+		[
+			A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$text(model.errorMessage)
+				]))
+		]);
+};
+var $author$project$Search$Views$View$viewSearchResultsLoading = function (model) {
+	return _List_fromArray(
+		[
+			A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$text('Loading results')
+				]))
+		]);
+};
 var $author$project$Search$Views$View$viewSearchResultsSection = function (model) {
 	var resp = model.response;
-	var itemCount = function () {
-		if (resp.$ === 'Response') {
-			var searchResponse = resp.a;
-			return $elm$core$List$length(searchResponse.items);
-		} else {
-			return 0;
+	var viewResults = function () {
+		switch (resp.$) {
+			case 'Response':
+				var searchResponse = resp.a;
+				return $author$project$Search$Views$View$viewHasSearchResults(model);
+			case 'ApiError':
+				return $author$project$Search$Views$View$viewSearchResultsError(model);
+			case 'Loading':
+				return $author$project$Search$Views$View$viewSearchResultsLoading(model);
+			default:
+				return $author$project$Search$Views$View$viewHasNoSearchResults(model);
 		}
 	}();
-	var viewResults = (itemCount > 0) ? $author$project$Search$Views$View$viewHasSearchResults(model) : $author$project$Search$Views$View$viewHasNoSearchResults(model);
 	return A2(
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(

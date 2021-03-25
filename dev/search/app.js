@@ -12221,16 +12221,9 @@ var $author$project$SearchApp$update = F2(
 					}
 				case 'SearchInput':
 					var textInput = msg.a;
-					var newInp = function () {
-						var _v2 = $elm$core$String$isEmpty(textInput);
-						if (_v2) {
-							return $elm$core$Maybe$Nothing;
-						} else {
-							return $elm$core$Maybe$Just(textInput);
-						}
-					}();
+					var newInp = $elm$core$String$isEmpty(textInput) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(textInput);
 					var currentQ = model.query;
-					var newQ = A4($author$project$Api$Search$SearchQueryArgs, newInp, currentQ.filters, currentQ.sort, currentQ.page);
+					var newQ = A4($author$project$Api$Search$SearchQueryArgs, newInp, currentQ.filters, currentQ.sort, 1);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -12264,17 +12257,17 @@ var $author$project$SearchApp$update = F2(
 					if (urlRequest.$ === 'Internal') {
 						var url = urlRequest.a;
 						var query = function () {
-							var _v5 = $author$project$Search$DataTypes$parseUrl(url);
-							if (_v5.$ === 'SearchPageRoute') {
-								var qp = _v5.a;
+							var _v4 = $author$project$Search$DataTypes$parseUrl(url);
+							if (_v4.$ === 'SearchPageRoute') {
+								var qp = _v4.a;
 								return qp;
 							} else {
 								return model.query;
 							}
 						}();
 						var state = function () {
-							var _v4 = $author$project$Search$DataTypes$routeMatches(url);
-							if (_v4.$ === 'Just') {
+							var _v3 = $author$project$Search$DataTypes$routeMatches(url);
+							if (_v3.$ === 'Just') {
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
@@ -12337,7 +12330,7 @@ var $author$project$SearchApp$update = F2(
 					var newFilters = checked ? A2($elm$core$List$cons, converted, currentFilters) : A2($elm_community$list_extra$List$Extra$remove, converted, currentFilters);
 					var newQuery = _Utils_update(
 						currentQuery,
-						{filters: newFilters});
+						{filters: newFilters, page: 1});
 					var $temp$msg = $author$project$Search$DataTypes$SearchSubmit,
 						$temp$model = _Utils_update(
 						model,
