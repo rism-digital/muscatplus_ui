@@ -46,7 +46,7 @@ update msg model =
                             Just textInput
 
                 newQ =
-                    SearchQueryArgs newInp currentQ.filters currentQ.sort currentQ.page
+                    SearchQueryArgs newInp currentQ.filters currentQ.sort 1
             in
             ( { model | query = newQ }, Cmd.none )
 
