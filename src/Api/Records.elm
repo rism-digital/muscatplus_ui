@@ -129,7 +129,7 @@ type alias PersonBody =
     { id : String
     , label : LanguageMap
     , sources : Maybe PersonSources
-    , nameVariants : Maybe PersonNameVariants
+    , summary : List LabelValue
     , externalReferences : Maybe (List PersonExternalReferences)
     }
 
@@ -312,13 +312,6 @@ personSourcesDecoder =
         |> required "totalItems" int
 
 
-personNameVariantsDecoder : Decoder PersonNameVariants
-personNameVariantsDecoder =
-    Decode.succeed PersonNameVariants
-        |> required "label" labelDecoder
-        |> required "values" labelDecoder
-
-
 personExternalReferencesDecoder : Decoder PersonExternalReferences
 personExternalReferencesDecoder =
     Decode.succeed PersonExternalReferences
@@ -337,7 +330,7 @@ personBodyDecoder =
         |> required "id" string
         |> required "label" labelDecoder
         |> optional "sources" (Decode.maybe personSourcesDecoder) Nothing
-        |> optional "nameVariants" (Decode.maybe personNameVariantsDecoder) Nothing
+        |> required "summary" (list noteDecoder)
         |> optional "seeAlso" (Decode.maybe (list personExternalReferencesDecoder)) Nothing
 
 
