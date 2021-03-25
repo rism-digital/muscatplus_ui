@@ -1,11 +1,11 @@
 module UI.Components exposing (..)
 
-import Element exposing (Attr, Attribute, Element, el, fill, html, link, paragraph, text, width)
+import Element exposing (Attr, Attribute, Element, el, fill, html, link, paragraph, spacing, text, textColumn, width)
 import Element.Font as Font
 import Html as HT
 import Html.Attributes as HA
 import Html.Events as HE
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import UI.Style exposing (bodyRegular, darkBlue, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
 
 
@@ -61,7 +61,27 @@ label language langmap =
 
 value : Language -> LanguageMap -> Element msg
 value language langmap =
-    el [ bodyRegular ] (paragraph [ width fill ] [ text (extractLabelFromLanguageMap language langmap) ])
+    textColumn
+        [ spacing 10
+        , bodyRegular
+        ]
+        (styledParagraphs (extractTextFromLanguageMap language langmap))
+
+
+{-|
+
+    Wraps a list of string values in paragraph markers so that they can be properly spaced, etc.
+
+-}
+styledParagraphs : List String -> List (Element msg)
+styledParagraphs textList =
+    List.map
+        (\t ->
+            paragraph
+                []
+                [ el [] (text t) ]
+        )
+        textList
 
 
 styledLink : String -> String -> Element msg
