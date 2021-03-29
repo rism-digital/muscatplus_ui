@@ -11676,9 +11676,12 @@ var $author$project$Api$Search$SearchResult = F4(
 	function (id, label, type_, typeLabel) {
 		return {id: id, label: label, typeLabel: typeLabel, type_: type_};
 	});
+var $author$project$Api$DataTypes$Incipit = {$: 'Incipit'};
 var $author$project$Api$DataTypes$Institution = {$: 'Institution'};
 var $author$project$Api$DataTypes$Person = {$: 'Person'};
+var $author$project$Api$DataTypes$Place = {$: 'Place'};
 var $author$project$Api$DataTypes$Source = {$: 'Source'};
+var $author$project$Api$DataTypes$Unknown = {$: 'Unknown'};
 var $author$project$Api$DataTypes$recordTypeFromJsonType = function (jsonType) {
 	switch (jsonType) {
 		case 'rism:Source':
@@ -11687,8 +11690,12 @@ var $author$project$Api$DataTypes$recordTypeFromJsonType = function (jsonType) {
 			return $author$project$Api$DataTypes$Person;
 		case 'rism:Institution':
 			return $author$project$Api$DataTypes$Institution;
+		case 'rism:Incipit':
+			return $author$project$Api$DataTypes$Incipit;
+		case 'rism:Place':
+			return $author$project$Api$DataTypes$Place;
 		default:
-			return $author$project$Api$DataTypes$Source;
+			return $author$project$Api$DataTypes$Unknown;
 	}
 };
 var $author$project$Api$DataTypes$typeDecoder = A2(
@@ -12221,16 +12228,9 @@ var $author$project$SearchApp$update = F2(
 					}
 				case 'SearchInput':
 					var textInput = msg.a;
-					var newInp = function () {
-						var _v2 = $elm$core$String$isEmpty(textInput);
-						if (_v2) {
-							return $elm$core$Maybe$Nothing;
-						} else {
-							return $elm$core$Maybe$Just(textInput);
-						}
-					}();
+					var newInp = $elm$core$String$isEmpty(textInput) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(textInput);
 					var currentQ = model.query;
-					var newQ = A4($author$project$Api$Search$SearchQueryArgs, newInp, currentQ.filters, currentQ.sort, currentQ.page);
+					var newQ = A4($author$project$Api$Search$SearchQueryArgs, newInp, currentQ.filters, currentQ.sort, 1);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -12264,17 +12264,17 @@ var $author$project$SearchApp$update = F2(
 					if (urlRequest.$ === 'Internal') {
 						var url = urlRequest.a;
 						var query = function () {
-							var _v5 = $author$project$Search$DataTypes$parseUrl(url);
-							if (_v5.$ === 'SearchPageRoute') {
-								var qp = _v5.a;
+							var _v4 = $author$project$Search$DataTypes$parseUrl(url);
+							if (_v4.$ === 'SearchPageRoute') {
+								var qp = _v4.a;
 								return qp;
 							} else {
 								return model.query;
 							}
 						}();
 						var state = function () {
-							var _v4 = $author$project$Search$DataTypes$routeMatches(url);
-							if (_v4.$ === 'Just') {
+							var _v3 = $author$project$Search$DataTypes$routeMatches(url);
+							if (_v3.$ === 'Just') {
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
@@ -12337,7 +12337,7 @@ var $author$project$SearchApp$update = F2(
 					var newFilters = checked ? A2($elm$core$List$cons, converted, currentFilters) : A2($elm_community$list_extra$List$Extra$remove, converted, currentFilters);
 					var newQuery = _Utils_update(
 						currentQuery,
-						{filters: newFilters});
+						{filters: newFilters, page: 1});
 					var $temp$msg = $author$project$Search$DataTypes$SearchSubmit,
 						$temp$model = _Utils_update(
 						model,
@@ -20979,4 +20979,4 @@ _Platform_export({'SearchApp':{'init':$author$project$SearchApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, expanded : Basics.Bool, items : List.List Api.Search.FacetItem }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : List.List Api.Search.Facet }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["String.String"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"UrlChange":["Url.Url"],"UrlRequest":["Browser.UrlRequest"],"LanguageSelectChanged":["String.String"],"FacetChecked":["String.String","Api.Search.FacetItem","Basics.Bool"],"NoOp":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Api.Search.FacetItem":{"args":[],"tags":{"FacetItem":["String.String","Language.LanguageMap","Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Search.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Api.Search.Facet":{"args":[],"type":"{ alias : String.String, label : Language.LanguageMap, expanded : Basics.Bool, items : List.List Api.Search.FacetItem }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Search.SearchPagination":{"args":[],"type":"{ next : Maybe.Maybe String.String, previous : Maybe.Maybe String.String, first : String.String, last : Maybe.Maybe String.String, totalPages : Basics.Int }"},"Api.Search.SearchResponse":{"args":[],"type":"{ id : String.String, items : List.List Api.Search.SearchResult, view : Api.Search.SearchPagination, facets : List.List Api.Search.Facet }"},"Api.Search.SearchResult":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, type_ : Api.DataTypes.RecordType, typeLabel : Language.LanguageMap }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Search.DataTypes.Msg":{"args":[],"tags":{"ReceivedSearchResponse":["Result.Result Http.Error Api.Search.SearchResponse"],"SearchInput":["String.String"],"SearchSubmit":[],"OnWindowResize":["Element.Device"],"UrlChange":["Url.Url"],"UrlRequest":["Browser.UrlRequest"],"LanguageSelectChanged":["String.String"],"FacetChecked":["String.String","Api.Search.FacetItem","Basics.Bool"],"NoOp":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Api.Search.FacetItem":{"args":[],"tags":{"FacetItem":["String.String","Language.LanguageMap","Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[],"Place":[],"Incipit":[],"Unknown":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));

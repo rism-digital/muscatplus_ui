@@ -11235,10 +11235,49 @@ var $author$project$Api$Records$institutionResponseDecoder = A2($elm$json$Json$D
 var $author$project$Api$Records$PersonResponse = function (a) {
 	return {$: 'PersonResponse', a: a};
 };
-var $author$project$Api$Records$PersonBody = F5(
-	function (id, label, sources, summary, externalReferences) {
-		return {externalReferences: externalReferences, id: id, label: label, sources: sources, summary: summary};
+var $author$project$Api$Records$PersonBody = F9(
+	function (id, label, sources, summary, seeAlso, nameVariants, relations, notes, externalResources) {
+		return {externalResources: externalResources, id: id, label: label, nameVariants: nameVariants, notes: notes, relations: relations, seeAlso: seeAlso, sources: sources, summary: summary};
 	});
+var $author$project$Api$Records$ExternalResourceList = F2(
+	function (label, items) {
+		return {items: items, label: label};
+	});
+var $author$project$Api$Records$ExternalResource = F2(
+	function (url, label) {
+		return {label: label, url: url};
+	});
+var $author$project$Api$Records$externalResourceDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'label',
+	$author$project$Api$Search$labelDecoder,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'url',
+		$elm$json$Json$Decode$string,
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$ExternalResource)));
+var $author$project$Api$Records$externalResourceListDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Api$Records$externalResourceDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$ExternalResourceList)));
+var $author$project$Api$Records$LabelValue = F2(
+	function (label, value) {
+		return {label: label, value: value};
+	});
+var $author$project$Api$Records$labelValueDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'value',
+	$author$project$Api$Search$labelDecoder,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$LabelValue)));
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$json$Json$Decode$maybe = function (decoder) {
 	return $elm$json$Json$Decode$oneOf(
@@ -11248,19 +11287,19 @@ var $elm$json$Json$Decode$maybe = function (decoder) {
 				$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
 			]));
 };
-var $author$project$Api$Records$LabelValue = F2(
-	function (label, value) {
-		return {label: label, value: value};
+var $author$project$Api$Records$NoteList = F2(
+	function (label, notes) {
+		return {label: label, notes: notes};
 	});
-var $author$project$Api$Records$noteDecoder = A3(
+var $author$project$Api$Records$noteListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'value',
-	$author$project$Api$Search$labelDecoder,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
 		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$LabelValue)));
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$NoteList)));
 var $elm$json$Json$Decode$fail = _Json_fail;
 var $elm$json$Json$Decode$null = _Json_decodeNull;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder = F3(
@@ -11306,19 +11345,134 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional = F4(
 				fallback),
 			decoder);
 	});
-var $author$project$Api$Records$PersonExternalReferences = F2(
-	function (id, type_) {
-		return {id: id, type_: type_};
+var $author$project$Api$Records$PersonNameVariantList = F2(
+	function (label, items) {
+		return {items: items, label: label};
 	});
-var $author$project$Api$Records$personExternalReferencesDecoder = A3(
+var $author$project$Api$Records$personNameVariantListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'type',
+	'items',
+	$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonNameVariantList)));
+var $author$project$Api$Records$PersonRelationList = F2(
+	function (label, items) {
+		return {items: items, label: label};
+	});
+var $author$project$Api$Records$PersonRelation = F2(
+	function (label, items) {
+		return {items: items, label: label};
+	});
+var $author$project$Api$Records$Relationship = F5(
+	function (id, role, qualifier, relatedTo, value) {
+		return {id: id, qualifier: qualifier, relatedTo: relatedTo, role: role, value: value};
+	});
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt = F4(
+	function (path, valDecoder, fallback, decoder) {
+		return A2(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder,
+				A2($elm$json$Json$Decode$at, path, $elm$json$Json$Decode$value),
+				valDecoder,
+				fallback),
+			decoder);
+	});
+var $author$project$Api$Records$RelatedEntity = F3(
+	function (type_, name, id) {
+		return {id: id, name: name, type_: type_};
+	});
+var $author$project$Api$DataTypes$Incipit = {$: 'Incipit'};
+var $author$project$Api$DataTypes$Institution = {$: 'Institution'};
+var $author$project$Api$DataTypes$Person = {$: 'Person'};
+var $author$project$Api$DataTypes$Place = {$: 'Place'};
+var $author$project$Api$DataTypes$Source = {$: 'Source'};
+var $author$project$Api$DataTypes$Unknown = {$: 'Unknown'};
+var $author$project$Api$DataTypes$recordTypeFromJsonType = function (jsonType) {
+	switch (jsonType) {
+		case 'rism:Source':
+			return $author$project$Api$DataTypes$Source;
+		case 'rism:Person':
+			return $author$project$Api$DataTypes$Person;
+		case 'rism:Institution':
+			return $author$project$Api$DataTypes$Institution;
+		case 'rism:Incipit':
+			return $author$project$Api$DataTypes$Incipit;
+		case 'rism:Place':
+			return $author$project$Api$DataTypes$Place;
+		default:
+			return $author$project$Api$DataTypes$Unknown;
+	}
+};
+var $author$project$Api$DataTypes$typeDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (str) {
+		return $elm$json$Json$Decode$succeed(
+			$author$project$Api$DataTypes$recordTypeFromJsonType(str));
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Api$Records$relatedEntityDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'id',
 	$elm$json$Json$Decode$string,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'id',
-		$elm$json$Json$Decode$string,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonExternalReferences)));
+		'name',
+		$author$project$Api$Search$labelDecoder,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'type',
+			$author$project$Api$DataTypes$typeDecoder,
+			$elm$json$Json$Decode$succeed($author$project$Api$Records$RelatedEntity))));
+var $author$project$Api$Records$relationshipDecoder = A4(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+	'value',
+	$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
+	$elm$core$Maybe$Nothing,
+	A4(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+		'relatedTo',
+		$elm$json$Json$Decode$maybe($author$project$Api$Records$relatedEntityDecoder),
+		$elm$core$Maybe$Nothing,
+		A4(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt,
+			_List_fromArray(
+				['qualifier', 'label']),
+			$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
+			$elm$core$Maybe$Nothing,
+			A4(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt,
+				_List_fromArray(
+					['role', 'label']),
+				$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
+				$elm$core$Maybe$Nothing,
+				A4(
+					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+					'id',
+					$elm$json$Json$Decode$maybe($elm$json$Json$Decode$string),
+					$elm$core$Maybe$Nothing,
+					$elm$json$Json$Decode$succeed($author$project$Api$Records$Relationship))))));
+var $author$project$Api$Records$personRelationDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Api$Records$relationshipDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonRelation)));
+var $author$project$Api$Records$personRelationListDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Api$Records$personRelationDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Api$Search$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonRelationList)));
 var $author$project$Api$Records$PersonSources = F2(
 	function (id, totalItems) {
 		return {id: id, totalItems: totalItems};
@@ -11332,46 +11486,64 @@ var $author$project$Api$Records$personSourcesDecoder = A3(
 		'id',
 		$elm$json$Json$Decode$string,
 		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonSources)));
-var $author$project$Api$Records$personBodyDecoder = A4(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-	'seeAlso',
-	$elm$json$Json$Decode$maybe(
-		$elm$json$Json$Decode$list($author$project$Api$Records$personExternalReferencesDecoder)),
-	$elm$core$Maybe$Nothing,
+var $author$project$Api$Records$SeeAlso = F2(
+	function (url, label) {
+		return {label: label, url: url};
+	});
+var $author$project$Api$Records$seeAlsoDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'label',
+	$author$project$Api$Search$labelDecoder,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'summary',
-		$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
+		'url',
+		$elm$json$Json$Decode$string,
+		$elm$json$Json$Decode$succeed($author$project$Api$Records$SeeAlso)));
+var $author$project$Api$Records$personBodyDecoder = A4(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+	'externalResources',
+	$elm$json$Json$Decode$maybe($author$project$Api$Records$externalResourceListDecoder),
+	$elm$core$Maybe$Nothing,
+	A4(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+		'notes',
+		$elm$json$Json$Decode$maybe($author$project$Api$Records$noteListDecoder),
+		$elm$core$Maybe$Nothing,
 		A4(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
-			'sources',
-			$elm$json$Json$Decode$maybe($author$project$Api$Records$personSourcesDecoder),
+			'relations',
+			$elm$json$Json$Decode$maybe($author$project$Api$Records$personRelationListDecoder),
 			$elm$core$Maybe$Nothing,
-			A3(
-				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'label',
-				$author$project$Api$Search$labelDecoder,
-				A3(
-					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-					'id',
-					$elm$json$Json$Decode$string,
-					$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonBody))))));
+			A4(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+				'nameVariants',
+				$elm$json$Json$Decode$maybe($author$project$Api$Records$personNameVariantListDecoder),
+				$elm$core$Maybe$Nothing,
+				A4(
+					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+					'seeAlso',
+					$elm$json$Json$Decode$maybe(
+						$elm$json$Json$Decode$list($author$project$Api$Records$seeAlsoDecoder)),
+					$elm$core$Maybe$Nothing,
+					A3(
+						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+						'summary',
+						$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
+						A4(
+							$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+							'sources',
+							$elm$json$Json$Decode$maybe($author$project$Api$Records$personSourcesDecoder),
+							$elm$core$Maybe$Nothing,
+							A3(
+								$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+								'label',
+								$author$project$Api$Search$labelDecoder,
+								A3(
+									$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+									'id',
+									$elm$json$Json$Decode$string,
+									$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonBody))))))))));
 var $author$project$Api$Records$personResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Api$Records$PersonResponse, $author$project$Api$Records$personBodyDecoder);
-var $author$project$Api$DataTypes$Institution = {$: 'Institution'};
-var $author$project$Api$DataTypes$Person = {$: 'Person'};
-var $author$project$Api$DataTypes$Source = {$: 'Source'};
-var $author$project$Api$DataTypes$recordTypeFromJsonType = function (jsonType) {
-	switch (jsonType) {
-		case 'rism:Source':
-			return $author$project$Api$DataTypes$Source;
-		case 'rism:Person':
-			return $author$project$Api$DataTypes$Person;
-		case 'rism:Institution':
-			return $author$project$Api$DataTypes$Institution;
-		default:
-			return $author$project$Api$DataTypes$Source;
-	}
-};
 var $author$project$Api$Records$SourceResponse = function (a) {
 	return {$: 'SourceResponse', a: a};
 };
@@ -11432,7 +11604,7 @@ var $author$project$Api$Records$exemplarDecoder = A3(
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'summary',
-		$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
+		$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'id',
@@ -11497,7 +11669,7 @@ var $author$project$Api$Records$incipitDecoder = A4(
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'summary',
-		$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
+		$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'label',
@@ -11531,17 +11703,6 @@ var $author$project$Api$Records$SourceRelationshipList = F3(
 var $author$project$Api$Records$SourceRelationship = F4(
 	function (id, role, qualifier, person) {
 		return {id: id, person: person, qualifier: qualifier, role: role};
-	});
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt = F4(
-	function (path, valDecoder, fallback, decoder) {
-		return A2(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
-			A3(
-				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder,
-				A2($elm$json$Json$Decode$at, path, $elm$json$Json$Decode$value),
-				valDecoder,
-				fallback),
-			decoder);
 	});
 var $author$project$Api$Records$sourceRelationshipDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
@@ -11587,7 +11748,7 @@ var $author$project$Api$Records$materialGroupDecoder = A4(
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'summary',
-		$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
+		$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'label',
@@ -11606,19 +11767,6 @@ var $author$project$Api$Records$materialGroupListDecoder = A3(
 		'label',
 		$author$project$Api$Search$labelDecoder,
 		$elm$json$Json$Decode$succeed($author$project$Api$Records$MaterialGroupList)));
-var $author$project$Api$Records$NoteList = F2(
-	function (label, notes) {
-		return {label: label, notes: notes};
-	});
-var $author$project$Api$Records$noteListDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$NoteList)));
 var $author$project$Api$Records$Subject = F2(
 	function (id, term) {
 		return {id: id, term: term};
@@ -11681,7 +11829,7 @@ var $author$project$Api$Records$sourceBodyDecoder = A4(
 									A3(
 										$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 										'summary',
-										$elm$json$Json$Decode$list($author$project$Api$Records$noteDecoder),
+										$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
 										A3(
 											$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 											'label',
@@ -11699,8 +11847,10 @@ var $author$project$Api$Records$recordResponseConverter = function (typevalue) {
 			return $author$project$Api$Records$sourceResponseDecoder;
 		case 'Person':
 			return $author$project$Api$Records$personResponseDecoder;
-		default:
+		case 'Institution':
 			return $author$project$Api$Records$institutionResponseDecoder;
+		default:
+			return $author$project$Api$Records$sourceResponseDecoder;
 	}
 };
 var $author$project$Api$Records$recordResponseDecoder = A2(
@@ -11728,7 +11878,6 @@ var $elm$url$Url$Builder$crossOrigin = F3(
 	});
 var $author$project$Config$serverUrl = 'http://dev.rism.offline';
 var $author$project$Api$Records$recordUrl = function (pathSegments) {
-	var qstring = '';
 	return A3($elm$url$Url$Builder$crossOrigin, $author$project$Config$serverUrl, pathSegments, _List_Nil);
 };
 var $author$project$Api$Records$recordRequest = F2(
@@ -18656,56 +18805,6 @@ var $author$project$Records$Views$Shared$viewLoadingSpinner = function (model) {
 					]))
 			]));
 };
-var $author$project$Records$Views$Person$viewPersonRecord = F2(
-	function (body, language) {
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$alignTop,
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$row,
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-									$mdgriffith$elm_ui$Element$height(
-									$mdgriffith$elm_ui$Element$px(120))
-								]),
-							_List_fromArray(
-								[
-									A2($author$project$UI$Components$h2, language, body.label)
-								]))
-						]))
-				]));
-	});
-var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
-var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
-var $author$project$Records$Views$Source$viewDistributionSection = F2(
-	function (body, language) {
-		return $mdgriffith$elm_ui$Element$none;
-	});
-var $author$project$UI$Style$headingMD = $mdgriffith$elm_ui$Element$Font$size(25);
-var $author$project$UI$Components$h4 = F2(
-	function (language, heading) {
-		return A3(
-			$author$project$UI$Components$headingHelper,
-			_List_fromArray(
-				[$author$project$UI$Style$headingMD]),
-			language,
-			heading);
-	});
 var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
 	function (a, b, c, d, e) {
 		return {$: 'PaddingStyle', a: a, b: b, c: c, d: d, e: e};
@@ -18742,59 +18841,6 @@ var $mdgriffith$elm_ui$Element$paddingXY = F2(
 	});
 var $author$project$UI$Style$fontBaseSize = $mdgriffith$elm_ui$Element$Font$size(16);
 var $author$project$UI$Style$bodyRegular = $author$project$UI$Style$fontBaseSize;
-var $mdgriffith$elm_ui$Element$Font$underline = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.underline);
-var $author$project$UI$Components$styledLink = F2(
-	function (url, labelString) {
-		return A2(
-			$mdgriffith$elm_ui$Element$link,
-			_List_fromArray(
-				[
-					$author$project$UI$Style$bodyRegular,
-					$mdgriffith$elm_ui$Element$Font$underline,
-					$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue)
-				]),
-			{
-				label: $mdgriffith$elm_ui$Element$text(labelString),
-				url: url
-			});
-	});
-var $author$project$Records$Views$Source$viewHeldByInstitution = F2(
-	function (exemplar, language) {
-		var heldByInstitution = exemplar.heldBy;
-		var heldByLink = A2(
-			$author$project$UI$Components$styledLink,
-			heldByInstitution.id,
-			A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.label));
-		var institutionSiglum = '(' + (A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.siglum) + ')');
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-					A2($mdgriffith$elm_ui$Element$paddingXY, 10, 5)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$paragraph,
-							_List_fromArray(
-								[$author$project$UI$Style$bodyRegular]),
-							_List_fromArray(
-								[
-									heldByLink,
-									$mdgriffith$elm_ui$Element$text(' ' + institutionSiglum)
-								]))
-						]))
-				]));
-	});
 var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
 var $author$project$UI$Components$label = F2(
 	function (language, langmap) {
@@ -18901,6 +18947,644 @@ var $author$project$Records$Views$Shared$viewSummaryField = F2(
 									]));
 						},
 						field))
+				]));
+	});
+var $author$project$Records$Views$Person$viewBiographySection = F2(
+	function (body, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2($author$project$Records$Views$Shared$viewSummaryField, body.summary, language)
+						]))
+				]));
+	});
+var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
+var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
+var $mdgriffith$elm_ui$Element$spacingXY = F2(
+	function (x, y) {
+		return A2(
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$spacing,
+			A3(
+				$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
+				A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, y),
+				x,
+				y));
+	});
+var $mdgriffith$elm_ui$Element$Font$underline = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.underline);
+var $author$project$UI$Components$styledLink = F2(
+	function (url, labelString) {
+		return A2(
+			$mdgriffith$elm_ui$Element$link,
+			_List_fromArray(
+				[
+					$author$project$UI$Style$bodyRegular,
+					$mdgriffith$elm_ui$Element$Font$underline,
+					$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue)
+				]),
+			{
+				label: $mdgriffith$elm_ui$Element$text(labelString),
+				url: url
+			});
+	});
+var $author$project$Records$Views$Person$viewExternalAuthority = F2(
+	function (seeAlso, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+							A2($mdgriffith$elm_ui$Element$spacingXY, 0, 10)
+						]),
+					A2(
+						$author$project$UI$Components$styledLink,
+						seeAlso.url,
+						A2($author$project$Language$extractLabelFromLanguageMap, language, seeAlso.label)))
+				]));
+	});
+var $author$project$Records$Views$Person$viewExternalAuthorities = F2(
+	function (seeAlsoList, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					A2(
+						$elm$core$List$map,
+						function (it) {
+							return A2($author$project$Records$Views$Person$viewExternalAuthority, it, language);
+						},
+						seeAlsoList))
+				]));
+	});
+var $author$project$Records$Views$Person$viewExternalAuthoritiesSection = F2(
+	function (body, language) {
+		var _v0 = body.seeAlso;
+		if (_v0.$ === 'Just') {
+			var extAuthList = _v0.a;
+			return A2($author$project$Records$Views$Person$viewExternalAuthorities, extAuthList, language);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
+	});
+var $author$project$UI$Style$headingMD = $mdgriffith$elm_ui$Element$Font$size(25);
+var $author$project$UI$Components$h4 = F2(
+	function (language, heading) {
+		return A3(
+			$author$project$UI$Components$headingHelper,
+			_List_fromArray(
+				[$author$project$UI$Style$headingMD]),
+			language,
+			heading);
+	});
+var $author$project$Records$Views$Person$viewExternalResource = F2(
+	function (externalResource, language) {
+		return A2(
+			$author$project$UI$Components$styledLink,
+			externalResource.url,
+			A2($author$project$Language$extractLabelFromLanguageMap, language, externalResource.label));
+	});
+var $author$project$Records$Views$Person$viewExternalResources = F2(
+	function (resourceList, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h4, language, resourceList.label)
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											A2($mdgriffith$elm_ui$Element$spacingXY, 0, 10)
+										]),
+									A2(
+										$elm$core$List$map,
+										function (n) {
+											return A2($author$project$Records$Views$Person$viewExternalResource, n, language);
+										},
+										resourceList.items))
+								]))
+						]))
+				]));
+	});
+var $author$project$Records$Views$Person$viewExternalResourcesSectionSection = F2(
+	function (body, language) {
+		var _v0 = body.externalResources;
+		if (_v0.$ === 'Just') {
+			var resources = _v0.a;
+			return A2($author$project$Records$Views$Person$viewExternalResources, resources, language);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
+	});
+var $author$project$Records$Views$Person$viewNameVariants = F2(
+	function (variants, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h4, language, variants.label)
+								])),
+							A2($author$project$Records$Views$Shared$viewSummaryField, variants.items, language)
+						]))
+				]));
+	});
+var $author$project$Records$Views$Person$viewNameVariantsSection = F2(
+	function (body, language) {
+		var _v0 = body.nameVariants;
+		if (_v0.$ === 'Just') {
+			var variants = _v0.a;
+			return A2($author$project$Records$Views$Person$viewNameVariants, variants, language);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
+	});
+var $author$project$Records$Views$Person$viewReferencesNotes = F2(
+	function (noteList, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+							A2($mdgriffith$elm_ui$Element$spacingXY, 0, 10)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h4, language, noteList.label)
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									_List_fromArray(
+										[
+											A2($author$project$Records$Views$Shared$viewSummaryField, noteList.notes, language)
+										]))
+								]))
+						]))
+				]));
+	});
+var $author$project$Records$Views$Person$viewReferencesNotesSection = F2(
+	function (body, language) {
+		var _v0 = body.notes;
+		if (_v0.$ === 'Just') {
+			var noteList = _v0.a;
+			return A2($author$project$Records$Views$Person$viewReferencesNotes, noteList, language);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
+	});
+var $mdgriffith$elm_ui$Internal$Model$paddingName = F4(
+	function (top, right, bottom, left) {
+		return 'pad-' + ($elm$core$String$fromInt(top) + ('-' + ($elm$core$String$fromInt(right) + ('-' + ($elm$core$String$fromInt(bottom) + ('-' + $elm$core$String$fromInt(left)))))));
+	});
+var $mdgriffith$elm_ui$Element$paddingEach = function (_v0) {
+	var top = _v0.top;
+	var right = _v0.right;
+	var bottom = _v0.bottom;
+	var left = _v0.left;
+	if (_Utils_eq(top, right) && (_Utils_eq(top, bottom) && _Utils_eq(top, left))) {
+		var topFloat = top;
+		return A2(
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$padding,
+			A5(
+				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+				'p-' + $elm$core$String$fromInt(top),
+				topFloat,
+				topFloat,
+				topFloat,
+				topFloat));
+	} else {
+		return A2(
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$padding,
+			A5(
+				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+				A4($mdgriffith$elm_ui$Internal$Model$paddingName, top, right, bottom, left),
+				top,
+				right,
+				bottom,
+				left));
+	}
+};
+var $author$project$Records$Views$Person$viewLinkedRelatedTo = F3(
+	function (entity, role, language) {
+		var relationshipLink = A2(
+			$author$project$UI$Components$styledLink,
+			entity.id,
+			A2($author$project$Language$extractLabelFromLanguageMap, language, entity.name));
+		var relationshipAttributes = ($elm$core$String$length(role) > 0) ? _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$author$project$UI$Style$bodyRegular,
+				$mdgriffith$elm_ui$Element$paddingEach(
+				{bottom: 0, left: 10, right: 0, top: 0})
+			]) : _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$author$project$UI$Style$bodyRegular
+			]);
+		return A2(
+			$mdgriffith$elm_ui$Element$paragraph,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					relationshipLink,
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					relationshipAttributes,
+					$mdgriffith$elm_ui$Element$text(role))
+				]));
+	});
+var $author$project$Records$Views$Person$viewUnlinkedRelatedTo = F3(
+	function (relatedEntity, role, language) {
+		var relationshipName = A2($author$project$Language$extractLabelFromLanguageMap, language, relatedEntity);
+		var relationshipAttributes = ($elm$core$String$length(role) > 0) ? _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$author$project$UI$Style$bodyRegular,
+				$mdgriffith$elm_ui$Element$paddingEach(
+				{bottom: 0, left: 10, right: 0, top: 0})
+			]) : _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$author$project$UI$Style$bodyRegular
+			]);
+		return A2(
+			$mdgriffith$elm_ui$Element$paragraph,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[$author$project$UI$Style$bodyRegular]),
+					$mdgriffith$elm_ui$Element$text(relationshipName)),
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					relationshipAttributes,
+					$mdgriffith$elm_ui$Element$text(role))
+				]));
+	});
+var $author$project$Records$Views$Person$viewRelationship = F2(
+	function (relationship, language) {
+		var role = function () {
+			var _v2 = relationship.role;
+			if (_v2.$ === 'Just') {
+				var relationshipRole = _v2.a;
+				return '[' + (A2($author$project$Language$extractLabelFromLanguageMap, language, relationshipRole) + ']');
+			} else {
+				return '';
+			}
+		}();
+		var relatedTo = function () {
+			var _v0 = relationship.relatedTo;
+			if (_v0.$ === 'Just') {
+				var rel = _v0.a;
+				return A3($author$project$Records$Views$Person$viewLinkedRelatedTo, rel, role, language);
+			} else {
+				var _v1 = relationship.value;
+				if (_v1.$ === 'Just') {
+					var rel = _v1.a;
+					return A3($author$project$Records$Views$Person$viewUnlinkedRelatedTo, rel, role, language);
+				} else {
+					return $mdgriffith$elm_ui$Element$none;
+				}
+			}
+		}();
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[relatedTo]))
+				]));
+	});
+var $author$project$Records$Views$Person$viewRelationTypes = F2(
+	function (relation, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width(
+							$mdgriffith$elm_ui$Element$fillPortion(2)),
+							$mdgriffith$elm_ui$Element$alignTop
+						]),
+					_List_fromArray(
+						[
+							A2($author$project$UI$Components$label, language, relation.label)
+						])),
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width(
+							$mdgriffith$elm_ui$Element$fillPortion(4)),
+							$mdgriffith$elm_ui$Element$alignTop
+						]),
+					A2(
+						$elm$core$List$map,
+						function (r) {
+							return A2($author$project$Records$Views$Person$viewRelationship, r, language);
+						},
+						relation.items))
+				]));
+	});
+var $author$project$Records$Views$Person$viewRelations = F2(
+	function (relationships, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h4, language, relationships.label)
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									A2(
+										$elm$core$List$map,
+										function (r) {
+											return A2($author$project$Records$Views$Person$viewRelationTypes, r, language);
+										},
+										relationships.items))
+								]))
+						]))
+				]));
+	});
+var $author$project$Records$Views$Person$viewRelationsSection = F2(
+	function (body, language) {
+		var _v0 = body.relations;
+		if (_v0.$ === 'Just') {
+			var relationships = _v0.a;
+			return A2($author$project$Records$Views$Person$viewRelations, relationships, language);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
+	});
+var $author$project$Records$Views$Person$viewPersonRecord = F2(
+	function (body, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$alignTop,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$height(
+									$mdgriffith$elm_ui$Element$px(120))
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h2, language, body.label)
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+											$mdgriffith$elm_ui$Element$spacing(20)
+										]),
+									A2(
+										$elm$core$List$map,
+										function (viewSection) {
+											return A2(viewSection, body, language);
+										},
+										_List_fromArray(
+											[$author$project$Records$Views$Person$viewBiographySection, $author$project$Records$Views$Person$viewNameVariantsSection, $author$project$Records$Views$Person$viewRelationsSection, $author$project$Records$Views$Person$viewReferencesNotesSection, $author$project$Records$Views$Person$viewExternalResourcesSectionSection, $author$project$Records$Views$Person$viewExternalAuthoritiesSection])))
+								]))
+						]))
+				]));
+	});
+var $author$project$Records$Views$Source$viewDistributionSection = F2(
+	function (body, language) {
+		return $mdgriffith$elm_ui$Element$none;
+	});
+var $author$project$Records$Views$Source$viewHeldByInstitution = F2(
+	function (exemplar, language) {
+		var heldByInstitution = exemplar.heldBy;
+		var heldByLink = A2(
+			$author$project$UI$Components$styledLink,
+			heldByInstitution.id,
+			A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.label));
+		var institutionSiglum = '(' + (A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.siglum) + ')');
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 10, 5)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$paragraph,
+							_List_fromArray(
+								[$author$project$UI$Style$bodyRegular]),
+							_List_fromArray(
+								[
+									heldByLink,
+									$mdgriffith$elm_ui$Element$text(' ' + institutionSiglum)
+								]))
+						]))
 				]));
 	});
 var $author$project$Records$Views$Source$viewSingleExemplar = F2(
@@ -20262,4 +20946,4 @@ _Platform_export({'RecordsApp':{'init':$author$project$RecordsApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Records.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Api.Records.Exemplar":{"args":[],"type":"{ id : String.String, summary : List.List Api.Records.LabelValue, heldBy : Api.Records.InstitutionBody }"},"Api.Records.ExemplarsList":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, items : List.List Api.Records.Exemplar }"},"Api.Records.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, rendered : Maybe.Maybe (List.List Api.Records.RenderedIncipit) }"},"Api.Records.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Api.Records.Incipit }"},"Api.Records.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, siglum : Language.LanguageMap }"},"Api.Records.LabelValue":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Records.MaterialGroup":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, related : Maybe.Maybe Api.Records.SourceRelationshipList }"},"Api.Records.MaterialGroupList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.MaterialGroup }"},"Api.Records.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Api.Records.LabelValue }"},"Api.Records.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Api.Records.PersonSources, summary : List.List Api.Records.LabelValue, externalReferences : Maybe.Maybe (List.List Api.Records.PersonExternalReferences) }"},"Api.Records.PersonExternalReferences":{"args":[],"type":"{ id : String.String, type_ : String.String }"},"Api.Records.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Api.Records.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Api.Records.BasicSourceBody), creator : Maybe.Maybe Api.Records.SourceRelationship, related : Maybe.Maybe Api.Records.SourceRelationshipList, subjects : Maybe.Maybe (List.List Api.Records.Subject), notes : Maybe.Maybe Api.Records.NoteList, incipits : Maybe.Maybe Api.Records.IncipitList, materialgroups : Maybe.Maybe Api.Records.MaterialGroupList, exemplars : Maybe.Maybe Api.Records.ExemplarsList }"},"Api.Records.SourceRelationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, person : Api.Records.PersonBody }"},"Api.Records.SourceRelationshipList":{"args":[],"type":"{ id : Maybe.Maybe String.String, label : Language.LanguageMap, items : List.List Api.Records.SourceRelationship }"},"Api.Records.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Api.Records.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.Records.RecordResponse":{"args":[],"tags":{"SourceResponse":["Api.Records.SourceBody"],"PersonResponse":["Api.Records.PersonBody"],"InstitutionResponse":["Api.Records.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Api.Records.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Api.Records.IncipitFormat","String.String"]}},"Api.Records.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Records.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Api.Records.Exemplar":{"args":[],"type":"{ id : String.String, summary : List.List Api.Records.LabelValue, heldBy : Api.Records.InstitutionBody }"},"Api.Records.ExemplarsList":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, items : List.List Api.Records.Exemplar }"},"Api.Records.ExternalResource":{"args":[],"type":"{ url : String.String, label : Language.LanguageMap }"},"Api.Records.ExternalResourceList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.ExternalResource }"},"Api.Records.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, rendered : Maybe.Maybe (List.List Api.Records.RenderedIncipit) }"},"Api.Records.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Api.Records.Incipit }"},"Api.Records.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, siglum : Language.LanguageMap }"},"Api.Records.LabelValue":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Records.MaterialGroup":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, related : Maybe.Maybe Api.Records.SourceRelationshipList }"},"Api.Records.MaterialGroupList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.MaterialGroup }"},"Api.Records.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Api.Records.LabelValue }"},"Api.Records.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Api.Records.PersonSources, summary : List.List Api.Records.LabelValue, seeAlso : Maybe.Maybe (List.List Api.Records.SeeAlso), nameVariants : Maybe.Maybe Api.Records.PersonNameVariantList, relations : Maybe.Maybe Api.Records.PersonRelationList, notes : Maybe.Maybe Api.Records.NoteList, externalResources : Maybe.Maybe Api.Records.ExternalResourceList }"},"Api.Records.PersonNameVariantList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.LabelValue }"},"Api.Records.PersonRelation":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.Relationship }"},"Api.Records.PersonRelationList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.PersonRelation }"},"Api.Records.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Api.Records.RelatedEntity":{"args":[],"type":"{ type_ : Api.DataTypes.RecordType, name : Language.LanguageMap, id : String.String }"},"Api.Records.Relationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, relatedTo : Maybe.Maybe Api.Records.RelatedEntity, value : Maybe.Maybe Language.LanguageMap }"},"Api.Records.SeeAlso":{"args":[],"type":"{ url : String.String, label : Language.LanguageMap }"},"Api.Records.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Api.Records.BasicSourceBody), creator : Maybe.Maybe Api.Records.SourceRelationship, related : Maybe.Maybe Api.Records.SourceRelationshipList, subjects : Maybe.Maybe (List.List Api.Records.Subject), notes : Maybe.Maybe Api.Records.NoteList, incipits : Maybe.Maybe Api.Records.IncipitList, materialgroups : Maybe.Maybe Api.Records.MaterialGroupList, exemplars : Maybe.Maybe Api.Records.ExemplarsList }"},"Api.Records.SourceRelationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, person : Api.Records.PersonBody }"},"Api.Records.SourceRelationshipList":{"args":[],"type":"{ id : Maybe.Maybe String.String, label : Language.LanguageMap, items : List.List Api.Records.SourceRelationship }"},"Api.Records.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Api.Records.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.Records.RecordResponse":{"args":[],"tags":{"SourceResponse":["Api.Records.SourceBody"],"PersonResponse":["Api.Records.PersonBody"],"InstitutionResponse":["Api.Records.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[],"Place":[],"Incipit":[],"Unknown":[]}},"Api.Records.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Api.Records.IncipitFormat","String.String"]}},"Api.Records.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
