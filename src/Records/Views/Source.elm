@@ -52,7 +52,9 @@ viewSourceRecord body language =
 viewSummarySection : SourceBody -> Language -> Element Msg
 viewSummarySection body language =
     row
-        [ width fill, paddingXY 0 10 ]
+        [ width fill
+        , paddingXY 0 10
+        ]
         [ column
             [ width fill ]
             [ viewSummaryField body.summary language ]
