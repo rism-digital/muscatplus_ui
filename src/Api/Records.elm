@@ -1,12 +1,12 @@
 module Api.Records exposing (..)
 
-import Api.DataTypes exposing (RecordType(..), recordTypeFromJsonType)
+import Api.DataTypes exposing (RecordType(..), recordTypeFromJsonType, typeDecoder)
 import Api.Request exposing (createRequest)
 import Api.Search exposing (labelDecoder)
 import Config as C
 import Http
-import Json.Decode as Decode exposing (Decoder, andThen, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (hardcoded, optional, optionalAt, required, requiredAt)
+import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
+import Json.Decode.Pipeline exposing (optional, optionalAt, required)
 import Language exposing (LanguageMap, LanguageValues)
 import Url.Builder
 
@@ -21,6 +21,35 @@ type IncipitFormat
     = RenderedSVG
     | RenderedMIDI
     | UnknownFormat
+
+
+type alias Relationship =
+    { id : Maybe String
+    , role : Maybe LanguageMap
+    , qualifier : Maybe LanguageMap
+    , relatedTo : Maybe RelatedEntity
+    , value : Maybe LanguageMap
+    }
+
+
+{-| -}
+type alias RelatedEntity =
+    { type_ : RecordType
+    , name : LanguageMap
+    , id : String
+    }
+
+
+type alias ExternalResource =
+    { url : String
+    , label : LanguageMap
+    }
+
+
+type alias ExternalResourceList =
+    { label : LanguageMap
+    , items : List ExternalResource
+    }
 
 
 type alias BasicSourceBody =
@@ -130,7 +159,11 @@ type alias PersonBody =
     , label : LanguageMap
     , sources : Maybe PersonSources
     , summary : List LabelValue
-    , externalReferences : Maybe (List PersonExternalReferences)
+    , seeAlso : Maybe (List SeeAlso)
+    , nameVariants : Maybe PersonNameVariantList
+    , relations : Maybe PersonRelationList
+    , notes : Maybe NoteList
+    , externalResources : Maybe ExternalResourceList
     }
 
 
@@ -140,15 +173,27 @@ type alias PersonSources =
     }
 
 
-type alias PersonNameVariants =
+type alias PersonRelation =
     { label : LanguageMap
-    , values : LanguageMap
+    , items : List Relationship
     }
 
 
-type alias PersonExternalReferences =
-    { id : String
-    , type_ : String
+type alias PersonRelationList =
+    { label : LanguageMap
+    , items : List PersonRelation
+    }
+
+
+type alias PersonNameVariantList =
+    { label : LanguageMap
+    , items : List LabelValue
+    }
+
+
+type alias SeeAlso =
+    { url : String
+    , label : LanguageMap
     }
 
 
@@ -165,6 +210,52 @@ type RecordResponse
     | InstitutionResponse InstitutionBody
 
 
+labelValueDecoder : Decoder LabelValue
+labelValueDecoder =
+    Decode.succeed LabelValue
+        |> required "label" labelDecoder
+        |> required "value" labelDecoder
+
+
+{-|
+
+    Decoder for the structures used to communicate relationships.
+    Most of the keys are optional since not all relationships will have all keys,
+    but most relationships will have some combination of them.
+
+-}
+relationshipDecoder : Decoder Relationship
+relationshipDecoder =
+    Decode.succeed Relationship
+        |> optional "id" (Decode.maybe string) Nothing
+        |> optionalAt [ "role", "label" ] (Decode.maybe labelDecoder) Nothing
+        |> optionalAt [ "qualifier", "label" ] (Decode.maybe labelDecoder) Nothing
+        |> optional "relatedTo" (Decode.maybe relatedEntityDecoder) Nothing
+        |> optional "value" (Decode.maybe labelDecoder) Nothing
+
+
+relatedEntityDecoder : Decoder RelatedEntity
+relatedEntityDecoder =
+    Decode.succeed RelatedEntity
+        |> required "type" typeDecoder
+        |> required "name" labelDecoder
+        |> required "id" string
+
+
+externalResourceListDecoder : Decoder ExternalResourceList
+externalResourceListDecoder =
+    Decode.succeed ExternalResourceList
+        |> required "label" labelDecoder
+        |> required "items" (list externalResourceDecoder)
+
+
+externalResourceDecoder : Decoder ExternalResource
+externalResourceDecoder =
+    Decode.succeed ExternalResource
+        |> required "url" string
+        |> required "label" labelDecoder
+
+
 sourceResponseDecoder : Decoder RecordResponse
 sourceResponseDecoder =
     Decode.map SourceResponse sourceBodyDecoder
@@ -175,7 +266,7 @@ sourceBodyDecoder =
     Decode.succeed SourceBody
         |> required "id" string
         |> required "label" labelDecoder
-        |> required "summary" (list noteDecoder)
+        |> required "summary" (list labelValueDecoder)
         |> required "sourceType" labelDecoder
         |> optional "partOf" (Decode.maybe (list basicSourceBodyDecoder)) Nothing
         |> optional "creator" (Decode.maybe sourceRelationshipDecoder) Nothing
@@ -223,14 +314,7 @@ noteListDecoder : Decoder NoteList
 noteListDecoder =
     Decode.succeed NoteList
         |> required "label" labelDecoder
-        |> required "items" (list noteDecoder)
-
-
-noteDecoder : Decoder LabelValue
-noteDecoder =
-    Decode.succeed LabelValue
-        |> required "label" labelDecoder
-        |> required "value" labelDecoder
+        |> required "items" (list labelValueDecoder)
 
 
 materialGroupListDecoder : Decoder MaterialGroupList
@@ -245,7 +329,7 @@ materialGroupDecoder =
     Decode.succeed MaterialGroup
         |> required "id" string
         |> required "label" labelDecoder
-        |> required "summary" (list noteDecoder)
+        |> required "summary" (list labelValueDecoder)
         |> optional "related" (Decode.maybe sourceRelationshipListDecoder) Nothing
 
 
@@ -261,7 +345,7 @@ incipitDecoder =
     Decode.succeed Incipit
         |> required "id" string
         |> required "label" labelDecoder
-        |> required "summary" (list noteDecoder)
+        |> required "summary" (list labelValueDecoder)
         |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
 
 
@@ -301,7 +385,7 @@ exemplarDecoder : Decoder Exemplar
 exemplarDecoder =
     Decode.succeed Exemplar
         |> required "id" string
-        |> required "summary" (list noteDecoder)
+        |> required "summary" (list labelValueDecoder)
         |> required "heldBy" institutionBodyDecoder
 
 
@@ -312,11 +396,30 @@ personSourcesDecoder =
         |> required "totalItems" int
 
 
-personExternalReferencesDecoder : Decoder PersonExternalReferences
-personExternalReferencesDecoder =
-    Decode.succeed PersonExternalReferences
-        |> required "id" string
-        |> required "type" string
+{-|
+
+    Used for Person to Person, Person to Place, and Person to Institution relationships
+
+-}
+personRelationDecoder : Decoder PersonRelation
+personRelationDecoder =
+    Decode.succeed PersonRelation
+        |> required "label" labelDecoder
+        |> required "items" (list relationshipDecoder)
+
+
+personRelationListDecoder : Decoder PersonRelationList
+personRelationListDecoder =
+    Decode.succeed PersonRelationList
+        |> required "label" labelDecoder
+        |> required "items" (list personRelationDecoder)
+
+
+personNameVariantListDecoder : Decoder PersonNameVariantList
+personNameVariantListDecoder =
+    Decode.succeed PersonNameVariantList
+        |> required "label" labelDecoder
+        |> required "items" (list labelValueDecoder)
 
 
 personResponseDecoder : Decoder RecordResponse
@@ -330,8 +433,19 @@ personBodyDecoder =
         |> required "id" string
         |> required "label" labelDecoder
         |> optional "sources" (Decode.maybe personSourcesDecoder) Nothing
-        |> required "summary" (list noteDecoder)
-        |> optional "seeAlso" (Decode.maybe (list personExternalReferencesDecoder)) Nothing
+        |> required "summary" (list labelValueDecoder)
+        |> optional "seeAlso" (Decode.maybe (list seeAlsoDecoder)) Nothing
+        |> optional "nameVariants" (Decode.maybe personNameVariantListDecoder) Nothing
+        |> optional "relations" (Decode.maybe personRelationListDecoder) Nothing
+        |> optional "notes" (Decode.maybe noteListDecoder) Nothing
+        |> optional "externalResources" (Decode.maybe externalResourceListDecoder) Nothing
+
+
+seeAlsoDecoder : Decoder SeeAlso
+seeAlsoDecoder =
+    Decode.succeed SeeAlso
+        |> required "url" string
+        |> required "label" labelDecoder
 
 
 institutionBodyDecoder : Decoder InstitutionBody
@@ -359,6 +473,10 @@ recordResponseConverter typevalue =
         Institution ->
             institutionResponseDecoder
 
+        -- TODO: This is obviously wrong! Fix it.
+        _ ->
+            sourceResponseDecoder
+
 
 recordResponseDecoder : Decoder RecordResponse
 recordResponseDecoder =
@@ -368,10 +486,6 @@ recordResponseDecoder =
 
 recordUrl : List String -> String
 recordUrl pathSegments =
-    let
-        qstring =
-            ""
-    in
     Url.Builder.crossOrigin C.serverUrl pathSegments []
 
 
