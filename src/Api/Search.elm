@@ -4,8 +4,8 @@ import Api.DataTypes exposing (RecordType(..), typeDecoder)
 import Api.Request exposing (createRequest)
 import Config as C
 import Http
-import Json.Decode as Decode exposing (Decoder, andThen, at, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (hardcoded, optional, optionalAt, required, requiredAt)
+import Json.Decode as Decode exposing (Decoder, andThen, int, list, nullable, string)
+import Json.Decode.Pipeline exposing (hardcoded, optional, optionalAt, required)
 import Language exposing (Language(..), LanguageMap, LanguageValues(..), languageMapDecoder)
 import Url.Builder exposing (QueryParameter)
 
