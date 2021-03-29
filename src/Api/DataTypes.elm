@@ -7,6 +7,9 @@ type RecordType
     = Source
     | Person
     | Institution
+    | Place
+    | Incipit
+    | Unknown
 
 
 typeDecoder : Decoder RecordType
@@ -27,5 +30,11 @@ recordTypeFromJsonType jsonType =
         "rism:Institution" ->
             Institution
 
+        "rism:Incipit" ->
+            Incipit
+
+        "rism:Place" ->
+            Place
+
         _ ->
-            Source
+            Unknown
