@@ -1,7 +1,7 @@
 module Records.Views.Shared exposing (..)
 
 import Element exposing (DeviceClass(..), Element, alignTop, centerX, centerY, column, el, fill, fillPortion, height, none, paddingEach, paddingXY, paragraph, row, text, width)
-import Records.DataTypes exposing (Model, Msg, RelatedEntity, RelationList, Relationship, Relationships)
+import Records.DataTypes exposing (Model, Msg, RelatedEntity, RelatedList, Relationship, Relationships)
 import Shared.DataTypes exposing (LabelValue)
 import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import UI.Components exposing (h4, label, styledLink, value)
@@ -58,7 +58,7 @@ viewSummaryField field language =
         ]
 
 
-viewRelations : RelationList -> Language -> Element Msg
+viewRelations : RelatedList -> Language -> Element Msg
 viewRelations relationships language =
     row
         [ width fill ]

@@ -52,7 +52,7 @@ viewSummarySection body language =
 
 viewRelationsSection : InstitutionBody -> Language -> Element Msg
 viewRelationsSection body language =
-    case body.relations of
+    case body.related of
         Just relationships ->
             viewRelations relationships language
 

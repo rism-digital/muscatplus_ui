@@ -180,7 +180,7 @@ type alias PersonBody =
     , summary : List LabelValue
     , seeAlso : Maybe (List SeeAlso)
     , nameVariants : Maybe PersonNameVariantList
-    , relations : Maybe RelationList
+    , related : Maybe RelatedList
     , notes : Maybe NoteList
     , externalResources : Maybe ExternalResourceList
     }
@@ -198,7 +198,7 @@ type alias Relationships =
     }
 
 
-type alias RelationList =
+type alias RelatedList =
     { label : LanguageMap
     , items : List Relationships
     }
@@ -220,7 +220,7 @@ type alias InstitutionBody =
     { id : String
     , label : LanguageMap
     , summary : List LabelValue
-    , relations : Maybe RelationList
+    , related : Maybe RelatedList
     }
 
 

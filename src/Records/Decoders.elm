@@ -2,7 +2,7 @@ module Records.Decoders exposing (..)
 
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
 import Json.Decode.Pipeline exposing (optional, optionalAt, required)
-import Records.DataTypes as RDT exposing (BasicSourceBody, Exemplar, ExemplarsList, ExternalResource, ExternalResourceList, Incipit, IncipitFormat(..), IncipitList, InstitutionBody, MaterialGroup, MaterialGroupList, NoteList, PersonBody, PersonNameVariantList, PersonSources, PlaceBody, RecordResponse(..), RelatedEntity, RelationList, Relationship, Relationships, RenderedIncipit(..), SeeAlso, SourceBody, SourceRelationship, SourceRelationshipList, Subject)
+import Records.DataTypes as RDT exposing (BasicSourceBody, Exemplar, ExemplarsList, ExternalResource, ExternalResourceList, Incipit, IncipitFormat(..), IncipitList, InstitutionBody, MaterialGroup, MaterialGroupList, NoteList, PersonBody, PersonNameVariantList, PersonSources, PlaceBody, RecordResponse(..), RelatedEntity, RelatedList, Relationship, Relationships, RenderedIncipit(..), SeeAlso, SourceBody, SourceRelationship, SourceRelationshipList, Subject)
 import Shared.DataTypes exposing (RecordType(..), recordTypeFromJsonType)
 import Shared.Decoders exposing (labelDecoder, labelValueDecoder, typeDecoder)
 
@@ -198,9 +198,9 @@ relationshipsDecoder =
         |> required "items" (list relationshipDecoder)
 
 
-relationListDecoder : Decoder RelationList
-relationListDecoder =
-    Decode.succeed RelationList
+relatedListDecoder : Decoder RelatedList
+relatedListDecoder =
+    Decode.succeed RelatedList
         |> required "label" labelDecoder
         |> required "items" (list relationshipsDecoder)
 
@@ -226,7 +226,7 @@ personBodyDecoder =
         |> required "summary" (list labelValueDecoder)
         |> optional "seeAlso" (Decode.maybe (list seeAlsoDecoder)) Nothing
         |> optional "nameVariants" (Decode.maybe personNameVariantListDecoder) Nothing
-        |> optional "relations" (Decode.maybe relationListDecoder) Nothing
+        |> optional "related" (Decode.maybe relatedListDecoder) Nothing
         |> optional "notes" (Decode.maybe noteListDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourceListDecoder) Nothing
 
@@ -244,7 +244,7 @@ institutionBodyDecoder =
         |> required "id" string
         |> required "label" labelDecoder
         |> required "summary" (list labelValueDecoder)
-        |> optional "relations" (Decode.maybe relationListDecoder) Nothing
+        |> optional "related" (Decode.maybe relatedListDecoder) Nothing
 
 
 institutionResponseDecoder : Decoder RecordResponse
