@@ -4,8 +4,8 @@ import Element exposing (Element, alignLeft, alignRight, centerX, column, el, fi
 import Element.Border as Border
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html.Attributes as Html
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Model, Msg(..))
+import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import String.Extra as SE
 import UI.Components exposing (h6)
 import UI.Style exposing (bodyRegular, pink)

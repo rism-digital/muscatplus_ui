@@ -4,7 +4,6 @@ import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Http exposing (Error(..))
-import Language exposing (Language, parseLocaleToLanguage)
 import List.Extra as LE
 import Search.DataTypes
     exposing
@@ -19,6 +18,7 @@ import Search.DataTypes
         )
 import Search.Routes exposing (buildQueryParameters, searchRequest)
 import Search.Views.View exposing (viewSearchBody)
+import Shared.Language exposing (Language, parseLocaleToLanguage)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
 import Url.Builder as Builder

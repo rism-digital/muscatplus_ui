@@ -3,12 +3,12 @@ module Records.Views.View exposing (..)
 import Browser
 import Element exposing (DeviceClass(..), Element, alignLeft, centerX, column, fill, fillPortion, height, row, width)
 import Html
-import Language exposing (languageOptions, languageOptionsForDisplay)
 import Records.DataTypes exposing (ApiResponse(..), Model, Msg(..), RecordResponse(..))
 import Records.Views.Institution exposing (viewInstitutionRecord)
 import Records.Views.Person exposing (viewPersonRecord)
 import Records.Views.Shared exposing (viewErrorMessage, viewLoadingSpinner)
 import Records.Views.Source exposing (viewSourceRecord)
+import Shared.Language exposing (languageOptions, languageOptionsForDisplay)
 import UI.Layout exposing (layoutBody)
 import UI.Style exposing (minMaxFillDesktop)
 

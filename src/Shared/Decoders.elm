@@ -2,8 +2,8 @@ module Shared.Decoders exposing (..)
 
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (required)
-import Language exposing (LanguageMap, languageMapDecoder)
 import Shared.DataTypes exposing (LabelValue, RecordType, recordTypeFromJsonType)
+import Shared.Language exposing (LanguageMap, languageMapDecoder)
 
 
 typeDecoder : Decoder RecordType

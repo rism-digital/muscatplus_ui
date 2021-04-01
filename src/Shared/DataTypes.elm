@@ -1,6 +1,6 @@
 module Shared.DataTypes exposing (..)
 
-import Language exposing (LanguageMap)
+import Shared.Language exposing (LanguageMap)
 
 
 type RecordType

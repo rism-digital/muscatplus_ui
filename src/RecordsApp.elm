@@ -4,10 +4,10 @@ import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Http exposing (Error(..))
-import Language exposing (parseLocaleToLanguage)
 import Records.DataTypes exposing (ApiResponse(..), Model, Msg(..))
 import Records.Routes exposing (recordRequest, routeMatches)
 import Records.Views.View as View
+import Shared.Language exposing (parseLocaleToLanguage)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
 

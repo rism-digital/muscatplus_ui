@@ -2,8 +2,8 @@ module Search.Views.Results exposing (..)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacingXY, text, width)
 import Element.Font as Font
-import Language exposing (Language)
 import Search.DataTypes exposing (ApiResponse(..), Model, Msg, SearchPagination, SearchResult)
+import Shared.Language exposing (Language)
 import UI.Components exposing (h5)
 import UI.Style exposing (darkBlue, red)
 

@@ -5,7 +5,7 @@ import Element.Font as Font
 import Html as HT
 import Html.Attributes as HA
 import Html.Events as HE
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
+import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import UI.Style exposing (bodyRegular, darkBlue, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
 
 

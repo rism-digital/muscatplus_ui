@@ -4,8 +4,8 @@ import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
 import Element exposing (Device)
 import Http
-import Language exposing (Language, LanguageMap)
 import Shared.DataTypes exposing (LabelValue, RecordType)
+import Shared.Language exposing (Language, LanguageMap)
 import Url exposing (Url)
 
 

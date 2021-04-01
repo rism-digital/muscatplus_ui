@@ -1,9 +1,9 @@
 module Records.Views.Institution exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, none, paddingXY, px, row, spacing, width)
-import Language exposing (Language, LanguageMap)
 import Records.DataTypes exposing (InstitutionBody, Msg)
 import Records.Views.Shared exposing (viewRelations, viewSummaryField)
+import Shared.Language exposing (Language, LanguageMap)
 import UI.Components exposing (h2)
 
 

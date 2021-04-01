@@ -1,7 +1,6 @@
 module Records.Views.Source exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, fillPortion, height, none, paddingXY, paragraph, px, row, spacing, text, width)
-import Language exposing (Language, extractLabelFromLanguageMap)
 import Records.DataTypes
     exposing
         ( Exemplar
@@ -19,6 +18,7 @@ import Records.DataTypes
         , SourceRelationshipList
         )
 import Records.Views.Shared exposing (viewSummaryField)
+import Shared.Language exposing (Language, extractLabelFromLanguageMap)
 import SvgParser
 import UI.Components exposing (h2, h4, h5, styledLink)
 import UI.Style exposing (bodyRegular)

@@ -1,12 +1,11 @@
 module UI.Layout exposing (..)
 
-import Dict
 import Element exposing (..)
 import Element.Font as Font
 import Html
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Shared.Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import UI.Components exposing (languageSelect)
-import UI.Style as Style exposing (blueBackground, bodyFont, darkBlue, greyBackground, minMaxFillDesktop)
+import UI.Style exposing (blueBackground, bodyFont, darkBlue, greyBackground, minMaxFillDesktop)
 
 
 detectDevice : Int -> Int -> Device

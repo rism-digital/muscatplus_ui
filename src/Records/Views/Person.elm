@@ -1,9 +1,9 @@
 module Records.Views.Person exposing (..)
 
 import Element exposing (Element, alignTop, column, el, fill, height, none, paddingXY, px, row, spacing, spacingXY, width)
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Records.DataTypes exposing (ExternalResource, ExternalResourceList, Msg, NoteList, PersonBody, PersonNameVariantList, SeeAlso)
 import Records.Views.Shared exposing (viewRelations, viewSummaryField)
+import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import UI.Components exposing (h2, h4, styledLink)
 
 

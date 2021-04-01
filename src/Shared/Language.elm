@@ -1,4 +1,4 @@
-module Language exposing
+module Shared.Language exposing
     ( Language(..)
     , LanguageMap
     , LanguageValues(..)
@@ -16,7 +16,6 @@ module Language exposing
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)
-import List.Extra as LE
 
 
 type Language

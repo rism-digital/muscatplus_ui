@@ -5,11 +5,11 @@ import Element.Border as Border
 import Element.Input as Input
 import Html
 import Html.Attributes
-import Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
 import Search.DataTypes exposing (ApiResponse(..), Model, Msg(..), Route(..))
 import Search.Views.Facets exposing (viewSidebarFacets, viewTypeFacet)
 import Search.Views.Results exposing (viewResultList)
 import Search.Views.Shared exposing (onEnter)
+import Shared.Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
 import UI.Layout exposing (layoutBody)
 import UI.Style as Style exposing (darkBlue, greyBackground, lightBlue, minMaxFillDesktop, minMaxFillMobile, roundedBorder, roundedButton)
 

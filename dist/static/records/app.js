@@ -10865,29 +10865,29 @@ var $author$project$UI$Layout$detectDevice = F2(
 		return $mdgriffith$elm_ui$Element$classifyDevice(
 			{height: height, width: width});
 	});
-var $author$project$Language$English = {$: 'English'};
-var $author$project$Language$French = {$: 'French'};
-var $author$project$Language$German = {$: 'German'};
-var $author$project$Language$Italian = {$: 'Italian'};
-var $author$project$Language$None = {$: 'None'};
-var $author$project$Language$Polish = {$: 'Polish'};
-var $author$project$Language$Portugese = {$: 'Portugese'};
-var $author$project$Language$Spanish = {$: 'Spanish'};
-var $author$project$Language$languageOptions = _List_fromArray(
+var $author$project$Shared$Language$English = {$: 'English'};
+var $author$project$Shared$Language$French = {$: 'French'};
+var $author$project$Shared$Language$German = {$: 'German'};
+var $author$project$Shared$Language$Italian = {$: 'Italian'};
+var $author$project$Shared$Language$None = {$: 'None'};
+var $author$project$Shared$Language$Polish = {$: 'Polish'};
+var $author$project$Shared$Language$Portugese = {$: 'Portugese'};
+var $author$project$Shared$Language$Spanish = {$: 'Spanish'};
+var $author$project$Shared$Language$languageOptions = _List_fromArray(
 	[
-		_Utils_Tuple3('en', 'English', $author$project$Language$English),
-		_Utils_Tuple3('de', 'Deutsch', $author$project$Language$German),
-		_Utils_Tuple3('fr', 'Français', $author$project$Language$French),
-		_Utils_Tuple3('it', 'Italiano', $author$project$Language$Italian),
-		_Utils_Tuple3('es', 'Español', $author$project$Language$Spanish),
-		_Utils_Tuple3('pt', 'Português', $author$project$Language$Portugese),
-		_Utils_Tuple3('pl', 'Polskie', $author$project$Language$Polish),
-		_Utils_Tuple3('none', 'None', $author$project$Language$None)
+		_Utils_Tuple3('en', 'English', $author$project$Shared$Language$English),
+		_Utils_Tuple3('de', 'Deutsch', $author$project$Shared$Language$German),
+		_Utils_Tuple3('fr', 'Français', $author$project$Shared$Language$French),
+		_Utils_Tuple3('it', 'Italiano', $author$project$Shared$Language$Italian),
+		_Utils_Tuple3('es', 'Español', $author$project$Shared$Language$Spanish),
+		_Utils_Tuple3('pt', 'Português', $author$project$Shared$Language$Portugese),
+		_Utils_Tuple3('pl', 'Polskie', $author$project$Shared$Language$Polish),
+		_Utils_Tuple3('none', 'None', $author$project$Shared$Language$None)
 	]);
-var $author$project$Language$parseLocaleToLanguage = function (locale) {
+var $author$project$Shared$Language$parseLocaleToLanguage = function (locale) {
 	return A2(
 		$elm$core$Maybe$withDefault,
-		$author$project$Language$English,
+		$author$project$Shared$Language$English,
 		A2(
 			$elm$core$Dict$get,
 			locale,
@@ -10899,7 +10899,7 @@ var $author$project$Language$parseLocaleToLanguage = function (locale) {
 						var s = _v0.c;
 						return _Utils_Tuple2(l, s);
 					},
-					$author$project$Language$languageOptions))));
+					$author$project$Shared$Language$languageOptions))));
 };
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -11173,25 +11173,25 @@ var $author$project$Records$DataTypes$InstitutionBody = F4(
 	function (id, label, summary, relations) {
 		return {id: id, label: label, relations: relations, summary: summary};
 	});
-var $author$project$Language$LanguageValues = F2(
+var $author$project$Shared$Language$LanguageValues = F2(
 	function (a, b) {
 		return {$: 'LanguageValues', a: a, b: b};
 	});
-var $author$project$Language$languageDecoder = function (locale) {
-	var lang = $author$project$Language$parseLocaleToLanguage(locale);
+var $author$project$Shared$Language$languageDecoder = function (locale) {
+	var lang = $author$project$Shared$Language$parseLocaleToLanguage(locale);
 	return $elm$json$Json$Decode$succeed(lang);
 };
-var $author$project$Language$languageValuesDecoder = function (_v0) {
+var $author$project$Shared$Language$languageValuesDecoder = function (_v0) {
 	var locale = _v0.a;
 	var translations = _v0.b;
 	return A2(
 		$elm$json$Json$Decode$map,
 		function (lang) {
-			return A2($author$project$Language$LanguageValues, lang, translations);
+			return A2($author$project$Shared$Language$LanguageValues, lang, translations);
 		},
-		$author$project$Language$languageDecoder(locale));
+		$author$project$Shared$Language$languageDecoder(locale));
 };
-var $author$project$Language$languageMapDecoder = function (json) {
+var $author$project$Shared$Language$languageMapDecoder = function (json) {
 	return A3(
 		$elm$core$List$foldl,
 		F2(
@@ -11199,7 +11199,7 @@ var $author$project$Language$languageMapDecoder = function (json) {
 				return A3(
 					$elm$json$Json$Decode$map2,
 					$elm$core$List$cons,
-					$author$project$Language$languageValuesDecoder(map),
+					$author$project$Shared$Language$languageValuesDecoder(map),
 					maps);
 			}),
 		$elm$json$Json$Decode$succeed(_List_Nil),
@@ -11207,7 +11207,7 @@ var $author$project$Language$languageMapDecoder = function (json) {
 };
 var $author$project$Shared$Decoders$labelDecoder = A2(
 	$elm$json$Json$Decode$andThen,
-	$author$project$Language$languageMapDecoder,
+	$author$project$Shared$Language$languageMapDecoder,
 	$elm$json$Json$Decode$keyValuePairs(
 		$elm$json$Json$Decode$list($elm$json$Json$Decode$string)));
 var $author$project$Shared$DataTypes$LabelValue = F2(
@@ -11896,7 +11896,7 @@ var $author$project$Records$Routes$recordRequest = F2(
 	});
 var $author$project$RecordsApp$init = F3(
 	function (flags, initialUrl, key) {
-		var language = $author$project$Language$parseLocaleToLanguage(flags.locale);
+		var language = $author$project$Shared$Language$parseLocaleToLanguage(flags.locale);
 		var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
 		return _Utils_Tuple2(
 			{errorMessage: '', key: key, language: language, response: $author$project$Records$DataTypes$Loading, url: initialUrl, viewingDevice: initialDevice},
@@ -12504,7 +12504,7 @@ var $author$project$RecordsApp$update = F2(
 					_Utils_update(
 						model,
 						{
-							language: $author$project$Language$parseLocaleToLanguage(str)
+							language: $author$project$Shared$Language$parseLocaleToLanguage(str)
 						}),
 					$elm$core$Platform$Cmd$none);
 			default:
@@ -12525,7 +12525,7 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var $author$project$Language$languageOptionsForDisplay = A2(
+var $author$project$Shared$Language$languageOptionsForDisplay = A2(
 	$elm$core$List$filter,
 	function (_v1) {
 		var l = _v1.a;
@@ -12538,7 +12538,7 @@ var $author$project$Language$languageOptionsForDisplay = A2(
 			var n = _v0.b;
 			return _Utils_Tuple2(l, n);
 		},
-		$author$project$Language$languageOptions));
+		$author$project$Shared$Language$languageOptions));
 var $mdgriffith$elm_ui$Internal$Model$FontFamily = F2(
 	function (a, b) {
 		return {$: 'FontFamily', a: a, b: b};
@@ -18347,7 +18347,7 @@ var $elm$core$List$head = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $author$project$Language$extractTextFromLanguageMap = F2(
+var $author$project$Shared$Language$extractTextFromLanguageMap = F2(
 	function (lang, langMap) {
 		var lastResort = _List_fromArray(
 			['[No language value found]']);
@@ -18364,7 +18364,7 @@ var $author$project$Language$extractTextFromLanguageMap = F2(
 				$elm$core$List$filter,
 				function (_v4) {
 					var l = _v4.a;
-					return _Utils_eq(l, $author$project$Language$None);
+					return _Utils_eq(l, $author$project$Shared$Language$None);
 				},
 				langMap));
 		var chosenLangValues = function () {
@@ -18384,12 +18384,12 @@ var $author$project$Language$extractTextFromLanguageMap = F2(
 		}();
 		return chosenLangValues;
 	});
-var $author$project$Language$extractLabelFromLanguageMap = F2(
+var $author$project$Shared$Language$extractLabelFromLanguageMap = F2(
 	function (lang, langMap) {
 		return A2(
 			$elm$core$String$join,
 			'; ',
-			A2($author$project$Language$extractTextFromLanguageMap, lang, langMap));
+			A2($author$project$Shared$Language$extractTextFromLanguageMap, lang, langMap));
 	});
 var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
 var $author$project$UI$Style$lightGrey = A3($mdgriffith$elm_ui$Element$rgb255, 241, 244, 249);
@@ -18456,80 +18456,80 @@ var $mdgriffith$elm_ui$Element$link = F2(
 				_List_fromArray(
 					[label])));
 	});
-var $author$project$Language$localTranslations = {
+var $author$project$Shared$Language$localTranslations = {
 	home: _List_fromArray(
 		[
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$English,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$English,
 			_List_fromArray(
 				['Home'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$German,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$German,
 			_List_fromArray(
 				['Startseite'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$French,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$French,
 			_List_fromArray(
 				['Accueil'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$Italian,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$Italian,
 			_List_fromArray(
 				['Home'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$Spanish,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$Spanish,
 			_List_fromArray(
 				['Página principal'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$Portugese,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$Portugese,
 			_List_fromArray(
 				['Início'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$Polish,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$Polish,
 			_List_fromArray(
 				['Strona główna']))
 		]),
 	search: _List_fromArray(
 		[
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$English,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$English,
 			_List_fromArray(
 				['Search'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$German,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$German,
 			_List_fromArray(
 				['Suche'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$French,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$French,
 			_List_fromArray(
 				['Chercher'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$Italian,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$Italian,
 			_List_fromArray(
 				['Cerca'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$Spanish,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$Spanish,
 			_List_fromArray(
 				['Búsqueda'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$Portugese,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$Portugese,
 			_List_fromArray(
 				['Busca'])),
 			A2(
-			$author$project$Language$LanguageValues,
-			$author$project$Language$Polish,
+			$author$project$Shared$Language$LanguageValues,
+			$author$project$Shared$Language$Polish,
 			_List_fromArray(
 				['Wyszukiwanie']))
 		])
@@ -18593,7 +18593,7 @@ var $author$project$UI$Layout$layoutTopBar = F3(
 											_List_Nil,
 											{
 												label: $mdgriffith$elm_ui$Element$text(
-													A2($author$project$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Language$localTranslations.home)),
+													A2($author$project$Shared$Language$extractLabelFromLanguageMap, currentLanguage, $author$project$Shared$Language$localTranslations.home)),
 												url: '/'
 											})
 										])),
@@ -18721,7 +18721,7 @@ var $author$project$UI$Components$headingHelper = F3(
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$text(
-					A2($author$project$Language$extractLabelFromLanguageMap, language, heading))
+					A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, heading))
 				]));
 	});
 var $mdgriffith$elm_ui$Element$Font$size = function (i) {
@@ -18762,7 +18762,7 @@ var $author$project$UI$Components$label = F2(
 			_List_fromArray(
 				[$mdgriffith$elm_ui$Element$Font$bold, $author$project$UI$Style$bodyRegular]),
 			$mdgriffith$elm_ui$Element$text(
-				A2($author$project$Language$extractLabelFromLanguageMap, language, langmap)));
+				A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, langmap)));
 	});
 var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
 	function (a, b, c, d, e) {
@@ -18853,7 +18853,7 @@ var $author$project$Records$Views$Shared$viewLinkedRelatedTo = F3(
 		var relationshipLink = A2(
 			$author$project$UI$Components$styledLink,
 			entity.id,
-			A2($author$project$Language$extractLabelFromLanguageMap, language, entity.name));
+			A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, entity.name));
 		var relationshipAttributes = ($elm$core$String$length(role) > 0) ? _List_fromArray(
 			[
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
@@ -18882,7 +18882,7 @@ var $author$project$Records$Views$Shared$viewLinkedRelatedTo = F3(
 	});
 var $author$project$Records$Views$Shared$viewUnlinkedRelatedTo = F3(
 	function (relatedEntity, role, language) {
-		var relationshipName = A2($author$project$Language$extractLabelFromLanguageMap, language, relatedEntity);
+		var relationshipName = A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, relatedEntity);
 		var relationshipAttributes = ($elm$core$String$length(role) > 0) ? _List_fromArray(
 			[
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
@@ -18919,7 +18919,7 @@ var $author$project$Records$Views$Shared$viewRelationship = F2(
 			var _v2 = relationship.role;
 			if (_v2.$ === 'Just') {
 				var relationshipRole = _v2.a;
-				return '[' + (A2($author$project$Language$extractLabelFromLanguageMap, language, relationshipRole) + ']');
+				return '[' + (A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, relationshipRole) + ']');
 			} else {
 				return '';
 			}
@@ -19103,7 +19103,7 @@ var $author$project$UI$Components$value = F2(
 					$author$project$UI$Style$bodyRegular
 				]),
 			$author$project$UI$Components$styledParagraphs(
-				A2($author$project$Language$extractTextFromLanguageMap, language, langmap)));
+				A2($author$project$Shared$Language$extractTextFromLanguageMap, language, langmap)));
 	});
 var $author$project$Records$Views$Shared$viewSummaryField = F2(
 	function (field, language) {
@@ -19327,7 +19327,7 @@ var $author$project$Records$Views$Person$viewExternalAuthority = F2(
 					A2(
 						$author$project$UI$Components$styledLink,
 						seeAlso.url,
-						A2($author$project$Language$extractLabelFromLanguageMap, language, seeAlso.label)))
+						A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, seeAlso.label)))
 				]));
 	});
 var $author$project$Records$Views$Person$viewExternalAuthorities = F2(
@@ -19370,7 +19370,7 @@ var $author$project$Records$Views$Person$viewExternalResource = F2(
 		return A2(
 			$author$project$UI$Components$styledLink,
 			externalResource.url,
-			A2($author$project$Language$extractLabelFromLanguageMap, language, externalResource.label));
+			A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, externalResource.label));
 	});
 var $author$project$Records$Views$Person$viewExternalResources = F2(
 	function (resourceList, language) {
@@ -19618,7 +19618,7 @@ var $author$project$Records$Views$Source$viewHeldByInstitution = F2(
 		var heldByLink = A2(
 			$author$project$UI$Components$styledLink,
 			heldByInstitution.id,
-			A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.label));
+			A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, heldByInstitution.label));
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
 			_List_fromArray(
@@ -20570,7 +20570,7 @@ var $author$project$Records$Views$Source$viewRelatedPerson = F2(
 			var _v1 = relationship.role;
 			if (_v1.$ === 'Just') {
 				var role = _v1.a;
-				return '[' + (A2($author$project$Language$extractLabelFromLanguageMap, language, role) + ']');
+				return '[' + (A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, role) + ']');
 			} else {
 				return '';
 			}
@@ -20579,7 +20579,7 @@ var $author$project$Records$Views$Source$viewRelatedPerson = F2(
 			var _v0 = relationship.qualifier;
 			if (_v0.$ === 'Just') {
 				var qual = _v0.a;
-				return '[' + (A2($author$project$Language$extractLabelFromLanguageMap, language, qual) + ']');
+				return '[' + (A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, qual) + ']');
 			} else {
 				return '';
 			}
@@ -20588,7 +20588,7 @@ var $author$project$Records$Views$Source$viewRelatedPerson = F2(
 		var relatedPerson = A2(
 			$author$project$UI$Components$styledLink,
 			person.id,
-			A2($author$project$Language$extractLabelFromLanguageMap, language, person.label));
+			A2($author$project$Shared$Language$extractLabelFromLanguageMap, language, person.label));
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
 			_List_fromArray(
@@ -20957,7 +20957,7 @@ var $author$project$Records$Views$View$viewRecordContentMobile = function (model
 };
 var $author$project$Records$Views$View$viewRecordBody = function (model) {
 	var message = $author$project$Records$DataTypes$LanguageSelectChanged;
-	var langOptions = $author$project$Language$languageOptionsForDisplay;
+	var langOptions = $author$project$Shared$Language$languageOptionsForDisplay;
 	var device = model.viewingDevice;
 	var deviceView = function () {
 		var _v0 = device._class;
@@ -21004,4 +21004,4 @@ _Platform_export({'RecordsApp':{'init':$author$project$RecordsApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Records.DataTypes.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Records.DataTypes.Exemplar":{"args":[],"type":"{ id : String.String, summary : List.List Shared.DataTypes.LabelValue, heldBy : Records.DataTypes.InstitutionBody }"},"Records.DataTypes.ExemplarsList":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, items : List.List Records.DataTypes.Exemplar }"},"Records.DataTypes.ExternalResource":{"args":[],"type":"{ url : String.String, label : Language.LanguageMap }"},"Records.DataTypes.ExternalResourceList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Records.DataTypes.ExternalResource }"},"Records.DataTypes.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, rendered : Maybe.Maybe (List.List Records.DataTypes.RenderedIncipit) }"},"Records.DataTypes.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Records.DataTypes.Incipit }"},"Records.DataTypes.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, relations : Maybe.Maybe Records.DataTypes.RelationList }"},"Shared.DataTypes.LabelValue":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Records.DataTypes.MaterialGroup":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, related : Maybe.Maybe Records.DataTypes.SourceRelationshipList }"},"Records.DataTypes.MaterialGroupList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Records.DataTypes.MaterialGroup }"},"Records.DataTypes.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Shared.DataTypes.LabelValue }"},"Records.DataTypes.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Records.DataTypes.PersonSources, summary : List.List Shared.DataTypes.LabelValue, seeAlso : Maybe.Maybe (List.List Records.DataTypes.SeeAlso), nameVariants : Maybe.Maybe Records.DataTypes.PersonNameVariantList, relations : Maybe.Maybe Records.DataTypes.RelationList, notes : Maybe.Maybe Records.DataTypes.NoteList, externalResources : Maybe.Maybe Records.DataTypes.ExternalResourceList }"},"Records.DataTypes.PersonNameVariantList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Shared.DataTypes.LabelValue }"},"Records.DataTypes.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Records.DataTypes.RelatedEntity":{"args":[],"type":"{ type_ : Shared.DataTypes.RecordType, name : Language.LanguageMap, id : String.String }"},"Records.DataTypes.RelationList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Records.DataTypes.Relationships }"},"Records.DataTypes.Relationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, relatedTo : Maybe.Maybe Records.DataTypes.RelatedEntity, value : Maybe.Maybe Language.LanguageMap }"},"Records.DataTypes.Relationships":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Records.DataTypes.Relationship }"},"Records.DataTypes.SeeAlso":{"args":[],"type":"{ url : String.String, label : Language.LanguageMap }"},"Records.DataTypes.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Records.DataTypes.BasicSourceBody), creator : Maybe.Maybe Records.DataTypes.SourceRelationship, related : Maybe.Maybe Records.DataTypes.SourceRelationshipList, subjects : Maybe.Maybe (List.List Records.DataTypes.Subject), notes : Maybe.Maybe Records.DataTypes.NoteList, incipits : Maybe.Maybe Records.DataTypes.IncipitList, materialgroups : Maybe.Maybe Records.DataTypes.MaterialGroupList, exemplars : Maybe.Maybe Records.DataTypes.ExemplarsList }"},"Records.DataTypes.SourceRelationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, person : Records.DataTypes.PersonBody }"},"Records.DataTypes.SourceRelationshipList":{"args":[],"type":"{ id : Maybe.Maybe String.String, label : Language.LanguageMap, items : List.List Records.DataTypes.SourceRelationship }"},"Records.DataTypes.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Records.DataTypes.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Records.DataTypes.RecordResponse":{"args":[],"tags":{"SourceResponse":["Records.DataTypes.SourceBody"],"PersonResponse":["Records.DataTypes.PersonBody"],"InstitutionResponse":["Records.DataTypes.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Shared.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[],"Place":[],"Incipit":[],"Unknown":[]}},"Records.DataTypes.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Records.DataTypes.IncipitFormat","String.String"]}},"Records.DataTypes.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Records.DataTypes.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Shared.Language.LanguageMap, sourceType : Shared.Language.LanguageMap }"},"Records.DataTypes.Exemplar":{"args":[],"type":"{ id : String.String, summary : List.List Shared.DataTypes.LabelValue, heldBy : Records.DataTypes.InstitutionBody }"},"Records.DataTypes.ExemplarsList":{"args":[],"type":"{ id : String.String, label : Shared.Language.LanguageMap, items : List.List Records.DataTypes.Exemplar }"},"Records.DataTypes.ExternalResource":{"args":[],"type":"{ url : String.String, label : Shared.Language.LanguageMap }"},"Records.DataTypes.ExternalResourceList":{"args":[],"type":"{ label : Shared.Language.LanguageMap, items : List.List Records.DataTypes.ExternalResource }"},"Records.DataTypes.Incipit":{"args":[],"type":"{ id : String.String, label : Shared.Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, rendered : Maybe.Maybe (List.List Records.DataTypes.RenderedIncipit) }"},"Records.DataTypes.IncipitList":{"args":[],"type":"{ label : Shared.Language.LanguageMap, incipits : List.List Records.DataTypes.Incipit }"},"Records.DataTypes.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Shared.Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, relations : Maybe.Maybe Records.DataTypes.RelationList }"},"Shared.DataTypes.LabelValue":{"args":[],"type":"{ label : Shared.Language.LanguageMap, value : Shared.Language.LanguageMap }"},"Shared.Language.LanguageMap":{"args":[],"type":"List.List Shared.Language.LanguageValues"},"Records.DataTypes.MaterialGroup":{"args":[],"type":"{ id : String.String, label : Shared.Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, related : Maybe.Maybe Records.DataTypes.SourceRelationshipList }"},"Records.DataTypes.MaterialGroupList":{"args":[],"type":"{ label : Shared.Language.LanguageMap, items : List.List Records.DataTypes.MaterialGroup }"},"Records.DataTypes.NoteList":{"args":[],"type":"{ label : Shared.Language.LanguageMap, notes : List.List Shared.DataTypes.LabelValue }"},"Records.DataTypes.PersonBody":{"args":[],"type":"{ id : String.String, label : Shared.Language.LanguageMap, sources : Maybe.Maybe Records.DataTypes.PersonSources, summary : List.List Shared.DataTypes.LabelValue, seeAlso : Maybe.Maybe (List.List Records.DataTypes.SeeAlso), nameVariants : Maybe.Maybe Records.DataTypes.PersonNameVariantList, relations : Maybe.Maybe Records.DataTypes.RelationList, notes : Maybe.Maybe Records.DataTypes.NoteList, externalResources : Maybe.Maybe Records.DataTypes.ExternalResourceList }"},"Records.DataTypes.PersonNameVariantList":{"args":[],"type":"{ label : Shared.Language.LanguageMap, items : List.List Shared.DataTypes.LabelValue }"},"Records.DataTypes.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Records.DataTypes.RelatedEntity":{"args":[],"type":"{ type_ : Shared.DataTypes.RecordType, name : Shared.Language.LanguageMap, id : String.String }"},"Records.DataTypes.RelationList":{"args":[],"type":"{ label : Shared.Language.LanguageMap, items : List.List Records.DataTypes.Relationships }"},"Records.DataTypes.Relationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Shared.Language.LanguageMap, qualifier : Maybe.Maybe Shared.Language.LanguageMap, relatedTo : Maybe.Maybe Records.DataTypes.RelatedEntity, value : Maybe.Maybe Shared.Language.LanguageMap }"},"Records.DataTypes.Relationships":{"args":[],"type":"{ label : Shared.Language.LanguageMap, items : List.List Records.DataTypes.Relationship }"},"Records.DataTypes.SeeAlso":{"args":[],"type":"{ url : String.String, label : Shared.Language.LanguageMap }"},"Records.DataTypes.SourceBody":{"args":[],"type":"{ id : String.String, label : Shared.Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, sourceType : Shared.Language.LanguageMap, partOf : Maybe.Maybe (List.List Records.DataTypes.BasicSourceBody), creator : Maybe.Maybe Records.DataTypes.SourceRelationship, related : Maybe.Maybe Records.DataTypes.SourceRelationshipList, subjects : Maybe.Maybe (List.List Records.DataTypes.Subject), notes : Maybe.Maybe Records.DataTypes.NoteList, incipits : Maybe.Maybe Records.DataTypes.IncipitList, materialgroups : Maybe.Maybe Records.DataTypes.MaterialGroupList, exemplars : Maybe.Maybe Records.DataTypes.ExemplarsList }"},"Records.DataTypes.SourceRelationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Shared.Language.LanguageMap, qualifier : Maybe.Maybe Shared.Language.LanguageMap, person : Records.DataTypes.PersonBody }"},"Records.DataTypes.SourceRelationshipList":{"args":[],"type":"{ id : Maybe.Maybe String.String, label : Shared.Language.LanguageMap, items : List.List Records.DataTypes.SourceRelationship }"},"Records.DataTypes.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Records.DataTypes.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Records.DataTypes.RecordResponse":{"args":[],"tags":{"SourceResponse":["Records.DataTypes.SourceBody"],"PersonResponse":["Records.DataTypes.PersonBody"],"InstitutionResponse":["Records.DataTypes.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Shared.Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Shared.Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Shared.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[],"Place":[],"Incipit":[],"Unknown":[]}},"Records.DataTypes.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Records.DataTypes.IncipitFormat","String.String"]}},"Records.DataTypes.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Shared.Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
