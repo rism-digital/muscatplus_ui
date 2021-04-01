@@ -128,7 +128,7 @@ viewLinkedRelatedTo : RelatedEntity -> String -> Language -> Element Msg
 viewLinkedRelatedTo entity role language =
     let
         relationshipLink =
-            styledLink entity.id (extractLabelFromLanguageMap language entity.name)
+            styledLink entity.id (extractLabelFromLanguageMap language entity.label)
 
         relationshipAttributes =
             if String.length role > 0 then

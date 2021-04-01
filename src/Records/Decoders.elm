@@ -28,7 +28,7 @@ relatedEntityDecoder : Decoder RelatedEntity
 relatedEntityDecoder =
     Decode.succeed RelatedEntity
         |> required "type" typeDecoder
-        |> required "name" labelDecoder
+        |> required "label" labelDecoder
         |> required "id" string
 
 

@@ -60,7 +60,7 @@ type alias Relationship =
 {-| -}
 type alias RelatedEntity =
     { type_ : RecordType
-    , name : LanguageMap
+    , label : LanguageMap
     , id : String
     }
 
