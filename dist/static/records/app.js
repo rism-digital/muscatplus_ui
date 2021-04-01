@@ -10836,7 +10836,7 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Api$Records$Loading = {$: 'Loading'};
+var $author$project$Records$DataTypes$Loading = {$: 'Loading'};
 var $author$project$Records$DataTypes$ReceivedRecordResponse = function (a) {
 	return {$: 'ReceivedRecordResponse', a: a};
 };
@@ -11150,7 +11150,7 @@ var $elm$http$Http$request = function (r) {
 		$elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
-var $author$project$Api$Request$createRequest = F3(
+var $author$project$Shared$Request$createRequest = F3(
 	function (responseMsg, responseDecoder, url) {
 		return $elm$http$Http$request(
 			{
@@ -11166,12 +11166,12 @@ var $author$project$Api$Request$createRequest = F3(
 				url: url
 			});
 	});
-var $author$project$Api$Records$InstitutionResponse = function (a) {
+var $author$project$Records$DataTypes$InstitutionResponse = function (a) {
 	return {$: 'InstitutionResponse', a: a};
 };
-var $author$project$Api$Records$InstitutionBody = F3(
-	function (id, label, siglum) {
-		return {id: id, label: label, siglum: siglum};
+var $author$project$Records$DataTypes$InstitutionBody = F4(
+	function (id, label, summary, relations) {
+		return {id: id, label: label, relations: relations, summary: summary};
 	});
 var $author$project$Language$LanguageValues = F2(
 	function (a, b) {
@@ -11205,11 +11205,15 @@ var $author$project$Language$languageMapDecoder = function (json) {
 		$elm$json$Json$Decode$succeed(_List_Nil),
 		json);
 };
-var $author$project$Api$Search$labelDecoder = A2(
+var $author$project$Shared$Decoders$labelDecoder = A2(
 	$elm$json$Json$Decode$andThen,
 	$author$project$Language$languageMapDecoder,
 	$elm$json$Json$Decode$keyValuePairs(
 		$elm$json$Json$Decode$list($elm$json$Json$Decode$string)));
+var $author$project$Shared$DataTypes$LabelValue = F2(
+	function (label, value) {
+		return {label: label, value: value};
+	});
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 	function (key, valDecoder, decoder) {
@@ -11218,66 +11222,15 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 			A2($elm$json$Json$Decode$field, key, valDecoder),
 			decoder);
 	});
-var $author$project$Api$Records$institutionBodyDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'siglum',
-	$author$project$Api$Search$labelDecoder,
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'label',
-		$author$project$Api$Search$labelDecoder,
-		A3(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'id',
-			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$Api$Records$InstitutionBody))));
-var $author$project$Api$Records$institutionResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Api$Records$InstitutionResponse, $author$project$Api$Records$institutionBodyDecoder);
-var $author$project$Api$Records$PersonResponse = function (a) {
-	return {$: 'PersonResponse', a: a};
-};
-var $author$project$Api$Records$PersonBody = F9(
-	function (id, label, sources, summary, seeAlso, nameVariants, relations, notes, externalResources) {
-		return {externalResources: externalResources, id: id, label: label, nameVariants: nameVariants, notes: notes, relations: relations, seeAlso: seeAlso, sources: sources, summary: summary};
-	});
-var $author$project$Api$Records$ExternalResourceList = F2(
-	function (label, items) {
-		return {items: items, label: label};
-	});
-var $author$project$Api$Records$ExternalResource = F2(
-	function (url, label) {
-		return {label: label, url: url};
-	});
-var $author$project$Api$Records$externalResourceDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'label',
-	$author$project$Api$Search$labelDecoder,
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'url',
-		$elm$json$Json$Decode$string,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$ExternalResource)));
-var $author$project$Api$Records$externalResourceListDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$externalResourceDecoder),
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$ExternalResourceList)));
-var $author$project$Api$Records$LabelValue = F2(
-	function (label, value) {
-		return {label: label, value: value};
-	});
-var $author$project$Api$Records$labelValueDecoder = A3(
+var $author$project$Shared$Decoders$labelValueDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'value',
-	$author$project$Api$Search$labelDecoder,
+	$author$project$Shared$Decoders$labelDecoder,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$LabelValue)));
+		$author$project$Shared$Decoders$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Shared$DataTypes$LabelValue)));
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$json$Json$Decode$maybe = function (decoder) {
 	return $elm$json$Json$Decode$oneOf(
@@ -11287,19 +11240,6 @@ var $elm$json$Json$Decode$maybe = function (decoder) {
 				$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
 			]));
 };
-var $author$project$Api$Records$NoteList = F2(
-	function (label, notes) {
-		return {label: label, notes: notes};
-	});
-var $author$project$Api$Records$noteListDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$NoteList)));
 var $elm$json$Json$Decode$fail = _Json_fail;
 var $elm$json$Json$Decode$null = _Json_decodeNull;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder = F3(
@@ -11345,28 +11285,15 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional = F4(
 				fallback),
 			decoder);
 	});
-var $author$project$Api$Records$PersonNameVariantList = F2(
+var $author$project$Records$DataTypes$RelationList = F2(
 	function (label, items) {
 		return {items: items, label: label};
 	});
-var $author$project$Api$Records$personNameVariantListDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonNameVariantList)));
-var $author$project$Api$Records$PersonRelationList = F2(
+var $author$project$Records$DataTypes$Relationships = F2(
 	function (label, items) {
 		return {items: items, label: label};
 	});
-var $author$project$Api$Records$PersonRelation = F2(
-	function (label, items) {
-		return {items: items, label: label};
-	});
-var $author$project$Api$Records$Relationship = F5(
+var $author$project$Records$DataTypes$Relationship = F5(
 	function (id, role, qualifier, relatedTo, value) {
 		return {id: id, qualifier: qualifier, relatedTo: relatedTo, role: role, value: value};
 	});
@@ -11381,103 +11308,181 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt = F4(
 				fallback),
 			decoder);
 	});
-var $author$project$Api$Records$RelatedEntity = F3(
+var $author$project$Records$DataTypes$RelatedEntity = F3(
 	function (type_, name, id) {
 		return {id: id, name: name, type_: type_};
 	});
-var $author$project$Api$DataTypes$Incipit = {$: 'Incipit'};
-var $author$project$Api$DataTypes$Institution = {$: 'Institution'};
-var $author$project$Api$DataTypes$Person = {$: 'Person'};
-var $author$project$Api$DataTypes$Place = {$: 'Place'};
-var $author$project$Api$DataTypes$Source = {$: 'Source'};
-var $author$project$Api$DataTypes$Unknown = {$: 'Unknown'};
-var $author$project$Api$DataTypes$recordTypeFromJsonType = function (jsonType) {
+var $author$project$Shared$DataTypes$Incipit = {$: 'Incipit'};
+var $author$project$Shared$DataTypes$Institution = {$: 'Institution'};
+var $author$project$Shared$DataTypes$Person = {$: 'Person'};
+var $author$project$Shared$DataTypes$Place = {$: 'Place'};
+var $author$project$Shared$DataTypes$Source = {$: 'Source'};
+var $author$project$Shared$DataTypes$Unknown = {$: 'Unknown'};
+var $author$project$Shared$DataTypes$recordTypeFromJsonType = function (jsonType) {
 	switch (jsonType) {
 		case 'rism:Source':
-			return $author$project$Api$DataTypes$Source;
+			return $author$project$Shared$DataTypes$Source;
 		case 'rism:Person':
-			return $author$project$Api$DataTypes$Person;
+			return $author$project$Shared$DataTypes$Person;
 		case 'rism:Institution':
-			return $author$project$Api$DataTypes$Institution;
+			return $author$project$Shared$DataTypes$Institution;
 		case 'rism:Incipit':
-			return $author$project$Api$DataTypes$Incipit;
+			return $author$project$Shared$DataTypes$Incipit;
 		case 'rism:Place':
-			return $author$project$Api$DataTypes$Place;
+			return $author$project$Shared$DataTypes$Place;
 		default:
-			return $author$project$Api$DataTypes$Unknown;
+			return $author$project$Shared$DataTypes$Unknown;
 	}
 };
-var $author$project$Api$DataTypes$typeDecoder = A2(
+var $author$project$Shared$Decoders$typeDecoder = A2(
 	$elm$json$Json$Decode$andThen,
 	function (str) {
 		return $elm$json$Json$Decode$succeed(
-			$author$project$Api$DataTypes$recordTypeFromJsonType(str));
+			$author$project$Shared$DataTypes$recordTypeFromJsonType(str));
 	},
 	$elm$json$Json$Decode$string);
-var $author$project$Api$Records$relatedEntityDecoder = A3(
+var $author$project$Records$Decoders$relatedEntityDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'id',
 	$elm$json$Json$Decode$string,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'name',
-		$author$project$Api$Search$labelDecoder,
+		$author$project$Shared$Decoders$labelDecoder,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'type',
-			$author$project$Api$DataTypes$typeDecoder,
-			$elm$json$Json$Decode$succeed($author$project$Api$Records$RelatedEntity))));
-var $author$project$Api$Records$relationshipDecoder = A4(
+			$author$project$Shared$Decoders$typeDecoder,
+			$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$RelatedEntity))));
+var $author$project$Records$Decoders$relationshipDecoder = A4(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 	'value',
-	$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
+	$elm$json$Json$Decode$maybe($author$project$Shared$Decoders$labelDecoder),
 	$elm$core$Maybe$Nothing,
 	A4(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 		'relatedTo',
-		$elm$json$Json$Decode$maybe($author$project$Api$Records$relatedEntityDecoder),
+		$elm$json$Json$Decode$maybe($author$project$Records$Decoders$relatedEntityDecoder),
 		$elm$core$Maybe$Nothing,
 		A4(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt,
 			_List_fromArray(
 				['qualifier', 'label']),
-			$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
+			$elm$json$Json$Decode$maybe($author$project$Shared$Decoders$labelDecoder),
 			$elm$core$Maybe$Nothing,
 			A4(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt,
 				_List_fromArray(
 					['role', 'label']),
-				$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
+				$elm$json$Json$Decode$maybe($author$project$Shared$Decoders$labelDecoder),
 				$elm$core$Maybe$Nothing,
 				A4(
 					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 					'id',
 					$elm$json$Json$Decode$maybe($elm$json$Json$Decode$string),
 					$elm$core$Maybe$Nothing,
-					$elm$json$Json$Decode$succeed($author$project$Api$Records$Relationship))))));
-var $author$project$Api$Records$personRelationDecoder = A3(
+					$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$Relationship))))));
+var $author$project$Records$Decoders$relationshipsDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$relationshipDecoder),
+	$elm$json$Json$Decode$list($author$project$Records$Decoders$relationshipDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonRelation)));
-var $author$project$Api$Records$personRelationListDecoder = A3(
+		$author$project$Shared$Decoders$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$Relationships)));
+var $author$project$Records$Decoders$relationListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$personRelationDecoder),
+	$elm$json$Json$Decode$list($author$project$Records$Decoders$relationshipsDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonRelationList)));
-var $author$project$Api$Records$PersonSources = F2(
+		$author$project$Shared$Decoders$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$RelationList)));
+var $author$project$Records$Decoders$institutionBodyDecoder = A4(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
+	'relations',
+	$elm$json$Json$Decode$maybe($author$project$Records$Decoders$relationListDecoder),
+	$elm$core$Maybe$Nothing,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'summary',
+		$elm$json$Json$Decode$list($author$project$Shared$Decoders$labelValueDecoder),
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'label',
+			$author$project$Shared$Decoders$labelDecoder,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'id',
+				$elm$json$Json$Decode$string,
+				$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$InstitutionBody)))));
+var $author$project$Records$Decoders$institutionResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Records$DataTypes$InstitutionResponse, $author$project$Records$Decoders$institutionBodyDecoder);
+var $author$project$Records$DataTypes$PersonResponse = function (a) {
+	return {$: 'PersonResponse', a: a};
+};
+var $author$project$Records$DataTypes$PersonBody = F9(
+	function (id, label, sources, summary, seeAlso, nameVariants, relations, notes, externalResources) {
+		return {externalResources: externalResources, id: id, label: label, nameVariants: nameVariants, notes: notes, relations: relations, seeAlso: seeAlso, sources: sources, summary: summary};
+	});
+var $author$project$Records$DataTypes$ExternalResourceList = F2(
+	function (label, items) {
+		return {items: items, label: label};
+	});
+var $author$project$Records$DataTypes$ExternalResource = F2(
+	function (url, label) {
+		return {label: label, url: url};
+	});
+var $author$project$Records$Decoders$externalResourceDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'label',
+	$author$project$Shared$Decoders$labelDecoder,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'url',
+		$elm$json$Json$Decode$string,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$ExternalResource)));
+var $author$project$Records$Decoders$externalResourceListDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Records$Decoders$externalResourceDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Shared$Decoders$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$ExternalResourceList)));
+var $author$project$Records$DataTypes$NoteList = F2(
+	function (label, notes) {
+		return {label: label, notes: notes};
+	});
+var $author$project$Records$Decoders$noteListDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Shared$Decoders$labelValueDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Shared$Decoders$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$NoteList)));
+var $author$project$Records$DataTypes$PersonNameVariantList = F2(
+	function (label, items) {
+		return {items: items, label: label};
+	});
+var $author$project$Records$Decoders$personNameVariantListDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'items',
+	$elm$json$Json$Decode$list($author$project$Shared$Decoders$labelValueDecoder),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'label',
+		$author$project$Shared$Decoders$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$PersonNameVariantList)));
+var $author$project$Records$DataTypes$PersonSources = F2(
 	function (id, totalItems) {
 		return {id: id, totalItems: totalItems};
 	});
-var $author$project$Api$Records$personSourcesDecoder = A3(
+var $author$project$Records$Decoders$personSourcesDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'totalItems',
 	$elm$json$Json$Decode$int,
@@ -11485,69 +11490,69 @@ var $author$project$Api$Records$personSourcesDecoder = A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'id',
 		$elm$json$Json$Decode$string,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonSources)));
-var $author$project$Api$Records$SeeAlso = F2(
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$PersonSources)));
+var $author$project$Records$DataTypes$SeeAlso = F2(
 	function (url, label) {
 		return {label: label, url: url};
 	});
-var $author$project$Api$Records$seeAlsoDecoder = A3(
+var $author$project$Records$Decoders$seeAlsoDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'label',
-	$author$project$Api$Search$labelDecoder,
+	$author$project$Shared$Decoders$labelDecoder,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'url',
 		$elm$json$Json$Decode$string,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$SeeAlso)));
-var $author$project$Api$Records$personBodyDecoder = A4(
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$SeeAlso)));
+var $author$project$Records$Decoders$personBodyDecoder = A4(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 	'externalResources',
-	$elm$json$Json$Decode$maybe($author$project$Api$Records$externalResourceListDecoder),
+	$elm$json$Json$Decode$maybe($author$project$Records$Decoders$externalResourceListDecoder),
 	$elm$core$Maybe$Nothing,
 	A4(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 		'notes',
-		$elm$json$Json$Decode$maybe($author$project$Api$Records$noteListDecoder),
+		$elm$json$Json$Decode$maybe($author$project$Records$Decoders$noteListDecoder),
 		$elm$core$Maybe$Nothing,
 		A4(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 			'relations',
-			$elm$json$Json$Decode$maybe($author$project$Api$Records$personRelationListDecoder),
+			$elm$json$Json$Decode$maybe($author$project$Records$Decoders$relationListDecoder),
 			$elm$core$Maybe$Nothing,
 			A4(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 				'nameVariants',
-				$elm$json$Json$Decode$maybe($author$project$Api$Records$personNameVariantListDecoder),
+				$elm$json$Json$Decode$maybe($author$project$Records$Decoders$personNameVariantListDecoder),
 				$elm$core$Maybe$Nothing,
 				A4(
 					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 					'seeAlso',
 					$elm$json$Json$Decode$maybe(
-						$elm$json$Json$Decode$list($author$project$Api$Records$seeAlsoDecoder)),
+						$elm$json$Json$Decode$list($author$project$Records$Decoders$seeAlsoDecoder)),
 					$elm$core$Maybe$Nothing,
 					A3(
 						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 						'summary',
-						$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
+						$elm$json$Json$Decode$list($author$project$Shared$Decoders$labelValueDecoder),
 						A4(
 							$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 							'sources',
-							$elm$json$Json$Decode$maybe($author$project$Api$Records$personSourcesDecoder),
+							$elm$json$Json$Decode$maybe($author$project$Records$Decoders$personSourcesDecoder),
 							$elm$core$Maybe$Nothing,
 							A3(
 								$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 								'label',
-								$author$project$Api$Search$labelDecoder,
+								$author$project$Shared$Decoders$labelDecoder,
 								A3(
 									$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 									'id',
 									$elm$json$Json$Decode$string,
-									$elm$json$Json$Decode$succeed($author$project$Api$Records$PersonBody))))))))));
-var $author$project$Api$Records$personResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Api$Records$PersonResponse, $author$project$Api$Records$personBodyDecoder);
-var $author$project$Api$Records$SourceResponse = function (a) {
+									$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$PersonBody))))))))));
+var $author$project$Records$Decoders$personResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Records$DataTypes$PersonResponse, $author$project$Records$Decoders$personBodyDecoder);
+var $author$project$Records$DataTypes$SourceResponse = function (a) {
 	return {$: 'SourceResponse', a: a};
 };
-var $author$project$Api$Records$SourceBody = function (id) {
+var $author$project$Records$DataTypes$SourceBody = function (id) {
 	return function (label) {
 		return function (summary) {
 			return function (sourceType) {
@@ -11572,206 +11577,206 @@ var $author$project$Api$Records$SourceBody = function (id) {
 		};
 	};
 };
-var $author$project$Api$Records$BasicSourceBody = F3(
+var $author$project$Records$DataTypes$BasicSourceBody = F3(
 	function (id, label, sourceType) {
 		return {id: id, label: label, sourceType: sourceType};
 	});
-var $author$project$Api$Records$basicSourceBodyDecoder = A3(
+var $author$project$Records$Decoders$basicSourceBodyDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'sourceType',
-	$author$project$Api$Search$labelDecoder,
+	$author$project$Shared$Decoders$labelDecoder,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
-		$author$project$Api$Search$labelDecoder,
+		$author$project$Shared$Decoders$labelDecoder,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'id',
 			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$Api$Records$BasicSourceBody))));
-var $author$project$Api$Records$ExemplarsList = F3(
+			$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$BasicSourceBody))));
+var $author$project$Records$DataTypes$ExemplarsList = F3(
 	function (id, label, items) {
 		return {id: id, items: items, label: label};
 	});
-var $author$project$Api$Records$Exemplar = F3(
+var $author$project$Records$DataTypes$Exemplar = F3(
 	function (id, summary, heldBy) {
 		return {heldBy: heldBy, id: id, summary: summary};
 	});
-var $author$project$Api$Records$exemplarDecoder = A3(
+var $author$project$Records$Decoders$exemplarDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'heldBy',
-	$author$project$Api$Records$institutionBodyDecoder,
+	$author$project$Records$Decoders$institutionBodyDecoder,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'summary',
-		$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
+		$elm$json$Json$Decode$list($author$project$Shared$Decoders$labelValueDecoder),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'id',
 			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$Api$Records$Exemplar))));
-var $author$project$Api$Records$exemplarListDecoder = A3(
+			$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$Exemplar))));
+var $author$project$Records$Decoders$exemplarListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$exemplarDecoder),
+	$elm$json$Json$Decode$list($author$project$Records$Decoders$exemplarDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
-		$author$project$Api$Search$labelDecoder,
+		$author$project$Shared$Decoders$labelDecoder,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'id',
 			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$Api$Records$ExemplarsList))));
-var $author$project$Api$Records$IncipitList = F2(
+			$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$ExemplarsList))));
+var $author$project$Records$DataTypes$IncipitList = F2(
 	function (label, incipits) {
 		return {incipits: incipits, label: label};
 	});
-var $author$project$Api$Records$Incipit = F4(
+var $author$project$Records$DataTypes$Incipit = F4(
 	function (id, label, summary, rendered) {
 		return {id: id, label: label, rendered: rendered, summary: summary};
 	});
-var $author$project$Api$Records$RenderedIncipit = F2(
+var $author$project$Records$DataTypes$RenderedIncipit = F2(
 	function (a, b) {
 		return {$: 'RenderedIncipit', a: a, b: b};
 	});
-var $author$project$Api$Records$RenderedMIDI = {$: 'RenderedMIDI'};
-var $author$project$Api$Records$RenderedSVG = {$: 'RenderedSVG'};
-var $author$project$Api$Records$UnknownFormat = {$: 'UnknownFormat'};
-var $author$project$Api$Records$incipitFormatDecoder = A2(
+var $author$project$Records$DataTypes$RenderedMIDI = {$: 'RenderedMIDI'};
+var $author$project$Records$DataTypes$RenderedSVG = {$: 'RenderedSVG'};
+var $author$project$Records$DataTypes$UnknownFormat = {$: 'UnknownFormat'};
+var $author$project$Records$Decoders$incipitFormatDecoder = A2(
 	$elm$json$Json$Decode$andThen,
 	function (mimetype) {
 		switch (mimetype) {
 			case 'audio/midi':
-				return $elm$json$Json$Decode$succeed($author$project$Api$Records$RenderedMIDI);
+				return $elm$json$Json$Decode$succeed($author$project$Records$DataTypes$RenderedMIDI);
 			case 'image/svg+xml':
-				return $elm$json$Json$Decode$succeed($author$project$Api$Records$RenderedSVG);
+				return $elm$json$Json$Decode$succeed($author$project$Records$DataTypes$RenderedSVG);
 			default:
-				return $elm$json$Json$Decode$succeed($author$project$Api$Records$UnknownFormat);
+				return $elm$json$Json$Decode$succeed($author$project$Records$DataTypes$UnknownFormat);
 		}
 	},
 	$elm$json$Json$Decode$string);
-var $author$project$Api$Records$renderedIncipitDecoder = A3(
+var $author$project$Records$Decoders$renderedIncipitDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'data',
 	$elm$json$Json$Decode$string,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'format',
-		$author$project$Api$Records$incipitFormatDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$RenderedIncipit)));
-var $author$project$Api$Records$incipitDecoder = A4(
+		$author$project$Records$Decoders$incipitFormatDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$RenderedIncipit)));
+var $author$project$Records$Decoders$incipitDecoder = A4(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 	'rendered',
 	$elm$json$Json$Decode$maybe(
-		$elm$json$Json$Decode$list($author$project$Api$Records$renderedIncipitDecoder)),
+		$elm$json$Json$Decode$list($author$project$Records$Decoders$renderedIncipitDecoder)),
 	$elm$core$Maybe$Nothing,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'summary',
-		$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
+		$elm$json$Json$Decode$list($author$project$Shared$Decoders$labelValueDecoder),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'label',
-			$author$project$Api$Search$labelDecoder,
+			$author$project$Shared$Decoders$labelDecoder,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 				'id',
 				$elm$json$Json$Decode$string,
-				$elm$json$Json$Decode$succeed($author$project$Api$Records$Incipit)))));
-var $author$project$Api$Records$incipitListDecoder = A3(
+				$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$Incipit)))));
+var $author$project$Records$Decoders$incipitListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$incipitDecoder),
+	$elm$json$Json$Decode$list($author$project$Records$Decoders$incipitDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$IncipitList)));
-var $author$project$Api$Records$MaterialGroupList = F2(
+		$author$project$Shared$Decoders$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$IncipitList)));
+var $author$project$Records$DataTypes$MaterialGroupList = F2(
 	function (label, items) {
 		return {items: items, label: label};
 	});
-var $author$project$Api$Records$MaterialGroup = F4(
+var $author$project$Records$DataTypes$MaterialGroup = F4(
 	function (id, label, summary, related) {
 		return {id: id, label: label, related: related, summary: summary};
 	});
-var $author$project$Api$Records$SourceRelationshipList = F3(
+var $author$project$Records$DataTypes$SourceRelationshipList = F3(
 	function (id, label, items) {
 		return {id: id, items: items, label: label};
 	});
-var $author$project$Api$Records$SourceRelationship = F4(
+var $author$project$Records$DataTypes$SourceRelationship = F4(
 	function (id, role, qualifier, person) {
 		return {id: id, person: person, qualifier: qualifier, role: role};
 	});
-var $author$project$Api$Records$sourceRelationshipDecoder = A3(
+var $author$project$Records$Decoders$sourceRelationshipDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'relatedTo',
-	$author$project$Api$Records$personBodyDecoder,
+	$author$project$Records$Decoders$personBodyDecoder,
 	A4(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt,
 		_List_fromArray(
 			['qualifier', 'label']),
-		$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
+		$elm$json$Json$Decode$maybe($author$project$Shared$Decoders$labelDecoder),
 		$elm$core$Maybe$Nothing,
 		A4(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalAt,
 			_List_fromArray(
 				['role', 'label']),
-			$elm$json$Json$Decode$maybe($author$project$Api$Search$labelDecoder),
+			$elm$json$Json$Decode$maybe($author$project$Shared$Decoders$labelDecoder),
 			$elm$core$Maybe$Nothing,
 			A4(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 				'id',
 				$elm$json$Json$Decode$maybe($elm$json$Json$Decode$string),
 				$elm$core$Maybe$Nothing,
-				$elm$json$Json$Decode$succeed($author$project$Api$Records$SourceRelationship)))));
-var $author$project$Api$Records$sourceRelationshipListDecoder = A3(
+				$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$SourceRelationship)))));
+var $author$project$Records$Decoders$sourceRelationshipListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$sourceRelationshipDecoder),
+	$elm$json$Json$Decode$list($author$project$Records$Decoders$sourceRelationshipDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
-		$author$project$Api$Search$labelDecoder,
+		$author$project$Shared$Decoders$labelDecoder,
 		A4(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 			'id',
 			$elm$json$Json$Decode$maybe($elm$json$Json$Decode$string),
 			$elm$core$Maybe$Nothing,
-			$elm$json$Json$Decode$succeed($author$project$Api$Records$SourceRelationshipList))));
-var $author$project$Api$Records$materialGroupDecoder = A4(
+			$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$SourceRelationshipList))));
+var $author$project$Records$Decoders$materialGroupDecoder = A4(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 	'related',
-	$elm$json$Json$Decode$maybe($author$project$Api$Records$sourceRelationshipListDecoder),
+	$elm$json$Json$Decode$maybe($author$project$Records$Decoders$sourceRelationshipListDecoder),
 	$elm$core$Maybe$Nothing,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'summary',
-		$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
+		$elm$json$Json$Decode$list($author$project$Shared$Decoders$labelValueDecoder),
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'label',
-			$author$project$Api$Search$labelDecoder,
+			$author$project$Shared$Decoders$labelDecoder,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 				'id',
 				$elm$json$Json$Decode$string,
-				$elm$json$Json$Decode$succeed($author$project$Api$Records$MaterialGroup)))));
-var $author$project$Api$Records$materialGroupListDecoder = A3(
+				$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$MaterialGroup)))));
+var $author$project$Records$Decoders$materialGroupListDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'items',
-	$elm$json$Json$Decode$list($author$project$Api$Records$materialGroupDecoder),
+	$elm$json$Json$Decode$list($author$project$Records$Decoders$materialGroupDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'label',
-		$author$project$Api$Search$labelDecoder,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$MaterialGroupList)));
-var $author$project$Api$Records$Subject = F2(
+		$author$project$Shared$Decoders$labelDecoder,
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$MaterialGroupList)));
+var $author$project$Records$DataTypes$Subject = F2(
 	function (id, term) {
 		return {id: id, term: term};
 	});
-var $author$project$Api$Records$subjectDecoder = A3(
+var $author$project$Records$Decoders$subjectDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'term',
 	$elm$json$Json$Decode$string,
@@ -11779,83 +11784,83 @@ var $author$project$Api$Records$subjectDecoder = A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'id',
 		$elm$json$Json$Decode$string,
-		$elm$json$Json$Decode$succeed($author$project$Api$Records$Subject)));
-var $author$project$Api$Records$sourceBodyDecoder = A4(
+		$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$Subject)));
+var $author$project$Records$Decoders$sourceBodyDecoder = A4(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 	'exemplars',
-	$elm$json$Json$Decode$maybe($author$project$Api$Records$exemplarListDecoder),
+	$elm$json$Json$Decode$maybe($author$project$Records$Decoders$exemplarListDecoder),
 	$elm$core$Maybe$Nothing,
 	A4(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 		'materials',
-		$elm$json$Json$Decode$maybe($author$project$Api$Records$materialGroupListDecoder),
+		$elm$json$Json$Decode$maybe($author$project$Records$Decoders$materialGroupListDecoder),
 		$elm$core$Maybe$Nothing,
 		A4(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 			'incipits',
-			$elm$json$Json$Decode$maybe($author$project$Api$Records$incipitListDecoder),
+			$elm$json$Json$Decode$maybe($author$project$Records$Decoders$incipitListDecoder),
 			$elm$core$Maybe$Nothing,
 			A4(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 				'notes',
-				$elm$json$Json$Decode$maybe($author$project$Api$Records$noteListDecoder),
+				$elm$json$Json$Decode$maybe($author$project$Records$Decoders$noteListDecoder),
 				$elm$core$Maybe$Nothing,
 				A4(
 					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 					'subjects',
 					$elm$json$Json$Decode$maybe(
-						$elm$json$Json$Decode$list($author$project$Api$Records$subjectDecoder)),
+						$elm$json$Json$Decode$list($author$project$Records$Decoders$subjectDecoder)),
 					$elm$core$Maybe$Nothing,
 					A4(
 						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 						'related',
-						$elm$json$Json$Decode$maybe($author$project$Api$Records$sourceRelationshipListDecoder),
+						$elm$json$Json$Decode$maybe($author$project$Records$Decoders$sourceRelationshipListDecoder),
 						$elm$core$Maybe$Nothing,
 						A4(
 							$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 							'creator',
-							$elm$json$Json$Decode$maybe($author$project$Api$Records$sourceRelationshipDecoder),
+							$elm$json$Json$Decode$maybe($author$project$Records$Decoders$sourceRelationshipDecoder),
 							$elm$core$Maybe$Nothing,
 							A4(
 								$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional,
 								'partOf',
 								$elm$json$Json$Decode$maybe(
-									$elm$json$Json$Decode$list($author$project$Api$Records$basicSourceBodyDecoder)),
+									$elm$json$Json$Decode$list($author$project$Records$Decoders$basicSourceBodyDecoder)),
 								$elm$core$Maybe$Nothing,
 								A3(
 									$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 									'sourceType',
-									$author$project$Api$Search$labelDecoder,
+									$author$project$Shared$Decoders$labelDecoder,
 									A3(
 										$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 										'summary',
-										$elm$json$Json$Decode$list($author$project$Api$Records$labelValueDecoder),
+										$elm$json$Json$Decode$list($author$project$Shared$Decoders$labelValueDecoder),
 										A3(
 											$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 											'label',
-											$author$project$Api$Search$labelDecoder,
+											$author$project$Shared$Decoders$labelDecoder,
 											A3(
 												$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 												'id',
 												$elm$json$Json$Decode$string,
-												$elm$json$Json$Decode$succeed($author$project$Api$Records$SourceBody)))))))))))));
-var $author$project$Api$Records$sourceResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Api$Records$SourceResponse, $author$project$Api$Records$sourceBodyDecoder);
-var $author$project$Api$Records$recordResponseConverter = function (typevalue) {
-	var _v0 = $author$project$Api$DataTypes$recordTypeFromJsonType(typevalue);
+												$elm$json$Json$Decode$succeed($author$project$Records$DataTypes$SourceBody)))))))))))));
+var $author$project$Records$Decoders$sourceResponseDecoder = A2($elm$json$Json$Decode$map, $author$project$Records$DataTypes$SourceResponse, $author$project$Records$Decoders$sourceBodyDecoder);
+var $author$project$Records$Decoders$recordResponseConverter = function (typevalue) {
+	var _v0 = $author$project$Shared$DataTypes$recordTypeFromJsonType(typevalue);
 	switch (_v0.$) {
 		case 'Source':
-			return $author$project$Api$Records$sourceResponseDecoder;
+			return $author$project$Records$Decoders$sourceResponseDecoder;
 		case 'Person':
-			return $author$project$Api$Records$personResponseDecoder;
+			return $author$project$Records$Decoders$personResponseDecoder;
 		case 'Institution':
-			return $author$project$Api$Records$institutionResponseDecoder;
+			return $author$project$Records$Decoders$institutionResponseDecoder;
 		default:
-			return $author$project$Api$Records$sourceResponseDecoder;
+			return $author$project$Records$Decoders$sourceResponseDecoder;
 	}
 };
-var $author$project$Api$Records$recordResponseDecoder = A2(
+var $author$project$Records$Decoders$recordResponseDecoder = A2(
 	$elm$json$Json$Decode$andThen,
-	$author$project$Api$Records$recordResponseConverter,
+	$author$project$Records$Decoders$recordResponseConverter,
 	A2($elm$json$Json$Decode$field, 'type', $elm$json$Json$Decode$string));
 var $elm$url$Url$Builder$toQueryPair = function (_v0) {
 	var key = _v0.a;
@@ -11877,25 +11882,25 @@ var $elm$url$Url$Builder$crossOrigin = F3(
 		return prePath + ('/' + (A2($elm$core$String$join, '/', pathSegments) + $elm$url$Url$Builder$toQuery(parameters)));
 	});
 var $author$project$Config$serverUrl = 'http://dev.rism.offline';
-var $author$project$Api$Records$recordUrl = function (pathSegments) {
+var $author$project$Records$Routes$recordUrl = function (pathSegments) {
 	return A3($elm$url$Url$Builder$crossOrigin, $author$project$Config$serverUrl, pathSegments, _List_Nil);
 };
-var $author$project$Api$Records$recordRequest = F2(
+var $author$project$Records$Routes$recordRequest = F2(
 	function (responseMsg, path) {
 		var pathSegments = A2(
 			$elm$core$String$split,
 			'/',
 			A2($elm$core$String$dropLeft, 1, path));
-		var url = $author$project$Api$Records$recordUrl(pathSegments);
-		return A3($author$project$Api$Request$createRequest, responseMsg, $author$project$Api$Records$recordResponseDecoder, url);
+		var url = $author$project$Records$Routes$recordUrl(pathSegments);
+		return A3($author$project$Shared$Request$createRequest, responseMsg, $author$project$Records$Decoders$recordResponseDecoder, url);
 	});
 var $author$project$RecordsApp$init = F3(
 	function (flags, initialUrl, key) {
 		var language = $author$project$Language$parseLocaleToLanguage(flags.locale);
 		var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
 		return _Utils_Tuple2(
-			{errorMessage: '', key: key, language: language, response: $author$project$Api$Records$Loading, url: initialUrl, viewingDevice: initialDevice},
-			A2($author$project$Api$Records$recordRequest, $author$project$Records$DataTypes$ReceivedRecordResponse, initialUrl.path));
+			{errorMessage: '', key: key, language: language, response: $author$project$Records$DataTypes$Loading, url: initialUrl, viewingDevice: initialDevice},
+			A2($author$project$Records$Routes$recordRequest, $author$project$Records$DataTypes$ReceivedRecordResponse, initialUrl.path));
 	});
 var $author$project$Records$DataTypes$OnWindowResize = function (a) {
 	return {$: 'OnWindowResize', a: a};
@@ -12098,8 +12103,8 @@ var $author$project$RecordsApp$subscriptions = function (model) {
 					}))
 			]));
 };
-var $author$project$Api$Records$ApiError = {$: 'ApiError'};
-var $author$project$Api$Records$Response = function (a) {
+var $author$project$Records$DataTypes$ApiError = {$: 'ApiError'};
+var $author$project$Records$DataTypes$Response = function (a) {
 	return {$: 'Response', a: a};
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
@@ -12351,7 +12356,7 @@ var $elm$url$Url$Parser$slash = F2(
 					parseBefore(state));
 			});
 	});
-var $author$project$Records$DataTypes$routeParser = $elm$url$Url$Parser$oneOf(
+var $author$project$Records$Routes$routeParser = $elm$url$Url$Parser$oneOf(
 	_List_fromArray(
 		[
 			A2(
@@ -12376,8 +12381,8 @@ var $author$project$Records$DataTypes$routeParser = $elm$url$Url$Parser$oneOf(
 				$elm$url$Url$Parser$s('institutions'),
 				$elm$url$Url$Parser$int))
 		]));
-var $author$project$Records$DataTypes$routeMatches = function (url) {
-	return A2($elm$url$Url$Parser$parse, $author$project$Records$DataTypes$routeParser, url);
+var $author$project$Records$Routes$routeMatches = function (url) {
+	return A2($elm$url$Url$Parser$parse, $author$project$Records$Routes$routeParser, url);
 };
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -12433,7 +12438,7 @@ var $author$project$RecordsApp$update = F2(
 						_Utils_update(
 							model,
 							{
-								response: $author$project$Api$Records$Response(response)
+								response: $author$project$Records$DataTypes$Response(response)
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -12453,7 +12458,7 @@ var $author$project$RecordsApp$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{errorMessage: errorMessage, response: $author$project$Api$Records$ApiError}),
+							{errorMessage: errorMessage, response: $author$project$Records$DataTypes$ApiError}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 'UrlRequest':
@@ -12461,7 +12466,7 @@ var $author$project$RecordsApp$update = F2(
 				if (urlRequest.$ === 'Internal') {
 					var url = urlRequest.a;
 					var cmd = function () {
-						var _v3 = $author$project$Records$DataTypes$routeMatches(url);
+						var _v3 = $author$project$Records$Routes$routeMatches(url);
 						if (_v3.$ === 'Just') {
 							return A2(
 								$elm$browser$Browser$Navigation$pushUrl,
@@ -12485,7 +12490,7 @@ var $author$project$RecordsApp$update = F2(
 					_Utils_update(
 						model,
 						{url: url}),
-					A2($author$project$Api$Records$recordRequest, $author$project$Records$DataTypes$ReceivedRecordResponse, url.path));
+					A2($author$project$Records$Routes$recordRequest, $author$project$Records$DataTypes$ReceivedRecordResponse, url.path));
 			case 'OnWindowResize':
 				var device = msg.a;
 				return _Utils_Tuple2(
@@ -18735,76 +18740,30 @@ var $author$project$UI$Components$h2 = F2(
 			language,
 			heading);
 	});
-var $author$project$Records$Views$Institution$viewInstitutionRecord = F2(
-	function (body, language) {
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
+var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
+var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
+var $author$project$UI$Style$headingMD = $mdgriffith$elm_ui$Element$Font$size(25);
+var $author$project$UI$Components$h4 = F2(
+	function (language, heading) {
+		return A3(
+			$author$project$UI$Components$headingHelper,
 			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$alignTop,
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$row,
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-									$mdgriffith$elm_ui$Element$height(
-									$mdgriffith$elm_ui$Element$px(120))
-								]),
-							_List_fromArray(
-								[
-									A2($author$project$UI$Components$h2, language, body.label)
-								]))
-						]))
-				]));
+				[$author$project$UI$Style$headingMD]),
+			language,
+			heading);
 	});
-var $author$project$Records$Views$Shared$viewLoadingSpinner = function (model) {
-	return A2(
-		$mdgriffith$elm_ui$Element$row,
-		_List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$column,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-								$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$el,
-								_List_fromArray(
-									[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
-								$mdgriffith$elm_ui$Element$text('Loading'))
-							]))
-					]))
-			]));
-};
+var $author$project$UI$Style$fontBaseSize = $mdgriffith$elm_ui$Element$Font$size(16);
+var $author$project$UI$Style$bodyRegular = $author$project$UI$Style$fontBaseSize;
+var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
+var $author$project$UI$Components$label = F2(
+	function (language, langmap) {
+		return A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[$mdgriffith$elm_ui$Element$Font$bold, $author$project$UI$Style$bodyRegular]),
+			$mdgriffith$elm_ui$Element$text(
+				A2($author$project$Language$extractLabelFromLanguageMap, language, langmap)));
+	});
 var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
 	function (a, b, c, d, e) {
 		return {$: 'PaddingStyle', a: a, b: b, c: c, d: d, e: e};
@@ -18839,17 +18798,265 @@ var $mdgriffith$elm_ui$Element$paddingXY = F2(
 					xFloat));
 		}
 	});
-var $author$project$UI$Style$fontBaseSize = $mdgriffith$elm_ui$Element$Font$size(16);
-var $author$project$UI$Style$bodyRegular = $author$project$UI$Style$fontBaseSize;
-var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
-var $author$project$UI$Components$label = F2(
-	function (language, langmap) {
+var $mdgriffith$elm_ui$Internal$Model$paddingName = F4(
+	function (top, right, bottom, left) {
+		return 'pad-' + ($elm$core$String$fromInt(top) + ('-' + ($elm$core$String$fromInt(right) + ('-' + ($elm$core$String$fromInt(bottom) + ('-' + $elm$core$String$fromInt(left)))))));
+	});
+var $mdgriffith$elm_ui$Element$paddingEach = function (_v0) {
+	var top = _v0.top;
+	var right = _v0.right;
+	var bottom = _v0.bottom;
+	var left = _v0.left;
+	if (_Utils_eq(top, right) && (_Utils_eq(top, bottom) && _Utils_eq(top, left))) {
+		var topFloat = top;
 		return A2(
-			$mdgriffith$elm_ui$Element$el,
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$padding,
+			A5(
+				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+				'p-' + $elm$core$String$fromInt(top),
+				topFloat,
+				topFloat,
+				topFloat,
+				topFloat));
+	} else {
+		return A2(
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$padding,
+			A5(
+				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+				A4($mdgriffith$elm_ui$Internal$Model$paddingName, top, right, bottom, left),
+				top,
+				right,
+				bottom,
+				left));
+	}
+};
+var $mdgriffith$elm_ui$Element$Font$underline = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.underline);
+var $author$project$UI$Components$styledLink = F2(
+	function (url, labelString) {
+		return A2(
+			$mdgriffith$elm_ui$Element$link,
 			_List_fromArray(
-				[$mdgriffith$elm_ui$Element$Font$bold, $author$project$UI$Style$bodyRegular]),
-			$mdgriffith$elm_ui$Element$text(
-				A2($author$project$Language$extractLabelFromLanguageMap, language, langmap)));
+				[
+					$author$project$UI$Style$bodyRegular,
+					$mdgriffith$elm_ui$Element$Font$underline,
+					$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue)
+				]),
+			{
+				label: $mdgriffith$elm_ui$Element$text(labelString),
+				url: url
+			});
+	});
+var $author$project$Records$Views$Shared$viewLinkedRelatedTo = F3(
+	function (entity, role, language) {
+		var relationshipLink = A2(
+			$author$project$UI$Components$styledLink,
+			entity.id,
+			A2($author$project$Language$extractLabelFromLanguageMap, language, entity.name));
+		var relationshipAttributes = ($elm$core$String$length(role) > 0) ? _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$author$project$UI$Style$bodyRegular,
+				$mdgriffith$elm_ui$Element$paddingEach(
+				{bottom: 0, left: 10, right: 0, top: 0})
+			]) : _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$author$project$UI$Style$bodyRegular
+			]);
+		return A2(
+			$mdgriffith$elm_ui$Element$paragraph,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					relationshipLink,
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					relationshipAttributes,
+					$mdgriffith$elm_ui$Element$text(role))
+				]));
+	});
+var $author$project$Records$Views$Shared$viewUnlinkedRelatedTo = F3(
+	function (relatedEntity, role, language) {
+		var relationshipName = A2($author$project$Language$extractLabelFromLanguageMap, language, relatedEntity);
+		var relationshipAttributes = ($elm$core$String$length(role) > 0) ? _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$author$project$UI$Style$bodyRegular,
+				$mdgriffith$elm_ui$Element$paddingEach(
+				{bottom: 0, left: 10, right: 0, top: 0})
+			]) : _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$author$project$UI$Style$bodyRegular
+			]);
+		return A2(
+			$mdgriffith$elm_ui$Element$paragraph,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[$author$project$UI$Style$bodyRegular]),
+					$mdgriffith$elm_ui$Element$text(relationshipName)),
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					relationshipAttributes,
+					$mdgriffith$elm_ui$Element$text(role))
+				]));
+	});
+var $author$project$Records$Views$Shared$viewRelationship = F2(
+	function (relationship, language) {
+		var role = function () {
+			var _v2 = relationship.role;
+			if (_v2.$ === 'Just') {
+				var relationshipRole = _v2.a;
+				return '[' + (A2($author$project$Language$extractLabelFromLanguageMap, language, relationshipRole) + ']');
+			} else {
+				return '';
+			}
+		}();
+		var relatedTo = function () {
+			var _v0 = relationship.relatedTo;
+			if (_v0.$ === 'Just') {
+				var rel = _v0.a;
+				return A3($author$project$Records$Views$Shared$viewLinkedRelatedTo, rel, role, language);
+			} else {
+				var _v1 = relationship.value;
+				if (_v1.$ === 'Just') {
+					var rel = _v1.a;
+					return A3($author$project$Records$Views$Shared$viewUnlinkedRelatedTo, rel, role, language);
+				} else {
+					return $mdgriffith$elm_ui$Element$none;
+				}
+			}
+		}();
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[relatedTo]))
+				]));
+	});
+var $author$project$Records$Views$Shared$viewRelationTypes = F2(
+	function (relation, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width(
+							$mdgriffith$elm_ui$Element$fillPortion(2)),
+							$mdgriffith$elm_ui$Element$alignTop
+						]),
+					_List_fromArray(
+						[
+							A2($author$project$UI$Components$label, language, relation.label)
+						])),
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width(
+							$mdgriffith$elm_ui$Element$fillPortion(4)),
+							$mdgriffith$elm_ui$Element$alignTop
+						]),
+					A2(
+						$elm$core$List$map,
+						function (r) {
+							return A2($author$project$Records$Views$Shared$viewRelationship, r, language);
+						},
+						relation.items))
+				]));
+	});
+var $author$project$Records$Views$Shared$viewRelations = F2(
+	function (relationships, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h4, language, relationships.label)
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									A2(
+										$elm$core$List$map,
+										function (r) {
+											return A2($author$project$Records$Views$Shared$viewRelationTypes, r, language);
+										},
+										relationships.items))
+								]))
+						]))
+				]));
+	});
+var $author$project$Records$Views$Institution$viewRelationsSection = F2(
+	function (body, language) {
+		var _v0 = body.relations;
+		if (_v0.$ === 'Just') {
+			var relationships = _v0.a;
+			return A2($author$project$Records$Views$Shared$viewRelations, relationships, language);
+		} else {
+			return $mdgriffith$elm_ui$Element$none;
+		}
 	});
 var $author$project$UI$Components$styledParagraphs = function (textList) {
 	return A2(
@@ -18949,6 +19156,123 @@ var $author$project$Records$Views$Shared$viewSummaryField = F2(
 						field))
 				]));
 	});
+var $author$project$Records$Views$Institution$viewSummarySection = F2(
+	function (body, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2($author$project$Records$Views$Shared$viewSummaryField, body.summary, language)
+						]))
+				]));
+	});
+var $author$project$Records$Views$Institution$viewInstitutionRecord = F2(
+	function (body, language) {
+		return A2(
+			$mdgriffith$elm_ui$Element$row,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$alignTop,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$height(
+									$mdgriffith$elm_ui$Element$px(120))
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$UI$Components$h2, language, body.label)
+								])),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$column,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+											$mdgriffith$elm_ui$Element$spacing(20)
+										]),
+									A2(
+										$elm$core$List$map,
+										function (viewSection) {
+											return A2(viewSection, body, language);
+										},
+										_List_fromArray(
+											[$author$project$Records$Views$Institution$viewSummarySection, $author$project$Records$Views$Institution$viewRelationsSection])))
+								]))
+						]))
+				]));
+	});
+var $author$project$Records$Views$Shared$viewLoadingSpinner = function (model) {
+	return A2(
+		$mdgriffith$elm_ui$Element$row,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$mdgriffith$elm_ui$Element$column,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$mdgriffith$elm_ui$Element$row,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+								$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$mdgriffith$elm_ui$Element$el,
+								_List_fromArray(
+									[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY]),
+								$mdgriffith$elm_ui$Element$text('Loading'))
+							]))
+					]))
+			]));
+};
 var $author$project$Records$Views$Person$viewBiographySection = F2(
 	function (body, language) {
 		return A2(
@@ -18972,8 +19296,6 @@ var $author$project$Records$Views$Person$viewBiographySection = F2(
 						]))
 				]));
 	});
-var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
-var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
 var $mdgriffith$elm_ui$Element$spacingXY = F2(
 	function (x, y) {
 		return A2(
@@ -18984,22 +19306,6 @@ var $mdgriffith$elm_ui$Element$spacingXY = F2(
 				A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, y),
 				x,
 				y));
-	});
-var $mdgriffith$elm_ui$Element$Font$underline = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.underline);
-var $author$project$UI$Components$styledLink = F2(
-	function (url, labelString) {
-		return A2(
-			$mdgriffith$elm_ui$Element$link,
-			_List_fromArray(
-				[
-					$author$project$UI$Style$bodyRegular,
-					$mdgriffith$elm_ui$Element$Font$underline,
-					$mdgriffith$elm_ui$Element$Font$color($author$project$UI$Style$darkBlue)
-				]),
-			{
-				label: $mdgriffith$elm_ui$Element$text(labelString),
-				url: url
-			});
 	});
 var $author$project$Records$Views$Person$viewExternalAuthority = F2(
 	function (seeAlso, language) {
@@ -19058,16 +19364,6 @@ var $author$project$Records$Views$Person$viewExternalAuthoritiesSection = F2(
 		} else {
 			return $mdgriffith$elm_ui$Element$none;
 		}
-	});
-var $author$project$UI$Style$headingMD = $mdgriffith$elm_ui$Element$Font$size(25);
-var $author$project$UI$Components$h4 = F2(
-	function (language, heading) {
-		return A3(
-			$author$project$UI$Components$headingHelper,
-			_List_fromArray(
-				[$author$project$UI$Style$headingMD]),
-			language,
-			heading);
 	});
 var $author$project$Records$Views$Person$viewExternalResource = F2(
 	function (externalResource, language) {
@@ -19244,246 +19540,12 @@ var $author$project$Records$Views$Person$viewReferencesNotesSection = F2(
 			return $mdgriffith$elm_ui$Element$none;
 		}
 	});
-var $mdgriffith$elm_ui$Internal$Model$paddingName = F4(
-	function (top, right, bottom, left) {
-		return 'pad-' + ($elm$core$String$fromInt(top) + ('-' + ($elm$core$String$fromInt(right) + ('-' + ($elm$core$String$fromInt(bottom) + ('-' + $elm$core$String$fromInt(left)))))));
-	});
-var $mdgriffith$elm_ui$Element$paddingEach = function (_v0) {
-	var top = _v0.top;
-	var right = _v0.right;
-	var bottom = _v0.bottom;
-	var left = _v0.left;
-	if (_Utils_eq(top, right) && (_Utils_eq(top, bottom) && _Utils_eq(top, left))) {
-		var topFloat = top;
-		return A2(
-			$mdgriffith$elm_ui$Internal$Model$StyleClass,
-			$mdgriffith$elm_ui$Internal$Flag$padding,
-			A5(
-				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
-				'p-' + $elm$core$String$fromInt(top),
-				topFloat,
-				topFloat,
-				topFloat,
-				topFloat));
-	} else {
-		return A2(
-			$mdgriffith$elm_ui$Internal$Model$StyleClass,
-			$mdgriffith$elm_ui$Internal$Flag$padding,
-			A5(
-				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
-				A4($mdgriffith$elm_ui$Internal$Model$paddingName, top, right, bottom, left),
-				top,
-				right,
-				bottom,
-				left));
-	}
-};
-var $author$project$Records$Views$Person$viewLinkedRelatedTo = F3(
-	function (entity, role, language) {
-		var relationshipLink = A2(
-			$author$project$UI$Components$styledLink,
-			entity.id,
-			A2($author$project$Language$extractLabelFromLanguageMap, language, entity.name));
-		var relationshipAttributes = ($elm$core$String$length(role) > 0) ? _List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-				$author$project$UI$Style$bodyRegular,
-				$mdgriffith$elm_ui$Element$paddingEach(
-				{bottom: 0, left: 10, right: 0, top: 0})
-			]) : _List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-				$author$project$UI$Style$bodyRegular
-			]);
-		return A2(
-			$mdgriffith$elm_ui$Element$paragraph,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[
-					relationshipLink,
-					A2(
-					$mdgriffith$elm_ui$Element$el,
-					relationshipAttributes,
-					$mdgriffith$elm_ui$Element$text(role))
-				]));
-	});
-var $author$project$Records$Views$Person$viewUnlinkedRelatedTo = F3(
-	function (relatedEntity, role, language) {
-		var relationshipName = A2($author$project$Language$extractLabelFromLanguageMap, language, relatedEntity);
-		var relationshipAttributes = ($elm$core$String$length(role) > 0) ? _List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-				$author$project$UI$Style$bodyRegular,
-				$mdgriffith$elm_ui$Element$paddingEach(
-				{bottom: 0, left: 10, right: 0, top: 0})
-			]) : _List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-				$author$project$UI$Style$bodyRegular
-			]);
-		return A2(
-			$mdgriffith$elm_ui$Element$paragraph,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$el,
-					_List_fromArray(
-						[$author$project$UI$Style$bodyRegular]),
-					$mdgriffith$elm_ui$Element$text(relationshipName)),
-					A2(
-					$mdgriffith$elm_ui$Element$el,
-					relationshipAttributes,
-					$mdgriffith$elm_ui$Element$text(role))
-				]));
-	});
-var $author$project$Records$Views$Person$viewRelationship = F2(
-	function (relationship, language) {
-		var role = function () {
-			var _v2 = relationship.role;
-			if (_v2.$ === 'Just') {
-				var relationshipRole = _v2.a;
-				return '[' + (A2($author$project$Language$extractLabelFromLanguageMap, language, relationshipRole) + ']');
-			} else {
-				return '';
-			}
-		}();
-		var relatedTo = function () {
-			var _v0 = relationship.relatedTo;
-			if (_v0.$ === 'Just') {
-				var rel = _v0.a;
-				return A3($author$project$Records$Views$Person$viewLinkedRelatedTo, rel, role, language);
-			} else {
-				var _v1 = relationship.value;
-				if (_v1.$ === 'Just') {
-					var rel = _v1.a;
-					return A3($author$project$Records$Views$Person$viewUnlinkedRelatedTo, rel, role, language);
-				} else {
-					return $mdgriffith$elm_ui$Element$none;
-				}
-			}
-		}();
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[relatedTo]))
-				]));
-	});
-var $author$project$Records$Views$Person$viewRelationTypes = F2(
-	function (relation, language) {
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width(
-							$mdgriffith$elm_ui$Element$fillPortion(2)),
-							$mdgriffith$elm_ui$Element$alignTop
-						]),
-					_List_fromArray(
-						[
-							A2($author$project$UI$Components$label, language, relation.label)
-						])),
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width(
-							$mdgriffith$elm_ui$Element$fillPortion(4)),
-							$mdgriffith$elm_ui$Element$alignTop
-						]),
-					A2(
-						$elm$core$List$map,
-						function (r) {
-							return A2($author$project$Records$Views$Person$viewRelationship, r, language);
-						},
-						relation.items))
-				]));
-	});
-var $author$project$Records$Views$Person$viewRelations = F2(
-	function (relationships, language) {
-		return A2(
-			$mdgriffith$elm_ui$Element$row,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$row,
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-								]),
-							_List_fromArray(
-								[
-									A2($author$project$UI$Components$h4, language, relationships.label)
-								])),
-							A2(
-							$mdgriffith$elm_ui$Element$row,
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$mdgriffith$elm_ui$Element$column,
-									_List_fromArray(
-										[
-											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-										]),
-									A2(
-										$elm$core$List$map,
-										function (r) {
-											return A2($author$project$Records$Views$Person$viewRelationTypes, r, language);
-										},
-										relationships.items))
-								]))
-						]))
-				]));
-	});
 var $author$project$Records$Views$Person$viewRelationsSection = F2(
 	function (body, language) {
 		var _v0 = body.relations;
 		if (_v0.$ === 'Just') {
 			var relationships = _v0.a;
-			return A2($author$project$Records$Views$Person$viewRelations, relationships, language);
+			return A2($author$project$Records$Views$Shared$viewRelations, relationships, language);
 		} else {
 			return $mdgriffith$elm_ui$Element$none;
 		}
@@ -19557,7 +19619,6 @@ var $author$project$Records$Views$Source$viewHeldByInstitution = F2(
 			$author$project$UI$Components$styledLink,
 			heldByInstitution.id,
 			A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.label));
-		var institutionSiglum = '(' + (A2($author$project$Language$extractLabelFromLanguageMap, language, heldByInstitution.siglum) + ')');
 		return A2(
 			$mdgriffith$elm_ui$Element$row,
 			_List_fromArray(
@@ -19580,10 +19641,7 @@ var $author$project$Records$Views$Source$viewHeldByInstitution = F2(
 							_List_fromArray(
 								[$author$project$UI$Style$bodyRegular]),
 							_List_fromArray(
-								[
-									heldByLink,
-									$mdgriffith$elm_ui$Element$text(' ' + institutionSiglum)
-								]))
+								[heldByLink]))
 						]))
 				]));
 	});
@@ -20946,4 +21004,4 @@ _Platform_export({'RecordsApp':{'init':$author$project$RecordsApp$main(
 				},
 				A2($elm$json$Json$Decode$field, 'windowHeight', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Records.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Api.Records.Exemplar":{"args":[],"type":"{ id : String.String, summary : List.List Api.Records.LabelValue, heldBy : Api.Records.InstitutionBody }"},"Api.Records.ExemplarsList":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, items : List.List Api.Records.Exemplar }"},"Api.Records.ExternalResource":{"args":[],"type":"{ url : String.String, label : Language.LanguageMap }"},"Api.Records.ExternalResourceList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.ExternalResource }"},"Api.Records.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, rendered : Maybe.Maybe (List.List Api.Records.RenderedIncipit) }"},"Api.Records.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Api.Records.Incipit }"},"Api.Records.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, siglum : Language.LanguageMap }"},"Api.Records.LabelValue":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Api.Records.MaterialGroup":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, related : Maybe.Maybe Api.Records.SourceRelationshipList }"},"Api.Records.MaterialGroupList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.MaterialGroup }"},"Api.Records.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Api.Records.LabelValue }"},"Api.Records.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Api.Records.PersonSources, summary : List.List Api.Records.LabelValue, seeAlso : Maybe.Maybe (List.List Api.Records.SeeAlso), nameVariants : Maybe.Maybe Api.Records.PersonNameVariantList, relations : Maybe.Maybe Api.Records.PersonRelationList, notes : Maybe.Maybe Api.Records.NoteList, externalResources : Maybe.Maybe Api.Records.ExternalResourceList }"},"Api.Records.PersonNameVariantList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.LabelValue }"},"Api.Records.PersonRelation":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.Relationship }"},"Api.Records.PersonRelationList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Api.Records.PersonRelation }"},"Api.Records.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Api.Records.RelatedEntity":{"args":[],"type":"{ type_ : Api.DataTypes.RecordType, name : Language.LanguageMap, id : String.String }"},"Api.Records.Relationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, relatedTo : Maybe.Maybe Api.Records.RelatedEntity, value : Maybe.Maybe Language.LanguageMap }"},"Api.Records.SeeAlso":{"args":[],"type":"{ url : String.String, label : Language.LanguageMap }"},"Api.Records.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Api.Records.LabelValue, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Api.Records.BasicSourceBody), creator : Maybe.Maybe Api.Records.SourceRelationship, related : Maybe.Maybe Api.Records.SourceRelationshipList, subjects : Maybe.Maybe (List.List Api.Records.Subject), notes : Maybe.Maybe Api.Records.NoteList, incipits : Maybe.Maybe Api.Records.IncipitList, materialgroups : Maybe.Maybe Api.Records.MaterialGroupList, exemplars : Maybe.Maybe Api.Records.ExemplarsList }"},"Api.Records.SourceRelationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, person : Api.Records.PersonBody }"},"Api.Records.SourceRelationshipList":{"args":[],"type":"{ id : Maybe.Maybe String.String, label : Language.LanguageMap, items : List.List Api.Records.SourceRelationship }"},"Api.Records.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Api.Records.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Api.Records.RecordResponse":{"args":[],"tags":{"SourceResponse":["Api.Records.SourceBody"],"PersonResponse":["Api.Records.PersonBody"],"InstitutionResponse":["Api.Records.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Api.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[],"Place":[],"Incipit":[],"Unknown":[]}},"Api.Records.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Api.Records.IncipitFormat","String.String"]}},"Api.Records.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
+		A2($elm$json$Json$Decode$field, 'windowWidth', $elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.1"},"types":{"message":"Records.DataTypes.Msg","aliases":{"Element.Device":{"args":[],"type":"{ class : Element.DeviceClass, orientation : Element.Orientation }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Records.DataTypes.BasicSourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sourceType : Language.LanguageMap }"},"Records.DataTypes.Exemplar":{"args":[],"type":"{ id : String.String, summary : List.List Shared.DataTypes.LabelValue, heldBy : Records.DataTypes.InstitutionBody }"},"Records.DataTypes.ExemplarsList":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, items : List.List Records.DataTypes.Exemplar }"},"Records.DataTypes.ExternalResource":{"args":[],"type":"{ url : String.String, label : Language.LanguageMap }"},"Records.DataTypes.ExternalResourceList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Records.DataTypes.ExternalResource }"},"Records.DataTypes.Incipit":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, rendered : Maybe.Maybe (List.List Records.DataTypes.RenderedIncipit) }"},"Records.DataTypes.IncipitList":{"args":[],"type":"{ label : Language.LanguageMap, incipits : List.List Records.DataTypes.Incipit }"},"Records.DataTypes.InstitutionBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, relations : Maybe.Maybe Records.DataTypes.RelationList }"},"Shared.DataTypes.LabelValue":{"args":[],"type":"{ label : Language.LanguageMap, value : Language.LanguageMap }"},"Language.LanguageMap":{"args":[],"type":"List.List Language.LanguageValues"},"Records.DataTypes.MaterialGroup":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, related : Maybe.Maybe Records.DataTypes.SourceRelationshipList }"},"Records.DataTypes.MaterialGroupList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Records.DataTypes.MaterialGroup }"},"Records.DataTypes.NoteList":{"args":[],"type":"{ label : Language.LanguageMap, notes : List.List Shared.DataTypes.LabelValue }"},"Records.DataTypes.PersonBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, sources : Maybe.Maybe Records.DataTypes.PersonSources, summary : List.List Shared.DataTypes.LabelValue, seeAlso : Maybe.Maybe (List.List Records.DataTypes.SeeAlso), nameVariants : Maybe.Maybe Records.DataTypes.PersonNameVariantList, relations : Maybe.Maybe Records.DataTypes.RelationList, notes : Maybe.Maybe Records.DataTypes.NoteList, externalResources : Maybe.Maybe Records.DataTypes.ExternalResourceList }"},"Records.DataTypes.PersonNameVariantList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Shared.DataTypes.LabelValue }"},"Records.DataTypes.PersonSources":{"args":[],"type":"{ id : String.String, totalItems : Basics.Int }"},"Records.DataTypes.RelatedEntity":{"args":[],"type":"{ type_ : Shared.DataTypes.RecordType, name : Language.LanguageMap, id : String.String }"},"Records.DataTypes.RelationList":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Records.DataTypes.Relationships }"},"Records.DataTypes.Relationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, relatedTo : Maybe.Maybe Records.DataTypes.RelatedEntity, value : Maybe.Maybe Language.LanguageMap }"},"Records.DataTypes.Relationships":{"args":[],"type":"{ label : Language.LanguageMap, items : List.List Records.DataTypes.Relationship }"},"Records.DataTypes.SeeAlso":{"args":[],"type":"{ url : String.String, label : Language.LanguageMap }"},"Records.DataTypes.SourceBody":{"args":[],"type":"{ id : String.String, label : Language.LanguageMap, summary : List.List Shared.DataTypes.LabelValue, sourceType : Language.LanguageMap, partOf : Maybe.Maybe (List.List Records.DataTypes.BasicSourceBody), creator : Maybe.Maybe Records.DataTypes.SourceRelationship, related : Maybe.Maybe Records.DataTypes.SourceRelationshipList, subjects : Maybe.Maybe (List.List Records.DataTypes.Subject), notes : Maybe.Maybe Records.DataTypes.NoteList, incipits : Maybe.Maybe Records.DataTypes.IncipitList, materialgroups : Maybe.Maybe Records.DataTypes.MaterialGroupList, exemplars : Maybe.Maybe Records.DataTypes.ExemplarsList }"},"Records.DataTypes.SourceRelationship":{"args":[],"type":"{ id : Maybe.Maybe String.String, role : Maybe.Maybe Language.LanguageMap, qualifier : Maybe.Maybe Language.LanguageMap, person : Records.DataTypes.PersonBody }"},"Records.DataTypes.SourceRelationshipList":{"args":[],"type":"{ id : Maybe.Maybe String.String, label : Language.LanguageMap, items : List.List Records.DataTypes.SourceRelationship }"},"Records.DataTypes.Subject":{"args":[],"type":"{ id : String.String, term : String.String }"}},"unions":{"Records.DataTypes.Msg":{"args":[],"tags":{"ReceivedRecordResponse":["Result.Result Http.Error Records.DataTypes.RecordResponse"],"UrlRequest":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"OnWindowResize":["Element.Device"],"LanguageSelectChanged":["String.String"],"NoOp":[]}},"Element.DeviceClass":{"args":[],"tags":{"Phone":[],"Tablet":[],"Desktop":[],"BigDesktop":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Element.Orientation":{"args":[],"tags":{"Portrait":[],"Landscape":[]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Records.DataTypes.RecordResponse":{"args":[],"tags":{"SourceResponse":["Records.DataTypes.SourceBody"],"PersonResponse":["Records.DataTypes.PersonBody"],"InstitutionResponse":["Records.DataTypes.InstitutionBody"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Language.LanguageValues":{"args":[],"tags":{"LanguageValues":["Language.Language","List.List String.String"]}},"List.List":{"args":["a"],"tags":{}},"Shared.DataTypes.RecordType":{"args":[],"tags":{"Source":[],"Person":[],"Institution":[],"Place":[],"Incipit":[],"Unknown":[]}},"Records.DataTypes.RenderedIncipit":{"args":[],"tags":{"RenderedIncipit":["Records.DataTypes.IncipitFormat","String.String"]}},"Records.DataTypes.IncipitFormat":{"args":[],"tags":{"RenderedSVG":[],"RenderedMIDI":[],"UnknownFormat":[]}},"Language.Language":{"args":[],"tags":{"English":[],"French":[],"German":[],"Italian":[],"Portugese":[],"Spanish":[],"Polish":[],"None":[]}}}}})}});}(this));
