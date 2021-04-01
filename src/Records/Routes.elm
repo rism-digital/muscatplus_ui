@@ -26,6 +26,7 @@ routeParser =
         [ P.map SourceRoute (s "sources" </> P.int)
         , P.map PersonRoute (s "people" </> P.int)
         , P.map InstitutionRoute (s "institutions" </> P.int)
+        , P.map PlaceRoute (s "places" </> P.int)
         ]
 
 

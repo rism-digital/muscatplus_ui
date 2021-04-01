@@ -32,6 +32,7 @@ type Route
     = SourceRoute Int
     | PersonRoute Int
     | InstitutionRoute Int
+    | PlaceRoute Int
     | NotFound
 
 
@@ -223,7 +224,14 @@ type alias InstitutionBody =
     }
 
 
+type alias PlaceBody =
+    { id : String
+    , label : LanguageMap
+    }
+
+
 type RecordResponse
     = SourceResponse SourceBody
     | PersonResponse PersonBody
     | InstitutionResponse InstitutionBody
+    | PlaceResponse PlaceBody

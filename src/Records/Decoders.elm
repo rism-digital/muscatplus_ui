@@ -2,35 +2,7 @@ module Records.Decoders exposing (..)
 
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
 import Json.Decode.Pipeline exposing (optional, optionalAt, required)
-import Records.DataTypes as RDT
-    exposing
-        ( BasicSourceBody
-        , Exemplar
-        , ExemplarsList
-        , ExternalResource
-        , ExternalResourceList
-        , Incipit
-        , IncipitFormat(..)
-        , IncipitList
-        , InstitutionBody
-        , MaterialGroup
-        , MaterialGroupList
-        , NoteList
-        , PersonBody
-        , PersonNameVariantList
-        , PersonSources
-        , RecordResponse(..)
-        , RelatedEntity
-        , RelationList
-        , Relationship
-        , Relationships
-        , RenderedIncipit(..)
-        , SeeAlso
-        , SourceBody
-        , SourceRelationship
-        , SourceRelationshipList
-        , Subject
-        )
+import Records.DataTypes as RDT exposing (BasicSourceBody, Exemplar, ExemplarsList, ExternalResource, ExternalResourceList, Incipit, IncipitFormat(..), IncipitList, InstitutionBody, MaterialGroup, MaterialGroupList, NoteList, PersonBody, PersonNameVariantList, PersonSources, PlaceBody, RecordResponse(..), RelatedEntity, RelationList, Relationship, Relationships, RenderedIncipit(..), SeeAlso, SourceBody, SourceRelationship, SourceRelationshipList, Subject)
 import Shared.DataTypes exposing (RecordType(..), recordTypeFromJsonType)
 import Shared.Decoders exposing (labelDecoder, labelValueDecoder, typeDecoder)
 
@@ -280,6 +252,18 @@ institutionResponseDecoder =
     Decode.map InstitutionResponse institutionBodyDecoder
 
 
+placeResponseDecoder : Decoder RecordResponse
+placeResponseDecoder =
+    Decode.map PlaceResponse placeBodyDecoder
+
+
+placeBodyDecoder : Decoder PlaceBody
+placeBodyDecoder =
+    Decode.succeed PlaceBody
+        |> required "id" string
+        |> required "label" labelDecoder
+
+
 recordResponseConverter : String -> Decoder RecordResponse
 recordResponseConverter typevalue =
     case recordTypeFromJsonType typevalue of
@@ -292,7 +276,11 @@ recordResponseConverter typevalue =
         Institution ->
             institutionResponseDecoder
 
-        -- TODO: This is obviously wrong! Fix it.
+        Place ->
+            placeResponseDecoder
+
+        -- TODO: This is obviously wrong! Fix it with the actual response types
+        --       once we have a clear idea of what they are.
         _ ->
             sourceResponseDecoder
 

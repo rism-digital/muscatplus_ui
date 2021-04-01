@@ -6,9 +6,10 @@ import Html
 import Records.DataTypes exposing (ApiResponse(..), Model, Msg(..), RecordResponse(..))
 import Records.Views.Institution exposing (viewInstitutionRecord)
 import Records.Views.Person exposing (viewPersonRecord)
+import Records.Views.Place exposing (viewPlaceRecord)
 import Records.Views.Shared exposing (viewErrorMessage, viewLoadingSpinner)
 import Records.Views.Source exposing (viewSourceRecord)
-import Shared.Language exposing (languageOptions, languageOptionsForDisplay)
+import Shared.Language exposing (languageOptionsForDisplay)
 import UI.Layout exposing (layoutBody)
 import UI.Style exposing (minMaxFillDesktop)
 
@@ -64,6 +65,9 @@ viewRecordContentDesktop model =
 
                         InstitutionResponse institutionbody ->
                             viewInstitutionRecord institutionbody model.language
+
+                        PlaceResponse placebody ->
+                            viewPlaceRecord placebody model.language
 
                 ApiError ->
                     viewErrorMessage model
