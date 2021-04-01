@@ -4,3 +4,6 @@ elm-stuff
 muscatplus_search_ui.iml
 .DS_Store
 yarn-error.log
+dev/**/app.js
+dist/**/app.js
+dist/**/app.min.js
