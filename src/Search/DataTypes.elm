@@ -38,7 +38,7 @@ type alias Model =
     , viewingDevice : Device
     , language : Language
     , currentRoute : Route
-    , selectedFacets : List FacetItem
+    , selectedFilters : List Filter
     }
 
 

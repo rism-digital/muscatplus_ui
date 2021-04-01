@@ -11886,7 +11886,7 @@ var $author$project$SearchApp$init = F3(
 		var initialErrorMessage = '';
 		var initialDevice = A2($author$project$UI$Layout$detectDevice, flags.windowWidth, flags.windowHeight);
 		return _Utils_Tuple2(
-			{currentRoute: initialRoute, errorMessage: initialErrorMessage, key: key, language: language, query: initialQuery, response: $author$project$Search$DataTypes$Loading, selectedFacets: _List_Nil, url: initialUrl, viewingDevice: initialDevice},
+			{currentRoute: initialRoute, errorMessage: initialErrorMessage, key: key, language: language, query: initialQuery, response: $author$project$Search$DataTypes$Loading, selectedFilters: _List_Nil, url: initialUrl, viewingDevice: initialDevice},
 			A2($author$project$Search$Routes$searchRequest, $author$project$Search$DataTypes$ReceivedSearchResponse, initialQuery));
 	});
 var $author$project$Search$DataTypes$OnWindowResize = function (a) {
@@ -12329,19 +12329,19 @@ var $author$project$SearchApp$update = F2(
 					var facetname = msg.a;
 					var itm = msg.b;
 					var checked = msg.c;
-					var currentlySelected = model.selectedFacets;
-					var newSelected = A2($elm$core$List$member, itm, currentlySelected) ? A2($elm_community$list_extra$List$Extra$remove, itm, currentlySelected) : A2($elm$core$List$cons, itm, currentlySelected);
+					var facetConvertedToFilter = A2($author$project$Search$DataTypes$convertFacetToFilter, facetname, itm);
+					var currentlySelected = model.selectedFilters;
+					var newSelected = A2($elm$core$List$member, facetConvertedToFilter, currentlySelected) ? A2($elm_community$list_extra$List$Extra$remove, facetConvertedToFilter, currentlySelected) : A2($elm$core$List$cons, facetConvertedToFilter, currentlySelected);
 					var currentQuery = model.query;
 					var currentFilters = currentQuery.filters;
-					var converted = A2($author$project$Search$DataTypes$convertFacetToFilter, facetname, itm);
-					var newFilters = checked ? A2($elm$core$List$cons, converted, currentFilters) : A2($elm_community$list_extra$List$Extra$remove, converted, currentFilters);
+					var newFilters = checked ? A2($elm$core$List$cons, facetConvertedToFilter, currentFilters) : A2($elm_community$list_extra$List$Extra$remove, facetConvertedToFilter, currentFilters);
 					var newQuery = _Utils_update(
 						currentQuery,
 						{filters: newFilters, page: 1});
 					var $temp$msg = $author$project$Search$DataTypes$SearchSubmit,
 						$temp$model = _Utils_update(
 						model,
-						{query: newQuery, selectedFacets: newSelected});
+						{query: newQuery, selectedFilters: newSelected});
 					msg = $temp$msg;
 					model = $temp$model;
 					continue update;
@@ -20588,8 +20588,9 @@ var $elm_community$string_extra$String$Extra$softEllipsis = F2(
 							string)))));
 	});
 var $author$project$Search$Views$Facets$viewSidebarFacetItem = F4(
-	function (currentlySelected, facetfield, fitem, language) {
-		var shouldBeChecked = A2($elm$core$List$member, fitem, currentlySelected);
+	function (currentlySelectedFilters, facetfield, fitem, language) {
+		var facetConvertedToFilter = A2($author$project$Search$DataTypes$convertFacetToFilter, facetfield, fitem);
+		var shouldBeChecked = A2($elm$core$List$member, facetConvertedToFilter, currentlySelectedFilters);
 		var _v0 = fitem;
 		var value = _v0.a;
 		var label = _v0.b;
@@ -20690,7 +20691,7 @@ var $author$project$Search$Views$Facets$viewSidebarFacet = F3(
 	});
 var $author$project$Search$Views$Facets$viewSidebarFacets = function (model) {
 	var language = model.language;
-	var currentlySelected = model.selectedFacets;
+	var currentlySelected = model.selectedFilters;
 	var templatedResults = function () {
 		var _v0 = model.response;
 		if (_v0.$ === 'Response') {

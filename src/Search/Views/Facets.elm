@@ -4,7 +4,7 @@ import Element exposing (Element, alignLeft, alignRight, centerX, column, el, fi
 import Element.Border as Border
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html.Attributes as Html
-import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Model, Msg(..))
+import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Filter, Model, Msg(..), convertFacetToFilter)
 import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import String.Extra as SE
 import UI.Components exposing (h6)
@@ -102,7 +102,7 @@ viewSidebarFacets model =
             model.language
 
         currentlySelected =
-            model.selectedFacets
+            model.selectedFilters
 
         templatedResults =
             case model.response of
@@ -129,7 +129,7 @@ viewSidebarFacets model =
         ]
 
 
-viewSidebarFacet : List FacetItem -> Facet -> Language -> Element Msg
+viewSidebarFacet : List Filter -> Facet -> Language -> Element Msg
 viewSidebarFacet currentlySelected facet language =
     let
         -- if the facet item is expanded, then show everything; else show just the first 10.
@@ -161,8 +161,8 @@ viewSidebarFacet currentlySelected facet language =
         ]
 
 
-viewSidebarFacetItem : List FacetItem -> String -> FacetItem -> Language -> Element Msg
-viewSidebarFacetItem currentlySelected facetfield fitem language =
+viewSidebarFacetItem : List Filter -> String -> FacetItem -> Language -> Element Msg
+viewSidebarFacetItem currentlySelectedFilters facetfield fitem language =
     let
         (FacetItem value label count) =
             fitem
@@ -170,8 +170,11 @@ viewSidebarFacetItem currentlySelected facetfield fitem language =
         fullLabel =
             extractLabelFromLanguageMap language label
 
+        facetConvertedToFilter =
+            convertFacetToFilter facetfield fitem
+
         shouldBeChecked =
-            List.member fitem currentlySelected
+            List.member facetConvertedToFilter currentlySelectedFilters
     in
     row
         [ width fill ]

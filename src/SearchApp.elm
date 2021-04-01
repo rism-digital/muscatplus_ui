@@ -118,17 +118,17 @@ update msg model =
         FacetChecked facetname itm checked ->
             let
                 currentlySelected =
-                    model.selectedFacets
+                    model.selectedFilters
+
+                facetConvertedToFilter =
+                    convertFacetToFilter facetname itm
 
                 newSelected =
-                    if List.member itm currentlySelected then
-                        LE.remove itm currentlySelected
+                    if List.member facetConvertedToFilter currentlySelected then
+                        LE.remove facetConvertedToFilter currentlySelected
 
                     else
-                        itm :: currentlySelected
-
-                converted =
-                    convertFacetToFilter facetname itm
+                        facetConvertedToFilter :: currentlySelected
 
                 currentQuery =
                     model.query
@@ -138,15 +138,15 @@ update msg model =
 
                 newFilters =
                     if checked then
-                        converted :: currentFilters
+                        facetConvertedToFilter :: currentFilters
 
                     else
-                        LE.remove converted currentFilters
+                        LE.remove facetConvertedToFilter currentFilters
 
                 newQuery =
                     { currentQuery | filters = newFilters, page = 1 }
             in
-            update SearchSubmit { model | query = newQuery, selectedFacets = newSelected }
+            update SearchSubmit { model | query = newQuery, selectedFilters = newSelected }
 
         NoOp ->
             ( model, Cmd.none )
@@ -202,7 +202,7 @@ init flags initialUrl key =
       , language = language
       , currentRoute = initialRoute
       , query = initialQuery
-      , selectedFacets = []
+      , selectedFilters = []
       }
     , searchRequest ReceivedSearchResponse initialQuery
     )
