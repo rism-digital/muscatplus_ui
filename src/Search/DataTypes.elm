@@ -76,6 +76,11 @@ type alias SearchQueryArgs =
     }
 
 
+defaultSearchQueryArgs : SearchQueryArgs
+defaultSearchQueryArgs =
+    SearchQueryArgs Nothing [] Nothing 1
+
+
 type alias SearchPagination =
     { next : Maybe String
     , previous : Maybe String

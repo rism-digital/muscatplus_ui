@@ -13,6 +13,7 @@ import Search.DataTypes
         , Route(..)
         , SearchQueryArgs
         , convertFacetToFilter
+        , defaultSearchQueryArgs
         , parseUrl
         , routeMatches
         )
@@ -87,6 +88,9 @@ update msg model =
                             case parseUrl url of
                                 SearchPageRoute qp ->
                                     qp
+
+                                FrontPageRoute ->
+                                    defaultSearchQueryArgs
 
                                 _ ->
                                     model.query
@@ -183,7 +187,7 @@ init flags initialUrl key =
                     queryargs
 
                 _ ->
-                    SearchQueryArgs Nothing [] Nothing 1
+                    defaultSearchQueryArgs
 
         initialErrorMessage =
             ""
