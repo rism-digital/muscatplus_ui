@@ -1,13 +1,23 @@
 module SearchApp exposing (..)
 
-import Api.Search exposing (ApiResponse(..), SearchQueryArgs, buildQueryParameters, searchRequest)
 import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Http exposing (Error(..))
 import Language exposing (Language, parseLocaleToLanguage)
 import List.Extra as LE
-import Search.DataTypes exposing (Model, Msg(..), Route(..), convertFacetToFilter, parseUrl, routeMatches)
+import Search.DataTypes
+    exposing
+        ( ApiResponse(..)
+        , Model
+        , Msg(..)
+        , Route(..)
+        , SearchQueryArgs
+        , convertFacetToFilter
+        , parseUrl
+        , routeMatches
+        )
+import Search.Routes exposing (buildQueryParameters, searchRequest)
 import Search.Views.View exposing (viewSearchBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
@@ -39,8 +49,9 @@ update msg model =
 
                 newInp =
                     if String.isEmpty textInput then
-                        Nothing 
-                    else 
+                        Nothing
+
+                    else
                         Just textInput
 
                 newQ =

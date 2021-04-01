@@ -1,17 +1,17 @@
 module Search.Views.View exposing (viewSearchBody)
 
-import Api.Search exposing (ApiResponse(..), SearchPagination, SearchQueryArgs, SearchResult)
 import Element exposing (..)
+import Element.Border as Border
 import Element.Input as Input
 import Html
 import Html.Attributes
 import Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
-import Search.DataTypes exposing (Model, Msg(..), Route(..))
+import Search.DataTypes exposing (ApiResponse(..), Model, Msg(..), Route(..))
 import Search.Views.Facets exposing (viewSidebarFacets, viewTypeFacet)
 import Search.Views.Results exposing (viewResultList)
 import Search.Views.Shared exposing (onEnter)
 import UI.Layout exposing (layoutBody)
-import UI.Style as Style exposing (greyBackground, minMaxFillDesktop, minMaxFillMobile, roundedBorder, roundedButton)
+import UI.Style as Style exposing (darkBlue, greyBackground, lightBlue, minMaxFillDesktop, minMaxFillMobile, roundedBorder, roundedButton)
 
 
 viewSearchDesktop : Model -> Element Msg
@@ -78,6 +78,7 @@ viewSearchFrontDesktop model =
                     [ width minMaxFillDesktop
                     , height fill
                     , centerX
+                    , centerY
                     ]
                     [ viewSearchKeywordInput model ]
                 ]
@@ -99,6 +100,7 @@ viewSearchKeywordInput model =
     in
     row
         [ centerX
+        , centerY
         , height shrink
         , width
             (fill
@@ -112,10 +114,11 @@ viewSearchKeywordInput model =
             ]
             [ Input.text
                 [ width fill
-                , height shrink
-                , spacingXY 0 4
-                , roundedBorder
+                , height (px 50)
+                , Border.widthEach { bottom = 1, top = 1, left = 1, right = 0 }
+                , Border.roundEach { topLeft = 5, bottomLeft = 5, topRight = 0, bottomRight = 0 }
                 , htmlAttribute (Html.Attributes.autocomplete False)
+                , Border.color lightBlue
                 , onEnter SearchSubmit
                 ]
                 { onChange = \inp -> SearchInput inp
@@ -126,7 +129,14 @@ viewSearchKeywordInput model =
             ]
         , column
             [ width (fillPortion 2) ]
-            [ Input.button (List.concat [ roundedButton, [] ])
+            [ Input.button
+                [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
+                , Border.roundEach { topLeft = 0, bottomLeft = 0, topRight = 5, bottomRight = 5 }
+                , Border.color lightBlue
+                , paddingXY 10 10
+                , height (px 50)
+                , width shrink
+                ]
                 { onPress = Just SearchSubmit
                 , label = text (extractLabelFromLanguageMap currentLanguage localTranslations.search)
                 }

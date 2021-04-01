@@ -1,6 +1,6 @@
-module Api.DataTypes exposing (RecordType(..), recordTypeFromJsonType, typeDecoder)
+module Shared.DataTypes exposing (..)
 
-import Json.Decode as Decode exposing (Decoder, andThen)
+import Language exposing (LanguageMap)
 
 
 type RecordType
@@ -12,10 +12,10 @@ type RecordType
     | Unknown
 
 
-typeDecoder : Decoder RecordType
-typeDecoder =
-    Decode.string
-        |> andThen (\str -> Decode.succeed (recordTypeFromJsonType str))
+type alias LabelValue =
+    { label : LanguageMap
+    , value : LanguageMap
+    }
 
 
 recordTypeFromJsonType : String -> RecordType

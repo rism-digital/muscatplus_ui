@@ -1,14 +1,27 @@
 module Records.Views.Source exposing (..)
 
-import Api.Records exposing (Exemplar, ExemplarsList, Incipit, IncipitFormat(..), IncipitList, MaterialGroup, MaterialGroupList, NoteList, RenderedIncipit(..), SourceBody, SourceRelationship, SourceRelationshipList)
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacing, text, width)
-import Element.Border as Border
+import Element exposing (Element, alignTop, column, fill, fillPortion, height, none, paddingXY, paragraph, px, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Records.DataTypes exposing (Msg)
+import Records.DataTypes
+    exposing
+        ( Exemplar
+        , ExemplarsList
+        , Incipit
+        , IncipitFormat(..)
+        , IncipitList
+        , MaterialGroup
+        , MaterialGroupList
+        , Msg
+        , NoteList
+        , RenderedIncipit(..)
+        , SourceBody
+        , SourceRelationship
+        , SourceRelationshipList
+        )
 import Records.Views.Shared exposing (viewSummaryField)
 import SvgParser
-import UI.Components exposing (h2, h4, h5, label, styledLink, value)
-import UI.Style exposing (bodyRegular, borderBottom, lightBlue, red)
+import UI.Components exposing (h2, h4, h5, styledLink)
+import UI.Style exposing (bodyRegular)
 
 
 viewSourceRecord : SourceBody -> Language -> Element Msg
@@ -375,9 +388,8 @@ viewHeldByInstitution exemplar language =
         heldByInstitution =
             exemplar.heldBy
 
-        institutionSiglum =
-            "(" ++ extractLabelFromLanguageMap language heldByInstitution.siglum ++ ")"
-
+        --institutionSiglum =
+        --    "(" ++ extractLabelFromLanguageMap language heldByInstitution.siglum ++ ")"
         heldByLink =
             styledLink heldByInstitution.id (extractLabelFromLanguageMap language heldByInstitution.label)
     in
@@ -390,7 +402,6 @@ viewHeldByInstitution exemplar language =
             [ paragraph
                 [ bodyRegular ]
                 [ heldByLink
-                , text (" " ++ institutionSiglum)
                 ]
             ]
         ]

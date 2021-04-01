@@ -1,15 +1,14 @@
 module Search.Views.Facets exposing (..)
 
-import Api.Search exposing (ApiResponse(..), Facet, FacetItem(..))
-import Element exposing (Element, alignLeft, alignRight, centerX, column, el, fill, none, paddingEach, paddingXY, paragraph, row, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerX, column, el, fill, none, paddingEach, paddingXY, row, spacingXY, text, width)
 import Element.Border as Border
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html.Attributes as Html
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
-import Search.DataTypes exposing (Model, Msg(..))
+import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Model, Msg(..))
 import String.Extra as SE
-import UI.Components exposing (h5, h6)
-import UI.Style exposing (bodyRegular, bodySM, bodyXS, lightGrey, pink, red)
+import UI.Components exposing (h6)
+import UI.Style exposing (bodyRegular, pink)
 
 
 {-|

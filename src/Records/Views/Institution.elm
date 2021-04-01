@@ -1,9 +1,9 @@
 module Records.Views.Institution exposing (..)
 
-import Api.Records exposing (InstitutionBody)
-import Element exposing (Element, alignTop, column, fill, height, px, row, width)
-import Language exposing (Language)
-import Records.DataTypes exposing (Msg)
+import Element exposing (Element, alignTop, column, fill, height, none, paddingXY, px, row, spacing, width)
+import Language exposing (Language, LanguageMap)
+import Records.DataTypes exposing (InstitutionBody, Msg)
+import Records.Views.Shared exposing (viewRelations, viewSummaryField)
 import UI.Components exposing (h2)
 
 
@@ -20,5 +20,41 @@ viewInstitutionRecord body language =
                 , height (px 120)
                 ]
                 [ h2 language body.label ]
+            , row
+                [ width fill
+                , height fill
+                ]
+                [ column
+                    [ width fill
+                    , spacing 20
+                    ]
+                    (List.map (\viewSection -> viewSection body language)
+                        [ viewSummarySection
+                        , viewRelationsSection
+                        ]
+                    )
+                ]
             ]
         ]
+
+
+viewSummarySection : InstitutionBody -> Language -> Element Msg
+viewSummarySection body language =
+    row
+        [ width fill
+        , paddingXY 0 10
+        ]
+        [ column
+            [ width fill ]
+            [ viewSummaryField body.summary language ]
+        ]
+
+
+viewRelationsSection : InstitutionBody -> Language -> Element Msg
+viewRelationsSection body language =
+    case body.relations of
+        Just relationships ->
+            viewRelations relationships language
+
+        Nothing ->
+            none

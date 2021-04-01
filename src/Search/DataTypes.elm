@@ -1,11 +1,11 @@
 module Search.DataTypes exposing (..)
 
-import Api.Search exposing (ApiResponse(..), FacetItem(..), Filter(..), SearchQueryArgs, SearchResponse)
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
 import Element exposing (Device)
 import Http
-import Language exposing (Language)
+import Language exposing (Language, LanguageMap)
+import Shared.DataTypes exposing (RecordType)
 import Url exposing (Url)
 import Url.Parser as P exposing ((</>), (<?>), s)
 import Url.Parser.Query as Q
@@ -40,6 +40,84 @@ type alias Model =
     , currentRoute : Route
     , selectedFacets : List FacetItem
     }
+
+
+type ApiResponse
+    = Loading
+    | Response SearchResponse
+    | ApiError
+    | NoResponseToShow
+
+
+{-|
+
+    A filter represents a selected filter query; The values are the
+    field name and the value, e.g., "Filter type source". This will then
+    get converted to a list of URL parameters, `fq=type:source`.
+
+-}
+type Filter
+    = Filter String String
+
+
+type alias SearchResponse =
+    { id : String
+    , items : List SearchResult
+    , view : SearchPagination
+    , facets : List Facet
+    }
+
+
+type alias SearchQueryArgs =
+    { query : Maybe String
+    , filters : List Filter
+    , sort : Maybe String
+    , page : Int
+    }
+
+
+type alias SearchPagination =
+    { next : Maybe String
+    , previous : Maybe String
+    , first : String
+    , last : Maybe String
+    , totalPages : Int
+    }
+
+
+type alias SearchResult =
+    { id : String
+    , label : LanguageMap
+    , type_ : RecordType
+    , typeLabel : LanguageMap
+    }
+
+
+type alias FacetList =
+    { items : List Facet
+    }
+
+
+type alias Facet =
+    { alias : String
+    , label : LanguageMap
+    , expanded : Bool -- facet is showing more than 10 items
+    , items : List FacetItem
+    }
+
+
+{-|
+
+    FacetItem is a facet name, a query value, a label (language map),
+    and the count of documents in the response.
+
+    E.g.,
+
+    FacetItem "source" {'none': {'some label'}} 123
+
+-}
+type FacetItem
+    = FacetItem String LanguageMap Int
 
 
 parseUrl : Url -> Route

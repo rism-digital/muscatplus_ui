@@ -1,11 +1,10 @@
 module Records.Views.View exposing (..)
 
-import Api.Records exposing (ApiResponse(..), RecordResponse(..))
 import Browser
 import Element exposing (DeviceClass(..), Element, alignLeft, centerX, column, fill, fillPortion, height, row, width)
 import Html
 import Language exposing (languageOptions, languageOptionsForDisplay)
-import Records.DataTypes exposing (Model, Msg(..))
+import Records.DataTypes exposing (ApiResponse(..), Model, Msg(..), RecordResponse(..))
 import Records.Views.Institution exposing (viewInstitutionRecord)
 import Records.Views.Person exposing (viewPersonRecord)
 import Records.Views.Shared exposing (viewErrorMessage, viewLoadingSpinner)

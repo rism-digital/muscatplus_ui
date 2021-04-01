@@ -1,4 +1,4 @@
-module Api.Request exposing (..)
+module Shared.Request exposing (..)
 
 import Http
 import Json.Decode exposing (Decoder)

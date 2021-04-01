@@ -1,13 +1,12 @@
-module Records.DataTypes exposing (Model, Msg(..), Route(..), parseUrl, routeMatches)
+module Records.DataTypes exposing (..)
 
-import Api.Records exposing (ApiResponse(..), RecordResponse)
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
 import Element exposing (Device)
 import Http
-import Language exposing (Language)
+import Language exposing (Language, LanguageMap)
+import Shared.DataTypes exposing (LabelValue, RecordType)
 import Url exposing (Url)
-import Url.Parser as P exposing ((</>), s)
 
 
 type Msg
@@ -36,25 +35,195 @@ type Route
     | NotFound
 
 
-parseUrl : Url -> Route
-parseUrl url =
-    case P.parse routeParser url of
-        Just route ->
-            route
-
-        Nothing ->
-            NotFound
+type ApiResponse
+    = Loading
+    | Response RecordResponse
+    | ApiError
 
 
-routeParser : P.Parser (Route -> a) a
-routeParser =
-    P.oneOf
-        [ P.map SourceRoute (s "sources" </> P.int)
-        , P.map PersonRoute (s "people" </> P.int)
-        , P.map InstitutionRoute (s "institutions" </> P.int)
-        ]
+type IncipitFormat
+    = RenderedSVG
+    | RenderedMIDI
+    | UnknownFormat
 
 
-routeMatches : Url -> Maybe Route
-routeMatches url =
-    P.parse routeParser url
+type alias Relationship =
+    { id : Maybe String
+    , role : Maybe LanguageMap
+    , qualifier : Maybe LanguageMap
+    , relatedTo : Maybe RelatedEntity
+    , value : Maybe LanguageMap
+    }
+
+
+{-| -}
+type alias RelatedEntity =
+    { type_ : RecordType
+    , name : LanguageMap
+    , id : String
+    }
+
+
+type alias ExternalResource =
+    { url : String
+    , label : LanguageMap
+    }
+
+
+type alias ExternalResourceList =
+    { label : LanguageMap
+    , items : List ExternalResource
+    }
+
+
+type alias BasicSourceBody =
+    { id : String
+    , label : LanguageMap
+    , sourceType : LanguageMap
+    }
+
+
+type alias SourceRelationship =
+    { id : Maybe String
+    , role : Maybe LanguageMap
+    , qualifier : Maybe LanguageMap
+    , person : PersonBody
+    }
+
+
+type alias SourceRelationshipList =
+    { id : Maybe String
+    , label : LanguageMap
+    , items : List SourceRelationship
+    }
+
+
+type alias Subject =
+    { id : String
+    , term : String
+    }
+
+
+type alias NoteList =
+    { label : LanguageMap
+    , notes : List LabelValue
+    }
+
+
+type RenderedIncipit
+    = RenderedIncipit IncipitFormat String
+
+
+type alias Incipit =
+    { id : String
+    , label : LanguageMap
+    , summary : List LabelValue
+    , rendered : Maybe (List RenderedIncipit)
+    }
+
+
+type alias IncipitList =
+    { label : LanguageMap
+    , incipits : List Incipit
+    }
+
+
+type alias MaterialGroupList =
+    { label : LanguageMap
+    , items : List MaterialGroup
+    }
+
+
+type alias MaterialGroup =
+    { id : String
+    , label : LanguageMap
+    , summary : List LabelValue
+    , related : Maybe SourceRelationshipList
+    }
+
+
+type alias ExemplarsList =
+    { id : String
+    , label : LanguageMap
+    , items : List Exemplar
+    }
+
+
+type alias Exemplar =
+    { id : String
+    , summary : List LabelValue
+    , heldBy : InstitutionBody
+    }
+
+
+type alias SourceBody =
+    { id : String
+    , label : LanguageMap
+    , summary : List LabelValue
+    , sourceType : LanguageMap
+    , partOf : Maybe (List BasicSourceBody)
+    , creator : Maybe SourceRelationship
+    , related : Maybe SourceRelationshipList
+    , subjects : Maybe (List Subject)
+    , notes : Maybe NoteList
+    , incipits : Maybe IncipitList
+    , materialgroups : Maybe MaterialGroupList
+    , exemplars : Maybe ExemplarsList
+    }
+
+
+type alias PersonBody =
+    { id : String
+    , label : LanguageMap
+    , sources : Maybe PersonSources
+    , summary : List LabelValue
+    , seeAlso : Maybe (List SeeAlso)
+    , nameVariants : Maybe PersonNameVariantList
+    , relations : Maybe RelationList
+    , notes : Maybe NoteList
+    , externalResources : Maybe ExternalResourceList
+    }
+
+
+type alias PersonSources =
+    { id : String
+    , totalItems : Int
+    }
+
+
+type alias Relationships =
+    { label : LanguageMap
+    , items : List Relationship
+    }
+
+
+type alias RelationList =
+    { label : LanguageMap
+    , items : List Relationships
+    }
+
+
+type alias PersonNameVariantList =
+    { label : LanguageMap
+    , items : List LabelValue
+    }
+
+
+type alias SeeAlso =
+    { url : String
+    , label : LanguageMap
+    }
+
+
+type alias InstitutionBody =
+    { id : String
+    , label : LanguageMap
+    , summary : List LabelValue
+    , relations : Maybe RelationList
+    }
+
+
+type RecordResponse
+    = SourceResponse SourceBody
+    | PersonResponse PersonBody
+    | InstitutionResponse InstitutionBody
