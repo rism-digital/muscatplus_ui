@@ -1,26 +1,11 @@
 module Records.Views.Source exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, fillPortion, height, none, paddingXY, paragraph, px, row, spacing, text, width)
-import Records.DataTypes
-    exposing
-        ( Exemplar
-        , ExemplarsList
-        , Incipit
-        , IncipitFormat(..)
-        , IncipitList
-        , MaterialGroup
-        , MaterialGroupList
-        , Msg
-        , NoteList
-        , RenderedIncipit(..)
-        , SourceBody
-        , SourceRelationship
-        , SourceRelationshipList
-        )
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, none, paddingXY, paragraph, px, row, spacing, text, width)
+import Records.DataTypes exposing (Exemplar, ExemplarsList, Incipit, IncipitFormat(..), IncipitList, MaterialGroup, MaterialGroupList, Msg, NoteList, Relations, Relationship, RelationshipList, RenderedIncipit(..), SourceBody)
 import Records.Views.Shared exposing (viewSummaryField)
 import Shared.Language exposing (Language, extractLabelFromLanguageMap)
 import SvgParser
-import UI.Components exposing (h2, h4, h5, styledLink)
+import UI.Components exposing (h2, h4, h5, label, styledLink, value)
 import UI.Style exposing (bodyRegular)
 
 
@@ -50,6 +35,7 @@ viewSourceRecord body language =
                         , viewNotesSection
                         , viewIncipitSection
                         , viewDistributionSection
+                        , viewRelationsSection
                         , viewMaterialDescriptionSection
                         , viewFurtherInformationSection
                         , viewReferencesSection
@@ -70,7 +56,57 @@ viewSummarySection body language =
         ]
         [ column
             [ width fill ]
-            [ viewSummaryField body.summary language ]
+            [ viewCreatorSection body language
+            , viewSummaryField body.summary language
+            ]
+        ]
+
+
+viewCreatorSection : SourceBody -> Language -> Element Msg
+viewCreatorSection body language =
+    case body.creator of
+        Just creator ->
+            viewCreator creator language
+
+        Nothing ->
+            none
+
+
+viewCreator : Relationship -> Language -> Element Msg
+viewCreator creator language =
+    let
+        creatorLabel =
+            case creator.role of
+                Just role ->
+                    label language role
+
+                -- for creators hopefully it will always have a role, but we add a Nothing case to satisfy the maybe
+                -- for other types of relationships
+                Nothing ->
+                    text "[No label]"
+
+        creatorValue =
+            case creator.relatedTo of
+                Just r ->
+                    styledLink r.id (extractLabelFromLanguageMap language r.label)
+
+                Nothing ->
+                    none
+    in
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill, paddingXY 0 10 ]
+                [ el
+                    [ width (fillPortion 2), alignTop ]
+                    creatorLabel
+                , el
+                    [ width (fillPortion 4), alignTop ]
+                    creatorValue
+                ]
+            ]
         ]
 
 
@@ -207,6 +243,56 @@ viewDistributionSection body language =
     none
 
 
+viewRelationsSection : SourceBody -> Language -> Element Msg
+viewRelationsSection body language =
+    case body.related of
+        Just relations ->
+            viewRelations relations language
+
+        Nothing ->
+            none
+
+
+viewRelations : Relations -> Language -> Element Msg
+viewRelations relations language =
+    row
+        [ width fill
+        , paddingXY 0 10
+        ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ h4 language relations.label ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    (List.map (\rl -> viewRelationshipList rl language) relations.items)
+                ]
+            ]
+        ]
+
+
+viewRelationshipList : RelationshipList -> Language -> Element Msg
+viewRelationshipList relationships language =
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ h4 language relationships.label ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    (List.map (\re -> viewRelationship re language) relationships.items)
+                ]
+            ]
+        ]
+
+
 viewMaterialDescriptionSection : SourceBody -> Language -> Element Msg
 viewMaterialDescriptionSection body language =
     case body.materialgroups of
@@ -245,7 +331,7 @@ viewMaterialGroup materialgroup language =
         relatedPeople =
             case materialgroup.related of
                 Just related ->
-                    viewRelatedPeople related language
+                    viewRelations related language
 
                 Nothing ->
                     none
@@ -265,29 +351,8 @@ viewMaterialGroup materialgroup language =
         ]
 
 
-viewRelatedPeople : SourceRelationshipList -> Language -> Element Msg
-viewRelatedPeople related language =
-    row
-        [ width fill ]
-        [ column
-            [ width fill ]
-            [ row
-                [ width fill
-                , paddingXY 0 10
-                ]
-                [ h5 language related.label ]
-            , row
-                [ width fill ]
-                [ column
-                    [ width fill ]
-                    (List.map (\p -> viewRelatedPerson p language) related.items)
-                ]
-            ]
-        ]
-
-
-viewRelatedPerson : SourceRelationship -> Language -> Element Msg
-viewRelatedPerson relationship language =
+viewRelationship : Relationship -> Language -> Element Msg
+viewRelationship relationship language =
     let
         relationshipRole =
             case relationship.role of
@@ -306,10 +371,15 @@ viewRelatedPerson relationship language =
                     ""
 
         person =
-            relationship.person
+            relationship.relatedTo
 
         relatedPerson =
-            styledLink person.id (extractLabelFromLanguageMap language person.label)
+            case relationship.relatedTo of
+                Just r ->
+                    styledLink r.id (extractLabelFromLanguageMap language r.label)
+
+                Nothing ->
+                    none
     in
     row
         [ width fill

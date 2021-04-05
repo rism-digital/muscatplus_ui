@@ -2,22 +2,40 @@ module Records.Decoders exposing (..)
 
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
 import Json.Decode.Pipeline exposing (optional, optionalAt, required)
-import Records.DataTypes as RDT exposing (BasicSourceBody, Exemplar, ExemplarsList, ExternalResource, ExternalResourceList, Incipit, IncipitFormat(..), IncipitList, InstitutionBody, MaterialGroup, MaterialGroupList, NoteList, PersonBody, PersonNameVariantList, PersonSources, PlaceBody, RecordResponse(..), RelatedEntity, RelatedList, Relationship, Relationships, RenderedIncipit(..), SeeAlso, SourceBody, SourceRelationship, SourceRelationshipList, Subject)
+import Records.DataTypes as RDT exposing (BasicSourceBody, Exemplar, ExemplarsList, ExternalResource, ExternalResourceList, Incipit, IncipitFormat(..), IncipitList, InstitutionBody, MaterialGroup, MaterialGroupList, NoteList, PersonBody, PersonNameVariantList, PersonSources, PlaceBody, RecordResponse(..), RelatedEntity, RelatedList, Relations, Relationship, RelationshipList, Relationships, RenderedIncipit(..), SeeAlso, SourceBody, Subject)
 import Shared.DataTypes exposing (RecordType(..), recordTypeFromJsonType)
 import Shared.Decoders exposing (labelDecoder, labelValueDecoder, typeDecoder)
 
 
 {-|
 
-    Decoder for the structures used to communicate relationships.
-    Most of the keys are optional since not all relationships will have all keys,
-    but most relationships will have some combination of them.
+    Decoders for the structures used to communicate relationships.
 
 -}
+relationsDecoder : Decoder Relations
+relationsDecoder =
+    -- "rism:Relations"
+    Decode.succeed Relations
+        |> required "label" labelDecoder
+        |> required "items" (list relationshipListDecoder)
+        |> required "type" string
+
+
+relationshipListDecoder : Decoder RelationshipList
+relationshipListDecoder =
+    -- "rism:PersonRelationshipList", "rism:PlaceRelationshipList", "rism:InstitutionRelationshipList"
+    Decode.succeed RelationshipList
+        |> required "label" labelDecoder
+        |> required "items" (list relationshipDecoder)
+        |> required "type" string
+
+
 relationshipDecoder : Decoder Relationship
 relationshipDecoder =
+    -- "rism:PersonRelationship"
     Decode.succeed Relationship
         |> optional "id" (Decode.maybe string) Nothing
+        |> required "type" string
         |> optionalAt [ "role", "label" ] (Decode.maybe labelDecoder) Nothing
         |> optionalAt [ "qualifier", "label" ] (Decode.maybe labelDecoder) Nothing
         |> optional "relatedTo" (Decode.maybe relatedEntityDecoder) Nothing
@@ -26,6 +44,7 @@ relationshipDecoder =
 
 relatedEntityDecoder : Decoder RelatedEntity
 relatedEntityDecoder =
+    -- "rism:Person"
     Decode.succeed RelatedEntity
         |> required "type" typeDecoder
         |> required "label" labelDecoder
@@ -59,8 +78,8 @@ sourceBodyDecoder =
         |> required "summary" (list labelValueDecoder)
         |> required "sourceType" labelDecoder
         |> optional "partOf" (Decode.maybe (list basicSourceBodyDecoder)) Nothing
-        |> optional "creator" (Decode.maybe sourceRelationshipDecoder) Nothing
-        |> optional "related" (Decode.maybe sourceRelationshipListDecoder) Nothing
+        |> optional "creator" (Decode.maybe relationshipDecoder) Nothing
+        |> optional "related" (Decode.maybe relationsDecoder) Nothing
         |> optional "subjects" (Decode.maybe (list subjectDecoder)) Nothing
         |> optional "notes" (Decode.maybe noteListDecoder) Nothing
         |> optional "incipits" (Decode.maybe incipitListDecoder) Nothing
@@ -74,23 +93,6 @@ basicSourceBodyDecoder =
         |> required "id" string
         |> required "label" labelDecoder
         |> required "sourceType" labelDecoder
-
-
-sourceRelationshipDecoder : Decoder SourceRelationship
-sourceRelationshipDecoder =
-    Decode.succeed SourceRelationship
-        |> optional "id" (Decode.maybe string) Nothing
-        |> optionalAt [ "role", "label" ] (Decode.maybe labelDecoder) Nothing
-        |> optionalAt [ "qualifier", "label" ] (Decode.maybe labelDecoder) Nothing
-        |> required "relatedTo" personBodyDecoder
-
-
-sourceRelationshipListDecoder : Decoder SourceRelationshipList
-sourceRelationshipListDecoder =
-    Decode.succeed SourceRelationshipList
-        |> optional "id" (Decode.maybe string) Nothing
-        |> required "label" labelDecoder
-        |> required "items" (list sourceRelationshipDecoder)
 
 
 subjectDecoder : Decoder Subject
@@ -120,7 +122,7 @@ materialGroupDecoder =
         |> required "id" string
         |> required "label" labelDecoder
         |> required "summary" (list labelValueDecoder)
-        |> optional "related" (Decode.maybe sourceRelationshipListDecoder) Nothing
+        |> optional "related" (Decode.maybe relationsDecoder) Nothing
 
 
 incipitListDecoder : Decoder IncipitList

@@ -48,8 +48,23 @@ type IncipitFormat
     | UnknownFormat
 
 
+type alias Relations =
+    { label : LanguageMap
+    , items : List RelationshipList
+    , type_ : String
+    }
+
+
+type alias RelationshipList =
+    { label : LanguageMap
+    , items : List Relationship
+    , type_ : String
+    }
+
+
 type alias Relationship =
     { id : Maybe String
+    , type_ : String
     , role : Maybe LanguageMap
     , qualifier : Maybe LanguageMap
     , relatedTo : Maybe RelatedEntity
@@ -81,21 +96,6 @@ type alias BasicSourceBody =
     { id : String
     , label : LanguageMap
     , sourceType : LanguageMap
-    }
-
-
-type alias SourceRelationship =
-    { id : Maybe String
-    , role : Maybe LanguageMap
-    , qualifier : Maybe LanguageMap
-    , person : PersonBody
-    }
-
-
-type alias SourceRelationshipList =
-    { id : Maybe String
-    , label : LanguageMap
-    , items : List SourceRelationship
     }
 
 
@@ -139,7 +139,7 @@ type alias MaterialGroup =
     { id : String
     , label : LanguageMap
     , summary : List LabelValue
-    , related : Maybe SourceRelationshipList
+    , related : Maybe Relations
     }
 
 
@@ -163,8 +163,8 @@ type alias SourceBody =
     , summary : List LabelValue
     , sourceType : LanguageMap
     , partOf : Maybe (List BasicSourceBody)
-    , creator : Maybe SourceRelationship
-    , related : Maybe SourceRelationshipList
+    , creator : Maybe Relationship
+    , related : Maybe Relations
     , subjects : Maybe (List Subject)
     , notes : Maybe NoteList
     , incipits : Maybe IncipitList
