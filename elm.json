@@ -17,6 +17,7 @@
             "elm/url": "1.0.0",
             "elm-community/list-extra": "8.2.4",
             "elm-community/string-extra": "4.0.1",
+            "jasonliang-dev/elm-heroicons": "1.0.3",
             "mdgriffith/elm-ui": "1.1.8"
         },
         "indirect": {
