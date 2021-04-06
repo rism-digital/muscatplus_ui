@@ -1,7 +1,7 @@
 module Records.Views.Source exposing (..)
 
 import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, none, paddingXY, paragraph, px, row, spacing, text, width)
-import Records.DataTypes exposing (Exemplar, ExemplarsList, Incipit, IncipitFormat(..), IncipitList, MaterialGroup, MaterialGroupList, Msg, NoteList, Relations, Relationship, RelationshipList, RenderedIncipit(..), SourceBody)
+import Records.DataTypes exposing (Exemplar, ExemplarList, Incipit, IncipitFormat(..), IncipitList, MaterialGroup, MaterialGroupList, Msg, NoteList, Relations, Relationship, RelationshipList, RenderedIncipit(..), SourceBody)
 import Records.Views.Shared exposing (viewSummaryField)
 import Shared.Language exposing (Language, extractLabelFromLanguageMap)
 import SvgParser
@@ -243,6 +243,13 @@ viewDistributionSection body language =
     none
 
 
+{-|
+
+    Displays the relationships defined on the source directly. If
+    a relationship is defined on a material group, that is handled
+    in the Material Group section (below).
+
+-}
 viewRelationsSection : SourceBody -> Language -> Element Msg
 viewRelationsSection body language =
     case body.related of
@@ -293,6 +300,46 @@ viewRelationshipList relationships language =
         ]
 
 
+viewRelationship : Relationship -> Language -> Element Msg
+viewRelationship relationship language =
+    let
+        relationshipRole =
+            case relationship.role of
+                Just role ->
+                    "[" ++ extractLabelFromLanguageMap language role ++ "]"
+
+                Nothing ->
+                    ""
+
+        relationshipQualifier =
+            case relationship.qualifier of
+                Just qual ->
+                    "[" ++ extractLabelFromLanguageMap language qual ++ "]"
+
+                Nothing ->
+                    ""
+
+        relatedEntity =
+            case relationship.relatedTo of
+                Just r ->
+                    styledLink r.id (extractLabelFromLanguageMap language r.label)
+
+                Nothing ->
+                    none
+    in
+    row
+        [ width fill
+        , paddingXY 10 5
+        ]
+        [ paragraph
+            [ bodyRegular ]
+            [ relatedEntity
+            , text (" " ++ relationshipRole)
+            , text (" " ++ relationshipQualifier)
+            ]
+        ]
+
+
 viewMaterialDescriptionSection : SourceBody -> Language -> Element Msg
 viewMaterialDescriptionSection body language =
     case body.materialgroups of
@@ -328,7 +375,7 @@ viewMaterialDescriptions materialgroups language =
 viewMaterialGroup : MaterialGroup -> Language -> Element Msg
 viewMaterialGroup materialgroup language =
     let
-        relatedPeople =
+        relations =
             case materialgroup.related of
                 Just related ->
                     viewRelations related language
@@ -343,53 +390,10 @@ viewMaterialGroup materialgroup language =
         [ column
             [ width fill ]
             [ row
-                []
+                [ width fill ]
                 [ h5 language materialgroup.label ]
             , viewSummaryField materialgroup.summary language
-            , relatedPeople
-            ]
-        ]
-
-
-viewRelationship : Relationship -> Language -> Element Msg
-viewRelationship relationship language =
-    let
-        relationshipRole =
-            case relationship.role of
-                Just role ->
-                    "[" ++ extractLabelFromLanguageMap language role ++ "]"
-
-                Nothing ->
-                    ""
-
-        relationshipQualifier =
-            case relationship.qualifier of
-                Just qual ->
-                    "[" ++ extractLabelFromLanguageMap language qual ++ "]"
-
-                Nothing ->
-                    ""
-
-        person =
-            relationship.relatedTo
-
-        relatedPerson =
-            case relationship.relatedTo of
-                Just r ->
-                    styledLink r.id (extractLabelFromLanguageMap language r.label)
-
-                Nothing ->
-                    none
-    in
-    row
-        [ width fill
-        , paddingXY 10 5
-        ]
-        [ paragraph
-            [ bodyRegular ]
-            [ relatedPerson
-            , text (" " ++ relationshipRole)
-            , text (" " ++ relationshipQualifier)
+            , relations
             ]
         ]
 
@@ -409,6 +413,11 @@ viewIndexTermsSection body language =
     none
 
 
+{-|
+
+    Exemplars <-> Holdings. They're the same thing.
+
+-}
 viewExemplarsSection : SourceBody -> Language -> Element Msg
 viewExemplarsSection body language =
     case body.exemplars of
@@ -419,7 +428,7 @@ viewExemplarsSection body language =
             none
 
 
-viewExemplars : ExemplarsList -> Language -> Element Msg
+viewExemplars : ExemplarList -> Language -> Element Msg
 viewExemplars exemplarlist language =
     row
         [ width fill
@@ -465,7 +474,7 @@ viewHeldByInstitution exemplar language =
     in
     row
         [ width fill
-        , paddingXY 10 5
+        , paddingXY 0 10
         ]
         [ column
             [ width fill ]
