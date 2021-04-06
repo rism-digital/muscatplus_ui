@@ -177,7 +177,7 @@ exemplarDecoder : Decoder Exemplar
 exemplarDecoder =
     Decode.succeed Exemplar
         |> required "id" string
-        |> required "summary" (list labelValueDecoder)
+        |> optional "summary" (list labelValueDecoder) []
         |> required "heldBy" institutionBodyDecoder
 
 
@@ -225,7 +225,7 @@ personBodyDecoder =
         |> required "id" string
         |> required "label" labelDecoder
         |> optional "sources" (Decode.maybe personSourcesDecoder) Nothing
-        |> required "summary" (list labelValueDecoder)
+        |> optional "summary" (list labelValueDecoder) []
         |> optional "seeAlso" (Decode.maybe (list seeAlsoDecoder)) Nothing
         |> optional "nameVariants" (Decode.maybe personNameVariantListDecoder) Nothing
         |> optional "related" (Decode.maybe relatedListDecoder) Nothing
@@ -245,7 +245,7 @@ institutionBodyDecoder =
     Decode.succeed InstitutionBody
         |> required "id" string
         |> required "label" labelDecoder
-        |> required "summary" (list labelValueDecoder)
+        |> optional "summary" (list labelValueDecoder) []
         |> optional "related" (Decode.maybe relatedListDecoder) Nothing
 
 
