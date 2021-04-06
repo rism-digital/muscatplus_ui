@@ -2,6 +2,7 @@ module Search.DataTypes exposing (..)
 
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
+import Dict
 import Element exposing (Device)
 import Http
 import Shared.DataTypes exposing (RecordType)
@@ -20,6 +21,7 @@ type Msg
     | UrlRequest UrlRequest
     | LanguageSelectChanged String
     | FacetChecked String FacetItem Bool
+    | ModeChecked String FacetItem Bool
     | NoOp
 
 
@@ -39,6 +41,7 @@ type alias Model =
     , language : Language
     , currentRoute : Route
     , selectedFilters : List Filter
+    , selectedMode : ResultMode
     }
 
 
@@ -60,11 +63,58 @@ type Filter
     = Filter String String
 
 
+type ResultMode
+    = Everything
+    | Sources
+    | People
+    | Institutions
+    | Incipits
+
+
+defaultModeFilter : ResultMode
+defaultModeFilter =
+    Everything
+
+
+resultModeOptions : List ( String, ResultMode )
+resultModeOptions =
+    [ ( "everything", Everything )
+    , ( "sources", Sources )
+    , ( "people", People )
+    , ( "institutions", Institutions )
+    , ( "incipits", Incipits )
+    ]
+
+
+{-|
+
+    Takes a string and parses it to a result mode type. If one is not found
+    then it assumes 'everything' is the default.
+
+-}
+parseStringToResultMode : String -> ResultMode
+parseStringToResultMode string =
+    List.filter (\( str, _ ) -> str == string) resultModeOptions
+        |> List.head
+        |> Maybe.withDefault ( "everything", Everything )
+        |> Tuple.second
+
+
+parseResultModeToString : ResultMode -> String
+parseResultModeToString mode =
+    List.filter (\( _, m ) -> m == mode) resultModeOptions
+        |> List.head
+        |> Maybe.withDefault ( "everything", Everything )
+        |> Tuple.first
+
+
 type alias SearchResponse =
     { id : String
     , items : List SearchResult
     , view : SearchPagination
     , facets : List Facet
+    , modes : Facet
+    , totalItems : Int
     }
 
 
@@ -73,12 +123,13 @@ type alias SearchQueryArgs =
     , filters : List Filter
     , sort : Maybe String
     , page : Int
+    , mode : ResultMode
     }
 
 
 defaultSearchQueryArgs : SearchQueryArgs
 defaultSearchQueryArgs =
-    SearchQueryArgs Nothing [] Nothing 1
+    SearchQueryArgs Nothing [] Nothing 1 Everything
 
 
 type alias SearchPagination =
@@ -145,12 +196,17 @@ routeParser =
 
 queryParamsParser : Q.Parser SearchQueryArgs
 queryParamsParser =
-    Q.map4 SearchQueryArgs (Q.string "q") fqParamParser (Q.string "sort") pageParamParser
+    Q.map5 SearchQueryArgs (Q.string "q") fqParamParser (Q.string "sort") pageParamParser modeParamParser
 
 
 fqParamParser : Q.Parser (List Filter)
 fqParamParser =
     Q.custom "fq" (\a -> filterQueryStringToFilter a)
+
+
+modeParamParser : Q.Parser ResultMode
+modeParamParser =
+    Q.custom "mode" (\a -> modeQueryStringToResultMode a)
 
 
 filterQueryStringToFilter : List String -> List Filter
@@ -169,6 +225,13 @@ filterQueryStringToFilter fqlist =
             )
             fqlist
         )
+
+
+modeQueryStringToResultMode : List String -> ResultMode
+modeQueryStringToResultMode modelist =
+    List.map (\a -> parseStringToResultMode a) modelist
+        |> List.head
+        |> Maybe.withDefault Everything
 
 
 pageParamParser : Q.Parser Int
@@ -197,3 +260,12 @@ convertFacetToFilter name facet =
             facet
     in
     Filter name qval
+
+
+convertFacetToResultMode : FacetItem -> ResultMode
+convertFacetToResultMode facet =
+    let
+        (FacetItem qval label count) =
+            facet
+    in
+    parseStringToResultMode qval

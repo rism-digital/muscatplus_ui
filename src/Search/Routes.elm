@@ -2,7 +2,7 @@ module Search.Routes exposing (..)
 
 import Config as C
 import Http
-import Search.DataTypes exposing (Filter(..), SearchQueryArgs, SearchResponse)
+import Search.DataTypes exposing (Filter(..), SearchQueryArgs, SearchResponse, parseResultModeToString)
 import Search.Decoders exposing (searchResponseDecoder)
 import Shared.Request exposing (createRequest)
 import Url.Builder exposing (QueryParameter)
@@ -18,6 +18,9 @@ buildQueryParameters queryArgs =
 
                 Nothing ->
                     []
+
+        modeParam =
+            [ Url.Builder.string "mode" (parseResultModeToString queryArgs.mode) ]
 
         fqParams =
             List.map
@@ -44,7 +47,7 @@ buildQueryParameters queryArgs =
                 Nothing ->
                     []
     in
-    List.concat [ qParam, fqParams, pageParam, sortParam ]
+    List.concat [ qParam, modeParam, fqParams, pageParam, sortParam ]
 
 
 searchUrl : SearchQueryArgs -> String

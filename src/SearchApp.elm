@@ -5,18 +5,7 @@ import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Http exposing (Error(..))
 import List.Extra as LE
-import Search.DataTypes
-    exposing
-        ( ApiResponse(..)
-        , Model
-        , Msg(..)
-        , Route(..)
-        , SearchQueryArgs
-        , convertFacetToFilter
-        , defaultSearchQueryArgs
-        , parseUrl
-        , routeMatches
-        )
+import Search.DataTypes exposing (ApiResponse(..), Model, Msg(..), Route(..), SearchQueryArgs, convertFacetToFilter, convertFacetToResultMode, defaultModeFilter, defaultSearchQueryArgs, parseUrl, routeMatches)
 import Search.Routes exposing (buildQueryParameters, searchRequest)
 import Search.Views.View exposing (viewSearchBody)
 import Shared.Language exposing (Language, parseLocaleToLanguage)
@@ -56,7 +45,7 @@ update msg model =
                         Just textInput
 
                 newQ =
-                    SearchQueryArgs newInp currentQ.filters currentQ.sort 1
+                    SearchQueryArgs newInp currentQ.filters currentQ.sort 1 currentQ.mode
             in
             ( { model | query = newQ }, Cmd.none )
 
@@ -152,6 +141,19 @@ update msg model =
             in
             update SearchSubmit { model | query = newQuery, selectedFilters = newSelected }
 
+        ModeChecked _ itm _ ->
+            let
+                facetConvertedToResultMode =
+                    convertFacetToResultMode itm
+
+                currentQuery =
+                    model.query
+
+                newQuery =
+                    { currentQuery | mode = facetConvertedToResultMode, filters = [] }
+            in
+            update SearchSubmit { model | selectedMode = facetConvertedToResultMode, query = newQuery, selectedFilters = [] }
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -197,6 +199,14 @@ init flags initialUrl key =
 
         initialRoute =
             parseUrl initialUrl
+
+        initialCmd =
+            case route of
+                SearchPageRoute _ ->
+                    searchRequest ReceivedSearchResponse initialQuery
+
+                _ ->
+                    Cmd.none
     in
     ( { key = key
       , url = initialUrl
@@ -207,8 +217,9 @@ init flags initialUrl key =
       , currentRoute = initialRoute
       , query = initialQuery
       , selectedFilters = []
+      , selectedMode = defaultModeFilter
       }
-    , searchRequest ReceivedSearchResponse initialQuery
+    , initialCmd
     )
 
 

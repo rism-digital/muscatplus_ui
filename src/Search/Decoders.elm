@@ -53,7 +53,7 @@ facetItemDecoder =
     Decode.succeed FacetItem
         |> required "value" string
         |> required "label" labelDecoder
-        |> required "count" int
+        |> optional "count" int 0
 
 
 searchResponseDecoder : Decoder SearchResponse
@@ -63,3 +63,5 @@ searchResponseDecoder =
         |> optional "items" (Decode.list resultDecoder) []
         |> required "view" searchPaginationDecoder
         |> optionalAt [ "facets", "items" ] (Decode.list facetDecoder) []
+        |> required "modes" facetDecoder
+        |> required "totalItems" int

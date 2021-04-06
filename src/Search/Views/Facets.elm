@@ -4,27 +4,16 @@ import Element exposing (Element, alignLeft, alignRight, centerX, column, el, fi
 import Element.Border as Border
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html.Attributes as Html
-import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Filter, Model, Msg(..), convertFacetToFilter)
+import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Filter, Model, Msg(..), SearchResponse, convertFacetToFilter)
 import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import String.Extra as SE
 import UI.Components exposing (h6)
+import UI.Icons exposing (modeIcons)
 import UI.Style exposing (bodyRegular, pink)
 
 
-{-|
-
-    Partitions the list of facets into a tuple containing the 'type' facet, and
-    the rest of them. This helps us split the facets so that the type can be displayed
-    at the top, and the rest on the side.
-
--}
-partitionFacetList : List Facet -> ( List Facet, List Facet )
-partitionFacetList facetList =
-    List.partition (\f -> f.alias == "type") facetList
-
-
-viewTypeFacetItems : Facet -> Language -> Element Msg
-viewTypeFacetItems typeFacet language =
+viewModeItems : Facet -> Language -> Element Msg
+viewModeItems typeFacet language =
     row
         [ Border.widthEach { top = 0, left = 0, right = 0, bottom = 1 }
         , Border.color pink
@@ -32,11 +21,11 @@ viewTypeFacetItems typeFacet language =
         , centerX
         , width fill
         ]
-        (List.map (\t -> viewTypeFacetItem t language) typeFacet.items)
+        (List.map (\t -> viewModeItem t language) typeFacet.items)
 
 
-viewTypeFacetItem : FacetItem -> Language -> Element Msg
-viewTypeFacetItem fitem language =
+viewModeItem : FacetItem -> Language -> Element Msg
+viewModeItem fitem language =
     let
         -- uses opaque type destructuring to unpack the values of the facet item.
         (FacetItem value label count) =
@@ -44,55 +33,47 @@ viewTypeFacetItem fitem language =
 
         fullLabel =
             extractLabelFromLanguageMap language label
-    in
-    column
-        [ centerX ]
-        [ checkbox
-            [ alignLeft
-            , spacingXY 20 0
-            ]
-            { onChange = \t -> NoOp
-            , icon = \b -> none
-            , checked = False
-            , label =
-                labelLeft
-                    [ bodyRegular
-                    , alignLeft
-                    ]
-                    (text (fullLabel ++ " (" ++ String.fromInt count ++ ")"))
-            }
-        ]
 
+        icon =
+            case value of
+                "everything" ->
+                    modeIcons.everything
 
-viewTypeFacet : Model -> Element Msg
-viewTypeFacet model =
-    let
-        language =
-            model.language
+                "sources" ->
+                    modeIcons.sources
 
-        templatedResults =
-            case model.response of
-                Response results ->
-                    let
-                        typeFacet =
-                            partitionFacetList results.facets
-                                |> Tuple.first
-                                |> List.head
+                "people" ->
+                    modeIcons.people
 
-                        typeFacetItems =
-                            case typeFacet of
-                                Just tf ->
-                                    viewTypeFacetItems tf language
+                "institutions" ->
+                    modeIcons.institutions
 
-                                Nothing ->
-                                    none
-                    in
-                    typeFacetItems
+                "incipits" ->
+                    modeIcons.incipits
 
                 _ ->
-                    none
+                    modeIcons.unknown
     in
-    templatedResults
+    row
+        [ alignLeft ]
+        [ el [ paddingXY 5 0 ] icon
+        , el []
+            (checkbox
+                [ alignLeft
+                , spacingXY 20 0
+                ]
+                { onChange = \t -> ModeChecked "mode" fitem t
+                , icon = \b -> none
+                , checked = False
+                , label =
+                    labelLeft
+                        [ bodyRegular
+                        , alignLeft
+                        ]
+                        (text fullLabel)
+                }
+            )
+        ]
 
 
 viewSidebarFacets : Model -> Element Msg
@@ -109,8 +90,7 @@ viewSidebarFacets model =
                 Response results ->
                     let
                         sidebarFacetList =
-                            partitionFacetList results.facets
-                                |> Tuple.second
+                            results.facets
 
                         sidebarFacets =
                             sidebarFacetList
