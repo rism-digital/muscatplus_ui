@@ -101,7 +101,7 @@ type alias BasicSourceBody =
 
 type alias Subject =
     { id : String
-    , term : String
+    , term : LanguageMap
     }
 
 
@@ -143,7 +143,7 @@ type alias MaterialGroup =
     }
 
 
-type alias ExemplarsList =
+type alias ExemplarList =
     { id : String
     , label : LanguageMap
     , items : List Exemplar
@@ -169,7 +169,7 @@ type alias SourceBody =
     , notes : Maybe NoteList
     , incipits : Maybe IncipitList
     , materialgroups : Maybe MaterialGroupList
-    , exemplars : Maybe ExemplarsList
+    , exemplars : Maybe ExemplarList
     }
 
 

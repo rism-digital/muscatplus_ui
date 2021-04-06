@@ -99,7 +99,7 @@ subjectDecoder : Decoder Subject
 subjectDecoder =
     Decode.succeed Subject
         |> required "id" string
-        |> required "term" string
+        |> required "term" labelDecoder
 
 
 noteListDecoder : Decoder NoteList
