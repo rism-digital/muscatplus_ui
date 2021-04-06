@@ -56,6 +56,11 @@ lightGrey =
     rgb255 241 244 249
 
 
+darkGrey : Color
+darkGrey =
+    rgb255 143 143 143
+
+
 roundedBorder : Attribute msg
 roundedBorder =
     Border.rounded 5
