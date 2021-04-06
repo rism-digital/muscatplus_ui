@@ -2,10 +2,10 @@ module Search.Views.Results exposing (..)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacingXY, text, width)
 import Element.Font as Font
-import Search.DataTypes exposing (ApiResponse(..), Model, Msg, SearchPagination, SearchResult)
+import Search.DataTypes exposing (ApiResponse(..), Model, Msg, SearchPagination, SearchResponse, SearchResult)
 import Shared.Language exposing (Language)
 import UI.Components exposing (h5)
-import UI.Style exposing (darkBlue, red)
+import UI.Style exposing (bodySM, darkBlue, darkGrey, red)
 
 
 viewResult : SearchResult -> Language -> Element Msg
@@ -154,3 +154,14 @@ viewPaginatorTotalPages pages =
             |> (++) "Page "
             |> text
         )
+
+
+viewResultCount : SearchResponse -> Language -> Element Msg
+viewResultCount response language =
+    row
+        [ width fill
+        , height (px 30)
+        , bodySM
+        , Font.color darkGrey
+        ]
+        [ text ("Found " ++ String.fromInt response.totalItems ++ " results") ]

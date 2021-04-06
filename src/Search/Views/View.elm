@@ -6,12 +6,12 @@ import Element.Input as Input
 import Html
 import Html.Attributes
 import Search.DataTypes exposing (ApiResponse(..), Model, Msg(..), Route(..))
-import Search.Views.Facets exposing (viewSidebarFacets, viewTypeFacet)
-import Search.Views.Results exposing (viewResultList)
+import Search.Views.Facets exposing (viewModeItems, viewSidebarFacets)
+import Search.Views.Results exposing (viewResultCount, viewResultList)
 import Search.Views.Shared exposing (onEnter)
 import Shared.Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
 import UI.Layout exposing (layoutBody)
-import UI.Style as Style exposing (darkBlue, greyBackground, lightBlue, minMaxFillDesktop, minMaxFillMobile, roundedBorder, roundedButton)
+import UI.Style as Style exposing (greyBackground, lightBlue, minMaxFillDesktop, minMaxFillMobile)
 
 
 viewSearchDesktop : Model -> Element Msg
@@ -221,7 +221,25 @@ viewSearchResultsLoading model =
 
 viewHasSearchResults : Model -> List (Element Msg)
 viewHasSearchResults model =
-    [ viewTypeFacet model
+    let
+        modeFacet =
+            case model.response of
+                Response results ->
+                    viewModeItems results.modes model.language
+
+                _ ->
+                    none
+
+        resultCount =
+            case model.response of
+                Response results ->
+                    viewResultCount results model.language
+
+                _ ->
+                    none
+    in
+    [ modeFacet
+    , resultCount
     , row
         [ width fill
         , alignTop
