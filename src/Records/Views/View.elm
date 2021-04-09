@@ -6,6 +6,7 @@ import Html
 import Records.DataTypes exposing (ApiResponse(..), Model, Msg(..), RecordResponse(..))
 import Records.Views.Festival exposing (viewFestivalRecord)
 import Records.Views.Institution exposing (viewInstitutionRecord)
+import Records.Views.Loading exposing (viewRecordLoading)
 import Records.Views.Person exposing (viewPersonRecord)
 import Records.Views.Place exposing (viewPlaceRecord)
 import Records.Views.Shared exposing (viewErrorMessage, viewLoadingSpinner)
@@ -54,7 +55,7 @@ viewRecordContentDesktop model =
         content =
             case model.response of
                 Loading ->
-                    viewLoadingSpinner model
+                    viewRecordLoading
 
                 Response apiResponse ->
                     case apiResponse of

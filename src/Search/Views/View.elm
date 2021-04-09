@@ -7,6 +7,7 @@ import Html
 import Html.Attributes
 import Search.DataTypes exposing (ApiResponse(..), Model, Msg(..), Route(..))
 import Search.Views.Facets exposing (viewModeItems, viewSidebarFacets)
+import Search.Views.Loading exposing (viewSearchResultsLoading)
 import Search.Views.Results exposing (viewResultCount, viewResultList)
 import Search.Views.Shared exposing (onEnter)
 import Shared.Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
@@ -175,7 +176,7 @@ viewSearchResultsSection model =
                     viewSearchResultsError model
 
                 Loading ->
-                    viewSearchResultsLoading model
+                    viewSearchResultsLoading
 
                 _ ->
                     viewHasNoSearchResults model
@@ -208,14 +209,6 @@ viewHasNoSearchResults model =
     [ row
         [ width fill ]
         [ text "No results were returned" ]
-    ]
-
-
-viewSearchResultsLoading : Model -> List (Element Msg)
-viewSearchResultsLoading model =
-    [ row
-        [ width fill ]
-        [ text "Loading results" ]
     ]
 
 
