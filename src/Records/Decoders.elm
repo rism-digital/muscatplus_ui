@@ -264,6 +264,7 @@ placeBodyDecoder =
     Decode.succeed PlaceBody
         |> required "id" string
         |> required "label" labelDecoder
+        |> optional "summary" (list labelValueDecoder) []
 
 
 festivalResponseDecoder : Decoder RecordResponse

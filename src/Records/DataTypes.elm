@@ -228,6 +228,7 @@ type alias InstitutionBody =
 type alias PlaceBody =
     { id : String
     , label : LanguageMap
+    , summary : List LabelValue
     }
 
 
