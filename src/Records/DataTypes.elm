@@ -33,6 +33,7 @@ type Route
     | PersonRoute Int
     | InstitutionRoute Int
     | PlaceRoute Int
+    | FestivalRoute Int
     | NotFound
 
 
@@ -230,8 +231,16 @@ type alias PlaceBody =
     }
 
 
+type alias FestivalBody =
+    { id : String
+    , label : LanguageMap
+    , summary : List LabelValue
+    }
+
+
 type RecordResponse
     = SourceResponse SourceBody
     | PersonResponse PersonBody
     | InstitutionResponse InstitutionBody
     | PlaceResponse PlaceBody
+    | FestivalResponse FestivalBody

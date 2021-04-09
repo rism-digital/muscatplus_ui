@@ -2,7 +2,7 @@ module Records.Decoders exposing (..)
 
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
 import Json.Decode.Pipeline exposing (optional, optionalAt, required)
-import Records.DataTypes as RDT exposing (BasicSourceBody, Exemplar, ExemplarList, ExternalResource, ExternalResourceList, Incipit, IncipitFormat(..), IncipitList, InstitutionBody, MaterialGroup, MaterialGroupList, NoteList, PersonBody, PersonNameVariantList, PersonSources, PlaceBody, RecordResponse(..), RelatedEntity, RelatedList, Relations, Relationship, RelationshipList, Relationships, RenderedIncipit(..), SeeAlso, SourceBody, Subject)
+import Records.DataTypes as RDT exposing (BasicSourceBody, Exemplar, ExemplarList, ExternalResource, ExternalResourceList, FestivalBody, Incipit, IncipitFormat(..), IncipitList, InstitutionBody, MaterialGroup, MaterialGroupList, NoteList, PersonBody, PersonNameVariantList, PersonSources, PlaceBody, RecordResponse(..), RelatedEntity, RelatedList, Relations, Relationship, RelationshipList, Relationships, RenderedIncipit(..), SeeAlso, SourceBody, Subject)
 import Shared.DataTypes exposing (RecordType(..), recordTypeFromJsonType)
 import Shared.Decoders exposing (labelDecoder, labelValueDecoder, typeDecoder)
 
@@ -266,6 +266,19 @@ placeBodyDecoder =
         |> required "label" labelDecoder
 
 
+festivalResponseDecoder : Decoder RecordResponse
+festivalResponseDecoder =
+    Decode.map FestivalResponse festivalBodyDecoder
+
+
+festivalBodyDecoder : Decoder FestivalBody
+festivalBodyDecoder =
+    Decode.succeed FestivalBody
+        |> required "id" string
+        |> required "label" labelDecoder
+        |> optional "summary" (list labelValueDecoder) []
+
+
 recordResponseConverter : String -> Decoder RecordResponse
 recordResponseConverter typevalue =
     case recordTypeFromJsonType typevalue of
@@ -280,6 +293,9 @@ recordResponseConverter typevalue =
 
         Place ->
             placeResponseDecoder
+
+        Festival ->
+            festivalResponseDecoder
 
         -- TODO: This is obviously wrong! Fix it with the actual response types
         --       once we have a clear idea of what they are.

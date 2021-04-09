@@ -9,6 +9,7 @@ type RecordType
     | Institution
     | Place
     | Incipit
+    | Festival
     | Unknown
 
 
@@ -35,6 +36,9 @@ recordTypeFromJsonType jsonType =
 
         "rism:Place" ->
             Place
+
+        "rism:LiturgicalFestival" ->
+            Festival
 
         _ ->
             Unknown

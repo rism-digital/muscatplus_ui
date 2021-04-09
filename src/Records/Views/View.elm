@@ -4,6 +4,7 @@ import Browser
 import Element exposing (DeviceClass(..), Element, alignLeft, centerX, column, fill, fillPortion, height, row, width)
 import Html
 import Records.DataTypes exposing (ApiResponse(..), Model, Msg(..), RecordResponse(..))
+import Records.Views.Festival exposing (viewFestivalRecord)
 import Records.Views.Institution exposing (viewInstitutionRecord)
 import Records.Views.Person exposing (viewPersonRecord)
 import Records.Views.Place exposing (viewPlaceRecord)
@@ -68,6 +69,9 @@ viewRecordContentDesktop model =
 
                         PlaceResponse placebody ->
                             viewPlaceRecord placebody model.language
+
+                        FestivalResponse festivalbody ->
+                            viewFestivalRecord festivalbody model.language
 
                 ApiError ->
                     viewErrorMessage model
