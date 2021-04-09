@@ -169,10 +169,6 @@ update msg model =
             ( { model | expandedFacets = newExpandedList }, Cmd.none )
 
         NoOp ->
-            let
-                _ =
-                    Debug.log "No op clicked!" ""
-            in
             ( model, Cmd.none )
 
 
