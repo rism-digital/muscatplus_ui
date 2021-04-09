@@ -44,7 +44,6 @@ facetDecoder =
     Decode.succeed Facet
         |> required "alias" string
         |> required "label" labelDecoder
-        |> hardcoded False
         |> required "items" (Decode.list facetItemDecoder)
 
 

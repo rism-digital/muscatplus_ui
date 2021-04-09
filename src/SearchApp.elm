@@ -154,7 +154,25 @@ update msg model =
             in
             update SearchSubmit { model | selectedMode = facetConvertedToResultMode, query = newQuery, selectedFilters = [] }
 
+        ToggleExpandFacet facetAlias ->
+            let
+                isInExpandedList =
+                    List.member facetAlias model.expandedFacets
+
+                newExpandedList =
+                    if isInExpandedList then
+                        LE.remove facetAlias model.expandedFacets
+
+                    else
+                        facetAlias :: model.expandedFacets
+            in
+            ( { model | expandedFacets = newExpandedList }, Cmd.none )
+
         NoOp ->
+            let
+                _ =
+                    Debug.log "No op clicked!" ""
+            in
             ( model, Cmd.none )
 
 
@@ -218,6 +236,7 @@ init flags initialUrl key =
       , query = initialQuery
       , selectedFilters = []
       , selectedMode = defaultModeFilter
+      , expandedFacets = []
       }
     , initialCmd
     )

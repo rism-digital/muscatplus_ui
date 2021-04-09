@@ -22,6 +22,7 @@ type Msg
     | LanguageSelectChanged String
     | FacetChecked String FacetItem Bool
     | ModeChecked String FacetItem Bool
+    | ToggleExpandFacet String
     | NoOp
 
 
@@ -42,6 +43,7 @@ type alias Model =
     , currentRoute : Route
     , selectedFilters : List Filter
     , selectedMode : ResultMode
+    , expandedFacets : List String
     }
 
 
@@ -157,7 +159,6 @@ type alias FacetList =
 type alias Facet =
     { alias : String
     , label : LanguageMap
-    , expanded : Bool -- facet is showing more than 10 items
     , items : List FacetItem
     }
 

@@ -2,6 +2,7 @@ module Search.Views.Facets exposing (..)
 
 import Element exposing (Element, alignLeft, alignRight, centerX, column, el, fill, none, paddingEach, paddingXY, row, spacingXY, text, width)
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html.Attributes as Html
 import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Filter, Model, Msg(..), SearchResponse, convertFacetToFilter)
@@ -9,7 +10,7 @@ import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguage
 import String.Extra as SE
 import UI.Components exposing (h6)
 import UI.Icons exposing (modeIcons)
-import UI.Style exposing (bodyRegular, pink)
+import UI.Style exposing (bodyRegular, bodySM, pink)
 
 
 viewModeItems : Facet -> Language -> Element Msg
@@ -85,6 +86,9 @@ viewSidebarFacets model =
         currentlySelected =
             model.selectedFilters
 
+        currentlyExpanded =
+            model.expandedFacets
+
         templatedResults =
             case model.response of
                 Response results ->
@@ -94,7 +98,7 @@ viewSidebarFacets model =
 
                         sidebarFacets =
                             sidebarFacetList
-                                |> List.map (\f -> viewSidebarFacet currentlySelected f language)
+                                |> List.map (\f -> viewSidebarFacet currentlyExpanded currentlySelected f language)
                     in
                     sidebarFacets
 
@@ -109,16 +113,51 @@ viewSidebarFacets model =
         ]
 
 
-viewSidebarFacet : List Filter -> Facet -> Language -> Element Msg
-viewSidebarFacet currentlySelected facet language =
+viewSidebarFacet :
+    List String
+    -> List Filter
+    -> Facet
+    -> Language
+    -> Element Msg
+viewSidebarFacet currentlyExpanded currentlySelected facet language =
     let
-        -- if the facet item is expanded, then show everything; else show just the first 10.
+        facetIsExpanded =
+            List.member facet.alias currentlyExpanded
+
         facetItems =
-            if facet.expanded then
+            if facetIsExpanded then
                 facet.items
 
             else
                 List.take 10 facet.items
+
+        facetShowLink =
+            if facetIsExpanded then
+                "Show fewer"
+
+            else
+                "Show more"
+
+        showLink =
+            if List.length facet.items > 10 then
+                row
+                    [ width fill
+                    ]
+                    [ column
+                        [ width fill
+                        , bodySM
+                        ]
+                        [ el
+                            [ alignRight
+                            , paddingXY 0 5
+                            , onClick (ToggleExpandFacet facet.alias)
+                            ]
+                            (text facetShowLink)
+                        ]
+                    ]
+
+            else
+                none
     in
     row
         [ width fill
@@ -137,6 +176,7 @@ viewSidebarFacet currentlySelected facet language =
                     [ width fill ]
                     (List.map (\t -> viewSidebarFacetItem currentlySelected facet.alias t language) facetItems)
                 ]
+            , showLink
             ]
         ]
 
