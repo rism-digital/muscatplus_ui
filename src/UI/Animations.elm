@@ -41,7 +41,7 @@ loadingStyles whooshWidth whooshHeight =
             , top (px 0)
             , height (pct 100)
             , width (px 150)
-            , backgroundImage (linearGradient2 toRight (stop2 (rgba 0 0 0 0) (pct 0)) (stop2 (rgb 232 232 232) (pct 50)) [ stop2 (rgba 0 0 0 0) (pct 100) ])
+            , backgroundImage (linearGradient2 toRight (stop2 (rgba 255 255 255 0) (pct 0)) (stop2 (rgba 241 244 249 1) (pct 50)) [ stop2 (rgba 255 255 255 0) (pct 100) ])
             , animationName
                 (keyframes
                     [ ( 0, [ Animations.property "left" "-150px" ] )
