@@ -97,9 +97,9 @@ viewResponsePaginator pagination =
                         ]
                         [ row
                             [ spacingXY 20 20 ]
-                            [ viewPaginatorFirstLink pagination.first
+                            [ viewPaginatorTotalPages pagination.totalPages
+                            , viewPaginatorFirstLink pagination.first
                             , viewPaginatorPreviousLink pagination.previous
-                            , viewPaginatorTotalPages pagination.totalPages
                             , viewPaginatorNextLink pagination.next
                             , viewPaginatorLastLink pagination.last
                             ]
@@ -151,7 +151,7 @@ viewPaginatorTotalPages : Int -> Element Msg
 viewPaginatorTotalPages pages =
     el []
         (String.fromInt pages
-            |> (++) "Page "
+            |> (++) "Number of pages: "
             |> text
         )
 
