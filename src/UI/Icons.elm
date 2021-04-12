@@ -6,8 +6,7 @@ import Html.Attributes exposing (style)
 
 
 modeIcons :
-    { everything : Element msg
-    , sources : Element msg
+    { sources : Element msg
     , people : Element msg
     , institutions : Element msg
     , incipits : Element msg
@@ -18,8 +17,7 @@ modeIcons =
         iconWidth =
             style "width" "1rem"
     in
-    { everything = html (Icon.globeAlt [ iconWidth ])
-    , sources = html (Icon.bookOpen [ iconWidth ])
+    { sources = html (Icon.bookOpen [ iconWidth ])
     , people = html (Icon.userGroup [ iconWidth ])
     , institutions = html (Icon.library [ iconWidth ])
     , incipits = html (Icon.musicNote [ iconWidth ])

@@ -38,9 +38,6 @@ viewModeItem selectedMode fitem language =
 
         icon =
             case value of
-                "everything" ->
-                    modeIcons.everything
-
                 "sources" ->
                     modeIcons.sources
 

@@ -66,25 +66,25 @@ type Filter
 
 
 type ResultMode
-    = Everything
-    | Sources
+    = Sources
     | People
     | Institutions
     | Incipits
+    | LiturgicalFestivals
 
 
 defaultModeFilter : ResultMode
 defaultModeFilter =
-    Everything
+    Sources
 
 
 resultModeOptions : List ( String, ResultMode )
 resultModeOptions =
-    [ ( "everything", Everything )
-    , ( "sources", Sources )
+    [ ( "sources", Sources )
     , ( "people", People )
     , ( "institutions", Institutions )
     , ( "incipits", Incipits )
+    , ( "festivals", LiturgicalFestivals )
     ]
 
 
@@ -98,7 +98,7 @@ parseStringToResultMode : String -> ResultMode
 parseStringToResultMode string =
     List.filter (\( str, _ ) -> str == string) resultModeOptions
         |> List.head
-        |> Maybe.withDefault ( "everything", Everything )
+        |> Maybe.withDefault ( "sources", Sources )
         |> Tuple.second
 
 
@@ -106,7 +106,7 @@ parseResultModeToString : ResultMode -> String
 parseResultModeToString mode =
     List.filter (\( _, m ) -> m == mode) resultModeOptions
         |> List.head
-        |> Maybe.withDefault ( "everything", Everything )
+        |> Maybe.withDefault ( "sources", Sources )
         |> Tuple.first
 
 
@@ -131,7 +131,7 @@ type alias SearchQueryArgs =
 
 defaultSearchQueryArgs : SearchQueryArgs
 defaultSearchQueryArgs =
-    SearchQueryArgs Nothing [] Nothing 1 Everything
+    SearchQueryArgs Nothing [] Nothing 1 Sources
 
 
 type alias SearchPagination =
@@ -232,7 +232,7 @@ modeQueryStringToResultMode : List String -> ResultMode
 modeQueryStringToResultMode modelist =
     List.map (\a -> parseStringToResultMode a) modelist
         |> List.head
-        |> Maybe.withDefault Everything
+        |> Maybe.withDefault Sources
 
 
 pageParamParser : Q.Parser Int
