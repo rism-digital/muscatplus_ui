@@ -169,7 +169,7 @@ viewSearchResultsSection model =
 
         viewResults =
             case resp of
-                Response searchResponse ->
+                Response _ ->
                     viewHasSearchResults model
 
                 ApiError ->
