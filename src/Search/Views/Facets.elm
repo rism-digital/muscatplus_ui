@@ -1,6 +1,6 @@
 module Search.Views.Facets exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, none, paddingEach, paddingXY, row, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, none, paddingEach, paddingXY, px, row, spacingXY, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
@@ -21,7 +21,7 @@ viewModeItems selectedMode typeFacet language =
         , Border.color pink
         , centerX
         , width fill
-        , height fill
+        , height (px 60)
         ]
         (List.map (\t -> viewModeItem selectedMode t language) typeFacet.items)
 
