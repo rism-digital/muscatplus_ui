@@ -221,6 +221,9 @@ init flags initialUrl key =
 
                 _ ->
                     Cmd.none
+
+        initialMode =
+            initialQuery.mode
     in
     ( { key = key
       , url = initialUrl
@@ -231,7 +234,7 @@ init flags initialUrl key =
       , currentRoute = initialRoute
       , query = initialQuery
       , selectedFilters = []
-      , selectedMode = defaultModeFilter
+      , selectedMode = initialMode
       , expandedFacets = []
       }
     , initialCmd
