@@ -1,32 +1,33 @@
 module Search.Views.Facets exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, centerX, column, el, fill, none, paddingEach, paddingXY, row, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, none, paddingEach, paddingXY, row, spacingXY, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
+import Element.Font as Font
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html.Attributes as Html
-import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Filter, Model, Msg(..), SearchResponse, convertFacetToFilter)
+import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Filter, Model, Msg(..), ResultMode, SearchResponse, convertFacetToFilter, parseStringToResultMode)
 import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import String.Extra as SE
 import UI.Components exposing (h6)
 import UI.Icons exposing (modeIcons)
-import UI.Style exposing (bodyRegular, bodySM, pink)
+import UI.Style exposing (bodyRegular, bodySM, pink, white)
 
 
-viewModeItems : Facet -> Language -> Element Msg
-viewModeItems typeFacet language =
+viewModeItems : ResultMode -> Facet -> Language -> Element Msg
+viewModeItems selectedMode typeFacet language =
     row
         [ Border.widthEach { top = 0, left = 0, right = 0, bottom = 1 }
         , Border.color pink
-        , paddingXY 0 10
         , centerX
         , width fill
+        , height fill
         ]
-        (List.map (\t -> viewModeItem t language) typeFacet.items)
+        (List.map (\t -> viewModeItem selectedMode t language) typeFacet.items)
 
 
-viewModeItem : FacetItem -> Language -> Element Msg
-viewModeItem fitem language =
+viewModeItem : ResultMode -> FacetItem -> Language -> Element Msg
+viewModeItem selectedMode fitem language =
     let
         -- uses opaque type destructuring to unpack the values of the facet item.
         (FacetItem value label count) =
@@ -54,9 +55,27 @@ viewModeItem fitem language =
 
                 _ ->
                     modeIcons.unknown
+
+        rowMode =
+            parseStringToResultMode value
+
+        baseRowStyle =
+            [ alignLeft
+            , Font.center
+            , height fill
+            , paddingXY 0 10
+            , Border.widthEach { top = 0, left = 0, right = 0, bottom = 3 }
+            ]
+
+        rowStyle =
+            if selectedMode == rowMode then
+                Border.color pink :: baseRowStyle
+
+            else
+                Border.color white :: baseRowStyle
     in
     row
-        [ alignLeft ]
+        rowStyle
         [ el [ paddingXY 5 0 ] icon
         , el []
             (checkbox

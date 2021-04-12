@@ -218,7 +218,7 @@ viewHasSearchResults model =
         modeFacet =
             case model.response of
                 Response results ->
-                    viewModeItems results.modes model.language
+                    viewModeItems model.selectedMode results.modes model.language
 
                 _ ->
                     none
