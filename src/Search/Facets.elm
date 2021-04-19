@@ -1,13 +1,13 @@
-module Search.Views.Facets exposing (..)
+module Search.Facets exposing (..)
 
+import DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Filter, Model, Msg(..), ResultMode, SearchBody, ServerResponse(..), convertFacetToFilter, parseStringToResultMode)
 import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, none, paddingEach, paddingXY, px, row, spacingXY, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html.Attributes as Html
-import Search.DataTypes exposing (ApiResponse(..), Facet, FacetItem(..), Filter, Model, Msg(..), ResultMode, SearchResponse, convertFacetToFilter, parseStringToResultMode)
-import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import String.Extra as SE
 import UI.Components exposing (h6)
 import UI.Icons exposing (modeIcons)
@@ -107,7 +107,7 @@ viewSidebarFacets model =
 
         templatedResults =
             case model.response of
-                Response results ->
+                Response (SearchResponse results) ->
                     let
                         sidebarFacetList =
                             results.facets

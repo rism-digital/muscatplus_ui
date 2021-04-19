@@ -1,9 +1,9 @@
-module Records.Views.Festival exposing (..)
+module Records.Festival exposing (..)
 
+import DataTypes exposing (FestivalBody, Msg)
 import Element exposing (Element, alignTop, column, fill, height, none, paddingXY, px, row, spacing, width)
-import Records.DataTypes exposing (FestivalBody, Msg)
-import Records.Views.Shared exposing (viewSummaryField)
-import Shared.Language exposing (Language)
+import Language exposing (Language)
+import Records.Shared exposing (viewSummaryField)
 import UI.Components exposing (h2)
 
 

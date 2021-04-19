@@ -1,4 +1,4 @@
-module Records.Views.Loading exposing (..)
+module Records.Loading exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, none, paddingXY, px, row, spacingXY, width)
 import UI.Animations exposing (loadingBox)

@@ -1,4 +1,4 @@
-module Search.Views.Loading exposing (viewSearchResultsLoading)
+module Search.Loading exposing (viewSearchResultsLoading)
 
 import Element exposing (Element, alignTop, column, fill, fillPortion, height, none, paddingEach, paddingXY, px, row, spacingXY, width)
 import UI.Animations exposing (loadingBox)

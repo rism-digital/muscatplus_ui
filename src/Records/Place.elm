@@ -1,9 +1,9 @@
-module Records.Views.Place exposing (..)
+module Records.Place exposing (..)
 
+import DataTypes exposing (Msg, PlaceBody)
 import Element exposing (Element, alignTop, column, fill, height, none, paddingXY, px, row, spacing, width)
-import Records.DataTypes exposing (Msg, PlaceBody)
-import Records.Views.Shared exposing (viewSummaryField)
-import Shared.Language exposing (Language)
+import Language exposing (Language)
+import Records.Shared exposing (viewSummaryField)
 import UI.Components exposing (h2)
 
 

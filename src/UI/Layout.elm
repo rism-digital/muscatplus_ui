@@ -3,7 +3,7 @@ module UI.Layout exposing (..)
 import Element exposing (..)
 import Element.Font as Font
 import Html
-import Shared.Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import UI.Components exposing (languageSelect)
 import UI.Style exposing (blueBackground, bodyFont, darkBlue, greyBackground, minMaxFillDesktop)
 

@@ -11,13 +11,9 @@
     "uglify-js": "^3.12.2"
   },
   "scripts": {
-    "develop:search": "elm-live src/SearchApp.elm -u --port 8001 --dir=./dev/search -- --output=dev/search/app.js --debug",
-    "develop:records": "elm-live src/RecordsApp.elm -u --port 8002 --dir=./dev/records -- --output=dev/records/app.js --debug",
-    "develop:records:build": "chokidar '**/*.elm' -c 'elm make src/RecordsApp.elm --debug --output=dist/static/records/app.js'",
-    "develop:search:build": "chokidar '**/*.elm' -c 'elm make src/SearchApp.elm --debug --output=dist/static/search/app.js'",
-    "production:search:build": "elm make src/SearchApp.elm --optimize --output=dist/static/search/app.js",
-    "production:records:build": "elm make src/RecordsApp.elm --optimize --output=dist/static/records/app.js",
-    "production:search:deploy": "./optimize.sh src/SearchApp.elm dist/static/search/app.js dist/static/search/app.js",
-    "production:records:deploy": "./optimize.sh src/RecordsApp.elm dist/static/records/app.js dist/static/records/app.js"
+    "develop": "elm-live src/Main.elm -u --port 8002 --dir=./dev -- --output=dev/app.js --debug",
+    "develop:build": "chokidar '**/*.elm' -c 'elm make src/Main.elm --debug --output=dist/static/app.js'",
+    "production:build": "elm make src/Main.elm --optimize --output=dist/static/app.js",
+    "production:deploy": "./optimize.sh src/Main.elm dist/static/app.js dist/static/app.js"
   }
 }

@@ -1,9 +1,8 @@
-module Records.Views.Shared exposing (..)
+module Records.Shared exposing (..)
 
+import DataTypes exposing (LabelValue, Model, Msg, RelatedEntity, RelatedList, Relationship, Relationships)
 import Element exposing (DeviceClass(..), Element, alignTop, centerX, centerY, column, el, fill, fillPortion, height, none, paddingEach, paddingXY, paragraph, row, text, width)
-import Records.DataTypes exposing (Model, Msg, RelatedEntity, RelatedList, Relationship, Relationships)
-import Shared.DataTypes exposing (LabelValue)
-import Shared.Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import UI.Components exposing (h4, label, styledLink, value)
 import UI.Style exposing (bodyRegular)
 

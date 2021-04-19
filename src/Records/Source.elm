@@ -1,9 +1,9 @@
-module Records.Views.Source exposing (..)
+module Records.Source exposing (..)
 
+import DataTypes exposing (Exemplar, ExemplarList, IncipitFormat(..), IncipitList, IncipitRecord, MaterialGroup, MaterialGroupList, Msg, NoteList, Relations, Relationship, RelationshipList, RenderedIncipit(..), SourceBody)
 import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, none, paddingXY, paragraph, px, row, spacing, text, width)
-import Records.DataTypes exposing (Exemplar, ExemplarList, Incipit, IncipitFormat(..), IncipitList, MaterialGroup, MaterialGroupList, Msg, NoteList, Relations, Relationship, RelationshipList, RenderedIncipit(..), SourceBody)
-import Records.Views.Shared exposing (viewSummaryField)
-import Shared.Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap)
+import Records.Shared exposing (viewSummaryField)
 import SvgParser
 import UI.Components exposing (h2, h4, h5, label, styledLink, value)
 import UI.Style exposing (bodyRegular)
@@ -168,7 +168,7 @@ viewIncipits incipitlist language =
         ]
 
 
-viewSingleIncipit : Language -> Incipit -> Element Msg
+viewSingleIncipit : Language -> IncipitRecord -> Element Msg
 viewSingleIncipit language incipit =
     let
         renderedIncipits =

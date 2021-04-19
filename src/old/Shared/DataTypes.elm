@@ -3,6 +3,13 @@ module Shared.DataTypes exposing (..)
 import Shared.Language exposing (LanguageMap)
 
 
+type alias Flags =
+    { locale : String
+    , windowWidth : Int
+    , windowHeight : Int
+    }
+
+
 type RecordType
     = Source
     | Person

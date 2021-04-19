@@ -1,4 +1,4 @@
-module Search.Views.Shared exposing (..)
+module Search.Shared exposing (..)
 
 import Element
 import Html.Events

@@ -1,8 +1,6 @@
 ## Muscat Plus User Interface
 
-There are two applications built: One for the Search interface, and one for displaying the records.
-Each application is built and deployed independently, but share common a common set of library
-functions.
+The primary UI for the MuscatPlus interface. 
 
 ### Building and running locally (built-in server)
 
@@ -13,12 +11,7 @@ happens with `yarn`, so:
 
 will install all of the necessary packages, then:
 
-    $ yarn run develop:[app name]
-
-For example:
-
-    $ yarn run develop:search
-    $ yarn run develop:records
+    $ yarn run develop
 
 This will start up a local development server and watch for changes.
 
@@ -65,8 +58,7 @@ To update the results as you develop, you should run the development builds. Thi
 recompiles, installing the output in the `dist` directory. `yarn install` installs the `chokidar` tool which will
 watch the tree for any changes and re-run the compiler.
 
-    $ yarn run develop:search:build
-    $ yarn run develop:records:build
+    $ yarn run develop:build
 
 ### Building and running for production
 

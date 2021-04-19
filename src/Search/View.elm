@@ -1,16 +1,16 @@
-module Search.Views.View exposing (viewSearchBody)
+module Search.View exposing (viewSearchBody)
 
+import DataTypes exposing (ApiResponse(..), Model, Msg(..), Route(..), ServerResponse(..))
 import Element exposing (..)
 import Element.Border as Border
 import Element.Input as Input
 import Html
 import Html.Attributes
-import Search.DataTypes exposing (ApiResponse(..), Model, Msg(..), Route(..))
-import Search.Views.Facets exposing (viewModeItems, viewSidebarFacets)
-import Search.Views.Loading exposing (viewSearchResultsLoading)
-import Search.Views.Results exposing (viewResultCount, viewResultList)
-import Search.Views.Shared exposing (onEnter)
-import Shared.Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
+import Search.Facets exposing (viewModeItems, viewSidebarFacets)
+import Search.Loading exposing (viewSearchResultsLoading)
+import Search.Results exposing (viewResultCount, viewResultList)
+import Search.Shared exposing (onEnter)
 import UI.Layout exposing (layoutBody)
 import UI.Style as Style exposing (greyBackground, lightBlue, minMaxFillDesktop, minMaxFillMobile)
 
@@ -24,7 +24,7 @@ viewSearchDesktop model =
         SearchPageRoute _ ->
             viewSearchResultsDesktop model
 
-        NotFound ->
+        _ ->
             viewNotFound
 
 
@@ -217,7 +217,7 @@ viewHasSearchResults model =
     let
         modeFacet =
             case model.response of
-                Response results ->
+                Response (SearchResponse results) ->
                     viewModeItems model.selectedMode results.modes model.language
 
                 _ ->
@@ -225,7 +225,7 @@ viewHasSearchResults model =
 
         resultCount =
             case model.response of
-                Response results ->
+                Response (SearchResponse results) ->
                     viewResultCount results model.language
 
                 _ ->

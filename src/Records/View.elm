@@ -1,17 +1,17 @@
-module Records.Views.View exposing (..)
+module Records.View exposing (..)
 
 import Browser
+import DataTypes exposing (ApiResponse(..), Model, Msg(..), ServerResponse(..))
 import Element exposing (DeviceClass(..), Element, alignLeft, centerX, column, fill, fillPortion, height, row, width)
 import Html
-import Records.DataTypes exposing (ApiResponse(..), Model, Msg(..), RecordResponse(..))
-import Records.Views.Festival exposing (viewFestivalRecord)
-import Records.Views.Institution exposing (viewInstitutionRecord)
-import Records.Views.Loading exposing (viewRecordLoading)
-import Records.Views.Person exposing (viewPersonRecord)
-import Records.Views.Place exposing (viewPlaceRecord)
-import Records.Views.Shared exposing (viewErrorMessage, viewLoadingSpinner)
-import Records.Views.Source exposing (viewSourceRecord)
-import Shared.Language exposing (languageOptionsForDisplay)
+import Language exposing (languageOptionsForDisplay)
+import Records.Festival exposing (viewFestivalRecord)
+import Records.Institution exposing (viewInstitutionRecord)
+import Records.Loading exposing (viewRecordLoading)
+import Records.Person exposing (viewPersonRecord)
+import Records.Place exposing (viewPlaceRecord)
+import Records.Shared exposing (viewErrorMessage, viewLoadingSpinner)
+import Records.Source exposing (viewSourceRecord)
 import UI.Layout exposing (layoutBody)
 import UI.Style exposing (minMaxFillDesktop)
 
@@ -74,7 +74,10 @@ viewRecordContentDesktop model =
                         FestivalResponse festivalbody ->
                             viewFestivalRecord festivalbody model.language
 
-                ApiError ->
+                        SearchResponse _ ->
+                            viewErrorMessage model
+
+                _ ->
                     viewErrorMessage model
     in
     row

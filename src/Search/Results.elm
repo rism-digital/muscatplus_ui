@@ -1,9 +1,9 @@
-module Search.Views.Results exposing (..)
+module Search.Results exposing (..)
 
+import DataTypes exposing (ApiResponse(..), Model, Msg, SearchBody, SearchPagination, SearchResult, ServerResponse(..))
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacingXY, text, width)
 import Element.Font as Font
-import Search.DataTypes exposing (ApiResponse(..), Model, Msg, SearchPagination, SearchResponse, SearchResult)
-import Shared.Language exposing (Language)
+import Language exposing (Language)
 import UI.Components exposing (h5)
 import UI.Style exposing (bodySM, darkBlue, darkGrey, red)
 
@@ -49,7 +49,7 @@ viewResultList model =
 
         templatedResults =
             case model.response of
-                Response results ->
+                Response (SearchResponse results) ->
                     row
                         [ width fill ]
                         [ column
@@ -68,8 +68,8 @@ viewResultList model =
 
         paginator =
             case model.response of
-                Response resp ->
-                    viewResponsePaginator resp.view
+                Response (SearchResponse results) ->
+                    viewResponsePaginator results.view
 
                 _ ->
                     none
@@ -156,7 +156,7 @@ viewPaginatorTotalPages pages =
         )
 
 
-viewResultCount : SearchResponse -> Language -> Element Msg
+viewResultCount : SearchBody -> Language -> Element Msg
 viewResultCount response language =
     row
         [ width fill
