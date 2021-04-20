@@ -7,6 +7,7 @@ import DataTypes exposing (ApiResponse(..), Flags, Model, Msg(..), Route(..), Se
 import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
 import List.Extra as LE
+import Ports.LocalStorage exposing (saveLanguagePreference)
 import Records.View exposing (viewRecordBody)
 import Routes exposing (buildQueryParameters, parseUrl, requestFromServer, serverUrl)
 import Search.View exposing (viewSearchBody)
@@ -114,7 +115,9 @@ update msg model =
             )
 
         LanguageSelectChanged str ->
-            ( { model | language = parseLocaleToLanguage str }, Cmd.none )
+            ( { model | language = parseLocaleToLanguage str }
+            , saveLanguagePreference str
+            )
 
         FacetChecked facetname itm checked ->
             let

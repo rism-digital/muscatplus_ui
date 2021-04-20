@@ -13,9 +13,21 @@
 
 <div id="elm"></div>
 <script>
+    const LANGUAGE_KEY = "language";
+
+    function getStoredLanguage() /* -> null | string */
+    {
+        return localStorage.getItem(LANGUAGE_KEY);
+    }
+
+    function setStoredLanguage(lang)
+    {
+        localStorage.setItem(LANGUAGE_KEY, lang);
+    }
+
     const detectLanguage = () =>
     {
-        return navigator.language.split("-")[0];
+        return getStoredLanguage() || navigator.language.split("-")[0];
     }
 
     var app = Elm.Main.init({
@@ -25,6 +37,10 @@
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight
         }
+    });
+
+    app.ports.saveLanguagePreference.subscribe( (lang) => {
+        setStoredLanguage(lang);
     });
 </script>
 </body>

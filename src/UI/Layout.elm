@@ -45,7 +45,7 @@ layoutTopBar message langOptions currentLanguage =
                     [ link [] { url = "/", label = text (extractLabelFromLanguageMap currentLanguage localTranslations.home) } ]
                 , column
                     [ width (fillPortion 2) ]
-                    [ languageSelect message langOptions ]
+                    [ languageSelect message langOptions currentLanguage ]
                 ]
             ]
         ]

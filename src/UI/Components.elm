@@ -2,10 +2,10 @@ module UI.Components exposing (..)
 
 import Element exposing (Attr, Attribute, Element, el, fill, html, link, paragraph, spacing, text, textColumn, width)
 import Element.Font as Font
-import Html as HT
+import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, parseLocaleToLanguage)
 import UI.Style exposing (bodyRegular, darkBlue, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
 
 
@@ -102,10 +102,29 @@ styledLink url labelString =
     values to fill out the options, e.g., [("en", "English"), ("fr", "French")]
 
 -}
-languageSelect : (String -> msg) -> List ( String, String ) -> Element msg
-languageSelect msg options =
+languageSelect : (String -> msg) -> List ( String, String ) -> Language -> Element msg
+languageSelect msg options currentLanguage =
     html
         (HT.select
             [ HE.onInput msg ]
-            (List.map (\( val, name ) -> HT.option [ HA.value val ] [ HT.text name ]) options)
+            (List.map (\( val, name ) -> languageSelectOption val name currentLanguage) options)
         )
+
+
+languageSelectOption : String -> String -> Language -> Html msg
+languageSelectOption val name currentLanguage =
+    let
+        lang =
+            parseLocaleToLanguage val
+
+        isCurrentLanguage =
+            lang == currentLanguage
+
+        attrib =
+            [ HA.value val
+            , HA.selected isCurrentLanguage
+            ]
+    in
+    HT.option
+        attrib
+        [ HT.text name ]
