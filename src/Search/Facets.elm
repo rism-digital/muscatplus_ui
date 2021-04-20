@@ -96,14 +96,17 @@ viewModeItem selectedMode fitem language =
 viewSidebarFacets : Model -> Element Msg
 viewSidebarFacets model =
     let
+        activeSearch =
+            model.activeSearch
+
         language =
             model.language
 
         currentlySelected =
-            model.selectedFilters
+            activeSearch.selectedFilters
 
         currentlyExpanded =
-            model.expandedFacets
+            activeSearch.expandedFacets
 
         templatedResults =
             case model.response of

@@ -90,8 +90,11 @@ viewSearchFrontDesktop model =
 viewSearchKeywordInput : Model -> Element Msg
 viewSearchKeywordInput model =
     let
+        activeSearch =
+            model.activeSearch
+
         queryObj =
-            model.query
+            activeSearch.query
 
         qText =
             Maybe.withDefault "" queryObj.query
@@ -215,10 +218,13 @@ viewHasNoSearchResults model =
 viewHasSearchResults : Model -> List (Element Msg)
 viewHasSearchResults model =
     let
+        activeSearch =
+            model.activeSearch
+
         modeFacet =
             case model.response of
                 Response (SearchResponse results) ->
-                    viewModeItems model.selectedMode results.modes model.language
+                    viewModeItems activeSearch.selectedMode results.modes model.language
 
                 _ ->
                     none

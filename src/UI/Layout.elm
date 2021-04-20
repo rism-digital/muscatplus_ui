@@ -19,10 +19,20 @@ layoutTopBar :
     -> Language
     -> Element msg
 layoutTopBar message langOptions currentLanguage =
-    row [ width fill, height (px 60), greyBackground ]
-        [ column [ width minMaxFillDesktop, height fill, centerX ]
+    row
+        [ width fill
+        , height (px 60)
+        , greyBackground
+        ]
+        [ column
+            [ width minMaxFillDesktop
+            , height fill
+            , centerX
+            ]
             [ row
-                [ width fill, height fill ]
+                [ width fill
+                , height fill
+                ]
                 [ column
                     [ width (fillPortion 2)
                     , Font.color darkBlue
@@ -42,9 +52,23 @@ layoutTopBar message langOptions currentLanguage =
 
 layoutFooter : Element msg
 layoutFooter =
-    row [ width fill, height (px 120), blueBackground ]
-        [ column [ width minMaxFillDesktop, height fill, centerX ]
-            [ row [ width fill, height fill, Font.color (rgb255 255 255 255), Font.semiBold ] [ text "Footer" ]
+    row
+        [ width fill
+        , height (px 120)
+        , blueBackground
+        ]
+        [ column
+            [ width minMaxFillDesktop
+            , height fill
+            , centerX
+            ]
+            [ row
+                [ width fill
+                , height fill
+                , Font.color (rgb255 255 255 255)
+                , Font.semiBold
+                ]
+                [ text "" ]
             ]
         ]
 
@@ -57,8 +81,15 @@ layoutBody :
     -> Language
     -> List (Html.Html msg)
 layoutBody message langOptions bodyView device currentLanguage =
-    [ layout [ width fill, bodyFont ]
-        (column [ centerX, width fill, height fill ]
+    [ layout
+        [ width fill
+        , bodyFont
+        ]
+        (column
+            [ centerX
+            , width fill
+            , height fill
+            ]
             [ layoutTopBar message langOptions currentLanguage
             , bodyView
             , layoutFooter

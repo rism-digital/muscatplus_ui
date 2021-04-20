@@ -8,7 +8,7 @@ import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
 import List.Extra as LE
 import Records.View exposing (viewRecordBody)
-import Routes exposing (buildQueryParameters, parseUrl, requestFromServer, routeMatches)
+import Routes exposing (buildQueryParameters, parseUrl, requestFromServer)
 import Search.View exposing (viewSearchBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
@@ -38,8 +38,11 @@ update msg model =
 
         SearchInput textInput ->
             let
+                activeSearch =
+                    model.activeSearch
+
                 currentQ =
-                    model.query
+                    activeSearch.query
 
                 newInp =
                     if String.isEmpty textInput then
@@ -50,13 +53,19 @@ update msg model =
 
                 newQ =
                     DataTypes.SearchQueryArgs newInp currentQ.filters currentQ.sort 1 currentQ.mode
+
+                newActiveSearch =
+                    { activeSearch | query = newQ }
             in
-            ( { model | query = newQ }, Cmd.none )
+            ( { model | activeSearch = newActiveSearch }, Cmd.none )
 
         SearchSubmit ->
             let
+                activeSearch =
+                    model.activeSearch
+
                 url =
-                    "/search" ++ Builder.toQuery (buildQueryParameters model.query)
+                    "/search" ++ Builder.toQuery (buildQueryParameters activeSearch.query)
             in
             ( { model | response = Loading }
             , Cmd.batch
@@ -98,8 +107,11 @@ update msg model =
 
         FacetChecked facetname itm checked ->
             let
+                activeSearch =
+                    model.activeSearch
+
                 currentlySelected =
-                    model.selectedFilters
+                    activeSearch.selectedFilters
 
                 facetConvertedToFilter =
                     convertFacetToFilter facetname itm
@@ -112,7 +124,7 @@ update msg model =
                         facetConvertedToFilter :: currentlySelected
 
                 currentQuery =
-                    model.query
+                    activeSearch.query
 
                 currentFilters =
                     currentQuery.filters
@@ -126,35 +138,50 @@ update msg model =
 
                 newQuery =
                     { currentQuery | filters = newFilters, page = 1 }
+
+                newActiveSearch =
+                    { activeSearch | query = newQuery, selectedFilters = newSelected }
             in
-            update SearchSubmit { model | query = newQuery, selectedFilters = newSelected }
+            update SearchSubmit { model | activeSearch = newActiveSearch }
 
         ModeChecked _ itm _ ->
             let
+                activeSearch =
+                    model.activeSearch
+
                 facetConvertedToResultMode =
                     convertFacetToResultMode itm
 
                 currentQuery =
-                    model.query
+                    activeSearch.query
 
                 newQuery =
                     { currentQuery | mode = facetConvertedToResultMode, filters = [] }
+
+                newActiveSearch =
+                    { activeSearch | selectedMode = facetConvertedToResultMode, query = newQuery, selectedFilters = [] }
             in
-            update SearchSubmit { model | selectedMode = facetConvertedToResultMode, query = newQuery, selectedFilters = [] }
+            update SearchSubmit { model | activeSearch = newActiveSearch }
 
         ToggleExpandFacet facetAlias ->
             let
+                activeSearch =
+                    model.activeSearch
+
                 isInExpandedList =
-                    List.member facetAlias model.expandedFacets
+                    List.member facetAlias activeSearch.expandedFacets
 
                 newExpandedList =
                     if isInExpandedList then
-                        LE.remove facetAlias model.expandedFacets
+                        LE.remove facetAlias activeSearch.expandedFacets
 
                     else
-                        facetAlias :: model.expandedFacets
+                        facetAlias :: activeSearch.expandedFacets
+
+                newActiveSearch =
+                    { activeSearch | expandedFacets = newExpandedList }
             in
-            ( { model | expandedFacets = newExpandedList }, Cmd.none )
+            ( { model | activeSearch = newActiveSearch }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -211,14 +238,18 @@ init flags initialUrl key =
 
                 _ ->
                     requestFromServer ReceivedServerResponse initialUrl.path
+
+        initialActiveSearch =
+            { selectedMode = initialMode
+            , selectedFilters = []
+            , expandedFacets = []
+            , query = initialQuery
+            }
     in
     ( { key = key
       , url = initialUrl
       , currentRoute = route
-      , selectedMode = initialMode
-      , selectedFilters = []
-      , expandedFacets = []
-      , query = initialQuery
+      , activeSearch = initialActiveSearch
       , response = Loading
       , errorMessage = ""
       , language = language

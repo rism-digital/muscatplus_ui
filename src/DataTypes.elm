@@ -26,11 +26,16 @@ type alias Model =
     { key : Nav.Key
     , url : Url
     , response : ApiResponse
+    , activeSearch : ActiveSearch
     , errorMessage : String
     , language : Language
     , viewingDevice : Device
-    , query : SearchQueryArgs
     , currentRoute : Route
+    }
+
+
+type alias ActiveSearch =
+    { query : SearchQueryArgs
     , selectedFilters : List Filter
     , selectedMode : ResultMode
     , expandedFacets : List String
