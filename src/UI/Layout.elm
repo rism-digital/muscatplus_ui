@@ -38,7 +38,8 @@ layoutTopBar message langOptions currentLanguage =
                     , Font.color darkBlue
                     , Font.semiBold
                     ]
-                    [ text "RISM Online" ]
+                    [ link [] { url = "/", label = text "RISM Online" }
+                    ]
                 , column
                     [ width (fillPortion 8) ]
                     [ link [] { url = "/", label = text (extractLabelFromLanguageMap currentLanguage localTranslations.home) } ]
