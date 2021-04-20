@@ -53,34 +53,24 @@ buildQueryParameters queryArgs =
     List.concat [ qParam, modeParam, fqParams, pageParam, sortParam ]
 
 
-searchUrl : SearchQueryArgs -> String
-searchUrl queryArgs =
-    Url.Builder.crossOrigin C.serverUrl [ "search/" ] (buildQueryParameters queryArgs)
+serverUrl : List String -> List QueryParameter -> String
+serverUrl pathSegments queryParameters =
+    Url.Builder.crossOrigin C.serverUrl pathSegments queryParameters
 
 
-
---searchRequest : (Result Http.Error ServerResponse -> msg) -> SearchQueryArgs -> Cmd msg
---searchRequest responseMsg queryArgs =
---    let
---        url =
---            searchUrl queryArgs
---
---        responseDecoder =
---            searchResponseDecoder
---    in
---    createRequest responseMsg responseDecoder url
-
-
-requestFromServer : (Result Http.Error ServerResponse -> msg) -> String -> Cmd msg
-requestFromServer responseMsg path =
+requestFromServer : (Result Http.Error ServerResponse -> msg) -> String -> SearchQueryArgs -> Cmd msg
+requestFromServer responseMsg path queryArgs =
     let
         pathSegments =
             path
                 |> String.dropLeft 1
                 |> String.split "/"
 
+        qParams =
+            buildQueryParameters queryArgs
+
         url =
-            recordUrl pathSegments
+            serverUrl pathSegments qParams
     in
     createRequest responseMsg recordResponseDecoder url
 
@@ -111,11 +101,6 @@ routeParser =
 routeMatches : Url -> Maybe Route
 routeMatches url =
     P.parse routeParser url
-
-
-recordUrl : List String -> String
-recordUrl pathSegments =
-    Url.Builder.crossOrigin C.serverUrl pathSegments []
 
 
 queryParamsParser : Q.Parser SearchQueryArgs

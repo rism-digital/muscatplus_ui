@@ -8,7 +8,7 @@ import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
 import List.Extra as LE
 import Records.View exposing (viewRecordBody)
-import Routes exposing (buildQueryParameters, parseUrl, requestFromServer)
+import Routes exposing (buildQueryParameters, parseUrl, requestFromServer, serverUrl)
 import Search.View exposing (viewSearchBody)
 import UI.Layout exposing (detectDevice)
 import Url exposing (Url)
@@ -19,7 +19,9 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ReceivedServerResponse (Ok response) ->
-            ( { model | response = Response response }, Cmd.none )
+            ( { model | response = Response response }
+            , Cmd.none
+            )
 
         ReceivedServerResponse (Err error) ->
             let
@@ -64,12 +66,15 @@ update msg model =
                 activeSearch =
                     model.activeSearch
 
+                urlBase =
+                    "/search"
+
                 url =
-                    "/search" ++ Builder.toQuery (buildQueryParameters activeSearch.query)
+                    serverUrl [ "search" ] (buildQueryParameters activeSearch.query)
             in
             ( { model | response = Loading }
             , Cmd.batch
-                [ requestFromServer ReceivedServerResponse url
+                [ requestFromServer ReceivedServerResponse urlBase activeSearch.query
                 , Nav.pushUrl model.key url
                 ]
             )
@@ -90,13 +95,19 @@ update msg model =
                 parsedUrl =
                     parseUrl url
 
+                activeSearch =
+                    model.activeSearch
+
+                activeQuery =
+                    activeSearch.query
+
                 cmd =
                     case parsedUrl of
                         FrontPageRoute ->
                             Cmd.none
 
                         _ ->
-                            requestFromServer ReceivedServerResponse url.path
+                            requestFromServer ReceivedServerResponse url.path activeQuery
             in
             ( { model | url = url, currentRoute = parsedUrl }
             , cmd
@@ -110,18 +121,8 @@ update msg model =
                 activeSearch =
                     model.activeSearch
 
-                currentlySelected =
-                    activeSearch.selectedFilters
-
                 facetConvertedToFilter =
                     convertFacetToFilter facetname itm
-
-                newSelected =
-                    if List.member facetConvertedToFilter currentlySelected then
-                        LE.remove facetConvertedToFilter currentlySelected
-
-                    else
-                        facetConvertedToFilter :: currentlySelected
 
                 currentQuery =
                     activeSearch.query
@@ -140,7 +141,7 @@ update msg model =
                     { currentQuery | filters = newFilters, page = 1 }
 
                 newActiveSearch =
-                    { activeSearch | query = newQuery, selectedFilters = newSelected }
+                    { activeSearch | query = newQuery }
             in
             update SearchSubmit { model | activeSearch = newActiveSearch }
 
@@ -159,7 +160,7 @@ update msg model =
                     { currentQuery | mode = facetConvertedToResultMode, filters = [] }
 
                 newActiveSearch =
-                    { activeSearch | selectedMode = facetConvertedToResultMode, query = newQuery, selectedFilters = [] }
+                    { activeSearch | selectedMode = facetConvertedToResultMode, query = newQuery }
             in
             update SearchSubmit { model | activeSearch = newActiveSearch }
 
@@ -237,11 +238,10 @@ init flags initialUrl key =
                     Cmd.none
 
                 _ ->
-                    requestFromServer ReceivedServerResponse initialUrl.path
+                    requestFromServer ReceivedServerResponse initialUrl.path initialQuery
 
         initialActiveSearch =
             { selectedMode = initialMode
-            , selectedFilters = []
             , expandedFacets = []
             , query = initialQuery
             }

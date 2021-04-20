@@ -36,7 +36,6 @@ type alias Model =
 
 type alias ActiveSearch =
     { query : SearchQueryArgs
-    , selectedFilters : List Filter
     , selectedMode : ResultMode
     , expandedFacets : List String
     }

@@ -99,11 +99,14 @@ viewSidebarFacets model =
         activeSearch =
             model.activeSearch
 
+        activeQuery =
+            activeSearch.query
+
         language =
             model.language
 
         currentlySelected =
-            activeSearch.selectedFilters
+            activeQuery.filters
 
         currentlyExpanded =
             activeSearch.expandedFacets
