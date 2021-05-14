@@ -9,8 +9,3 @@ serverUrl =
 minimumQueryLength : Int
 minimumQueryLength =
     3
-
-
-defaultRows : Int
-defaultRows =
-    20

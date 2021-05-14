@@ -11,9 +11,9 @@
     "uglify-js": "^3.12.2"
   },
   "scripts": {
-    "develop": "elm-live src/Main.elm -u --port 8002 --dir=./dev -- --output=dev/app.js --debug",
-    "develop:build": "chokidar '**/*.elm' -c 'elm make src/Main.elm --debug --output=dist/static/app.js'",
+    "develop": "elm-live src-2nd-try/Main.elm -u --port 8002 --dir=./dev -- --output=dev/app.js --debug",
+    "develop:build": "chokidar 'src/**/*.elm' -c 'elm make src/Main.elm --debug --output=dist/static/app.js'",
     "production:build": "elm make src/Main.elm --optimize --output=dist/static/app.js",
-    "production:deploy": "./optimize.sh src/Main.elm dist/static/app.js dist/static/app.js"
+    "production:deploy": "./optimize.sh src-2nd-try/Main.elm dist/static/app.js dist/static/app.js"
   }
 }

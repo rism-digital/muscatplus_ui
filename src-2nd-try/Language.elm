@@ -1,15 +1,11 @@
 module Language exposing
     ( Language(..)
     , LanguageMap
-    , LanguageNumericMap
-    , LanguageNumericValues(..)
     , LanguageValues(..)
     , extractLabelFromLanguageMap
     , extractTextFromLanguageMap
-    , formatNumberByLanguage
     , languageDecoder
     , languageMapDecoder
-    , languageNumericMapDecoder
     , languageOptions
     , languageOptionsForDisplay
     , languageValuesDecoder
@@ -19,8 +15,6 @@ module Language exposing
     )
 
 import Dict exposing (Dict)
-import FormatNumber exposing (format)
-import FormatNumber.Locales exposing (Decimals(..), Locale, base, usLocale)
 import Json.Decode as Decode exposing (Decoder)
 
 
@@ -39,21 +33,8 @@ type LanguageValues
     = LanguageValues Language (List String)
 
 
-{-|
-
-    Used for cases where the values being decoded are numbers, not strings
-
--}
-type LanguageNumericValues
-    = LanguageNumericValues Language (List Int)
-
-
 type alias LanguageMap =
     List LanguageValues
-
-
-type alias LanguageNumericMap =
-    List LanguageNumericValues
 
 
 {-|
@@ -89,12 +70,6 @@ languageOptionsForDisplay =
         |> List.filter (\( l, _ ) -> l /= "none")
 
 
-{-|
-
-    Takes a string and returns the corresponding language type, e.g.,
-    "en" -> English.
-
--}
 parseLocaleToLanguage : String -> Language
 parseLocaleToLanguage locale =
     -- defaults to English if no language is detected
@@ -104,12 +79,6 @@ parseLocaleToLanguage locale =
         |> Maybe.withDefault English
 
 
-{-|
-
-    Takes a language type and returns the string representation,
-    e.g., "en", "de", etc.
-
--}
 parseLanguageToLocale : Language -> String
 parseLanguageToLocale lang =
     -- it's unlikely that a language will get passed in that doesn't exist,
@@ -185,12 +154,6 @@ languageValuesDecoder ( locale, translations ) =
         |> Decode.map (\lang -> LanguageValues lang translations)
 
 
-languageNumericValuesDecoder : ( String, List Int ) -> Decoder LanguageNumericValues
-languageNumericValuesDecoder ( locale, translations ) =
-    languageDecoder locale
-        |> Decode.map (\lang -> LanguageNumericValues lang translations)
-
-
 {-|
 
     A custom decoder that takes a JSON-LD Language Map and produces a list of
@@ -206,114 +169,6 @@ languageMapDecoder json =
         json
 
 
-languageNumericMapDecoder : List ( String, List Int ) -> Decoder LanguageNumericMap
-languageNumericMapDecoder json =
-    List.foldl
-        (\map maps -> Decode.map2 (::) (languageNumericValuesDecoder map) maps)
-        (Decode.succeed [])
-        json
-
-
-englishLocale : Locale
-englishLocale =
-    { base
-        | decimals = Max 2
-        , thousandSeparator = ","
-    }
-
-
-germanLocale : Locale
-germanLocale =
-    { base
-        | decimals = Max 2
-        , thousandSeparator = "."
-        , decimalSeparator = ","
-    }
-
-
-frenchLocale : Locale
-frenchLocale =
-    { base
-        | decimals = Max 3
-        , thousandSeparator = "\u{202F}"
-        , decimalSeparator = ","
-    }
-
-
-polishLocale : Locale
-polishLocale =
-    { base
-        | decimals = Max 3
-        , thousandSeparator = "\u{202F}"
-        , decimalSeparator = ","
-    }
-
-
-spanishLocale : Locale
-spanishLocale =
-    { base
-        | decimals = Max 3
-        , thousandSeparator = "."
-        , decimalSeparator = ","
-    }
-
-
-portugeseLocale : Locale
-portugeseLocale =
-    { base
-        | decimals = Max 3
-        , thousandSeparator = "\u{202F}"
-        , decimalSeparator = ","
-    }
-
-
-italianLocale : Locale
-italianLocale =
-    { base
-        | decimals = Max 2
-        , thousandSeparator = "."
-        , decimalSeparator = ","
-    }
-
-
-{-|
-
-    Formats a number according to a particular regional locale.
-    Returns a string corresponding to the formatted number.
-
--}
-formatNumberByLanguage : Float -> Language -> String
-formatNumberByLanguage num lang =
-    let
-        formatterLocale =
-            case lang of
-                English ->
-                    englishLocale
-
-                German ->
-                    germanLocale
-
-                French ->
-                    frenchLocale
-
-                Italian ->
-                    italianLocale
-
-                Spanish ->
-                    spanishLocale
-
-                Portugese ->
-                    portugeseLocale
-
-                Polish ->
-                    polishLocale
-
-                None ->
-                    englishLocale
-    in
-    format formatterLocale num
-
-
 {-|
 
     Local translations that do not come from the server
@@ -323,11 +178,6 @@ localTranslations :
     { search : List LanguageValues
     , home : List LanguageValues
     , queryEnter : List LanguageValues
-    , next : List LanguageValues
-    , previous : List LanguageValues
-    , first : List LanguageValues
-    , last : List LanguageValues
-    , page : List LanguageValues
     }
 localTranslations =
     { search =
@@ -356,50 +206,5 @@ localTranslations =
         , LanguageValues Spanish [ "Introduzca su consulta" ]
         , LanguageValues Portugese [ "Introduza a sua consulta" ]
         , LanguageValues Polish [ "Wprowadź swoje zapytanie" ]
-        ]
-    , next =
-        [ LanguageValues English [ "Next" ]
-        , LanguageValues German [ "Nächste" ]
-        , LanguageValues French [ "Suivante" ]
-        , LanguageValues Italian [ "Prossimo" ]
-        , LanguageValues Spanish [ "Siguiente" ]
-        , LanguageValues Portugese [ "Próximo" ]
-        , LanguageValues Polish [ "Następny" ]
-        ]
-    , previous =
-        [ LanguageValues English [ "Previous" ]
-        , LanguageValues German [ "Vorige" ]
-        , LanguageValues French [ "Précédent" ]
-        , LanguageValues Italian [ "Precedente" ]
-        , LanguageValues Spanish [ "Anterior" ]
-        , LanguageValues Portugese [ "Anterior" ]
-        , LanguageValues Polish [ "Poprzedni" ]
-        ]
-    , first =
-        [ LanguageValues English [ "First" ]
-        , LanguageValues German [ "Erste" ]
-        , LanguageValues French [ "Première" ]
-        , LanguageValues Italian [ "Primo" ]
-        , LanguageValues Spanish [ "Primero" ]
-        , LanguageValues Portugese [ "Primeiro" ]
-        , LanguageValues Polish [ "Pierwszy" ]
-        ]
-    , last =
-        [ LanguageValues English [ "Last" ]
-        , LanguageValues German [ "Letzte" ]
-        , LanguageValues French [ "Dernière" ]
-        , LanguageValues Italian [ "Ultimo" ]
-        , LanguageValues Spanish [ "Último" ]
-        , LanguageValues Portugese [ "Último" ]
-        , LanguageValues Polish [ "Ostatni" ]
-        ]
-    , page =
-        [ LanguageValues English [ "Page" ]
-        , LanguageValues German [ "Seite" ]
-        , LanguageValues French [ "Page" ]
-        , LanguageValues Italian [ "Pagina" ]
-        , LanguageValues Spanish [ "Página" ]
-        , LanguageValues Portugese [ "Página" ]
-        , LanguageValues Polish [ "Strona" ]
         ]
     }
