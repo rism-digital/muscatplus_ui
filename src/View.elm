@@ -141,7 +141,7 @@ siteFooter =
                     [ width (px 200) ]
                     [ el
                         []
-                        (html (rismLogo "#ffffff" (footerHeight - 10)))
+                        (rismLogo "#ffffff" (footerHeight - 10))
                     ]
                 , column
                     [ width (fillPortion 10)
