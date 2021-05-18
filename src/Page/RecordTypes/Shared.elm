@@ -1,4 +1,4 @@
-module Page.RecordTypes.Shared exposing (LabelNumericValue, LabelValue, labelDecoder, labelNumericValueDecoder, labelValueDecoder, typeDecoder)
+module Page.RecordTypes.Shared exposing (LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
 import Json.Decode.Pipeline exposing (required)
@@ -21,19 +21,19 @@ type alias LabelNumericValue =
 labelValueDecoder : Decoder LabelValue
 labelValueDecoder =
     Decode.succeed LabelValue
-        |> required "label" labelDecoder
-        |> required "value" labelDecoder
+        |> required "label" languageMapLabelDecoder
+        |> required "value" languageMapLabelDecoder
 
 
 labelNumericValueDecoder : Decoder LabelNumericValue
 labelNumericValueDecoder =
     Decode.succeed LabelNumericValue
-        |> required "label" labelDecoder
+        |> required "label" languageMapLabelDecoder
         |> required "value" numericValueDecoder
 
 
-labelDecoder : Decoder LanguageMap
-labelDecoder =
+languageMapLabelDecoder : Decoder LanguageMap
+languageMapLabelDecoder =
     Decode.keyValuePairs (list string)
         |> andThen languageMapDecoder
 

@@ -6,7 +6,7 @@ import Page.RecordTypes
         ( RecordType(..)
         , recordTypeFromJsonType
         )
-import Page.RecordTypes.Festival exposing (festivalBodyDecoder)
+import Page.RecordTypes.Festival exposing (liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)
 import Page.RecordTypes.Person exposing (personBodyDecoder)
@@ -25,7 +25,7 @@ recordResponseDecoder =
 
 festivalResponseDecoder : Decoder ServerData
 festivalResponseDecoder =
-    Decode.map FestivalData festivalBodyDecoder
+    Decode.map FestivalData liturgicalFestivalBodyDecoder
 
 
 sourceResponseDecoder : Decoder ServerData

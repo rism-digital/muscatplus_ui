@@ -1,12 +1,19 @@
 module Page.RecordTypes.Festival exposing (..)
 
-import Json.Decode as Decode exposing (Decoder)
+import Json.Decode as Decode exposing (Decoder, list)
+import Json.Decode.Pipeline exposing (optional, required)
+import Language exposing (LanguageMap)
+import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 
 
-type alias FestivalBody =
-    {}
+type alias LiturgicalFestivalBody =
+    { label : LanguageMap
+    , summary : Maybe (List LabelValue)
+    }
 
 
-festivalBodyDecoder : Decoder FestivalBody
-festivalBodyDecoder =
-    Decode.succeed FestivalBody
+liturgicalFestivalBodyDecoder : Decoder LiturgicalFestivalBody
+liturgicalFestivalBodyDecoder =
+    Decode.succeed LiturgicalFestivalBody
+        |> required "label" languageMapLabelDecoder
+        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing

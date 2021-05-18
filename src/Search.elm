@@ -1,5 +1,6 @@
 module Search exposing (..)
 
+import Page.Model exposing (Response(..))
 import Page.Query exposing (QueryArgs)
 import Page.Response exposing (ResultMode(..))
 import Page.Route exposing (Route(..))
@@ -9,6 +10,7 @@ type alias ActiveSearch =
     { query : QueryArgs
     , selectedMode : ResultMode
     , expandedFacets : List String
+    , preview : Response
     }
 
 
@@ -26,4 +28,5 @@ init initialRoute =
     { query = qargs
     , selectedMode = SourcesMode
     , expandedFacets = []
+    , preview = NoResponseToShow
     }

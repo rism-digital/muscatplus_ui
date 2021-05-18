@@ -1,6 +1,6 @@
 module Page.Response exposing (..)
 
-import Page.RecordTypes.Festival exposing (FestivalBody)
+import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.RecordTypes.Person exposing (PersonBody)
@@ -15,7 +15,7 @@ type ServerData
     | PersonData PersonBody
     | InstitutionData InstitutionBody
     | PlaceData PlaceBody
-    | FestivalData FestivalBody
+    | FestivalData LiturgicalFestivalBody
     | SearchData SearchBody
     | IncipitData IncipitBody
     | RootData RootBody

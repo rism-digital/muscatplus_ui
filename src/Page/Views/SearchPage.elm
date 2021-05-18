@@ -1,18 +1,21 @@
 module Page.Views.SearchPage exposing (view)
 
-import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, fill, height, maximum, minimum, none, padding, paddingXY, paragraph, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, el, fill, height, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
+import Element.Font as Font
 import Language exposing (Language)
 import Model exposing (Model)
-import Msg exposing (Msg)
+import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchPagination, SearchResult)
 import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (minimalDropShadow, searchColumnVerticalSize)
-import Page.UI.Components exposing (h5, searchKeywordInput)
+import Page.UI.Components exposing (h4, h5, searchKeywordInput)
 import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Page.Views.SearchPage.Pagination exposing (viewSearchResultsPagination)
+import Search exposing (ActiveSearch)
 
 
 view : Model -> Element Msg
@@ -86,15 +89,20 @@ viewTopBar model =
                     [ width fill ]
                     []
                 ]
-            , row
-                [ width fill ]
-                [ column
-                    [ width fill
-                    , paddingXY 20 10
-                    ]
-                    [ text "Result type" ]
-                ]
+            , searchModeSelectorSection model
             ]
+        ]
+
+
+searchModeSelectorSection : Model -> Element Msg
+searchModeSelectorSection model =
+    row
+        [ width fill ]
+        [ column
+            [ width fill
+            , paddingXY 20 10
+            ]
+            [ text "Result type" ]
         ]
 
 
@@ -110,13 +118,16 @@ searchResultsViewRouter model =
         language =
             model.language
 
+        activeSearch =
+            model.activeSearch
+
         sectionView =
             case resp of
                 Loading ->
                     viewSearchResultsLoading model
 
                 Response (SearchData body) ->
-                    viewSearchResultsSection body language
+                    viewSearchResultsSection body activeSearch language
 
                 Error e ->
                     viewSearchResultsError model
@@ -133,8 +144,8 @@ searchResultsViewRouter model =
     sectionView
 
 
-viewSearchResultsSection : SearchBody -> Language -> Element Msg
-viewSearchResultsSection body language =
+viewSearchResultsSection : SearchBody -> ActiveSearch -> Language -> Element Msg
+viewSearchResultsSection body searchParams language =
     row
         [ width fill
         ]
@@ -157,7 +168,7 @@ viewSearchResultsSection body language =
             , scrollbarY
             , alignTop
             ]
-            [ viewSearchResultsPreviewSection body language
+            [ viewSearchResultsPreviewSection searchParams language
             ]
         ]
 
@@ -194,8 +205,26 @@ viewSearchResultsList body language =
         ]
 
 
-viewSearchResultsPreviewSection : SearchBody -> Language -> Element Msg
-viewSearchResultsPreviewSection body language =
+viewSearchResultsPreviewSection : ActiveSearch -> Language -> Element Msg
+viewSearchResultsPreviewSection searchParams language =
+    let
+        preview =
+            searchParams.preview
+
+        showText =
+            case preview of
+                Loading ->
+                    "Loading"
+
+                Response _ ->
+                    "Response"
+
+                Error _ ->
+                    "Error"
+
+                NoResponseToShow ->
+                    "Nothing to see here"
+    in
     row
         [ width fill
         , height (px 2000)
@@ -204,18 +233,27 @@ viewSearchResultsPreviewSection body language =
             [ width fill
             , height fill
             ]
-            [ text "hellooo" ]
+            [ text showText ]
         ]
 
 
 viewSearchResult : SearchResult -> Language -> Element Msg
 viewSearchResult result language =
+    let
+        resultTitle =
+            el
+                [ Font.color colourScheme.lightBlue
+                , width fill
+                , onClick (PreviewSearchResult result.id)
+                , pointer
+                ]
+                (h5 language result.label)
+    in
     row
         [ width fill
         , height (px 60)
         ]
-        [ h5 language result.label
-        ]
+        [ resultTitle ]
 
 
 viewSearchResultsLoading : Model -> Element Msg

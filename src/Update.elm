@@ -49,6 +49,19 @@ update msg model =
             in
             ( { model | page = newResponse }, Cmd.none )
 
+        Msg.ReceivedPreviewResponse (Ok response) ->
+            let
+                oldSearch =
+                    model.activeSearch
+
+                newSearch =
+                    { oldSearch | preview = Response response }
+            in
+            ( { model | activeSearch = newSearch }, Cmd.none )
+
+        Msg.ReceivedPreviewResponse (Err error) ->
+            ( model, Cmd.none )
+
         Msg.UrlChanged url ->
             let
                 oldPage =
@@ -137,6 +150,24 @@ update msg model =
                     { oldSearch | query = newQueryParams }
             in
             ( { model | activeSearch = newSearch }, Cmd.none )
+
+        Msg.ModeSelected _ _ _ ->
+            ( model, Cmd.none )
+
+        Msg.FacetChecked _ _ _ ->
+            ( model, Cmd.none )
+
+        Msg.PreviewSearchResult url ->
+            let
+                oldSearch =
+                    model.activeSearch
+
+                newSearch =
+                    { oldSearch | preview = Loading }
+            in
+            ( { model | activeSearch = newSearch }
+            , createRequest Msg.ReceivedPreviewResponse recordResponseDecoder url
+            )
 
         Msg.NoOp ->
             ( model, Cmd.none )

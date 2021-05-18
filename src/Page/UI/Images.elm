@@ -75,14 +75,14 @@ rismLogo colour size =
         )
 
 
-type alias ChevronDetails =
+type alias SvgDetails =
     { viewBox : String
     , path : String
     }
 
 
-makeChevronSvgIcon : ChevronDetails -> Element msg
-makeChevronSvgIcon details =
+makeSvgIcon : SvgDetails -> Element msg
+makeSvgIcon details =
     html
         (svg
             [ viewBox details.viewBox ]
@@ -95,12 +95,18 @@ makeChevronSvgIcon details =
         )
 
 
-makeChevronStringIcon : ChevronDetails -> String
-makeChevronStringIcon details =
+{-|
+
+    The string variant is useful if the SVG is needed for embedding in a
+    CSS string.
+
+-}
+makeStringIcon : SvgDetails -> String
+makeStringIcon details =
     "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"" ++ details.viewBox ++ "\"><path d=\"" ++ details.path ++ "\" fill=\"LightSlateGray\"/></svg>"
 
 
-chevronDown : ChevronDetails
+chevronDown : SvgDetails
 chevronDown =
     { viewBox = "0 0 448 512"
     , path = "M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"
@@ -109,15 +115,15 @@ chevronDown =
 
 chevronDownSvg : Element msg
 chevronDownSvg =
-    makeChevronSvgIcon chevronDown
+    makeSvgIcon chevronDown
 
 
 chevronDownString : String
 chevronDownString =
-    makeChevronStringIcon chevronDown
+    makeStringIcon chevronDown
 
 
-chevronUp : ChevronDetails
+chevronUp : SvgDetails
 chevronUp =
     { viewBox = "0 0 448 512"
     , path = "M240.971 130.524l194.343 194.343c9.373 9.373 9.373 24.569 0 33.941l-22.667 22.667c-9.357 9.357-24.522 9.375-33.901.04L224 227.495 69.255 381.516c-9.379 9.335-24.544 9.317-33.901-.04l-22.667-22.667c-9.373-9.373-9.373-24.569 0-33.941L207.03 130.525c9.372-9.373 24.568-9.373 33.941-.001z"
@@ -126,15 +132,15 @@ chevronUp =
 
 chevronUpSvg : Element msg
 chevronUpSvg =
-    makeChevronSvgIcon chevronUp
+    makeSvgIcon chevronUp
 
 
 chevronUpString : String
 chevronUpString =
-    makeChevronStringIcon chevronUp
+    makeStringIcon chevronUp
 
 
-chevronLeft : ChevronDetails
+chevronLeft : SvgDetails
 chevronLeft =
     { viewBox = "0 0 320 512"
     , path = "M34.52 239.03L228.87 44.69c9.37-9.37 24.57-9.37 33.94 0l22.67 22.67c9.36 9.36 9.37 24.52.04 33.9L131.49 256l154.02 154.75c9.34 9.38 9.32 24.54-.04 33.9l-22.67 22.67c-9.37 9.37-24.57 9.37-33.94 0L34.52 272.97c-9.37-9.37-9.37-24.57 0-33.94z"
@@ -143,15 +149,15 @@ chevronLeft =
 
 chevronLeftSvg : Element msg
 chevronLeftSvg =
-    makeChevronSvgIcon chevronLeft
+    makeSvgIcon chevronLeft
 
 
 chevronLeftString : String
 chevronLeftString =
-    makeChevronStringIcon chevronLeft
+    makeStringIcon chevronLeft
 
 
-chevronRight : ChevronDetails
+chevronRight : SvgDetails
 chevronRight =
     { viewBox = "0 0 320 512"
     , path = "M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"
@@ -160,15 +166,15 @@ chevronRight =
 
 chevronRightSvg : Element msg
 chevronRightSvg =
-    makeChevronSvgIcon chevronRight
+    makeSvgIcon chevronRight
 
 
 chevronRightString : String
 chevronRightString =
-    makeChevronStringIcon chevronRight
+    makeStringIcon chevronRight
 
 
-chevronDoubleRight : ChevronDetails
+chevronDoubleRight : SvgDetails
 chevronDoubleRight =
     { viewBox = "0 0 512 512"
     , path = "M477.5 273L283.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9l154-154.7-154-154.7c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L477.5 239c9.3 9.4 9.3 24.6 0 34zm-192-34L91.1 44.7c-9.4-9.4-24.6-9.4-33.9 0L34.5 67.4c-9.4 9.4-9.4 24.5 0 33.9l154 154.7-154 154.7c-9.3 9.4-9.3 24.5 0 33.9l22.7 22.7c9.4 9.4 24.6 9.4 33.9 0L285.5 273c9.3-9.4 9.3-24.6 0-34z"
@@ -177,15 +183,15 @@ chevronDoubleRight =
 
 chevronDoubleRightSvg : Element msg
 chevronDoubleRightSvg =
-    makeChevronSvgIcon chevronDoubleRight
+    makeSvgIcon chevronDoubleRight
 
 
 chevronDoubleRightString : String
 chevronDoubleRightString =
-    makeChevronStringIcon chevronDoubleRight
+    makeStringIcon chevronDoubleRight
 
 
-chevronDoubleLeft : ChevronDetails
+chevronDoubleLeft : SvgDetails
 chevronDoubleLeft =
     { viewBox = "0 0 512 512"
     , path = "M34.5 239L228.9 44.7c9.4-9.4 24.6-9.4 33.9 0l22.7 22.7c9.4 9.4 9.4 24.5 0 33.9L131.5 256l154 154.7c9.3 9.4 9.3 24.5 0 33.9l-22.7 22.7c-9.4 9.4-24.6 9.4-33.9 0L34.5 273c-9.3-9.4-9.3-24.6 0-34zm192 34l194.3 194.3c9.4 9.4 24.6 9.4 33.9 0l22.7-22.7c9.4-9.4 9.4-24.5 0-33.9L323.5 256l154-154.7c9.3-9.4 9.3-24.5 0-33.9l-22.7-22.7c-9.4-9.4-24.6-9.4-33.9 0L226.5 239c-9.3 9.4-9.3 24.6 0 34z"
@@ -194,9 +200,69 @@ chevronDoubleLeft =
 
 chevronDoubleLeftSvg : Element msg
 chevronDoubleLeftSvg =
-    makeChevronSvgIcon chevronDoubleLeft
+    makeSvgIcon chevronDoubleLeft
 
 
 chevronDoubleLeftString : String
 chevronDoubleLeftString =
-    makeChevronStringIcon chevronDoubleLeft
+    makeStringIcon chevronDoubleLeft
+
+
+bookOpen : SvgDetails
+bookOpen =
+    { viewBox = "0 0 640 512"
+    , path = "M561.91 0C549.44 0 406.51 6.49 320 56.89 233.49 6.49 90.56 0 78.09 0 35.03 0 0 34.34 0 76.55v313.72c0 40.73 32.47 74.3 73.92 76.41 36.78 1.91 128.81 9.5 187.73 38.69 8.19 4.05 17.25 6.29 26.34 6.58v.05h64.02v-.05c9.09-.29 18.15-2.53 26.34-6.58 58.92-29.19 150.95-36.78 187.73-38.69C607.53 464.57 640 431 640 390.27V76.55C640 34.34 604.97 0 561.91 0zM296 438.15c0 11.09-10.96 18.91-21.33 14.96-64.53-24.54-153.96-32.07-198.31-34.38-15.9-.8-28.36-13.3-28.36-28.46V76.55C48 60.81 61.5 48 78.06 48c19.93.1 126.55 7.81 198.53 40.49 11.63 5.28 19.27 16.66 19.28 29.44L296 224v214.15zm296-47.88c0 15.16-12.46 27.66-28.36 28.47-44.35 2.3-133.78 9.83-198.31 34.38-10.37 3.94-21.33-3.87-21.33-14.96V224l.14-106.08c.02-12.78 7.65-24.15 19.28-29.44C435.4 55.81 542.02 48.1 561.94 48 578.5 48 592 60.81 592 76.55v313.72z"
+    }
+
+
+bookOpenSvg : Element msg
+bookOpenSvg =
+    makeSvgIcon bookOpen
+
+
+people : SvgDetails
+people =
+    { viewBox = "0 0 640 512"
+    , path = "M192 256c61.9 0 112-50.1 112-112S253.9 32 192 32 80 82.1 80 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C51.6 288 0 339.6 0 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zM480 256c53 0 96-43 96-96s-43-96-96-96-96 43-96 96 43 96 96 96zm48 32h-3.8c-13.9 4.8-28.6 8-44.2 8s-30.3-3.2-44.2-8H432c-20.4 0-39.2 5.9-55.7 15.4 24.4 26.3 39.7 61.2 39.7 99.8v38.4c0 2.2-.5 4.3-.6 6.4H592c26.5 0 48-21.5 48-48 0-61.9-50.1-112-112-112z"
+    }
+
+
+peopleSvg : Element msg
+peopleSvg =
+    makeSvgIcon people
+
+
+institution : SvgDetails
+institution =
+    { viewBox = "0 0 512 512"
+    , path = "M501.62 92.11L267.24 2.04a31.958 31.958 0 0 0-22.47 0L10.38 92.11A16.001 16.001 0 0 0 0 107.09V144c0 8.84 7.16 16 16 16h480c8.84 0 16-7.16 16-16v-36.91c0-6.67-4.14-12.64-10.38-14.98zM64 192v160H48c-8.84 0-16 7.16-16 16v48h448v-48c0-8.84-7.16-16-16-16h-16V192h-64v160h-96V192h-64v160h-96V192H64zm432 256H16c-8.84 0-16 7.16-16 16v32c0 8.84 7.16 16 16 16h480c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16z"
+    }
+
+
+institutionSvg : Element msg
+institutionSvg =
+    makeSvgIcon institution
+
+
+musicNotation : SvgDetails
+musicNotation =
+    { viewBox = "0 0 512 512"
+    , path = "M470.38 1.51L150.41 96A32 32 0 0 0 128 126.51v261.41A139 139 0 0 0 96 384c-53 0-96 28.66-96 64s43 64 96 64 96-28.66 96-64V214.32l256-75v184.61a138.4 138.4 0 0 0-32-3.93c-53 0-96 28.66-96 64s43 64 96 64 96-28.65 96-64V32a32 32 0 0 0-41.62-30.49z"
+    }
+
+
+musicNotationSvg : Element msg
+musicNotationSvg =
+    makeSvgIcon musicNotation
+
+
+unknown : SvgDetails
+unknown =
+    { viewBox = "0 0 384 512"
+    , path = "M202.021 0C122.202 0 70.503 32.703 29.914 91.026c-7.363 10.58-5.093 25.086 5.178 32.874l43.138 32.709c10.373 7.865 25.132 6.026 33.253-4.148 25.049-31.381 43.63-49.449 82.757-49.449 30.764 0 68.816 19.799 68.816 49.631 0 22.552-18.617 34.134-48.993 51.164-35.423 19.86-82.299 44.576-82.299 106.405V320c0 13.255 10.745 24 24 24h72.471c13.255 0 24-10.745 24-24v-5.773c0-42.86 125.268-44.645 125.268-160.627C377.504 66.256 286.902 0 202.021 0zM192 373.459c-38.196 0-69.271 31.075-69.271 69.271 0 38.195 31.075 69.27 69.271 69.27s69.271-31.075 69.271-69.271-31.075-69.27-69.271-69.27z"
+    }
+
+
+unknownSvg : Element msg
+unknownSvg =
+    makeSvgIcon unknown
