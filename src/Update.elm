@@ -9,7 +9,7 @@ import Msg exposing (Msg)
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (Response(..))
 import Page.Query exposing (buildQueryParameters)
-import Page.Route exposing (parseUrl)
+import Page.Route exposing (Route(..), parseUrl)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
 import Url
@@ -59,9 +59,20 @@ update msg model =
 
                 newPage =
                     { oldPage | route = newRoute }
+
+                newQuery =
+                    case newRoute of
+                        SearchPageRoute qargs ->
+                            buildQueryParameters qargs
+
+                        _ ->
+                            []
+
+                newUrl =
+                    serverUrl [ url.path ] newQuery
             in
             ( { model | page = newPage }
-            , Cmd.none
+            , createRequest Msg.ReceivedServerResponse recordResponseDecoder newUrl
             )
 
         Msg.OnWindowResize device ->
@@ -93,6 +104,9 @@ update msg model =
 
                 url =
                     serverUrl [ "search" ] (buildQueryParameters activeSearch.query)
+
+                _ =
+                    Debug.log "Url" url
             in
             ( { model | page = newPage }
             , Cmd.batch
