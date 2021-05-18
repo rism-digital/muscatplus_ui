@@ -17,7 +17,7 @@ init initialUrl =
         initialRoute =
             parseUrl initialUrl
     in
-    { response = NoResponseToShow
+    { response = Loading
     , route = initialRoute
     , url = initialUrl
     }
