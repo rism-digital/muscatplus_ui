@@ -8,7 +8,19 @@ import Url.Builder exposing (QueryParameter)
 
 serverUrl : List String -> List QueryParameter -> String
 serverUrl pathSegments queryParameters =
-    Url.Builder.crossOrigin C.serverUrl pathSegments queryParameters
+    let
+        cleanedSegments =
+            List.map
+                (\segment ->
+                    if String.startsWith "/" segment then
+                        String.dropLeft 1 segment
+
+                    else
+                        segment
+                )
+                pathSegments
+    in
+    Url.Builder.crossOrigin C.serverUrl cleanedSegments queryParameters
 
 
 createRequest : (Result Http.Error a -> msg) -> Decoder a -> String -> Cmd msg
