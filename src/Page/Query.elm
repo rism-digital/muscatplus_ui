@@ -28,6 +28,12 @@ defaultQueryArgs =
     }
 
 
+{-|
+
+    Converts our application's QueryArgs to a set of QueryParameters
+    suitable for Elm's internal URL handling.
+
+-}
 buildQueryParameters : QueryArgs -> List QueryParameter
 buildQueryParameters queryArgs =
     let
