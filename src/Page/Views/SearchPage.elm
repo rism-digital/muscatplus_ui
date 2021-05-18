@@ -122,10 +122,12 @@ searchResultsViewRouter model =
                     viewSearchResultsError model
 
                 NoResponseToShow ->
-                    -- we shouldn't have this, but we'll show the error page in case we do.
-                    viewSearchResultsError model
+                    -- In case we're just booting the app up, show
+                    -- the loading message.
+                    viewSearchResultsLoading model
 
                 _ ->
+                    -- For any other responses, show the error.
                     viewSearchResultsError model
     in
     sectionView
@@ -165,6 +167,7 @@ viewSearchResultsListSection body language =
     row
         [ width fill
         , height fill
+        , alignTop
         ]
         [ column
             [ width fill
@@ -179,9 +182,14 @@ viewSearchResultsListSection body language =
 viewSearchResultsList : SearchBody -> Language -> Element Msg
 viewSearchResultsList body language =
     row
-        [ width fill ]
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            [ width fill ]
+            [ width fill
+            , alignTop
+            ]
             (List.map (\i -> viewSearchResult i language) body.items)
         ]
 
@@ -203,8 +211,11 @@ viewSearchResultsPreviewSection body language =
 viewSearchResult : SearchResult -> Language -> Element Msg
 viewSearchResult result language =
     row
-        [ width fill ]
-        [ h5 language result.label ]
+        [ width fill
+        , height (px 60)
+        ]
+        [ h5 language result.label
+        ]
 
 
 viewSearchResultsLoading : Model -> Element Msg
