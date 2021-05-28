@@ -186,7 +186,7 @@ searchKeywordInput msgs queryText currentLanguage =
                 , Border.color colourScheme.darkBlue
                 , onEnter msgs.submitMsg
                 , headingSM
-                , paddingXY 10 10
+                , paddingXY 10 12
                 ]
                 { onChange = \inp -> msgs.changeMsg inp
                 , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap currentLanguage localTranslations.queryEnter)))
