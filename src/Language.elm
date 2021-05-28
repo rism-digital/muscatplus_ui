@@ -328,6 +328,7 @@ localTranslations :
     , first : List LanguageValues
     , last : List LanguageValues
     , page : List LanguageValues
+    , viewRecord : List LanguageValues
     }
 localTranslations =
     { search =
@@ -401,5 +402,9 @@ localTranslations =
         , LanguageValues Spanish [ "Página" ]
         , LanguageValues Portugese [ "Página" ]
         , LanguageValues Polish [ "Strona" ]
+        ]
+    , viewRecord =
+        -- TODO: Additional translations
+        [ LanguageValues English [ "View full record" ]
         ]
     }

@@ -1,6 +1,6 @@
 module Page.Views.SearchPage exposing (view)
 
-import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, el, fill, height, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, el, fill, height, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -9,12 +9,11 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
-import Page.RecordTypes.Person exposing (PersonBody)
 import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.RecordTypes.Search exposing (Facet, SearchBody, SearchPagination, SearchResult)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.Response exposing (ServerData(..))
-import Page.UI.Attributes exposing (minimalDropShadow, searchColumnVerticalSize)
+import Page.UI.Attributes exposing (bodySM, minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (h4, h5, searchKeywordInput)
 import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Page.Views.SearchPage.Facets exposing (viewModeItems)
@@ -236,6 +235,7 @@ viewSearchResultsList body language =
         [ column
             [ width fill
             , alignTop
+            , spacing 20
             ]
             (List.map (\i -> viewSearchResult i language) body.items)
         ]
@@ -287,11 +287,18 @@ viewSearchResult result language =
 
         partOf =
             case result.partOf of
-                Just source ->
+                Just partOfBody ->
+                    let
+                        source =
+                            partOfBody.source
+                    in
                     row
-                        [ width fill ]
+                        [ width fill
+                        , bodySM
+                        ]
                         [ column
-                            [ width fill ]
+                            [ width fill
+                            ]
                             [ row
                                 [ width fill ]
                                 [ text "Part of "
@@ -309,20 +316,29 @@ viewSearchResult result language =
             case result.summary of
                 Just fields ->
                     row
-                        [ width fill ]
-                        (List.map (\l -> el [] (text (extractLabelFromLanguageMap language l.value))) fields)
+                        [ width fill
+                        , bodySM
+                        ]
+                        [ column
+                            [ width fill
+                            ]
+                            (List.map (\l -> el [] (text (extractLabelFromLanguageMap language l.value))) fields)
+                        ]
 
                 Nothing ->
                     none
     in
     row
         [ width fill
-        , height (px 60)
+        , height (px 100)
         ]
         [ column
-            [ width fill ]
+            [ width fill
+            , spacing 8
+            ]
             [ row
-                [ width fill ]
+                [ width fill
+                ]
                 [ resultTitle ]
             , partOf
             , summary

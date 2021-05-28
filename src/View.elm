@@ -15,7 +15,12 @@ import Page.UI.Components exposing (languageSelect)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Style exposing (colourScheme, footerHeight, headerHeight)
 import Page.Views.FrontPage
+import Page.Views.InstitutionPage
+import Page.Views.NotFoundPage
+import Page.Views.PersonPage
+import Page.Views.PlacePage
 import Page.Views.SearchPage
+import Page.Views.SourcePage
 
 
 view : Model -> Browser.Document Msg
@@ -32,12 +37,22 @@ view model =
                 SearchPageRoute _ ->
                     Page.Views.SearchPage.view
 
-                --SourceRoute _ ->
-                --PersonRoute _ ->
-                --InstitutionRoute _ ->
-                --PlaceRoute _ ->
+                SourcePageRoute _ ->
+                    Page.Views.SourcePage.view
+
+                PersonPageRoute _ ->
+                    Page.Views.PersonPage.view
+
+                InstitutionPageRoute _ ->
+                    Page.Views.InstitutionPage.view
+
+                PlacePageRoute _ ->
+                    Page.Views.PlacePage.view
+
                 --FestivalRoute _ ->
-                --NotFound ->
+                NotFoundPageRoute ->
+                    Page.Views.NotFoundPage.view
+
                 _ ->
                     Page.Views.FrontPage.view
 
