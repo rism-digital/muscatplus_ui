@@ -6,6 +6,7 @@ import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
 import Model exposing (Model)
 import Msg exposing (Msg)
+import Page.Converters exposing (convertFacetToResultMode)
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (Response(..))
 import Page.Query exposing (buildQueryParameters)
@@ -117,9 +118,6 @@ update msg model =
 
                 url =
                     serverUrl [ "search" ] (buildQueryParameters activeSearch.query)
-
-                _ =
-                    Debug.log "Url" url
             in
             ( { model | page = newPage }
             , Cmd.batch
@@ -151,8 +149,27 @@ update msg model =
             in
             ( { model | activeSearch = newSearch }, Cmd.none )
 
-        Msg.ModeSelected _ _ _ ->
-            ( model, Cmd.none )
+        Msg.ModeSelected _ itm _ ->
+            let
+                facetConvertedToResultMode =
+                    convertFacetToResultMode itm
+
+                oldSearch =
+                    model.activeSearch
+
+                oldQuery =
+                    oldSearch.query
+
+                newQuery =
+                    { oldQuery | mode = facetConvertedToResultMode }
+
+                newSearch =
+                    { oldSearch | query = newQuery, selectedMode = facetConvertedToResultMode }
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            update Msg.SearchSubmit newModel
 
         Msg.FacetChecked _ _ _ ->
             ( model, Cmd.none )
