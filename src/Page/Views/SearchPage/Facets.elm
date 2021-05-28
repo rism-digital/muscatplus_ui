@@ -1,28 +1,39 @@
 module Page.Views.SearchPage.Facets exposing (..)
 
-import Element exposing (Element, alignLeft, centerX, el, fill, height, none, paddingXY, px, row, spacingXY, text, width)
+import Element exposing (Element, alignLeft, centerX, centerY, el, fill, height, none, padding, paddingXY, px, row, spacing, spacingXY, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (checkbox, labelLeft)
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Msg exposing (Msg(..))
-import Page.RecordTypes exposing (Facet, FacetItem)
-import Page.Response exposing (ResultMode, parseStringToResultMode)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
+import Page.RecordTypes.Search exposing (Facet, FacetItem(..))
 import Page.UI.Attributes exposing (bodyRegular)
-import Page.UI.Images exposing (bookOpenSvg, institutionSvg, musicNotationSvg, peopleSvg, unknownSvg)
+import Page.UI.Images exposing (bookOpenSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme)
 
 
 viewModeItems : ResultMode -> Facet -> Language -> Element Msg
 viewModeItems selectedMode typeFacet language =
+    let
+        rowLabel =
+            row
+                [ Font.semiBold
+                , height fill
+                , centerY
+                ]
+                [ text (extractLabelFromLanguageMap language typeFacet.label) ]
+    in
     row
-        [ Border.widthEach { top = 0, left = 0, right = 0, bottom = 1 }
-        , Border.color colourScheme.red
-        , centerX
+        [ centerX
         , width fill
-        , height (px 60)
+        , height fill
+        , height (px 40)
+        , paddingXY 20 0
+        , spacing 10
+        , centerY
         ]
-        (List.map (\t -> viewModeItem selectedMode t language) typeFacet.items)
+        (rowLabel :: List.map (\t -> viewModeItem selectedMode t language) typeFacet.items)
 
 
 viewModeItem : ResultMode -> FacetItem -> Language -> Element Msg
@@ -35,22 +46,34 @@ viewModeItem selectedMode fitem language =
         fullLabel =
             extractLabelFromLanguageMap language label
 
+        iconTmpl svg =
+            el
+                [ width (px 16)
+                , height fill
+                , centerX
+                , centerY
+                ]
+                svg
+
         icon =
             case value of
                 "sources" ->
-                    bookOpenSvg
+                    iconTmpl bookOpenSvg
 
                 "people" ->
-                    peopleSvg
+                    iconTmpl peopleSvg
 
                 "institutions" ->
-                    institutionSvg
+                    iconTmpl institutionSvg
 
                 "incipits" ->
-                    musicNotationSvg
+                    iconTmpl musicNotationSvg
+
+                "festivals" ->
+                    iconTmpl liturgicalFestivalSvg
 
                 _ ->
-                    unknownSvg
+                    iconTmpl unknownSvg
 
         rowMode =
             parseStringToResultMode value
@@ -58,17 +81,20 @@ viewModeItem selectedMode fitem language =
         baseRowStyle =
             [ alignLeft
             , Font.center
+            , Font.regular
             , height fill
-            , paddingXY 0 10
-            , Border.widthEach { top = 0, left = 0, right = 0, bottom = 3 }
+            , Border.widthEach { top = 0, left = 0, bottom = 1, right = 0 }
             ]
 
         rowStyle =
             if selectedMode == rowMode then
-                Border.color colourScheme.red :: baseRowStyle
+                Border.color colourScheme.darkBlue :: baseRowStyle
 
             else
                 Border.color colourScheme.cream :: baseRowStyle
+
+        itemCount =
+            formatNumberByLanguage count language
     in
     row
         rowStyle
@@ -76,7 +102,7 @@ viewModeItem selectedMode fitem language =
         , el []
             (checkbox
                 [ alignLeft
-                , spacingXY 20 0
+                , spacing 10
                 ]
                 { onChange = \t -> ModeSelected "mode" fitem t
                 , icon = \b -> none
@@ -86,7 +112,7 @@ viewModeItem selectedMode fitem language =
                         [ bodyRegular
                         , alignLeft
                         ]
-                        (text fullLabel)
+                        (text (fullLabel ++ " (" ++ itemCount ++ ")"))
                 }
             )
         ]

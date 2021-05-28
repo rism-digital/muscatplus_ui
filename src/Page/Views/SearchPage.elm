@@ -5,16 +5,21 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
-import Page.RecordTypes.Search exposing (SearchBody, SearchPagination, SearchResult)
+import Page.RecordTypes.Person exposing (PersonBody)
+import Page.RecordTypes.ResultMode exposing (ResultMode)
+import Page.RecordTypes.Search exposing (Facet, SearchBody, SearchPagination, SearchResult)
+import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (h4, h5, searchKeywordInput)
 import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
+import Page.Views.SearchPage.Facets exposing (viewModeItems)
 import Page.Views.SearchPage.Pagination exposing (viewSearchResultsPagination)
+import Page.Views.SearchPage.Previews exposing (viewPreviewRouter)
 import Search exposing (ActiveSearch)
 
 
@@ -89,21 +94,52 @@ viewTopBar model =
                     [ width fill ]
                     []
                 ]
-            , searchModeSelectorSection model
+            , searchModeSelectorRouter model
             ]
         ]
 
 
-searchModeSelectorSection : Model -> Element Msg
-searchModeSelectorSection model =
+searchModeSelectorRouter : Model -> Element Msg
+searchModeSelectorRouter model =
+    let
+        activeSearch =
+            model.activeSearch
+
+        selectedMode =
+            activeSearch.selectedMode
+
+        page =
+            model.page
+
+        response =
+            page.response
+
+        modeView =
+            case response of
+                Response (SearchData data) ->
+                    searchModeSelectorView selectedMode data.modes model.language
+
+                _ ->
+                    searchModeSelectorLoading
+    in
+    modeView
+
+
+searchModeSelectorView : ResultMode -> Facet -> Language -> Element Msg
+searchModeSelectorView currentMode modeFacet language =
     row
         [ width fill ]
         [ column
             [ width fill
-            , paddingXY 20 10
             ]
-            [ text "Result type" ]
+            [ viewModeItems currentMode modeFacet language
+            ]
         ]
+
+
+searchModeSelectorLoading : Element Msg
+searchModeSelectorLoading =
+    none
 
 
 searchResultsViewRouter : Model -> Element Msg
@@ -211,19 +247,19 @@ viewSearchResultsPreviewSection searchParams language =
         preview =
             searchParams.preview
 
-        showText =
+        renderedPreview =
             case preview of
                 Loading ->
-                    "Loading"
+                    el [] (text "Loading")
 
-                Response _ ->
-                    "Response"
+                Response resp ->
+                    viewPreviewRouter resp language
 
                 Error _ ->
-                    "Error"
+                    el [] (text "Error")
 
                 NoResponseToShow ->
-                    "Nothing to see here"
+                    el [] (text "Nothing to see here")
     in
     row
         [ width fill
@@ -233,7 +269,7 @@ viewSearchResultsPreviewSection searchParams language =
             [ width fill
             , height fill
             ]
-            [ text showText ]
+            [ renderedPreview ]
         ]
 
 
@@ -248,12 +284,50 @@ viewSearchResult result language =
                 , pointer
                 ]
                 (h5 language result.label)
+
+        partOf =
+            case result.partOf of
+                Just source ->
+                    row
+                        [ width fill ]
+                        [ column
+                            [ width fill ]
+                            [ row
+                                [ width fill ]
+                                [ text "Part of "
+                                , link
+                                    [ Font.color colourScheme.lightBlue ]
+                                    { url = source.id, label = text (extractLabelFromLanguageMap language source.label) }
+                                ]
+                            ]
+                        ]
+
+                Nothing ->
+                    none
+
+        summary =
+            case result.summary of
+                Just fields ->
+                    row
+                        [ width fill ]
+                        (List.map (\l -> el [] (text (extractLabelFromLanguageMap language l.value))) fields)
+
+                Nothing ->
+                    none
     in
     row
         [ width fill
         , height (px 60)
         ]
-        [ resultTitle ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ resultTitle ]
+            , partOf
+            , summary
+            ]
+        ]
 
 
 viewSearchResultsLoading : Model -> Element Msg
