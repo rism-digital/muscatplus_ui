@@ -43,12 +43,12 @@ h3 language heading =
 
 h4 : Language -> LanguageMap -> Element msg
 h4 language heading =
-    headingHelper [ headingMD, Region.heading 4 ] language heading
+    headingHelper [ headingMD, Region.heading 4, Font.medium ] language heading
 
 
 h5 : Language -> LanguageMap -> Element msg
 h5 language heading =
-    headingHelper [ headingSM, Region.heading 5 ] language heading
+    headingHelper [ headingSM, Region.heading 5, Font.medium ] language heading
 
 
 h6 : Language -> LanguageMap -> Element msg
