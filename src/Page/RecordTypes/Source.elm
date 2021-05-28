@@ -21,13 +21,19 @@ type alias FullSourceBody =
     { id : String
     , label : LanguageMap
     , typeLabel : LanguageMap
-    , partOf : Maybe BasicSourceBody
+    , partOf : Maybe PartOfSectionBody
     , contents : Maybe ContentsSectionBody
     , materialGroups : Maybe MaterialGroupsSectionBody
     , incipits : Maybe IncipitsSectionBody
     , referencesNotes : Maybe ReferencesNotesSectionBody
     , exemplars : Maybe ExemplarsSectionBody
     , items : Maybe SourceItemsSectionBody
+    }
+
+
+type alias PartOfSectionBody =
+    { label : LanguageMap
+    , source : BasicSourceBody
     }
 
 
@@ -134,7 +140,7 @@ sourceBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
-        |> optional "partOf" (Decode.maybe basicSourceBodyDecoder) Nothing
+        |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "contents" (Decode.maybe contentsSectionBodyDecoder) Nothing
         |> optional "materialGroups" (Decode.maybe materialGroupsSectionBodyDecoder) Nothing
         |> optional "incipits" (Decode.maybe incipitsSectionBodyDecoder) Nothing
@@ -149,6 +155,13 @@ basicSourceBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
+
+
+partOfSectionBodyDecoder : Decoder PartOfSectionBody
+partOfSectionBodyDecoder =
+    Decode.succeed PartOfSectionBody
+        |> required "label" languageMapLabelDecoder
+        |> required "source" basicSourceBodyDecoder
 
 
 contentsSectionBodyDecoder : Decoder ContentsSectionBody

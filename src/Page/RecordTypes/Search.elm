@@ -5,7 +5,7 @@ import Json.Decode.Pipeline exposing (optional, optionalAt, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
-import Page.RecordTypes.Source exposing (BasicSourceBody, basicSourceBodyDecoder)
+import Page.RecordTypes.Source exposing (BasicSourceBody, PartOfSectionBody, basicSourceBodyDecoder, partOfSectionBodyDecoder)
 
 
 type alias SearchBody =
@@ -22,7 +22,7 @@ type alias SearchResult =
     { id : String
     , label : LanguageMap
     , type_ : RecordType
-    , partOf : Maybe BasicSourceBody
+    , partOf : Maybe PartOfSectionBody
     , summary : Maybe (List LabelValue)
     }
 
@@ -80,7 +80,7 @@ searchResultDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "type" typeDecoder
-        |> optional "partOf" (Decode.maybe basicSourceBodyDecoder) Nothing
+        |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
 
 
