@@ -2,7 +2,7 @@ module Search exposing (..)
 
 import Page.Model exposing (Response(..))
 import Page.Query exposing (QueryArgs)
-import Page.Response exposing (ResultMode(..))
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.Route exposing (Route(..))
 
 
@@ -24,9 +24,12 @@ init initialRoute =
 
                 _ ->
                     Page.Query.defaultQueryArgs
+
+        initialMode =
+            qargs.mode
     in
     { query = qargs
-    , selectedMode = SourcesMode
+    , selectedMode = initialMode
     , expandedFacets = []
     , preview = NoResponseToShow
     }

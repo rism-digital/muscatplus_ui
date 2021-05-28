@@ -2,7 +2,7 @@ module Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, q
 
 import Config as C
 import Page.RecordTypes exposing (Filter(..))
-import Page.Response exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
 

@@ -1,7 +1,5 @@
 module Page.RecordTypes exposing (..)
 
-import Language exposing (LanguageMap)
-
 
 type RecordType
     = Source
@@ -24,32 +22,6 @@ type RecordType
 -}
 type Filter
     = Filter String String
-
-
-type alias FacetList =
-    { items : List Facet
-    }
-
-
-type alias Facet =
-    { alias : String
-    , label : LanguageMap
-    , items : List FacetItem
-    }
-
-
-{-|
-
-    FacetItem is a facet name, a query value, a label (language map),
-    and the count of documents in the response.
-
-    E.g.,
-
-    FacetItem "source" {'none': {'some label'}} 123
-
--}
-type FacetItem
-    = FacetItem String LanguageMap Int
 
 
 recordTypeFromJsonType : String -> RecordType
