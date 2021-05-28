@@ -3,7 +3,7 @@ module Page.RecordTypes.Shared exposing (LabelNumericValue, LabelValue, labelNum
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
 import Json.Decode.Pipeline exposing (required)
 import Language exposing (LanguageMap, LanguageNumericMap, languageMapDecoder, languageNumericMapDecoder)
-import Page.RecordTypes exposing (RecordType, recordTypeFromJsonType)
+import Page.RecordTypes exposing (Filter, RecordType, recordTypeFromJsonType)
 
 
 type alias LabelValue =

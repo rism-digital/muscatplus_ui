@@ -1,14 +1,16 @@
-module Page.RecordTypes.Search exposing (SearchBody, SearchPagination, SearchResult, searchBodyDecoder)
+module Page.RecordTypes.Search exposing (Facet, FacetItem(..), SearchBody, SearchPagination, SearchResult, searchBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, int, nullable, string)
+import Json.Decode as Decode exposing (Decoder, float, int, list, nullable, string)
 import Json.Decode.Pipeline exposing (optional, optionalAt, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType)
-import Page.RecordTypes.Shared exposing (languageMapLabelDecoder, typeDecoder)
+import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
+import Page.RecordTypes.Source exposing (BasicSourceBody, basicSourceBodyDecoder)
 
 
 type alias SearchBody =
     { id : String
+    , totalItems : Int
     , items : List SearchResult
     , pagination : SearchPagination
     , facets : List Facet
@@ -20,6 +22,8 @@ type alias SearchResult =
     { id : String
     , label : LanguageMap
     , type_ : RecordType
+    , partOf : Maybe BasicSourceBody
+    , summary : Maybe (List LabelValue)
     }
 
 
@@ -56,13 +60,14 @@ type alias Facet =
 
 -}
 type FacetItem
-    = FacetItem String LanguageMap Int
+    = FacetItem String LanguageMap Float
 
 
 searchBodyDecoder : Decoder SearchBody
 searchBodyDecoder =
     Decode.succeed SearchBody
         |> required "id" string
+        |> required "totalItems" int
         |> optional "items" (Decode.list searchResultDecoder) []
         |> required "view" searchPaginationDecoder
         |> optionalAt [ "facets", "items" ] (Decode.list facetDecoder) []
@@ -75,6 +80,8 @@ searchResultDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "type" typeDecoder
+        |> optional "partOf" (Decode.maybe basicSourceBodyDecoder) Nothing
+        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
 
 
 searchPaginationDecoder : Decoder SearchPagination
@@ -107,4 +114,4 @@ facetItemDecoder =
     Decode.succeed FacetItem
         |> required "value" string
         |> required "label" languageMapLabelDecoder
-        |> optional "count" int 0
+        |> required "count" float

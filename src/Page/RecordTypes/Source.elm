@@ -13,12 +13,14 @@ import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, language
 type alias BasicSourceBody =
     { id : String
     , label : LanguageMap
+    , typeLabel : LanguageMap
     }
 
 
 type alias FullSourceBody =
     { id : String
     , label : LanguageMap
+    , typeLabel : LanguageMap
     , partOf : Maybe BasicSourceBody
     , contents : Maybe ContentsSectionBody
     , materialGroups : Maybe MaterialGroupsSectionBody
@@ -131,6 +133,7 @@ sourceBodyDecoder =
     Decode.succeed FullSourceBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
+        |> required "typeLabel" languageMapLabelDecoder
         |> optional "partOf" (Decode.maybe basicSourceBodyDecoder) Nothing
         |> optional "contents" (Decode.maybe contentsSectionBodyDecoder) Nothing
         |> optional "materialGroups" (Decode.maybe materialGroupsSectionBodyDecoder) Nothing
@@ -145,6 +148,7 @@ basicSourceBodyDecoder =
     Decode.succeed BasicSourceBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
+        |> required "typeLabel" languageMapLabelDecoder
 
 
 contentsSectionBodyDecoder : Decoder ContentsSectionBody
