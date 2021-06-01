@@ -1,4 +1,4 @@
-module Language exposing
+module Shared.Language exposing
     ( Language(..)
     , LanguageMap
     , LanguageValues(..)
@@ -177,7 +177,6 @@ languageMapDecoder json =
 localTranslations :
     { search : List LanguageValues
     , home : List LanguageValues
-    , queryEnter : List LanguageValues
     }
 localTranslations =
     { search =
@@ -197,14 +196,5 @@ localTranslations =
         , LanguageValues Spanish [ "Página principal" ]
         , LanguageValues Portugese [ "Início" ]
         , LanguageValues Polish [ "Strona główna" ]
-        ]
-    , queryEnter =
-        [ LanguageValues English [ "Enter your query" ]
-        , LanguageValues German [ "Eingabe Ihrer Anfrage" ]
-        , LanguageValues French [ "Entrez votre requête" ]
-        , LanguageValues Italian [ "Inserisci la tua richiesta" ]
-        , LanguageValues Spanish [ "Introduzca su consulta" ]
-        , LanguageValues Portugese [ "Introduza a sua consulta" ]
-        , LanguageValues Polish [ "Wprowadź swoje zapytanie" ]
         ]
     }
