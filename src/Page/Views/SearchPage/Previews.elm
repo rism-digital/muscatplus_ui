@@ -10,6 +10,7 @@ import Page.Response exposing (ServerData(..))
 import Page.UI.Components exposing (h4, h5)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.SourcePage.ContentsSection exposing (viewContentsRouter)
+import Page.Views.SourcePage.ExemplarsSection exposing (viewExemplarsRouter)
 import Page.Views.SourcePage.PartOfSection exposing (viewPartOfRouter, viewPartOfSection)
 
 
@@ -60,6 +61,7 @@ viewSourcePreview body language =
                     (List.map (\viewFunc -> viewFunc body language)
                         [ viewPartOfRouter
                         , viewContentsRouter
+                        , viewExemplarsRouter
                         ]
                     )
                 ]

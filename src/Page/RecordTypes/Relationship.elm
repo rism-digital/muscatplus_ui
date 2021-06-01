@@ -154,9 +154,10 @@ roleConverter roleString =
 
 
 type alias RelationshipBody =
-    { summary : Maybe (List LabelValue)
+    { label : LanguageMap
     , role : RelationshipRole
-    , qualifier : RelationshipQualifier
+    , qualifier : Maybe RelationshipQualifier
+    , qualifierLabel : Maybe LanguageMap
     , relatedTo : Maybe RelatedToBody
     , name : Maybe LanguageMap
     }
@@ -214,8 +215,9 @@ relatedToConverter typeString =
 relationshipBodyDecoder : Decoder RelationshipBody
 relationshipBodyDecoder =
     Decode.succeed RelationshipBody
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> required "label" languageMapLabelDecoder
         |> required "role" roleDecoder
-        |> required "qualifier" qualifierDecoder
+        |> optional "qualifier" (Decode.maybe qualifierDecoder) Nothing
+        |> optional "qualifierLabel" (Decode.maybe languageMapLabelDecoder) Nothing
         |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
         |> optional "name" (Decode.maybe languageMapLabelDecoder) Nothing

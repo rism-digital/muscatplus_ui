@@ -3,7 +3,7 @@ module Page.Views.SearchPage.Pagination exposing (..)
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, link, none, padding, px, row, shrink, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
-import Msg exposing (Msg)
+import Msg exposing (Msg(..))
 import Page.RecordTypes.Search exposing (SearchPagination)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 

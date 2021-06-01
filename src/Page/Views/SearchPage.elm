@@ -1,10 +1,11 @@
 module Page.Views.SearchPage exposing (view)
 
-import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, el, fill, height, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
@@ -236,6 +237,7 @@ viewSearchResultsList body language =
             [ width fill
             , alignTop
             , spacing 20
+            , htmlAttribute (HA.id "search-results-list")
             ]
             (List.map (\i -> viewSearchResult i language) body.items)
         ]
@@ -263,7 +265,7 @@ viewSearchResultsPreviewSection searchParams language =
     in
     row
         [ width fill
-        , height (px 2000)
+        , height fill
         ]
         [ column
             [ width fill

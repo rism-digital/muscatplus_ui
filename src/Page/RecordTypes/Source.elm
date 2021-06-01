@@ -112,7 +112,7 @@ type alias ExemplarBody =
     { id : String
     , summary : Maybe (List LabelValue)
     , heldBy : BasicInstitutionBody
-    , externalLinks : Maybe ExternalResourcesListBody
+    , externalResources : Maybe ExternalResourcesListBody
     }
 
 
@@ -252,7 +252,7 @@ exemplarsBodyDecoder =
         |> required "id" string
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
-        |> optional "externalLinks" (Decode.maybe externalResourcesListBodyDecoder) Nothing
+        |> optional "externalResources" (Decode.maybe externalResourcesListBodyDecoder) Nothing
 
 
 externalResourcesListBodyDecoder : Decoder ExternalResourcesListBody
