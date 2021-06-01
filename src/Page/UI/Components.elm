@@ -1,6 +1,6 @@
 module Page.UI.Components exposing (..)
 
-import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, none, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width)
+import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, none, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -10,6 +10,8 @@ import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, localTranslations, parseLocaleToLanguage)
+import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Style exposing (colourScheme)
@@ -58,7 +60,7 @@ h6 language heading =
 
 label : Language -> LanguageMap -> Element msg
 label language langmap =
-    el [ Font.bold, bodyRegular ] (text (extractLabelFromLanguageMap language langmap))
+    el [ Font.medium, bodyRegular ] (text (extractLabelFromLanguageMap language langmap))
 
 
 value : Language -> LanguageMap -> Element msg
@@ -68,6 +70,29 @@ value language langmap =
         , bodyRegular
         ]
         (styledParagraphs (extractTextFromLanguageMap language langmap))
+
+
+viewSummaryField : List LabelValue -> Language -> Element msg
+viewSummaryField field language =
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            (List.map
+                (\f ->
+                    row
+                        [ width fill, paddingXY 0 10 ]
+                        [ el
+                            [ width (fillPortion 1), alignTop ]
+                            (label language f.label)
+                        , el
+                            [ width (fillPortion 4), alignTop ]
+                            (value language f.value)
+                        ]
+                )
+                field
+            )
+        ]
 
 
 {-|
