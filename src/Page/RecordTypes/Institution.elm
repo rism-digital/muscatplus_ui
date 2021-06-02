@@ -13,12 +13,16 @@ type alias BasicInstitutionBody =
 
 
 type alias InstitutionBody =
-    {}
+    { id : String
+    , label : LanguageMap
+    }
 
 
 institutionBodyDecoder : Decoder InstitutionBody
 institutionBodyDecoder =
     Decode.succeed InstitutionBody
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
 
 
 basicInstitutionBodyDecoder : Decoder BasicInstitutionBody
