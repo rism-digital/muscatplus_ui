@@ -71,6 +71,18 @@ viewSourcePreview body language =
 
 viewPersonPreview : PersonBody -> Language -> Element Msg
 viewPersonPreview body language =
+    let
+        personLink =
+            row
+                [ width fill ]
+                [ el
+                    []
+                    (text (extractLabelFromLanguageMap language localTranslations.viewRecord ++ ": "))
+                , link
+                    [ Font.color colourScheme.lightBlue ]
+                    { url = body.id, label = text body.id }
+                ]
+    in
     row
         [ width fill
         , height fill
@@ -78,13 +90,12 @@ viewPersonPreview body language =
         [ column
             [ width fill
             , height fill
+            , spacing 5
             ]
             [ row
                 [ width fill ]
-                [ h5 language body.label ]
-            , row
-                [ width fill ]
-                [ text body.id ]
+                [ h4 language body.label ]
+            , personLink
             ]
         ]
 
