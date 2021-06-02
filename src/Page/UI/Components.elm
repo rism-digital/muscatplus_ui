@@ -1,6 +1,6 @@
 module Page.UI.Components exposing (..)
 
-import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, none, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width)
+import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, none, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -72,6 +72,15 @@ value language langmap =
         (styledParagraphs (extractTextFromLanguageMap language langmap))
 
 
+concatenatedValue : Language -> LanguageMap -> Element msg
+concatenatedValue language langmap =
+    textColumn
+        [ spacing 10
+        , bodyRegular
+        ]
+        [ styledList (extractTextFromLanguageMap language langmap) ]
+
+
 viewSummaryField : List LabelValue -> Language -> Element msg
 viewSummaryField field language =
     row
@@ -87,7 +96,7 @@ viewSummaryField field language =
                             (label language f.label)
                         , el
                             [ width (fillPortion 4), alignTop ]
-                            (value language f.value)
+                            (concatenatedValue language f.value)
                         ]
                 )
                 field
@@ -99,6 +108,8 @@ viewSummaryField field language =
 
     Wraps a list of string values in paragraph markers so that they can be properly spaced, etc.
 
+    Useful for rendering notes fields.
+
 -}
 styledParagraphs : List String -> List (Element msg)
 styledParagraphs textList =
@@ -109,6 +120,19 @@ styledParagraphs textList =
                 [ el [] (text t) ]
         )
         textList
+
+
+{-|
+
+    Concatenate lists with a semicolon. Useful for rendering lists of smaller values,
+    like instrumentation.
+
+-}
+styledList : List String -> Element msg
+styledList textList =
+    wrappedRow
+        []
+        [ text (String.join "; " textList) ]
 
 
 languageParentStyles : List (HT.Attribute msg)
