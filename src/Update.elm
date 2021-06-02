@@ -120,10 +120,9 @@ update msg model =
                     serverUrl [ "search" ] (buildQueryParameters activeSearch.query)
             in
             ( { model | page = newPage }
-            , Cmd.batch
-                [ createRequest Msg.ReceivedServerResponse recordResponseDecoder url
-                , Nav.pushUrl model.key url
-                ]
+              -- this will trigger UrlChanged, which will actually submit the
+              -- URL and request the data from the server.
+            , Nav.pushUrl model.key url
             )
 
         Msg.SearchInput qtext ->
