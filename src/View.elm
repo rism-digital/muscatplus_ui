@@ -9,6 +9,8 @@ import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Page.Model exposing (Response(..))
+import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, minimalDropShadow, pageBackground)
 import Page.UI.Components exposing (languageSelect)
@@ -56,6 +58,29 @@ view model =
                 _ ->
                     Page.Views.FrontPage.view
 
+        pageTitle =
+            case page.response of
+                Response (SearchData _) ->
+                    extractLabelFromLanguageMap model.language localTranslations.search ++ " RISM"
+
+                Response (SourceData d) ->
+                    extractLabelFromLanguageMap model.language d.label
+
+                Response (PersonData d) ->
+                    extractLabelFromLanguageMap model.language d.label
+
+                Response (InstitutionData d) ->
+                    extractLabelFromLanguageMap model.language d.label
+
+                Response (FestivalData d) ->
+                    extractLabelFromLanguageMap model.language d.label
+
+                Response (RootData d) ->
+                    "RISM Online"
+
+                _ ->
+                    "RISM Online"
+
         wrappedPageView =
             [ layout
                 [ width fill
@@ -76,7 +101,7 @@ view model =
                 )
             ]
     in
-    { title = ""
+    { title = pageTitle
     , body =
         wrappedPageView
     }
