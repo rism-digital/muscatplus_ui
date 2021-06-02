@@ -4,6 +4,7 @@ import Element exposing (Element, column, el, fill, height, link, none, paddingX
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
+import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.RecordTypes.Source exposing (FullSourceBody, PartOfSectionBody)
 import Page.Response exposing (ServerData(..))
@@ -22,6 +23,9 @@ viewPreviewRouter previewData language =
 
         PersonData body ->
             viewPersonPreview body language
+
+        InstitutionData body ->
+            viewInstitutionPreview body language
 
         _ ->
             viewUnknownPreview
@@ -96,6 +100,37 @@ viewPersonPreview body language =
                 [ width fill ]
                 [ h4 language body.label ]
             , personLink
+            ]
+        ]
+
+
+viewInstitutionPreview : InstitutionBody -> Language -> Element msg
+viewInstitutionPreview body language =
+    let
+        institutionLink =
+            row
+                [ width fill ]
+                [ el
+                    []
+                    (text (extractLabelFromLanguageMap language localTranslations.viewRecord ++ ": "))
+                , link
+                    [ Font.color colourScheme.lightBlue ]
+                    { url = body.id, label = text body.id }
+                ]
+    in
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , spacing 5
+            ]
+            [ row
+                [ width fill ]
+                [ h4 language body.label ]
+            , institutionLink
             ]
         ]
 
