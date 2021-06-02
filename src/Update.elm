@@ -116,10 +116,13 @@ update msg model =
                 activeSearch =
                     model.activeSearch
 
+                newSearch =
+                    { activeSearch | preview = NoResponseToShow }
+
                 url =
                     serverUrl [ "search" ] (buildQueryParameters activeSearch.query)
             in
-            ( { model | page = newPage }
+            ( { model | page = newPage, activeSearch = newSearch }
               -- this will trigger UrlChanged, which will actually submit the
               -- URL and request the data from the server.
             , Nav.pushUrl model.key url
