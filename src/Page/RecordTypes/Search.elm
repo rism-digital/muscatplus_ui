@@ -1,6 +1,6 @@
 module Page.RecordTypes.Search exposing (Facet, FacetItem(..), SearchBody, SearchPagination, SearchResult, searchBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, float, int, list, nullable, string)
+import Json.Decode as Decode exposing (Decoder, bool, float, int, list, nullable, string)
 import Json.Decode.Pipeline exposing (optional, optionalAt, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType)
@@ -24,6 +24,24 @@ type alias SearchResult =
     , type_ : RecordType
     , partOf : Maybe PartOfSectionBody
     , summary : Maybe (List LabelValue)
+    , flags : SearchResultFlags
+    }
+
+
+type alias SearchResultFlags =
+    { hasDigitization : Bool
+    , hasIIIFManifest : Bool
+    , isItemRecord : Bool
+    , hasIncipits : Bool
+    }
+
+
+defaultSearchResultFlags : SearchResultFlags
+defaultSearchResultFlags =
+    { hasDigitization = False
+    , hasIIIFManifest = False
+    , isItemRecord = False
+    , hasIncipits = False
     }
 
 
@@ -82,6 +100,16 @@ searchResultDecoder =
         |> required "type" typeDecoder
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "flags" searchResultFlagsDecoder defaultSearchResultFlags
+
+
+searchResultFlagsDecoder : Decoder SearchResultFlags
+searchResultFlagsDecoder =
+    Decode.succeed SearchResultFlags
+        |> optional "hasDigitization" bool False
+        |> optional "hasIIIFManifest" bool False
+        |> optional "isItem" bool False
+        |> optional "hasIncipits" bool False
 
 
 searchPaginationDecoder : Decoder SearchPagination
