@@ -83,20 +83,20 @@ concatenatedValue language langmap =
 
 viewSummaryField : List LabelValue -> Language -> Element msg
 viewSummaryField field language =
-    row
+    wrappedRow
         [ width fill ]
         [ column
             [ width fill ]
             (List.map
                 (\f ->
-                    row
+                    wrappedRow
                         [ width fill, paddingXY 0 10 ]
                         [ el
                             [ width (fillPortion 1), alignTop ]
                             (label language f.label)
-                        , el
+                        , wrappedRow
                             [ width (fillPortion 4), alignTop ]
-                            (concatenatedValue language f.value)
+                            [ concatenatedValue language f.value ]
                         ]
                 )
                 field
@@ -130,7 +130,7 @@ styledParagraphs textList =
 -}
 styledList : List String -> Element msg
 styledList textList =
-    wrappedRow
+    paragraph
         []
         [ text (String.join "; " textList) ]
 

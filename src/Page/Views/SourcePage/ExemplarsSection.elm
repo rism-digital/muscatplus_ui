@@ -1,12 +1,12 @@
 module Page.Views.SourcePage.ExemplarsSection exposing (..)
 
-import Element exposing (Element, column, fill, link, none, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, none, paddingXY, row, spacing, text, textColumn, width)
 import Element.Border as Border
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody, ExternalResourceBody, ExternalResourcesListBody, FullSourceBody)
-import Page.UI.Components exposing (h5, h6, viewSummaryField)
+import Page.UI.Components exposing (h5, h6, label, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -25,16 +25,21 @@ viewExemplarsSection exemplarSection language =
     row
         [ width fill
         , paddingXY 0 20
+        , height fill
         ]
         [ column
             [ width fill
+            , height fill
             , spacing 20
             ]
             [ row
                 [ width fill ]
                 [ h5 language exemplarSection.label ]
             , column
-                [ width fill ]
+                [ width fill
+                , height fill
+                , spacing 20
+                ]
                 (List.map (\l -> viewExemplar l language) exemplarSection.items)
             ]
         ]
@@ -68,10 +73,13 @@ viewExemplar exemplar language =
         [ width fill
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
         , Border.color colourScheme.midGrey
-        , paddingXY 5 0
+        , paddingXY 10 0
         ]
         [ column
-            [ width fill ]
+            [ width fill
+            , height fill
+            , spacing 10
+            ]
             [ heldBy
             , summary
             , externalResources
@@ -92,6 +100,7 @@ viewExternalLinksSection : ExternalResourcesListBody -> Language -> Element msg
 viewExternalLinksSection linkSection language =
     row
         [ width fill
+        , height fill
         ]
         [ column
             [ width fill
@@ -99,11 +108,22 @@ viewExternalLinksSection linkSection language =
             ]
             [ row
                 [ width fill
+                , paddingXY 0 10
                 ]
-                [ h6 language linkSection.label ]
-            , row
-                [ width fill ]
-                (List.map (\l -> viewExternalLink l language) linkSection.items)
+                [ el
+                    [ width (fillPortion 1)
+                    , alignTop
+                    ]
+                    (label language linkSection.label)
+                , el
+                    [ width (fillPortion 4)
+                    , alignTop
+                    ]
+                    (textColumn
+                        []
+                        (List.map (\l -> viewExternalLink l language) linkSection.items)
+                    )
+                ]
             ]
         ]
 
