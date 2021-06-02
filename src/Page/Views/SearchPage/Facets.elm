@@ -9,7 +9,7 @@ import Msg exposing (Msg(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (Facet, FacetItem(..))
 import Page.UI.Attributes exposing (bodyRegular)
-import Page.UI.Images exposing (bookOpenSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, unknownSvg)
+import Page.UI.Images exposing (bookOpenSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -58,7 +58,7 @@ viewModeItem selectedMode fitem language =
         icon =
             case value of
                 "sources" ->
-                    iconTmpl bookOpenSvg
+                    iconTmpl sourcesSvg
 
                 "people" ->
                     iconTmpl peopleSvg
