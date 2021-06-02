@@ -1,6 +1,6 @@
 module Page.Views.SearchPage exposing (view)
 
-import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -16,6 +16,7 @@ import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (bodySM, minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (h4, h5, searchKeywordInput)
+import Page.UI.Images exposing (bookOpenSvg, digitizedImagesSvg)
 import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Page.Views.SearchPage.Facets exposing (viewModeItems)
 import Page.Views.SearchPage.Pagination exposing (viewSearchResultsPagination)
@@ -92,7 +93,8 @@ viewTopBar model =
                     [ searchKeywordInput msgs qText model.language ]
                 , column
                     [ width fill ]
-                    []
+                    [ text "Hide item records"
+                    ]
                 ]
             , searchModeSelectorRouter model
             ]
@@ -287,6 +289,41 @@ viewSearchResult result language =
                 ]
                 (h5 language result.label)
 
+        flags =
+            result.flags
+
+        digitizedImagesFlag =
+            flags.hasDigitization
+
+        isItemFlag =
+            flags.isItemRecord
+
+        digitalImagesIcon =
+            if digitizedImagesFlag == True then
+                el
+                    [ width (px 16)
+                    , height fill
+                    , centerX
+                    , centerY
+                    ]
+                    digitizedImagesSvg
+
+            else
+                none
+
+        isItemIcon =
+            if isItemFlag == True then
+                el
+                    [ width (px 16)
+                    , height fill
+                    , centerX
+                    , centerY
+                    ]
+                    bookOpenSvg
+
+            else
+                none
+
         partOf =
             case result.partOf of
                 Just partOfBody ->
@@ -340,8 +377,13 @@ viewSearchResult result language =
             ]
             [ row
                 [ width fill
+                , alignLeft
+                , spacing 10
                 ]
-                [ resultTitle ]
+                [ digitalImagesIcon
+                , isItemIcon
+                , resultTitle
+                ]
             , partOf
             , summary
             ]
@@ -355,4 +397,16 @@ viewSearchResultsLoading model =
 
 viewSearchResultsError : Model -> Element Msg
 viewSearchResultsError model =
-    text "Error"
+    let
+        page =
+            model.page
+
+        errorMessage =
+            case page.response of
+                Error msg ->
+                    text msg
+
+                _ ->
+                    none
+    in
+    errorMessage
