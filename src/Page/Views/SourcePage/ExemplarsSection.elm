@@ -24,21 +24,23 @@ viewExemplarsSection : ExemplarsSectionBody -> Language -> Element msg
 viewExemplarsSection exemplarSection language =
     row
         [ width fill
-        , paddingXY 0 20
         , height fill
+        , paddingXY 0 20
         ]
         [ column
             [ width fill
             , height fill
             , spacing 20
+            , alignTop
             ]
             [ row
-                [ width fill ]
+                [ width fill
+                ]
                 [ h5 language exemplarSection.label ]
             , column
                 [ width fill
-                , height fill
                 , spacing 20
+                , alignTop
                 ]
                 (List.map (\l -> viewExemplar l language) exemplarSection.items)
             ]
@@ -58,7 +60,9 @@ viewExemplar exemplar language =
 
         heldBy =
             row
-                [ width fill ]
+                [ width fill
+                , spacing 20
+                ]
                 [ viewHeldBy exemplar.heldBy language ]
 
         externalResources =
