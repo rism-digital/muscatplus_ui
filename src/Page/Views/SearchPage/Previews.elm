@@ -14,6 +14,7 @@ import Page.Views.SourcePage.ContentsSection exposing (viewContentsRouter)
 import Page.Views.SourcePage.ExemplarsSection exposing (viewExemplarsRouter)
 import Page.Views.SourcePage.MaterialGroupsSection exposing (viewMaterialGroupsRouter)
 import Page.Views.SourcePage.PartOfSection exposing (viewPartOfRouter, viewPartOfSection)
+import Page.Views.SourcePage.SourceItemsSection exposing (viewSourceItemsRouter)
 
 
 viewPreviewRouter : ServerData -> Language -> Element Msg
@@ -68,6 +69,7 @@ viewSourcePreview body language =
                         , viewContentsRouter
                         , viewExemplarsRouter
                         , viewMaterialGroupsRouter
+                        , viewSourceItemsRouter
                         ]
                     )
                 ]
