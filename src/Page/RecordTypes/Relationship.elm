@@ -7,6 +7,29 @@ import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 
 
+type alias RelationshipsSectionBody =
+    { label : LanguageMap
+    , items : List RelationshipBody
+    }
+
+
+type alias RelationshipBody =
+    { label : LanguageMap
+    , role : RelationshipRole
+    , qualifier : Maybe RelationshipQualifier
+    , qualifierLabel : Maybe LanguageMap
+    , relatedTo : Maybe RelatedToBody
+    , name : Maybe LanguageMap
+    }
+
+
+type alias RelatedToBody =
+    { id : String
+    , label : LanguageMap
+    , type_ : RelatedTo
+    }
+
+
 type RelatedTo
     = PersonRelationship
     | InstitutionRelationship
@@ -153,23 +176,6 @@ roleConverter roleString =
         |> Decode.succeed
 
 
-type alias RelationshipBody =
-    { label : LanguageMap
-    , role : RelationshipRole
-    , qualifier : Maybe RelationshipQualifier
-    , qualifierLabel : Maybe LanguageMap
-    , relatedTo : Maybe RelatedToBody
-    , name : Maybe LanguageMap
-    }
-
-
-type alias RelatedToBody =
-    { id : String
-    , label : LanguageMap
-    , type_ : RelatedTo
-    }
-
-
 relatedToTypeDecoder : Decoder RelatedTo
 relatedToTypeDecoder =
     Decode.string
@@ -210,6 +216,13 @@ relatedToConverter typeString =
 
         _ ->
             Decode.succeed UnknownRelationship
+
+
+relationshipsSectionBodyDecoder : Decoder RelationshipsSectionBody
+relationshipsSectionBodyDecoder =
+    Decode.succeed RelationshipsSectionBody
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list relationshipBodyDecoder)
 
 
 relationshipBodyDecoder : Decoder RelationshipBody

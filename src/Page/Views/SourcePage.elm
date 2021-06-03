@@ -21,17 +21,27 @@ view model =
 
         pageView =
             case response of
+                Loading ->
+                    -- TODO: Show source loading page
+                    none
+
                 Response (SourceData body) ->
                     viewFullSourcePage body model.language
+
+                Error err ->
+                    -- TODO: Show error page
+                    none
 
                 _ ->
                     none
     in
     row
         [ width fill
+        , height fill
         ]
         [ column
             [ width fill
+            , height fill
             , padding 20
             , Background.color colourScheme.white
             ]

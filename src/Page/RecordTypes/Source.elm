@@ -6,7 +6,7 @@ import Language exposing (LanguageMap)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody, InstitutionBody, basicInstitutionBodyDecoder)
-import Page.RecordTypes.Relationship exposing (RelationshipBody, relationshipBodyDecoder)
+import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 
 
@@ -68,12 +68,6 @@ type alias MaterialGroupBody =
     { label : LanguageMap
     , summary : Maybe (List LabelValue)
     , relationships : Maybe RelationshipsSectionBody
-    }
-
-
-type alias RelationshipsSectionBody =
-    { label : LanguageMap
-    , items : List RelationshipBody
     }
 
 
@@ -202,13 +196,6 @@ materialGroupBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
-
-
-relationshipsSectionBodyDecoder : Decoder RelationshipsSectionBody
-relationshipsSectionBodyDecoder =
-    Decode.succeed RelationshipsSectionBody
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list relationshipBodyDecoder)
 
 
 incipitsSectionBodyDecoder : Decoder IncipitsSectionBody
