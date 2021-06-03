@@ -14,6 +14,7 @@ type alias BasicSourceBody =
     { id : String
     , label : LanguageMap
     , typeLabel : LanguageMap
+    , summary : Maybe (List LabelValue)
     }
 
 
@@ -155,6 +156,7 @@ basicSourceBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
+        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
 
 
 partOfSectionBodyDecoder : Decoder PartOfSectionBody
