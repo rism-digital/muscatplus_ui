@@ -301,10 +301,8 @@ viewSearchResult result language =
         digitalImagesIcon =
             if digitizedImagesFlag == True then
                 el
-                    [ width (px 16)
+                    [ width (px 20)
                     , height fill
-                    , centerX
-                    , centerY
                     ]
                     digitizedImagesSvg
 
@@ -314,10 +312,8 @@ viewSearchResult result language =
         isItemIcon =
             if isItemFlag == True then
                 el
-                    [ width (px 16)
+                    [ width (px 20)
                     , height fill
-                    , centerX
-                    , centerY
                     ]
                     bookOpenSvg
 
@@ -370,22 +366,33 @@ viewSearchResult result language =
     row
         [ width fill
         , height (px 100)
+        , alignTop
+        , Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
+        , Border.color colourScheme.midGrey
+        , paddingXY 10 0
         ]
         [ column
             [ width fill
             , spacing 8
+            , alignTop
             ]
             [ row
                 [ width fill
                 , alignLeft
                 , spacing 10
                 ]
-                [ digitalImagesIcon
-                , isItemIcon
-                , resultTitle
+                [ resultTitle
                 ]
             , partOf
             , summary
+            , row
+                [ width fill
+                , alignLeft
+                , spacing 10
+                ]
+                [ digitalImagesIcon
+                , isItemIcon
+                ]
             ]
         ]
 
