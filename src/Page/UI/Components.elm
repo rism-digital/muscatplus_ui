@@ -84,18 +84,32 @@ concatenatedValue language langmap =
 viewSummaryField : List LabelValue -> Language -> Element msg
 viewSummaryField field language =
     wrappedRow
-        [ width fill ]
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            [ width fill ]
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             (List.map
                 (\f ->
                     wrappedRow
-                        [ width fill, paddingXY 0 10 ]
+                        [ width fill
+                        , height fill
+                        , paddingXY 0 10
+                        , alignTop
+                        ]
                         [ el
-                            [ width (fillPortion 1), alignTop ]
+                            [ width (fillPortion 1)
+                            , alignTop
+                            ]
                             (label language f.label)
                         , wrappedRow
-                            [ width (fillPortion 4), alignTop ]
+                            [ width (fillPortion 4)
+                            , alignTop
+                            ]
                             [ concatenatedValue language f.value ]
                         ]
                 )
