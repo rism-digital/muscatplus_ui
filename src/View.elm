@@ -1,7 +1,7 @@
 module View exposing (view)
 
 import Browser
-import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, layout, link, paddingXY, px, row, text, width)
+import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, inFront, layout, link, moveDown, moveLeft, none, paddingXY, px, row, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Region as Region
@@ -12,6 +12,7 @@ import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..))
+import Page.TablesOfContents exposing (createSourceRecordToc)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, minimalDropShadow, pageBackground)
 import Page.UI.Components exposing (languageSelect)
 import Page.UI.Images exposing (rismLogo)
@@ -58,28 +59,42 @@ view model =
                 _ ->
                     Page.Views.FrontPage.view
 
-        pageTitle =
+        ( pageTitle, pageToc ) =
             case page.response of
                 Response (SearchData _) ->
-                    extractLabelFromLanguageMap model.language localTranslations.search ++ " RISM"
+                    ( extractLabelFromLanguageMap model.language localTranslations.search ++ " RISM"
+                    , none
+                    )
 
                 Response (SourceData d) ->
-                    extractLabelFromLanguageMap model.language d.label
+                    ( extractLabelFromLanguageMap model.language d.label
+                    , createSourceRecordToc d model.language
+                    )
 
                 Response (PersonData d) ->
-                    extractLabelFromLanguageMap model.language d.label
+                    ( extractLabelFromLanguageMap model.language d.label
+                    , none
+                    )
 
                 Response (InstitutionData d) ->
-                    extractLabelFromLanguageMap model.language d.label
+                    ( extractLabelFromLanguageMap model.language d.label
+                    , none
+                    )
 
                 Response (FestivalData d) ->
-                    extractLabelFromLanguageMap model.language d.label
+                    ( extractLabelFromLanguageMap model.language d.label
+                    , none
+                    )
 
                 Response (RootData d) ->
-                    "RISM Online"
+                    ( "RISM Online"
+                    , none
+                    )
 
                 _ ->
-                    "RISM Online"
+                    ( "RISM Online"
+                    , none
+                    )
 
         wrappedPageView =
             [ layout
@@ -88,6 +103,15 @@ view model =
                 , bodyFontColour
                 , fontBaseSize
                 , pageBackground
+                , inFront
+                    (el
+                        [ Border.width 1
+                        , alignRight
+                        , moveDown 100
+                        , moveLeft 100
+                        ]
+                        pageToc
+                    )
                 ]
                 (column
                     [ centerX

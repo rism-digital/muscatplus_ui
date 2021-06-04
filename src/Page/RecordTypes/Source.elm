@@ -1,7 +1,7 @@
 module Page.RecordTypes.Source exposing (..)
 
 import Json.Decode as Decode exposing (Decoder, list, string)
-import Json.Decode.Pipeline exposing (optional, required)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
@@ -19,7 +19,8 @@ type alias BasicSourceBody =
 
 
 type alias FullSourceBody =
-    { id : String
+    { sectionToc : String
+    , id : String
     , label : LanguageMap
     , typeLabel : LanguageMap
     , partOf : Maybe PartOfSectionBody
@@ -39,7 +40,8 @@ type alias PartOfSectionBody =
 
 
 type alias ContentsSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , creator : Maybe RelationshipBody
     , summary : Maybe (List LabelValue)
     , subjects : Maybe SourceSubjectsBody
@@ -59,7 +61,8 @@ type alias SourceSubject =
 
 
 type alias MaterialGroupsSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , items : List MaterialGroupBody
     }
 
@@ -72,13 +75,15 @@ type alias MaterialGroupBody =
 
 
 type alias IncipitsSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , items : List IncipitBody
     }
 
 
 type alias ReferencesNotesSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , notes : Maybe (List LabelValue)
     , performanceLocations : Maybe PerformanceLocationsSectionBody
     , liturgicalFestivals : Maybe LiturgicalFestivalsSectionBody
@@ -98,7 +103,8 @@ type alias LiturgicalFestivalsSectionBody =
 
 
 type alias ExemplarsSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , items : List ExemplarBody
     }
 
@@ -112,7 +118,8 @@ type alias ExemplarBody =
 
 
 type alias ExternalResourcesListBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , items : List ExternalResourceBody
     }
 
@@ -124,7 +131,8 @@ type alias ExternalResourceBody =
 
 
 type alias SourceItemsSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , items : List BasicSourceBody
     }
 
@@ -132,6 +140,7 @@ type alias SourceItemsSectionBody =
 sourceBodyDecoder : Decoder FullSourceBody
 sourceBodyDecoder =
     Decode.succeed FullSourceBody
+        |> hardcoded "source-record-top"
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
@@ -163,6 +172,7 @@ partOfSectionBodyDecoder =
 contentsSectionBodyDecoder : Decoder ContentsSectionBody
 contentsSectionBodyDecoder =
     Decode.succeed ContentsSectionBody
+        |> hardcoded "source-record-contents-section"
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (Decode.maybe relationshipBodyDecoder) Nothing
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
@@ -186,6 +196,7 @@ sourceSubjectDecoder =
 materialGroupsSectionBodyDecoder : Decoder MaterialGroupsSectionBody
 materialGroupsSectionBodyDecoder =
     Decode.succeed MaterialGroupsSectionBody
+        |> hardcoded "source-record-material-groups-section"
         |> required "label" languageMapLabelDecoder
         |> required "items" (list materialGroupBodyDecoder)
 
@@ -201,6 +212,7 @@ materialGroupBodyDecoder =
 incipitsSectionBodyDecoder : Decoder IncipitsSectionBody
 incipitsSectionBodyDecoder =
     Decode.succeed IncipitsSectionBody
+        |> hardcoded "source-record-incipits-section"
         |> required "label" languageMapLabelDecoder
         |> required "items" (list incipitBodyDecoder)
 
@@ -208,6 +220,7 @@ incipitsSectionBodyDecoder =
 referencesNotesSectionBodyDecoder : Decoder ReferencesNotesSectionBody
 referencesNotesSectionBodyDecoder =
     Decode.succeed ReferencesNotesSectionBody
+        |> hardcoded "source-record-references-notes-section"
         |> required "label" languageMapLabelDecoder
         |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "performanceLocations" (Decode.maybe performanceLocationsSectionBodyDecoder) Nothing
@@ -231,6 +244,7 @@ liturgicalFestivalsSectionBodyDecoder =
 exemplarsSectionBodyDecoder : Decoder ExemplarsSectionBody
 exemplarsSectionBodyDecoder =
     Decode.succeed ExemplarsSectionBody
+        |> hardcoded "source-record-exemplars-section"
         |> required "label" languageMapLabelDecoder
         |> required "items" (list exemplarsBodyDecoder)
 
@@ -247,6 +261,7 @@ exemplarsBodyDecoder =
 externalResourcesListBodyDecoder : Decoder ExternalResourcesListBody
 externalResourcesListBodyDecoder =
     Decode.succeed ExternalResourcesListBody
+        |> hardcoded "source-record-external-resources-section"
         |> required "label" languageMapLabelDecoder
         |> required "items" (list externalResourceBodyDecoder)
 
@@ -261,5 +276,6 @@ externalResourceBodyDecoder =
 sourceItemsSectionBodyDecoder : Decoder SourceItemsSectionBody
 sourceItemsSectionBodyDecoder =
     Decode.succeed SourceItemsSectionBody
+        |> hardcoded "source-record-items-section"
         |> required "label" languageMapLabelDecoder
         |> required "items" (list basicSourceBodyDecoder)

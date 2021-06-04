@@ -330,6 +330,7 @@ localTranslations :
     , page : List LanguageValues
     , viewRecord : List LanguageValues
     , recordURI : List LanguageValues
+    , recordTop : List LanguageValues
     }
 localTranslations =
     { search =
@@ -410,4 +411,6 @@ localTranslations =
         ]
     , recordURI =
         [ LanguageValues English [ "Record URI (Permalink)" ] ]
+    , recordTop =
+        [ LanguageValues English [ "Record top" ] ]
     }
