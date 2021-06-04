@@ -164,6 +164,7 @@ languageSelectStyles : List (HT.Attribute msg)
 languageSelectStyles =
     [ HA.style "box-sizing" "border-box"
     , HA.style "appearance" "none"
+    , HA.style "-webkit-appearance" "none"
     , HA.style "border" "none"
     , HA.style "padding" "0 1em 0 0"
     , HA.style "margin" "0"
