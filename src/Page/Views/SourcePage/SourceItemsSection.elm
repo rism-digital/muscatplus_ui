@@ -3,7 +3,7 @@ module Page.Views.SourcePage.SourceItemsSection exposing (..)
 import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, none, paddingXY, row, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
-import Html.Attributes as HA
+import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Source exposing (BasicSourceBody, FullSourceBody, SourceItemsSectionBody)
 import Page.UI.Attributes exposing (headingXS)
@@ -36,7 +36,7 @@ viewSourceItemsSection siSection language =
             ]
             [ row
                 [ width fill
-                , htmlAttribute (HA.id siSection.sectionToc)
+                , htmlAttribute (HTA.id siSection.sectionToc)
                 ]
                 [ h5 language siSection.label ]
             , column

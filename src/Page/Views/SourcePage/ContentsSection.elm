@@ -1,6 +1,7 @@
 module Page.Views.SourcePage.ContentsSection exposing (..)
 
-import Element exposing (Element, column, fill, none, paddingXY, row, spacing, width)
+import Element exposing (Element, column, fill, htmlAttribute, none, paddingXY, row, spacing, width)
+import Html.Attributes as HTA
 import Language exposing (Language)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (ContentsSectionBody, FullSourceBody)
@@ -41,7 +42,9 @@ viewContentsSection contents language =
             , spacing 10
             ]
             [ row
-                [ width fill ]
+                [ width fill
+                , htmlAttribute (HTA.id contents.sectionToc)
+                ]
                 [ h5 language contents.label ]
             , creator
             , viewSummaryField summary language

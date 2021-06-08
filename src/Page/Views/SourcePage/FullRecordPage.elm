@@ -1,9 +1,8 @@
 module Page.Views.SourcePage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignRight, column, el, fill, height, htmlAttribute, inFront, link, none, row, spacing, text, width)
-import Element.Border as Border
+import Element exposing (Element, column, el, fill, height, htmlAttribute, link, row, spacing, text, width)
 import Element.Font as Font
-import Html.Attributes as HA
+import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
@@ -41,14 +40,15 @@ viewFullSourcePage body language =
             , spacing 5
             ]
             [ row
-                [ width fill ]
+                [ width fill
+                , htmlAttribute (HTA.id body.sectionToc)
+                ]
                 [ h4 language body.label ]
             , recordUri
             , row
                 [ width fill ]
                 [ column
                     [ width fill
-                    , htmlAttribute (HA.id body.sectionToc)
                     ]
                     (List.map (\viewFunc -> viewFunc body language)
                         [ viewPartOfRouter

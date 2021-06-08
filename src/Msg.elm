@@ -19,5 +19,6 @@ type Msg
     | LanguageSelectChanged String
     | FacetChecked String FacetItem Bool
     | ModeSelected String FacetItem Bool
+    | ToCElementSelected String
     | PreviewSearchResult String
     | NoOp

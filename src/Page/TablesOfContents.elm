@@ -1,29 +1,32 @@
 module Page.TablesOfContents exposing (..)
 
-import Element exposing (Element, column, fill, html, link, none, padding, paragraph, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, column, el, fill, htmlAttribute, none, padding, pointer, px, row, spacing, text, width)
+import Element.Events exposing (onClick)
 import Element.Font as Font
-import Html as HT
 import Html.Attributes as HTA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, localTranslations)
+import Msg exposing (Msg(..))
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Style exposing (colourScheme)
 
 
-createTocLink : ( String, LanguageMap ) -> Language -> Element msg
+createTocLink : ( String, LanguageMap ) -> Language -> Element Msg
 createTocLink ( url, label ) language =
+    -- TODO: Scrolling probably needs to be implemented with
+    -- https://package.elm-lang.org/packages/elm/browser/latest/Browser.Dom
     row
         [ width fill
-        , Font.color colourScheme.lightBlue
         ]
-        [ html
-            (HT.a
-                [ HTA.href ("#" ++ url) ]
-                [ HT.text (extractLabelFromLanguageMap language label) ]
-            )
+        [ el
+            [ Font.color colourScheme.lightBlue
+            , onClick (ToCElementSelected url)
+            , pointer
+            ]
+            (text (extractLabelFromLanguageMap language label))
         ]
 
 
-createSourceRecordToc : FullSourceBody -> Language -> Element msg
+createSourceRecordToc : FullSourceBody -> Language -> Element Msg
 createSourceRecordToc body language =
     let
         topEntry =
@@ -39,6 +42,22 @@ createSourceRecordToc body language =
 
         exemplarsEntry =
             case body.exemplars of
+                Just section ->
+                    createTocLink ( section.sectionToc, section.label ) language
+
+                Nothing ->
+                    none
+
+        incipitsEntry =
+            case body.incipits of
+                Just section ->
+                    createTocLink ( section.sectionToc, section.label ) language
+
+                Nothing ->
+                    none
+
+        materialGroupsEntry =
+            case body.materialGroups of
                 Just section ->
                     createTocLink ( section.sectionToc, section.label ) language
 
@@ -64,6 +83,8 @@ createSourceRecordToc body language =
             [ topEntry
             , contentsEntry
             , exemplarsEntry
+            , incipitsEntry
+            , materialGroupsEntry
             , sourceItemsEntry
             ]
         ]

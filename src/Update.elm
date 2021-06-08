@@ -14,6 +14,7 @@ import Page.Route exposing (Route(..), parseUrl)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
 import Url
+import Viewport exposing (jumpToId)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -175,6 +176,11 @@ update msg model =
 
         Msg.FacetChecked _ _ _ ->
             ( model, Cmd.none )
+
+        Msg.ToCElementSelected idParam ->
+            ( model
+            , jumpToId idParam
+            )
 
         Msg.PreviewSearchResult url ->
             let

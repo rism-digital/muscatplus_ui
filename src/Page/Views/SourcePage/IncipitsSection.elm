@@ -1,7 +1,8 @@
 module Page.Views.SourcePage.IncipitsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, none, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, none, paddingXY, row, spacing, text, width)
 import Element.Border as Border
+import Html.Attributes as HTA
 import Language exposing (Language)
 import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (FullSourceBody, IncipitsSectionBody)
@@ -34,7 +35,9 @@ viewIncipitsSection incipSection language =
             , alignTop
             ]
             [ row
-                [ width fill ]
+                [ width fill
+                , htmlAttribute (HTA.id incipSection.sectionToc)
+                ]
                 [ h5 language incipSection.label ]
             , column
                 [ width fill

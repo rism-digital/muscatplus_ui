@@ -1,8 +1,9 @@
 module Page.Views.SourcePage.ExemplarsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, none, paddingXY, row, spacing, text, textColumn, width)
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, none, paddingXY, row, spacing, text, textColumn, width)
 import Element.Border as Border
 import Element.Font as Font
+import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody, ExternalResourceBody, ExternalResourcesListBody, FullSourceBody)
@@ -35,6 +36,7 @@ viewExemplarsSection exemplarSection language =
             ]
             [ row
                 [ width fill
+                , htmlAttribute (HTA.id exemplarSection.sectionToc)
                 ]
                 [ h5 language exemplarSection.label ]
             , column
