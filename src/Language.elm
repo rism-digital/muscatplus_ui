@@ -4,6 +4,7 @@ module Language exposing
     , LanguageNumericMap
     , LanguageNumericValues(..)
     , LanguageValues(..)
+    , dateFormatter
     , extractLabelFromLanguageMap
     , extractTextFromLanguageMap
     , formatNumberByLanguage
@@ -18,10 +19,13 @@ module Language exposing
     , parseLocaleToLanguage
     )
 
+import DateFormat
+import DateFormat.Language
 import Dict exposing (Dict)
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), Locale, base, usLocale)
 import Json.Decode as Decode exposing (Decoder)
+import Time exposing (Posix, Zone)
 
 
 type Language
@@ -312,6 +316,22 @@ formatNumberByLanguage num lang =
                     englishLocale
     in
     format formatterLocale num
+
+
+
+-- DATE FORMATTING
+-- TODO: Change this to work with languages
+
+
+dateFormatter : Zone -> Posix -> String
+dateFormatter =
+    DateFormat.format
+        [ DateFormat.monthNameFull
+        , DateFormat.text " "
+        , DateFormat.dayOfMonthSuffix
+        , DateFormat.text ", "
+        , DateFormat.yearNumber
+        ]
 
 
 {-|
