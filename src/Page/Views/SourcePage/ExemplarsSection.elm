@@ -55,7 +55,7 @@ viewExemplar exemplar language =
         summary =
             case exemplar.summary of
                 Just sum ->
-                    viewSummaryField sum language
+                    viewSummaryField language sum
 
                 Nothing ->
                     none

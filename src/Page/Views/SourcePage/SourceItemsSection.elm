@@ -55,7 +55,7 @@ viewSourceItem source language =
         summary =
             case source.summary of
                 Just sum ->
-                    viewSummaryField sum language
+                    viewSummaryField language sum
 
                 Nothing ->
                     none

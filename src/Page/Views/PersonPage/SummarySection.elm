@@ -11,7 +11,7 @@ viewSummaryRouter : PersonBody -> Language -> Element Msg
 viewSummaryRouter body language =
     case body.summary of
         Just sum ->
-            viewSummaryField sum language
+            viewSummaryField language sum
 
         Nothing ->
             none

@@ -80,8 +80,12 @@ concatenatedValue language langmap =
         [ styledList (extractTextFromLanguageMap language langmap) ]
 
 
-viewSummaryField : List LabelValue -> Language -> Element msg
-viewSummaryField field language =
+viewLabelValueField :
+    (Language -> LanguageMap -> Element msg)
+    -> Language
+    -> List LabelValue
+    -> Element msg
+viewLabelValueField fmt language field =
     wrappedRow
         [ width fill
         , height fill
@@ -109,12 +113,22 @@ viewSummaryField field language =
                             [ width (fillPortion 4)
                             , alignTop
                             ]
-                            [ concatenatedValue language f.value ]
+                            [ fmt language f.value ]
                         ]
                 )
                 field
             )
         ]
+
+
+viewSummaryField : Language -> List LabelValue -> Element msg
+viewSummaryField language field =
+    viewLabelValueField concatenatedValue language field
+
+
+viewParagraphField : Language -> List LabelValue -> Element msg
+viewParagraphField language field =
+    viewLabelValueField value language field
 
 
 {-|

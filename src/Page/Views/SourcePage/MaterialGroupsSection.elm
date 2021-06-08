@@ -55,7 +55,7 @@ viewMaterialGroup mg language =
         summary =
             case mg.summary of
                 Just sum ->
-                    viewSummaryField sum language
+                    viewSummaryField language sum
 
                 Nothing ->
                     none

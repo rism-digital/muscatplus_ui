@@ -39,6 +39,6 @@ viewNameVariantsSection variantsSection language =
                 , spacing 20
                 , alignTop
                 ]
-                [ viewSummaryField variantsSection.items language ]
+                [ viewSummaryField language variantsSection.items ]
             ]
         ]

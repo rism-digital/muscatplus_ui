@@ -55,7 +55,7 @@ viewIncipit incipit language =
         summary =
             case incipit.summary of
                 Just sum ->
-                    viewSummaryField sum language
+                    viewSummaryField language sum
 
                 Nothing ->
                     none

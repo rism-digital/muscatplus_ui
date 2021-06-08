@@ -47,6 +47,6 @@ viewContentsSection contents language =
                 ]
                 [ h5 language contents.label ]
             , creator
-            , viewSummaryField summary language
+            , viewSummaryField language summary
             ]
         ]
