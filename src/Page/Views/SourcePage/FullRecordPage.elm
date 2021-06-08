@@ -11,6 +11,7 @@ import Page.UI.Components exposing (h4)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.SourcePage.ContentsSection exposing (viewContentsRouter)
 import Page.Views.SourcePage.ExemplarsSection exposing (viewExemplarsRouter)
+import Page.Views.SourcePage.IncipitsSection exposing (viewIncipitsRouter)
 import Page.Views.SourcePage.MaterialGroupsSection exposing (viewMaterialGroupsRouter)
 import Page.Views.SourcePage.PartOfSection exposing (viewPartOfRouter)
 import Page.Views.SourcePage.SourceItemsSection exposing (viewSourceItemsRouter)
@@ -53,6 +54,7 @@ viewFullSourcePage body language =
                         [ viewPartOfRouter
                         , viewContentsRouter
                         , viewExemplarsRouter
+                        , viewIncipitsRouter
                         , viewMaterialGroupsRouter
                         , viewSourceItemsRouter
                         ]
