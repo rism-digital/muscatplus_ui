@@ -64,6 +64,14 @@ createSourceRecordToc body language =
                 Nothing ->
                     none
 
+        referencesNotesEntry =
+            case body.referencesNotes of
+                Just section ->
+                    createTocLink ( section.sectionToc, section.label ) language
+
+                Nothing ->
+                    none
+
         sourceItemsEntry =
             case body.items of
                 Just section ->
@@ -85,6 +93,7 @@ createSourceRecordToc body language =
             , exemplarsEntry
             , incipitsEntry
             , materialGroupsEntry
+            , referencesNotesEntry
             , sourceItemsEntry
             ]
         ]
