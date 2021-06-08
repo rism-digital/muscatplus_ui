@@ -229,7 +229,7 @@ relationshipBodyDecoder : Decoder RelationshipBody
 relationshipBodyDecoder =
     Decode.succeed RelationshipBody
         |> required "label" languageMapLabelDecoder
-        |> required "role" roleDecoder
+        |> optional "role" roleDecoder UnknownRole
         |> optional "qualifier" (Decode.maybe qualifierDecoder) Nothing
         |> optional "qualifierLabel" (Decode.maybe languageMapLabelDecoder) Nothing
         |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing

@@ -34,7 +34,8 @@ viewPartOfSection partOf language =
             , spacing 10
             ]
             [ row
-                [ width fill ]
+                [ width fill
+                ]
                 [ h5 language partOf.label ]
             , row
                 [ width fill ]
