@@ -1,9 +1,11 @@
-module Page.RecordTypes.Shared exposing (LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
+module Page.RecordTypes.Shared exposing (LabelNumericValue, LabelValue, RecordHistory, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder, typeDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
+import Json.Decode.Extra exposing (datetime)
 import Json.Decode.Pipeline exposing (required)
 import Language exposing (LanguageMap, LanguageNumericMap, languageMapDecoder, languageNumericMapDecoder)
 import Page.RecordTypes exposing (Filter, RecordType, recordTypeFromJsonType)
+import Time
 
 
 type alias LabelValue =
@@ -15,6 +17,14 @@ type alias LabelValue =
 type alias LabelNumericValue =
     { label : LanguageMap
     , value : LanguageNumericMap
+    }
+
+
+type alias RecordHistory =
+    { createdLabel : LanguageMap
+    , created : Time.Posix
+    , updatedLabel : LanguageMap
+    , updated : Time.Posix
     }
 
 
@@ -48,3 +58,12 @@ typeDecoder : Decoder RecordType
 typeDecoder =
     Decode.string
         |> andThen (\str -> Decode.succeed (recordTypeFromJsonType str))
+
+
+recordHistoryDecoder : Decoder RecordHistory
+recordHistoryDecoder =
+    Decode.succeed RecordHistory
+        |> required "createdLabel" languageMapLabelDecoder
+        |> required "created" datetime
+        |> required "updatedLabel" languageMapLabelDecoder
+        |> required "updated" datetime

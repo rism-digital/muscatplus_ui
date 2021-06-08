@@ -1,6 +1,7 @@
 module Page.UI.Components exposing (..)
 
-import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
+import DateFormat
+import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, none, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -9,11 +10,12 @@ import Element.Region as Region
 import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, localTranslations, parseLocaleToLanguage)
-import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
+import Language exposing (Language, LanguageMap, dateFormatter, extractLabelFromLanguageMap, extractTextFromLanguageMap, localTranslations, parseLocaleToLanguage)
+import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Style exposing (colourScheme)
+import Time exposing (utc)
 
 
 {-|
@@ -288,5 +290,41 @@ searchKeywordInput msgs queryText currentLanguage =
                 { onPress = Just msgs.submitMsg
                 , label = text (extractLabelFromLanguageMap currentLanguage localTranslations.search)
                 }
+            ]
+        ]
+
+
+viewRecordHistory : RecordHistory -> Language -> Element msg
+viewRecordHistory history language =
+    let
+        createdDateFormatted =
+            dateFormatter utc history.created
+
+        updatedDateFormatted =
+            dateFormatter utc history.updated
+
+        created =
+            extractLabelFromLanguageMap language history.createdLabel ++ ": " ++ createdDateFormatted
+
+        updated =
+            extractLabelFromLanguageMap language history.updatedLabel ++ ": " ++ updatedDateFormatted
+    in
+    row
+        [ width fill
+        ]
+        [ column
+            [ width fill
+            , spacing 10
+            ]
+            [ el
+                [ alignRight
+                , bodySM
+                ]
+                (text created)
+            , el
+                [ alignRight
+                , bodySM
+                ]
+                (text updated)
             ]
         ]

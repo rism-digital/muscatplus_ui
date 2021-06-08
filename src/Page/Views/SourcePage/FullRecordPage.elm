@@ -6,13 +6,14 @@ import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Components exposing (h4)
+import Page.UI.Components exposing (h4, viewRecordHistory)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.SourcePage.ContentsSection exposing (viewContentsRouter)
 import Page.Views.SourcePage.ExemplarsSection exposing (viewExemplarsRouter)
 import Page.Views.SourcePage.IncipitsSection exposing (viewIncipitsRouter)
 import Page.Views.SourcePage.MaterialGroupsSection exposing (viewMaterialGroupsRouter)
 import Page.Views.SourcePage.PartOfSection exposing (viewPartOfRouter)
+import Page.Views.SourcePage.ReferencesNotesSection exposing (viewReferencesNotesRouter)
 import Page.Views.SourcePage.SourceItemsSection exposing (viewSourceItemsRouter)
 
 
@@ -56,9 +57,17 @@ viewFullSourcePage body language =
                         , viewExemplarsRouter
                         , viewIncipitsRouter
                         , viewMaterialGroupsRouter
+                        , viewReferencesNotesRouter
                         , viewSourceItemsRouter
                         ]
                     )
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewRecordHistory body.recordHistory language
+                    ]
                 ]
             ]
         ]
