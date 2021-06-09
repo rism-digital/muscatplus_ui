@@ -6,6 +6,7 @@ import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg(..))
+import Page.RecordTypes.Person exposing (PersonBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Style exposing (colourScheme)
 
@@ -64,6 +65,14 @@ createSourceRecordToc body language =
                 Nothing ->
                     none
 
+        relationshipsEntry =
+            case body.relationships of
+                Just section ->
+                    createTocLink ( section.sectionToc, section.label ) language
+
+                Nothing ->
+                    none
+
         referencesNotesEntry =
             case body.referencesNotes of
                 Just section ->
@@ -93,7 +102,63 @@ createSourceRecordToc body language =
             , exemplarsEntry
             , incipitsEntry
             , materialGroupsEntry
+            , relationshipsEntry
             , referencesNotesEntry
             , sourceItemsEntry
+            ]
+        ]
+
+
+createPersonRecordToc : PersonBody -> Language -> Element Msg
+createPersonRecordToc body language =
+    let
+        topEntry =
+            createTocLink ( body.sectionToc, localTranslations.recordTop ) language
+
+        nameVariantsEntry =
+            case body.nameVariants of
+                Just section ->
+                    createTocLink ( section.sectionToc, section.label ) language
+
+                Nothing ->
+                    none
+
+        personRelationshipsEntry =
+            case body.relationships of
+                Just section ->
+                    createTocLink ( section.sectionToc, section.label ) language
+
+                Nothing ->
+                    none
+
+        notesEntry =
+            case body.notes of
+                Just section ->
+                    createTocLink ( section.sectionToc, section.label ) language
+
+                Nothing ->
+                    none
+
+        externalResourcesEntry =
+            case body.externalResources of
+                Just section ->
+                    createTocLink ( section.sectionToc, section.label ) language
+
+                Nothing ->
+                    none
+    in
+    row
+        [ width (px 300)
+        , padding 10
+        ]
+        [ column
+            [ width fill
+            , spacing 5
+            ]
+            [ topEntry
+            , nameVariantsEntry
+            , personRelationshipsEntry
+            , notesEntry
+            , externalResourcesEntry
             ]
         ]
