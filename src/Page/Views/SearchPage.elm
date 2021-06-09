@@ -365,7 +365,8 @@ viewSearchResult result language =
     in
     row
         [ width fill
-        , height (px 100)
+
+        --, height (px 100)
         , alignTop
         , Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
         , Border.color colourScheme.midGrey
