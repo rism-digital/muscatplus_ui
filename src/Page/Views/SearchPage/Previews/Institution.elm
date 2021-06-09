@@ -3,12 +3,17 @@ module Page.Views.SearchPage.Previews.Institution exposing (..)
 import Element exposing (Element, column, el, fill, height, link, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Msg exposing (Msg)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Components exposing (h4)
+import Page.UI.Components exposing (h4, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
+import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
+import Page.Views.Helpers exposing (viewMaybe)
+import Page.Views.Notes exposing (viewNotesSection)
+import Page.Views.Relationship exposing (viewRelationshipsSection)
 
 
-viewInstitutionPreview : InstitutionBody -> Language -> Element msg
+viewInstitutionPreview : InstitutionBody -> Language -> Element Msg
 viewInstitutionPreview body language =
     let
         institutionLink =
@@ -35,5 +40,15 @@ viewInstitutionPreview body language =
                 [ width fill ]
                 [ h4 language body.label ]
             , institutionLink
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewMaybe (viewSummaryField language) body.summary
+                    , viewMaybe (viewRelationshipsSection language) body.relationships
+                    , viewMaybe (viewNotesSection language) body.notes
+                    , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                    ]
+                ]
             ]
         ]
