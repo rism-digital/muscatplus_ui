@@ -23,3 +23,9 @@ jumpToId id =
             (\_ ->
                 NoOp
             )
+
+
+resetViewport : Cmd Msg
+resetViewport =
+    Dom.setViewport 0 0
+        |> Task.attempt (\_ -> NoOp)
