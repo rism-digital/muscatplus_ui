@@ -19,13 +19,16 @@ view model =
         response =
             page.response
 
+        currentTab =
+            page.currentTab
+
         pageView =
             case response of
                 Loading ->
                     none
 
                 Response (PersonData body) ->
-                    viewFullPersonPage body model.language
+                    viewFullPersonPage currentTab model.language body
 
                 Error err ->
                     -- TODO: Show error page

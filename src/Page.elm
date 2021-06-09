@@ -1,7 +1,7 @@
 module Page exposing (..)
 
 import Msg exposing (Msg)
-import Page.Model exposing (PageModel, Response(..))
+import Page.Model exposing (CurrentTab(..), PageModel, Response(..))
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route(..), parseUrl)
 import Url exposing (Url)
@@ -20,6 +20,7 @@ init initialUrl =
     { response = Loading
     , route = initialRoute
     , url = initialUrl
+    , currentTab = DefaultTab
     }
 
 

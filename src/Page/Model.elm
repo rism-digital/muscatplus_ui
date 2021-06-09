@@ -12,8 +12,14 @@ type Response
     | NoResponseToShow
 
 
+type CurrentTab
+    = DefaultTab
+    | PersonSourcesTab
+
+
 type alias PageModel =
     { response : Response
     , route : Route
     , url : Url
+    , currentTab : CurrentTab
     }
