@@ -1,16 +1,19 @@
 module Page.Views.PersonPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, column, el, fill, height, link, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, htmlAttribute, link, row, spacing, text, width)
 import Element.Font as Font
+import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Components exposing (h4)
+import Page.UI.Components exposing (h4, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
-import Page.Views.PersonPage.ExternalAuthoritiesSection exposing (viewExternalAuthoritiesRouter)
-import Page.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsRouter)
-import Page.Views.PersonPage.RelationshipsSection exposing (viewPersonRelationshipsRouter)
-import Page.Views.PersonPage.SummarySection exposing (viewSummaryRouter)
+import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
+import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
+import Page.Views.Helpers exposing (viewMaybe)
+import Page.Views.Notes exposing (viewNotesSection)
+import Page.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
+import Page.Views.Relationship exposing (viewPersonRelationshipsSection)
 
 
 viewFullPersonPage : PersonBody -> Language -> Element Msg
@@ -30,7 +33,7 @@ viewFullPersonPage body language =
                 ]
 
         extAuthorities =
-            viewExternalAuthoritiesRouter body language
+            viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
     in
     row
         [ width fill
@@ -42,7 +45,9 @@ viewFullPersonPage body language =
             , spacing 5
             ]
             [ row
-                [ width fill ]
+                [ width fill
+                , htmlAttribute (HTA.id body.sectionToc)
+                ]
                 [ h4 language body.label ]
             , recordUri
             , extAuthorities
@@ -50,12 +55,12 @@ viewFullPersonPage body language =
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    (List.map (\viewFunc -> viewFunc body language)
-                        [ viewSummaryRouter
-                        , viewNameVariantsRouter
-                        , viewPersonRelationshipsRouter
-                        ]
-                    )
+                    [ viewMaybe (viewSummaryField language) body.summary
+                    , viewMaybe (viewNameVariantsSection language) body.nameVariants
+                    , viewMaybe (viewPersonRelationshipsSection language) body.relationships
+                    , viewMaybe (viewNotesSection language) body.notes
+                    , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                    ]
                 ]
             ]
         ]

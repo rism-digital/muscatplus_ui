@@ -9,18 +9,8 @@ import Page.UI.Components exposing (h5)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewPartOfRouter : FullSourceBody -> Language -> Element Msg
-viewPartOfRouter body language =
-    case body.partOf of
-        Just partOfSection ->
-            viewPartOfSection partOfSection language
-
-        Nothing ->
-            none
-
-
-viewPartOfSection : PartOfSectionBody -> Language -> Element Msg
-viewPartOfSection partOf language =
+viewPartOfSection : Language -> PartOfSectionBody -> Element Msg
+viewPartOfSection language partOf =
     let
         source =
             partOf.source
@@ -41,7 +31,9 @@ viewPartOfSection partOf language =
                 [ width fill ]
                 [ link
                     [ Font.color colourScheme.lightBlue ]
-                    { url = source.id, label = text (extractLabelFromLanguageMap language source.label) }
+                    { url = source.id
+                    , label = text (extractLabelFromLanguageMap language source.label)
+                    }
                 ]
             ]
         ]

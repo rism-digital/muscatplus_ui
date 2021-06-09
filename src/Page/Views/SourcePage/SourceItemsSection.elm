@@ -9,20 +9,11 @@ import Page.RecordTypes.Source exposing (BasicSourceBody, FullSourceBody, Source
 import Page.UI.Attributes exposing (headingXS)
 import Page.UI.Components exposing (h5, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
+import Page.Views.Helpers exposing (viewMaybe)
 
 
-viewSourceItemsRouter : FullSourceBody -> Language -> Element msg
-viewSourceItemsRouter body language =
-    case body.items of
-        Just sourceItemsSection ->
-            viewSourceItemsSection sourceItemsSection language
-
-        Nothing ->
-            none
-
-
-viewSourceItemsSection : SourceItemsSectionBody -> Language -> Element msg
-viewSourceItemsSection siSection language =
+viewSourceItemsSection : Language -> SourceItemsSectionBody -> Element msg
+viewSourceItemsSection language siSection =
     row
         [ width fill
         , height fill
@@ -44,21 +35,16 @@ viewSourceItemsSection siSection language =
                 , spacing 20
                 , alignTop
                 ]
-                (List.map (\l -> viewSourceItem l language) siSection.items)
+                (List.map (\l -> viewSourceItem language l) siSection.items)
             ]
         ]
 
 
-viewSourceItem : BasicSourceBody -> Language -> Element msg
-viewSourceItem source language =
+viewSourceItem : Language -> BasicSourceBody -> Element msg
+viewSourceItem language source =
     let
         summary =
-            case source.summary of
-                Just sum ->
-                    viewSummaryField language sum
-
-                Nothing ->
-                    none
+            viewMaybe (viewSummaryField language) source.summary
     in
     row
         [ width fill

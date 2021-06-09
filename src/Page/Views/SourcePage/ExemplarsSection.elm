@@ -5,24 +5,16 @@ import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
-import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody, ExternalResourceBody, ExternalResourcesListBody, FullSourceBody)
-import Page.UI.Components exposing (h5, h6, label, viewSummaryField)
+import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody, FullSourceBody)
+import Page.UI.Components exposing (h5, label, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
+import Page.Views.Helpers exposing (viewMaybe)
 
 
-viewExemplarsRouter : FullSourceBody -> Language -> Element msg
-viewExemplarsRouter body language =
-    case body.exemplars of
-        Just exemplarsSection ->
-            viewExemplarsSection exemplarsSection language
-
-        Nothing ->
-            none
-
-
-viewExemplarsSection : ExemplarsSectionBody -> Language -> Element msg
-viewExemplarsSection exemplarSection language =
+viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
+viewExemplarsSection language exemplarSection =
     row
         [ width fill
         , height fill
@@ -52,28 +44,12 @@ viewExemplarsSection exemplarSection language =
 viewExemplar : ExemplarBody -> Language -> Element msg
 viewExemplar exemplar language =
     let
-        summary =
-            case exemplar.summary of
-                Just sum ->
-                    viewSummaryField language sum
-
-                Nothing ->
-                    none
-
         heldBy =
             row
                 [ width fill
                 , spacing 20
                 ]
-                [ viewHeldBy exemplar.heldBy language ]
-
-        externalResources =
-            case exemplar.externalResources of
-                Just linksSection ->
-                    viewExternalLinksSection linksSection language
-
-                Nothing ->
-                    none
+                [ viewHeldBy language exemplar.heldBy ]
     in
     row
         [ width fill
@@ -87,14 +63,14 @@ viewExemplar exemplar language =
             , spacing 10
             ]
             [ heldBy
-            , summary
-            , externalResources
+            , viewMaybe (viewSummaryField language) exemplar.summary
+            , viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
             ]
         ]
 
 
-viewHeldBy : BasicInstitutionBody -> Language -> Element msg
-viewHeldBy body language =
+viewHeldBy : Language -> BasicInstitutionBody -> Element msg
+viewHeldBy language body =
     link
         [ Font.color colourScheme.lightBlue ]
         { url = body.id
@@ -102,8 +78,8 @@ viewHeldBy body language =
         }
 
 
-viewExternalLinksSection : ExternalResourcesListBody -> Language -> Element msg
-viewExternalLinksSection linkSection language =
+viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
+viewExternalResourcesSection language linkSection =
     row
         [ width fill
         , height fill
@@ -127,15 +103,15 @@ viewExternalLinksSection linkSection language =
                     ]
                     (textColumn
                         []
-                        (List.map (\l -> viewExternalLink l language) linkSection.items)
+                        (List.map (\l -> viewExternalResource language l) linkSection.items)
                     )
                 ]
             ]
         ]
 
 
-viewExternalLink : ExternalResourceBody -> Language -> Element msg
-viewExternalLink extLink language =
+viewExternalResource : Language -> ExternalResourceBody -> Element msg
+viewExternalResource language extLink =
     link
         [ Font.color colourScheme.lightBlue ]
         { url = extLink.url

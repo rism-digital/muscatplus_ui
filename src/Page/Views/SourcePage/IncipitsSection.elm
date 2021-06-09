@@ -8,21 +8,12 @@ import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitFormat(..), Render
 import Page.RecordTypes.Source exposing (FullSourceBody, IncipitsSectionBody)
 import Page.UI.Components exposing (h5, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
+import Page.Views.Helpers exposing (viewMaybe)
 import SvgParser
 
 
-viewIncipitsRouter : FullSourceBody -> Language -> Element msg
-viewIncipitsRouter body language =
-    case body.incipits of
-        Just incipitsSection ->
-            viewIncipitsSection incipitsSection language
-
-        Nothing ->
-            none
-
-
-viewIncipitsSection : IncipitsSectionBody -> Language -> Element msg
-viewIncipitsSection incipSection language =
+viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
+viewIncipitsSection language incipSection =
     row
         [ width fill
         , height fill
@@ -44,30 +35,13 @@ viewIncipitsSection incipSection language =
                 , spacing 20
                 , alignTop
                 ]
-                (List.map (\l -> viewIncipit l language) incipSection.items)
+                (List.map (\l -> viewIncipit language l) incipSection.items)
             ]
         ]
 
 
-viewIncipit : IncipitBody -> Language -> Element msg
-viewIncipit incipit language =
-    let
-        summary =
-            case incipit.summary of
-                Just sum ->
-                    viewSummaryField language sum
-
-                Nothing ->
-                    none
-
-        renderedIncipits =
-            case incipit.rendered of
-                Just renderedIncipitList ->
-                    viewRenderedIncipits renderedIncipitList
-
-                Nothing ->
-                    Element.none
-    in
+viewIncipit : Language -> IncipitBody -> Element msg
+viewIncipit language incipit =
     row
         [ width fill
         , height fill
@@ -82,8 +56,8 @@ viewIncipit incipit language =
             , spacing 10
             , alignTop
             ]
-            [ summary
-            , renderedIncipits
+            [ viewMaybe (viewSummaryField language) incipit.summary
+            , viewMaybe viewRenderedIncipits incipit.rendered
             ]
         ]
 

@@ -5,51 +5,16 @@ import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
-import Page.RecordTypes.Relationship exposing (RelationshipBody)
+import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (FullSourceBody, LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
-import Page.UI.Components exposing (h5, h6, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (h5, h6, viewParagraphField)
 import Page.UI.Style exposing (colourScheme)
-import Page.Views.Relationship exposing (viewRelationshipBody)
+import Page.Views.Helpers exposing (viewMaybe)
 
 
-viewReferencesNotesRouter : FullSourceBody -> Language -> Element msg
-viewReferencesNotesRouter body language =
-    case body.referencesNotes of
-        Just refNotesSection ->
-            viewReferencesNotesSection refNotesSection language
-
-        Nothing ->
-            none
-
-
-viewReferencesNotesSection : ReferencesNotesSectionBody -> Language -> Element msg
-viewReferencesNotesSection refNotesSection language =
-    let
-        performanceLocations =
-            case refNotesSection.performanceLocations of
-                Just section ->
-                    viewPerformanceLocationsSection section language
-
-                Nothing ->
-                    none
-
-        liturgicalFestivals =
-            case refNotesSection.liturgicalFestivals of
-                Just section ->
-                    viewLiturgicalFestivalsSection section language
-
-                Nothing ->
-                    none
-
-        notesSection =
-            case refNotesSection.notes of
-                Just notes ->
-                    viewNotesSection notes language
-
-                Nothing ->
-                    none
-    in
+viewReferencesNotesSection : Language -> ReferencesNotesSectionBody -> Element msg
+viewReferencesNotesSection language refNotesSection =
     row
         [ width fill
         , height fill
@@ -66,15 +31,15 @@ viewReferencesNotesSection refNotesSection language =
                 , htmlAttribute (HTA.id refNotesSection.sectionToc)
                 ]
                 [ h5 language refNotesSection.label ]
-            , notesSection
-            , performanceLocations
-            , liturgicalFestivals
+            , viewMaybe (viewNotesSection language) refNotesSection.notes
+            , viewMaybe (viewPerformanceLocationsSection language) refNotesSection.performanceLocations
+            , viewMaybe (viewLiturgicalFestivalsSection language) refNotesSection.liturgicalFestivals
             ]
         ]
 
 
-viewNotesSection : List LabelValue -> Language -> Element msg
-viewNotesSection notes language =
+viewNotesSection : Language -> List LabelValue -> Element msg
+viewNotesSection language notes =
     row
         [ width fill
         , spacing 20
@@ -84,8 +49,8 @@ viewNotesSection notes language =
         ]
 
 
-viewPerformanceLocationsSection : PerformanceLocationsSectionBody -> Language -> Element msg
-viewPerformanceLocationsSection body language =
+viewPerformanceLocationsSection : Language -> PerformanceLocationsSectionBody -> Element msg
+viewPerformanceLocationsSection language body =
     row
         [ width fill ]
         [ column
@@ -99,14 +64,14 @@ viewPerformanceLocationsSection body language =
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    (List.map (\l -> viewPerformanceLocation l language) body.items)
+                    (List.map (\l -> viewPerformanceLocation language l) body.items)
                 ]
             ]
         ]
 
 
-viewLiturgicalFestivalsSection : LiturgicalFestivalsSectionBody -> Language -> Element msg
-viewLiturgicalFestivalsSection body language =
+viewLiturgicalFestivalsSection : Language -> LiturgicalFestivalsSectionBody -> Element msg
+viewLiturgicalFestivalsSection language body =
     row
         [ width fill ]
         [ column
@@ -122,14 +87,14 @@ viewLiturgicalFestivalsSection body language =
                     [ width fill
                     , spacing 20
                     ]
-                    (List.map (\l -> viewLiturgicalFestival l language) body.items)
+                    (List.map (\l -> viewLiturgicalFestival language l) body.items)
                 ]
             ]
         ]
 
 
-viewLiturgicalFestival : LiturgicalFestivalBody -> Language -> Element msg
-viewLiturgicalFestival festival language =
+viewLiturgicalFestival : Language -> LiturgicalFestivalBody -> Element msg
+viewLiturgicalFestival language festival =
     row
         [ width fill ]
         [ link
@@ -140,22 +105,18 @@ viewLiturgicalFestival festival language =
         ]
 
 
-viewPerformanceLocation : RelationshipBody -> Language -> Element msg
-viewPerformanceLocation location language =
-    let
-        perfLocation =
-            case location.relatedTo of
-                Just relationship ->
-                    row
-                        [ width fill ]
-                        [ link
-                            [ Font.color colourScheme.lightBlue ]
-                            { url = relationship.id
-                            , label = text (extractLabelFromLanguageMap language relationship.label)
-                            }
-                        ]
+viewPerformanceLocation : Language -> RelationshipBody -> Element msg
+viewPerformanceLocation language location =
+    viewMaybe (viewLocation language) location.relatedTo
 
-                Nothing ->
-                    none
-    in
-    perfLocation
+
+viewLocation : Language -> RelatedToBody -> Element msg
+viewLocation language body =
+    row
+        [ width fill ]
+        [ link
+            [ Font.color colourScheme.lightBlue ]
+            { url = body.id
+            , label = text (extractLabelFromLanguageMap language body.label)
+            }
+        ]

@@ -8,13 +8,15 @@ import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Components exposing (h4, viewRecordHistory)
 import Page.UI.Style exposing (colourScheme)
-import Page.Views.SourcePage.ContentsSection exposing (viewContentsRouter)
-import Page.Views.SourcePage.ExemplarsSection exposing (viewExemplarsRouter)
-import Page.Views.SourcePage.IncipitsSection exposing (viewIncipitsRouter)
-import Page.Views.SourcePage.MaterialGroupsSection exposing (viewMaterialGroupsRouter)
-import Page.Views.SourcePage.PartOfSection exposing (viewPartOfRouter)
-import Page.Views.SourcePage.ReferencesNotesSection exposing (viewReferencesNotesRouter)
-import Page.Views.SourcePage.SourceItemsSection exposing (viewSourceItemsRouter)
+import Page.Views.Helpers exposing (viewMaybe)
+import Page.Views.SourcePage.ContentsSection exposing (viewContentsSection)
+import Page.Views.SourcePage.ExemplarsSection exposing (viewExemplarsSection)
+import Page.Views.SourcePage.IncipitsSection exposing (viewIncipitsSection)
+import Page.Views.SourcePage.MaterialGroupsSection exposing (viewMaterialGroupsSection)
+import Page.Views.SourcePage.PartOfSection exposing (viewPartOfSection)
+import Page.Views.SourcePage.ReferencesNotesSection exposing (viewReferencesNotesSection)
+import Page.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
+import Page.Views.SourcePage.SourceItemsSection exposing (viewSourceItemsSection)
 
 
 viewFullSourcePage : FullSourceBody -> Language -> Element Msg
@@ -51,16 +53,15 @@ viewFullSourcePage body language =
                 [ column
                     [ width fill
                     ]
-                    (List.map (\viewFunc -> viewFunc body language)
-                        [ viewPartOfRouter
-                        , viewContentsRouter
-                        , viewExemplarsRouter
-                        , viewIncipitsRouter
-                        , viewMaterialGroupsRouter
-                        , viewReferencesNotesRouter
-                        , viewSourceItemsRouter
-                        ]
-                    )
+                    [ viewMaybe (viewPartOfSection language) body.partOf
+                    , viewMaybe (viewContentsSection language) body.contents
+                    , viewMaybe (viewExemplarsSection language) body.exemplars
+                    , viewMaybe (viewIncipitsSection language) body.incipits
+                    , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
+                    , viewMaybe (viewRelationshipsSection language) body.relationships
+                    , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
+                    , viewMaybe (viewSourceItemsSection language) body.items
+                    ]
                 ]
             , row
                 [ width fill ]

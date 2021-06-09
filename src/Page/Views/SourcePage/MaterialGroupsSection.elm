@@ -8,21 +8,12 @@ import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (FullSourceBody, MaterialGroupBody, MaterialGroupsSectionBody)
 import Page.UI.Components exposing (h5, h6, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
+import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Relationship exposing (viewRelationshipBody)
 
 
-viewMaterialGroupsRouter : FullSourceBody -> Language -> Element msg
-viewMaterialGroupsRouter body language =
-    case body.materialGroups of
-        Just materialGroupsSection ->
-            viewMaterialGroupsSection materialGroupsSection language
-
-        Nothing ->
-            none
-
-
-viewMaterialGroupsSection : MaterialGroupsSectionBody -> Language -> Element msg
-viewMaterialGroupsSection mgSection language =
+viewMaterialGroupsSection : Language -> MaterialGroupsSectionBody -> Element msg
+viewMaterialGroupsSection language mgSection =
     row
         [ width fill
         , height fill
@@ -44,30 +35,13 @@ viewMaterialGroupsSection mgSection language =
                 , spacing 20
                 , alignTop
                 ]
-                (List.map (\l -> viewMaterialGroup l language) mgSection.items)
+                (List.map (\l -> viewMaterialGroup language l) mgSection.items)
             ]
         ]
 
 
-viewMaterialGroup : MaterialGroupBody -> Language -> Element msg
-viewMaterialGroup mg language =
-    let
-        summary =
-            case mg.summary of
-                Just sum ->
-                    viewSummaryField language sum
-
-                Nothing ->
-                    none
-
-        relationships =
-            case mg.relationships of
-                Just rel ->
-                    viewMaterialGroupRelationships rel language
-
-                Nothing ->
-                    none
-    in
+viewMaterialGroup : Language -> MaterialGroupBody -> Element msg
+viewMaterialGroup language mg =
     row
         [ width fill
         , height fill
@@ -82,14 +56,14 @@ viewMaterialGroup mg language =
             , spacing 10
             , alignTop
             ]
-            [ summary
-            , relationships
+            [ viewMaybe (viewSummaryField language) mg.summary
+            , viewMaybe (viewMaterialGroupRelationships language) mg.relationships
             ]
         ]
 
 
-viewMaterialGroupRelationships : RelationshipsSectionBody -> Language -> Element msg
-viewMaterialGroupRelationships relSection language =
+viewMaterialGroupRelationships : Language -> RelationshipsSectionBody -> Element msg
+viewMaterialGroupRelationships language relSection =
     row
         [ width fill ]
         [ column
@@ -101,7 +75,7 @@ viewMaterialGroupRelationships relSection language =
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    (List.map (\t -> viewRelationshipBody t language) relSection.items)
+                    (List.map (\t -> viewRelationshipBody language t) relSection.items)
                 ]
             ]
         ]

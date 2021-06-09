@@ -6,33 +6,12 @@ import Language exposing (Language)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (ContentsSectionBody, FullSourceBody)
 import Page.UI.Components exposing (h5, viewSummaryField)
+import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Relationship exposing (viewRelationshipBody)
 
 
-viewContentsRouter : FullSourceBody -> Language -> Element Msg
-viewContentsRouter body language =
-    case body.contents of
-        Just contentsSection ->
-            viewContentsSection contentsSection language
-
-        Nothing ->
-            none
-
-
-viewContentsSection : ContentsSectionBody -> Language -> Element Msg
-viewContentsSection contents language =
-    let
-        summary =
-            Maybe.withDefault [] contents.summary
-
-        creator =
-            case contents.creator of
-                Just relBody ->
-                    viewRelationshipBody relBody language
-
-                Nothing ->
-                    none
-    in
+viewContentsSection : Language -> ContentsSectionBody -> Element Msg
+viewContentsSection language contents =
     row
         [ width fill
         , paddingXY 0 20
@@ -46,7 +25,8 @@ viewContentsSection contents language =
                 , htmlAttribute (HTA.id contents.sectionToc)
                 ]
                 [ h5 language contents.label ]
-            , creator
-            , viewSummaryField language summary
+            , viewMaybe (viewRelationshipBody language) contents.creator
+            , Maybe.withDefault [] contents.summary
+                |> viewSummaryField language
             ]
         ]
