@@ -1,18 +1,17 @@
 module View exposing (view)
 
 import Browser
-import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, inFront, layout, link, moveDown, moveLeft, none, paddingXY, px, row, text, width)
+import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, inFront, layout, link, moveDown, moveLeft, none, paddingXY, px, row, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Region as Region
-import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..))
-import Page.TablesOfContents exposing (createSourceRecordToc)
+import Page.TablesOfContents exposing (createPersonRecordToc, createSourceRecordToc)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, minimalDropShadow, pageBackground)
 import Page.UI.Components exposing (languageSelect)
 import Page.UI.Images exposing (rismLogo)
@@ -73,7 +72,7 @@ view model =
 
                 Response (PersonData d) ->
                     ( extractLabelFromLanguageMap model.language d.label
-                    , none
+                    , createPersonRecordToc d model.language
                     )
 
                 Response (InstitutionData d) ->
