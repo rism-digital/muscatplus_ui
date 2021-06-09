@@ -102,15 +102,7 @@ view model =
                 , bodyFontColour
                 , fontBaseSize
                 , pageBackground
-                , inFront
-                    (el
-                        [ Border.width 1
-                        , alignRight
-                        , moveDown 100
-                        , moveLeft 100
-                        ]
-                        pageToc
-                    )
+                , inFront pageToc
                 ]
                 (column
                     [ centerX
