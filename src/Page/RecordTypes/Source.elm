@@ -3,6 +3,7 @@ module Page.RecordTypes.Source exposing (..)
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody, InstitutionBody, basicInstitutionBodyDecoder)
@@ -27,6 +28,7 @@ type alias FullSourceBody =
     , partOf : Maybe PartOfSectionBody
     , contents : Maybe ContentsSectionBody
     , materialGroups : Maybe MaterialGroupsSectionBody
+    , relationships : Maybe RelationshipsSectionBody
     , incipits : Maybe IncipitsSectionBody
     , referencesNotes : Maybe ReferencesNotesSectionBody
     , exemplars : Maybe ExemplarsSectionBody
@@ -115,20 +117,7 @@ type alias ExemplarBody =
     { id : String
     , summary : Maybe (List LabelValue)
     , heldBy : BasicInstitutionBody
-    , externalResources : Maybe ExternalResourcesListBody
-    }
-
-
-type alias ExternalResourcesListBody =
-    { sectionToc : String
-    , label : LanguageMap
-    , items : List ExternalResourceBody
-    }
-
-
-type alias ExternalResourceBody =
-    { label : LanguageMap
-    , url : String
+    , externalResources : Maybe ExternalResourcesSectionBody
     }
 
 
@@ -149,6 +138,7 @@ sourceBodyDecoder =
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "contents" (Decode.maybe contentsSectionBodyDecoder) Nothing
         |> optional "materialGroups" (Decode.maybe materialGroupsSectionBodyDecoder) Nothing
+        |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "incipits" (Decode.maybe incipitsSectionBodyDecoder) Nothing
         |> optional "referencesNotes" (Decode.maybe referencesNotesSectionBodyDecoder) Nothing
         |> optional "exemplars" (Decode.maybe exemplarsSectionBodyDecoder) Nothing
@@ -259,22 +249,7 @@ exemplarsBodyDecoder =
         |> required "id" string
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
-        |> optional "externalResources" (Decode.maybe externalResourcesListBodyDecoder) Nothing
-
-
-externalResourcesListBodyDecoder : Decoder ExternalResourcesListBody
-externalResourcesListBodyDecoder =
-    Decode.succeed ExternalResourcesListBody
-        |> hardcoded "source-record-external-resources-section"
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list externalResourceBodyDecoder)
-
-
-externalResourceBodyDecoder : Decoder ExternalResourceBody
-externalResourceBodyDecoder =
-    Decode.succeed ExternalResourceBody
-        |> required "label" languageMapLabelDecoder
-        |> required "url" string
+        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
 
 
 sourceItemsSectionBodyDecoder : Decoder SourceItemsSectionBody

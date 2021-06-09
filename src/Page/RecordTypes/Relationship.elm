@@ -2,13 +2,14 @@ module Page.RecordTypes.Relationship exposing (..)
 
 import Dict
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
-import Json.Decode.Pipeline exposing (optional, required)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 
 
 type alias RelationshipsSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , items : List RelationshipBody
     }
 
@@ -221,6 +222,7 @@ relatedToConverter typeString =
 relationshipsSectionBodyDecoder : Decoder RelationshipsSectionBody
 relationshipsSectionBodyDecoder =
     Decode.succeed RelationshipsSectionBody
+        |> hardcoded "record-relationships-section"
         |> required "label" languageMapLabelDecoder
         |> required "items" (list relationshipBodyDecoder)
 

@@ -1,69 +1,54 @@
 module Page.RecordTypes.Person exposing (..)
 
 import Json.Decode as Decode exposing (Decoder, list, string)
-import Json.Decode.Pipeline exposing (optional, required)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
+import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 
 
 type alias PersonBody =
-    { id : String
+    { sectionToc : String
+    , id : String
     , label : LanguageMap
     , typeLabel : LanguageMap
     , summary : Maybe (List LabelValue)
     , nameVariants : Maybe NameVariantsSectionBody
     , relationships : Maybe RelationshipsSectionBody
+    , notes : Maybe NotesSectionBody
     , externalAuthorities : Maybe ExternalAuthoritiesSectionBody
+    , externalResources : Maybe ExternalResourcesSectionBody
     }
 
 
 type alias NameVariantsSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , items : List LabelValue
-    }
-
-
-type alias ExternalAuthoritiesSectionBody =
-    { label : LanguageMap
-    , items : List ExternalAuthorityBody
-    }
-
-
-type alias ExternalAuthorityBody =
-    { label : LanguageMap
-    , url : String
     }
 
 
 personBodyDecoder : Decoder PersonBody
 personBodyDecoder =
     Decode.succeed PersonBody
+        |> hardcoded "person-record-top"
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "nameVariants" (Decode.maybe nameVariantsSectionBodyDecoder) Nothing
         |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
+        |> optional "notes" (Decode.maybe notesSectionBodyDecoder) Nothing
         |> optional "externalAuthorities" (Decode.maybe externalAuthoritiesSectionBodyDecoder) Nothing
+        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
 
 
 nameVariantsSectionBodyDecoder : Decoder NameVariantsSectionBody
 nameVariantsSectionBodyDecoder =
     Decode.succeed NameVariantsSectionBody
+        |> hardcoded "person-name-variants-section"
         |> required "label" languageMapLabelDecoder
         |> required "items" (list labelValueDecoder)
-
-
-externalAuthoritiesSectionBodyDecoder : Decoder ExternalAuthoritiesSectionBody
-externalAuthoritiesSectionBodyDecoder =
-    Decode.succeed ExternalAuthoritiesSectionBody
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list externalAuthorityBodyDecoder)
-
-
-externalAuthorityBodyDecoder : Decoder ExternalAuthorityBody
-externalAuthorityBodyDecoder =
-    Decode.succeed ExternalAuthorityBody
-        |> required "label" languageMapLabelDecoder
-        |> required "url" string
