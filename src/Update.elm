@@ -14,7 +14,7 @@ import Page.Route exposing (Route(..), parseUrl)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
 import Url
-import Viewport exposing (jumpToId)
+import Viewport exposing (jumpToId, resetViewport)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -87,7 +87,10 @@ update msg model =
                     serverUrl [ url.path ] newQuery
             in
             ( { model | page = newPage }
-            , createRequest Msg.ReceivedServerResponse recordResponseDecoder newUrl
+            , Cmd.batch
+                [ createRequest Msg.ReceivedServerResponse recordResponseDecoder newUrl
+                , resetViewport
+                ]
             )
 
         Msg.OnWindowResize device ->
