@@ -10,8 +10,8 @@ import Page.UI.Components exposing (h5, label)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewPersonRelationshipsSection : Language -> RelationshipsSectionBody -> Element Msg
-viewPersonRelationshipsSection language relSection =
+viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element Msg
+viewRelationshipsSection language relSection =
     row
         [ width fill
         , height fill

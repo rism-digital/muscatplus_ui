@@ -11,7 +11,7 @@ import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Notes exposing (viewNotesSection)
 import Page.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
-import Page.Views.Relationship exposing (viewPersonRelationshipsSection)
+import Page.Views.Relationship exposing (viewRelationshipsSection)
 
 
 viewPersonPreview : PersonBody -> Language -> Element Msg
@@ -47,7 +47,7 @@ viewPersonPreview body language =
                     [ width fill ]
                     [ viewMaybe (viewSummaryField language) body.summary
                     , viewMaybe (viewNameVariantsSection language) body.nameVariants
-                    , viewMaybe (viewPersonRelationshipsSection language) body.relationships
+                    , viewMaybe (viewRelationshipsSection language) body.relationships
                     , viewMaybe (viewNotesSection language) body.notes
                     , viewMaybe (viewExternalResourcesSection language) body.externalResources
                     ]
