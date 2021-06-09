@@ -57,7 +57,7 @@ viewWelcomeMessageRouter model =
         welcomeView =
             case page.response of
                 Response (RootData body) ->
-                    viewWelcomeMessage body model.language
+                    viewWelcomeMessage model.language body
 
                 _ ->
                     none
@@ -65,8 +65,8 @@ viewWelcomeMessageRouter model =
     welcomeView
 
 
-viewWelcomeMessage : RootBody -> Language -> Element Msg
-viewWelcomeMessage body language =
+viewWelcomeMessage : Language -> RootBody -> Element Msg
+viewWelcomeMessage language body =
     let
         stats =
             body.stats

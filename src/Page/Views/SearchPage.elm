@@ -257,7 +257,7 @@ viewSearchResultsPreviewSection searchParams language =
                     el [] (text "Loading")
 
                 Response resp ->
-                    viewPreviewRouter resp language
+                    viewPreviewRouter language resp
 
                 Error _ ->
                     el [] (text "Error")

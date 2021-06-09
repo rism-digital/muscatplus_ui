@@ -1,15 +1,47 @@
 module Page.Views.Relationship exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, link, none, paddingXY, row, text, width)
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, none, paddingXY, row, spacing, text, width)
 import Element.Font as Font
+import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
-import Page.UI.Components exposing (label)
+import Msg exposing (Msg)
+import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
+import Page.UI.Components exposing (h5, label)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewRelationshipBody : RelationshipBody -> Language -> Element msg
-viewRelationshipBody body language =
+viewPersonRelationshipsSection : Language -> RelationshipsSectionBody -> Element Msg
+viewPersonRelationshipsSection language relSection =
+    row
+        [ width fill
+        , height fill
+        , paddingXY 0 20
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , spacing 20
+            , alignTop
+            ]
+            [ row
+                [ width fill
+                , htmlAttribute (HTA.id relSection.sectionToc)
+                ]
+                [ h5 language relSection.label ]
+            , row
+                [ width fill
+                ]
+                [ column
+                    [ width fill
+                    ]
+                    (List.map (\t -> viewRelationshipBody language t) relSection.items)
+                ]
+            ]
+        ]
+
+
+viewRelationshipBody : Language -> RelationshipBody -> Element msg
+viewRelationshipBody language body =
     let
         relatedToView =
             -- if there is a related-to relationship, display that.
@@ -17,7 +49,7 @@ viewRelationshipBody body language =
             -- if neither, don't show anything because we can't!
             case body.relatedTo of
                 Just rel ->
-                    viewRelatedToBody rel language
+                    viewRelatedToBody language rel
 
                 Nothing ->
                     case body.name of
@@ -60,8 +92,8 @@ viewRelationshipBody body language =
         ]
 
 
-viewRelatedToBody : RelatedToBody -> Language -> Element msg
-viewRelatedToBody body language =
+viewRelatedToBody : Language -> RelatedToBody -> Element msg
+viewRelatedToBody language body =
     link
         [ Font.color colourScheme.lightBlue ]
         { url = body.id
