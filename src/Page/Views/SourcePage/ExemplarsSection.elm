@@ -1,13 +1,13 @@
 module Page.Views.SourcePage.ExemplarsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, none, paddingXY, row, spacing, text, textColumn, width)
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, paddingXY, row, spacing, text, textColumn, width)
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
-import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody, FullSourceBody)
+import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Components exposing (h5, label, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)

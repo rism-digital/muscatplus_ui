@@ -1,11 +1,11 @@
 module Page.Views.SourcePage.IncipitsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, none, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, paddingXY, row, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language)
 import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitFormat(..), RenderedIncipit(..))
-import Page.RecordTypes.Source exposing (FullSourceBody, IncipitsSectionBody)
+import Page.RecordTypes.Source exposing (IncipitsSectionBody)
 import Page.UI.Components exposing (h5, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
@@ -110,7 +110,7 @@ viewSVGRenderedIncipit incipitData =
                 Ok html ->
                     Element.html html
 
-                Err error ->
+                Err _ ->
                     text "Could not parse SVG"
     in
     svgResponse

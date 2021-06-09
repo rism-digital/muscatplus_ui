@@ -1,10 +1,9 @@
 module Page.TablesOfContents exposing (..)
 
-import Element exposing (Element, alignRight, column, el, fill, htmlAttribute, moveDown, moveLeft, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignRight, column, el, fill, moveDown, moveLeft, none, padding, pointer, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Html.Attributes as HTA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg(..))
 import Page.RecordTypes.Person exposing (PersonBody)

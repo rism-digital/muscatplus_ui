@@ -1,8 +1,7 @@
 module View exposing (view)
 
 import Browser
-import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, inFront, layout, link, moveDown, moveLeft, none, paddingXY, px, row, text, width)
-import Element.Border as Border
+import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
 import Element.Font as Font
 import Element.Region as Region
 import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
@@ -85,7 +84,7 @@ view model =
                     , none
                     )
 
-                Response (RootData d) ->
+                Response (RootData _) ->
                     ( "RISM Online"
                     , none
                     )

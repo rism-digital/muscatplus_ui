@@ -3,7 +3,7 @@ module Page exposing (..)
 import Msg exposing (Msg)
 import Page.Model exposing (CurrentTab(..), PageModel, Response(..))
 import Page.Request exposing (createRequestWithDecoder)
-import Page.Route exposing (Route(..), parseUrl)
+import Page.Route exposing (parseUrl)
 import Url exposing (Url)
 
 

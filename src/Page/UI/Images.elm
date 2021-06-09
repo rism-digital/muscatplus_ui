@@ -1,7 +1,7 @@
 module Page.UI.Images exposing (..)
 
 import Element exposing (Element, html)
-import Svg exposing (Svg, defs, g, metadata, svg)
+import Svg exposing (defs, g, metadata, svg)
 import Svg.Attributes exposing (d, fill, height, id, style, transform, version, viewBox, width)
 
 

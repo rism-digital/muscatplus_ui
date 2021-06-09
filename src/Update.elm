@@ -61,7 +61,7 @@ update msg model =
             in
             ( { model | activeSearch = newSearch }, Cmd.none )
 
-        Msg.ReceivedPreviewResponse (Err error) ->
+        Msg.ReceivedPreviewResponse (Err _) ->
             ( model, Cmd.none )
 
         Msg.UrlChanged url ->

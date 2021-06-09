@@ -5,7 +5,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA exposing (style)
-import Page.UI.Style exposing (colourScheme, footerHeight, headerHeight, minMaxFillDesktop, searchHeaderHeight, translucentBlue)
+import Page.UI.Style exposing (colourScheme, footerHeight, headerHeight, minMaxFillDesktop, searchHeaderHeight)
 
 
 bodyFont : Attribute msg

@@ -1,10 +1,10 @@
-module Page.RecordTypes.Shared exposing (LabelNumericValue, LabelValue, RecordHistory, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder, typeDecoder)
+module Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder, typeDecoder)
 
-import Json.Decode as Decode exposing (Decoder, andThen, int, list, string)
+import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Extra exposing (datetime)
 import Json.Decode.Pipeline exposing (required)
-import Language exposing (LanguageMap, LanguageNumericMap, languageMapDecoder, languageNumericMapDecoder)
-import Page.RecordTypes exposing (Filter, RecordType, recordTypeFromJsonType)
+import Language exposing (LanguageMap, LanguageNumericMap, languageMapDecoder)
+import Page.RecordTypes exposing (RecordType, recordTypeFromJsonType)
 import Time
 
 
@@ -35,23 +35,10 @@ labelValueDecoder =
         |> required "value" languageMapLabelDecoder
 
 
-labelNumericValueDecoder : Decoder LabelNumericValue
-labelNumericValueDecoder =
-    Decode.succeed LabelNumericValue
-        |> required "label" languageMapLabelDecoder
-        |> required "value" numericValueDecoder
-
-
 languageMapLabelDecoder : Decoder LanguageMap
 languageMapLabelDecoder =
     Decode.keyValuePairs (list string)
         |> andThen languageMapDecoder
-
-
-numericValueDecoder : Decoder LanguageNumericMap
-numericValueDecoder =
-    Decode.keyValuePairs (list int)
-        |> andThen languageNumericMapDecoder
 
 
 typeDecoder : Decoder RecordType

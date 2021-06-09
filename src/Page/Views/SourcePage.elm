@@ -28,7 +28,7 @@ view model =
                 Response (SourceData body) ->
                     viewFullSourcePage body model.language
 
-                Error err ->
+                Error _ ->
                     -- TODO: Show error page
                     none
 

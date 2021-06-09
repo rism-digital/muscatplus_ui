@@ -1,7 +1,6 @@
 module Page.UI.Components exposing (..)
 
-import DateFormat
-import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, none, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font

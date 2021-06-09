@@ -5,7 +5,7 @@ import Json.Decode.Pipeline exposing (optional, optionalAt, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
-import Page.RecordTypes.Source exposing (BasicSourceBody, PartOfSectionBody, basicSourceBodyDecoder, partOfSectionBodyDecoder)
+import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 
 
 type alias SearchBody =
@@ -121,12 +121,6 @@ searchPaginationDecoder =
         |> optional "last" (nullable string) Nothing
         |> required "totalPages" int
         |> required "thisPage" int
-
-
-facetListDecoder : Decoder FacetList
-facetListDecoder =
-    Decode.succeed FacetList
-        |> required "items" (Decode.list facetDecoder)
 
 
 facetDecoder : Decoder Facet

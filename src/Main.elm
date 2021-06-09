@@ -4,8 +4,7 @@ import Browser
 import Browser.Navigation as Nav
 import Flags exposing (Flags)
 import Model exposing (Model)
-import Msg exposing (Msg(..))
-import Page.Route exposing (parseUrl)
+import Msg exposing (Msg)
 import Subscriptions
 import Update
 import Url exposing (Url)

@@ -1,6 +1,6 @@
 module Page.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, column, el, fill, height, link, none, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, link, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)

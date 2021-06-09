@@ -1,11 +1,11 @@
 module Page.Views.SourcePage.MaterialGroupsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, none, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, paddingXY, row, spacing, width)
 import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
-import Page.RecordTypes.Source exposing (FullSourceBody, MaterialGroupBody, MaterialGroupsSectionBody)
+import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
 import Page.UI.Components exposing (h5, h6, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)

@@ -8,22 +8,17 @@ module Language exposing
     , extractLabelFromLanguageMap
     , extractTextFromLanguageMap
     , formatNumberByLanguage
-    , languageDecoder
     , languageMapDecoder
-    , languageNumericMapDecoder
-    , languageOptions
     , languageOptionsForDisplay
-    , languageValuesDecoder
     , localTranslations
     , parseLanguageToLocale
     , parseLocaleToLanguage
     )
 
 import DateFormat
-import DateFormat.Language
-import Dict exposing (Dict)
+import Dict
 import FormatNumber exposing (format)
-import FormatNumber.Locales exposing (Decimals(..), Locale, base, usLocale)
+import FormatNumber.Locales exposing (Decimals(..), Locale, base)
 import Json.Decode as Decode exposing (Decoder)
 import Time exposing (Posix, Zone)
 
@@ -189,12 +184,6 @@ languageValuesDecoder ( locale, translations ) =
         |> Decode.map (\lang -> LanguageValues lang translations)
 
 
-languageNumericValuesDecoder : ( String, List Int ) -> Decoder LanguageNumericValues
-languageNumericValuesDecoder ( locale, translations ) =
-    languageDecoder locale
-        |> Decode.map (\lang -> LanguageNumericValues lang translations)
-
-
 {-|
 
     A custom decoder that takes a JSON-LD Language Map and produces a list of
@@ -206,14 +195,6 @@ languageMapDecoder : List ( String, List String ) -> Decoder LanguageMap
 languageMapDecoder json =
     List.foldl
         (\map maps -> Decode.map2 (::) (languageValuesDecoder map) maps)
-        (Decode.succeed [])
-        json
-
-
-languageNumericMapDecoder : List ( String, List Int ) -> Decoder LanguageNumericMap
-languageNumericMapDecoder json =
-    List.foldl
-        (\map maps -> Decode.map2 (::) (languageNumericValuesDecoder map) maps)
         (Decode.succeed [])
         json
 

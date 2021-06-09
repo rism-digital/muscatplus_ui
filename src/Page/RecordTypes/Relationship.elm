@@ -4,7 +4,7 @@ import Dict
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
+import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 
 
 type alias RelationshipsSectionBody =

@@ -1,6 +1,6 @@
 module Page.UI.Style exposing (..)
 
-import Element exposing (Attribute, Color, Length, fill, maximum, minimum, rgb255, rgba255)
+import Element exposing (Color, Length, fill, maximum, minimum, rgb255, rgba255)
 
 
 colourScheme :

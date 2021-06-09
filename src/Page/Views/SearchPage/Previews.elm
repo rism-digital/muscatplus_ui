@@ -1,13 +1,9 @@
 module Page.Views.SearchPage.Previews exposing (..)
 
-import Element exposing (Element, column, el, fill, height, link, none, row, spacing, text, width)
-import Element.Font as Font
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Element exposing (Element, none)
+import Language exposing (Language)
 import Msg exposing (Msg)
-import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.Response exposing (ServerData(..))
-import Page.UI.Components exposing (h4)
-import Page.UI.Style exposing (colourScheme)
 import Page.Views.SearchPage.Previews.Institution exposing (viewInstitutionPreview)
 import Page.Views.SearchPage.Previews.Person exposing (viewPersonPreview)
 import Page.Views.SearchPage.Previews.Source exposing (viewSourcePreview)

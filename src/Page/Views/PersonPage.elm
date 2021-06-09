@@ -30,7 +30,7 @@ view model =
                 Response (PersonData body) ->
                     viewFullPersonPage currentTab model.language body
 
-                Error err ->
+                Error _ ->
                     -- TODO: Show error page
                     none
 

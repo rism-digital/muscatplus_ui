@@ -1,10 +1,10 @@
 module Page.Views.SourcePage.PartOfSection exposing (..)
 
-import Element exposing (Element, column, fill, link, none, paddingXY, row, spacing, text, width)
+import Element exposing (Element, column, fill, link, paddingXY, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
-import Page.RecordTypes.Source exposing (FullSourceBody, PartOfSectionBody)
+import Page.RecordTypes.Source exposing (PartOfSectionBody)
 import Page.UI.Components exposing (h5)
 import Page.UI.Style exposing (colourScheme)
 

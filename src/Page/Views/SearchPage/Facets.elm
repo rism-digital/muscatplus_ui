@@ -1,15 +1,15 @@
 module Page.Views.SearchPage.Facets exposing (..)
 
-import Element exposing (Element, alignLeft, centerX, centerY, el, fill, height, none, padding, paddingXY, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, centerX, centerY, el, fill, height, none, paddingXY, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (checkbox, labelLeft)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Msg exposing (Msg(..))
-import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
+import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (Facet, FacetItem(..))
 import Page.UI.Attributes exposing (bodyRegular)
-import Page.UI.Images exposing (bookOpenSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
+import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -105,7 +105,7 @@ viewModeItem selectedMode fitem language =
                 , spacing 10
                 ]
                 { onChange = \t -> ModeSelected "mode" fitem t
-                , icon = \b -> none
+                , icon = \_ -> none
                 , checked = False
                 , label =
                     labelLeft

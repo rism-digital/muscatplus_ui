@@ -2,7 +2,7 @@ module Search exposing (..)
 
 import Page.Model exposing (Response(..))
 import Page.Query exposing (QueryArgs)
-import Page.RecordTypes.ResultMode exposing (ResultMode(..))
+import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.Route exposing (Route(..))
 
 

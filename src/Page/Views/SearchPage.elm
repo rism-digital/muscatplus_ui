@@ -1,6 +1,6 @@
 module Page.Views.SearchPage exposing (view)
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -11,11 +11,10 @@ import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode)
-import Page.RecordTypes.Search exposing (Facet, SearchBody, SearchPagination, SearchResult)
-import Page.RecordTypes.Source exposing (FullSourceBody)
+import Page.RecordTypes.Search exposing (Facet, SearchBody, SearchResult)
 import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (bodySM, minimalDropShadow, searchColumnVerticalSize)
-import Page.UI.Components exposing (h4, h5, searchKeywordInput)
+import Page.UI.Components exposing (h5, searchKeywordInput)
 import Page.UI.Images exposing (bookOpenSvg, digitizedImagesSvg)
 import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Page.Views.SearchPage.Facets exposing (viewModeItems)
@@ -167,7 +166,7 @@ searchResultsViewRouter model =
                 Response (SearchData body) ->
                     viewSearchResultsSection body activeSearch language
 
-                Error e ->
+                Error _ ->
                     viewSearchResultsError model
 
                 NoResponseToShow ->
