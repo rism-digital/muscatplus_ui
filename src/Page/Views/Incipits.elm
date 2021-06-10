@@ -1,4 +1,4 @@
-module Page.Views.SourcePage.IncipitsSection exposing (..)
+module Page.Views.Incipits exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, paddingXY, row, spacing, text, width)
 import Element.Border as Border
