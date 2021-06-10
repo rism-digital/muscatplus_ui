@@ -20,7 +20,7 @@ createTocLink ( url, label ) language =
         ]
         [ el
             [ Font.color colourScheme.lightBlue
-            , onClick (ToCElementSelected url)
+            , onClick (UserClickedToCItem url)
             , pointer
             ]
             (text (extractLabelFromLanguageMap language label))

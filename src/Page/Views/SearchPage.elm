@@ -61,8 +61,8 @@ viewTopBar : Model -> Element Msg
 viewTopBar model =
     let
         msgs =
-            { submitMsg = Msg.SearchSubmit
-            , changeMsg = Msg.SearchInput
+            { submitMsg = Msg.UserClickedSearchSubmitButton
+            , changeMsg = Msg.UserInputTextInQueryBox
             }
 
         activeSearch =
@@ -308,7 +308,7 @@ viewSearchResult result language =
             el
                 [ Font.color colourScheme.lightBlue
                 , width fill
-                , onClick (PreviewSearchResult result.id)
+                , onClick (UserClickedSearchResultForPreview result.id)
                 , pointer
                 ]
                 (h5 language result.label)

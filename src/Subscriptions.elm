@@ -10,5 +10,5 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ onResize <|
-            \width height -> Msg.OnWindowResize (detectDevice width height)
+            \width height -> Msg.UserResizedWindow (detectDevice width height)
         ]

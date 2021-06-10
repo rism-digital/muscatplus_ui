@@ -7,4 +7,4 @@ import Request exposing (createRequest)
 
 createRequestWithDecoder : String -> Cmd Msg
 createRequestWithDecoder url =
-    createRequest Msg.ReceivedServerResponse recordResponseDecoder url
+    createRequest Msg.ServerRespondedWithData recordResponseDecoder url

@@ -171,7 +171,7 @@ siteHeader model =
                     [ row
                         [ alignRight
                         ]
-                        [ languageSelect LanguageSelectChanged languageOptionsForDisplay model.language ]
+                        [ languageSelect UserChangedLanguageSelect languageOptionsForDisplay model.language ]
                     ]
                 ]
             ]

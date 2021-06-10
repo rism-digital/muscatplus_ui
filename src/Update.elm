@@ -20,7 +20,7 @@ import Viewport exposing (jumpToId, resetViewport)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Msg.ReceivedServerResponse (Ok response) ->
+        Msg.ServerRespondedWithData (Ok response) ->
             let
                 oldPage =
                     model.page
@@ -30,7 +30,7 @@ update msg model =
             in
             ( { model | page = newResponse }, Cmd.none )
 
-        Msg.ReceivedServerResponse (Err error) ->
+        Msg.ServerRespondedWithData (Err error) ->
             let
                 oldPage =
                     model.page
@@ -51,7 +51,7 @@ update msg model =
             in
             ( { model | page = newResponse }, Cmd.none )
 
-        Msg.ReceivedPreviewResponse (Ok response) ->
+        Msg.ServerRespondedWithPreview (Ok response) ->
             let
                 oldSearch =
                     model.activeSearch
@@ -61,10 +61,10 @@ update msg model =
             in
             ( { model | activeSearch = newSearch }, Cmd.none )
 
-        Msg.ReceivedPreviewResponse (Err _) ->
+        Msg.ServerRespondedWithPreview (Err _) ->
             ( model, Cmd.none )
 
-        Msg.ReceivedPageSearchResponse (Ok response) ->
+        Msg.ServerRespondedWithPageSearch (Ok response) ->
             let
                 oldPage =
                     model.page
@@ -74,10 +74,10 @@ update msg model =
             in
             ( { model | page = newPage }, Cmd.none )
 
-        Msg.ReceivedPageSearchResponse (Err _) ->
+        Msg.ServerRespondedWithPageSearch (Err _) ->
             ( model, Cmd.none )
 
-        Msg.UrlChanged url ->
+        Msg.ClientChangedUrl url ->
             let
                 oldPage =
                     model.page
@@ -101,15 +101,15 @@ update msg model =
             in
             ( { model | page = newPage }
             , Cmd.batch
-                [ createRequest Msg.ReceivedServerResponse recordResponseDecoder newUrl
+                [ createRequest Msg.ServerRespondedWithData recordResponseDecoder newUrl
                 , resetViewport
                 ]
             )
 
-        Msg.OnWindowResize device ->
+        Msg.UserResizedWindow device ->
             ( { model | device = device }, Cmd.none )
 
-        Msg.UrlRequest urlRequest ->
+        Msg.UserRequestedUrlChange urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
                     ( model, Nav.pushUrl model.key (Url.toString url) )
@@ -117,12 +117,12 @@ update msg model =
                 Browser.External href ->
                     ( model, Nav.load href )
 
-        Msg.LanguageSelectChanged lang ->
+        Msg.UserChangedLanguageSelect lang ->
             ( { model | language = parseLocaleToLanguage lang }
             , saveLanguagePreference lang
             )
 
-        Msg.SearchSubmit ->
+        Msg.UserClickedSearchSubmitButton ->
             let
                 oldPage =
                     model.page
@@ -145,7 +145,7 @@ update msg model =
             , Nav.pushUrl model.key url
             )
 
-        Msg.SearchInput qtext ->
+        Msg.UserInputTextInQueryBox qtext ->
             let
                 oldSearch =
                     model.activeSearch
@@ -168,7 +168,7 @@ update msg model =
             in
             ( { model | activeSearch = newSearch }, Cmd.none )
 
-        Msg.ModeSelected _ itm _ ->
+        Msg.UserClickedModeItem _ itm _ ->
             let
                 facetConvertedToResultMode =
                     convertFacetToResultMode itm
@@ -188,17 +188,17 @@ update msg model =
                 newModel =
                     { model | activeSearch = newSearch }
             in
-            update Msg.SearchSubmit newModel
+            update Msg.UserClickedSearchSubmitButton newModel
 
-        Msg.FacetChecked _ _ _ ->
+        Msg.UserClickedFacetItem _ _ _ ->
             ( model, Cmd.none )
 
-        Msg.ToCElementSelected idParam ->
+        Msg.UserClickedToCItem idParam ->
             ( model
             , jumpToId idParam
             )
 
-        Msg.PreviewSearchResult url ->
+        Msg.UserClickedSearchResultForPreview url ->
             let
                 oldSearch =
                     model.activeSearch
@@ -207,10 +207,10 @@ update msg model =
                     { oldSearch | preview = Loading }
             in
             ( { model | activeSearch = newSearch }
-            , createRequest Msg.ReceivedPreviewResponse recordResponseDecoder url
+            , createRequest Msg.ServerRespondedWithPreview recordResponseDecoder url
             )
 
-        Msg.ChangeRecordViewTab tab ->
+        Msg.UserClickedRecordViewTab tab ->
             let
                 oldPage =
                     model.page
@@ -221,7 +221,7 @@ update msg model =
                 cmd =
                     case tab of
                         PersonSourcesRecordViewTab url ->
-                            createRequest Msg.ReceivedPageSearchResponse recordResponseDecoder url
+                            createRequest Msg.ServerRespondedWithPageSearch recordResponseDecoder url
 
                         _ ->
                             Cmd.none
@@ -230,5 +230,5 @@ update msg model =
             , cmd
             )
 
-        Msg.NoOp ->
+        Msg.NothingHappened ->
             ( model, Cmd.none )

@@ -86,7 +86,7 @@ viewTabSwitcher language body =
                     column
                         [ Border.width 1
                         , padding 12
-                        , onClick (ChangeRecordViewTab (PersonSourcesRecordViewTab sources.url))
+                        , onClick (UserClickedRecordViewTab (PersonSourcesRecordViewTab sources.url))
                         ]
                         [ el
                             []
@@ -104,7 +104,7 @@ viewTabSwitcher language body =
         [ column
             [ Border.width 1
             , padding 12
-            , onClick (ChangeRecordViewTab DefaultRecordViewTab)
+            , onClick (UserClickedRecordViewTab DefaultRecordViewTab)
             ]
             [ text "Description" ]
         , sourcesTab

@@ -104,7 +104,7 @@ viewModeItem selectedMode fitem language =
                 [ alignLeft
                 , spacing 10
                 ]
-                { onChange = \t -> ModeSelected "mode" fitem t
+                { onChange = \t -> UserClickedModeItem "mode" fitem t
                 , icon = \_ -> none
                 , checked = False
                 , label =

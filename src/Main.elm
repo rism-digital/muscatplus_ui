@@ -18,8 +18,8 @@ main =
         , view = View.view
         , update = Update.update
         , subscriptions = Subscriptions.subscriptions
-        , onUrlChange = Msg.UrlChanged
-        , onUrlRequest = Msg.UrlRequest
+        , onUrlChange = Msg.ClientChangedUrl
+        , onUrlRequest = Msg.UserRequestedUrlChange
         }
 
 

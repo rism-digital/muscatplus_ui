@@ -21,11 +21,11 @@ jumpToId id =
             )
         |> Task.attempt
             (\_ ->
-                NoOp
+                NothingHappened
             )
 
 
 resetViewport : Cmd Msg
 resetViewport =
     Dom.setViewport 0 0
-        |> Task.attempt (\_ -> NoOp)
+        |> Task.attempt (\_ -> NothingHappened)

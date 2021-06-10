@@ -16,8 +16,8 @@ view : Model -> Element Msg
 view model =
     let
         msgs =
-            { submitMsg = Msg.SearchSubmit
-            , changeMsg = Msg.SearchInput
+            { submitMsg = Msg.UserClickedSearchSubmitButton
+            , changeMsg = Msg.UserInputTextInQueryBox
             }
 
         activeSearch =
