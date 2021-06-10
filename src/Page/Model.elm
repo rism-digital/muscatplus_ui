@@ -12,14 +12,15 @@ type Response
     | NoResponseToShow
 
 
-type CurrentTab
-    = DefaultTab
-    | PersonSourcesTab
+type CurrentRecordViewTab
+    = DefaultRecordViewTab
+    | PersonSourcesRecordViewTab String
 
 
 type alias PageModel =
     { response : Response
     , route : Route
     , url : Url
-    , currentTab : CurrentTab
+    , currentTab : CurrentRecordViewTab
+    , pageSearch : Response
     }
