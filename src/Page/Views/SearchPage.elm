@@ -1,6 +1,6 @@
-module Page.Views.SearchPage exposing (view)
+module Page.Views.SearchPage exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingEach, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -10,12 +10,13 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
+import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.RecordTypes.Search exposing (Facet, SearchBody, SearchResult)
 import Page.Response exposing (ServerData(..))
-import Page.UI.Attributes exposing (bodySM, minimalDropShadow, searchColumnVerticalSize)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (h5, searchKeywordInput)
-import Page.UI.Images exposing (bookOpenSvg, digitizedImagesSvg)
+import Page.UI.Images exposing (bookOpenSvg, digitizedImagesSvg, musicNotationSvg, sourceSvg)
 import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Page.Views.SearchPage.Facets exposing (viewModeItems)
 import Page.Views.SearchPage.Pagination exposing (viewSearchResultsPagination)
@@ -187,19 +188,21 @@ viewSearchResultsSection body searchParams language =
         [ width fill
         ]
         [ column
-            [ width (fill |> minimum 600 |> maximum 800)
+            [ width (fill |> minimum 800 |> maximum 1100)
+            , Background.color colourScheme.white
             , padding 20
             , searchColumnVerticalSize
             , scrollbarY
             , alignTop
             ]
-            [ viewSearchResultsListSection body language
+            [ viewSearchResultsListSection language body
             ]
         , column
             [ Border.widthEach { top = 0, left = 2, right = 0, bottom = 0 }
             , Border.color colourScheme.slateGrey
-            , Background.color colourScheme.white
-            , width fill
+
+            --, Background.color colourScheme.white
+            , width (fill |> minimum 800)
             , padding 20
             , searchColumnVerticalSize
             , scrollbarY
@@ -210,8 +213,8 @@ viewSearchResultsSection body searchParams language =
         ]
 
 
-viewSearchResultsListSection : SearchBody -> Language -> Element Msg
-viewSearchResultsListSection body language =
+viewSearchResultsListSection : Language -> SearchBody -> Element Msg
+viewSearchResultsListSection language body =
     row
         [ width fill
         , height fill
@@ -221,14 +224,14 @@ viewSearchResultsListSection body language =
             [ width fill
             , height fill
             ]
-            [ viewSearchResultsList body language
+            [ viewSearchResultsList language body
             , viewSearchResultsPagination body.pagination language
             ]
         ]
 
 
-viewSearchResultsList : SearchBody -> Language -> Element Msg
-viewSearchResultsList body language =
+viewSearchResultsList : Language -> SearchBody -> Element Msg
+viewSearchResultsList language body =
     row
         [ width fill
         , height fill
@@ -237,7 +240,7 @@ viewSearchResultsList body language =
         [ column
             [ width fill
             , alignTop
-            , spacing 20
+            , spacing 60
             , htmlAttribute (HA.id "search-results-list")
             ]
             (List.map (\i -> viewSearchResult i language) body.items)
@@ -276,6 +279,28 @@ viewSearchResultsPreviewSection searchParams language =
         ]
 
 
+makeFlagIcon : Element msg -> String -> Element msg
+makeFlagIcon iconImage iconLabel =
+    column
+        [ bodySM
+        , padding 4
+        , Border.width 1
+        , Border.color colourScheme.darkGrey
+        , Border.rounded 4
+        ]
+        [ row
+            [ spacing 5
+            ]
+            [ el
+                [ width (px 20)
+                , height (px 20)
+                ]
+                iconImage
+            , text iconLabel
+            ]
+        ]
+
+
 viewSearchResult : SearchResult -> Language -> Element Msg
 viewSearchResult result language =
     let
@@ -297,24 +322,36 @@ viewSearchResult result language =
         isItemFlag =
             flags.isItemRecord
 
+        hasIncipits =
+            flags.hasIncipits
+
+        isFullSource =
+            result.type_ == Source && flags.isItemRecord == False
+
+        fullSourceIcon =
+            if isFullSource == True then
+                makeFlagIcon sourceSvg "Source record"
+
+            else
+                none
+
         digitalImagesIcon =
             if digitizedImagesFlag == True then
-                el
-                    [ width (px 20)
-                    , height fill
-                    ]
-                    digitizedImagesSvg
+                makeFlagIcon digitizedImagesSvg "Digitization available"
 
             else
                 none
 
         isItemIcon =
             if isItemFlag == True then
-                el
-                    [ width (px 20)
-                    , height fill
-                    ]
-                    bookOpenSvg
+                makeFlagIcon bookOpenSvg "Item record"
+
+            else
+                none
+
+        incipitIcon =
+            if hasIncipits == True then
+                makeFlagIcon musicNotationSvg "Has incipits"
 
             else
                 none
@@ -328,14 +365,14 @@ viewSearchResult result language =
                     in
                     row
                         [ width fill
-                        , bodySM
+                        , bodyRegular
                         ]
                         [ column
                             [ width fill
                             ]
                             [ row
                                 [ width fill ]
-                                [ text "Part of "
+                                [ text "Part of " -- TODO: Translate!
                                 , link
                                     [ Font.color colourScheme.lightBlue ]
                                     { url = source.id, label = text (extractLabelFromLanguageMap language source.label) }
@@ -351,7 +388,7 @@ viewSearchResult result language =
                 Just fields ->
                     row
                         [ width fill
-                        , bodySM
+                        , bodyRegular
                         ]
                         [ column
                             [ width fill
@@ -367,13 +404,14 @@ viewSearchResult result language =
 
         --, height (px 100)
         , alignTop
-        , Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
-        , Border.color colourScheme.midGrey
+
+        --, Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
+        --, Border.color colourScheme.midGrey
         , paddingXY 10 0
         ]
         [ column
             [ width fill
-            , spacing 8
+            , spacing 10
             , alignTop
             ]
             [ row
@@ -388,10 +426,13 @@ viewSearchResult result language =
             , row
                 [ width fill
                 , alignLeft
-                , spacing 10
+                , spacing 8
+                , paddingEach { top = 8, bottom = 0, left = 0, right = 0 }
                 ]
                 [ digitalImagesIcon
+                , fullSourceIcon
                 , isItemIcon
+                , incipitIcon
                 ]
             ]
         ]
