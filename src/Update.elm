@@ -8,7 +8,7 @@ import Model exposing (Model)
 import Msg exposing (Msg)
 import Page.Converters exposing (convertFacetToResultMode)
 import Page.Decoders exposing (recordResponseDecoder)
-import Page.Model exposing (Response(..))
+import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Query exposing (buildQueryParameters)
 import Page.Route exposing (Route(..), parseUrl)
 import Ports.LocalStorage exposing (saveLanguagePreference)
@@ -62,6 +62,19 @@ update msg model =
             ( { model | activeSearch = newSearch }, Cmd.none )
 
         Msg.ReceivedPreviewResponse (Err _) ->
+            ( model, Cmd.none )
+
+        Msg.ReceivedPageSearchResponse (Ok response) ->
+            let
+                oldPage =
+                    model.page
+
+                newPage =
+                    { oldPage | pageSearch = Response response }
+            in
+            ( { model | page = newPage }, Cmd.none )
+
+        Msg.ReceivedPageSearchResponse (Err _) ->
             ( model, Cmd.none )
 
         Msg.UrlChanged url ->
@@ -195,6 +208,26 @@ update msg model =
             in
             ( { model | activeSearch = newSearch }
             , createRequest Msg.ReceivedPreviewResponse recordResponseDecoder url
+            )
+
+        Msg.ChangeRecordViewTab tab ->
+            let
+                oldPage =
+                    model.page
+
+                newPage =
+                    { oldPage | currentTab = tab }
+
+                cmd =
+                    case tab of
+                        PersonSourcesRecordViewTab url ->
+                            createRequest Msg.ReceivedPageSearchResponse recordResponseDecoder url
+
+                        _ ->
+                            Cmd.none
+            in
+            ( { model | page = newPage }
+            , cmd
             )
 
         Msg.NoOp ->

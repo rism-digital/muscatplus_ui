@@ -28,7 +28,7 @@ view model =
                     none
 
                 Response (PersonData body) ->
-                    viewFullPersonPage currentTab model.language body
+                    viewFullPersonPage page model.language body
 
                 Error _ ->
                     -- TODO: Show error page

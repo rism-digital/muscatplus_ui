@@ -2,12 +2,15 @@ module Page.Views.PersonPage.FullRecordPage exposing (..)
 
 import Element exposing (Element, column, el, fill, height, htmlAttribute, link, none, padding, px, row, spacing, text, width)
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
-import Msg exposing (Msg)
-import Page.Model exposing (CurrentTab(..))
+import Msg exposing (Msg(..))
+import Page
+import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.RecordTypes.Person exposing (PersonBody)
+import Page.Response exposing (ServerData(..))
 import Page.UI.Components exposing (h4, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -16,11 +19,22 @@ import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Notes exposing (viewNotesSection)
 import Page.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.Views.Relationship exposing (viewRelationshipsSection)
+import Page.Views.SearchPage exposing (viewSearchResultsList, viewSearchResultsListSection)
 
 
-viewFullPersonPage : CurrentTab -> Language -> PersonBody -> Element Msg
-viewFullPersonPage currentTab language body =
+viewFullPersonPage :
+    Page.Model
+    -> Language
+    -> PersonBody
+    -> Element Msg
+viewFullPersonPage page language body =
     let
+        currentTab =
+            page.currentTab
+
+        searchData =
+            page.pageSearch
+
         recordUri =
             row
                 [ width fill ]
@@ -36,11 +50,11 @@ viewFullPersonPage currentTab language body =
 
         pageBodyView =
             case currentTab of
-                DefaultTab ->
+                DefaultRecordViewTab ->
                     viewDescriptionTab language body
 
-                PersonSourcesTab ->
-                    viewPersonSourcesTab language body
+                PersonSourcesRecordViewTab _ ->
+                    viewPersonSourcesTab language searchData
     in
     row
         [ width fill
@@ -57,14 +71,31 @@ viewFullPersonPage currentTab language body =
                 ]
                 [ h4 language body.label ]
             , recordUri
-            , viewTabSwitcher language
+            , viewTabSwitcher language body
             , pageBodyView
             ]
         ]
 
 
-viewTabSwitcher : Language -> Element Msg
-viewTabSwitcher language =
+viewTabSwitcher : Language -> PersonBody -> Element Msg
+viewTabSwitcher language body =
+    let
+        sourcesTab =
+            case body.sources of
+                Just sources ->
+                    column
+                        [ Border.width 1
+                        , padding 12
+                        , onClick (ChangeRecordViewTab (PersonSourcesRecordViewTab sources.url))
+                        ]
+                        [ el
+                            []
+                            (text "Sources")
+                        ]
+
+                Nothing ->
+                    none
+    in
     row
         [ width fill
         , height (px 60)
@@ -73,13 +104,10 @@ viewTabSwitcher language =
         [ column
             [ Border.width 1
             , padding 12
+            , onClick (ChangeRecordViewTab DefaultRecordViewTab)
             ]
             [ text "Description" ]
-        , column
-            [ Border.width 1
-            , padding 12
-            ]
-            [ text "Sources" ]
+        , sourcesTab
         ]
 
 
@@ -99,6 +127,15 @@ viewDescriptionTab language body =
         ]
 
 
-viewPersonSourcesTab : Language -> PersonBody -> Element Msg
-viewPersonSourcesTab language body =
-    none
+viewPersonSourcesTab : Language -> Response -> Element Msg
+viewPersonSourcesTab language searchData =
+    let
+        resultsView =
+            case searchData of
+                Response (SearchData body) ->
+                    viewSearchResultsListSection language body
+
+                _ ->
+                    none
+    in
+    resultsView

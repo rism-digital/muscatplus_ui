@@ -1,7 +1,7 @@
 module Page exposing (..)
 
 import Msg exposing (Msg)
-import Page.Model exposing (CurrentTab(..), PageModel, Response(..))
+import Page.Model exposing (CurrentRecordViewTab(..), PageModel, Response(..))
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (parseUrl)
 import Url exposing (Url)
@@ -20,7 +20,8 @@ init initialUrl =
     { response = Loading
     , route = initialRoute
     , url = initialUrl
-    , currentTab = DefaultTab
+    , currentTab = DefaultRecordViewTab
+    , pageSearch = NoResponseToShow
     }
 
 
