@@ -4,6 +4,7 @@ import Element exposing (Element, none)
 import Language exposing (Language)
 import Msg exposing (Msg)
 import Page.Response exposing (ServerData(..))
+import Page.Views.SearchPage.Previews.Incipit exposing (viewIncipitPreview)
 import Page.Views.SearchPage.Previews.Institution exposing (viewInstitutionPreview)
 import Page.Views.SearchPage.Previews.Person exposing (viewPersonPreview)
 import Page.Views.SearchPage.Previews.Source exposing (viewSourcePreview)
@@ -20,6 +21,9 @@ viewPreviewRouter language previewData =
 
         InstitutionData body ->
             viewInstitutionPreview body language
+
+        IncipitData body ->
+            viewIncipitPreview body language
 
         _ ->
             viewUnknownPreview
