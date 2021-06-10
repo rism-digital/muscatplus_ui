@@ -7,7 +7,7 @@ import Element.Region as Region
 import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
-import Page.Model exposing (Response(..))
+import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..))
 import Page.TablesOfContents exposing (createPersonRecordToc, createSourceRecordToc)
@@ -70,8 +70,16 @@ view model =
                     )
 
                 Response (PersonData d) ->
+                    let
+                        toc =
+                            if page.currentTab == DefaultRecordViewTab then
+                                createPersonRecordToc d model.language
+
+                            else
+                                none
+                    in
                     ( extractLabelFromLanguageMap model.language d.label
-                    , createPersonRecordToc d model.language
+                    , toc
                     )
 
                 Response (InstitutionData d) ->
