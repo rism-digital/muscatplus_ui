@@ -16,7 +16,6 @@ type alias BasicSourceBody =
     , label : LanguageMap
     , typeLabel : LanguageMap
     , summary : Maybe (List LabelValue)
-    , recordHistory : RecordHistory
     }
 
 
@@ -153,7 +152,6 @@ basicSourceBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> required "recordHistory" recordHistoryDecoder
 
 
 partOfSectionBodyDecoder : Decoder PartOfSectionBody
