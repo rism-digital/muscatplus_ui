@@ -54,7 +54,7 @@ viewFullPersonPage page language body =
                 DefaultRecordViewTab ->
                     viewDescriptionTab language body
 
-                PersonSourcesRecordViewTab _ ->
+                PersonSourcesRecordSearchTab _ ->
                     viewPersonSourcesTab language searchData
     in
     row
@@ -87,7 +87,7 @@ viewTabSwitcher language body =
                     column
                         [ Border.width 1
                         , padding 12
-                        , onClick (UserClickedRecordViewTab (PersonSourcesRecordViewTab sources.url))
+                        , onClick (UserClickedRecordViewTab (PersonSourcesRecordSearchTab sources.url))
                         ]
                         [ el
                             []

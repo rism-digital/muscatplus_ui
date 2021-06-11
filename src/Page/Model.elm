@@ -14,7 +14,7 @@ type Response
 
 type CurrentRecordViewTab
     = DefaultRecordViewTab
-    | PersonSourcesRecordViewTab String
+    | PersonSourcesRecordSearchTab String
 
 
 type alias PageModel =

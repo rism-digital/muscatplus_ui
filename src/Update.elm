@@ -224,7 +224,7 @@ update msg model =
 
                 cmd =
                     case tab of
-                        PersonSourcesRecordViewTab url ->
+                        PersonSourcesRecordSearchTab url ->
                             createRequest Msg.ServerRespondedWithPageSearch recordResponseDecoder url
 
                         _ ->
