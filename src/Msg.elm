@@ -62,6 +62,8 @@ type Msg
     | ServerRespondedWithPreview (Result Http.Error ServerData)
     | ServerRespondedWithPageSearch (Result Http.Error ServerData)
     | ClientChangedUrl Url
+    | ClientJumpedToId
+    | ClientResetViewport
     | UserClickedSearchSubmitButton
     | UserInputTextInQueryBox String
     | UserChangedLanguageSelect String

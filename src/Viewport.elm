@@ -21,11 +21,11 @@ jumpToId id =
             )
         |> Task.attempt
             (\_ ->
-                NothingHappened
+                ClientJumpedToId
             )
 
 
 resetViewport : Cmd Msg
 resetViewport =
     Dom.setViewport 0 0
-        |> Task.attempt (\_ -> NothingHappened)
+        |> Task.attempt (\_ -> ClientResetViewport)

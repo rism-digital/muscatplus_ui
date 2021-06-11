@@ -234,5 +234,13 @@ update msg model =
             , cmd
             )
 
+        Msg.ClientJumpedToId ->
+            ( model, Cmd.none )
+
+        Msg.ClientResetViewport ->
+            ( model, Cmd.none )
+
         Msg.NothingHappened ->
+            -- Use for mocking in a Msg that does nothing; For actual code, favour adding
+            -- an explicit message for 'NoOp' updates.
             ( model, Cmd.none )
