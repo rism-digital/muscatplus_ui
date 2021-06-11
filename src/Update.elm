@@ -240,6 +240,16 @@ update msg model =
         Msg.ClientResetViewport ->
             ( model, Cmd.none )
 
+        Msg.UserClickedRecordViewTabPagination url ->
+            let
+                cmd =
+                    Cmd.batch
+                        [ createRequest Msg.ServerRespondedWithPageSearch recordResponseDecoder url
+                        , resetViewport
+                        ]
+            in
+            ( model, cmd )
+
         Msg.NothingHappened ->
             -- Use for mocking in a Msg that does nothing; For actual code, favour adding
             -- an explicit message for 'NoOp' updates.

@@ -72,6 +72,7 @@ type Msg
     | UserClickedToCItem String
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserClickedSearchResultForPreview String
+    | UserClickedRecordViewTabPagination String
     | UserResizedWindow Device
     | UserRequestedUrlChange UrlRequest
     | NothingHappened -- for stubbing out messages and development, a.k.a. 'NoOp'
