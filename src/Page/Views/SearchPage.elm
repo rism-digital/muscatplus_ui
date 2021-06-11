@@ -165,7 +165,7 @@ searchResultsViewRouter model =
                     viewSearchResultsLoading model
 
                 Response (SearchData body) ->
-                    viewSearchResultsSection body activeSearch language
+                    viewSearchResultsSection language activeSearch body
 
                 Error _ ->
                     viewSearchResultsError model
@@ -182,8 +182,8 @@ searchResultsViewRouter model =
     sectionView
 
 
-viewSearchResultsSection : SearchBody -> ActiveSearch -> Language -> Element Msg
-viewSearchResultsSection body searchParams language =
+viewSearchResultsSection : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewSearchResultsSection language searchParams body =
     row
         [ width fill
         ]
@@ -225,7 +225,7 @@ viewSearchResultsListSection language body =
             , height fill
             ]
             [ viewSearchResultsList language body
-            , viewSearchResultsPagination body.pagination language
+            , viewSearchResultsPagination language body.pagination
             ]
         ]
 
@@ -243,7 +243,7 @@ viewSearchResultsList language body =
             , spacing 60
             , htmlAttribute (HA.id "search-results-list")
             ]
-            (List.map (\i -> viewSearchResult i language) body.items)
+            (List.map (\result -> viewSearchResult language result) body.items)
         ]
 
 
@@ -301,8 +301,8 @@ makeFlagIcon iconImage iconLabel =
         ]
 
 
-viewSearchResult : SearchResult -> Language -> Element Msg
-viewSearchResult result language =
+viewSearchResult : Language -> SearchResult -> Element Msg
+viewSearchResult language result =
     let
         resultTitle =
             el

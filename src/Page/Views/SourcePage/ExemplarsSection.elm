@@ -36,13 +36,13 @@ viewExemplarsSection language exemplarSection =
                 , spacing 20
                 , alignTop
                 ]
-                (List.map (\l -> viewExemplar l language) exemplarSection.items)
+                (List.map (\l -> viewExemplar language l) exemplarSection.items)
             ]
         ]
 
 
-viewExemplar : ExemplarBody -> Language -> Element msg
-viewExemplar exemplar language =
+viewExemplar : Language -> ExemplarBody -> Element msg
+viewExemplar language exemplar =
     let
         heldBy =
             row
