@@ -47,17 +47,17 @@ type alias ContentsSectionBody =
     , label : LanguageMap
     , creator : Maybe RelationshipBody
     , summary : Maybe (List LabelValue)
-    , subjects : Maybe SourceSubjectsBody
+    , subjects : Maybe SubjectsSectionBody
     }
 
 
-type alias SourceSubjectsBody =
+type alias SubjectsSectionBody =
     { label : LanguageMap
-    , items : List SourceSubject
+    , items : List Subject
     }
 
 
-type alias SourceSubject =
+type alias Subject =
     { id : String
     , term : LanguageMap
     }
@@ -171,16 +171,16 @@ contentsSectionBodyDecoder =
         |> optional "subjects" (Decode.maybe sourceSubjectsBodyDecoder) Nothing
 
 
-sourceSubjectsBodyDecoder : Decoder SourceSubjectsBody
+sourceSubjectsBodyDecoder : Decoder SubjectsSectionBody
 sourceSubjectsBodyDecoder =
-    Decode.succeed SourceSubjectsBody
+    Decode.succeed SubjectsSectionBody
         |> required "label" languageMapLabelDecoder
         |> required "items" (list sourceSubjectDecoder)
 
 
-sourceSubjectDecoder : Decoder SourceSubject
+sourceSubjectDecoder : Decoder Subject
 sourceSubjectDecoder =
-    Decode.succeed SourceSubject
+    Decode.succeed Subject
         |> required "id" string
         |> required "term" languageMapLabelDecoder
 
