@@ -1,6 +1,6 @@
 module Page.Views.PersonPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, column, el, fill, height, htmlAttribute, link, none, padding, px, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
@@ -10,7 +10,6 @@ import Msg exposing (Msg(..))
 import Page
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.Response exposing (ServerData(..))
 import Page.UI.Components exposing (h4, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -20,7 +19,6 @@ import Page.Views.Notes exposing (viewNotesSection)
 import Page.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.Views.PersonPage.SourcesTab exposing (viewPersonSourcesTab)
 import Page.Views.Relationship exposing (viewRelationshipsSection)
-import Page.Views.SearchPage exposing (viewSearchResultsList, viewSearchResultsListSection)
 
 
 viewFullPersonPage :
@@ -58,7 +56,7 @@ viewFullPersonPage page language body =
                     viewPersonSourcesTab language searchData
     in
     row
-        [ width fill
+        [ width (fill |> minimum 800 |> maximum 1400)
         , height fill
         ]
         [ column

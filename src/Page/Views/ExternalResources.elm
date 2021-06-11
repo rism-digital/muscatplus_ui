@@ -1,6 +1,6 @@
 module Page.Views.ExternalResources exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, maximum, minimum, paddingXY, paragraph, row, spacing, text, width, wrappedRow)
 import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
@@ -31,7 +31,7 @@ viewExternalResourcesSection language extSection =
                 [ width fill ]
                 [ column
                     [ width fill
-                    , spacing 10
+                    , spacing 15
                     ]
                     (List.map (\l -> viewExternalResource language l) extSection.items)
                 ]
@@ -43,9 +43,12 @@ viewExternalResource : Language -> ExternalResourceBody -> Element msg
 viewExternalResource language body =
     row
         [ width fill ]
-        [ link
-            [ Font.color colourScheme.lightBlue ]
-            { url = body.url
-            , label = text (extractLabelFromLanguageMap language body.label)
-            }
+        [ paragraph
+            []
+            [ link
+                [ Font.color colourScheme.lightBlue ]
+                { url = body.url
+                , label = text (extractLabelFromLanguageMap language body.label)
+                }
+            ]
         ]
