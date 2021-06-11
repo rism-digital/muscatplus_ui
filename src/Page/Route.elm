@@ -13,6 +13,7 @@ type Route
     | InstitutionPageRoute Int
     | PlacePageRoute Int
     | FestivalPageRoute Int
+    | SubjectPageRoute Int
     | NotFoundPageRoute
 
 
@@ -36,4 +37,5 @@ routeParser =
         , P.map InstitutionPageRoute (s "institutions" </> P.int)
         , P.map PlacePageRoute (s "places" </> P.int)
         , P.map FestivalPageRoute (s "festivals" </> P.int)
+        , P.map SubjectPageRoute (s "subjects" </> P.int)
         ]
