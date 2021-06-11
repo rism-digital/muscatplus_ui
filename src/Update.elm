@@ -86,7 +86,11 @@ update msg model =
                     parseUrl url
 
                 newPage =
-                    { oldPage | route = newRoute }
+                    { oldPage
+                        | route = newRoute
+                        , currentTab = DefaultRecordViewTab
+                        , pageSearch = NoResponseToShow
+                    }
 
                 newQuery =
                     case newRoute of
