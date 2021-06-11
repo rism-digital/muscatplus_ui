@@ -2,14 +2,14 @@ module Page.Views.SearchPage.Pagination exposing (..)
 
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, link, none, padding, px, row, shrink, text, width)
 import Element.Font as Font
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Search exposing (SearchPagination)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 
 
-viewSearchResultsPagination : SearchPagination -> Language -> Element Msg
-viewSearchResultsPagination pagination language =
+viewSearchResultsPagination : Language -> SearchPagination -> Element Msg
+viewSearchResultsPagination language pagination =
     row
         [ width fill
         , alignBottom
@@ -57,10 +57,10 @@ pageInfo : SearchPagination -> Language -> Element Msg
 pageInfo pagination language =
     let
         thisPage =
-            String.fromInt pagination.thisPage
+            formatNumberByLanguage (toFloat pagination.thisPage) language
 
         totalPages =
-            String.fromInt pagination.totalPages
+            formatNumberByLanguage (toFloat pagination.totalPages) language
 
         label =
             extractLabelFromLanguageMap language localTranslations.page
@@ -93,7 +93,9 @@ formatPaginationLink icon url linkText =
             [ height (px 20)
             , width (px 20)
             ]
-            { url = url, label = icon }
+            { url = url
+            , label = icon
+            }
         )
 
 
