@@ -18,6 +18,7 @@ import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Notes exposing (viewNotesSection)
 import Page.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
+import Page.Views.PersonPage.SourcesTab exposing (viewPersonSourcesTab)
 import Page.Views.Relationship exposing (viewRelationshipsSection)
 import Page.Views.SearchPage exposing (viewSearchResultsList, viewSearchResultsListSection)
 
@@ -125,17 +126,3 @@ viewDescriptionTab language body =
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
             ]
         ]
-
-
-viewPersonSourcesTab : Language -> Response -> Element Msg
-viewPersonSourcesTab language searchData =
-    let
-        resultsView =
-            case searchData of
-                Response (SearchData body) ->
-                    viewSearchResultsListSection language body
-
-                _ ->
-                    none
-    in
-    resultsView
