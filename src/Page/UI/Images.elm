@@ -1,6 +1,7 @@
 module Page.UI.Images exposing (..)
 
 import Element exposing (Element, html)
+import Page.UI.Style exposing (RGBColour, colourToHexString)
 import Svg exposing (defs, g, metadata, svg)
 import Svg.Attributes exposing (d, fill, height, id, style, transform, version, viewBox, width)
 
@@ -12,8 +13,12 @@ import Svg.Attributes exposing (d, fill, height, id, style, transform, version, 
     The colour is, for now, simply a hex string value (including the leading "#")
 
 -}
-rismLogo : String -> Int -> Element msg
+rismLogo : RGBColour -> Int -> Element msg
 rismLogo colour size =
+    let
+        hexColour =
+            colourToHexString colour
+    in
     html
         (svg
             [ width (String.fromInt size)
@@ -35,38 +40,38 @@ rismLogo colour size =
                     , id "g20"
                     ]
                     [ Svg.path
-                        [ style ("fill:" ++ colour ++ ";fill-opacity:1")
+                        [ style ("fill:" ++ hexColour ++ ";fill-opacity:1")
                         , id "path10"
                         , d "m 245.48,169.456 c -75.086,123.436 -138.273,33.89 -162.733,-3.441 -0.183,-0.47 -0.484,-0.933 -0.889,-1.363 -5.5,-8.523 -7.298,-11.24 -7.298,-11.24 -0.591,-0.661 -3.041,-5.026 -3.489,-5.698 -1.329,-2.16 -2.537,-3.987 -4.023,-6.193 -2.82,-4.188 -6.111,-9.359 -9.871,-15.513 -2.479,-4.103 -4.189,-6.836 -5.128,-8.204 2.051,-0.597 4.058,-1.538 6.025,-2.82 3.846,-2.648 6.879,-6.174 9.102,-10.577 2.222,-4.401 3.334,-9.08 3.334,-14.038 0,-4.615 -1.048,-9.122 -3.141,-13.525 -2.095,-4.4 -5.192,-7.84 -9.295,-10.32 -2.564,-1.538 -5.727,-2.734 -9.486,-3.589 -3.762,-0.853 -7.137,-1.282 -10.128,-1.282 -2.48,0 -6.198,0.172 -11.153,0.513 -5.557,0.428 -9.788,0.641 -12.692,0.641 -2.051,0 -4.317,-0.064 -6.795,-0.193 -2.48,-0.128 -4.957,-0.32 -7.435,-0.577 v 1.154 c 2.99,1.625 5.021,3.506 6.089,5.641 1.068,2.137 1.687,4.743 1.859,7.82 0.341,6.41 0.597,13.034 0.769,19.871 0.171,6.839 0.257,13.547 0.257,20.127 0,17.264 -0.086,30.212 -0.257,38.844 -0.086,2.394 -1.005,4.551 -2.756,6.474 -1.753,1.924 -3.868,3.525 -6.346,4.808 v 1.154 c 1.965,-0.171 4.359,-0.321 7.179,-0.449 2.821,-0.128 5.385,-0.192 7.692,-0.192 4.103,0 8.93,0.214 14.487,0.642 v -1.026 c -2.65,-1.196 -4.531,-2.648 -5.641,-4.359 -1.112,-1.708 -1.795,-4.313 -2.051,-7.819 -0.685,-10.169 -1.026,-21.621 -1.026,-34.357 1.11,0 2.734,-0.128 4.872,-0.385 2.307,-0.17 3.888,-0.256 4.743,-0.256 h 6.795 c 2.307,2.563 4.443,5.235 6.41,8.012 1.965,2.779 4.529,6.603 7.692,11.474 2.277,3.501 4.325,6.542 6.188,9.212 109.779,187.675 188.815,26.188 188.815,26.188 1.792,-2.692 -0.675,-5.159 -0.675,-5.159 z M 32.691,113.957 c -0.685,0 -2.394,0 -5.128,0 -3.163,0.086 -5.471,0.128 -6.923,0.128 0,-12.391 0.042,-20.468 0.128,-24.229 0,-3.161 0.042,-5.641 0.129,-7.436 0.084,-1.795 0.17,-3.545 0.256,-5.256 0,-0.427 0.042,-1.324 0.128,-2.692 0.084,-3.077 0.427,-5.256 1.026,-6.538 0.513,-0.085 1.324,-0.171 2.436,-0.257 2.82,-0.256 5.041,-0.384 6.666,-0.384 3.503,0 6.644,0.214 9.423,0.641 2.776,0.428 5.192,1.326 7.243,2.692 2.99,2.051 5.34,4.807 7.051,8.269 1.708,3.461 2.564,6.986 2.564,10.576 0,8.547 -1.839,14.765 -5.513,18.653 -3.676,3.89 -10.172,5.833 -19.486,5.833 z"
-                        , fill colour
+                        , fill hexColour
                         ]
                         []
                     , Svg.path
-                        [ style ("fill:" ++ colour ++ ";fill-opacity:1")
+                        [ style ("fill:" ++ hexColour ++ ";fill-opacity:1")
                         , id "path12"
                         , d "m 87.253,167.8 v -1.025 c 2.135,-1.11 3.888,-2.648 5.256,-4.615 1.366,-1.965 2.093,-4.23 2.18,-6.795 0.17,-8.631 0.256,-21.579 0.256,-38.843 0,-6.58 -0.086,-13.289 -0.256,-20.127 C 94.516,89.558 94.26,82.934 93.919,76.524 93.747,73.447 93.17,70.735 92.189,68.383 91.205,66.034 89.304,63.918 86.484,62.037 V 61.14 c 5.641,0.513 10.212,0.769 13.717,0.769 2.051,0 5,-0.17 8.846,-0.513 2.051,-0.084 3.632,-0.17 4.743,-0.256 v 0.897 c -2.393,1.198 -4.102,3.141 -5.128,5.833 -1.025,2.693 -1.666,5.749 -1.923,9.167 -0.086,1.794 -0.172,3.633 -0.256,5.512 -0.086,1.881 -0.128,4.531 -0.128,7.949 -0.086,4.018 -0.128,12.563 -0.128,25.639 0,11.967 0.34,24.786 1.025,38.46 0.17,2.819 0.875,5.277 2.115,7.37 1.238,2.097 3.097,3.698 5.577,4.809 v 1.025 c -5.557,-0.427 -10.384,-0.641 -14.486,-0.641 -4.103,-0.001 -8.506,0.213 -13.205,0.64 z"
-                        , fill colour
+                        , fill hexColour
                         ]
                         []
                     , Svg.path
-                        [ style ("fill:" ++ colour ++ ";fill-opacity:1")
+                        [ style ("fill:" ++ hexColour ++ ";fill-opacity:1")
                         , id "path14"
                         , d "m 141.407,167.929 c -2.48,-0.514 -5.556,-1.324 -9.23,-2.437 -2.137,-0.597 -3.249,-0.896 -3.333,-0.896 -1.539,-0.428 -2.563,-1.282 -3.077,-2.564 -0.514,-1.282 -0.769,-3.077 -0.769,-5.385 l -0.128,-1.025 c -0.257,-1.623 -0.471,-3.183 -0.641,-4.68 -0.173,-1.494 -0.257,-2.926 -0.257,-4.294 0,-1.026 0.193,-2.029 0.577,-3.014 0.385,-0.98 0.918,-1.474 1.603,-1.474 0.17,0 0.512,0.728 1.025,2.179 0.597,1.796 1.238,3.442 1.923,4.937 0.683,1.496 1.581,2.928 2.692,4.294 2.052,2.479 5.148,4.638 9.295,6.475 4.144,1.838 7.712,2.756 10.704,2.756 2.222,0 4.529,-0.404 6.923,-1.218 2.393,-0.811 4.593,-2.007 6.603,-3.59 2.008,-1.58 3.632,-3.545 4.872,-5.896 1.237,-2.35 1.858,-5.021 1.858,-8.013 0,-2.904 -0.577,-5.597 -1.73,-8.077 -1.154,-2.478 -2.715,-4.784 -4.68,-6.923 -1.967,-2.135 -4.102,-4.08 -6.41,-5.833 -2.308,-1.75 -5.213,-3.822 -8.718,-6.216 -3.761,-2.564 -6.838,-4.764 -9.23,-6.602 -2.394,-1.837 -4.637,-3.889 -6.73,-6.154 -2.096,-2.264 -3.762,-4.763 -5,-7.5 -1.24,-2.734 -1.859,-5.725 -1.859,-8.974 0,-3.333 0.555,-6.58 1.667,-9.743 1.109,-3.161 2.798,-6.045 5.063,-8.653 2.264,-2.606 5.148,-4.679 8.654,-6.218 3.503,-1.538 7.52,-2.307 12.051,-2.307 1.794,0 4.571,0.342 8.333,1.025 3.673,0.769 6.409,1.154 8.204,1.154 0.769,0 1.709,-0.212 2.821,-0.641 1.281,-0.513 2.391,-0.769 3.333,-0.769 0.513,0 0.769,0.384 0.769,1.154 0,2.223 0.212,5.342 0.641,9.358 0.342,3.846 0.514,6.753 0.514,8.718 0,0.428 -0.108,0.897 -0.321,1.41 -0.214,0.513 -0.448,0.769 -0.705,0.769 -0.599,0 -1.624,-1.366 -3.077,-4.102 -0.769,-1.539 -1.496,-2.821 -2.179,-3.846 -0.685,-1.026 -1.41,-1.879 -2.179,-2.564 -2.309,-2.051 -5.108,-3.568 -8.397,-4.551 -3.291,-0.982 -6.39,-1.475 -9.295,-1.475 -1.881,0 -3.782,0.385 -5.705,1.154 -1.923,0.769 -3.653,1.839 -5.192,3.205 -1.538,1.368 -2.778,2.929 -3.718,4.679 -0.941,1.753 -1.41,3.57 -1.41,5.449 0,2.48 0.533,4.829 1.603,7.051 1.068,2.223 2.542,4.339 4.423,6.346 1.879,2.009 3.846,3.804 5.897,5.384 2.051,1.583 4.914,3.698 8.589,6.346 3.93,2.82 7.179,5.236 9.743,7.243 2.563,2.009 4.978,4.275 7.243,6.795 2.264,2.521 4.08,5.3 5.448,8.332 1.366,3.034 2.093,6.304 2.18,9.808 0,3.932 -0.686,7.714 -2.052,11.345 -1.368,3.634 -3.44,6.881 -6.217,9.744 -2.779,2.864 -6.262,5.128 -10.449,6.794 -4.188,1.667 -9.018,2.5 -14.486,2.5 v 0 c -2.907,-0.002 -5.599,-0.258 -8.077,-0.77 z"
-                        , fill colour
+                        , fill hexColour
                         ]
                         []
                     , Svg.path
-                        [ style ("fill:" ++ colour ++ ";fill-opacity:1")
+                        [ style ("fill:" ++ hexColour ++ ";fill-opacity:1")
                         , id "path16"
                         , d "m 306.142,153.826 c 0.514,3.077 1.773,5.749 3.782,8.012 2.007,2.267 4.423,3.997 7.243,5.192 v 0.898 c -4.701,-0.77 -9.402,-1.154 -14.102,-1.154 -5.043,0 -10.085,0.385 -15.127,1.154 v -0.77 c 0,-0.597 0.641,-1.282 1.923,-2.052 1.109,-0.684 1.986,-1.41 2.628,-2.179 0.641,-0.77 0.961,-1.88 0.961,-3.333 0,-0.171 -0.044,-0.342 -0.128,-0.514 0,-0.256 0,-0.469 0,-0.641 l -8.845,-64.997 h -0.771 l -30.639,73.585 c -0.344,0.94 -0.728,1.411 -1.154,1.411 -0.343,0 -0.897,-0.6 -1.667,-1.795 -0.256,-0.428 -0.599,-1.026 -1.025,-1.795 -0.429,-0.77 -1.176,-2.309 -2.244,-4.615 -1.068,-2.308 -2.242,-4.808 -3.524,-7.5 -1.282,-2.692 -3.205,-6.687 -5.77,-11.986 -0.854,-1.795 -8.291,-17.263 -22.307,-46.407 l -1.154,0.384 -7.691,58.715 c -0.086,0.599 -0.128,1.497 -0.128,2.691 0,2.564 0.555,4.725 1.667,6.476 1.109,1.752 2.903,3.14 5.384,4.166 l 0.385,1.025 c -1.539,-0.257 -3.826,-0.448 -6.858,-0.576 -3.035,-0.13 -5.576,-0.193 -7.629,-0.193 -3.846,0 -7.649,0.257 -11.408,0.77 l 0.641,-0.77 c 2.904,-0.939 5.298,-2.926 7.179,-5.961 1.879,-3.033 3.077,-6.558 3.589,-10.576 L 209.61,74.725 c 0,-4.956 0,-13.204 4.614,-13.204 l 38.076,82.943 2.308,0.13 28.717,-68.074 6.281,-14.999 c 1.879,0 4.699,-0.129 8.461,-0.385 1.623,-0.084 2.99,-0.17 4.103,-0.256 v 0.897 c -2.223,1.112 -4.018,2.949 -5.384,5.513 -1.369,2.564 -2.052,5.086 -2.052,7.563 0,0.257 0,0.599 0,1.026 0.084,0.429 0.129,0.727 0.129,0.897 z"
-                        , fill colour
+                        , fill hexColour
                         ]
                         []
                     , Svg.path
-                        [ style ("fill:" ++ colour ++ ";fill-opacity:1")
+                        [ style ("fill:" ++ hexColour ++ ";fill-opacity:1")
                         , id "path18"
                         , d "m 156.493,8.148 c 0,0 -56.505,7.765 -82.428,68.571 L 70.481,60.114 c 0,0 15.172,-61.523 114.802,-60.089 0,0 82.308,4.181 82.905,74.543 0,0 -6.928,-79.56 -111.695,-66.42 z"
-                        , fill colour
+                        , fill hexColour
                         ]
                         []
                     ]
@@ -81,14 +86,14 @@ type alias SvgDetails =
     }
 
 
-makeSvgIcon : SvgDetails -> Element msg
-makeSvgIcon details =
+makeSvgIcon : RGBColour -> SvgDetails -> Element msg
+makeSvgIcon color details =
     html
         (svg
             [ viewBox details.viewBox ]
             [ Svg.path
                 [ d details.path
-                , fill "LightSlateGray"
+                , fill (colourToHexString color)
                 ]
                 []
             ]
@@ -113,9 +118,9 @@ chevronDown =
     }
 
 
-chevronDownSvg : Element msg
-chevronDownSvg =
-    makeSvgIcon chevronDown
+chevronDownSvg : RGBColour -> Element msg
+chevronDownSvg color =
+    makeSvgIcon color chevronDown
 
 
 chevronDownString : String
@@ -130,9 +135,9 @@ chevronUp =
     }
 
 
-chevronUpSvg : Element msg
-chevronUpSvg =
-    makeSvgIcon chevronUp
+chevronUpSvg : RGBColour -> Element msg
+chevronUpSvg color =
+    makeSvgIcon color chevronUp
 
 
 chevronUpString : String
@@ -147,9 +152,9 @@ chevronLeft =
     }
 
 
-chevronLeftSvg : Element msg
-chevronLeftSvg =
-    makeSvgIcon chevronLeft
+chevronLeftSvg : RGBColour -> Element msg
+chevronLeftSvg color =
+    makeSvgIcon color chevronLeft
 
 
 chevronLeftString : String
@@ -164,9 +169,9 @@ chevronRight =
     }
 
 
-chevronRightSvg : Element msg
-chevronRightSvg =
-    makeSvgIcon chevronRight
+chevronRightSvg : RGBColour -> Element msg
+chevronRightSvg color =
+    makeSvgIcon color chevronRight
 
 
 chevronRightString : String
@@ -181,9 +186,9 @@ chevronDoubleRight =
     }
 
 
-chevronDoubleRightSvg : Element msg
-chevronDoubleRightSvg =
-    makeSvgIcon chevronDoubleRight
+chevronDoubleRightSvg : RGBColour -> Element msg
+chevronDoubleRightSvg color =
+    makeSvgIcon color chevronDoubleRight
 
 
 chevronDoubleRightString : String
@@ -198,9 +203,9 @@ chevronDoubleLeft =
     }
 
 
-chevronDoubleLeftSvg : Element msg
-chevronDoubleLeftSvg =
-    makeSvgIcon chevronDoubleLeft
+chevronDoubleLeftSvg : RGBColour -> Element msg
+chevronDoubleLeftSvg color =
+    makeSvgIcon color chevronDoubleLeft
 
 
 chevronDoubleLeftString : String
@@ -215,9 +220,9 @@ bookOpen =
     }
 
 
-bookOpenSvg : Element msg
-bookOpenSvg =
-    makeSvgIcon bookOpen
+bookOpenSvg : RGBColour -> Element msg
+bookOpenSvg color =
+    makeSvgIcon color bookOpen
 
 
 sources : SvgDetails
@@ -227,9 +232,9 @@ sources =
     }
 
 
-sourcesSvg : Element msg
-sourcesSvg =
-    makeSvgIcon sources
+sourcesSvg : RGBColour -> Element msg
+sourcesSvg color =
+    makeSvgIcon color sources
 
 
 source : SvgDetails
@@ -239,9 +244,9 @@ source =
     }
 
 
-sourceSvg : Element msg
-sourceSvg =
-    makeSvgIcon source
+sourceSvg : RGBColour -> Element msg
+sourceSvg color =
+    makeSvgIcon color source
 
 
 people : SvgDetails
@@ -251,9 +256,9 @@ people =
     }
 
 
-peopleSvg : Element msg
-peopleSvg =
-    makeSvgIcon people
+peopleSvg : RGBColour -> Element msg
+peopleSvg color =
+    makeSvgIcon color people
 
 
 institution : SvgDetails
@@ -263,9 +268,9 @@ institution =
     }
 
 
-institutionSvg : Element msg
-institutionSvg =
-    makeSvgIcon institution
+institutionSvg : RGBColour -> Element msg
+institutionSvg color =
+    makeSvgIcon color institution
 
 
 musicNotation : SvgDetails
@@ -275,9 +280,9 @@ musicNotation =
     }
 
 
-musicNotationSvg : Element msg
-musicNotationSvg =
-    makeSvgIcon musicNotation
+musicNotationSvg : RGBColour -> Element msg
+musicNotationSvg color =
+    makeSvgIcon color musicNotation
 
 
 unknown : SvgDetails
@@ -287,9 +292,9 @@ unknown =
     }
 
 
-unknownSvg : Element msg
-unknownSvg =
-    makeSvgIcon unknown
+unknownSvg : RGBColour -> Element msg
+unknownSvg color =
+    makeSvgIcon color unknown
 
 
 liturgicalFestival : SvgDetails
@@ -299,9 +304,9 @@ liturgicalFestival =
     }
 
 
-liturgicalFestivalSvg : Element msg
-liturgicalFestivalSvg =
-    makeSvgIcon liturgicalFestival
+liturgicalFestivalSvg : RGBColour -> Element msg
+liturgicalFestivalSvg color =
+    makeSvgIcon color liturgicalFestival
 
 
 digitizedImages : SvgDetails
@@ -311,6 +316,6 @@ digitizedImages =
     }
 
 
-digitizedImagesSvg : Element msg
-digitizedImagesSvg =
-    makeSvgIcon digitizedImages
+digitizedImagesSvg : RGBColour -> Element msg
+digitizedImagesSvg color =
+    makeSvgIcon color digitizedImages

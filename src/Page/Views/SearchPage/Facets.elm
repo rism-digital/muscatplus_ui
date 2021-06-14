@@ -10,7 +10,7 @@ import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode
 import Page.RecordTypes.Search exposing (Facet, FacetItem(..))
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, colourToHexString, colours)
 
 
 viewModeItems : ResultMode -> Facet -> Language -> Element Msg
@@ -58,22 +58,22 @@ viewModeItem selectedMode fitem language =
         icon =
             case value of
                 "sources" ->
-                    iconTmpl sourcesSvg
+                    iconTmpl (sourcesSvg colours.slateGrey)
 
                 "people" ->
-                    iconTmpl peopleSvg
+                    iconTmpl (peopleSvg colours.slateGrey)
 
                 "institutions" ->
-                    iconTmpl institutionSvg
+                    iconTmpl (institutionSvg colours.slateGrey)
 
                 "incipits" ->
-                    iconTmpl musicNotationSvg
+                    iconTmpl (musicNotationSvg colours.slateGrey)
 
                 "festivals" ->
-                    iconTmpl liturgicalFestivalSvg
+                    iconTmpl (liturgicalFestivalSvg colours.slateGrey)
 
                 _ ->
-                    iconTmpl unknownSvg
+                    iconTmpl (unknownSvg colours.slateGrey)
 
         rowMode =
             parseStringToResultMode value

@@ -14,7 +14,7 @@ import Page.TablesOfContents exposing (createPersonRecordToc, createSourceRecord
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, minimalDropShadow, pageBackground)
 import Page.UI.Components exposing (languageSelect)
 import Page.UI.Images exposing (rismLogo)
-import Page.UI.Style exposing (colourScheme, footerHeight, headerHeight)
+import Page.UI.Style exposing (colourScheme, colourToHexString, colours, footerHeight, headerHeight)
 import Page.Views.FrontPage
 import Page.Views.InstitutionPage
 import Page.Views.NotFoundPage
@@ -203,7 +203,7 @@ siteFooter =
                     [ width (px 200) ]
                     [ el
                         []
-                        (rismLogo "#ffffff" (footerHeight - 10))
+                        (rismLogo colours.white (footerHeight - 10))
                     ]
                 , column
                     [ width (fillPortion 10)

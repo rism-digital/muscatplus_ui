@@ -7,6 +7,7 @@ import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByL
 import Msg exposing (Msg(..))
 import Page.RecordTypes.Search exposing (SearchPagination)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
+import Page.UI.Style exposing (colourScheme, colours)
 import Page.Views.Helpers exposing (viewMaybe)
 
 
@@ -49,8 +50,8 @@ viewRecordSourceResultsPagination language pagination =
                 [ width shrink
                 , alignLeft
                 ]
-                [ viewMaybe (paginationLink chevronDoubleLeftSvg firstLabel) (Just pagination.first)
-                , viewMaybe (paginationLink chevronLeftSvg previousLabel) pagination.previous
+                [ viewMaybe (paginationLink (chevronDoubleLeftSvg colours.slateGrey) firstLabel) (Just pagination.first)
+                , viewMaybe (paginationLink (chevronLeftSvg colours.slateGrey) previousLabel) pagination.previous
                 ]
             ]
         , column
@@ -76,8 +77,8 @@ viewRecordSourceResultsPagination language pagination =
                 [ width shrink
                 , alignRight
                 ]
-                [ viewMaybe (paginationLink chevronRightSvg nextLabel) pagination.next
-                , viewMaybe (paginationLink chevronDoubleRightSvg lastLabel) pagination.last
+                [ viewMaybe (paginationLink (chevronRightSvg colours.slateGrey) nextLabel) pagination.next
+                , viewMaybe (paginationLink (chevronDoubleRightSvg colours.slateGrey) lastLabel) pagination.last
                 ]
             ]
         ]
