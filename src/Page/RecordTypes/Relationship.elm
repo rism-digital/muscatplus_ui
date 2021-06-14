@@ -7,6 +7,14 @@ import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 
 
+
+{-
+   Handles person, place, and institution
+   relationships to various other types of records.
+
+-}
+
+
 type alias RelationshipsSectionBody =
     { sectionToc : String
     , label : LanguageMap

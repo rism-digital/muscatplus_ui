@@ -25,7 +25,7 @@ view model =
                     none
 
                 Response (InstitutionData body) ->
-                    viewFullInstitutionPage model.language body
+                    viewFullInstitutionPage model.page model.language body
 
                 Error _ ->
                     -- TODO: Show error page

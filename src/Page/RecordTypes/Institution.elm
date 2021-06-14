@@ -8,6 +8,7 @@ import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody,
 import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
+import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody, sourceRelationshipsSectionBodyDecoder)
 
 
 type alias BasicInstitutionBody =
@@ -27,6 +28,7 @@ type alias InstitutionBody =
     , externalAuthorities : Maybe ExternalAuthoritiesSectionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , location : Maybe LocationSectionBody
+    , sources : Maybe SourceRelationshipsSectionBody
     }
 
 
@@ -49,6 +51,7 @@ institutionBodyDecoder =
         |> optional "externalAuthorities" (Decode.maybe externalAuthoritiesSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "location" (Decode.maybe locationSectionBodyDecoder) Nothing
+        |> optional "sources" (Decode.maybe sourceRelationshipsSectionBodyDecoder) Nothing
 
 
 basicInstitutionBodyDecoder : Decoder BasicInstitutionBody

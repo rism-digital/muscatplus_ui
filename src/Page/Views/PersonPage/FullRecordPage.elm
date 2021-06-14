@@ -54,6 +54,9 @@ viewFullPersonPage page language body =
 
                 PersonSourcesRecordSearchTab _ ->
                     viewPersonSourcesTab language searchData
+
+                _ ->
+                    none
     in
     row
         [ width (fill |> minimum 800 |> maximum 1400)

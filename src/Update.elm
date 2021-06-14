@@ -227,6 +227,9 @@ update msg model =
                         PersonSourcesRecordSearchTab url ->
                             createRequest Msg.ServerRespondedWithPageSearch recordResponseDecoder url
 
+                        InstitutionSourcesRecordSearchTab url ->
+                            createRequest Msg.ServerRespondedWithPageSearch recordResponseDecoder url
+
                         _ ->
                             Cmd.none
             in

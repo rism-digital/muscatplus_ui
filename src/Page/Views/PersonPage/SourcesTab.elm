@@ -10,6 +10,7 @@ import Page.RecordTypes.Search exposing (SearchBody, SearchPagination, SearchRes
 import Page.Response exposing (ServerData(..))
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 import Page.Views.Helpers exposing (viewMaybe)
+import Page.Views.Pagination exposing (viewRecordSourceResultsPagination)
 import Page.Views.SearchPage exposing (viewSearchResult)
 
 
@@ -39,7 +40,7 @@ viewPersonSourceResultsSection language body =
             , height fill
             ]
             [ viewPersonSourceResultsList language body
-            , viewPersonSourceResultsPagination language body.pagination
+            , viewRecordSourceResultsPagination language body.pagination
             ]
         ]
 
@@ -58,87 +59,3 @@ viewPersonSourceResultsList language body =
             ]
             (List.map (\result -> viewSearchResult language result) body.items)
         ]
-
-
-viewPersonSourceResultsPagination : Language -> SearchPagination -> Element Msg
-viewPersonSourceResultsPagination language pagination =
-    let
-        firstLabel =
-            extractLabelFromLanguageMap language localTranslations.first
-
-        previousLabel =
-            extractLabelFromLanguageMap language localTranslations.previous
-
-        nextLabel =
-            extractLabelFromLanguageMap language localTranslations.next
-
-        lastLabel =
-            extractLabelFromLanguageMap language localTranslations.last
-
-        thisPage =
-            formatNumberByLanguage (toFloat pagination.thisPage) language
-
-        totalPages =
-            formatNumberByLanguage (toFloat pagination.totalPages) language
-
-        pageLabel =
-            extractLabelFromLanguageMap language localTranslations.page
-
-        pageInfo =
-            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
-    in
-    row
-        [ width fill
-        , alignBottom
-        ]
-        [ column
-            [ alignLeft
-            , width fill
-            ]
-            [ row
-                [ width shrink
-                , alignLeft
-                ]
-                [ viewMaybe (paginationLink chevronDoubleLeftSvg firstLabel) (Just pagination.first)
-                , viewMaybe (paginationLink chevronLeftSvg previousLabel) pagination.previous
-                ]
-            ]
-        , column
-            [ centerX
-            , width fill
-            ]
-            [ row
-                [ width shrink
-                , height shrink
-                , centerX
-                , centerY
-                ]
-                [ el
-                    [ Font.medium ]
-                    (text pageInfo)
-                ]
-            ]
-        , column
-            [ alignRight
-            , width fill
-            ]
-            [ row
-                [ width shrink
-                , alignRight
-                ]
-                [ viewMaybe (paginationLink chevronRightSvg nextLabel) pagination.next
-                , viewMaybe (paginationLink chevronDoubleRightSvg lastLabel) pagination.last
-                ]
-            ]
-        ]
-
-
-paginationLink : Element Msg -> String -> String -> Element Msg
-paginationLink icon iconLabel url =
-    el
-        [ padding 5
-        , height (px 20)
-        , width (px 20)
-        , onClick (UserClickedRecordViewTabPagination url)
-        ]
-        icon

@@ -8,6 +8,7 @@ import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody,
 import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
+import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody, sourceRelationshipsSectionBodyDecoder)
 
 
 type alias PersonBody =
@@ -29,12 +30,6 @@ type alias NameVariantsSectionBody =
     { sectionToc : String
     , label : LanguageMap
     , items : List LabelValue
-    }
-
-
-type alias SourceRelationshipsSectionBody =
-    { url : String
-    , totalItems : Int
     }
 
 
@@ -60,10 +55,3 @@ nameVariantsSectionBodyDecoder =
         |> hardcoded "person-name-variants-section"
         |> required "label" languageMapLabelDecoder
         |> required "items" (list labelValueDecoder)
-
-
-sourceRelationshipsSectionBodyDecoder : Decoder SourceRelationshipsSectionBody
-sourceRelationshipsSectionBodyDecoder =
-    Decode.succeed SourceRelationshipsSectionBody
-        |> required "url" string
-        |> required "totalItems" int
