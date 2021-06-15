@@ -15,6 +15,7 @@ import Page.UI.Attributes exposing (bodySM, minimalDropShadow, searchColumnVerti
 import Page.UI.Components exposing (searchKeywordInput)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Page.Views.SearchPage.Facets exposing (viewModeItems)
+import Page.Views.SearchPage.Loading exposing (searchModeSelectorLoading, viewSearchResultsLoading)
 import Page.Views.SearchPage.Pagination exposing (viewSearchResultsPagination)
 import Page.Views.SearchPage.Previews exposing (viewPreviewRouter)
 import Page.Views.SearchPage.Results exposing (viewSearchResult)
@@ -134,11 +135,6 @@ searchModeSelectorView currentMode modeFacet language =
             [ viewModeItems currentMode modeFacet language
             ]
         ]
-
-
-searchModeSelectorLoading : Element Msg
-searchModeSelectorLoading =
-    none
 
 
 searchResultsViewRouter : Model -> Element Msg
@@ -299,11 +295,6 @@ makeFlagIcon borderColour iconImage iconLabel =
             , text iconLabel
             ]
         ]
-
-
-viewSearchResultsLoading : Model -> Element Msg
-viewSearchResultsLoading model =
-    text "Loading"
 
 
 viewSearchResultsError : Model -> Element Msg
