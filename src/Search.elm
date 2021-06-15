@@ -11,6 +11,7 @@ type alias ActiveSearch =
     , selectedMode : ResultMode
     , expandedFacets : List String
     , preview : Response
+    , selectedResult : Maybe String
     }
 
 
@@ -32,4 +33,5 @@ init initialRoute =
     , selectedMode = initialMode
     , expandedFacets = []
     , preview = NoResponseToShow
+    , selectedResult = Nothing
     }
