@@ -5,6 +5,7 @@ import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
@@ -23,7 +24,7 @@ viewInstitutionPreview body language =
                     []
                     (text (extractLabelFromLanguageMap language localTranslations.viewRecord ++ ": "))
                 , link
-                    [ Font.color colourScheme.lightBlue ]
+                    [ linkColour ]
                     { url = body.id, label = text body.id }
                 ]
     in

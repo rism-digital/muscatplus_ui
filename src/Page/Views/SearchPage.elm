@@ -1,26 +1,23 @@
 module Page.Views.SearchPage exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingEach, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Color, Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events exposing (onClick)
-import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
-import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.RecordTypes.Search exposing (Facet, SearchBody, SearchResult)
 import Page.Response exposing (ServerData(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, minimalDropShadow, searchColumnVerticalSize)
-import Page.UI.Components exposing (h5, searchKeywordInput)
-import Page.UI.Images exposing (bookOpenSvg, digitizedImagesSvg, musicNotationSvg, sourceSvg)
-import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
+import Page.UI.Attributes exposing (bodySM, minimalDropShadow, searchColumnVerticalSize)
+import Page.UI.Components exposing (searchKeywordInput)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Page.Views.SearchPage.Facets exposing (viewModeItems)
 import Page.Views.SearchPage.Pagination exposing (viewSearchResultsPagination)
 import Page.Views.SearchPage.Previews exposing (viewPreviewRouter)
+import Page.Views.SearchPage.Results exposing (viewSearchResult)
 import Search exposing (ActiveSearch)
 
 
@@ -78,7 +75,7 @@ viewTopBar model =
         [ width fill
         , height (px searchHeaderHeight)
         , Border.widthEach { top = 0, left = 0, bottom = 2, right = 0 }
-        , Border.color colourScheme.slateGrey
+        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , minimalDropShadow
         ]
         [ column
@@ -189,17 +186,16 @@ viewSearchResultsSection language searchParams body =
         ]
         [ column
             [ width (fill |> minimum 800 |> maximum 1100)
-            , Background.color colourScheme.white
-            , padding 20
+            , Background.color (colourScheme.white |> convertColorToElementColor)
             , searchColumnVerticalSize
             , scrollbarY
             , alignTop
             ]
-            [ viewSearchResultsListSection language body
+            [ viewSearchResultsListSection language searchParams body
             ]
         , column
             [ Border.widthEach { top = 0, left = 2, right = 0, bottom = 0 }
-            , Border.color colourScheme.slateGrey
+            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
 
             --, Background.color colourScheme.white
             , width (fill |> minimum 800)
@@ -213,8 +209,8 @@ viewSearchResultsSection language searchParams body =
         ]
 
 
-viewSearchResultsListSection : Language -> SearchBody -> Element Msg
-viewSearchResultsListSection language body =
+viewSearchResultsListSection : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewSearchResultsListSection language searchParams body =
     row
         [ width fill
         , height fill
@@ -224,14 +220,18 @@ viewSearchResultsListSection language body =
             [ width fill
             , height fill
             ]
-            [ viewSearchResultsList language body
+            [ viewSearchResultsList language searchParams body
             , viewSearchResultsPagination language body.pagination
             ]
         ]
 
 
-viewSearchResultsList : Language -> SearchBody -> Element Msg
-viewSearchResultsList language body =
+viewSearchResultsList : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewSearchResultsList language searchParams body =
+    let
+        selectedResult =
+            searchParams.selectedResult
+    in
     row
         [ width fill
         , height fill
@@ -240,10 +240,10 @@ viewSearchResultsList language body =
         [ column
             [ width fill
             , alignTop
-            , spacing 60
+            , spacing 20
             , htmlAttribute (HA.id "search-results-list")
             ]
-            (List.map (\result -> viewSearchResult language result) body.items)
+            (List.map (\result -> viewSearchResult language selectedResult result) body.items)
         ]
 
 
@@ -279,13 +279,13 @@ viewSearchResultsPreviewSection searchParams language =
         ]
 
 
-makeFlagIcon : Element msg -> String -> Element msg
-makeFlagIcon iconImage iconLabel =
+makeFlagIcon : Color -> Element msg -> String -> Element msg
+makeFlagIcon borderColour iconImage iconLabel =
     column
         [ bodySM
         , padding 4
         , Border.width 1
-        , Border.color colourScheme.darkGrey
+        , Border.color borderColour
         , Border.rounded 4
         ]
         [ row
@@ -297,143 +297,6 @@ makeFlagIcon iconImage iconLabel =
                 ]
                 iconImage
             , text iconLabel
-            ]
-        ]
-
-
-viewSearchResult : Language -> SearchResult -> Element Msg
-viewSearchResult language result =
-    let
-        resultTitle =
-            el
-                [ Font.color colourScheme.lightBlue
-                , width fill
-                , onClick (UserClickedSearchResultForPreview result.id)
-                , pointer
-                ]
-                (h5 language result.label)
-
-        flags =
-            result.flags
-
-        digitizedImagesFlag =
-            flags.hasDigitization
-
-        isItemFlag =
-            flags.isItemRecord
-
-        hasIncipits =
-            flags.hasIncipits
-
-        isFullSource =
-            result.type_ == Source && flags.isItemRecord == False
-
-        fullSourceIcon =
-            if isFullSource == True then
-                makeFlagIcon sourceSvg "Source record"
-
-            else
-                none
-
-        digitalImagesIcon =
-            if digitizedImagesFlag == True then
-                makeFlagIcon digitizedImagesSvg "Digitization available"
-
-            else
-                none
-
-        isItemIcon =
-            if isItemFlag == True then
-                makeFlagIcon bookOpenSvg "Item record"
-
-            else
-                none
-
-        incipitIcon =
-            if hasIncipits == True then
-                makeFlagIcon musicNotationSvg "Has incipits"
-
-            else
-                none
-
-        partOf =
-            case result.partOf of
-                Just partOfBody ->
-                    let
-                        source =
-                            partOfBody.source
-                    in
-                    row
-                        [ width fill
-                        , bodyRegular
-                        ]
-                        [ column
-                            [ width fill
-                            ]
-                            [ row
-                                [ width fill ]
-                                [ text "Part of " -- TODO: Translate!
-                                , link
-                                    [ Font.color colourScheme.lightBlue ]
-                                    { url = source.id, label = text (extractLabelFromLanguageMap language source.label) }
-                                ]
-                            ]
-                        ]
-
-                Nothing ->
-                    none
-
-        summary =
-            case result.summary of
-                Just fields ->
-                    row
-                        [ width fill
-                        , bodyRegular
-                        ]
-                        [ column
-                            [ width fill
-                            ]
-                            (List.map (\l -> el [] (text (extractLabelFromLanguageMap language l.value))) fields)
-                        ]
-
-                Nothing ->
-                    none
-    in
-    row
-        [ width fill
-
-        --, height (px 100)
-        , alignTop
-
-        --, Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
-        --, Border.color colourScheme.midGrey
-        , paddingXY 10 0
-        ]
-        [ column
-            [ width fill
-            , spacing 10
-            , alignTop
-            ]
-            [ row
-                [ width fill
-                , alignLeft
-                , spacing 10
-                ]
-                [ resultTitle
-                ]
-            , partOf
-            , summary
-            , row
-                [ width fill
-                , alignLeft
-                , spacing 8
-                , paddingEach { top = 8, bottom = 0, left = 0, right = 0 }
-                ]
-                [ digitalImagesIcon
-                , fullSourceIcon
-                , isItemIcon
-                , incipitIcon
-                ]
             ]
         ]
 

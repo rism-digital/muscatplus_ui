@@ -10,11 +10,10 @@ import Msg exposing (Msg(..))
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..))
-import Page.TablesOfContents exposing (createPersonRecordToc, createSourceRecordToc)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, minimalDropShadow, pageBackground)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, linkColour, minimalDropShadow, pageBackground)
 import Page.UI.Components exposing (languageSelect)
 import Page.UI.Images exposing (rismLogo)
-import Page.UI.Style exposing (colourScheme, colourToHexString, colours, footerHeight, headerHeight)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight, headerHeight)
 import Page.Views.FrontPage
 import Page.Views.InstitutionPage
 import Page.Views.NotFoundPage
@@ -22,6 +21,7 @@ import Page.Views.PersonPage
 import Page.Views.PlacePage
 import Page.Views.SearchPage
 import Page.Views.SourcePage
+import Page.Views.TablesOfContents exposing (createPersonRecordToc, createSourceRecordToc)
 
 
 view : Model -> Browser.Document Msg
@@ -153,7 +153,7 @@ siteHeader model =
                     , centerY
                     ]
                     [ link
-                        [ Font.color colourScheme.darkBlue ]
+                        [ Font.color (colourScheme.darkBlue |> convertColorToElementColor) ]
                         { url = "/", label = text "RISM Online" }
                     ]
                 , column
@@ -161,7 +161,7 @@ siteHeader model =
                     , centerY
                     ]
                     [ link
-                        [ Font.color colourScheme.lightBlue ]
+                        [ linkColour ]
                         { url = "/", label = text (extractLabelFromLanguageMap model.language localTranslations.home) }
                     ]
                 , column
@@ -196,14 +196,14 @@ siteFooter =
             [ row
                 [ width fill
                 , height fill
-                , Font.color colourScheme.white
+                , Font.color (colourScheme.white |> convertColorToElementColor)
                 , Font.semiBold
                 ]
                 [ column
                     [ width (px 200) ]
                     [ el
                         []
-                        (rismLogo colours.white (footerHeight - 10))
+                        (rismLogo colourScheme.white (footerHeight - 10))
                     ]
                 , column
                     [ width (fillPortion 10)

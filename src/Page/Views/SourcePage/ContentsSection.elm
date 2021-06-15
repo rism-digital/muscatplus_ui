@@ -6,6 +6,7 @@ import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, h6, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
@@ -66,7 +67,7 @@ viewSubject language subject =
     row
         [ width fill ]
         [ link
-            [ Font.color colourScheme.lightBlue ]
+            [ linkColour ]
             { url = subject.id
             , label = text (extractLabelFromLanguageMap language subject.term)
             }

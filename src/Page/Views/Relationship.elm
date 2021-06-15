@@ -6,8 +6,9 @@ import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, label)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element Msg
@@ -95,7 +96,7 @@ viewRelationshipBody language body =
 viewRelatedToBody : Language -> RelatedToBody -> Element msg
 viewRelatedToBody language body =
     link
-        [ Font.color colourScheme.lightBlue ]
+        [ linkColour ]
         { url = body.id
         , label = text (extractLabelFromLanguageMap language body.label)
         }

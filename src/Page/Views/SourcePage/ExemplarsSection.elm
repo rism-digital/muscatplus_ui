@@ -8,8 +8,9 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, label, viewSummaryField)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
 
 
@@ -54,7 +55,7 @@ viewExemplar language exemplar =
     row
         [ width fill
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
-        , Border.color colourScheme.midGrey
+        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , paddingXY 10 0
         ]
         [ column
@@ -72,7 +73,7 @@ viewExemplar language exemplar =
 viewHeldBy : Language -> BasicInstitutionBody -> Element msg
 viewHeldBy language body =
     link
-        [ Font.color colourScheme.lightBlue ]
+        [ linkColour ]
         { url = body.id
         , label = text (extractLabelFromLanguageMap language body.label)
         }
@@ -113,7 +114,7 @@ viewExternalResourcesSection language linkSection =
 viewExternalResource : Language -> ExternalResourceBody -> Element msg
 viewExternalResource language extLink =
     link
-        [ Font.color colourScheme.lightBlue ]
+        [ linkColour ]
         { url = extLink.url
         , label = text (extractLabelFromLanguageMap language extLink.label)
         }

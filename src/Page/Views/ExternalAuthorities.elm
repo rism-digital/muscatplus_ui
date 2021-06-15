@@ -5,7 +5,8 @@ import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element Msg
@@ -33,7 +34,7 @@ viewExternalAuthoritiesSection language extSection =
 viewExternalAuthority : Language -> ExternalAuthorityBody -> Element Msg
 viewExternalAuthority language authority =
     link
-        [ Font.color colourScheme.lightBlue ]
+        [ linkColour ]
         { url = authority.url
         , label = text (extractLabelFromLanguageMap language authority.label)
         }

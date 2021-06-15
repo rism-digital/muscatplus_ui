@@ -7,7 +7,7 @@ import Language exposing (Language)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
 import Page.UI.Components exposing (h5, h6, viewSummaryField)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Relationship exposing (viewRelationshipBody)
 
@@ -46,7 +46,7 @@ viewMaterialGroup language mg =
         [ width fill
         , height fill
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
-        , Border.color colourScheme.midGrey
+        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , paddingXY 10 0
         , alignTop
         ]

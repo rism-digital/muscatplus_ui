@@ -5,8 +5,9 @@ import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewPartOfSection : Language -> PartOfSectionBody -> Element Msg
@@ -30,7 +31,7 @@ viewPartOfSection language partOf =
             , row
                 [ width fill ]
                 [ link
-                    [ Font.color colourScheme.lightBlue ]
+                    [ linkColour ]
                     { url = source.id
                     , label = text (extractLabelFromLanguageMap language source.label)
                     }

@@ -8,8 +8,9 @@ import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, h6, viewParagraphField)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
 
 
@@ -98,7 +99,7 @@ viewLiturgicalFestival language festival =
     row
         [ width fill ]
         [ link
-            [ Font.color colourScheme.lightBlue ]
+            [ linkColour ]
             { url = festival.id
             , label = text (extractLabelFromLanguageMap language festival.label)
             }
@@ -115,7 +116,7 @@ viewLocation language body =
     row
         [ width fill ]
         [ link
-            [ Font.color colourScheme.lightBlue ]
+            [ linkColour ]
             { url = body.id
             , label = text (extractLabelFromLanguageMap language body.label)
             }

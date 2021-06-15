@@ -6,6 +6,7 @@ import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewRecordHistory)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
@@ -29,7 +30,7 @@ viewFullSourcePage body language =
                     []
                     (text (extractLabelFromLanguageMap language localTranslations.recordURI ++ ": "))
                 , link
-                    [ Font.color colourScheme.lightBlue ]
+                    [ linkColour ]
                     { url = body.id, label = text body.id }
                 ]
     in

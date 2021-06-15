@@ -13,7 +13,7 @@ import Language exposing (Language, LanguageMap, dateFormatter, extractLabelFrom
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
 import Page.UI.Events exposing (onEnter)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Time exposing (utc)
 
 
@@ -261,7 +261,7 @@ searchKeywordInput msgs queryText currentLanguage =
                 , Border.widthEach { bottom = 2, top = 2, left = 2, right = 0 }
                 , Border.roundEach { topLeft = 5, bottomLeft = 5, topRight = 0, bottomRight = 0 }
                 , htmlAttribute (HA.autocomplete False)
-                , Border.color colourScheme.darkBlue
+                , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
                 , onEnter msgs.submitMsg
                 , headingSM
                 , paddingXY 10 12
@@ -277,13 +277,13 @@ searchKeywordInput msgs queryText currentLanguage =
             [ Input.button
                 [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
                 , Border.roundEach { topLeft = 0, bottomLeft = 0, topRight = 5, bottomRight = 5 }
-                , Border.color colourScheme.darkBlue
-                , Background.color colourScheme.darkBlue
+                , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+                , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
                 , paddingXY 10 10
                 , height (px 50)
                 , width fill
                 , Font.center
-                , Font.color colourScheme.white
+                , Font.color (colourScheme.white |> convertColorToElementColor)
                 , headingSM
                 ]
                 { onPress = Just msgs.submitMsg

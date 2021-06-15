@@ -1,11 +1,12 @@
 module Page.UI.Attributes exposing (..)
 
+import Color exposing (toCssString)
 import Element exposing (Attr, Attribute, htmlAttribute, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA exposing (style)
-import Page.UI.Style exposing (colourScheme, footerHeight, headerHeight, minMaxFillDesktop, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight, headerHeight, minMaxFillDesktop, searchHeaderHeight)
 
 
 bodyFont : Attribute msg
@@ -15,22 +16,22 @@ bodyFont =
 
 bodyFontColour : Attribute msg
 bodyFontColour =
-    Font.color colourScheme.black
+    Font.color (colourScheme.black |> convertColorToElementColor)
 
 
 pageBackground : Attribute msg
 pageBackground =
-    Background.color colourScheme.cream
+    Background.color (colourScheme.cream |> convertColorToElementColor)
 
 
 headerBottomBorder : Attribute msg
 headerBottomBorder =
-    htmlAttribute (style "border-bottom" "4px double #778899")
+    htmlAttribute (style "border-bottom" ("4px double " ++ toCssString colourScheme.darkGrey))
 
 
 footerBackground : Attribute msg
 footerBackground =
-    Background.color colourScheme.darkBlue
+    Background.color (colourScheme.darkBlue |> convertColorToElementColor)
 
 
 desktopResponsiveWidth : Attribute msg
@@ -53,8 +54,18 @@ minimalDropShadow =
         { offset = ( 2, 0 )
         , size = 1
         , blur = 2
-        , color = colourScheme.darkGrey
+        , color =
+            colourScheme.darkGrey
+                |> convertColorToElementColor
         }
+
+
+linkColour : Attribute msg
+linkColour =
+    Font.color
+        (colourScheme.lightBlue
+            |> convertColorToElementColor
+        )
 
 
 

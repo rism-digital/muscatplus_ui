@@ -5,6 +5,7 @@ import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
@@ -28,7 +29,7 @@ viewSourcePreview body language =
                     []
                     (text (extractLabelFromLanguageMap language localTranslations.viewRecord ++ ": "))
                 , link
-                    [ Font.color colourScheme.lightBlue ]
+                    [ linkColour ]
                     { url = body.id, label = text body.id }
                 ]
     in

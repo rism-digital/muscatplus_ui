@@ -50,8 +50,8 @@ viewRecordSourceResultsPagination language pagination =
                 [ width shrink
                 , alignLeft
                 ]
-                [ viewMaybe (paginationLink (chevronDoubleLeftSvg colours.slateGrey) firstLabel) (Just pagination.first)
-                , viewMaybe (paginationLink (chevronLeftSvg colours.slateGrey) previousLabel) pagination.previous
+                [ viewMaybe (paginationLink (chevronDoubleLeftSvg colourScheme.slateGrey) firstLabel) (Just pagination.first)
+                , viewMaybe (paginationLink (chevronLeftSvg colourScheme.slateGrey) previousLabel) pagination.previous
                 ]
             ]
         , column
@@ -77,8 +77,8 @@ viewRecordSourceResultsPagination language pagination =
                 [ width shrink
                 , alignRight
                 ]
-                [ viewMaybe (paginationLink (chevronRightSvg colours.slateGrey) nextLabel) pagination.next
-                , viewMaybe (paginationLink (chevronDoubleRightSvg colours.slateGrey) lastLabel) pagination.last
+                [ viewMaybe (paginationLink (chevronRightSvg colourScheme.slateGrey) nextLabel) pagination.next
+                , viewMaybe (paginationLink (chevronDoubleRightSvg colourScheme.slateGrey) lastLabel) pagination.last
                 ]
             ]
         ]

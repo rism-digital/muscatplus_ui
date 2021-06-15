@@ -5,8 +5,9 @@ import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
@@ -46,7 +47,7 @@ viewExternalResource language body =
         [ paragraph
             []
             [ link
-                [ Font.color colourScheme.lightBlue ]
+                [ linkColour ]
                 { url = body.url
                 , label = text (extractLabelFromLanguageMap language body.label)
                 }

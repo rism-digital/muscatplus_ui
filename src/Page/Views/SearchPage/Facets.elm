@@ -10,7 +10,7 @@ import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode
 import Page.RecordTypes.Search exposing (Facet, FacetItem(..))
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
-import Page.UI.Style exposing (colourScheme, colourToHexString, colours)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewModeItems : ResultMode -> Facet -> Language -> Element Msg
@@ -58,22 +58,22 @@ viewModeItem selectedMode fitem language =
         icon =
             case value of
                 "sources" ->
-                    iconTmpl (sourcesSvg colours.slateGrey)
+                    iconTmpl (sourcesSvg colourScheme.slateGrey)
 
                 "people" ->
-                    iconTmpl (peopleSvg colours.slateGrey)
+                    iconTmpl (peopleSvg colourScheme.slateGrey)
 
                 "institutions" ->
-                    iconTmpl (institutionSvg colours.slateGrey)
+                    iconTmpl (institutionSvg colourScheme.slateGrey)
 
                 "incipits" ->
-                    iconTmpl (musicNotationSvg colours.slateGrey)
+                    iconTmpl (musicNotationSvg colourScheme.slateGrey)
 
                 "festivals" ->
-                    iconTmpl (liturgicalFestivalSvg colours.slateGrey)
+                    iconTmpl (liturgicalFestivalSvg colourScheme.slateGrey)
 
                 _ ->
-                    iconTmpl (unknownSvg colours.slateGrey)
+                    iconTmpl (unknownSvg colourScheme.slateGrey)
 
         rowMode =
             parseStringToResultMode value
@@ -88,10 +88,10 @@ viewModeItem selectedMode fitem language =
 
         rowStyle =
             if selectedMode == rowMode then
-                Border.color colourScheme.darkBlue :: baseRowStyle
+                Border.color (colourScheme.darkBlue |> convertColorToElementColor) :: baseRowStyle
 
             else
-                Border.color colourScheme.cream :: baseRowStyle
+                Border.color (colourScheme.cream |> convertColorToElementColor) :: baseRowStyle
 
         itemCount =
             formatNumberByLanguage count language

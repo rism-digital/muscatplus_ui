@@ -1,10 +1,10 @@
 module Page.UI.Style exposing (..)
 
-import Element exposing (Color, Length, fill, fromRgb255, maximum, minimum, rgb255, rgba255)
-import Hex
+import Color exposing (Color, rgb255, toRgba)
+import Element exposing (Length, fill, maximum, minimum)
 
 
-type alias RGBColour =
+type alias RGBA =
     { red : Int
     , green : Int
     , blue : Int
@@ -13,16 +13,16 @@ type alias RGBColour =
 
 
 colours :
-    { darkBlue : RGBColour
-    , lightBlue : RGBColour
-    , red : RGBColour
-    , lightGrey : RGBColour
-    , darkGrey : RGBColour
-    , midGrey : RGBColour
-    , slateGrey : RGBColour
-    , cream : RGBColour
-    , white : RGBColour
-    , black : RGBColour
+    { darkBlue : RGBA
+    , lightBlue : RGBA
+    , red : RGBA
+    , lightGrey : RGBA
+    , darkGrey : RGBA
+    , midGrey : RGBA
+    , slateGrey : RGBA
+    , cream : RGBA
+    , white : RGBA
+    , black : RGBA
     }
 colours =
     { darkBlue =
@@ -101,37 +101,30 @@ colourScheme :
     , black : Color
     }
 colourScheme =
-    { darkBlue = fromRgb255 colours.darkBlue
-    , lightBlue = fromRgb255 colours.lightBlue
-    , red = fromRgb255 colours.red
-    , lightGrey = fromRgb255 colours.lightGrey
-    , darkGrey = fromRgb255 colours.darkGrey
-    , midGrey = fromRgb255 colours.midGrey
-    , slateGrey = fromRgb255 colours.slateGrey
-    , cream = fromRgb255 colours.cream
-    , white = fromRgb255 colours.white
-    , black = fromRgb255 colours.black
+    { darkBlue = convertRGBAToColor colours.darkBlue
+    , lightBlue = convertRGBAToColor colours.lightBlue
+    , red = convertRGBAToColor colours.red
+    , lightGrey = convertRGBAToColor colours.lightGrey
+    , darkGrey = convertRGBAToColor colours.darkGrey
+    , midGrey = convertRGBAToColor colours.midGrey
+    , slateGrey = convertRGBAToColor colours.slateGrey
+    , cream = convertRGBAToColor colours.cream
+    , white = convertRGBAToColor colours.white
+    , black = convertRGBAToColor colours.black
     }
 
 
-colourToHexString : RGBColour -> String
-colourToHexString colour =
-    let
-        values =
-            [ Hex.toString colour.red
-            , Hex.toString colour.green
-            , Hex.toString colour.blue
-            ]
-
-        hexString =
-            String.join "" values
-    in
-    "#" ++ hexString
+{-| Converts a RGBA of Integers to a Color value.
+-}
+convertRGBAToColor : RGBA -> Color
+convertRGBAToColor { red, green, blue, alpha } =
+    rgb255 red green blue
 
 
-translucentBlue : Color
-translucentBlue =
-    rgba255 0 59 92 0.6
+convertColorToElementColor : Color -> Element.Color
+convertColorToElementColor color =
+    Color.toRgba color
+        |> Element.fromRgb
 
 
 desktopMaxWidth : Int

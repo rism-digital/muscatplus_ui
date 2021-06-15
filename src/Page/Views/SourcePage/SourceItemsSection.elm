@@ -6,9 +6,9 @@ import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Source exposing (BasicSourceBody, SourceItemsSectionBody)
-import Page.UI.Attributes exposing (headingXS)
+import Page.UI.Attributes exposing (headingXS, linkColour)
 import Page.UI.Components exposing (h5, viewSummaryField)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
 
 
@@ -49,7 +49,7 @@ viewSourceItem language source =
     row
         [ width fill
         , Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
-        , Border.color colourScheme.midGrey
+        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , paddingXY 10 0
         ]
         [ column
@@ -60,7 +60,7 @@ viewSourceItem language source =
             [ row
                 [ width fill ]
                 [ link
-                    [ Font.color colourScheme.lightBlue
+                    [ linkColour
                     , headingXS
                     , Font.semiBold
                     ]

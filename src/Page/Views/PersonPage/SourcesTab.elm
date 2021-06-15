@@ -1,17 +1,13 @@
 module Page.Views.PersonPage.SourcesTab exposing (..)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, none, padding, px, row, shrink, spacing, text, width)
-import Element.Events exposing (onClick)
-import Element.Font as Font
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
+import Element exposing (Element, alignTop, column, fill, height, none, row, spacing, width)
+import Language exposing (Language)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchPagination, SearchResult)
 import Page.Response exposing (ServerData(..))
-import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
-import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Pagination exposing (viewRecordSourceResultsPagination)
-import Page.Views.SearchPage exposing (viewSearchResult)
+import Page.Views.SearchPage.Results exposing (viewSearchResult)
 
 
 viewPersonSourcesTab : Language -> Response -> Element Msg
@@ -57,5 +53,5 @@ viewPersonSourceResultsList language body =
             , alignTop
             , spacing 40
             ]
-            (List.map (\result -> viewSearchResult language result) body.items)
+            (List.map (\result -> viewSearchResult language Nothing result) body.items)
         ]

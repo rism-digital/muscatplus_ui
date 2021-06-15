@@ -7,7 +7,7 @@ import Page.Model exposing (Response(..))
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Response exposing (ServerData(..))
 import Page.Views.Pagination exposing (viewRecordSourceResultsPagination)
-import Page.Views.SearchPage exposing (viewSearchResult)
+import Page.Views.SearchPage.Results exposing (viewSearchResult)
 
 
 viewInstitutionSourcesTab : Language -> Response -> Element Msg
@@ -53,5 +53,5 @@ viewInstitutionSourceResultsList language body =
             , alignTop
             , spacing 40
             ]
-            (List.map (\result -> viewSearchResult language result) body.items)
+            (List.map (\result -> viewSearchResult language Nothing result) body.items)
         ]

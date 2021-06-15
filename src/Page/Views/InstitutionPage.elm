@@ -6,7 +6,7 @@ import Model exposing (Model)
 import Msg exposing (Msg)
 import Page.Model exposing (Response(..))
 import Page.Response exposing (ServerData(..))
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
 
@@ -42,7 +42,7 @@ view model =
             [ width fill
             , height fill
             , padding 20
-            , Background.color colourScheme.white
+            , Background.color (colourScheme.white |> convertColorToElementColor)
             ]
             [ pageView ]
         ]

@@ -6,7 +6,7 @@ import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByL
 import Msg exposing (Msg)
 import Page.RecordTypes.Search exposing (SearchPagination)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
-import Page.UI.Style exposing (colours)
+import Page.UI.Style exposing (colourScheme, colours)
 
 
 viewSearchResultsPagination : Language -> SearchPagination -> Element Msg
@@ -106,7 +106,7 @@ viewPaginationNextLink url language =
         label =
             extractLabelFromLanguageMap language localTranslations.next
     in
-    viewPaginationLink (chevronRightSvg colours.slateGrey) url label
+    viewPaginationLink (chevronRightSvg colourScheme.slateGrey) url label
 
 
 viewPaginationLastLink : Maybe String -> Language -> Element Msg
@@ -115,7 +115,7 @@ viewPaginationLastLink url language =
         label =
             extractLabelFromLanguageMap language localTranslations.last
     in
-    viewPaginationLink (chevronDoubleRightSvg colours.slateGrey) url label
+    viewPaginationLink (chevronDoubleRightSvg colourScheme.slateGrey) url label
 
 
 viewPaginationPreviousLink : Maybe String -> Language -> Element Msg
@@ -124,7 +124,7 @@ viewPaginationPreviousLink url language =
         label =
             extractLabelFromLanguageMap language localTranslations.previous
     in
-    viewPaginationLink (chevronLeftSvg colours.slateGrey) url label
+    viewPaginationLink (chevronLeftSvg colourScheme.slateGrey) url label
 
 
 viewPaginationFirstLink : Maybe String -> Language -> Element Msg
@@ -133,4 +133,4 @@ viewPaginationFirstLink url language =
         label =
             extractLabelFromLanguageMap language localTranslations.first
     in
-    viewPaginationLink (chevronDoubleLeftSvg colours.slateGrey) url label
+    viewPaginationLink (chevronDoubleLeftSvg colourScheme.slateGrey) url label

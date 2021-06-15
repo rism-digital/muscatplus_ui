@@ -1,7 +1,7 @@
 module Page.UI.Images exposing (..)
 
+import Color exposing (Color, toCssString)
 import Element exposing (Element, html)
-import Page.UI.Style exposing (RGBColour, colourToHexString)
 import Svg exposing (defs, g, metadata, svg)
 import Svg.Attributes exposing (d, fill, height, id, style, transform, version, viewBox, width)
 
@@ -13,11 +13,11 @@ import Svg.Attributes exposing (d, fill, height, id, style, transform, version, 
     The colour is, for now, simply a hex string value (including the leading "#")
 
 -}
-rismLogo : RGBColour -> Int -> Element msg
+rismLogo : Color -> Int -> Element msg
 rismLogo colour size =
     let
         hexColour =
-            colourToHexString colour
+            toCssString colour
     in
     html
         (svg
@@ -86,14 +86,14 @@ type alias SvgDetails =
     }
 
 
-makeSvgIcon : RGBColour -> SvgDetails -> Element msg
+makeSvgIcon : Color -> SvgDetails -> Element msg
 makeSvgIcon color details =
     html
         (svg
             [ viewBox details.viewBox ]
             [ Svg.path
                 [ d details.path
-                , fill (colourToHexString color)
+                , fill (toCssString color)
                 ]
                 []
             ]
@@ -118,7 +118,7 @@ chevronDown =
     }
 
 
-chevronDownSvg : RGBColour -> Element msg
+chevronDownSvg : Color -> Element msg
 chevronDownSvg color =
     makeSvgIcon color chevronDown
 
@@ -135,7 +135,7 @@ chevronUp =
     }
 
 
-chevronUpSvg : RGBColour -> Element msg
+chevronUpSvg : Color -> Element msg
 chevronUpSvg color =
     makeSvgIcon color chevronUp
 
@@ -152,7 +152,7 @@ chevronLeft =
     }
 
 
-chevronLeftSvg : RGBColour -> Element msg
+chevronLeftSvg : Color -> Element msg
 chevronLeftSvg color =
     makeSvgIcon color chevronLeft
 
@@ -169,7 +169,7 @@ chevronRight =
     }
 
 
-chevronRightSvg : RGBColour -> Element msg
+chevronRightSvg : Color -> Element msg
 chevronRightSvg color =
     makeSvgIcon color chevronRight
 
@@ -186,7 +186,7 @@ chevronDoubleRight =
     }
 
 
-chevronDoubleRightSvg : RGBColour -> Element msg
+chevronDoubleRightSvg : Color -> Element msg
 chevronDoubleRightSvg color =
     makeSvgIcon color chevronDoubleRight
 
@@ -203,7 +203,7 @@ chevronDoubleLeft =
     }
 
 
-chevronDoubleLeftSvg : RGBColour -> Element msg
+chevronDoubleLeftSvg : Color -> Element msg
 chevronDoubleLeftSvg color =
     makeSvgIcon color chevronDoubleLeft
 
@@ -220,7 +220,7 @@ bookOpen =
     }
 
 
-bookOpenSvg : RGBColour -> Element msg
+bookOpenSvg : Color -> Element msg
 bookOpenSvg color =
     makeSvgIcon color bookOpen
 
@@ -232,7 +232,7 @@ sources =
     }
 
 
-sourcesSvg : RGBColour -> Element msg
+sourcesSvg : Color -> Element msg
 sourcesSvg color =
     makeSvgIcon color sources
 
@@ -244,7 +244,7 @@ source =
     }
 
 
-sourceSvg : RGBColour -> Element msg
+sourceSvg : Color -> Element msg
 sourceSvg color =
     makeSvgIcon color source
 
@@ -256,7 +256,7 @@ people =
     }
 
 
-peopleSvg : RGBColour -> Element msg
+peopleSvg : Color -> Element msg
 peopleSvg color =
     makeSvgIcon color people
 
@@ -268,7 +268,7 @@ institution =
     }
 
 
-institutionSvg : RGBColour -> Element msg
+institutionSvg : Color -> Element msg
 institutionSvg color =
     makeSvgIcon color institution
 
@@ -280,7 +280,7 @@ musicNotation =
     }
 
 
-musicNotationSvg : RGBColour -> Element msg
+musicNotationSvg : Color -> Element msg
 musicNotationSvg color =
     makeSvgIcon color musicNotation
 
@@ -292,7 +292,7 @@ unknown =
     }
 
 
-unknownSvg : RGBColour -> Element msg
+unknownSvg : Color -> Element msg
 unknownSvg color =
     makeSvgIcon color unknown
 
@@ -304,7 +304,7 @@ liturgicalFestival =
     }
 
 
-liturgicalFestivalSvg : RGBColour -> Element msg
+liturgicalFestivalSvg : Color -> Element msg
 liturgicalFestivalSvg color =
     makeSvgIcon color liturgicalFestival
 
@@ -316,6 +316,6 @@ digitizedImages =
     }
 
 
-digitizedImagesSvg : RGBColour -> Element msg
+digitizedImagesSvg : Color -> Element msg
 digitizedImagesSvg color =
     makeSvgIcon color digitizedImages

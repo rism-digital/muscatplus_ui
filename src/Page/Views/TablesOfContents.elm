@@ -1,4 +1,4 @@
-module Page.TablesOfContents exposing (..)
+module Page.Views.TablesOfContents exposing (..)
 
 import Element exposing (Element, alignRight, column, el, fill, moveDown, moveLeft, none, padding, pointer, px, row, spacing, text, width)
 import Element.Border as Border
@@ -8,7 +8,8 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, lo
 import Msg exposing (Msg(..))
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 createTocLink : ( String, LanguageMap ) -> Language -> Element Msg
@@ -19,7 +20,7 @@ createTocLink ( url, label ) language =
         [ width fill
         ]
         [ el
-            [ Font.color colourScheme.lightBlue
+            [ linkColour
             , onClick (UserClickedToCItem url)
             , pointer
             ]

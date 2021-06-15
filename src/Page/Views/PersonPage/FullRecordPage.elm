@@ -10,6 +10,7 @@ import Msg exposing (Msg(..))
 import Page
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.RecordTypes.Person exposing (PersonBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -41,7 +42,7 @@ viewFullPersonPage page language body =
                     []
                     (text (extractLabelFromLanguageMap language localTranslations.recordURI ++ ": "))
                 , link
-                    [ Font.color colourScheme.lightBlue ]
+                    [ linkColour ]
                     { url = body.id
                     , label = text body.id
                     }

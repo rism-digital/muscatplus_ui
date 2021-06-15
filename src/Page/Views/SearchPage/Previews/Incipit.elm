@@ -4,6 +4,7 @@ import Element exposing (Element, column, el, fill, height, link, none, row, spa
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
+import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
@@ -20,7 +21,7 @@ viewIncipitPreview body language =
                     []
                     (text (extractLabelFromLanguageMap language localTranslations.viewRecord ++ ": "))
                 , link
-                    [ Font.color colourScheme.lightBlue ]
+                    [ linkColour ]
                     { url = body.id
                     , label = text body.id
                     }
