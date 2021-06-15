@@ -11,7 +11,6 @@ module Language exposing
     , languageMapDecoder
     , languageOptionsForDisplay
     , localTranslations
-    , parseLanguageToLocale
     , parseLocaleToLanguage
     )
 

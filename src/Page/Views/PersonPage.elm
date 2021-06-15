@@ -19,9 +19,6 @@ view model =
         response =
             page.response
 
-        currentTab =
-            page.currentTab
-
         pageView =
             case response of
                 Loading ->

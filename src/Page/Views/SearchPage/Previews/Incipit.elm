@@ -1,14 +1,12 @@
 module Page.Views.SearchPage.Previews.Incipit exposing (..)
 
-import Element exposing (Element, column, el, fill, height, link, none, row, spacing, text, width)
-import Element.Font as Font
+import Element exposing (Element, column, el, fill, height, link, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h4, viewSummaryField)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Components exposing (h4)
 import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Incipits exposing (viewIncipit, viewIncipitsSection)
+import Page.Views.Incipits exposing (viewIncipit)
 
 
 viewIncipitPreview : IncipitBody -> Language -> Element msg

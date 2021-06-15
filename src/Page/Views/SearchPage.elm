@@ -6,10 +6,10 @@ import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language)
 import Model exposing (Model)
-import Msg exposing (Msg(..))
+import Msg exposing (Msg)
 import Page.Model exposing (Response(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode)
-import Page.RecordTypes.Search exposing (Facet, SearchBody, SearchResult)
+import Page.RecordTypes.Search exposing (Facet, SearchBody)
 import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (bodySM, minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (searchKeywordInput)

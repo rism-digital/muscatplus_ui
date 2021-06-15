@@ -1,7 +1,7 @@
 module Page.Views.InstitutionPage.LocationSection exposing (..)
 
 import Array
-import Element exposing (Element, alignTop, column, fill, height, none, paddingXY, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Institution exposing (LocationSectionBody)
 import Page.UI.Components exposing (h5)
@@ -30,10 +30,6 @@ createCoordinatePair coordinateList =
 
 viewLocationSection : LocationSectionBody -> Language -> Element msg
 viewLocationSection body language =
-    let
-        ( latitude, longitude ) =
-            createCoordinatePair body.coordinates
-    in
     row
         [ width fill
         , height fill

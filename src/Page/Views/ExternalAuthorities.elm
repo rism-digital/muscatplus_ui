@@ -6,7 +6,6 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
 import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element Msg

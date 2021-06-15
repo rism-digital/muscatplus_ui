@@ -1,13 +1,11 @@
 module Page.Views.SearchPage.Previews.Institution exposing (..)
 
 import Element exposing (Element, column, el, fill, height, link, row, spacing, text, width)
-import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewSummaryField)
-import Page.UI.Style exposing (colourScheme)
 import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Notes exposing (viewNotesSection)

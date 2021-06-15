@@ -3,7 +3,6 @@ module Page.Views.PersonPage.FullRecordPage exposing (..)
 import Element exposing (Element, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
-import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg(..))
@@ -12,7 +11,6 @@ import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewSummaryField)
-import Page.UI.Style exposing (colourScheme)
 import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Views.Helpers exposing (viewMaybe)

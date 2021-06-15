@@ -1,14 +1,12 @@
 module Page.Views.SourcePage.FullRecordPage exposing (..)
 
 import Element exposing (Element, column, el, fill, height, htmlAttribute, link, row, spacing, text, width)
-import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewRecordHistory)
-import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Incipits exposing (viewIncipitsSection)
 import Page.Views.SourcePage.ContentsSection exposing (viewContentsSection)

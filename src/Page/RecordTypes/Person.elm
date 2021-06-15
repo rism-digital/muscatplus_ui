@@ -1,6 +1,6 @@
 module Page.RecordTypes.Person exposing (..)
 
-import Json.Decode as Decode exposing (Decoder, int, list, string)
+import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)

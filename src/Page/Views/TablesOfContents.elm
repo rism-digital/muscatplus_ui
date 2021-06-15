@@ -3,13 +3,11 @@ module Page.Views.TablesOfContents exposing (..)
 import Element exposing (Element, alignRight, column, el, fill, moveDown, moveLeft, none, padding, pointer, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
-import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg(..))
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 createTocLink : ( String, LanguageMap ) -> Language -> Element Msg

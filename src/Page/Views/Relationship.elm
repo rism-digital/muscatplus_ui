@@ -1,14 +1,12 @@
 module Page.Views.Relationship exposing (..)
 
 import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, none, paddingXY, row, spacing, text, width)
-import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, label)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element Msg

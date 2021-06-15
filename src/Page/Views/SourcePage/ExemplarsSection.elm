@@ -2,7 +2,6 @@ module Page.Views.SourcePage.ExemplarsSection exposing (..)
 
 import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, paddingXY, row, spacing, text, textColumn, width)
 import Element.Border as Border
-import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)

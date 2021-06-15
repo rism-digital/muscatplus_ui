@@ -7,7 +7,7 @@ import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByL
 import Msg exposing (Msg(..))
 import Page.RecordTypes.Search exposing (SearchPagination)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
-import Page.UI.Style exposing (colourScheme, colours)
+import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
 
 

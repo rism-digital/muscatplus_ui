@@ -1,14 +1,12 @@
 module Page.Views.SourcePage.ContentsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, none, paddingXY, row, spacing, text, width)
-import Element.Font as Font
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, paddingXY, row, spacing, text, width)
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.Source exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, h6, viewSummaryField)
-import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Relationship exposing (viewRelationshipBody)
 

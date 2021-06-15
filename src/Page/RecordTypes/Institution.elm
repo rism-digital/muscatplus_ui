@@ -1,7 +1,7 @@
 module Page.RecordTypes.Institution exposing (..)
 
-import Json.Decode as Decode exposing (Decoder, andThen, list, string)
-import Json.Decode.Pipeline exposing (hardcoded, optional, optionalAt, required)
+import Json.Decode as Decode exposing (Decoder, list, string)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)

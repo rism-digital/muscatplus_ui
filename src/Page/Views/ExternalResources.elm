@@ -1,13 +1,11 @@
 module Page.Views.ExternalResources exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, maximum, minimum, paddingXY, paragraph, row, spacing, text, width, wrappedRow)
-import Element.Font as Font
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, paddingXY, paragraph, row, spacing, text, width)
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
