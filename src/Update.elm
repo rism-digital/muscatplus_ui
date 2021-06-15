@@ -187,7 +187,11 @@ update msg model =
                     { oldQuery | mode = facetConvertedToResultMode }
 
                 newSearch =
-                    { oldSearch | query = newQuery, selectedMode = facetConvertedToResultMode }
+                    { oldSearch
+                        | query = newQuery
+                        , selectedMode = facetConvertedToResultMode
+                        , selectedResult = Nothing
+                    }
 
                 newModel =
                     { model | activeSearch = newSearch }
@@ -208,7 +212,10 @@ update msg model =
                     model.activeSearch
 
                 newSearch =
-                    { oldSearch | preview = Loading }
+                    { oldSearch
+                        | preview = Loading
+                        , selectedResult = Just url
+                    }
             in
             ( { model | activeSearch = newSearch }
             , createRequest Msg.ServerRespondedWithPreview recordResponseDecoder url
