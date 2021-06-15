@@ -28,21 +28,28 @@ type alias SearchResult =
     }
 
 
-type alias SearchResultFlags =
+type SearchResultFlags
+    = SourceFlags SourceResultFlags
+    | PersonFlags PersonResultFlags
+    | InstitutionFlags InstitutionResultFlags
+
+
+type alias SourceResultFlags =
     { hasDigitization : Bool
     , hasIIIFManifest : Bool
-    , isItemRecord : Bool
+    , isContentsRecord : Bool
+    , isCollectionRecord : Bool
     , hasIncipits : Bool
+    , numberOfExemplars : Int
     }
 
 
-defaultSearchResultFlags : SearchResultFlags
-defaultSearchResultFlags =
-    { hasDigitization = False
-    , hasIIIFManifest = False
-    , isItemRecord = False
-    , hasIncipits = False
-    }
+type alias PersonResultFlags =
+    {}
+
+
+type alias InstitutionResultFlags =
+    {}
 
 
 type alias SearchPagination =
@@ -100,16 +107,37 @@ searchResultDecoder =
         |> required "type" typeDecoder
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "flags" searchResultFlagsDecoder defaultSearchResultFlags
+        |> required "flags" searchResultFlagsDecoder
 
 
 searchResultFlagsDecoder : Decoder SearchResultFlags
 searchResultFlagsDecoder =
-    Decode.succeed SearchResultFlags
+    Decode.oneOf
+        [ Decode.map (\r -> SourceFlags r) sourceResultFlagsDecoder
+        , Decode.map (\r -> PersonFlags r) personResultFlagsDecoder
+        , Decode.map (\r -> InstitutionFlags r) institutionResultFlagsDecoder
+        ]
+
+
+sourceResultFlagsDecoder : Decoder SourceResultFlags
+sourceResultFlagsDecoder =
+    Decode.succeed SourceResultFlags
         |> optional "hasDigitization" bool False
         |> optional "hasIIIFManifest" bool False
-        |> optional "isItem" bool False
+        |> optional "isContentsRecord" bool False
+        |> optional "isCollectionRecord" bool False
         |> optional "hasIncipits" bool False
+        |> optional "numberOfExemplars" int 0
+
+
+personResultFlagsDecoder : Decoder PersonResultFlags
+personResultFlagsDecoder =
+    Decode.succeed PersonResultFlags
+
+
+institutionResultFlagsDecoder : Decoder InstitutionResultFlags
+institutionResultFlagsDecoder =
+    Decode.succeed InstitutionResultFlags
 
 
 searchPaginationDecoder : Decoder SearchPagination
