@@ -78,7 +78,7 @@ viewWelcomeMessage language body =
             List.map (\t -> formatStat t language) stats
 
         allStats =
-            String.join ", " formattedStats
+            String.join " — " formattedStats
     in
     row
         [ width fill
