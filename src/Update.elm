@@ -74,8 +74,26 @@ update msg model =
             in
             ( { model | page = newPage }, Cmd.none )
 
-        Msg.ServerRespondedWithPageSearch (Err _) ->
-            ( model, Cmd.none )
+        Msg.ServerRespondedWithPageSearch (Err error) ->
+            let
+                errorMessage =
+                    case error of
+                        BadUrl url ->
+                            "A Bad URL was supplied: " ++ url
+
+                        BadBody message ->
+                            "Unexpected response: " ++ message
+
+                        _ ->
+                            "A problem happened with the request"
+
+                oldPage =
+                    model.page
+
+                newPage =
+                    { oldPage | pageSearch = Error errorMessage }
+            in
+            ( { model | page = newPage }, Cmd.none )
 
         Msg.ClientChangedUrl url ->
             let
