@@ -310,6 +310,16 @@ update msg model =
             in
             ( model, cmd )
 
+        Msg.UserClickedClosePreviewWindow ->
+            let
+                oldSearch =
+                    model.activeSearch
+
+                newSearch =
+                    { oldSearch | preview = NoResponseToShow }
+            in
+            ( { model | activeSearch = newSearch }, Cmd.none )
+
         Msg.NothingHappened ->
             -- Use for mocking in a Msg that does nothing; For actual code, favour adding
             -- an explicit message for 'NoOp' updates.
