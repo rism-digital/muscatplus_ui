@@ -1,6 +1,6 @@
 module Page.Converters exposing (..)
 
-import Page.RecordTypes exposing (Filter(..))
+import Page.Query exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..))
 

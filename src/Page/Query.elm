@@ -1,10 +1,20 @@
-module Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, queryParamsParser)
+module Page.Query exposing (Filter(..), QueryArgs, buildQueryParameters, defaultQueryArgs, queryParamsParser)
 
 import Config as C
-import Page.RecordTypes exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
+
+
+{-|
+
+    A filter represents a selected filter query; The values are the
+    field name and the value, e.g., "Filter type source". This will then
+    get converted to a list of URL parameters, `fq=type:source`.
+
+-}
+type Filter
+    = Filter String String
 
 
 type alias QueryArgs =
@@ -50,15 +60,15 @@ buildQueryParameters queryArgs =
 
         fqParams =
             List.map
-                (\f ->
+                (\filt ->
                     let
-                        (Filter field value) =
-                            f
+                        (Filter fieldName fieldValue) =
+                            filt
 
-                        fieldValue =
-                            field ++ ":" ++ value
+                        queryStringValue =
+                            fieldName ++ ":" ++ fieldValue
                     in
-                    Url.Builder.string "fq" fieldValue
+                    Url.Builder.string "fq" queryStringValue
                 )
                 queryArgs.filters
 
