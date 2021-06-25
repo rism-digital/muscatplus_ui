@@ -22,7 +22,8 @@ viewSourcePreview body language =
     let
         fullSourceLink =
             row
-                [ width fill ]
+                [ width fill
+                ]
                 [ el
                     []
                     (text (extractLabelFromLanguageMap language localTranslations.viewRecord ++ ": "))
