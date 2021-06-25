@@ -4,12 +4,13 @@ import Browser
 import Browser.Navigation as Nav
 import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
+import List.Extra as LE
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Page.Converters exposing (convertFacetToResultMode)
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
-import Page.Query exposing (buildQueryParameters)
+import Page.Query exposing (Filter(..), buildQueryParameters)
 import Page.Route exposing (Route(..), parseUrl)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
