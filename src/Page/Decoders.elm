@@ -94,3 +94,13 @@ recordResponseConverter typevalue =
         --       once we have a clear idea of what they are.
         Unknown ->
             sourceResponseDecoder
+
+
+decodeFromResult : Result String a -> Decoder a
+decodeFromResult result =
+    case result of
+        Ok a ->
+            Decode.succeed a
+
+        Err errMsg ->
+            Decode.fail errMsg
