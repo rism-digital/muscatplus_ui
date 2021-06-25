@@ -8,6 +8,7 @@
         "direct": {
             "Garados007/elm-svg-parser": "1.0.0",
             "NoRedInk/elm-json-decode-pipeline": "1.0.0",
+            "andrewMacmurray/elm-simple-animation": "2.1.0",
             "avh4/elm-color": "1.0.0",
             "cuducos/elm-format-number": "8.1.4",
             "elm/browser": "1.0.2",
@@ -19,6 +20,7 @@
             "elm/time": "1.0.0",
             "elm/url": "1.0.0",
             "elm-community/json-extra": "4.3.0",
+            "elm-community/list-extra": "8.3.1",
             "mdgriffith/elm-ui": "1.1.8",
             "rtfeldman/elm-css": "16.1.1",
             "ryannhg/date-format": "2.3.0"
