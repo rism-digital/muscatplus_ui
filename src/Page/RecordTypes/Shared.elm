@@ -1,6 +1,6 @@
-module Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder, typeDecoder)
+module Page.RecordTypes.Shared exposing (LabelBooleanValue, LabelNumericValue, LabelValue, RecordHistory, labelBooleanValueDecoder, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder, typeDecoder)
 
-import Json.Decode as Decode exposing (Decoder, andThen, list, string)
+import Json.Decode as Decode exposing (Decoder, andThen, bool, float, list, string)
 import Json.Decode.Extra exposing (datetime)
 import Json.Decode.Pipeline exposing (required)
 import Language exposing (LanguageMap, LanguageNumericMap, languageMapDecoder)
@@ -16,7 +16,13 @@ type alias LabelValue =
 
 type alias LabelNumericValue =
     { label : LanguageMap
-    , value : LanguageNumericMap
+    , value : Float
+    }
+
+
+type alias LabelBooleanValue =
+    { label : LanguageMap
+    , value : Bool
     }
 
 
@@ -33,6 +39,20 @@ labelValueDecoder =
     Decode.succeed LabelValue
         |> required "label" languageMapLabelDecoder
         |> required "value" languageMapLabelDecoder
+
+
+labelNumericValueDecoder : Decoder LabelNumericValue
+labelNumericValueDecoder =
+    Decode.succeed LabelNumericValue
+        |> required "label" languageMapLabelDecoder
+        |> required "value" float
+
+
+labelBooleanValueDecoder : Decoder LabelBooleanValue
+labelBooleanValueDecoder =
+    Decode.succeed LabelBooleanValue
+        |> required "label" languageMapLabelDecoder
+        |> required "value" bool
 
 
 languageMapLabelDecoder : Decoder LanguageMap
