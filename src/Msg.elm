@@ -76,4 +76,5 @@ type Msg
     | UserClickedRecordViewTabPagination String
     | UserResizedWindow Device
     | UserRequestedUrlChange UrlRequest
+    | UserClickedClosePreviewWindow
     | NothingHappened -- for stubbing out messages and development, a.k.a. 'NoOp'
