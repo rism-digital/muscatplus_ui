@@ -123,11 +123,6 @@ chevronDownSvg color =
     makeSvgIcon color chevronDown
 
 
-chevronDownString : String
-chevronDownString =
-    makeStringIcon chevronDown
-
-
 chevronUp : SvgDetails
 chevronUp =
     { viewBox = "0 0 448 512"
@@ -138,11 +133,6 @@ chevronUp =
 chevronUpSvg : Color -> Element msg
 chevronUpSvg color =
     makeSvgIcon color chevronUp
-
-
-chevronUpString : String
-chevronUpString =
-    makeStringIcon chevronUp
 
 
 chevronLeft : SvgDetails
@@ -157,11 +147,6 @@ chevronLeftSvg color =
     makeSvgIcon color chevronLeft
 
 
-chevronLeftString : String
-chevronLeftString =
-    makeStringIcon chevronLeft
-
-
 chevronRight : SvgDetails
 chevronRight =
     { viewBox = "0 0 320 512"
@@ -172,11 +157,6 @@ chevronRight =
 chevronRightSvg : Color -> Element msg
 chevronRightSvg color =
     makeSvgIcon color chevronRight
-
-
-chevronRightString : String
-chevronRightString =
-    makeStringIcon chevronRight
 
 
 chevronDoubleRight : SvgDetails
@@ -191,11 +171,6 @@ chevronDoubleRightSvg color =
     makeSvgIcon color chevronDoubleRight
 
 
-chevronDoubleRightString : String
-chevronDoubleRightString =
-    makeStringIcon chevronDoubleRight
-
-
 chevronDoubleLeft : SvgDetails
 chevronDoubleLeft =
     { viewBox = "0 0 512 512"
@@ -206,11 +181,6 @@ chevronDoubleLeft =
 chevronDoubleLeftSvg : Color -> Element msg
 chevronDoubleLeftSvg color =
     makeSvgIcon color chevronDoubleLeft
-
-
-chevronDoubleLeftString : String
-chevronDoubleLeftString =
-    makeStringIcon chevronDoubleLeft
 
 
 bookOpen : SvgDetails
@@ -319,3 +289,15 @@ digitizedImages =
 digitizedImagesSvg : Color -> Element msg
 digitizedImagesSvg color =
     makeSvgIcon color digitizedImages
+
+
+closeWindow : SvgDetails
+closeWindow =
+    { viewBox = "0 0 512 512"
+    , path = "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm101.8-262.2L295.6 256l62.2 62.2c4.7 4.7 4.7 12.3 0 17l-22.6 22.6c-4.7 4.7-12.3 4.7-17 0L256 295.6l-62.2 62.2c-4.7 4.7-12.3 4.7-17 0l-22.6-22.6c-4.7-4.7-4.7-12.3 0-17l62.2-62.2-62.2-62.2c-4.7-4.7-4.7-12.3 0-17l22.6-22.6c4.7-4.7 12.3-4.7 17 0l62.2 62.2 62.2-62.2c4.7-4.7 12.3-4.7 17 0l22.6 22.6c4.7 4.7 4.7 12.3 0 17z"
+    }
+
+
+closeWindowSvg : Color -> Element msg
+closeWindowSvg color =
+    makeSvgIcon color closeWindow
