@@ -60,7 +60,9 @@ h6 language heading =
 
 label : Language -> LanguageMap -> Element msg
 label language langmap =
-    el [ Font.medium, bodyRegular ] (text (extractLabelFromLanguageMap language langmap))
+    paragraph
+        [ Font.medium, bodyRegular ]
+        [ text (extractLabelFromLanguageMap language langmap) ]
 
 
 value : Language -> LanguageMap -> Element msg
@@ -105,11 +107,11 @@ viewLabelValueField fmt language field =
                         , paddingXY 0 10
                         , alignTop
                         ]
-                        [ el
+                        [ wrappedRow
                             [ width (fillPortion 1)
                             , alignTop
                             ]
-                            (label language f.label)
+                            [ label language f.label ]
                         , wrappedRow
                             [ width (fillPortion 4)
                             , alignTop
