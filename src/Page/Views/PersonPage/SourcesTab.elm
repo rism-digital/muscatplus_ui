@@ -1,6 +1,6 @@
 module Page.Views.PersonPage.SourcesTab exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, none, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, none, row, spacing, text, width)
 import Language exposing (Language)
 import Msg exposing (Msg)
 import Page.Model exposing (Response(..))
@@ -17,6 +17,9 @@ viewPersonSourcesTab language searchData =
             case searchData of
                 Response (SearchData body) ->
                     viewPersonSourceResultsSection language body
+
+                Error err ->
+                    text err
 
                 _ ->
                     none
