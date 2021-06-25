@@ -67,6 +67,7 @@ type Msg
     | UserClickedSearchSubmitButton
     | UserInputTextInQueryBox String
     | UserChangedLanguageSelect String
+    | UserClickedFacetToggle String
     | UserClickedFacetItem String FacetItem Bool
     | UserClickedModeItem String FacetItem Bool
     | UserClickedToCItem String

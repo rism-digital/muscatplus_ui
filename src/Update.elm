@@ -198,6 +198,38 @@ update msg model =
             in
             update Msg.UserClickedSearchSubmitButton newModel
 
+        Msg.UserClickedFacetToggle label ->
+            let
+                activeSearch =
+                    model.activeSearch
+
+                query =
+                    activeSearch.query
+
+                activeFilters =
+                    query.filters
+
+                filter =
+                    Filter label "true"
+
+                newFilters =
+                    if List.member filter activeFilters == True then
+                        LE.remove filter activeFilters
+
+                    else
+                        filter :: activeFilters
+
+                newQuery =
+                    { query | filters = newFilters }
+
+                newSearch =
+                    { activeSearch | query = newQuery }
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            update Msg.UserClickedSearchSubmitButton newModel
+
         Msg.UserClickedFacetItem _ _ _ ->
             ( model, Cmd.none )
 
