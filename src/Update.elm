@@ -2,16 +2,20 @@ module Update exposing (..)
 
 import Browser
 import Browser.Navigation as Nav
+import Dict
 import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
 import List.Extra as LE
 import Model exposing (Model)
 import Msg exposing (Msg)
-import Page.Converters exposing (convertFacetToResultMode)
+import Page.Converters exposing (convertFacetToFilter, convertFacetToResultMode, convertRangeFacetToRangeSlider, filterMap)
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Query exposing (Filter(..), buildQueryParameters)
+import Page.RecordTypes.Search exposing (FacetData(..))
+import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..), parseUrl)
+import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
 import Url
@@ -28,8 +32,32 @@ update msg model =
 
                 newResponse =
                     { oldPage | response = Response response }
+
+                sliderFacets =
+                    case response of
+                        SearchData body ->
+                            let
+                                isRangeSlider _ a =
+                                    case a of
+                                        RangeFacetData d ->
+                                            Just (convertRangeFacetToRangeSlider d)
+
+                                        _ ->
+                                            Nothing
+                            in
+                            body.facets
+                                |> filterMap isRangeSlider
+
+                        _ ->
+                            Dict.empty
+
+                oldSearch =
+                    model.activeSearch
+
+                newSearch =
+                    { oldSearch | sliders = sliderFacets }
             in
-            ( { model | page = newResponse }, Cmd.none )
+            ( { model | page = newResponse, activeSearch = newSearch }, Cmd.none )
 
         Msg.ServerRespondedWithData (Err error) ->
             let
@@ -249,8 +277,132 @@ update msg model =
             in
             update Msg.UserClickedSearchSubmitButton newModel
 
-        Msg.UserClickedFacetItem _ _ _ ->
-            ( model, Cmd.none )
+        Msg.UserClickedFacetItem alias facetItem isChecked ->
+            let
+                activeSearch =
+                    model.activeSearch
+
+                query =
+                    activeSearch.query
+
+                activeFilters =
+                    query.filters
+
+                asFilter =
+                    convertFacetToFilter alias facetItem
+
+                newSelected =
+                    if List.member asFilter activeFilters then
+                        LE.remove asFilter activeFilters
+
+                    else
+                        asFilter :: activeFilters
+
+                newQuery =
+                    { query | filters = newSelected }
+
+                newSearch =
+                    { activeSearch | query = newQuery }
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            update Msg.UserClickedSearchSubmitButton newModel
+
+        Msg.UserMovedRangeSlider sliderAlias sliderMsg ->
+            let
+                fireUpdate =
+                    case sliderMsg of
+                        RangeSlider.DragEnd _ ->
+                            True
+
+                        _ ->
+                            False
+
+                oldSearch =
+                    model.activeSearch
+
+                query =
+                    oldSearch.query
+
+                oldFilters =
+                    query.filters
+
+                oldSliders =
+                    oldSearch.sliders
+
+                newSlider : Maybe RangeSlider
+                newSlider =
+                    Dict.get sliderAlias oldSliders
+                        |> Maybe.map (RangeSlider.update sliderMsg)
+
+                newSliders =
+                    case newSlider of
+                        Just sl ->
+                            Dict.insert sliderAlias sl oldSliders
+
+                        Nothing ->
+                            oldSliders
+
+                newFilter : Maybe Filter
+                newFilter =
+                    case newSlider of
+                        Just sl ->
+                            let
+                                ( from, to ) =
+                                    RangeSlider.getValues sl
+
+                                filterValue =
+                                    "[" ++ String.fromFloat from ++ " TO " ++ String.fromFloat to ++ "]"
+
+                                thisFilt =
+                                    if fireUpdate == True then
+                                        Just (Filter sliderAlias filterValue)
+
+                                    else
+                                        Nothing
+                            in
+                            thisFilt
+
+                        Nothing ->
+                            Nothing
+
+                -- remove any old occurrences of the filter
+                filteredFilters =
+                    if fireUpdate == True then
+                        List.filter (\(Filter l _) -> l /= sliderAlias) oldFilters
+
+                    else
+                        oldFilters
+
+                newFilters =
+                    case newFilter of
+                        Just f ->
+                            f :: filteredFilters
+
+                        Nothing ->
+                            filteredFilters
+
+                newQuery =
+                    { query | filters = newFilters }
+
+                newSearch =
+                    { oldSearch | sliders = newSliders, query = newQuery }
+
+                newModel =
+                    { model | activeSearch = newSearch }
+
+                url =
+                    serverUrl [ "search" ] (buildQueryParameters newSearch.query)
+
+                cmd =
+                    if fireUpdate == True then
+                        Nav.pushUrl model.key url
+
+                    else
+                        Cmd.none
+            in
+            ( newModel, cmd )
 
         Msg.UserClickedToCItem idParam ->
             ( model

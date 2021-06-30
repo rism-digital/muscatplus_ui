@@ -6,6 +6,7 @@ import Http
 import Page.Model exposing (CurrentRecordViewTab)
 import Page.RecordTypes.Search exposing (FacetItem)
 import Page.Response exposing (ServerData)
+import Page.UI.Facets.RangeSlider as RangeSlider
 import Url exposing (Url)
 
 
@@ -70,6 +71,7 @@ type Msg
     | UserClickedFacetToggle String
     | UserClickedFacetItem String FacetItem Bool
     | UserClickedModeItem String FacetItem Bool
+    | UserMovedRangeSlider String RangeSlider.Msg
     | UserClickedToCItem String
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserClickedSearchResultForPreview String
