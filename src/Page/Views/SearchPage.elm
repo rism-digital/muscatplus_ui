@@ -9,6 +9,7 @@ import Language exposing (Language)
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Page.Model exposing (Response(..))
+import Page.Query exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Response exposing (ServerData(..))
@@ -341,6 +342,14 @@ viewSearchControls model =
 
                 _ ->
                     none
+
+        activeFilters =
+            case resp of
+                Response (SearchData body) ->
+                    viewActiveFilters language activeSearch
+
+                _ ->
+                    none
     in
     row
         [ width fill
@@ -359,7 +368,9 @@ viewSearchControls model =
                     [ width fill ]
                     [ row
                         [ width fill ]
-                        [ el [ Font.size 16, Font.semiBold, alignTop ] (text "Active search parameters") ]
+                        [ el [ Font.size 16, Font.semiBold, alignTop ] (text "Active search parameters")
+                        ]
+                    , activeFilters
                     ]
                 ]
             , row
@@ -397,5 +408,40 @@ viewFacetControls language activeSearch body =
             , viewFacet "hide-source-collections" language activeSearch body
             , viewFacet "hide-composite-volumes" language activeSearch body
             , viewFacet "has-incipits" language activeSearch body
+            , viewFacet "date-range" language activeSearch body
+            , viewFacet "holding-institution" language activeSearch body
+            , viewFacet "source-type" language activeSearch body
+            , viewFacet "person-role" language activeSearch body
             ]
         ]
+
+
+viewActiveFilters : Language -> ActiveSearch -> Element Msg
+viewActiveFilters language activeSearch =
+    let
+        query =
+            activeSearch.query
+
+        activeFilters =
+            query.filters
+    in
+    row
+        []
+        [ column
+            []
+            (List.map viewActiveFilter activeFilters)
+        ]
+
+
+viewActiveFilter : Filter -> Element Msg
+viewActiveFilter filt =
+    let
+        (Filter alias value) =
+            filt
+
+        label =
+            alias ++ ": " ++ value
+    in
+    row
+        []
+        [ el [] (text label) ]
