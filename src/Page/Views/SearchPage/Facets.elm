@@ -1,20 +1,26 @@
 module Page.Views.SearchPage.Facets exposing (..)
 
-import Dict
-import Element exposing (Element, alignLeft, centerX, centerY, column, el, fill, height, none, paddingXY, px, row, spacing, text, width)
+import Dict exposing (Dict)
+import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, html, none, paddingXY, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
-import Element.Input exposing (checkbox, labelLeft)
+import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
+import Html
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Msg exposing (Msg(..))
+import Page.Converters exposing (convertFacetToFilter)
 import Page.Query exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FilterFacet, ModeFacet, RangeFacet, SearchBody, SelectorFacet, ToggleFacet)
 import Page.UI.Attributes exposing (bodyRegular)
+import Page.UI.Components exposing (h6)
+import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Search exposing (ActiveSearch)
+import String.Extra as SE
 
 
 viewModeItems : ResultMode -> Language -> ModeFacet -> Element Msg
@@ -136,13 +142,22 @@ viewFacet facetKey language activeSearch body =
         activeFilters =
             query.filters
 
+        activeSliders =
+            activeSearch.sliders
+
         facetView =
             case facetConf of
                 Just (ToggleFacetData facet) ->
                     viewToggleFacet language activeFilters facet
 
                 Just (RangeFacetData facet) ->
-                    viewRangeFacet language activeFilters facet
+                    viewRangeFacet language activeSliders activeFilters facet
+
+                Just (SelectorFacetData facet) ->
+                    viewSelectorFacet language activeFilters facet
+
+                Just (FilterFacetData facet) ->
+                    viewFilterFacet language activeFilters facet
 
                 _ ->
                     none
@@ -175,18 +190,120 @@ viewToggleFacet language activeFilters facet =
         ]
 
 
-viewRangeFacet : Language -> List Filter -> RangeFacet -> Element Msg
-viewRangeFacet language activeFilters body =
+viewRangeFacet : Language -> Dict String RangeSlider -> List Filter -> RangeFacet -> Element Msg
+viewRangeFacet language activeSliders activeFilters body =
+    let
+        facetAlias =
+            body.alias
+
+        toggleSlider =
+            case Dict.get facetAlias activeSliders of
+                Just slider ->
+                    html (Html.map (UserMovedRangeSlider facetAlias) <| RangeSlider.view slider)
+
+                Nothing ->
+                    none
+    in
     row
         []
-        [ el [] (text "Range facet!") ]
+        [ column
+            []
+            [ row
+                [ width fill ]
+                [ h6 language body.label ]
+            , row
+                [ width fill
+                , paddingXY 20 10
+                ]
+                [ el [] toggleSlider ]
+            ]
+        ]
 
 
 viewSelectorFacet : Language -> List Filter -> SelectorFacet -> Element Msg
 viewSelectorFacet language activeFilters body =
-    none
+    let
+        facetItems =
+            List.take 10 body.items
+
+        facetAlias =
+            body.alias
+    in
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ h6 language body.label ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
+                ]
+            ]
+        ]
 
 
 viewFilterFacet : Language -> List Filter -> FilterFacet -> Element Msg
 viewFilterFacet language activeFilters body =
-    none
+    let
+        facetAlias =
+            body.alias
+
+        facetItems =
+            body.items
+    in
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ h6 language body.label ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
+                ]
+            ]
+        ]
+
+
+viewFacetItem : Language -> String -> List Filter -> FacetItem -> Element Msg
+viewFacetItem language facetAlias activeFilters fitem =
+    let
+        (FacetItem value label count) =
+            fitem
+
+        fullLabel =
+            extractLabelFromLanguageMap language label
+
+        asFilter =
+            convertFacetToFilter facetAlias fitem
+
+        shouldBeChecked =
+            List.member asFilter activeFilters
+    in
+    row
+        [ width fill ]
+        [ checkbox
+            [ Element.htmlAttribute (HA.alt fullLabel)
+            , alignLeft
+            ]
+            { onChange = \selected -> UserClickedFacetItem facetAlias fitem selected
+            , icon = defaultCheckbox
+            , checked = shouldBeChecked
+            , label =
+                labelRight
+                    [ bodyRegular ]
+                    (text (SE.softEllipsis 30 fullLabel))
+            }
+        , el
+            [ alignRight
+            , bodyRegular
+            ]
+            (text ("(" ++ String.fromFloat count ++ ")"))
+        ]
