@@ -96,7 +96,9 @@ type alias RangeFacet =
 
 
 type alias RangeMinMaxValues =
-    { min : LabelNumericValue
+    { lower : LabelNumericValue
+    , upper : LabelNumericValue
+    , min : LabelNumericValue
     , max : LabelNumericValue
     }
 
@@ -259,6 +261,8 @@ rangeFacetDecoder =
 rangeFacetMinMaxDecoder : Decoder RangeMinMaxValues
 rangeFacetMinMaxDecoder =
     Decode.succeed RangeMinMaxValues
+        |> required "lower" labelNumericValueDecoder
+        |> required "upper" labelNumericValueDecoder
         |> required "min" labelNumericValueDecoder
         |> required "max" labelNumericValueDecoder
 
