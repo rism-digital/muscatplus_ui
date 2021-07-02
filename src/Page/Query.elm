@@ -1,4 +1,4 @@
-module Page.Query exposing (Filter(..), QueryArgs, buildQueryParameters, defaultQueryArgs, queryParamsParser)
+module Page.Query exposing (FacetBehaviour(..), Filter(..), QueryArgs, buildQueryParameters, defaultQueryArgs, parseStringToFacetBehaviour, queryParamsParser)
 
 import Config as C
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
@@ -17,6 +17,25 @@ type Filter
     = Filter String String
 
 
+{-|
+
+    The behaviour carries the facet alias as a parameter
+
+    IntersectionBehaviour "source-type"
+    UnionBehaviour "holding-institution"
+    etc.
+
+-}
+type FacetBehaviour
+    = IntersectionBehaviour String
+    | UnionBehaviour String
+
+
+type FacetSort
+    = CountSort String
+    | AlphaSort String
+
+
 type alias QueryArgs =
     { query : Maybe String
     , filters : List Filter
@@ -24,6 +43,8 @@ type alias QueryArgs =
     , page : Int
     , rows : Int
     , mode : ResultMode
+    , facetBehaviours : List FacetBehaviour
+    , facetSorts : List FacetSort
     }
 
 
@@ -35,7 +56,35 @@ defaultQueryArgs =
     , page = 1
     , rows = C.defaultRows
     , mode = SourcesMode
+    , facetBehaviours = []
+    , facetSorts = []
     }
+
+
+{-|
+
+    Returns a partially-applied Facet Behaviour to which a
+    facet alias can be given.
+
+-}
+parseStringToFacetBehaviour : String -> (String -> FacetBehaviour)
+parseStringToFacetBehaviour inp =
+    case inp of
+        "union" ->
+            UnionBehaviour
+
+        _ ->
+            IntersectionBehaviour
+
+
+{-|
+
+    Creates a pipeline-like Query parser.
+
+-}
+apply : Q.Parser a -> Q.Parser (a -> b) -> Q.Parser b
+apply argParser funcParser =
+    Q.map2 (<|) funcParser argParser
 
 
 {-|
@@ -72,6 +121,38 @@ buildQueryParameters queryArgs =
                 )
                 queryArgs.filters
 
+        fbParams =
+            List.map
+                (\facetBehaviour ->
+                    let
+                        behaviourStringValue =
+                            case facetBehaviour of
+                                IntersectionBehaviour fieldName ->
+                                    fieldName ++ ":intersection"
+
+                                UnionBehaviour fieldName ->
+                                    fieldName ++ ":union"
+                    in
+                    Url.Builder.string "fb" behaviourStringValue
+                )
+                queryArgs.facetBehaviours
+
+        fsParams =
+            List.map
+                (\facetSort ->
+                    let
+                        sortStringValue =
+                            case facetSort of
+                                AlphaSort fieldName ->
+                                    fieldName ++ ":alpha"
+
+                                CountSort fieldName ->
+                                    fieldName ++ ":count"
+                    in
+                    Url.Builder.string "fs" sortStringValue
+                )
+                queryArgs.facetSorts
+
         pageParam =
             [ Url.Builder.string "page" (String.fromInt queryArgs.page) ]
 
@@ -83,17 +164,78 @@ buildQueryParameters queryArgs =
                 Nothing ->
                     []
     in
-    List.concat [ qParam, modeParam, fqParams, pageParam, sortParam ]
+    List.concat [ qParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam ]
 
 
 queryParamsParser : Q.Parser QueryArgs
 queryParamsParser =
-    Q.map6 QueryArgs (Q.string "q") fqParamParser (Q.string "sort") pageParamParser rowsParamParser modeParamParser
+    -- See the note on `map8` for how to define these pipelines:
+    -- https://package.elm-lang.org/packages/elm/url/latest/Url-Parser-Query#map8
+    Q.map QueryArgs (Q.string "q")
+        |> apply fqParamParser
+        |> apply (Q.string "sort")
+        |> apply pageParamParser
+        |> apply rowsParamParser
+        |> apply modeParamParser
+        |> apply fbParamParser
+        |> apply fsParamParser
 
 
 fqParamParser : Q.Parser (List Filter)
 fqParamParser =
     Q.custom "fq" (\a -> filterQueryStringToFilter a)
+
+
+fbParamParser : Q.Parser (List FacetBehaviour)
+fbParamParser =
+    Q.custom "fb" (\a -> facetBehaviourQueryStringToBehaviour a)
+
+
+facetBehaviourQueryStringToBehaviour : List String -> List FacetBehaviour
+facetBehaviourQueryStringToBehaviour fbList =
+    List.concat
+        (List.map
+            (\a ->
+                case String.split ":" a of
+                    [ field, value ] ->
+                        case value of
+                            "union" ->
+                                [ UnionBehaviour field ]
+
+                            _ ->
+                                [ IntersectionBehaviour field ]
+
+                    _ ->
+                        []
+            )
+            fbList
+        )
+
+
+fsParamParser : Q.Parser (List FacetSort)
+fsParamParser =
+    Q.custom "fs" (\a -> facetSortQueryStringToFacetSort a)
+
+
+facetSortQueryStringToFacetSort : List String -> List FacetSort
+facetSortQueryStringToFacetSort fsList =
+    List.concat
+        (List.map
+            (\a ->
+                case String.split ":" a of
+                    [ field, value ] ->
+                        case value of
+                            "alpha" ->
+                                [ AlphaSort field ]
+
+                            _ ->
+                                [ CountSort field ]
+
+                    _ ->
+                        []
+            )
+            fsList
+        )
 
 
 modeParamParser : Q.Parser ResultMode

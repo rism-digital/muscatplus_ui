@@ -11,8 +11,8 @@ import Msg exposing (Msg)
 import Page.Converters exposing (convertFacetToFilter, convertFacetToResultMode, convertRangeFacetToRangeSlider, filterMap)
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
-import Page.Query exposing (Filter(..), buildQueryParameters)
-import Page.RecordTypes.Search exposing (FacetData(..))
+import Page.Query exposing (FacetBehaviour(..), Filter(..), buildQueryParameters)
+import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..), parseUrl)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
@@ -279,6 +279,9 @@ update msg model =
 
         Msg.UserClickedFacetItem alias facetItem isChecked ->
             let
+                (FacetItem value label count) =
+                    facetItem
+
                 activeSearch =
                     model.activeSearch
 
@@ -303,6 +306,55 @@ update msg model =
 
                 newSearch =
                     { activeSearch | query = newQuery }
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            update Msg.UserClickedSearchSubmitButton newModel
+
+        Msg.UserChangedFacetBehaviour behaviour ->
+            let
+                oldSearch =
+                    model.activeSearch
+
+                oldQuery =
+                    oldSearch.query
+
+                oldBehaviours =
+                    oldQuery.facetBehaviours
+
+                fieldAlias =
+                    case behaviour of
+                        IntersectionBehaviour f ->
+                            f
+
+                        UnionBehaviour f ->
+                            f
+
+                -- filter the alias from the list of old behaviours, and then
+                -- add the new behaviour.
+                newBehaviours =
+                    List.filter
+                        (\b ->
+                            let
+                                aField =
+                                    case b of
+                                        IntersectionBehaviour alias ->
+                                            alias
+
+                                        UnionBehaviour alias ->
+                                            alias
+                            in
+                            aField /= fieldAlias
+                        )
+                        oldBehaviours
+                        |> (::) behaviour
+
+                newQuery =
+                    { oldQuery | facetBehaviours = newBehaviours }
+
+                newSearch =
+                    { oldSearch | query = newQuery }
 
                 newModel =
                     { model | activeSearch = newSearch }

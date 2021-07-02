@@ -4,6 +4,7 @@ import Browser exposing (UrlRequest)
 import Element exposing (Device)
 import Http
 import Page.Model exposing (CurrentRecordViewTab)
+import Page.Query exposing (FacetBehaviour)
 import Page.RecordTypes.Search exposing (FacetItem)
 import Page.Response exposing (ServerData)
 import Page.UI.Facets.RangeSlider as RangeSlider
@@ -68,6 +69,7 @@ type Msg
     | UserClickedSearchSubmitButton
     | UserInputTextInQueryBox String
     | UserChangedLanguageSelect String
+    | UserChangedFacetBehaviour FacetBehaviour
     | UserClickedFacetToggle String
     | UserClickedFacetItem String FacetItem Bool
     | UserClickedModeItem String FacetItem Bool

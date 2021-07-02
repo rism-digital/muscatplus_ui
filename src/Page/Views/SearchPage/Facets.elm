@@ -1,23 +1,24 @@
 module Page.Views.SearchPage.Facets exposing (..)
 
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, html, none, paddingXY, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, html, none, paddingXY, px, row, spacing, spacingXY, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import List.Extra as LE
 import Msg exposing (Msg(..))
 import Page.Converters exposing (convertFacetToFilter)
-import Page.Query exposing (Filter(..))
+import Page.Query exposing (FacetBehaviour(..), Filter(..), parseStringToFacetBehaviour)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FilterFacet, ModeFacet, RangeFacet, SearchBody, SelectorFacet, ToggleFacet)
+import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.UI.Attributes exposing (bodyRegular)
-import Page.UI.Components exposing (h6)
+import Page.UI.Components exposing (dropdownSelect, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
-import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
+import Page.UI.Images exposing (institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unionSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Search exposing (ActiveSearch)
 import String.Extra as SE
@@ -145,6 +146,9 @@ viewFacet facetKey language activeSearch body =
         activeSliders =
             activeSearch.sliders
 
+        facetBehaviours =
+            query.facetBehaviours
+
         facetView =
             case facetConf of
                 Just (ToggleFacetData facet) ->
@@ -153,11 +157,8 @@ viewFacet facetKey language activeSearch body =
                 Just (RangeFacetData facet) ->
                     viewRangeFacet language activeSliders activeFilters facet
 
-                Just (SelectorFacetData facet) ->
-                    viewSelectorFacet language activeFilters facet
-
-                Just (FilterFacetData facet) ->
-                    viewFilterFacet language activeFilters facet
+                Just (SelectFacetData facet) ->
+                    viewSelectFacet language facetBehaviours activeFilters facet
 
                 _ ->
                     none
@@ -220,59 +221,107 @@ viewRangeFacet language activeSliders activeFilters body =
         ]
 
 
-viewSelectorFacet : Language -> List Filter -> SelectorFacet -> Element Msg
-viewSelectorFacet language activeFilters body =
+viewSelectFacet : Language -> List FacetBehaviour -> List Filter -> SelectFacet -> Element Msg
+viewSelectFacet language facetBehaviours activeFilters body =
     let
         facetItems =
             List.take 10 body.items
 
         facetAlias =
             body.alias
+
+        behaviourOptions =
+            body.behaviours
+
+        behaviourLabel =
+            extractLabelFromLanguageMap language behaviourOptions.label
+
+        listOfBehavioursForDropdown =
+            List.map (\v -> ( v.value, extractLabelFromLanguageMap language v.label )) behaviourOptions.items
+
+        chosenOption =
+            LE.find
+                (\v ->
+                    case v of
+                        IntersectionBehaviour f ->
+                            f == facetAlias
+
+                        UnionBehaviour f ->
+                            f == facetAlias
+                )
+                facetBehaviours
+                |> Maybe.withDefault (IntersectionBehaviour facetAlias)
+
+        behaviourIcon =
+            case chosenOption of
+                UnionBehaviour _ ->
+                    unionSvg colourScheme.slateGrey
+
+                IntersectionBehaviour _ ->
+                    intersectionSvg colourScheme.slateGrey
+
+        behaviourDropdown =
+            dropdownSelect
+                (\inp -> UserChangedFacetBehaviour (parseStringToFacetBehaviour inp facetAlias))
+                listOfBehavioursForDropdown
+                (\inp -> parseStringToFacetBehaviour inp facetAlias)
+                chosenOption
     in
     row
-        [ width fill ]
+        [ width (px 400) ]
         [ column
             [ width fill ]
             [ row
-                [ width fill ]
-                [ h6 language body.label ]
+                [ width fill
+                , paddingXY 0 10
+                ]
+                [ column
+                    [ width fill
+                    , alignLeft
+                    ]
+                    [ h6 language body.label ]
+                , column
+                    [ width fill
+                    , alignRight
+                    , Font.size 12
+                    ]
+                    [ row
+                        [ width fill
+                        , alignRight
+                        ]
+                        [ el
+                            [ alignRight
+                            , paddingXY 5 0
+                            ]
+                            (text behaviourLabel)
+                        , behaviourDropdown
+                        , el
+                            [ width (px 20)
+                            , height (px 10)
+                            , alignRight
+                            ]
+                            behaviourIcon
+                        ]
+                    ]
+                ]
             , row
                 [ width fill ]
                 [ column
-                    [ width fill ]
+                    [ width fill
+                    , spacing 5
+                    ]
                     (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
                 ]
             ]
         ]
 
 
-viewFilterFacet : Language -> List Filter -> FilterFacet -> Element Msg
-viewFilterFacet language activeFilters body =
-    let
-        facetAlias =
-            body.alias
-
-        facetItems =
-            body.items
-    in
-    row
-        [ width fill ]
-        [ column
-            [ width fill ]
-            [ row
-                [ width fill ]
-                [ h6 language body.label ]
-            , row
-                [ width fill ]
-                [ column
-                    [ width fill ]
-                    (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
-                ]
-            ]
-        ]
-
-
-viewFacetItem : Language -> String -> List Filter -> FacetItem -> Element Msg
+viewFacetItem :
+    Language
+    -> String
+    -> List Filter
+    -> FacetItem
+    -> Element Msg
 viewFacetItem language facetAlias activeFilters fitem =
     let
         (FacetItem value label count) =
