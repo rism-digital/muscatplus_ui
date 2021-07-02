@@ -4,14 +4,14 @@ import Browser
 import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
 import Element.Font as Font
 import Element.Region as Region
-import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations)
+import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations, parseLocaleToLanguage)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, linkColour, minimalDropShadow, pageBackground)
-import Page.UI.Components exposing (languageSelect)
+import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight, headerHeight)
 import Page.Views.FrontPage
@@ -171,7 +171,7 @@ siteHeader model =
                     [ row
                         [ alignRight
                         ]
-                        [ languageSelect UserChangedLanguageSelect languageOptionsForDisplay model.language ]
+                        [ dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage model.language ]
                     ]
                 ]
             ]
