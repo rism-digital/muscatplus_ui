@@ -1,8 +1,8 @@
-module Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FilterFacet, ModeFacet, RangeFacet, SearchBody, SearchPagination, SearchResult, SelectorFacet, ToggleFacet, searchBodyDecoder)
+module Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetType, ModeFacet, RangeFacet, SearchBody, SearchPagination, SearchResult, SelectFacet, ToggleFacet, searchBodyDecoder)
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder, andThen, bool, float, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (hardcoded, optional, required)
+import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType)
 import Page.RecordTypes.Shared exposing (LabelBooleanValue, LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
@@ -70,15 +70,13 @@ type alias Facets =
 type FacetType
     = Range
     | Toggle
-    | Filter
-    | Selector
+    | Select
 
 
 type FacetData
     = ToggleFacetData ToggleFacet
     | RangeFacetData RangeFacet
-    | SelectorFacetData SelectorFacet
-    | FilterFacetData FilterFacet
+    | SelectFacetData SelectFacet
 
 
 type alias ModeFacet =
@@ -110,17 +108,23 @@ type alias ToggleFacet =
     }
 
 
-type alias SelectorFacet =
+type alias SelectFacet =
     { alias : String
     , label : LanguageMap
     , items : List FacetItem
+    , behaviours : FacetBehaviour
     }
 
 
-type alias FilterFacet =
-    { alias : String
-    , label : LanguageMap
-    , items : List FacetItem
+type alias FacetBehaviour =
+    { label : LanguageMap
+    , items : List FacetBehaviourLabelValue
+    }
+
+
+type alias FacetBehaviourLabelValue =
+    { label : LanguageMap
+    , value : String
     }
 
 
@@ -224,11 +228,8 @@ facetResponseConverter typeValue =
         Range ->
             Decode.map (\r -> RangeFacetData r) rangeFacetDecoder
 
-        Filter ->
-            Decode.map (\r -> FilterFacetData r) filterFacetDecoder
-
-        Selector ->
-            Decode.map (\r -> SelectorFacetData r) selectorFacetDecoder
+        Select ->
+            Decode.map (\r -> SelectFacetData r) selectFacetDecoder
 
 
 facetTypeFromJsonType : String -> FacetType
@@ -237,17 +238,14 @@ facetTypeFromJsonType facetType =
         "rism:ToggleFacet" ->
             Toggle
 
-        "rism:SelectorFacet" ->
-            Selector
+        "rism:SelectFacet" ->
+            Select
 
         "rism:RangeFacet" ->
             Range
 
-        "rism:FilterFacet" ->
-            Filter
-
         _ ->
-            Filter
+            Select
 
 
 rangeFacetDecoder : Decoder RangeFacet
@@ -275,20 +273,13 @@ toggleFacetDecoder =
         |> required "value" string
 
 
-selectorFacetDecoder : Decoder SelectorFacet
-selectorFacetDecoder =
-    Decode.succeed SelectorFacet
+selectFacetDecoder : Decoder SelectFacet
+selectFacetDecoder =
+    Decode.succeed SelectFacet
         |> required "alias" string
         |> required "label" languageMapLabelDecoder
         |> required "items" (Decode.list facetItemDecoder)
-
-
-filterFacetDecoder : Decoder FilterFacet
-filterFacetDecoder =
-    Decode.succeed FilterFacet
-        |> required "alias" string
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (Decode.list facetItemDecoder)
+        |> required "behaviours" facetBehaviourDecoder
 
 
 modeFacetDecoder : Decoder ModeFacet
@@ -305,3 +296,17 @@ facetItemDecoder =
         |> required "value" string
         |> required "label" languageMapLabelDecoder
         |> required "count" float
+
+
+facetBehaviourDecoder : Decoder FacetBehaviour
+facetBehaviourDecoder =
+    Decode.succeed FacetBehaviour
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list facetBehaviourLabelValueDecoder)
+
+
+facetBehaviourLabelValueDecoder : Decoder FacetBehaviourLabelValue
+facetBehaviourLabelValueDecoder =
+    Decode.succeed FacetBehaviourLabelValue
+        |> required "label" languageMapLabelDecoder
+        |> required "value" string
