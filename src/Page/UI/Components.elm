@@ -165,10 +165,10 @@ styledList textList =
         [ text (String.join "; " textList) ]
 
 
-languageParentStyles : List (HT.Attribute msg)
-languageParentStyles =
+dropdownSelectParentStyles : List (HT.Attribute msg)
+dropdownSelectParentStyles =
     [ HA.style "border-radius" "0.25em"
-    , HA.style "font-size" "1rem"
+    , HA.style "font-size" "inherit"
     , HA.style "width" "12ch"
     , HA.style "cursor" "pointer"
     , HA.style "line-height" "1.2"
@@ -177,8 +177,8 @@ languageParentStyles =
     ]
 
 
-languageSelectStyles : List (HT.Attribute msg)
-languageSelectStyles =
+dropdownSelectStyles : List (HT.Attribute msg)
+dropdownSelectStyles =
     [ HA.style "box-sizing" "border-box"
     , HA.style "appearance" "none"
     , HA.style "-webkit-appearance" "none"
@@ -199,34 +199,46 @@ languageSelectStyles =
 
 {-|
 
-    Expects a message type to return when a value has been chosen, and a list of
-    values to fill out the options, e.g., [("en", "English"), ("fr", "French")]
+    a) Function that converts the selected value to a message value
+    b) A list of values and labels for the values
+    c) Function that converts the value to a type
+    d) The selected value as a type
 
 -}
-languageSelect : (String -> msg) -> List ( String, String ) -> Language -> Element msg
-languageSelect msg options currentLanguage =
+dropdownSelect :
+    (String -> msg)
+    -> List ( String, String )
+    -> (String -> a)
+    -> a
+    -> Element msg
+dropdownSelect msg options choiceFn currentChoice =
     html
         (HT.div
-            (List.append [] languageParentStyles)
+            (List.append [] dropdownSelectParentStyles)
             [ HT.select
-                (List.append [ HE.onInput msg ] languageSelectStyles)
-                (List.map (\( val, name ) -> languageSelectOption val name currentLanguage) options)
+                (List.append [ HE.onInput msg ] dropdownSelectStyles)
+                (List.map (\( val, name ) -> dropdownSelectOption val name choiceFn currentChoice) options)
             ]
         )
 
 
-languageSelectOption : String -> String -> Language -> Html msg
-languageSelectOption val name currentLanguage =
+dropdownSelectOption :
+    String
+    -> String
+    -> (String -> a)
+    -> a
+    -> Html msg
+dropdownSelectOption val name choiceFn currentChoice =
     let
-        lang =
-            parseLocaleToLanguage val
+        valToChoice =
+            choiceFn val
 
-        isCurrentLanguage =
-            lang == currentLanguage
+        isSelected =
+            valToChoice == currentChoice
 
         attrib =
             [ HA.value val
-            , HA.selected isCurrentLanguage
+            , HA.selected isSelected
             ]
     in
     HT.option
