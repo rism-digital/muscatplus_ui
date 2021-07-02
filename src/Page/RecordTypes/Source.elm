@@ -113,8 +113,7 @@ type alias ExemplarsSectionBody =
 
 
 type alias ExemplarBody =
-    { id : String
-    , summary : Maybe (List LabelValue)
+    { summary : Maybe (List LabelValue)
     , heldBy : BasicInstitutionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     }
@@ -244,7 +243,7 @@ exemplarsSectionBodyDecoder =
 exemplarsBodyDecoder : Decoder ExemplarBody
 exemplarsBodyDecoder =
     Decode.succeed ExemplarBody
-        |> required "id" string
+        --|> required "id" string
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
