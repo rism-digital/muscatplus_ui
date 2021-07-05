@@ -1,4 +1,4 @@
-module Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetType, ModeFacet, RangeFacet, SearchBody, SearchPagination, SearchResult, SelectFacet, ToggleFacet, searchBodyDecoder)
+module Page.RecordTypes.Search exposing (..)
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder, andThen, bool, float, int, list, nullable, string)
