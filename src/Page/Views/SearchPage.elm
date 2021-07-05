@@ -1,6 +1,7 @@
 module Page.Views.SearchPage exposing (..)
 
-import Element exposing (Color, Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Color exposing (Color)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -13,7 +14,7 @@ import Page.Query exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Response exposing (ServerData(..))
-import Page.UI.Attributes exposing (bodySM, minimalDropShadow, searchColumnVerticalSize)
+import Page.UI.Attributes exposing (bodySM, headerBottomBorder, minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (searchKeywordInput)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Page.Views.Helpers exposing (viewMaybe)
@@ -194,6 +195,7 @@ viewSearchResultsSection model body =
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             , Background.color (colourScheme.cream |> convertColorToElementColor)
             , width (fill |> minimum 800)
+            , padding 20
             , searchColumnVerticalSize
             , scrollbarY
             , alignTop
@@ -281,28 +283,6 @@ viewSearchResultsControlPanel model =
         ]
 
 
-makeFlagIcon : Color -> Element msg -> String -> Element msg
-makeFlagIcon borderColour iconImage iconLabel =
-    column
-        [ bodySM
-        , padding 4
-        , Border.width 1
-        , Border.color borderColour
-        , Border.rounded 4
-        ]
-        [ row
-            [ spacing 5
-            ]
-            [ el
-                [ width (px 20)
-                , height (px 20)
-                ]
-                iconImage
-            , text iconLabel
-            ]
-        ]
-
-
 viewSearchResultsError : Model -> Element Msg
 viewSearchResultsError model =
     let
@@ -358,34 +338,47 @@ viewSearchControls model =
         [ column
             [ width fill
             , height fill
+            , spacing 20
             ]
             [ row
                 [ width fill
                 , height (px 120)
-                , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
+                , headerBottomBorder
                 ]
                 [ column
-                    [ width fill ]
+                    [ width fill
+                    , alignTop
+                    ]
                     [ row
                         [ width fill ]
-                        [ el [ Font.size 16, Font.semiBold, alignTop ] (text "Active search parameters")
+                        [ el
+                            [ Font.size 16
+                            , Font.semiBold
+                            , alignTop
+                            ]
+                            (text "Active search parameters")
                         ]
                     , activeFilters
                     ]
                 ]
             , row
                 [ width fill
-                , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
                 ]
                 [ column
                     [ width fill
                     , height fill
                     , spacing 20
-                    , padding 20
+                    , alignTop
                     ]
                     [ row
                         [ width fill ]
-                        [ el [ Font.size 16, Font.semiBold, alignTop ] (text "Facet controls") ]
+                        [ el
+                            [ Font.size 16
+                            , Font.semiBold
+                            , alignTop
+                            ]
+                            (text "Facet controls")
+                        ]
                     , controlView
                     ]
                 ]
@@ -408,6 +401,7 @@ viewFacetControls language activeSearch body =
             , viewFacet "hide-source-collections" language activeSearch body
             , viewFacet "hide-composite-volumes" language activeSearch body
             , viewFacet "has-incipits" language activeSearch body
+            , viewFacet "has-digitization" language activeSearch body
             , viewFacet "date-range" language activeSearch body
             , viewFacet "holding-institution" language activeSearch body
             , viewFacet "source-type" language activeSearch body

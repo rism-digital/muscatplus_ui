@@ -1,6 +1,7 @@
 module Page.UI.Components exposing (..)
 
-import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
+import Color exposing (Color)
+import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, padding, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -339,5 +340,33 @@ viewRecordHistory history language =
                 , bodySM
                 ]
                 (text updated)
+            ]
+        ]
+
+
+makeFlagIcon :
+    { foreground : Color, background : Color }
+    -> Element msg
+    -> String
+    -> Element msg
+makeFlagIcon colours iconImage iconLabel =
+    column
+        [ bodySM
+        , padding 4
+        , Border.width 1
+        , Border.color (colours.foreground |> convertColorToElementColor)
+        , Border.rounded 4
+        , Background.color (colours.background |> convertColorToElementColor)
+        ]
+        [ row
+            [ spacing 5
+            , Font.color (colours.foreground |> convertColorToElementColor)
+            ]
+            [ el
+                [ width (px 15)
+                , height (px 15)
+                ]
+                iconImage
+            , text iconLabel
             ]
         ]
