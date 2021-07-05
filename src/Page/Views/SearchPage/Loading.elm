@@ -16,7 +16,7 @@ viewSearchResultsLoading model =
         [ width fill
         ]
         [ column
-            [ width (fill |> minimum 600 |> maximum 800)
+            [ width (fill |> minimum 600 |> maximum 1100)
             , Background.color (colourScheme.white |> convertColorToElementColor)
             , searchColumnVerticalSize
             , scrollbarY
