@@ -14,7 +14,7 @@ import Page.Converters exposing (convertFacetToFilter)
 import Page.Query exposing (FacetBehaviour(..), Filter(..), parseStringToFacetBehaviour)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
-import Page.UI.Attributes exposing (bodyRegular)
+import Page.UI.Attributes exposing (bodyRegular, bodySM)
 import Page.UI.Components exposing (dropdownSelect, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
@@ -283,7 +283,7 @@ viewSelectFacet language facetBehaviours activeFilters body =
                 , column
                     [ width fill
                     , alignRight
-                    , Font.size 12
+                    , bodySM
                     ]
                     [ row
                         [ width fill
@@ -354,5 +354,5 @@ viewFacetItem language facetAlias activeFilters fitem =
             [ alignRight
             , bodyRegular
             ]
-            (text ("(" ++ String.fromFloat count ++ ")"))
+            (text (formatNumberByLanguage count language))
         ]
