@@ -1,10 +1,10 @@
 module Page.RecordTypes.Search exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode as Decode exposing (Decoder, andThen, bool, float, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (optional, required)
+import Json.Decode as Decode exposing (Decoder, andThen, at, bool, field, float, int, list, nullable, string)
+import Json.Decode.Pipeline exposing (custom, optional, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes exposing (RecordType)
+import Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType)
 import Page.RecordTypes.Shared exposing (LabelBooleanValue, LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 
@@ -46,11 +46,13 @@ type alias SourceResultFlags =
 
 
 type alias PersonResultFlags =
-    {}
+    { numberOfSources : Int
+    }
 
 
 type alias InstitutionResultFlags =
-    {}
+    { numberOfSources : Int
+    }
 
 
 type alias SearchPagination =
@@ -167,6 +169,10 @@ searchResultDecoder =
         |> optional "flags" (Decode.maybe searchResultFlagsDecoder) Nothing
 
 
+
+--|> optional "flags" (Decode.maybe searchResultFlagsDecoder) Nothing
+
+
 searchResultFlagsDecoder : Decoder SearchResultFlags
 searchResultFlagsDecoder =
     Decode.oneOf
@@ -184,17 +190,19 @@ sourceResultFlagsDecoder =
         |> optional "isContentsRecord" bool False
         |> optional "isCollectionRecord" bool False
         |> optional "hasIncipits" bool False
-        |> optional "numberOfExemplars" int 0
+        |> required "numberOfExemplars" int
 
 
 personResultFlagsDecoder : Decoder PersonResultFlags
 personResultFlagsDecoder =
     Decode.succeed PersonResultFlags
+        |> required "numberOfSources" int
 
 
 institutionResultFlagsDecoder : Decoder InstitutionResultFlags
 institutionResultFlagsDecoder =
     Decode.succeed InstitutionResultFlags
+        |> required "numberOfSources" int
 
 
 searchPaginationDecoder : Decoder SearchPagination

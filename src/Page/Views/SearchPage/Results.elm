@@ -9,9 +9,10 @@ import Msg exposing (Msg(..))
 import Page.RecordTypes.Search exposing (InstitutionResultFlags, PersonResultFlags, SearchResult, SearchResultFlags(..), SourceResultFlags)
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (h5, makeFlagIcon)
-import Page.UI.Images exposing (digitizedImagesSvg, musicNotationSvg)
+import Page.UI.Images exposing (digitizedImagesSvg, musicNotationSvg, penSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
+import String.Extra as SE
 
 
 viewSearchResult : Language -> Maybe String -> SearchResult -> Element Msg
@@ -119,6 +120,7 @@ viewSearchResult language selectedResult result =
         [ column
             [ width fill
             , alignTop
+            , spacing 10
             ]
             [ row
                 [ width fill
@@ -127,8 +129,8 @@ viewSearchResult language selectedResult result =
                 ]
                 [ resultTitle
                 ]
-            , partOf
             , summary
+            , partOf
             , resultFlags
             ]
         ]
@@ -180,10 +182,26 @@ viewSourceFlags language flags =
             if flags.hasDigitization == True then
                 makeFlagIcon
                     { foreground = colourScheme.white
-                    , background = colourScheme.lightBlue
+                    , background = colourScheme.turquoise
                     }
                     (digitizedImagesSvg colourScheme.white)
                     "Has digitization"
+
+            else
+                none
+
+        numExemplars =
+            if flags.numberOfExemplars > 0 then
+                let
+                    labelText =
+                        SE.pluralize "Exemplar" "Exemplars" flags.numberOfExemplars
+                in
+                makeFlagIcon
+                    { foreground = colourScheme.white
+                    , background = colourScheme.darkOrange
+                    }
+                    (penSvg colourScheme.white)
+                    labelText
 
             else
                 none
@@ -194,14 +212,58 @@ viewSourceFlags language flags =
         ]
         [ incipitFlag
         , hasDigitizationFlag
+        , numExemplars
         ]
 
 
 viewPersonFlags : PersonResultFlags -> Element msg
 viewPersonFlags flags =
-    none
+    let
+        numSources =
+            if flags.numberOfSources > 0 then
+                let
+                    labelText =
+                        SE.pluralize "Source" "Sources" flags.numberOfSources
+                in
+                makeFlagIcon
+                    { foreground = colourScheme.white
+                    , background = colourScheme.darkOrange
+                    }
+                    (sourcesSvg colourScheme.white)
+                    labelText
+
+            else
+                none
+    in
+    row
+        [ width fill
+        , spacing 10
+        ]
+        [ numSources ]
 
 
 viewInstitutionFlags : InstitutionResultFlags -> Element msg
 viewInstitutionFlags flags =
-    none
+    let
+        numSources =
+            if flags.numberOfSources > 0 then
+                let
+                    labelText =
+                        SE.pluralize "Source" "Sources" flags.numberOfSources
+                in
+                makeFlagIcon
+                    { foreground = colourScheme.white
+                    , background = colourScheme.darkOrange
+                    }
+                    (sourcesSvg colourScheme.white)
+                    labelText
+
+            else
+                none
+    in
+    row
+        [ width fill
+        , spacing 10
+        ]
+        [ numSources
+        ]
