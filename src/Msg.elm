@@ -79,6 +79,8 @@ type Msg
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserClickedSearchResultForPreview String
     | UserClickedRecordViewTabPagination String
+    | UserClickedPageSearchSubmitButton String
+    | UserInputTextInPageQueryBox String
     | UserResizedWindow Device
     | UserRequestedUrlChange UrlRequest
     | UserClickedClosePreviewWindow

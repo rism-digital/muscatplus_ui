@@ -2,6 +2,7 @@ module Page exposing (..)
 
 import Msg exposing (Msg)
 import Page.Model exposing (CurrentRecordViewTab(..), PageModel, Response(..))
+import Page.Query exposing (defaultQueryArgs)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (parseUrl)
 import Url exposing (Url)
@@ -21,7 +22,8 @@ init initialUrl =
     , route = initialRoute
     , url = initialUrl
     , currentTab = DefaultRecordViewTab
-    , pageSearch = NoResponseToShow
+    , searchResults = NoResponseToShow
+    , searchParams = { query = defaultQueryArgs }
     }
 
 

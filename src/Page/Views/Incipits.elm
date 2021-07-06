@@ -1,6 +1,6 @@
 module Page.Views.Incipits exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, htmlAttribute, maximum, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, htmlAttribute, maximum, minimum, paddingXY, row, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language)
@@ -88,7 +88,7 @@ viewRenderedIncipits incipits =
     in
     row
         [ paddingXY 0 10
-        , width fill
+        , width (fill |> minimum 400 |> maximum 800)
         ]
         incipitSVG
 

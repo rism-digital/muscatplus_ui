@@ -30,7 +30,7 @@ viewFullInstitutionPage page language body =
             page.currentTab
 
         searchData =
-            page.pageSearch
+            page.searchResults
 
         recordUri =
             row

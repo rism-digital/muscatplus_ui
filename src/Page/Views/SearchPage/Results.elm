@@ -4,7 +4,7 @@ import Element exposing (Element, alignLeft, alignTop, column, el, fill, link, n
 import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Msg exposing (Msg(..))
 import Page.RecordTypes.Search exposing (InstitutionResultFlags, PersonResultFlags, SearchResult, SearchResultFlags(..), SourceResultFlags)
 import Page.UI.Attributes exposing (bodyRegular)
@@ -12,7 +12,6 @@ import Page.UI.Components exposing (h5, makeFlagIcon)
 import Page.UI.Images exposing (digitizedImagesSvg, musicNotationSvg, penSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
-import String.Extra as SE
 
 
 viewSearchResult : Language -> Maybe String -> SearchResult -> Element Msg
@@ -145,10 +144,10 @@ viewResultFlags language flags =
                     viewSourceFlags language sourceFlags
 
                 PersonFlags personFlags ->
-                    viewPersonFlags personFlags
+                    viewPersonFlags language personFlags
 
                 InstitutionFlags institutionFlags ->
-                    viewInstitutionFlags institutionFlags
+                    viewInstitutionFlags language institutionFlags
     in
     row
         [ width fill
@@ -194,7 +193,11 @@ viewSourceFlags language flags =
             if flags.numberOfExemplars > 0 then
                 let
                     labelText =
-                        SE.pluralize "Exemplar" "Exemplars" flags.numberOfExemplars
+                        if flags.numberOfExemplars == 1 then
+                            "1 Exemplar"
+
+                        else
+                            formatNumberByLanguage (toFloat flags.numberOfExemplars) language ++ " Exemplars"
                 in
                 makeFlagIcon
                     { foreground = colourScheme.white
@@ -216,14 +219,18 @@ viewSourceFlags language flags =
         ]
 
 
-viewPersonFlags : PersonResultFlags -> Element msg
-viewPersonFlags flags =
+viewPersonFlags : Language -> PersonResultFlags -> Element msg
+viewPersonFlags language flags =
     let
         numSources =
             if flags.numberOfSources > 0 then
                 let
                     labelText =
-                        SE.pluralize "Source" "Sources" flags.numberOfSources
+                        if flags.numberOfSources == 1 then
+                            "1 Source"
+
+                        else
+                            formatNumberByLanguage (toFloat flags.numberOfSources) language ++ " Sources"
                 in
                 makeFlagIcon
                     { foreground = colourScheme.white
@@ -242,14 +249,18 @@ viewPersonFlags flags =
         [ numSources ]
 
 
-viewInstitutionFlags : InstitutionResultFlags -> Element msg
-viewInstitutionFlags flags =
+viewInstitutionFlags : Language -> InstitutionResultFlags -> Element msg
+viewInstitutionFlags language flags =
     let
         numSources =
             if flags.numberOfSources > 0 then
                 let
                     labelText =
-                        SE.pluralize "Source" "Sources" flags.numberOfSources
+                        if flags.numberOfSources == 1 then
+                            "1 Source"
+
+                        else
+                            formatNumberByLanguage (toFloat flags.numberOfSources) language ++ " Sources"
                 in
                 makeFlagIcon
                     { foreground = colourScheme.white

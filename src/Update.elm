@@ -19,6 +19,7 @@ import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
 import Url
+import Url.Builder
 import Viewport exposing (jumpToId, resetViewport)
 
 
@@ -30,8 +31,39 @@ update msg model =
                 oldPage =
                     model.page
 
-                newResponse =
-                    { oldPage | response = Response response }
+                incomingUrl =
+                    oldPage.url
+
+                ( showTab, cmd ) =
+                    case ( response, incomingUrl.fragment ) of
+                        ( PersonData body, Just "sources" ) ->
+                            let
+                                ( tab, sourceCmd ) =
+                                    case body.sources of
+                                        Just links ->
+                                            ( PersonSourcesRecordSearchTab links.url
+                                            , createRequest Msg.ServerRespondedWithPageSearch recordResponseDecoder links.url
+                                            )
+
+                                        Nothing ->
+                                            ( DefaultRecordViewTab
+                                            , Cmd.none
+                                            )
+                            in
+                            ( tab
+                            , sourceCmd
+                            )
+
+                        _ ->
+                            ( DefaultRecordViewTab
+                            , Cmd.none
+                            )
+
+                newPage =
+                    { oldPage
+                        | response = Response response
+                        , currentTab = showTab
+                    }
 
                 sliderFacets =
                     case response of
@@ -57,7 +89,9 @@ update msg model =
                 newSearch =
                     { oldSearch | sliders = sliderFacets }
             in
-            ( { model | page = newResponse, activeSearch = newSearch }, Cmd.none )
+            ( { model | page = newPage, activeSearch = newSearch }
+            , cmd
+            )
 
         Msg.ServerRespondedWithData (Err error) ->
             let
@@ -99,7 +133,7 @@ update msg model =
                     model.page
 
                 newPage =
-                    { oldPage | pageSearch = Response response }
+                    { oldPage | searchResults = Response response }
             in
             ( { model | page = newPage }, Cmd.none )
 
@@ -120,7 +154,7 @@ update msg model =
                     model.page
 
                 newPage =
-                    { oldPage | pageSearch = Error errorMessage }
+                    { oldPage | searchResults = Error errorMessage }
             in
             ( { model | page = newPage }, Cmd.none )
 
@@ -136,7 +170,7 @@ update msg model =
                     { oldPage
                         | route = newRoute
                         , currentTab = DefaultRecordViewTab
-                        , pageSearch = NoResponseToShow
+                        , searchResults = NoResponseToShow
                     }
 
                 newQuery =
@@ -537,6 +571,60 @@ update msg model =
                         ]
             in
             ( model, cmd )
+
+        Msg.UserClickedPageSearchSubmitButton baseUrl ->
+            let
+                page =
+                    model.page
+
+                pageQuery =
+                    page.searchParams
+
+                _ =
+                    Debug.log "Base URL" baseUrl
+
+                queryParameters =
+                    buildQueryParameters pageQuery.query
+
+                qString =
+                    Url.Builder.toQuery queryParameters
+
+                queryUrl =
+                    baseUrl ++ qString
+
+                cmd =
+                    createRequest Msg.ServerRespondedWithPageSearch recordResponseDecoder queryUrl
+            in
+            ( model, cmd )
+
+        Msg.UserInputTextInPageQueryBox qtext ->
+            let
+                page =
+                    model.page
+
+                oldSearchParams =
+                    page.searchParams
+
+                oldQueryParams =
+                    oldSearchParams.query
+
+                pageQuery =
+                    if String.isEmpty qtext then
+                        Nothing
+
+                    else
+                        Just qtext
+
+                newQueryParams =
+                    { oldQueryParams | query = pageQuery }
+
+                newSearchParams =
+                    { oldSearchParams | query = newQueryParams }
+
+                newPage =
+                    { page | searchParams = newSearchParams }
+            in
+            ( { model | page = newPage }, Cmd.none )
 
         Msg.UserClickedClosePreviewWindow ->
             let

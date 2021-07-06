@@ -1,16 +1,19 @@
 module Page.Views.PersonPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, px, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
+import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
+import Element.Font as Font
 import Html.Attributes as HTA
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
 import Msg exposing (Msg(..))
 import Page
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewSummaryField)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Views.Helpers exposing (viewMaybe)
@@ -31,7 +34,10 @@ viewFullPersonPage page language body =
             page.currentTab
 
         searchData =
-            page.pageSearch
+            page.searchResults
+
+        searchParams =
+            page.searchParams
 
         recordUri =
             row
@@ -51,8 +57,8 @@ viewFullPersonPage page language body =
                 DefaultRecordViewTab ->
                     viewDescriptionTab language body
 
-                PersonSourcesRecordSearchTab _ ->
-                    viewPersonSourcesTab language searchData
+                PersonSourcesRecordSearchTab sourcesUrl ->
+                    viewPersonSourcesTab language sourcesUrl searchParams searchData
 
                 _ ->
                     none
@@ -72,26 +78,68 @@ viewFullPersonPage page language body =
                 ]
                 [ h4 language body.label ]
             , recordUri
-            , viewTabSwitcher language body
+            , viewTabSwitcher language currentTab body
             , pageBodyView
             ]
         ]
 
 
-viewTabSwitcher : Language -> PersonBody -> Element Msg
-viewTabSwitcher language body =
+viewTabSwitcher :
+    Language
+    -> CurrentRecordViewTab
+    -> PersonBody
+    -> Element Msg
+viewTabSwitcher language currentTab body =
     let
+        descriptionTab =
+            let
+                ( backgroundColour, fontColour ) =
+                    case currentTab of
+                        DefaultRecordViewTab ->
+                            ( colourScheme.lightBlue, colourScheme.white )
+
+                        _ ->
+                            ( colourScheme.white, colourScheme.black )
+            in
+            column
+                [ Border.width 1
+                , padding 12
+                , onClick (UserClickedRecordViewTab DefaultRecordViewTab)
+                , pointer
+                , Background.color (backgroundColour |> convertColorToElementColor)
+                , Font.color (fontColour |> convertColorToElementColor)
+                ]
+                [ el
+                    []
+                    (text "Description")
+                ]
+
         sourcesTab =
             case body.sources of
                 Just sources ->
+                    let
+                        ( backgroundColour, fontColour ) =
+                            case currentTab of
+                                PersonSourcesRecordSearchTab _ ->
+                                    ( colourScheme.lightBlue, colourScheme.white )
+
+                                _ ->
+                                    ( colourScheme.white, colourScheme.black )
+
+                        sourceCount =
+                            formatNumberByLanguage (toFloat sources.totalItems) language
+                    in
                     column
                         [ Border.width 1
                         , padding 12
                         , onClick (UserClickedRecordViewTab (PersonSourcesRecordSearchTab sources.url))
+                        , pointer
+                        , Background.color (backgroundColour |> convertColorToElementColor)
+                        , Font.color (fontColour |> convertColorToElementColor)
                         ]
                         [ el
                             []
-                            (text "Sources")
+                            (text ("Sources (" ++ sourceCount ++ ")"))
                         ]
 
                 Nothing ->
@@ -102,12 +150,7 @@ viewTabSwitcher language body =
         , height (px 60)
         , spacing 20
         ]
-        [ column
-            [ Border.width 1
-            , padding 12
-            , onClick (UserClickedRecordViewTab DefaultRecordViewTab)
-            ]
-            [ text "Description" ]
+        [ descriptionTab
         , sourcesTab
         ]
 

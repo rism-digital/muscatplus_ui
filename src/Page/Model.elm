@@ -1,5 +1,6 @@
 module Page.Model exposing (..)
 
+import Page.Query exposing (QueryArgs)
 import Page.Response exposing (ServerData)
 import Page.Route exposing (Route)
 import Url exposing (Url)
@@ -18,10 +19,15 @@ type CurrentRecordViewTab
     | InstitutionSourcesRecordSearchTab String
 
 
+type alias PageSearch =
+    { query : QueryArgs }
+
+
 type alias PageModel =
     { response : Response
     , route : Route
     , url : Url
     , currentTab : CurrentRecordViewTab
-    , pageSearch : Response
+    , searchResults : Response
+    , searchParams : PageSearch
     }

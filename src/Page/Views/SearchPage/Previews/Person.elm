@@ -1,6 +1,6 @@
 module Page.Views.SearchPage.Previews.Person exposing (..)
 
-import Element exposing (Element, column, el, fill, height, link, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, link, none, paddingXY, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Msg exposing (Msg)
 import Page.RecordTypes.Person exposing (PersonBody)
@@ -16,6 +16,18 @@ import Page.Views.Relationship exposing (viewRelationshipsSection)
 viewPersonPreview : PersonBody -> Language -> Element Msg
 viewPersonPreview body language =
     let
+        sourcesLink =
+            case body.sources of
+                Just _ ->
+                    link
+                        [ linkColour
+                        , paddingXY 20 0
+                        ]
+                        { url = body.id ++ "#sources", label = text "(Sources)" }
+
+                Nothing ->
+                    none
+
         personLink =
             row
                 [ width fill ]
@@ -25,6 +37,7 @@ viewPersonPreview body language =
                 , link
                     [ linkColour ]
                     { url = body.id, label = text body.id }
+                , sourcesLink
                 ]
     in
     row
