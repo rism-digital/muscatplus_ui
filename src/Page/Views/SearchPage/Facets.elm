@@ -1,8 +1,9 @@
 module Page.Views.SearchPage.Facets exposing (..)
 
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, html, none, paddingXY, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, html, none, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html
@@ -149,6 +150,9 @@ viewFacet facetKey language activeSearch body =
         facetBehaviours =
             query.facetBehaviours
 
+        expandedFacets =
+            activeSearch.expandedFacets
+
         facetView =
             case facetConf of
                 Just (ToggleFacetData facet) ->
@@ -158,7 +162,7 @@ viewFacet facetKey language activeSearch body =
                     viewRangeFacet language activeSliders activeFilters facet
 
                 Just (SelectFacetData facet) ->
-                    viewSelectFacet language facetBehaviours activeFilters facet
+                    viewSelectFacet language facetBehaviours activeFilters expandedFacets facet
 
                 _ ->
                     none
@@ -221,14 +225,57 @@ viewRangeFacet language activeSliders activeFilters body =
         ]
 
 
-viewSelectFacet : Language -> List FacetBehaviour -> List Filter -> SelectFacet -> Element Msg
-viewSelectFacet language facetBehaviours activeFilters body =
+viewSelectFacet :
+    Language
+    -> List FacetBehaviour
+    -> List Filter
+    -> List String
+    -> SelectFacet
+    -> Element Msg
+viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
     let
-        facetItems =
-            List.take 10 body.items
-
         facetAlias =
             body.alias
+
+        isExpanded =
+            List.member facetAlias expandedFacets
+
+        facetItems =
+            if isExpanded == True then
+                body.items
+
+            else
+                List.take 10 body.items
+
+        -- TODO: Translate!
+        showMoreText =
+            if isExpanded == True then
+                "Show fewer"
+
+            else
+                "Show more"
+
+        showLink =
+            if List.length body.items > 10 then
+                row
+                    [ width fill
+                    ]
+                    [ column
+                        [ width fill
+                        , bodySM
+                        ]
+                        [ el
+                            [ alignRight
+                            , paddingXY 0 5
+                            , onClick (UserClickedFacetExpand facetAlias)
+                            , pointer
+                            ]
+                            (text showMoreText)
+                        ]
+                    ]
+
+            else
+                none
 
         behaviourOptions =
             body.behaviours
@@ -312,6 +359,10 @@ viewSelectFacet language facetBehaviours activeFilters body =
                     ]
                     (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
                 ]
+            , row
+                [ width fill ]
+                []
+            , showLink
             ]
         ]
 

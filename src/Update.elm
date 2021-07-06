@@ -277,6 +277,29 @@ update msg model =
             in
             update Msg.UserClickedSearchSubmitButton newModel
 
+        Msg.UserClickedFacetExpand alias ->
+            let
+                activeSearch =
+                    model.activeSearch
+
+                expandedFacets =
+                    activeSearch.expandedFacets
+
+                isInExpandedList =
+                    List.member alias expandedFacets
+
+                newExpandedList =
+                    if isInExpandedList then
+                        LE.remove alias expandedFacets
+
+                    else
+                        alias :: expandedFacets
+
+                newSearch =
+                    { activeSearch | expandedFacets = newExpandedList }
+            in
+            ( { model | activeSearch = newSearch }, Cmd.none )
+
         Msg.UserClickedFacetItem alias facetItem isChecked ->
             let
                 (FacetItem value label count) =

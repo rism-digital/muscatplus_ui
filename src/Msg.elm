@@ -72,6 +72,7 @@ type Msg
     | UserChangedFacetBehaviour FacetBehaviour
     | UserClickedFacetToggle String
     | UserClickedFacetItem String FacetItem Bool
+    | UserClickedFacetExpand String
     | UserClickedModeItem String FacetItem Bool
     | UserMovedRangeSlider String RangeSlider.Msg
     | UserClickedToCItem String
