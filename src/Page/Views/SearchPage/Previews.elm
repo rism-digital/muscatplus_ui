@@ -1,7 +1,8 @@
 module Page.Views.SearchPage.Previews exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, none, padding, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, minimum, none, padding, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language)
@@ -38,12 +39,14 @@ viewPreviewRouter language previewData =
                     viewUnknownPreview
     in
     row
-        [ width fill
+        [ width (fill |> minimum 800)
         , height fill
         , scrollbarY
         , alignTop
         , padding 20
         , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Border.color (colourScheme.black |> convertColorToElementColor)
+        , Border.width 1
         ]
         [ column
             [ width fill
@@ -60,24 +63,25 @@ viewRecordPreviewTitleBar : Element Msg
 viewRecordPreviewTitleBar =
     row
         [ width fill
-        , height (px 40)
+        , height (px 30)
+        , spacing 20
         ]
         [ el
             [ alignLeft
-            , alignTop
-            , headingXS
-            , Font.semiBold
-            ]
-            (text "Record preview")
-        , el
-            [ alignRight
-            , alignTop
+            , centerY
             , onClick UserClickedClosePreviewWindow
             , width (px 25)
             , height (px 25)
             , pointer
             ]
-            (closeWindowSvg colourScheme.darkGrey)
+            (closeWindowSvg colourScheme.darkOrange)
+        , el
+            [ alignLeft
+            , centerY
+            , headingXS
+            , Font.semiBold
+            ]
+            (text "Record preview")
         ]
 
 
