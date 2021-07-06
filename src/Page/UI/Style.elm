@@ -16,6 +16,11 @@ colours :
     { darkBlue : RGBA
     , lightBlue : RGBA
     , red : RGBA
+    , darkOrange : RGBA
+    , lightOrange : RGBA
+    , yellow : RGBA
+    , lightGreen : RGBA
+    , turquoise : RGBA
     , lightGrey : RGBA
     , darkGrey : RGBA
     , midGrey : RGBA
@@ -41,6 +46,36 @@ colours =
         { red = 249
         , green = 57
         , blue = 67
+        , alpha = 1
+        }
+    , darkOrange =
+        { red = 243
+        , green = 114
+        , blue = 44
+        , alpha = 1
+        }
+    , lightOrange =
+        { red = 248
+        , green = 150
+        , blue = 30
+        , alpha = 1
+        }
+    , yellow =
+        { red = 249
+        , green = 199
+        , blue = 79
+        , alpha = 1
+        }
+    , lightGreen =
+        { red = 144
+        , green = 190
+        , blue = 109
+        , alpha = 1
+        }
+    , turquoise =
+        { red = 67
+        , green = 170
+        , blue = 139
         , alpha = 1
         }
     , lightGrey =
@@ -80,9 +115,9 @@ colours =
         , alpha = 255
         }
     , black =
-        { red = 12
-        , green = 16
-        , blue = 21
+        { red = 34
+        , green = 38
+        , blue = 42
         , alpha = 1
         }
     }
@@ -92,6 +127,11 @@ colourScheme :
     { darkBlue : Color
     , lightBlue : Color
     , red : Color
+    , darkOrange : Color
+    , lightOrange : Color
+    , yellow : Color
+    , lightGreen : Color
+    , turquoise : Color
     , lightGrey : Color
     , darkGrey : Color
     , midGrey : Color
@@ -104,6 +144,11 @@ colourScheme =
     { darkBlue = convertRGBAToColor colours.darkBlue
     , lightBlue = convertRGBAToColor colours.lightBlue
     , red = convertRGBAToColor colours.red
+    , darkOrange = convertRGBAToColor colours.darkOrange
+    , lightOrange = convertRGBAToColor colours.lightOrange
+    , yellow = convertRGBAToColor colours.yellow
+    , lightGreen = convertRGBAToColor colours.lightGreen
+    , turquoise = convertRGBAToColor colours.turquoise
     , lightGrey = convertRGBAToColor colours.lightGrey
     , darkGrey = convertRGBAToColor colours.darkGrey
     , midGrey = convertRGBAToColor colours.midGrey
