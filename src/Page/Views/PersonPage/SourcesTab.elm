@@ -12,7 +12,7 @@ import Page.UI.Components exposing (h5, searchKeywordInput)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Pagination exposing (viewRecordSourceResultsPagination)
-import Page.Views.SearchPage.Results exposing (viewResultFlags, viewSearchResult)
+import Page.Views.SearchPage.Results exposing (viewResultFlags)
 
 
 viewPersonSourcesTab : Language -> String -> PageSearch -> Response -> Element Msg

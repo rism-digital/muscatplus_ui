@@ -1,16 +1,19 @@
 module Page.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, px, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
+import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
+import Element.Font as Font
 import Html.Attributes as HTA
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
 import Msg exposing (Msg(..))
 import Page
 import Page.Model exposing (CurrentRecordViewTab(..))
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewSummaryField)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Views.Helpers exposing (viewMaybe)
@@ -32,6 +35,9 @@ viewFullInstitutionPage page language body =
         searchData =
             page.searchResults
 
+        searchParams =
+            page.searchParams
+
         recordUri =
             row
                 [ width fill ]
@@ -50,8 +56,8 @@ viewFullInstitutionPage page language body =
                 DefaultRecordViewTab ->
                     viewDescriptionTab language body
 
-                InstitutionSourcesRecordSearchTab _ ->
-                    viewInstitutionSourcesTab language searchData
+                InstitutionSourcesRecordSearchTab sourcesUrl ->
+                    viewInstitutionSourcesTab language sourcesUrl searchParams searchData
 
                 _ ->
                     none
@@ -71,26 +77,68 @@ viewFullInstitutionPage page language body =
                 ]
                 [ h4 language body.label ]
             , recordUri
-            , viewTabSwitcher language body
+            , viewTabSwitcher language currentTab body
             , pageBodyView
             ]
         ]
 
 
-viewTabSwitcher : Language -> InstitutionBody -> Element Msg
-viewTabSwitcher language body =
+viewTabSwitcher :
+    Language
+    -> CurrentRecordViewTab
+    -> InstitutionBody
+    -> Element Msg
+viewTabSwitcher language currentTab body =
     let
+        descriptionTab =
+            let
+                ( backgroundColour, fontColour ) =
+                    case currentTab of
+                        DefaultRecordViewTab ->
+                            ( colourScheme.lightBlue, colourScheme.white )
+
+                        _ ->
+                            ( colourScheme.white, colourScheme.black )
+            in
+            column
+                [ Border.width 1
+                , padding 12
+                , onClick (UserClickedRecordViewTab DefaultRecordViewTab)
+                , pointer
+                , Background.color (backgroundColour |> convertColorToElementColor)
+                , Font.color (fontColour |> convertColorToElementColor)
+                ]
+                [ el
+                    []
+                    (text "Description")
+                ]
+
         sourcesTab =
             case body.sources of
                 Just sources ->
+                    let
+                        ( backgroundColour, fontColour ) =
+                            case currentTab of
+                                InstitutionSourcesRecordSearchTab _ ->
+                                    ( colourScheme.lightBlue, colourScheme.white )
+
+                                _ ->
+                                    ( colourScheme.white, colourScheme.black )
+
+                        sourceCount =
+                            formatNumberByLanguage (toFloat sources.totalItems) language
+                    in
                     column
                         [ Border.width 1
                         , padding 12
                         , onClick (UserClickedRecordViewTab (InstitutionSourcesRecordSearchTab sources.url))
+                        , pointer
+                        , Background.color (backgroundColour |> convertColorToElementColor)
+                        , Font.color (fontColour |> convertColorToElementColor)
                         ]
                         [ el
                             []
-                            (text "Sources")
+                            (text ("Sources (" ++ sourceCount ++ ")"))
                         ]
 
                 Nothing ->
@@ -101,12 +149,7 @@ viewTabSwitcher language body =
         , height (px 60)
         , spacing 20
         ]
-        [ column
-            [ Border.width 1
-            , padding 12
-            , onClick (UserClickedRecordViewTab DefaultRecordViewTab)
-            ]
-            [ text "Description" ]
+        [ descriptionTab
         , sourcesTab
         ]
 
