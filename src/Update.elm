@@ -580,9 +580,6 @@ update msg model =
                 pageQuery =
                     page.searchParams
 
-                _ =
-                    Debug.log "Base URL" baseUrl
-
                 queryParameters =
                     buildQueryParameters pageQuery.query
 
