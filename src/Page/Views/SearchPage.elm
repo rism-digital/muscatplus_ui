@@ -403,6 +403,7 @@ viewFacetControls language activeSearch body =
             , viewFacet "has-incipits" language activeSearch body
             , viewFacet "has-digitization" language activeSearch body
             , viewFacet "date-range" language activeSearch body
+            , viewFacet "num-holdings" language activeSearch body
             , viewFacet "holding-institution" language activeSearch body
             , viewFacet "source-type" language activeSearch body
             , viewFacet "person-role" language activeSearch body
