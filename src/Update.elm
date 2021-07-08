@@ -18,6 +18,7 @@ import Page.Route exposing (Route(..), parseUrl)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
+import Search.ActiveFacet exposing (convertFilterToActiveFacet)
 import Url
 import Url.Builder
 import Viewport exposing (jumpToId, resetViewport)
@@ -30,6 +31,9 @@ update msg model =
             let
                 oldPage =
                     model.page
+
+                oldSearch =
+                    model.activeSearch
 
                 incomingUrl =
                     oldPage.url
@@ -83,11 +87,29 @@ update msg model =
                         _ ->
                             Dict.empty
 
-                oldSearch =
-                    model.activeSearch
+                activeFacets =
+                    case response of
+                        SearchData body ->
+                            let
+                                query =
+                                    oldSearch.query
+
+                                qFilters =
+                                    query.filters
+
+                                facetData =
+                                    body.facets
+
+                                listOfActiveFacets =
+                                    List.filterMap (\f -> convertFilterToActiveFacet f facetData) qFilters
+                            in
+                            listOfActiveFacets
+
+                        _ ->
+                            []
 
                 newSearch =
-                    { oldSearch | sliders = sliderFacets }
+                    { oldSearch | sliders = sliderFacets, activeFacets = activeFacets }
             in
             ( { model | page = newPage, activeSearch = newSearch }
             , cmd
@@ -632,6 +654,32 @@ update msg model =
                     { oldSearch | preview = NoResponseToShow }
             in
             ( { model | activeSearch = newSearch }, Cmd.none )
+
+        Msg.UserClickedRemoveActiveFilter activeAlias activeValue ->
+            let
+                oldSearch =
+                    model.activeSearch
+
+                oldQuery =
+                    oldSearch.query
+
+                newFilters =
+                    List.filter
+                        (\(Filter filterAlias filterValue) ->
+                            not ((filterAlias == activeAlias) && (filterValue == activeValue))
+                        )
+                        oldQuery.filters
+
+                newQuery =
+                    { oldQuery | filters = newFilters }
+
+                newSearch =
+                    { oldSearch | query = newQuery }
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            update Msg.UserClickedSearchSubmitButton newModel
 
         Msg.NothingHappened ->
             -- Use for mocking in a Msg that does nothing; For actual code, favour adding

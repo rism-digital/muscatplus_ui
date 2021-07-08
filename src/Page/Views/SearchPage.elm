@@ -1,14 +1,15 @@
 module Page.Views.SearchPage exposing (..)
 
 import Color exposing (Color)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Model exposing (Model)
-import Msg exposing (Msg)
+import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
 import Page.Query exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode)
@@ -16,6 +17,7 @@ import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (bodySM, headerBottomBorder, minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (searchKeywordInput)
+import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.SearchPage.Facets exposing (viewFacet, viewModeItems)
@@ -24,6 +26,7 @@ import Page.Views.SearchPage.Pagination exposing (viewSearchResultsPagination)
 import Page.Views.SearchPage.Previews exposing (viewPreviewLoading, viewPreviewRouter)
 import Page.Views.SearchPage.Results exposing (viewSearchResult)
 import Search exposing (ActiveSearch)
+import Search.ActiveFacet exposing (ActiveFacet(..))
 
 
 view : Model -> Element Msg
@@ -342,12 +345,13 @@ viewSearchControls model =
             ]
             [ row
                 [ width fill
-                , height (px 120)
                 , headerBottomBorder
+                , paddingXY 0 10
                 ]
                 [ column
                     [ width fill
                     , alignTop
+                    , spacing 20
                     ]
                     [ row
                         [ width fill ]
@@ -407,6 +411,7 @@ viewFacetControls language activeSearch body =
             , viewFacet "holding-institution" language activeSearch body
             , viewFacet "source-type" language activeSearch body
             , viewFacet "person-role" language activeSearch body
+            , viewFacet "city" language activeSearch body
             ]
         ]
 
@@ -417,26 +422,53 @@ viewActiveFilters language activeSearch =
         query =
             activeSearch.query
 
-        activeFilters =
-            query.filters
+        activeFacets =
+            activeSearch.activeFacets
     in
     row
         []
         [ column
-            []
-            (List.map viewActiveFilter activeFilters)
+            [ spacing 10 ]
+            (List.map (viewActiveFilter language) activeFacets)
         ]
 
 
-viewActiveFilter : Filter -> Element Msg
-viewActiveFilter filt =
+viewActiveFilter : Language -> ActiveFacet -> Element Msg
+viewActiveFilter language (ActiveFacet facetType facetLabel facetAlias facetValue friendlyValue) =
     let
-        (Filter alias value) =
-            filt
-
         label =
-            alias ++ ": " ++ value
+            extractLabelFromLanguageMap language facetLabel
+
+        value =
+            case friendlyValue of
+                Just v ->
+                    extractLabelFromLanguageMap language v
+
+                Nothing ->
+                    facetValue
     in
     row
-        []
-        [ el [] (text label) ]
+        [ width shrink
+        , Background.color (colourScheme.red |> convertColorToElementColor)
+        , Border.rounded 5
+        , padding 5
+        , spacing 5
+        , Font.semiBold
+        , Font.color (colourScheme.white |> convertColorToElementColor)
+        ]
+        [ column
+            [ width (fillPortion 3) ]
+            [ el
+                []
+                (text (label ++ ": " ++ value))
+            ]
+        , column
+            [ width (fillPortion 1)
+            ]
+            [ el
+                [ width (px 20)
+                , onClick (UserClickedRemoveActiveFilter facetAlias facetValue)
+                ]
+                (closeWindowSvg colourScheme.white)
+            ]
+        ]

@@ -66,22 +66,23 @@ type Msg
     | ClientChangedUrl Url
     | ClientJumpedToId
     | ClientResetViewport
-    | UserClickedSearchSubmitButton
-    | UserInputTextInQueryBox String
-    | UserChangedLanguageSelect String
     | UserChangedFacetBehaviour FacetBehaviour
-    | UserClickedFacetToggle String
-    | UserClickedFacetItem String FacetItem Bool
-    | UserClickedFacetExpand String
-    | UserClickedModeItem String FacetItem Bool
-    | UserMovedRangeSlider String RangeSlider.Msg
-    | UserClickedToCItem String
-    | UserClickedRecordViewTab CurrentRecordViewTab
-    | UserClickedSearchResultForPreview String
-    | UserClickedRecordViewTabPagination String
-    | UserClickedPageSearchSubmitButton String
-    | UserInputTextInPageQueryBox String
-    | UserResizedWindow Device
-    | UserRequestedUrlChange UrlRequest
+    | UserChangedLanguageSelect String
     | UserClickedClosePreviewWindow
+    | UserClickedFacetExpand String
+    | UserClickedFacetItem String FacetItem Bool
+    | UserClickedFacetToggle String
+    | UserClickedModeItem String FacetItem Bool
+    | UserClickedPageSearchSubmitButton String
+    | UserClickedRecordViewTab CurrentRecordViewTab
+    | UserClickedRecordViewTabPagination String
+    | UserClickedRemoveActiveFilter String String
+    | UserClickedSearchResultForPreview String
+    | UserClickedSearchSubmitButton
+    | UserClickedToCItem String
+    | UserInputTextInPageQueryBox String
+    | UserInputTextInQueryBox String
+    | UserMovedRangeSlider String RangeSlider.Msg
+    | UserRequestedUrlChange UrlRequest
+    | UserResizedWindow Device
     | NothingHappened -- for stubbing out messages and development, a.k.a. 'NoOp'
