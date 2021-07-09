@@ -1,11 +1,11 @@
 module Page.Views.ExternalAuthorities exposing (..)
 
-import Element exposing (Element, alignLeft, column, el, fill, link, paddingXY, row, spacing, text, width)
-import Element.Font as Font
+import Element exposing (Element, alignLeft, alignTop, column, fill, fillPortion, link, paddingXY, paragraph, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
 import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Components exposing (label)
 
 
 viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element Msg
@@ -17,23 +17,34 @@ viewExternalAuthoritiesSection language extSection =
         ]
         [ column
             [ width fill
+            , alignTop
             ]
-            [ row
-                [ spacing 20
+            [ wrappedRow
+                [ width fill
                 ]
-                (el
-                    [ Font.semiBold ]
-                    (text (extractLabelFromLanguageMap language extSection.label))
-                    :: List.map (\a -> viewExternalAuthority language a) extSection.items
-                )
+                [ column
+                    [ width (fillPortion 1)
+                    , alignTop
+                    ]
+                    [ label language extSection.label ]
+                , column
+                    [ width (fillPortion 4)
+                    , alignTop
+                    , spacing 10
+                    ]
+                    (List.map (viewExternalAuthority language) extSection.items)
+                ]
             ]
         ]
 
 
 viewExternalAuthority : Language -> ExternalAuthorityBody -> Element Msg
 viewExternalAuthority language authority =
-    link
-        [ linkColour ]
-        { url = authority.url
-        , label = text (extractLabelFromLanguageMap language authority.label)
-        }
+    paragraph
+        []
+        [ link
+            [ linkColour ]
+            { url = authority.url
+            , label = text (extractLabelFromLanguageMap language authority.label)
+            }
+        ]

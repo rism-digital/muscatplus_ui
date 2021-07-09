@@ -108,12 +108,12 @@ viewLabelValueField fmt language field =
                         , paddingXY 0 10
                         , alignTop
                         ]
-                        [ wrappedRow
+                        [ column
                             [ width (fillPortion 1)
                             , alignTop
                             ]
                             [ label language f.label ]
-                        , wrappedRow
+                        , column
                             [ width (fillPortion 4)
                             , alignTop
                             ]
