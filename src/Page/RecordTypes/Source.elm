@@ -116,6 +116,7 @@ type alias ExemplarBody =
     { summary : Maybe (List LabelValue)
     , heldBy : BasicInstitutionBody
     , externalResources : Maybe ExternalResourcesSectionBody
+    , notes : Maybe (List LabelValue)
     }
 
 
@@ -247,6 +248,7 @@ exemplarsBodyDecoder =
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
+        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
 
 
 sourceItemsSectionBodyDecoder : Decoder SourceItemsSectionBody

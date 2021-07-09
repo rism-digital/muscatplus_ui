@@ -8,7 +8,7 @@ import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, Externa
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h5, label, viewSummaryField)
+import Page.UI.Components exposing (h5, label, viewParagraphField, viewSummaryField)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
 
@@ -64,6 +64,7 @@ viewExemplar language exemplar =
             ]
             [ heldBy
             , viewMaybe (viewSummaryField language) exemplar.summary
+            , viewMaybe (viewParagraphField language) exemplar.notes
             , viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
             ]
         ]
