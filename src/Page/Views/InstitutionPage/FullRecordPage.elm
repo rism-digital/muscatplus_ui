@@ -1,6 +1,6 @@
 module Page.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignRight, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -12,7 +12,7 @@ import Page
 import Page.Model exposing (CurrentRecordViewTab(..))
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h4, viewSummaryField)
+import Page.UI.Components exposing (h4, viewRecordHistory, viewSummaryField)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
@@ -79,6 +79,17 @@ viewFullInstitutionPage page language body =
             , recordUri
             , viewTabSwitcher language currentTab body
             , pageBodyView
+            , row
+                [ width fill
+                , alignBottom
+                ]
+                [ column
+                    [ width fill
+                    , alignRight
+                    ]
+                    [ viewRecordHistory body.recordHistory language
+                    ]
+                ]
             ]
         ]
 
