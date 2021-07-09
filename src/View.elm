@@ -1,7 +1,7 @@
 module View exposing (view)
 
 import Browser
-import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
+import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, spacing, text, width)
 import Element.Font as Font
 import Element.Region as Region
 import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations, parseLocaleToLanguage)
@@ -118,7 +118,7 @@ view model =
                     ]
                     [ siteHeader model
                     , pageView model
-                    , siteFooter
+                    , siteFooter model
                     ]
                 )
             ]
@@ -178,8 +178,16 @@ siteHeader model =
         ]
 
 
-siteFooter : Element msg
-siteFooter =
+siteFooter : Model -> Element Msg
+siteFooter model =
+    let
+        muscatLink =
+            if model.showMuscatLinks == True then
+                viewMuscatLink model
+
+            else
+                none
+    in
     row
         [ width fill
         , height (px footerHeight)
@@ -209,6 +217,48 @@ siteFooter =
                     [ width (fillPortion 10)
                     ]
                     [ text "Tagline / Impressum" ]
+                , muscatLink
                 ]
             ]
         ]
+
+
+viewMuscatLink : Model -> Element Msg
+viewMuscatLink model =
+    let
+        page =
+            model.page
+
+        route =
+            page.route
+
+        linkBase =
+            "https://muscat.rism.info/admin/"
+
+        linkTmpl muscatUrl =
+            column
+                [ alignRight
+                , paddingXY 5 0
+                ]
+                [ link
+                    []
+                    { url = muscatUrl
+                    , label = text "View record in Muscat"
+                    }
+                ]
+
+        linkView =
+            case route of
+                SourcePageRoute id ->
+                    linkTmpl (linkBase ++ "sources/" ++ String.fromInt id)
+
+                PersonPageRoute id ->
+                    linkTmpl (linkBase ++ "people/" ++ String.fromInt id)
+
+                InstitutionPageRoute id ->
+                    linkTmpl (linkBase ++ "institutions/" ++ String.fromInt id)
+
+                _ ->
+                    none
+    in
+    linkView

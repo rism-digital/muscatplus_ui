@@ -17,6 +17,7 @@ type alias Model =
     , language : Language
     , activeSearch : ActiveSearch
     , key : Nav.Key
+    , showMuscatLinks : Bool
     }
 
 
@@ -49,6 +50,7 @@ init flags initialUrl key =
       , language = language
       , activeSearch = initialSearch
       , key = key
+      , showMuscatLinks = flags.showMuscatLinks
       }
     , initialCmd
     )
