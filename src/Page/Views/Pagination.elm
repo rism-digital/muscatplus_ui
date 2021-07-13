@@ -1,6 +1,6 @@
 module Page.Views.Pagination exposing (..)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, px, row, shrink, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, pointer, px, row, shrink, text, width)
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
@@ -95,5 +95,6 @@ paginationLink icon clickFn url =
         , height (px 40)
         , width (px 40)
         , onClick clickMsg
+        , pointer
         ]
         icon
