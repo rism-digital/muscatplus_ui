@@ -584,6 +584,16 @@ update msg model =
         Msg.ClientResetViewport ->
             ( model, Cmd.none )
 
+        Msg.UserClickedSearchResultsPagination url ->
+            let
+                cmd =
+                    Cmd.batch
+                        [ createRequest Msg.ServerRespondedWithData recordResponseDecoder url
+                        , resetViewport
+                        ]
+            in
+            ( model, cmd )
+
         Msg.UserClickedRecordViewTabPagination url ->
             let
                 cmd =

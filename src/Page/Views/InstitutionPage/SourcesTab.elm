@@ -3,7 +3,7 @@ module Page.Views.InstitutionPage.SourcesTab exposing (..)
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, maximum, minimum, none, paddingXY, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Msg exposing (Msg)
+import Msg exposing (Msg(..))
 import Page.Model exposing (PageSearch, Response(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult)
 import Page.Response exposing (ServerData(..))
@@ -11,7 +11,7 @@ import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (h5, searchKeywordInput)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Pagination exposing (viewRecordSourceResultsPagination)
+import Page.Views.Pagination exposing (viewPagination)
 import Page.Views.SearchPage.Results exposing (viewResultFlags)
 
 
@@ -73,7 +73,7 @@ viewInstitutionSourceResultsSection language body =
                 [ width fill ]
                 [ text ("Found " ++ String.fromInt body.totalItems ++ " results") ]
             , viewInstitutionSourceResultsList language body
-            , viewRecordSourceResultsPagination language body.pagination
+            , viewPagination language body.pagination UserClickedRecordViewTabPagination
             ]
         ]
 

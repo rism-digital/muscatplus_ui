@@ -77,6 +77,7 @@ type Msg
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserClickedRecordViewTabPagination String
     | UserClickedRemoveActiveFilter String String
+    | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
     | UserClickedSearchSubmitButton
     | UserClickedToCItem String

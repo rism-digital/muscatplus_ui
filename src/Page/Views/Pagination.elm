@@ -11,8 +11,8 @@ import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
 
 
-viewRecordSourceResultsPagination : Language -> SearchPagination -> Element Msg
-viewRecordSourceResultsPagination language pagination =
+viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
+viewPagination language pagination clickMsg =
     let
         firstLabel =
             extractLabelFromLanguageMap language localTranslations.first
@@ -50,8 +50,8 @@ viewRecordSourceResultsPagination language pagination =
                 [ width shrink
                 , alignLeft
                 ]
-                [ viewMaybe (paginationLink (chevronDoubleLeftSvg colourScheme.slateGrey) firstLabel) (Just pagination.first)
-                , viewMaybe (paginationLink (chevronLeftSvg colourScheme.slateGrey) previousLabel) pagination.previous
+                [ viewMaybe (paginationLink (chevronDoubleLeftSvg colourScheme.slateGrey) clickMsg) (Just pagination.first)
+                , viewMaybe (paginationLink (chevronLeftSvg colourScheme.slateGrey) clickMsg) pagination.previous
                 ]
             ]
         , column
@@ -77,19 +77,23 @@ viewRecordSourceResultsPagination language pagination =
                 [ width shrink
                 , alignRight
                 ]
-                [ viewMaybe (paginationLink (chevronRightSvg colourScheme.slateGrey) nextLabel) pagination.next
-                , viewMaybe (paginationLink (chevronDoubleRightSvg colourScheme.slateGrey) lastLabel) pagination.last
+                [ viewMaybe (paginationLink (chevronRightSvg colourScheme.slateGrey) clickMsg) pagination.next
+                , viewMaybe (paginationLink (chevronDoubleRightSvg colourScheme.slateGrey) clickMsg) pagination.last
                 ]
             ]
         ]
 
 
-paginationLink : Element Msg -> String -> String -> Element Msg
-paginationLink icon iconLabel url =
+paginationLink : Element a -> (String -> a) -> String -> Element a
+paginationLink icon clickFn url =
+    let
+        clickMsg =
+            clickFn url
+    in
     el
         [ padding 5
-        , height (px 20)
-        , width (px 20)
-        , onClick (UserClickedRecordViewTabPagination url)
+        , height (px 40)
+        , width (px 40)
+        , onClick clickMsg
         ]
         icon

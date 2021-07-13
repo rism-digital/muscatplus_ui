@@ -1,6 +1,5 @@
 module Page.Views.SearchPage exposing (..)
 
-import Color exposing (Color)
 import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
@@ -15,14 +14,14 @@ import Page.Query exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Response exposing (ServerData(..))
-import Page.UI.Attributes exposing (bodySM, headerBottomBorder, minimalDropShadow, searchColumnVerticalSize)
+import Page.UI.Attributes exposing (headerBottomBorder, minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (searchKeywordInput)
 import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Page.Views.Helpers exposing (viewMaybe)
+import Page.Views.Pagination exposing (viewPagination)
 import Page.Views.SearchPage.Facets exposing (viewFacet, viewModeItems)
 import Page.Views.SearchPage.Loading exposing (searchModeSelectorLoading, viewSearchResultsLoading)
-import Page.Views.SearchPage.Pagination exposing (viewSearchResultsPagination)
 import Page.Views.SearchPage.Previews exposing (viewPreviewLoading, viewPreviewRouter)
 import Page.Views.SearchPage.Results exposing (viewSearchResult)
 import Search exposing (ActiveSearch)
@@ -220,7 +219,7 @@ viewSearchResultsListPanel language searchParams body =
             , height fill
             ]
             [ viewSearchResultsList language searchParams body
-            , viewSearchResultsPagination language body.pagination
+            , viewPagination language body.pagination UserClickedSearchResultsPagination
             ]
         ]
 
