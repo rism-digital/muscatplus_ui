@@ -29,3 +29,10 @@ resetViewport : Cmd Msg
 resetViewport =
     Dom.setViewport 0 0
         |> Task.attempt (\_ -> ClientResetViewport)
+
+
+resetViewportOf : String -> Cmd Msg
+resetViewportOf id =
+    Dom.setViewportOf id 0 0
+        |> Task.attempt
+            (\_ -> ClientResetViewport)

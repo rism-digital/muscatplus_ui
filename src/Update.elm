@@ -21,7 +21,7 @@ import Request exposing (createRequest, serverUrl)
 import Search.ActiveFacet exposing (convertFilterToActiveFacet)
 import Url
 import Url.Builder
-import Viewport exposing (jumpToId, resetViewport)
+import Viewport exposing (jumpToId, resetViewport, resetViewportOf)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -589,7 +589,7 @@ update msg model =
                 cmd =
                     Cmd.batch
                         [ createRequest Msg.ServerRespondedWithData recordResponseDecoder url
-                        , resetViewport
+                        , resetViewportOf "search-results-list"
                         ]
             in
             ( model, cmd )

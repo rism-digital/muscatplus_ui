@@ -189,6 +189,7 @@ viewSearchResultsSection model body =
             , searchColumnVerticalSize
             , scrollbarY
             , alignTop
+            , htmlAttribute (HA.id "search-results-list")
             ]
             [ viewSearchResultsListPanel language searchParams body
             ]
@@ -239,7 +240,6 @@ viewSearchResultsList language searchParams body =
             [ width fill
             , alignTop
             , spacing 20
-            , htmlAttribute (HA.id "search-results-list")
             ]
             (List.map (\result -> viewSearchResult language selectedResult result) body.items)
         ]
