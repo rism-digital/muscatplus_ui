@@ -1,16 +1,18 @@
 module Page.Views.SourcePage.ExemplarsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, paddingXY, row, spacing, text, textColumn, width)
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, none, paddingXY, row, spacing, text, textColumn, width)
 import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
+import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, label, viewParagraphField, viewSummaryField)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
+import Page.Views.Relationship exposing (viewRelationshipBody)
 
 
 viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
@@ -66,6 +68,7 @@ viewExemplar language exemplar =
             , viewMaybe (viewSummaryField language) exemplar.summary
             , viewMaybe (viewParagraphField language) exemplar.notes
             , viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
+            , viewMaybe (viewExemplarRelationships language) exemplar.relationships
             ]
         ]
 
@@ -118,3 +121,17 @@ viewExternalResource language extLink =
         { url = extLink.url
         , label = text (extractLabelFromLanguageMap language extLink.label)
         }
+
+
+viewExemplarRelationships : Language -> RelationshipsSectionBody -> Element msg
+viewExemplarRelationships language body =
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width fill
+            , alignTop
+            ]
+            (List.map (\l -> viewRelationshipBody language l) body.items)
+        ]

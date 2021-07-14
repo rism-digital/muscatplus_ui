@@ -67,12 +67,13 @@ viewRelationshipBody language body =
                     none
     in
     row
-        [ width fill ]
+        [ width fill
+        , alignTop
+        ]
         [ column
             [ width fill ]
             [ row
                 [ width fill
-                , paddingXY 0 10
                 ]
                 [ el
                     [ width (fillPortion 1)

@@ -29,7 +29,9 @@ viewRelationshipsSection language relSection =
             , row
                 [ width fill ]
                 [ column
-                    [ width fill ]
+                    [ width fill
+                    , spacing 10
+                    ]
                     (List.map (\t -> viewRelationshipBody language t) relSection.items)
                 ]
             ]
