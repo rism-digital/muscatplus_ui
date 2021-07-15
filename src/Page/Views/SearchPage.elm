@@ -409,6 +409,8 @@ viewFacetControls language activeSearch body =
             , viewFacet "num-holdings" language activeSearch body
             , viewFacet "holding-institution" language activeSearch body
             , viewFacet "source-type" language activeSearch body
+            , viewFacet "content-types" language activeSearch body
+            , viewFacet "material-group-types" language activeSearch body
             , viewFacet "person-role" language activeSearch body
             , viewFacet "city" language activeSearch body
             ]
