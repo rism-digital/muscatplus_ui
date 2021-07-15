@@ -73,6 +73,7 @@ type alias MaterialGroupsSectionBody =
 type alias MaterialGroupBody =
     { label : LanguageMap
     , summary : Maybe (List LabelValue)
+    , notes : Maybe (List LabelValue)
     , relationships : Maybe RelationshipsSectionBody
     }
 
@@ -199,6 +200,7 @@ materialGroupBodyDecoder =
     Decode.succeed MaterialGroupBody
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
 
 

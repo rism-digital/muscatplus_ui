@@ -57,6 +57,7 @@ viewMaterialGroup language mg =
             , alignTop
             ]
             [ viewMaybe (viewSummaryField language) mg.summary
+            , viewMaybe (viewParagraphField language) mg.notes
             , viewMaybe (viewMaterialGroupRelationships language) mg.relationships
             ]
         ]
