@@ -106,7 +106,7 @@ viewExternalResourcesSection language linkSection =
                     , alignTop
                     ]
                     (textColumn
-                        []
+                        [ spacing 10 ]
                         (List.map (\l -> viewExternalResource language l) linkSection.items)
                     )
                 ]
@@ -132,6 +132,7 @@ viewExemplarRelationships language body =
         [ column
             [ width fill
             , alignTop
+            , spacing 10
             ]
             (List.map (\l -> viewRelationshipBody language l) body.items)
         ]

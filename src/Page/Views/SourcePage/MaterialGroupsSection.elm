@@ -6,7 +6,7 @@ import Html.Attributes as HTA
 import Language exposing (Language)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Components exposing (h5, h6, viewSummaryField)
+import Page.UI.Components exposing (h5, h6, viewParagraphField, viewSummaryField)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Relationship exposing (viewRelationshipBody)
@@ -66,17 +66,13 @@ viewMaterialGroup language mg =
 viewMaterialGroupRelationships : Language -> RelationshipsSectionBody -> Element msg
 viewMaterialGroupRelationships language relSection =
     row
-        [ width fill ]
+        [ width fill
+        , height fill
+        ]
         [ column
-            [ width fill ]
-            [ row
-                [ width fill ]
-                [ h6 language relSection.label ]
-            , row
-                [ width fill ]
-                [ column
-                    [ width fill ]
-                    (List.map (\t -> viewRelationshipBody language t) relSection.items)
-                ]
+            [ width fill
+            , alignTop
+            , spacing 10
             ]
+            (List.map (\t -> viewRelationshipBody language t) relSection.items)
         ]
