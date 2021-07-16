@@ -88,7 +88,7 @@ viewRenderedIncipits incipits =
     in
     row
         [ paddingXY 0 10
-        , width (fill |> minimum 400 |> maximum 800)
+        , width (fill |> minimum 400 |> maximum 1000)
         ]
         incipitSVG
 
