@@ -280,9 +280,6 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
         behaviourOptions =
             body.behaviours
 
-        behaviourLabel =
-            extractLabelFromLanguageMap language behaviourOptions.label
-
         listOfBehavioursForDropdown =
             List.map (\v -> ( v.value, extractLabelFromLanguageMap language v.label )) behaviourOptions.items
 
@@ -336,12 +333,7 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
                         [ width fill
                         , alignRight
                         ]
-                        [ el
-                            [ alignRight
-                            , paddingXY 5 0
-                            ]
-                            (text behaviourLabel)
-                        , behaviourDropdown
+                        [ behaviourDropdown
                         , el
                             [ width (px 20)
                             , height (px 10)
