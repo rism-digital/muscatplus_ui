@@ -421,9 +421,6 @@ viewFacetControls language activeSearch body =
 viewActiveFilters : Language -> ActiveSearch -> Element Msg
 viewActiveFilters language activeSearch =
     let
-        query =
-            activeSearch.query
-
         activeFacets =
             activeSearch.activeFacets
     in
