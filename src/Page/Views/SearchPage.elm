@@ -411,6 +411,7 @@ viewFacetControls language activeSearch body =
             , viewFacet "source-type" language activeSearch body
             , viewFacet "content-types" language activeSearch body
             , viewFacet "material-group-types" language activeSearch body
+            , viewFacet "subjects" language activeSearch body
             , viewFacet "person-role" language activeSearch body
             , viewFacet "city" language activeSearch body
             ]
