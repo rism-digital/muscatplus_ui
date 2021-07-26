@@ -170,7 +170,7 @@ dropdownSelectParentStyles : List (HT.Attribute msg)
 dropdownSelectParentStyles =
     [ HA.style "border-radius" "0.25em"
     , HA.style "font-size" "inherit"
-    , HA.style "width" "12ch"
+    , HA.style "width" "auto"
     , HA.style "cursor" "pointer"
     , HA.style "line-height" "1.2"
     , HA.style "border-bottom" "2px dotted #778899"
@@ -184,7 +184,7 @@ dropdownSelectStyles =
     , HA.style "appearance" "none"
     , HA.style "-webkit-appearance" "none"
     , HA.style "border" "none"
-    , HA.style "padding" "0 1em 0 0"
+    , HA.style "padding" "0 1.8em 0 0"
     , HA.style "margin" "0"
     , HA.style "width" "100%"
     , HA.style "font-family" "inherit"

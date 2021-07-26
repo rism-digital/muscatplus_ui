@@ -305,11 +305,14 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
                     intersectionSvg colourScheme.slateGrey
 
         behaviourDropdown =
-            dropdownSelect
-                (\inp -> UserChangedFacetBehaviour (parseStringToFacetBehaviour inp facetAlias))
-                listOfBehavioursForDropdown
-                (\inp -> parseStringToFacetBehaviour inp facetAlias)
-                chosenOption
+            el
+                [ alignRight ]
+                (dropdownSelect
+                    (\inp -> UserChangedFacetBehaviour (parseStringToFacetBehaviour inp facetAlias))
+                    listOfBehavioursForDropdown
+                    (\inp -> parseStringToFacetBehaviour inp facetAlias)
+                    chosenOption
+                )
     in
     row
         [ width (px 400) ]
