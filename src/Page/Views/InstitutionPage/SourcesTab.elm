@@ -71,7 +71,9 @@ viewInstitutionSourceResultsSection language body =
             ]
             [ row
                 [ width fill ]
-                [ text ("Found " ++ String.fromInt body.totalItems ++ " results") ]
+                []
+
+            -- [ text ("Found " ++ String.fromInt body.totalItems ++ " results") ]
             , viewInstitutionSourceResultsList language body
             , viewPagination language body.pagination UserClickedRecordViewTabPagination
             ]
