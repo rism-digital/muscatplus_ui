@@ -5,6 +5,7 @@ import Json.Decode as Decode exposing (Decoder, andThen, at, bool, field, float,
 import Json.Decode.Pipeline exposing (custom, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType)
+import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
 import Page.RecordTypes.Shared exposing (LabelBooleanValue, LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 
@@ -33,6 +34,7 @@ type SearchResultFlags
     = SourceFlags SourceResultFlags
     | PersonFlags PersonResultFlags
     | InstitutionFlags InstitutionResultFlags
+    | IncipitFlags IncipitResultFlags
 
 
 type alias SourceResultFlags =
@@ -52,6 +54,11 @@ type alias PersonResultFlags =
 
 type alias InstitutionResultFlags =
     { numberOfSources : Int
+    }
+
+
+type alias IncipitResultFlags =
+    { highlightedResult : Maybe (List RenderedIncipit)
     }
 
 
@@ -179,6 +186,7 @@ searchResultFlagsDecoder =
         [ Decode.map (\r -> SourceFlags r) sourceResultFlagsDecoder
         , Decode.map (\r -> PersonFlags r) personResultFlagsDecoder
         , Decode.map (\r -> InstitutionFlags r) institutionResultFlagsDecoder
+        , Decode.map (\r -> IncipitFlags r) incipitResultFlagsDecoder
         ]
 
 
@@ -203,6 +211,12 @@ institutionResultFlagsDecoder : Decoder InstitutionResultFlags
 institutionResultFlagsDecoder =
     Decode.succeed InstitutionResultFlags
         |> required "numberOfSources" int
+
+
+incipitResultFlagsDecoder : Decoder IncipitResultFlags
+incipitResultFlagsDecoder =
+    Decode.succeed IncipitResultFlags
+        |> optional "highlightedResult" (Decode.maybe (list renderedIncipitDecoder)) Nothing
 
 
 searchPaginationDecoder : Decoder SearchPagination

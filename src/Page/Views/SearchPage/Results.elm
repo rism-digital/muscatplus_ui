@@ -6,12 +6,13 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Msg exposing (Msg(..))
-import Page.RecordTypes.Search exposing (InstitutionResultFlags, PersonResultFlags, SearchResult, SearchResultFlags(..), SourceResultFlags)
+import Page.RecordTypes.Search exposing (IncipitResultFlags, InstitutionResultFlags, PersonResultFlags, SearchResult, SearchResultFlags(..), SourceResultFlags)
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (h5, makeFlagIcon)
 import Page.UI.Images exposing (digitizedImagesSvg, musicNotationSvg, penSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Views.Helpers exposing (viewMaybe)
+import Page.Views.Incipits exposing (viewRenderedIncipits)
 
 
 viewSearchResult : Language -> Maybe String -> SearchResult -> Element Msg
@@ -148,6 +149,9 @@ viewResultFlags language flags =
 
                 InstitutionFlags institutionFlags ->
                     viewInstitutionFlags language institutionFlags
+
+                IncipitFlags incipitFlags ->
+                    viewIncipitFlags language incipitFlags
     in
     row
         [ width fill
@@ -278,3 +282,21 @@ viewInstitutionFlags language flags =
         ]
         [ numSources
         ]
+
+
+viewIncipitFlags : Language -> IncipitResultFlags -> Element msg
+viewIncipitFlags language flags =
+    let
+        incipits =
+            case flags.highlightedResult of
+                Just renderedIncipits ->
+                    viewRenderedIncipits renderedIncipits
+
+                Nothing ->
+                    none
+    in
+    row
+        [ width fill
+        , spacing 10
+        ]
+        [ incipits ]
