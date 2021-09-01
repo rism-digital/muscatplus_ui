@@ -1,15 +1,14 @@
 module Page.UI.Keyboard exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, fillPortion, maximum, minimum, paddingXY, px, row, text, width)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, maximum, minimum, paddingXY, px, row, width)
 import Element.Events exposing (onClick)
-import Element.Input as Input
 import List.Extra as LE
-import Page.Query exposing (buildNotationQueryParameters)
 import Page.UI.Images exposing (backspaceSvg)
 import Page.UI.Keyboard.Keyboard exposing (blackKeyWidth, octaveConfig, renderKey, whiteKeyWidthScale)
-import Page.UI.Keyboard.Model exposing (Clef(..), Keyboard(..), KeyboardConfig, KeyboardModel, clefStringMap)
+import Page.UI.Keyboard.Model exposing (Clef(..), Keyboard(..), KeyboardConfig, KeyboardModel)
 import Page.UI.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.UI.Keyboard.PAE exposing (createPAENote)
+import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.UI.Style exposing (colourScheme)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Incipits exposing (viewSVGRenderedIncipit)

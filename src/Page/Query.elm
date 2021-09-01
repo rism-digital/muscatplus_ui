@@ -1,4 +1,4 @@
-module Page.Query exposing (FacetBehaviour(..), Filter(..), QueryArgs, buildQueryParameters, defaultQueryArgs, parseStringToFacetBehaviour, queryParamsParser)
+module Page.Query exposing (FacetBehaviour(..), Filter(..), QueryArgs, apply, buildQueryParameters, defaultQueryArgs, parseStringToFacetBehaviour, queryParamsParser)
 
 import Config as C
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
