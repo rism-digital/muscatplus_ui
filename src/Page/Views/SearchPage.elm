@@ -17,6 +17,8 @@ import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (headerBottomBorder, minimalDropShadow, searchColumnVerticalSize)
 import Page.UI.Components exposing (searchKeywordInput)
 import Page.UI.Images exposing (closeWindowSvg)
+import Page.UI.Keyboard as Keyboard
+import Page.UI.Keyboard.Model exposing (Keyboard(..))
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Pagination exposing (viewPagination)
@@ -281,7 +283,7 @@ viewSearchResultsControlPanel model =
             , height fill
             , inFront renderedPreview
             ]
-            [ viewSearchControls model ]
+            [ viewSearchControlSection model ]
         ]
 
 
@@ -302,8 +304,8 @@ viewSearchResultsError model =
     errorMessage
 
 
-viewSearchControls : Model -> Element Msg
-viewSearchControls model =
+viewSearchControlSection : Model -> Element Msg
+viewSearchControlSection model =
     let
         page =
             model.page
@@ -320,7 +322,7 @@ viewSearchControls model =
         controlView =
             case resp of
                 Response (SearchData body) ->
-                    viewFacetControls language activeSearch body
+                    viewSearchControls language activeSearch body
 
                 _ ->
                     none
@@ -380,7 +382,7 @@ viewSearchControls model =
                             , Font.semiBold
                             , alignTop
                             ]
-                            (text "Facet controls")
+                            (text "Search controls")
                         ]
                     , controlView
                     ]
@@ -389,8 +391,8 @@ viewSearchControls model =
         ]
 
 
-viewFacetControls : Language -> ActiveSearch -> SearchBody -> Element Msg
-viewFacetControls language activeSearch body =
+viewSearchControls : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewSearchControls language activeSearch body =
     row
         [ width fill
         , height fill
