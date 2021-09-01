@@ -1,7 +1,7 @@
 module Request exposing (..)
 
 import Config as C
-import Http
+import Http exposing (Expect)
 import Json.Decode exposing (Decoder)
 import Url.Builder exposing (QueryParameter)
 
@@ -25,12 +25,22 @@ serverUrl pathSegments queryParameters =
 
 createRequest : (Result Http.Error a -> msg) -> Decoder a -> String -> Cmd msg
 createRequest responseMsg responseDecoder url =
+    createRequestWithAcceptAndExpect "application/ld+json" (Http.expectJson responseMsg responseDecoder) url
+
+
+createSvgRequest : (Result Http.Error String -> msg) -> String -> Cmd msg
+createSvgRequest responseMsg url =
+    createRequestWithAcceptAndExpect "image/svg+xml" (Http.expectString responseMsg) url
+
+
+createRequestWithAcceptAndExpect : String -> Expect msg -> String -> Cmd msg
+createRequestWithAcceptAndExpect accept expect url =
     Http.request
         { method = "GET"
-        , headers = [ Http.header "Accept" "application/ld+json" ]
+        , headers = [ Http.header "Accept" accept ]
         , url = url
         , body = Http.emptyBody
-        , expect = Http.expectJson responseMsg responseDecoder
+        , expect = expect
         , timeout = Nothing
         , tracker = Nothing
         }
