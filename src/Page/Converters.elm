@@ -27,6 +27,11 @@ convertFacetToResultMode facet =
     parseStringToResultMode qval
 
 
+{-|
+
+    A generic filterMap function that operates on Dictionaries.
+
+-}
 filterMap : (comparable -> a -> Maybe b) -> Dict comparable a -> Dict comparable b
 filterMap f dict =
     Dict.foldl
