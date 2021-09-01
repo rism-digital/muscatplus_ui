@@ -8,6 +8,7 @@ import Page.Query exposing (FacetBehaviour)
 import Page.RecordTypes.Search exposing (FacetItem)
 import Page.Response exposing (ServerData)
 import Page.UI.Facets.RangeSlider as RangeSlider
+import Page.UI.Keyboard as Keyboard
 import Url exposing (Url)
 
 
@@ -83,6 +84,7 @@ type Msg
     | UserClickedToCItem String
     | UserInputTextInPageQueryBox String
     | UserInputTextInQueryBox String
+    | UserInteractedWithPianoKeyboard Keyboard.Msg
     | UserMovedRangeSlider String RangeSlider.Msg
     | UserRequestedUrlChange UrlRequest
     | UserResizedWindow Device

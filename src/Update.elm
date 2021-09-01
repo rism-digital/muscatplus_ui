@@ -12,10 +12,12 @@ import Page.Converters exposing (convertFacetToFilter, convertFacetToResultMode,
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Query exposing (FacetBehaviour(..), Filter(..), buildQueryParameters)
+import Page.RecordTypes.Incipit exposing (IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..), parseUrl)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
+import Page.UI.Keyboard as Keyboard
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
 import Search.ActiveFacet exposing (convertFilterToActiveFacet)
@@ -439,6 +441,25 @@ update msg model =
                     { model | activeSearch = newSearch }
             in
             update Msg.UserClickedSearchSubmitButton newModel
+
+        Msg.UserInteractedWithPianoKeyboard subMsg ->
+            let
+                activeSearch =
+                    model.activeSearch
+
+                oldKeyboard =
+                    activeSearch.keyboard
+
+                ( keyboardModel, keyboardCmd ) =
+                    Keyboard.update subMsg oldKeyboard
+
+                newSearch =
+                    { activeSearch | keyboard = keyboardModel }
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            ( newModel, Cmd.map Msg.UserInteractedWithPianoKeyboard keyboardCmd )
 
         Msg.UserMovedRangeSlider sliderAlias sliderMsg ->
             let
