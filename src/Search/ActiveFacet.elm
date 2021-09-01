@@ -63,6 +63,9 @@ convertFilterToActiveFacet filter facets =
                                                 |> Maybe.map (\(FacetItem _ itmFriendly _) -> itmFriendly)
                                     in
                                     ( Select, f.label, friendlyFacetValue )
+
+                                NotationFacetData f ->
+                                    ( Notation, f.label, Nothing )
                     in
                     Just (ActiveFacet facetType facetLabel alias value friendlyValue)
 

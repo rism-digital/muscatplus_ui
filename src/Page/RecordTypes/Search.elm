@@ -80,12 +80,14 @@ type FacetType
     = Range
     | Toggle
     | Select
+    | Notation
 
 
 type FacetData
     = ToggleFacetData ToggleFacet
     | RangeFacetData RangeFacet
     | SelectFacetData SelectFacet
+    | NotationFacetData NotationFacet
 
 
 type alias ModeFacet =
@@ -122,6 +124,12 @@ type alias SelectFacet =
     , label : LanguageMap
     , items : List FacetItem
     , behaviours : FacetBehaviour
+    }
+
+
+type alias NotationFacet =
+    { alias : String
+    , label : LanguageMap
     }
 
 
@@ -253,6 +261,9 @@ facetResponseConverter typeValue =
         Select ->
             Decode.map (\r -> SelectFacetData r) selectFacetDecoder
 
+        Notation ->
+            Decode.map (\r -> NotationFacetData r) notationFacetDecoder
+
 
 facetTypeFromJsonType : String -> FacetType
 facetTypeFromJsonType facetType =
@@ -265,6 +276,9 @@ facetTypeFromJsonType facetType =
 
         "rism:RangeFacet" ->
             Range
+
+        "rism:NotationFacet" ->
+            Notation
 
         _ ->
             Select
@@ -302,6 +316,13 @@ selectFacetDecoder =
         |> required "label" languageMapLabelDecoder
         |> required "items" (Decode.list facetItemDecoder)
         |> required "behaviours" facetBehaviourDecoder
+
+
+notationFacetDecoder : Decoder NotationFacet
+notationFacetDecoder =
+    Decode.succeed NotationFacet
+        |> required "alias" string
+        |> required "label" languageMapLabelDecoder
 
 
 modeFacetDecoder : Decoder ModeFacet

@@ -20,6 +20,8 @@ import Page.UI.Components exposing (dropdownSelect, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Images exposing (institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unionSvg, unknownSvg)
+import Page.UI.Keyboard as Keyboard
+import Page.UI.Keyboard.Model exposing (Keyboard(..))
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Search exposing (ActiveSearch)
 import String.Extra as SE
@@ -147,6 +149,9 @@ viewFacet facetKey language activeSearch body =
         activeSliders =
             activeSearch.sliders
 
+        activeKeyboard =
+            activeSearch.keyboard
+
         facetBehaviours =
             query.facetBehaviours
 
@@ -163,6 +168,9 @@ viewFacet facetKey language activeSearch body =
 
                 Just (SelectFacetData facet) ->
                     viewSelectFacet language facetBehaviours activeFilters expandedFacets facet
+
+                Just (NotationFacetData facet) ->
+                    viewKeyboardControl language activeKeyboard
 
                 _ ->
                     none
@@ -402,3 +410,13 @@ viewFacetItem language facetAlias activeFilters fitem =
             ]
             (text (formatNumberByLanguage count language))
         ]
+
+
+viewKeyboardControl : Language -> Keyboard.Model -> Element Msg
+viewKeyboardControl model keyboard =
+    let
+        keyboardConfig =
+            { numOctaves = 2 }
+    in
+    Keyboard.view (Keyboard keyboard keyboardConfig)
+        |> Element.map UserInteractedWithPianoKeyboard
