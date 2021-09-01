@@ -6,6 +6,7 @@ import Page.Query exposing (Filter, QueryArgs)
 import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.Route exposing (Route(..))
 import Page.UI.Facets.RangeSlider exposing (RangeSlider)
+import Page.UI.Keyboard as Keyboard
 import Search.ActiveFacet exposing (ActiveFacet)
 
 
@@ -17,6 +18,7 @@ type alias ActiveSearch =
     , sliders : Dict String RangeSlider
     , preview : Response
     , selectedResult : Maybe String
+    , keyboard : Keyboard.Model
     }
 
 
@@ -41,4 +43,5 @@ init initialRoute =
     , sliders = Dict.empty
     , preview = NoResponseToShow
     , selectedResult = Nothing
+    , keyboard = Keyboard.initModel
     }
