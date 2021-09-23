@@ -10,4 +10,7 @@ type KeyboardMsg
     | UserClickedPianoKeyboardChangeClef
     | UserClickedPianoKeyboardChangeTimeSignature
     | UserClickedPianoKeyboardChangeKeySignature
+    | UserClickedPianoKeyboardSearchSubmit
     | ServerRespondedWithRenderedNotation (Result Http.Error String)
+    | ClientRequestedRenderedNotation
+    | NothingHappenedWithTheKeyboard

@@ -1,6 +1,6 @@
 module Page.Views.Incipits exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, htmlAttribute, maximum, minimum, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, htmlAttribute, maximum, minimum, paddingXY, px, row, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language)
@@ -113,4 +113,4 @@ viewSVGRenderedIncipit incipitData =
                 Err _ ->
                     text "Could not parse SVG"
     in
-    el [ width fill ] svgResponse
+    svgResponse

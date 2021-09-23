@@ -19,22 +19,32 @@ type alias ActiveSearch =
     , preview : Response
     , selectedResult : Maybe String
     , keyboard : Keyboard.Model
+    , selectedResultSort : Maybe String
     }
 
 
 init : Route -> ActiveSearch
 init initialRoute =
     let
-        qargs =
+        ( qargs, kqargs ) =
             case initialRoute of
-                SearchPageRoute q ->
-                    q
+                SearchPageRoute q kq ->
+                    ( q, kq )
 
                 _ ->
-                    Page.Query.defaultQueryArgs
+                    ( Page.Query.defaultQueryArgs, Keyboard.defaultKeyboardQuery )
 
         initialMode =
             qargs.mode
+
+        initialSort =
+            qargs.sort
+
+        initialKeyboardModel =
+            Keyboard.initModel
+
+        updatedKeyboardModel =
+            { initialKeyboardModel | query = kqargs }
     in
     { query = qargs
     , selectedMode = initialMode
@@ -43,5 +53,6 @@ init initialRoute =
     , sliders = Dict.empty
     , preview = NoResponseToShow
     , selectedResult = Nothing
-    , keyboard = Keyboard.initModel
+    , keyboard = updatedKeyboardModel
+    , selectedResultSort = initialSort
     }

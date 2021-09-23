@@ -11,12 +11,17 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerH
 
 bodyFont : Attribute msg
 bodyFont =
-    Font.family [ Font.typeface "Inter", Font.sansSerif ]
+    Font.family [ Font.typeface "Inter UI", Font.sansSerif ]
 
 
 bodyFontColour : Attribute msg
 bodyFontColour =
     Font.color (colourScheme.black |> convertColorToElementColor)
+
+
+bodyFontAlternateGlyphs : Attribute msg
+bodyFontAlternateGlyphs =
+    htmlAttribute (style "" "")
 
 
 pageBackground : Attribute msg

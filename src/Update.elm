@@ -12,15 +12,17 @@ import Page.Converters exposing (convertFacetToFilter, convertFacetToResultMode,
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Query exposing (FacetBehaviour(..), Filter(..), buildQueryParameters)
-import Page.RecordTypes.Incipit exposing (IncipitFormat(..), RenderedIncipit(..))
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..), parseUrl)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
-import Page.UI.Keyboard as Keyboard
+import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery)
+import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
 import Search.ActiveFacet exposing (convertFilterToActiveFacet)
+import Search.Update as Search
 import Url
 import Url.Builder
 import Viewport exposing (jumpToId, resetViewport, resetViewportOf)
@@ -40,9 +42,12 @@ update msg model =
                 incomingUrl =
                     oldPage.url
 
-                ( showTab, cmd ) =
+                ( showTab, pageSearchCmd ) =
                     case ( response, incomingUrl.fragment ) of
                         ( PersonData body, Just "sources" ) ->
+                            -- if the incoming data is a person record, and the fragment
+                            -- says we should be on the 'sources' tab, fire off another Cmd
+                            -- to fetch the list of sources associated with this person.
                             let
                                 ( tab, sourceCmd ) =
                                     case body.sources of
@@ -64,6 +69,25 @@ update msg model =
                             ( DefaultRecordViewTab
                             , Cmd.none
                             )
+
+                searchMode =
+                    oldSearch.selectedMode
+
+                keyboardModel =
+                    oldSearch.keyboard
+
+                keyboardQuery =
+                    keyboardModel.query
+
+                notationRenderCmd =
+                    case ( searchMode, keyboardQuery.noteData ) of
+                        -- if we have an incipit search, we will want to fire off a request to render
+                        -- any notation contained in the query parameters.
+                        ( IncipitsMode, _ ) ->
+                            Cmd.map Msg.UserInteractedWithPianoKeyboard (buildNotationRequestQuery keyboardQuery)
+
+                        _ ->
+                            Cmd.none
 
                 newPage =
                     { oldPage
@@ -114,7 +138,10 @@ update msg model =
                     { oldSearch | sliders = sliderFacets, activeFacets = activeFacets }
             in
             ( { model | page = newPage, activeSearch = newSearch }
-            , cmd
+            , Cmd.batch
+                [ pageSearchCmd
+                , notationRenderCmd
+                ]
             )
 
         Msg.ServerRespondedWithData (Err error) ->
@@ -132,6 +159,9 @@ update msg model =
 
                         _ ->
                             "A problem happened with the request"
+
+                _ =
+                    Debug.log "error" errorMessage
 
                 newResponse =
                     { oldPage | response = Error errorMessage }
@@ -199,8 +229,8 @@ update msg model =
 
                 newQuery =
                     case newRoute of
-                        SearchPageRoute qargs ->
-                            buildQueryParameters qargs
+                        SearchPageRoute qargs nargs ->
+                            List.append (buildQueryParameters qargs) (buildNotationQueryParameters nargs)
 
                         _ ->
                             []
@@ -211,7 +241,6 @@ update msg model =
             ( { model | page = newPage }
             , Cmd.batch
                 [ createRequest Msg.ServerRespondedWithData recordResponseDecoder newUrl
-                , resetViewport
                 ]
             )
 
@@ -231,28 +260,35 @@ update msg model =
             , saveLanguagePreference lang
             )
 
-        Msg.UserClickedSearchSubmitButton ->
+        Msg.UserChangedResultSorting sort ->
             let
-                oldPage =
-                    model.page
-
-                newPage =
-                    { oldPage | response = Page.Model.Loading }
-
-                activeSearch =
+                oldSearch =
                     model.activeSearch
 
-                newSearch =
-                    { activeSearch | preview = NoResponseToShow }
+                oldQuery =
+                    oldSearch.query
 
-                url =
-                    serverUrl [ "search" ] (buildQueryParameters activeSearch.query)
+                -- even though this is a 'Maybe' value, if the user goes through
+                -- the trouble of selecting a new sort then we explicitly use that.
+                sortValue =
+                    Just sort
+
+                newQuery =
+                    { oldQuery | sort = sortValue }
+
+                newSearch =
+                    { oldSearch
+                        | selectedResultSort = sortValue
+                        , query = newQuery
+                    }
+
+                newModel =
+                    { model | activeSearch = newSearch }
             in
-            ( { model | page = newPage, activeSearch = newSearch }
-              -- this will trigger UrlChanged, which will actually submit the
-              -- URL and request the data from the server.
-            , Nav.pushUrl model.key url
-            )
+            Search.searchSubmit newModel
+
+        Msg.UserTriggeredSearchSubmit ->
+            Search.searchSubmit model
 
         Msg.UserInputTextInQueryBox qtext ->
             let
@@ -301,7 +337,7 @@ update msg model =
                 newModel =
                     { model | activeSearch = newSearch }
             in
-            update Msg.UserClickedSearchSubmitButton newModel
+            Search.searchSubmit newModel
 
         Msg.UserClickedFacetToggle label ->
             let
@@ -333,7 +369,7 @@ update msg model =
                 newModel =
                     { model | activeSearch = newSearch }
             in
-            update Msg.UserClickedSearchSubmitButton newModel
+            Search.searchSubmit newModel
 
         Msg.UserClickedFacetExpand alias ->
             let
@@ -391,7 +427,7 @@ update msg model =
                 newModel =
                     { model | activeSearch = newSearch }
             in
-            update Msg.UserClickedSearchSubmitButton newModel
+            Search.searchSubmit newModel
 
         Msg.UserChangedFacetBehaviour behaviour ->
             let
@@ -440,7 +476,7 @@ update msg model =
                 newModel =
                     { model | activeSearch = newSearch }
             in
-            update Msg.UserClickedSearchSubmitButton newModel
+            Search.searchSubmit newModel
 
         Msg.UserInteractedWithPianoKeyboard subMsg ->
             let
@@ -459,7 +495,12 @@ update msg model =
                 newModel =
                     { model | activeSearch = newSearch }
             in
-            ( newModel, Cmd.map Msg.UserInteractedWithPianoKeyboard keyboardCmd )
+            ( newModel
+            , Cmd.map Msg.UserInteractedWithPianoKeyboard keyboardCmd
+            )
+
+        Msg.UserClickedPianoKeyboardSearchSubmitButton ->
+            Search.searchSubmit model
 
         Msg.UserMovedRangeSlider sliderAlias sliderMsg ->
             let
@@ -609,7 +650,9 @@ update msg model =
             let
                 cmd =
                     Cmd.batch
-                        [ createRequest Msg.ServerRespondedWithData recordResponseDecoder url
+                        [ Nav.pushUrl model.key url
+
+                        --, createRequest Msg.ServerRespondedWithData recordResponseDecoder url
                         , resetViewportOf "search-results-list"
                         ]
             in
@@ -674,7 +717,9 @@ update msg model =
                 newPage =
                     { page | searchParams = newSearchParams }
             in
-            ( { model | page = newPage }, Cmd.none )
+            ( { model | page = newPage }
+            , Cmd.none
+            )
 
         Msg.UserClickedClosePreviewWindow ->
             let
@@ -684,7 +729,9 @@ update msg model =
                 newSearch =
                     { oldSearch | preview = NoResponseToShow }
             in
-            ( { model | activeSearch = newSearch }, Cmd.none )
+            ( { model | activeSearch = newSearch }
+            , Cmd.none
+            )
 
         Msg.UserClickedRemoveActiveFilter activeAlias activeValue ->
             let
@@ -710,7 +757,7 @@ update msg model =
                 newModel =
                     { model | activeSearch = newSearch }
             in
-            update Msg.UserClickedSearchSubmitButton newModel
+            Search.searchSubmit newModel
 
         Msg.NothingHappened ->
             -- Use for mocking in a Msg that does nothing; For actual code, favour adding

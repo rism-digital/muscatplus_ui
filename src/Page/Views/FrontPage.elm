@@ -16,7 +16,7 @@ view : Model -> Element Msg
 view model =
     let
         msgs =
-            { submitMsg = Msg.UserClickedSearchSubmitButton
+            { submitMsg = Msg.UserTriggeredSearchSubmit
             , changeMsg = Msg.UserInputTextInQueryBox
             }
 

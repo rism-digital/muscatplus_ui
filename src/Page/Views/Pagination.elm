@@ -14,18 +14,6 @@ import Page.Views.Helpers exposing (viewMaybe)
 viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
 viewPagination language pagination clickMsg =
     let
-        firstLabel =
-            extractLabelFromLanguageMap language localTranslations.first
-
-        previousLabel =
-            extractLabelFromLanguageMap language localTranslations.previous
-
-        nextLabel =
-            extractLabelFromLanguageMap language localTranslations.next
-
-        lastLabel =
-            extractLabelFromLanguageMap language localTranslations.last
-
         thisPage =
             formatNumberByLanguage (toFloat pagination.thisPage) language
 

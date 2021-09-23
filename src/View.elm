@@ -35,7 +35,7 @@ view model =
                 FrontPageRoute ->
                     Page.Views.FrontPage.view
 
-                SearchPageRoute _ ->
+                SearchPageRoute _ _ ->
                     Page.Views.SearchPage.view
 
                 SourcePageRoute _ ->

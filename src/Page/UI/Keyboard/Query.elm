@@ -1,8 +1,8 @@
 module Page.UI.Keyboard.Query exposing (..)
 
-import Page.Query exposing (apply)
-import Page.UI.Keyboard.Model exposing (Clef, KeySignature, KeyboardQuery, TimeSignature)
+import Page.UI.Keyboard.Model exposing (Clef(..), KeySignature, KeyboardQuery, TimeSignature)
 import Page.UI.Keyboard.PAE exposing (clefQueryStringToClef, clefSymToClefQueryString)
+import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
 
@@ -11,18 +11,36 @@ buildNotationQueryParameters : KeyboardQuery -> List QueryParameter
 buildNotationQueryParameters notationInput =
     let
         notes =
-            Maybe.withDefault "" notationInput.noteData
-                |> Url.Builder.string "n"
-                |> List.singleton
+            case notationInput.noteData of
+                Just noteString ->
+                    List.singleton (Url.Builder.string "n" noteString)
+
+                Nothing ->
+                    []
+
+        clefString =
+            clefSymToClefQueryString notationInput.clef
 
         clef =
-            List.singleton (Url.Builder.string "ic" (clefSymToClefQueryString notationInput.clef))
+            if String.isEmpty clefString || (notationInput.clef == G2) then
+                []
+
+            else
+                List.singleton (Url.Builder.string "ic" clefString)
 
         timeSignature =
-            List.singleton (Url.Builder.string "it" notationInput.timeSignature)
+            if String.isEmpty notationInput.timeSignature then
+                []
+
+            else
+                List.singleton (Url.Builder.string "it" notationInput.timeSignature)
 
         keySignature =
-            List.singleton (Url.Builder.string "ik" notationInput.keySignature)
+            if String.isEmpty notationInput.keySignature then
+                []
+
+            else
+                List.singleton (Url.Builder.string "ik" notationInput.keySignature)
     in
     List.concat [ notes, clef, timeSignature, keySignature ]
 
@@ -49,7 +67,7 @@ keySigParamParser =
 timeSigQueryStringToTimeSignature : List String -> TimeSignature
 timeSigQueryStringToTimeSignature tsiglist =
     List.head tsiglist
-        |> Maybe.withDefault "4/4"
+        |> Maybe.withDefault ""
 
 
 keySigQueryStringToKeySignature : List String -> KeySignature

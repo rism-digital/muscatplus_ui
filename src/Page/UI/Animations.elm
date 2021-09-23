@@ -5,9 +5,8 @@ import Css.Animations exposing (keyframes)
 import Element exposing (Element)
 import Html.Styled exposing (Attribute, div, toUnstyled)
 import Html.Styled.Attributes exposing (css)
-import Simple.Animation as Animation exposing (Animation)
+import Simple.Animation exposing (Animation)
 import Simple.Animation.Animated as Animated
-import Simple.Animation.Property as P
 
 
 {-|

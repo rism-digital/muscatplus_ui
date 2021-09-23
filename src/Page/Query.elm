@@ -1,7 +1,9 @@
-module Page.Query exposing (FacetBehaviour(..), Filter(..), QueryArgs, apply, buildQueryParameters, defaultQueryArgs, parseStringToFacetBehaviour, queryParamsParser)
+module Page.Query exposing (FacetBehaviour(..), Filter(..), QueryArgs, buildQueryParameters, defaultQueryArgs, parseStringToFacetBehaviour, queryParamsParser)
 
 import Config as C
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
+import Page.UI.Keyboard.Query exposing (notationParamParser)
+import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
 
@@ -75,16 +77,6 @@ parseStringToFacetBehaviour inp =
 
         _ ->
             IntersectionBehaviour
-
-
-{-|
-
-    Creates a pipeline-like Query parser.
-
--}
-apply : Q.Parser a -> Q.Parser (a -> b) -> Q.Parser b
-apply argParser funcParser =
-    Q.map2 (<|) funcParser argParser
 
 
 {-|

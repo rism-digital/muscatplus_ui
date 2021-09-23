@@ -1,10 +1,10 @@
 module Page.RecordTypes.Search exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode as Decode exposing (Decoder, andThen, at, bool, field, float, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (custom, optional, required)
+import Json.Decode as Decode exposing (Decoder, andThen, bool, float, int, list, nullable, string)
+import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType)
+import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
 import Page.RecordTypes.Shared exposing (LabelBooleanValue, LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
@@ -17,6 +17,7 @@ type alias SearchBody =
     , pagination : SearchPagination
     , facets : Facets
     , modes : Maybe ModeFacet
+    , sorts : List SortData
     }
 
 
@@ -145,6 +146,12 @@ type alias FacetBehaviourLabelValue =
     }
 
 
+type alias SortData =
+    { alias : String
+    , label : LanguageMap
+    }
+
+
 {-|
 
     FacetItem is a facet type, a query value, a label (language map),
@@ -171,6 +178,7 @@ searchBodyDecoder =
         |> required "view" searchPaginationDecoder
         |> optional "facets" facetsDecoder Dict.empty
         |> optional "modes" (Decode.maybe modeFacetDecoder) Nothing
+        |> required "sorts" (Decode.list searchSortsDecoder)
 
 
 searchResultDecoder : Decoder SearchResult
@@ -353,3 +361,10 @@ facetBehaviourLabelValueDecoder =
     Decode.succeed FacetBehaviourLabelValue
         |> required "label" languageMapLabelDecoder
         |> required "value" string
+
+
+searchSortsDecoder : Decoder SortData
+searchSortsDecoder =
+    Decode.succeed SortData
+        |> required "alias" string
+        |> required "label" languageMapLabelDecoder

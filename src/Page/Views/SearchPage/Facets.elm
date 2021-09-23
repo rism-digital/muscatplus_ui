@@ -5,7 +5,7 @@ import Element exposing (Element, alignLeft, alignRight, centerX, centerY, colum
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
+import Element.Input as Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Html
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
@@ -413,10 +413,26 @@ viewFacetItem language facetAlias activeFilters fitem =
 
 
 viewKeyboardControl : Language -> Keyboard.Model -> Element Msg
-viewKeyboardControl model keyboard =
+viewKeyboardControl language keyboard =
     let
         keyboardConfig =
-            { numOctaves = 2 }
+            { numOctaves = 3 }
     in
-    Keyboard.view (Keyboard keyboard keyboardConfig)
-        |> Element.map UserInteractedWithPianoKeyboard
+    row
+        []
+        [ column
+            []
+            [ row []
+                [ Keyboard.view language (Keyboard keyboard keyboardConfig)
+                    |> Element.map UserInteractedWithPianoKeyboard
+                ]
+            , row
+                []
+                [ Input.button
+                    []
+                    { onPress = Just UserClickedPianoKeyboardSearchSubmitButton
+                    , label = text "Search"
+                    }
+                ]
+            ]
+        ]

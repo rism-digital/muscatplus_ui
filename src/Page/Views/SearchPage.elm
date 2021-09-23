@@ -6,19 +6,16 @@ import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
 import Page.Query exposing (Filter(..))
-import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (headerBottomBorder, minimalDropShadow, searchColumnVerticalSize)
-import Page.UI.Components exposing (searchKeywordInput)
+import Page.UI.Components exposing (dropdownSelect, searchKeywordInput)
 import Page.UI.Images exposing (closeWindowSvg)
-import Page.UI.Keyboard as Keyboard
-import Page.UI.Keyboard.Model exposing (Keyboard(..))
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Page.Views.Helpers exposing (viewMaybe)
 import Page.Views.Pagination exposing (viewPagination)
@@ -67,7 +64,7 @@ viewTopBar : Model -> Element Msg
 viewTopBar model =
     let
         msgs =
-            { submitMsg = Msg.UserClickedSearchSubmitButton
+            { submitMsg = Msg.UserTriggeredSearchSubmit
             , changeMsg = Msg.UserInputTextInQueryBox
             }
 
@@ -121,7 +118,7 @@ searchModeSelectorRouter model =
         modeView =
             case response of
                 Response (SearchData data) ->
-                    searchModeSelectorView selectedMode model.language data.modes
+                    searchModeSelectorView model data.modes
 
                 _ ->
                     searchModeSelectorLoading
@@ -129,14 +126,21 @@ searchModeSelectorRouter model =
     modeView
 
 
-searchModeSelectorView : ResultMode -> Language -> Maybe ModeFacet -> Element Msg
-searchModeSelectorView currentMode language modeFacet =
+searchModeSelectorView : Model -> Maybe ModeFacet -> Element Msg
+searchModeSelectorView model modeFacet =
+    let
+        activeSearch =
+            model.activeSearch
+
+        currentMode =
+            activeSearch.selectedMode
+    in
     row
         [ width fill ]
         [ column
             [ width fill
             ]
-            [ viewMaybe (viewModeItems currentMode language) modeFacet
+            [ viewMaybe (viewModeItems currentMode model.language) modeFacet
             ]
         ]
 
@@ -287,6 +291,83 @@ viewSearchResultsControlPanel model =
         ]
 
 
+viewSearchPageSort : Model -> Element Msg
+viewSearchPageSort model =
+    let
+        page =
+            model.page
+
+        language =
+            model.language
+
+        activeSearch =
+            model.activeSearch
+
+        selectorView =
+            case page.response of
+                Response (SearchData data) ->
+                    let
+                        pagination =
+                            data.pagination
+
+                        thisPage =
+                            formatNumberByLanguage (toFloat pagination.thisPage) language
+
+                        totalPages =
+                            formatNumberByLanguage (toFloat pagination.totalPages) language
+
+                        pageLabel =
+                            extractLabelFromLanguageMap language localTranslations.page
+
+                        pageInfo =
+                            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
+
+                        sorting =
+                            data.sorts
+
+                        listOfLabelsForResultSort =
+                            List.map
+                                (\d -> ( d.alias, extractLabelFromLanguageMap language d.label ))
+                                sorting
+
+                        chosenSort =
+                            Maybe.withDefault "relevance" activeSearch.selectedResultSort
+                    in
+                    row
+                        [ width fill ]
+                        [ column
+                            [ width (fillPortion 2) ]
+                            [ text pageInfo ]
+                        , column
+                            [ width (fillPortion 3) ]
+                            [ row
+                                [ width fill
+                                , spacing 10
+                                ]
+                                [ column
+                                    [ width shrink ]
+                                    [ text "Sort by" ]
+                                , column
+                                    [ width fill ]
+                                    [ el
+                                        []
+                                        (dropdownSelect
+                                            (\inp -> UserChangedResultSorting inp)
+                                            listOfLabelsForResultSort
+                                            (\inp -> inp)
+                                            chosenSort
+                                        )
+                                    ]
+                                ]
+                            ]
+                        ]
+
+                _ ->
+                    none
+    in
+    selectorView
+
+
 viewSearchResultsError : Model -> Element Msg
 viewSearchResultsError model =
     let
@@ -363,6 +444,7 @@ viewSearchControlSection model =
                             ]
                             (text "Active search parameters")
                         ]
+                    , viewSearchPageSort model
                     , activeFilters
                     ]
                 ]
@@ -416,6 +498,7 @@ viewSearchControls language activeSearch body =
             , viewFacet "subjects" language activeSearch body
             , viewFacet "person-role" language activeSearch body
             , viewFacet "city" language activeSearch body
+            , viewFacet "notation" language activeSearch body
             ]
         ]
 

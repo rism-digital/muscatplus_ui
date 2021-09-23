@@ -3,7 +3,8 @@ module Page.UI.Keyboard.Keyboard exposing (..)
 import Element exposing (Attr, Attribute, Element, alignLeft, alignTop, el, html, htmlAttribute, moveLeft)
 import Html.Attributes
 import Page.UI.Keyboard.Model exposing (Key(..), KeyNoteName(..))
-import Svg exposing (svg)
+import Page.UI.Keyboard.PAE exposing (keyNoteNameToNoteString)
+import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (cursor, d, height, pointerEvents, style, version, viewBox, width, x, y)
 import Svg.Events exposing (onClick)
 
@@ -42,11 +43,26 @@ octaveConfig =
     ]
 
 
-whiteKey : Attribute msg -> msg -> Element msg
-whiteKey offset keyMsg =
+whiteKey : Attribute msg -> Maybe String -> msg -> Element msg
+whiteKey offset keyLabel keyMsg =
     let
         whiteKeyWidth =
             toFloat blackKeyWidth * whiteKeyWidthScale
+
+        keyNoteLabel =
+            case keyLabel of
+                Just label ->
+                    Svg.text_
+                        [ style "fill: rgb(51, 51, 51); font-family: Inter, sans-serif; font-size: 40px; font-weight: 600; white-space: pre;"
+                        , x "26"
+                        , y "432"
+                        , onClick keyMsg
+                        , cursor "pointer"
+                        ]
+                        [ Svg.text label ]
+
+                Nothing ->
+                    Svg.text ""
 
         -- The original key shape was 100 x 500, so when scaling we just multiply the
         -- width by 5 to maintain the same ratio.
@@ -65,6 +81,7 @@ whiteKey offset keyMsg =
                         , cursor "pointer"
                         ]
                         []
+                    , keyNoteLabel
                     ]
                 )
     in
@@ -77,9 +94,16 @@ whiteKey offset keyMsg =
         keyShape
 
 
+{-|
+
+    All measurements in the keyboard are based on the width of the black keys.
+    Adjust this number if you want to increase or decrease the size of the
+    keyboard.
+
+-}
 blackKeyWidth : Int
 blackKeyWidth =
-    30
+    20
 
 
 blackKeyHalfWidth : Int
@@ -221,7 +245,16 @@ renderKey keyMsg idx keyConfig =
         keyDrawingFunction =
             case keyConfig.keyType of
                 WhiteKey keyName ->
-                    whiteKey moveOffset (keyMsg keyName octave)
+                    let
+                        keyNameForLabel =
+                            case keyName of
+                                KC ->
+                                    Just (keyNoteNameToNoteString keyName ++ String.fromInt octave)
+
+                                _ ->
+                                    Nothing
+                    in
+                    whiteKey moveOffset keyNameForLabel (keyMsg keyName octave)
 
                 BlackKey upperKey lowerKey ->
                     blackKey moveOffset (keyMsg upperKey octave) (keyMsg lowerKey octave)

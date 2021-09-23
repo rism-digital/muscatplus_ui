@@ -69,6 +69,7 @@ type Msg
     | ClientResetViewport
     | UserChangedFacetBehaviour FacetBehaviour
     | UserChangedLanguageSelect String
+    | UserChangedResultSorting String
     | UserClickedClosePreviewWindow
     | UserClickedFacetExpand String
     | UserClickedFacetItem String FacetItem Bool
@@ -80,11 +81,12 @@ type Msg
     | UserClickedRemoveActiveFilter String String
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
-    | UserClickedSearchSubmitButton
+    | UserTriggeredSearchSubmit
     | UserClickedToCItem String
     | UserInputTextInPageQueryBox String
     | UserInputTextInQueryBox String
     | UserInteractedWithPianoKeyboard Keyboard.Msg
+    | UserClickedPianoKeyboardSearchSubmitButton
     | UserMovedRangeSlider String RangeSlider.Msg
     | UserRequestedUrlChange UrlRequest
     | UserResizedWindow Device
