@@ -1,10 +1,11 @@
 module Page.Views.SearchPage.Previews exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, minimum, none, padding, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, none, padding, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Html.Attributes
 import Language exposing (Language)
 import Msg exposing (Msg(..))
 import Page.Response exposing (ServerData(..))
@@ -47,6 +48,7 @@ viewPreviewRouter language previewData =
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , Border.color (colourScheme.black |> convertColorToElementColor)
         , Border.width 1
+        , htmlAttribute (Html.Attributes.style "z-index" "10")
         ]
         [ column
             [ width fill
