@@ -166,7 +166,7 @@ blackKey offset upper lower =
                         , y "0.088"
                         , width "59.58"
                         , height "142.97"
-                        , style "fill: none;"
+                        , style "fill: black;"
                         , onClick upper
                         , cursor "pointer"
                         ]
@@ -183,7 +183,7 @@ blackKey offset upper lower =
                         , y "157.306"
                         , width "59.58"
                         , height "142.97"
-                        , style "fill: none"
+                        , style "fill: black"
                         , onClick lower
                         , cursor "pointer"
                         ]
