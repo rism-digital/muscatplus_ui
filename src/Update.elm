@@ -15,12 +15,16 @@ import Page.Query exposing (FacetBehaviour(..), Filter(..), buildQueryParameters
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..))
 import Page.Response exposing (ServerData(..))
+import Page.Response.DataResponse
+import Page.Response.PageSearchResponse
+import Page.Response.PreviewResponse
 import Page.Route exposing (Route(..), parseUrl)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
+import Search
 import Search.ActiveFacet exposing (convertFilterToActiveFacet)
 import Search.Update as Search
 import Url
@@ -32,185 +36,22 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Msg.ServerRespondedWithData (Ok response) ->
-            let
-                oldPage =
-                    model.page
-
-                oldSearch =
-                    model.activeSearch
-
-                incomingUrl =
-                    oldPage.url
-
-                ( showTab, pageSearchCmd ) =
-                    case ( response, incomingUrl.fragment ) of
-                        ( PersonData body, Just "sources" ) ->
-                            -- if the incoming data is a person record, and the fragment
-                            -- says we should be on the 'sources' tab, fire off another Cmd
-                            -- to fetch the list of sources associated with this person.
-                            let
-                                ( tab, sourceCmd ) =
-                                    case body.sources of
-                                        Just links ->
-                                            ( PersonSourcesRecordSearchTab links.url
-                                            , createRequest Msg.ServerRespondedWithPageSearch recordResponseDecoder links.url
-                                            )
-
-                                        Nothing ->
-                                            ( DefaultRecordViewTab
-                                            , Cmd.none
-                                            )
-                            in
-                            ( tab
-                            , sourceCmd
-                            )
-
-                        _ ->
-                            ( DefaultRecordViewTab
-                            , Cmd.none
-                            )
-
-                searchMode =
-                    oldSearch.selectedMode
-
-                keyboardModel =
-                    oldSearch.keyboard
-
-                keyboardQuery =
-                    keyboardModel.query
-
-                notationRenderCmd =
-                    case ( searchMode, keyboardQuery.noteData ) of
-                        -- if we have an incipit search, we will want to fire off a request to render
-                        -- any notation contained in the query parameters.
-                        ( IncipitsMode, _ ) ->
-                            Cmd.map Msg.UserInteractedWithPianoKeyboard (buildNotationRequestQuery keyboardQuery)
-
-                        _ ->
-                            Cmd.none
-
-                newPage =
-                    { oldPage
-                        | response = Response response
-                        , currentTab = showTab
-                    }
-
-                sliderFacets =
-                    case response of
-                        SearchData body ->
-                            let
-                                isRangeSlider _ a =
-                                    case a of
-                                        RangeFacetData d ->
-                                            Just (convertRangeFacetToRangeSlider d)
-
-                                        _ ->
-                                            Nothing
-                            in
-                            body.facets
-                                |> filterMap isRangeSlider
-
-                        _ ->
-                            Dict.empty
-
-                activeFacets =
-                    case response of
-                        SearchData body ->
-                            let
-                                query =
-                                    oldSearch.query
-
-                                qFilters =
-                                    query.filters
-
-                                facetData =
-                                    body.facets
-
-                                listOfActiveFacets =
-                                    List.filterMap (\f -> convertFilterToActiveFacet f facetData) qFilters
-                            in
-                            listOfActiveFacets
-
-                        _ ->
-                            []
-
-                newSearch =
-                    { oldSearch | sliders = sliderFacets, activeFacets = activeFacets }
-            in
-            ( { model | page = newPage, activeSearch = newSearch }
-            , Cmd.batch
-                [ pageSearchCmd
-                , notationRenderCmd
-                ]
-            )
+            Page.Response.DataResponse.serverRespondedWithData model response
 
         Msg.ServerRespondedWithData (Err error) ->
-            let
-                oldPage =
-                    model.page
-
-                errorMessage =
-                    case error of
-                        BadUrl url ->
-                            "A Bad URL was supplied: " ++ url
-
-                        BadBody message ->
-                            "Unexpected response: " ++ message
-
-                        _ ->
-                            "A problem happened with the request"
-
-                _ =
-                    Debug.log "error" errorMessage
-
-                newResponse =
-                    { oldPage | response = Error errorMessage }
-            in
-            ( { model | page = newResponse }, Cmd.none )
+            Page.Response.DataResponse.serverRespondedWithDataError model error
 
         Msg.ServerRespondedWithPreview (Ok response) ->
-            let
-                oldSearch =
-                    model.activeSearch
+            Page.Response.PreviewResponse.serverRespondedWithPreview model response
 
-                newSearch =
-                    { oldSearch | preview = Response response }
-            in
-            ( { model | activeSearch = newSearch }, Cmd.none )
-
-        Msg.ServerRespondedWithPreview (Err _) ->
-            ( model, Cmd.none )
+        Msg.ServerRespondedWithPreview (Err error) ->
+            Page.Response.PreviewResponse.serverRespondedWithPreviewError model error
 
         Msg.ServerRespondedWithPageSearch (Ok response) ->
-            let
-                oldPage =
-                    model.page
-
-                newPage =
-                    { oldPage | searchResults = Response response }
-            in
-            ( { model | page = newPage }, Cmd.none )
+            Page.Response.PageSearchResponse.serverRespondedWithPageSearch model response
 
         Msg.ServerRespondedWithPageSearch (Err error) ->
-            let
-                errorMessage =
-                    case error of
-                        BadUrl url ->
-                            "A Bad URL was supplied: " ++ url
-
-                        BadBody message ->
-                            "Unexpected response: " ++ message
-
-                        _ ->
-                            "A problem happened with the request"
-
-                oldPage =
-                    model.page
-
-                newPage =
-                    { oldPage | searchResults = Error errorMessage }
-            in
-            ( { model | page = newPage }, Cmd.none )
+            Page.Response.PageSearchResponse.serverRespondedWithPageSearchError model error
 
         Msg.ClientChangedUrl url ->
             let
@@ -219,6 +60,14 @@ update msg model =
 
                 newRoute =
                     parseUrl url
+
+                activeSearch =
+                    case newRoute of
+                        FrontPageRoute ->
+                            Search.init newRoute
+
+                        _ ->
+                            model.activeSearch
 
                 newPage =
                     { oldPage
@@ -238,7 +87,10 @@ update msg model =
                 newUrl =
                     serverUrl [ url.path ] newQuery
             in
-            ( { model | page = newPage }
+            ( { model
+                | page = newPage
+                , activeSearch = activeSearch
+              }
             , Cmd.batch
                 [ createRequest Msg.ServerRespondedWithData recordResponseDecoder newUrl
                 ]
