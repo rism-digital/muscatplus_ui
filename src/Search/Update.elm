@@ -37,9 +37,6 @@ searchSubmit model =
             serverUrl
                 [ "search" ]
                 (List.append textQueryParameters notationQueryParameters)
-
-        _ =
-            Debug.log "Request url" url
     in
     ( { model
         | page = newPage

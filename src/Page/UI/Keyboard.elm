@@ -97,10 +97,6 @@ update msg model =
             ( { model | notation = Just response }, Cmd.none )
 
         ServerRespondedWithRenderedNotation (Err error) ->
-            let
-                _ =
-                    Debug.log "Error in server notation response" ""
-            in
             ( model, Cmd.none )
 
         UserClickedPianoKeyboardKey noteName octave ->
