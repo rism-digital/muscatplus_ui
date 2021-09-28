@@ -12,6 +12,7 @@ type KeyboardMsg
     | UserClickedPianoKeyboardChangeTimeSignature
     | UserClickedPianoKeyboardChangeKeySignature
     | UserClickedPianoKeyboardSearchSubmit
+    | UserClickedClearAllNotes
     | ServerRespondedWithRenderedNotation (Result (Http.Detailed.Error String) ( Http.Metadata, String ))
     | ClientRequestedRenderedNotation
     | NothingHappenedWithTheKeyboard

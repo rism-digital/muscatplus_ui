@@ -5,7 +5,7 @@ import Html.Attributes
 import Page.UI.Keyboard.Model exposing (Key(..), KeyNoteName(..))
 import Page.UI.Keyboard.PAE exposing (keyNoteNameToNoteString)
 import Svg exposing (Svg, svg)
-import Svg.Attributes exposing (cursor, d, height, pointerEvents, style, version, viewBox, width, x, y)
+import Svg.Attributes exposing (cursor, d, height, pointerEvents, style, transform, version, viewBox, width, x, x1, x2, y, y1, y2)
 import Svg.Events exposing (onClick)
 
 
@@ -16,35 +16,35 @@ type alias KeyNoteConfig =
 
 octaveConfig : List KeyNoteConfig
 octaveConfig =
-    [ { keyType = WhiteKey KC
+    [ { keyType = WhiteKey KC KCn
       }
     , { keyType = BlackKey KCs KDf
       }
-    , { keyType = WhiteKey KD
+    , { keyType = WhiteKey KD KDn
       }
     , { keyType = BlackKey KDs KEf
       }
-    , { keyType = WhiteKey KE
+    , { keyType = WhiteKey KE KEn
       }
-    , { keyType = WhiteKey KF
+    , { keyType = WhiteKey KF KFn
       }
     , { keyType = BlackKey KFs KGf
       }
-    , { keyType = WhiteKey KG
+    , { keyType = WhiteKey KG KGn
       }
     , { keyType = BlackKey KGs KAf
       }
-    , { keyType = WhiteKey KA
+    , { keyType = WhiteKey KA KAn
       }
     , { keyType = BlackKey KAs KBf
       }
-    , { keyType = WhiteKey KB
+    , { keyType = WhiteKey KB KBn
       }
     ]
 
 
-whiteKey : Attribute msg -> Maybe String -> msg -> Element msg
-whiteKey offset keyLabel keyMsg =
+whiteKey : Attribute msg -> Maybe String -> msg -> msg -> Element msg
+whiteKey offset keyLabel upper lower =
     let
         whiteKeyWidth =
             toFloat blackKeyWidth * whiteKeyWidthScale
@@ -54,9 +54,9 @@ whiteKey offset keyLabel keyMsg =
                 Just label ->
                     Svg.text_
                         [ style "fill: rgb(51, 51, 51); font-family: Inter, sans-serif; font-size: 40px; font-weight: 600; white-space: pre;"
-                        , x "26"
-                        , y "432"
-                        , onClick keyMsg
+                        , x "30.268"
+                        , y "385.448"
+                        , onClick upper
                         , cursor "pointer"
                         ]
                         [ Svg.text label ]
@@ -77,11 +77,46 @@ whiteKey offset keyLabel keyMsg =
                     [ Svg.path
                         [ style "fill:rgba(255, 255, 255, 1); stroke: rgb(0, 0, 0); paint-order: fill; stroke-width: 4px;"
                         , d "M 2.437 0.518 H 97.83 V 490.442 A 8 8 0 0 1 89.83 498.442 H 10.437 A 8 8 0 0 1 2.437 490.442 V 0.518 Z"
-                        , onClick keyMsg
+                        , onClick upper
                         , cursor "pointer"
                         ]
                         []
                     , keyNoteLabel
+
+                    -- -- <rect x="5.974" y="410.048" width="42.107" height="83.357" style="fill: rgb(255, 255, 255);"/>
+                    , Svg.rect
+                        [ x "5.974"
+                        , y "410.048"
+                        , width "42.107"
+                        , height "83.357"
+                        , style "fill: rgb(255,255,255)"
+                        , onClick lower
+                        , cursor "pointer"
+                        ]
+                        []
+                    , Svg.path
+                        [ d "M 34.12 469.669 C 34.418 469.471 34.617 468.973 34.617 468.575 L 34.617 419.323 L 31.93 419.323 L 31.93 436.735 L 19.394 433.253 L 18.996 433.253 C 18.2 433.253 17.603 433.751 17.603 434.546 L 17.603 483.798 L 20.389 483.798 L 20.389 466.386 L 32.926 469.868 C 33.025 469.868 33.224 469.968 33.324 469.968 C 33.622 469.968 33.92 469.868 34.12 469.669 Z M 20.389 441.81 L 31.93 444.994 L 31.93 461.411 L 20.389 458.127 L 20.389 441.81 Z"
+                        , style "fill: rgb(0, 0, 0);"
+                        , onClick lower
+                        , cursor "pointer"
+                        ]
+                        []
+                    , Svg.line
+                        [ style "stroke-width:3px; stroke:rgb(120, 120, 120)"
+                        , x1 "50"
+                        , y1 "410.054"
+                        , x2 "50"
+                        , y2 "495.728"
+                        ]
+                        []
+                    , Svg.line
+                        [ style "stroke-width:3px; stroke:rgb(120, 120, 120)"
+                        , x1 "51.491"
+                        , y1 "408.599"
+                        , x2 "4.865"
+                        , y2 "408.599"
+                        ]
+                        []
                     ]
                 )
     in
@@ -165,7 +200,7 @@ blackKey offset upper lower =
                         [ x "0.71"
                         , y "0.088"
                         , width "59.58"
-                        , height "142.97"
+                        , height "152.036"
                         , style "fill: black;"
                         , onClick upper
                         , cursor "pointer"
@@ -193,6 +228,14 @@ blackKey offset upper lower =
                         , style "fill: rgb(255, 255, 255);"
                         , onClick lower
                         , cursor "pointer"
+                        ]
+                        []
+                    , Svg.line
+                        [ style "stroke: rgb(120, 120, 120); stroke-width: 3px"
+                        , x1 "0"
+                        , y1 "154.5"
+                        , x2 "60.752"
+                        , y2 "154.5"
                         ]
                         []
                     ]
@@ -244,17 +287,17 @@ renderKey keyMsg idx keyConfig =
 
         keyDrawingFunction =
             case keyConfig.keyType of
-                WhiteKey keyName ->
+                WhiteKey upperKey lowerKey ->
                     let
                         keyNameForLabel =
-                            case keyName of
+                            case upperKey of
                                 KC ->
-                                    Just (keyNoteNameToNoteString keyName ++ String.fromInt octave)
+                                    Just (keyNoteNameToNoteString upperKey ++ String.fromInt octave)
 
                                 _ ->
                                     Nothing
                     in
-                    whiteKey moveOffset keyNameForLabel (keyMsg keyName octave)
+                    whiteKey moveOffset keyNameForLabel (keyMsg upperKey octave) (keyMsg lowerKey octave)
 
                 BlackKey upperKey lowerKey ->
                     blackKey moveOffset (keyMsg upperKey octave) (keyMsg lowerKey octave)

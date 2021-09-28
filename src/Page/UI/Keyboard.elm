@@ -1,7 +1,7 @@
 module Page.UI.Keyboard exposing (..)
 
 import Array
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, maximum, minimum, paddingXY, px, row, text, width)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, maximum, minimum, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Events exposing (onClick)
 import Element.Input as Input
 import Language exposing (Language)
@@ -141,6 +141,19 @@ update msg model =
             in
             buildUpdateQuery noteData model
 
+        UserClickedClearAllNotes ->
+            let
+                initialModel =
+                    initModel
+
+                query =
+                    initialModel.query
+
+                noteData =
+                    query.noteData
+            in
+            buildUpdateQuery noteData initialModel
+
         _ ->
             ( model, Cmd.none )
 
@@ -191,12 +204,19 @@ view language (Keyboard model config) =
                     [ row
                         [ width fill
                         , alignTop
+                        , spacing 10
                         ]
                         [ el
                             [ width (px 30)
                             , onClick UserClickedPianoKeyboardDeleteNote
+                            , pointer
                             ]
                             (backspaceSvg colourScheme.black)
+                        , el
+                            [ onClick UserClickedClearAllNotes
+                            , pointer
+                            ]
+                            (text "Clear")
                         ]
                     ]
                 ]

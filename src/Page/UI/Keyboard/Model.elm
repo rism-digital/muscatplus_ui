@@ -7,7 +7,7 @@ type Keyboard
 
 type alias KeyboardModel =
     { query : KeyboardQuery
-    , notation : Maybe String
+    , notation : Maybe String -- the rendered SVG
     }
 
 
@@ -20,7 +20,7 @@ type alias KeyboardQuery =
 
 
 type Key
-    = WhiteKey KeyNoteName
+    = WhiteKey KeyNoteName KeyNoteName
     | BlackKey KeyNoteName KeyNoteName
 
 
@@ -62,22 +62,29 @@ type alias KeySignature =
 
 type KeyNoteName
     = KC
+    | KCn
     | KCs
     | KDf
     | KD
+    | KDn
     | KDs
     | KEf
     | KE
+    | KEn
     | KF
+    | KFn
     | KFs
     | KGf
     | KG
+    | KGn
     | KGs
     | KAf
     | KA
+    | KAn
     | KAs
     | KBf
     | KB
+    | KBn
 
 
 supportedOctaves : Octaves
@@ -107,20 +114,27 @@ clefStringMap =
 noteMap : List ( String, KeyNoteName )
 noteMap =
     [ ( "C", KC )
+    , ( "nC", KCn )
     , ( "xC", KCs )
     , ( "bD", KDf )
     , ( "D", KD )
+    , ( "nD", KDn )
     , ( "xD", KDs )
     , ( "bE", KEf )
     , ( "E", KE )
+    , ( "nE", KEn )
     , ( "F", KF )
+    , ( "nF", KFn )
     , ( "xF", KFs )
     , ( "bG", KGf )
     , ( "G", KG )
+    , ( "nG", KGn )
     , ( "xG", KGs )
     , ( "bA", KAf )
     , ( "A", KA )
+    , ( "nA", KAn )
     , ( "xA", KAs )
     , ( "bB", KBf )
     , ( "B", KB )
+    , ( "nB", KBn )
     ]
