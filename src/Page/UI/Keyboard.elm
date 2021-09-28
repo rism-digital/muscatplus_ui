@@ -1,5 +1,6 @@
 module Page.UI.Keyboard exposing (..)
 
+import Array
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, maximum, minimum, paddingXY, px, row, text, width)
 import Element.Events exposing (onClick)
 import Element.Input as Input
@@ -54,7 +55,7 @@ initModel =
     }
 
 
-buildUpdateQuery : Maybe String -> Model -> ( Model, Cmd Msg )
+buildUpdateQuery : Maybe (List String) -> Model -> ( Model, Cmd Msg )
 buildUpdateQuery newNoteData model =
     let
         query =
@@ -110,10 +111,12 @@ update msg model =
                 noteData =
                     case query.noteData of
                         Just n ->
-                            n ++ " " ++ note
+                            Array.fromList n
+                                |> Array.push note
+                                |> Array.toList
 
                         Nothing ->
-                            note
+                            [ note ]
             in
             buildUpdateQuery (Just noteData) model
 
@@ -123,14 +126,8 @@ update msg model =
                     model.query
 
                 noteData =
-                    Maybe.map
-                        (\n ->
-                            String.split " " n
-                                |> LE.init
-                                |> Maybe.withDefault []
-                                |> String.join " "
-                        )
-                        query.noteData
+                    Maybe.withDefault [] query.noteData
+                        |> LE.init
             in
             buildUpdateQuery noteData model
 

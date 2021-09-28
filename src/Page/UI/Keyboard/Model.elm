@@ -15,7 +15,7 @@ type alias KeyboardQuery =
     { clef : Clef
     , timeSignature : TimeSignature
     , keySignature : KeySignature
-    , noteData : Maybe String
+    , noteData : Maybe (List String)
     }
 
 

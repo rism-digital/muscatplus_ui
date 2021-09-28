@@ -1,7 +1,8 @@
 module Page.Views.SearchPage.Facets exposing (..)
 
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, html, none, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
+import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
@@ -15,7 +16,7 @@ import Page.Converters exposing (convertFacetToFilter)
 import Page.Query exposing (FacetBehaviour(..), Filter(..), parseStringToFacetBehaviour)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
-import Page.UI.Attributes exposing (bodyRegular, bodySM)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingSM)
 import Page.UI.Components exposing (dropdownSelect, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
@@ -417,6 +418,33 @@ viewKeyboardControl language keyboard =
     let
         keyboardConfig =
             { numOctaves = 3 }
+
+        keyboardQuery =
+            keyboard.query
+
+        queryLen =
+            Maybe.withDefault [] keyboardQuery.noteData
+                |> List.length
+
+        cursor =
+            if queryLen < 4 then
+                "not-allowed"
+
+            else
+                "pointer"
+
+        ( buttonMsg, buttonColor, buttonBorder ) =
+            if queryLen < 4 then
+                ( Nothing
+                , colourScheme.darkGrey |> convertColorToElementColor
+                , colourScheme.slateGrey |> convertColorToElementColor
+                )
+
+            else
+                ( Just UserClickedPianoKeyboardSearchSubmitButton
+                , colourScheme.darkBlue |> convertColorToElementColor
+                , colourScheme.darkBlue |> convertColorToElementColor
+                )
     in
     row
         []
@@ -429,8 +457,19 @@ viewKeyboardControl language keyboard =
             , row
                 []
                 [ Input.button
-                    []
-                    { onPress = Just UserClickedPianoKeyboardSearchSubmitButton
+                    [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
+                    , Border.rounded 5
+                    , Border.color buttonBorder
+                    , Background.color buttonColor
+                    , paddingXY 10 10
+                    , height (px 50)
+                    , width fill
+                    , Font.center
+                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                    , headingSM
+                    , htmlAttribute (HA.style "cursor" cursor)
+                    ]
+                    { onPress = buttonMsg
                     , label = text "Search"
                     }
                 ]

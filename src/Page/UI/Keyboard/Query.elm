@@ -13,7 +13,7 @@ buildNotationQueryParameters notationInput =
         notes =
             case notationInput.noteData of
                 Just noteString ->
-                    List.singleton (Url.Builder.string "n" noteString)
+                    List.singleton (Url.Builder.string "n" (String.join " " noteString))
 
                 Nothing ->
                     []
@@ -64,6 +64,18 @@ keySigParamParser =
     Q.custom "ik" (\a -> keySigQueryStringToKeySignature a)
 
 
+noteDataParamParser : Q.Parser (Maybe (List String))
+noteDataParamParser =
+    Q.custom "n" (\a -> Just (noteDataQueryStringToList a))
+
+
+noteDataQueryStringToList : List String -> List String
+noteDataQueryStringToList ndata =
+    List.head ndata
+        |> Maybe.withDefault ""
+        |> String.split " "
+
+
 timeSigQueryStringToTimeSignature : List String -> TimeSignature
 timeSigQueryStringToTimeSignature tsiglist =
     List.head tsiglist
@@ -81,4 +93,4 @@ notationParamParser =
     Q.map KeyboardQuery clefParamParser
         |> apply timeSigParamParser
         |> apply keySigParamParser
-        |> apply (Q.string "n")
+        |> apply noteDataParamParser
