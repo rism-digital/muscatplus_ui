@@ -11,6 +11,7 @@ import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
 import Page.Query exposing (Filter(..))
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Response exposing (ServerData(..))
 import Page.UI.Attributes exposing (headerBottomBorder, minimalDropShadow, searchColumnVerticalSize)
@@ -475,6 +476,24 @@ viewSearchControlSection model =
 
 viewSearchControls : Language -> ActiveSearch -> SearchBody -> Element Msg
 viewSearchControls language activeSearch body =
+    let
+        facetLayout =
+            case activeSearch.selectedMode of
+                IncipitsMode ->
+                    viewFacetsForIncipitsMode language activeSearch body
+
+                SourcesMode ->
+                    viewFacetsForSourcesMode language activeSearch body
+
+                PeopleMode ->
+                    viewFacetsForPeopleMode language activeSearch body
+
+                InstitutionsMode ->
+                    viewFacetsForInstitutionsMode language activeSearch body
+
+                LiturgicalFestivalsMode ->
+                    none
+    in
     row
         [ width fill
         , height fill
@@ -484,21 +503,7 @@ viewSearchControls language activeSearch body =
             , height fill
             , spacing 20
             ]
-            [ viewFacet "hide-source-contents" language activeSearch body
-            , viewFacet "hide-source-collections" language activeSearch body
-            , viewFacet "hide-composite-volumes" language activeSearch body
-            , viewFacet "has-incipits" language activeSearch body
-            , viewFacet "has-digitization" language activeSearch body
-            , viewFacet "date-range" language activeSearch body
-            , viewFacet "num-holdings" language activeSearch body
-            , viewFacet "holding-institution" language activeSearch body
-            , viewFacet "source-type" language activeSearch body
-            , viewFacet "content-types" language activeSearch body
-            , viewFacet "material-group-types" language activeSearch body
-            , viewFacet "subjects" language activeSearch body
-            , viewFacet "person-role" language activeSearch body
-            , viewFacet "city" language activeSearch body
-            , viewFacet "notation" language activeSearch body
+            [ facetLayout
             ]
         ]
 
@@ -554,5 +559,61 @@ viewActiveFilter language (ActiveFacet facetType facetLabel facetAlias facetValu
                 , onClick (UserClickedRemoveActiveFilter facetAlias facetValue)
                 ]
                 (closeWindowSvg colourScheme.white)
+            ]
+        ]
+
+
+viewFacetsForIncipitsMode : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewFacetsForIncipitsMode language activeSearch body =
+    row
+        []
+        [ column
+            []
+            [ viewFacet "notation" language activeSearch body ]
+        ]
+
+
+viewFacetsForSourcesMode : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewFacetsForSourcesMode language activeSearch body =
+    row
+        []
+        [ column
+            []
+            [ viewFacet "hide-source-contents" language activeSearch body
+            , viewFacet "hide-source-collections" language activeSearch body
+            , viewFacet "hide-composite-volumes" language activeSearch body
+            , viewFacet "has-incipits" language activeSearch body
+            , viewFacet "has-digitization" language activeSearch body
+            , viewFacet "date-range" language activeSearch body
+            , viewFacet "num-holdings" language activeSearch body
+            , viewFacet "holding-institution" language activeSearch body
+            , viewFacet "source-type" language activeSearch body
+            , viewFacet "content-types" language activeSearch body
+            , viewFacet "material-group-types" language activeSearch body
+            , viewFacet "subjects" language activeSearch body
+            ]
+        ]
+
+
+viewFacetsForPeopleMode : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewFacetsForPeopleMode language activeSearch body =
+    row
+        []
+        [ column
+            []
+            [ viewFacet "person-role" language activeSearch body
+            , viewFacet "date-range" language activeSearch body
+            ]
+        ]
+
+
+viewFacetsForInstitutionsMode : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewFacetsForInstitutionsMode language activeSearch body =
+    row
+        []
+        [ column
+            []
+            [ viewFacet "date-range" language activeSearch body
+            , viewFacet "city" language activeSearch body
             ]
         ]
