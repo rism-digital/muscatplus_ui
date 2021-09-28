@@ -1,6 +1,7 @@
 module Page.UI.Keyboard.Msg exposing (..)
 
 import Http
+import Http.Detailed
 import Page.UI.Keyboard.Model exposing (KeyNoteName, Octave)
 
 
@@ -11,6 +12,6 @@ type KeyboardMsg
     | UserClickedPianoKeyboardChangeTimeSignature
     | UserClickedPianoKeyboardChangeKeySignature
     | UserClickedPianoKeyboardSearchSubmit
-    | ServerRespondedWithRenderedNotation (Result Http.Error String)
+    | ServerRespondedWithRenderedNotation (Result (Http.Detailed.Error String) ( Http.Metadata, String ))
     | ClientRequestedRenderedNotation
     | NothingHappenedWithTheKeyboard

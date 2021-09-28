@@ -35,19 +35,19 @@ import Viewport exposing (jumpToId, resetViewport, resetViewportOf)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Msg.ServerRespondedWithData (Ok response) ->
+        Msg.ServerRespondedWithData (Ok ( metadata, response )) ->
             Page.Response.DataResponse.serverRespondedWithData model response
 
         Msg.ServerRespondedWithData (Err error) ->
             Page.Response.DataResponse.serverRespondedWithDataError model error
 
-        Msg.ServerRespondedWithPreview (Ok response) ->
+        Msg.ServerRespondedWithPreview (Ok ( metadata, response )) ->
             Page.Response.PreviewResponse.serverRespondedWithPreview model response
 
         Msg.ServerRespondedWithPreview (Err error) ->
             Page.Response.PreviewResponse.serverRespondedWithPreviewError model error
 
-        Msg.ServerRespondedWithPageSearch (Ok response) ->
+        Msg.ServerRespondedWithPageSearch (Ok ( metadata, response )) ->
             Page.Response.PageSearchResponse.serverRespondedWithPageSearch model response
 
         Msg.ServerRespondedWithPageSearch (Err error) ->

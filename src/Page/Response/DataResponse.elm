@@ -2,6 +2,7 @@ module Page.Response.DataResponse exposing (..)
 
 import Dict
 import Http exposing (Error(..))
+import Http.Detailed
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Page.Converters exposing (convertRangeFacetToRangeSlider, filterMap)
@@ -136,7 +137,7 @@ serverRespondedWithData model response =
     )
 
 
-serverRespondedWithDataError : Model -> Error -> ( Model, Cmd Msg )
+serverRespondedWithDataError : Model -> Http.Detailed.Error String -> ( Model, Cmd Msg )
 serverRespondedWithDataError model error =
     let
         oldPage =
@@ -144,11 +145,14 @@ serverRespondedWithDataError model error =
 
         errorMessage =
             case error of
-                BadUrl url ->
+                Http.Detailed.BadUrl url ->
                     "A Bad URL was supplied: " ++ url
 
-                BadBody message ->
+                Http.Detailed.BadBody metadata body message ->
                     "Unexpected response: " ++ message
+
+                Http.Detailed.BadStatus metadata message ->
+                    "A bad status was received: " ++ message
 
                 _ ->
                     "A problem happened with the request"

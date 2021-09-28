@@ -1,6 +1,6 @@
 module Page.Response.PageSearchResponse exposing (..)
 
-import Http exposing (Error(..))
+import Http.Detailed
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Page.Model exposing (Response(..))
@@ -19,15 +19,15 @@ serverRespondedWithPageSearch model response =
     ( { model | page = newPage }, Cmd.none )
 
 
-serverRespondedWithPageSearchError : Model -> Error -> ( Model, Cmd Msg )
+serverRespondedWithPageSearchError : Model -> Http.Detailed.Error String -> ( Model, Cmd Msg )
 serverRespondedWithPageSearchError model error =
     let
         errorMessage =
             case error of
-                BadUrl url ->
+                Http.Detailed.BadUrl url ->
                     "A Bad URL was supplied: " ++ url
 
-                BadBody message ->
+                Http.Detailed.BadBody metadata body message ->
                     "Unexpected response: " ++ message
 
                 _ ->

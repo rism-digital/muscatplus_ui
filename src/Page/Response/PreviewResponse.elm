@@ -1,6 +1,7 @@
 module Page.Response.PreviewResponse exposing (..)
 
 import Http exposing (Error)
+import Http.Detailed
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Page.Model exposing (Response(..))
@@ -19,6 +20,6 @@ serverRespondedWithPreview model response =
     ( { model | activeSearch = newSearch }, Cmd.none )
 
 
-serverRespondedWithPreviewError : Model -> Error -> ( Model, Cmd Msg )
+serverRespondedWithPreviewError : Model -> Http.Detailed.Error String -> ( Model, Cmd Msg )
 serverRespondedWithPreviewError model error =
     ( model, Cmd.none )

@@ -2,6 +2,7 @@ module Request exposing (..)
 
 import Config as C
 import Http exposing (Expect)
+import Http.Detailed
 import Json.Decode exposing (Decoder)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
@@ -24,14 +25,14 @@ serverUrl pathSegments queryParameters =
     Url.Builder.crossOrigin C.serverUrl cleanedSegments queryParameters
 
 
-createRequest : (Result Http.Error a -> msg) -> Decoder a -> String -> Cmd msg
+createRequest : (Result (Http.Detailed.Error String) ( Http.Metadata, a ) -> msg) -> Decoder a -> String -> Cmd msg
 createRequest responseMsg responseDecoder url =
-    createRequestWithAcceptAndExpect "application/ld+json" (Http.expectJson responseMsg responseDecoder) url
+    createRequestWithAcceptAndExpect "application/ld+json" (Http.Detailed.expectJson responseMsg responseDecoder) url
 
 
-createSvgRequest : (Result Http.Error String -> msg) -> String -> Cmd msg
+createSvgRequest : (Result (Http.Detailed.Error String) ( Http.Metadata, String ) -> msg) -> String -> Cmd msg
 createSvgRequest responseMsg url =
-    createRequestWithAcceptAndExpect "image/svg+xml" (Http.expectString responseMsg) url
+    createRequestWithAcceptAndExpect "image/svg+xml" (Http.Detailed.expectString responseMsg) url
 
 
 createRequestWithAcceptAndExpect : String -> Expect msg -> String -> Cmd msg

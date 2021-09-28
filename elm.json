@@ -23,6 +23,7 @@
             "elm-community/json-extra": "4.3.0",
             "elm-community/list-extra": "8.3.1",
             "elm-community/string-extra": "4.0.1",
+            "jzxhuang/http-extras": "2.1.0",
             "mdgriffith/elm-ui": "1.1.8",
             "rtfeldman/elm-css": "16.1.1",
             "ryannhg/date-format": "2.3.0"

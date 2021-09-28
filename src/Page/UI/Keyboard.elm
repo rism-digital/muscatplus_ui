@@ -93,7 +93,7 @@ buildNotationRequestQuery keyboardQuery =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ServerRespondedWithRenderedNotation (Ok response) ->
+        ServerRespondedWithRenderedNotation (Ok ( metadata, response )) ->
             ( { model | notation = Just response }, Cmd.none )
 
         ServerRespondedWithRenderedNotation (Err error) ->
@@ -146,100 +146,6 @@ update msg model =
 
         _ ->
             ( model, Cmd.none )
-
-
-
---Msg.UserClickedPianoKeyboardKey noteName octave ->
---            let
---                activeSearch =
---                    model.activeSearch
---
---                activeQuery =
---                    activeSearch.query
---
---                note =
---                    createPAENote noteName octave
---
---                keyboardQuery =
---                    activeQuery.keyboardQuery
---
---                noteData =
---                    case keyboardQuery.noteData of
---                        Just n ->
---                            n ++ " " ++ note
---
---                        Nothing ->
---                            note
---
---                newKeyboardQuery =
---                    { keyboardQuery | noteData = Just noteData }
---
---                newQuery =
---                    { activeQuery | keyboardQuery = newKeyboardQuery }
---
---                newSearch =
---                    { activeSearch | query = newQuery }
---
---                newModel =
---                    { model | activeSearch = newSearch }
---
---                queryParameters =
---                    buildNotationQueryParameters newKeyboardQuery
---
---                url =
---                    serverUrl [ "incipits/render" ] queryParameters
---
---                _ =
---                    Debug.log "Server url" url
---
---                cmd =
---                    createSvgRequest Msg.ServerRespondedWithRenderedNotation url
---            in
---            ( newModel, cmd )
---
---        Msg.UserClickedPianoKeyboardDeleteNote ->
---            let
---                activeSearch =
---                    model.activeSearch
---
---                activeQuery =
---                    activeSearch.query
---
---                keyboardQuery =
---                    activeQuery.keyboardQuery
---
---                noteData =
---                    case keyboardQuery.noteData of
---                        Just n ->
---                            Just
---                                (String.split " " n
---                                    |> LE.init
---                                    |> Maybe.withDefault []
---                                    |> String.join " "
---                                )
---
---                        Nothing ->
---                            Nothing
---
---                newKeyboardQuery =
---                    { keyboardQuery | noteData = noteData }
---
---                newQuery =
---                    { activeQuery | keyboardQuery = newKeyboardQuery }
---
---                newSearch =
---                    { activeSearch | query = newQuery }
---            in
---            ( { model | activeSearch = newSearch }, Cmd.none )
---
---        Msg.UserClickedPianoKeyboardChangeClef ->
---            ( model, Cmd.none )
---
---        Msg.UserClickedPianoKeyboardChangeKeySignature ->
---            ( model, Cmd.none )
---
---        Msg.UserClickedPianoKeyboardChangeTimeSignature ->
---            ( model, Cmd.none )
 
 
 view : Language -> Keyboard -> Element KeyboardMsg

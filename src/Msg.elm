@@ -3,6 +3,7 @@ module Msg exposing (Msg(..))
 import Browser exposing (UrlRequest)
 import Element exposing (Device)
 import Http
+import Http.Detailed
 import Page.Model exposing (CurrentRecordViewTab)
 import Page.Query exposing (FacetBehaviour)
 import Page.RecordTypes.Search exposing (FacetItem)
@@ -61,9 +62,9 @@ import Url exposing (Url)
 
 -}
 type Msg
-    = ServerRespondedWithData (Result Http.Error ServerData)
-    | ServerRespondedWithPreview (Result Http.Error ServerData)
-    | ServerRespondedWithPageSearch (Result Http.Error ServerData)
+    = ServerRespondedWithData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
+    | ServerRespondedWithPreview (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
+    | ServerRespondedWithPageSearch (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | ClientChangedUrl Url
     | ClientJumpedToId
     | ClientResetViewport
