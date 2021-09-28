@@ -1,6 +1,5 @@
 module Page.Response.PreviewResponse exposing (..)
 
-import Http exposing (Error)
 import Http.Detailed
 import Model exposing (Model)
 import Msg exposing (Msg)
