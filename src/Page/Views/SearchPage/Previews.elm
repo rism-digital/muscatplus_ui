@@ -54,6 +54,8 @@ viewPreviewRouter language previewData =
             [ width fill
             , spacing 10
             , alignTop
+            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , htmlAttribute (Html.Attributes.style "z-index" "10")
             ]
             [ viewRecordPreviewTitleBar
             , preview
@@ -96,6 +98,9 @@ viewPreviewLoading =
         , alignTop
         , padding 20
         , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Border.color (colourScheme.black |> convertColorToElementColor)
+        , Border.width 1
+        , htmlAttribute (Html.Attributes.style "z-index" "10")
         ]
         [ column
             [ width fill
