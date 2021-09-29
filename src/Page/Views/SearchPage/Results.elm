@@ -105,12 +105,7 @@ viewSearchResult language selectedResult result =
     in
     row
         [ width fill
-
-        --, height (px 100)
         , alignTop
-
-        --, Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
-        --, Border.color colourScheme.midGrey
         , paddingXY 20 20
         , Background.color (backgroundColour |> convertColorToElementColor)
         , Font.color (textColor |> convertColorToElementColor)
