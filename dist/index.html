@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
-    <style>body { padding: 0; margin: 0; }</style>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://rsms.me">
+    <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
+    <style>
+        body { padding: 0; margin: 0; }
+        html {
+            font-family: 'Inter', sans-serif;
+            font-feature-settings: "cv05", "cv08";
+        }
+        @supports (font-variation-settings: normal) {
+            html { font-family: 'Inter var', sans-serif; }
+        }
+
+    </style>
     <script src="/static/app.js"></script>
 </head>
 
