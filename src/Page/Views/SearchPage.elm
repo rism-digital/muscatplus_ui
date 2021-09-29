@@ -566,19 +566,31 @@ viewActiveFilter language (ActiveFacet facetType facetLabel facetAlias facetValu
 viewFacetsForIncipitsMode : Language -> ActiveSearch -> SearchBody -> Element Msg
 viewFacetsForIncipitsMode language activeSearch body =
     row
-        []
+        [ width fill
+        , height fill
+        ]
         [ column
-            []
-            [ viewFacet "notation" language activeSearch body ]
+            [ width fill
+            , height fill
+            , spacing 15
+            ]
+            [ viewFacet "notation" language activeSearch body
+            , viewFacet "composer" language activeSearch body
+            ]
         ]
 
 
 viewFacetsForSourcesMode : Language -> ActiveSearch -> SearchBody -> Element Msg
 viewFacetsForSourcesMode language activeSearch body =
     row
-        []
+        [ width fill
+        , height fill
+        ]
         [ column
-            []
+            [ width fill
+            , height fill
+            , spacing 15
+            ]
             [ viewFacet "hide-source-contents" language activeSearch body
             , viewFacet "hide-source-collections" language activeSearch body
             , viewFacet "hide-composite-volumes" language activeSearch body
@@ -598,9 +610,14 @@ viewFacetsForSourcesMode language activeSearch body =
 viewFacetsForPeopleMode : Language -> ActiveSearch -> SearchBody -> Element Msg
 viewFacetsForPeopleMode language activeSearch body =
     row
-        []
+        [ width fill
+        , height fill
+        ]
         [ column
-            []
+            [ width fill
+            , height fill
+            , spacing 15
+            ]
             [ viewFacet "person-role" language activeSearch body
             , viewFacet "date-range" language activeSearch body
             ]
@@ -610,9 +627,14 @@ viewFacetsForPeopleMode language activeSearch body =
 viewFacetsForInstitutionsMode : Language -> ActiveSearch -> SearchBody -> Element Msg
 viewFacetsForInstitutionsMode language activeSearch body =
     row
-        []
+        [ width fill
+        , height fill
+        ]
         [ column
-            []
+            [ width fill
+            , height fill
+            , spacing 15
+            ]
             [ viewFacet "date-range" language activeSearch body
             , viewFacet "city" language activeSearch body
             ]
