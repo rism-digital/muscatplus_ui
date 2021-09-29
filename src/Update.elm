@@ -611,6 +611,25 @@ update msg model =
             in
             Search.searchSubmit newModel
 
+        Msg.UserClickedClearSearchQueryBox ->
+            let
+                activeSearch =
+                    model.activeSearch
+
+                activeQuery =
+                    activeSearch.query
+
+                newActiveQuery =
+                    { activeQuery | query = Nothing }
+
+                newActiveSearch =
+                    { activeSearch | query = newActiveQuery }
+
+                newModel =
+                    { model | activeSearch = newActiveSearch }
+            in
+            Search.searchSubmit newModel
+
         Msg.NothingHappened ->
             -- Use for mocking in a Msg that does nothing; For actual code, favour adding
             -- an explicit message for 'NoOp' updates.

@@ -80,6 +80,7 @@ type Msg
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserClickedRecordViewTabPagination String
     | UserClickedRemoveActiveFilter String String
+    | UserClickedClearSearchQueryBox
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
     | UserTriggeredSearchSubmit

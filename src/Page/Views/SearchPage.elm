@@ -10,7 +10,7 @@ import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByL
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Page.Model exposing (Response(..))
-import Page.Query exposing (Filter(..))
+import Page.Query exposing (Filter(..), QueryArgs)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Response exposing (ServerData(..))
@@ -513,12 +513,55 @@ viewActiveFilters language activeSearch =
     let
         activeFacets =
             activeSearch.activeFacets
+
+        activeQuery =
+            activeSearch.query
+
+        activeFacetControls =
+            List.map (viewActiveFilter language) activeFacets
+
+        activeControls =
+            case activeQuery.query of
+                Just q ->
+                    viewActiveSearchQuery language q :: activeFacetControls
+
+                Nothing ->
+                    activeFacetControls
     in
     row
         []
         [ column
             [ spacing 10 ]
-            (List.map (viewActiveFilter language) activeFacets)
+            activeControls
+        ]
+
+
+viewActiveSearchQuery : Language -> String -> Element Msg
+viewActiveSearchQuery language query =
+    row
+        [ width shrink
+        , Background.color (colourScheme.red |> convertColorToElementColor)
+        , Border.rounded 5
+        , padding 5
+        , spacing 5
+        , Font.semiBold
+        , Font.color (colourScheme.white |> convertColorToElementColor)
+        ]
+        [ column
+            [ width (fillPortion 3) ]
+            [ el
+                []
+                (text ("Query: " ++ query))
+            ]
+        , column
+            [ width (fillPortion 1)
+            ]
+            [ el
+                [ width (px 20)
+                , onClick UserClickedClearSearchQueryBox
+                ]
+                (closeWindowSvg colourScheme.white)
+            ]
         ]
 
 
@@ -574,8 +617,30 @@ viewFacetsForIncipitsMode language activeSearch body =
             , height fill
             , spacing 15
             ]
-            [ viewFacet "notation" language activeSearch body
-            , viewFacet "composer" language activeSearch body
+            [ row
+                [ width fill ]
+                [ column [ width fill ]
+                    [ viewFacet "notation" language activeSearch body ]
+                ]
+            , row
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                [ column
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    [ viewFacet "composer" language activeSearch body
+                    ]
+                , column
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    [ viewFacet "date-range" language activeSearch body ]
+                ]
             ]
         ]
 
