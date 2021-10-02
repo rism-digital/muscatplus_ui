@@ -11,6 +11,7 @@ import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (FacetData(..))
 import Page.Response exposing (ServerData(..))
+import Page.Route exposing (Route(..))
 import Page.UI.Keyboard exposing (buildNotationRequestQuery)
 import Request exposing (createRequest)
 import Search.ActiveFacet exposing (convertFilterToActiveFacet)
@@ -152,12 +153,27 @@ serverRespondedWithDataError model error =
                     "Unexpected response: " ++ message
 
                 Http.Detailed.BadStatus metadata message ->
-                    "A bad status was received: " ++ message
+                    message
 
                 _ ->
                     "A problem happened with the request"
 
+        errorRoute =
+            case error of
+                Http.Detailed.BadStatus metadata _ ->
+                    if metadata.statusCode == 404 then
+                        NotFoundPageRoute
+
+                    else
+                        oldPage.route
+
+                _ ->
+                    oldPage.route
+
         newResponse =
-            { oldPage | response = Error errorMessage }
+            { oldPage
+                | response = Error errorMessage
+                , route = errorRoute
+            }
     in
     ( { model | page = newResponse }, Cmd.none )
