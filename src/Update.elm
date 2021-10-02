@@ -3,29 +3,25 @@ module Update exposing (..)
 import Browser
 import Browser.Navigation as Nav
 import Dict
-import Http exposing (Error(..))
 import Language exposing (parseLocaleToLanguage)
 import List.Extra as LE
 import Model exposing (Model)
 import Msg exposing (Msg)
-import Page.Converters exposing (convertFacetToFilter, convertFacetToResultMode, convertRangeFacetToRangeSlider, filterMap)
+import Page.Converters exposing (convertFacetToFilter, convertFacetToResultMode)
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Query exposing (FacetBehaviour(..), Filter(..), buildQueryParameters)
-import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..))
-import Page.Response exposing (ServerData(..))
 import Page.Response.DataResponse
 import Page.Response.PageSearchResponse
 import Page.Response.PreviewResponse
 import Page.Route exposing (Route(..), parseUrl)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
-import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery)
+import Page.UI.Keyboard as Keyboard
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Request exposing (createRequest, serverUrl)
 import Search
-import Search.ActiveFacet exposing (convertFilterToActiveFacet)
 import Search.Update as Search
 import Url
 import Url.Builder
