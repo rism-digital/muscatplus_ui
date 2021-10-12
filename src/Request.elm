@@ -25,12 +25,23 @@ serverUrl pathSegments queryParameters =
     Url.Builder.crossOrigin C.serverUrl cleanedSegments queryParameters
 
 
-createRequest : (Result (Http.Detailed.Error String) ( Http.Metadata, a ) -> msg) -> Decoder a -> String -> Cmd msg
+createRequest :
+    (Result (Http.Detailed.Error String) ( Http.Metadata, a )
+     -> msg
+    )
+    -> Decoder a
+    -> String
+    -> Cmd msg
 createRequest responseMsg responseDecoder url =
     createRequestWithAcceptAndExpect "application/ld+json" (Http.Detailed.expectJson responseMsg responseDecoder) url
 
 
-createSvgRequest : (Result (Http.Detailed.Error String) ( Http.Metadata, String ) -> msg) -> String -> Cmd msg
+createSvgRequest :
+    (Result (Http.Detailed.Error String) ( Http.Metadata, String )
+     -> msg
+    )
+    -> String
+    -> Cmd msg
 createSvgRequest responseMsg url =
     createRequestWithAcceptAndExpect "image/svg+xml" (Http.Detailed.expectString responseMsg) url
 

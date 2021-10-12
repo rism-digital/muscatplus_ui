@@ -22,7 +22,7 @@ viewSearchResultsLoading model =
             , scrollbarY
             , alignTop
             ]
-            (List.repeat 20 viewSearchResultLoadingAnimation)
+            []
         , column
             [ Border.widthEach { top = 0, left = 2, right = 0, bottom = 0 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
@@ -78,6 +78,6 @@ searchModeSelectorLoading =
                 , spacing 40
                 , centerY
                 ]
-                (List.repeat 5 (el [] (loadingBox 100 20)))
+                []
             ]
         ]

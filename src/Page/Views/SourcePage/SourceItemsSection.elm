@@ -5,7 +5,8 @@ import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.RecordTypes.Source exposing (BasicSourceBody, SourceItemsSectionBody)
+import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
+import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (headingXS, linkColour)
 import Page.UI.Components exposing (h5, viewSummaryField)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)

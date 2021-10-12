@@ -1,7 +1,7 @@
 module Page.Views.SearchPage.Facets exposing (..)
 
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, paddingEach, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -219,11 +219,17 @@ viewRangeFacet language activeSliders activeFilters body =
                     none
     in
     row
-        []
+        [ width fill
+        , alignTop
+        ]
         [ column
-            []
+            [ width fill
+            , alignTop
+            ]
             [ row
-                [ width fill ]
+                [ width fill
+                , alignTop
+                ]
                 [ h6 language body.label ]
             , row
                 [ width fill
@@ -324,16 +330,27 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
                 )
     in
     row
-        [ width (px 400) ]
+        [ width (px 400)
+        , alignTop
+        ]
         [ column
-            [ width fill ]
+            [ width fill
+            , alignTop
+            ]
             [ row
                 [ width fill
-                , paddingXY 0 10
+                , paddingEach
+                    { top = 0
+                    , right = 0
+                    , left = 0
+                    , bottom = 10
+                    }
+                , alignTop
                 ]
                 [ column
                     [ width fill
                     , alignLeft
+                    , alignTop
                     ]
                     [ h6 language body.label ]
                 , column

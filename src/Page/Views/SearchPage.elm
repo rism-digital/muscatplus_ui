@@ -632,14 +632,28 @@ viewFacetsForIncipitsMode language activeSearch body =
                     , height fill
                     , alignTop
                     ]
+                    [ viewFacet "is-mensural" language activeSearch body ]
+                ]
+            , row
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                [ column
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
                     [ viewFacet "composer" language activeSearch body
+                    , viewFacet "clef" language activeSearch body
                     ]
                 , column
                     [ width fill
                     , height fill
                     , alignTop
                     ]
-                    [ viewFacet "date-range" language activeSearch body ]
+                    [ viewFacet "date-range" language activeSearch body
+                    ]
                 ]
             ]
         ]
