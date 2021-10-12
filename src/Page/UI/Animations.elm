@@ -1,12 +1,40 @@
-module Page.UI.Animations exposing (animatedColumn, animatedEl, animatedRow, loadingBox)
+module Page.UI.Animations exposing (animatedColumn, animatedEl, animatedRow, loadingBox, progressBar)
 
 import Css exposing (absolute, animationDuration, animationName, backgroundColor, backgroundImage, before, block, display, height, hidden, left, linearGradient2, overflow, pct, position, property, px, relative, rgb, rgba, sec, stop2, toRight, top, width)
 import Css.Animations exposing (keyframes)
-import Element exposing (Element)
+import Element exposing (Element, el, fill, htmlAttribute, none, text)
+import Element.Background as Background
+import Html.Attributes as HA
 import Html.Styled exposing (Attribute, div, toUnstyled)
 import Html.Styled.Attributes exposing (css)
-import Simple.Animation exposing (Animation)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Simple.Animation as Animation exposing (Animation)
 import Simple.Animation.Animated as Animated
+import Simple.Animation.Property as P
+
+
+progressBarAnimation : Animation
+progressBarAnimation =
+    Animation.fromTo
+        { duration = 600
+        , options = []
+        }
+        [ P.property "width" "0" ]
+        [ P.property "width" "80%" ]
+
+
+progressBar : Element msg
+progressBar =
+    animatedEl progressBarAnimation
+        [ Element.height (Element.px 2)
+        , Element.width (Element.px 0)
+        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , htmlAttribute (HA.style "position" "fixed")
+        , htmlAttribute (HA.style "top" "0")
+        , htmlAttribute (HA.style "left" "0")
+        , htmlAttribute (HA.style "right" "0")
+        ]
+        none
 
 
 {-|
