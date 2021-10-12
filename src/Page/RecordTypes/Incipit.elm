@@ -4,6 +4,7 @@ import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
+import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 
 
 type IncipitFormat
@@ -26,8 +27,8 @@ type alias IncipitBody =
 
 
 type alias IncipitParentSourceBody =
-    { id : String
-    , label : LanguageMap
+    { label : LanguageMap
+    , source : BasicSourceBody
     }
 
 
@@ -44,8 +45,8 @@ incipitBodyDecoder =
 incipitParentSourceBodyDecoder : Decoder IncipitParentSourceBody
 incipitParentSourceBodyDecoder =
     Decode.succeed IncipitParentSourceBody
-        |> required "id" string
         |> required "label" languageMapLabelDecoder
+        |> required "source" basicSourceBodyDecoder
 
 
 incipitFormatDecoder : Decoder IncipitFormat
