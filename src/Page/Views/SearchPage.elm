@@ -620,7 +620,8 @@ viewFacetsForIncipitsMode language activeSearch body =
             [ row
                 [ width fill ]
                 [ column [ width fill ]
-                    [ viewFacet "notation" language activeSearch body ]
+                    [ viewFacet "notation" language activeSearch body
+                    ]
                 ]
             , row
                 [ width fill
@@ -631,8 +632,11 @@ viewFacetsForIncipitsMode language activeSearch body =
                     [ width fill
                     , height fill
                     , alignTop
+                    , spacing 10
                     ]
-                    [ viewFacet "is-mensural" language activeSearch body ]
+                    [ viewFacet "is-mensural" language activeSearch body
+                    , viewFacet "has-notation" language activeSearch body
+                    ]
                 ]
             , row
                 [ width fill
