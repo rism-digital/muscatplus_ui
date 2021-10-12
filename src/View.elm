@@ -10,6 +10,7 @@ import Msg exposing (Msg(..))
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
 import Page.Response exposing (ServerData(..))
 import Page.Route exposing (Route(..))
+import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, linkColour, minimalDropShadow, pageBackground)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Images exposing (rismLogo)
@@ -116,7 +117,8 @@ view model =
                     , width fill
                     , height fill
                     ]
-                    [ siteHeader model
+                    [ loadingIndicator model
+                    , siteHeader model
                     , pageView model
                     , siteFooter model
                     ]
@@ -127,6 +129,29 @@ view model =
     , body =
         wrappedPageView
     }
+
+
+loadingIndicator : Model -> Element Msg
+loadingIndicator model =
+    let
+        page =
+            model.page
+
+        status =
+            page.response
+
+        loadingView =
+            case status of
+                Loading ->
+                    row
+                        [ width fill
+                        ]
+                        [ progressBar ]
+
+                _ ->
+                    none
+    in
+    loadingView
 
 
 siteHeader : Model -> Element Msg
