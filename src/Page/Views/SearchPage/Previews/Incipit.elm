@@ -12,6 +12,18 @@ import Page.Views.Incipits exposing (viewIncipit)
 viewIncipitPreview : IncipitBody -> Language -> Element msg
 viewIncipitPreview body language =
     let
+        sourceUrl =
+            case body.partOf of
+                Just partOfBody ->
+                    let
+                        sourceBody =
+                            partOfBody.source
+                    in
+                    sourceBody.id
+
+                Nothing ->
+                    ""
+
         incipitLink =
             row
                 [ width fill ]
@@ -20,8 +32,8 @@ viewIncipitPreview body language =
                     (text (extractLabelFromLanguageMap language localTranslations.viewRecord ++ ": "))
                 , link
                     [ linkColour ]
-                    { url = body.id
-                    , label = text body.id
+                    { url = sourceUrl
+                    , label = text sourceUrl
                     }
                 ]
     in

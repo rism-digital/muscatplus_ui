@@ -9,14 +9,7 @@ import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitutionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
-
-
-type alias BasicSourceBody =
-    { id : String
-    , label : LanguageMap
-    , typeLabel : LanguageMap
-    , summary : Maybe (List LabelValue)
-    }
+import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 
 
 type alias FullSourceBody =
@@ -145,15 +138,6 @@ sourceBodyDecoder =
         |> optional "exemplars" (Decode.maybe exemplarsSectionBodyDecoder) Nothing
         |> optional "items" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
-
-
-basicSourceBodyDecoder : Decoder BasicSourceBody
-basicSourceBodyDecoder =
-    Decode.succeed BasicSourceBody
-        |> required "id" string
-        |> required "label" languageMapLabelDecoder
-        |> required "typeLabel" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
 
 
 partOfSectionBodyDecoder : Decoder PartOfSectionBody
