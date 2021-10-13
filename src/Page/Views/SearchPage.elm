@@ -686,6 +686,7 @@ viewFacetsForSourcesMode language activeSearch body =
             , viewFacet "content-types" language activeSearch body
             , viewFacet "material-group-types" language activeSearch body
             , viewFacet "subjects" language activeSearch body
+            , viewFacet "text-language" language activeSearch body
             ]
         ]
 
