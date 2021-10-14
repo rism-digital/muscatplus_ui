@@ -16,6 +16,12 @@
             html { font-family: 'Inter var', sans-serif; }
         }
 
+        @supports (-webkit-backdrop-filter: blur(1px)) {
+            .search-results-rendered-incipit svg {
+                height: 100%;
+                width: 100%;
+            }
+        }
     </style>
     <script src="/static/app.js"></script>
 </head>

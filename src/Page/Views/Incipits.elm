@@ -89,6 +89,7 @@ viewRenderedIncipits incipits =
     row
         [ paddingXY 0 10
         , width (fill |> minimum 400 |> maximum 1000)
+        , htmlAttribute (HTA.class "search-results-rendered-incipit")
         ]
         incipitSVG
 
