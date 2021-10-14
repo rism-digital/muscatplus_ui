@@ -66,7 +66,18 @@ keySigParamParser =
 
 noteDataParamParser : Q.Parser (Maybe (List String))
 noteDataParamParser =
-    Q.custom "n" (\a -> Just (noteDataQueryStringToList a))
+    Q.custom "n"
+        (\a ->
+            let
+                nVal =
+                    if List.isEmpty a then
+                        Nothing
+
+                    else
+                        Just (noteDataQueryStringToList a)
+            in
+            nVal
+        )
 
 
 noteDataQueryStringToList : List String -> List String
