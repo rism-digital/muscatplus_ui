@@ -330,6 +330,7 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
         [ width (px 400)
         , alignTop
         , Border.width 1
+        , Border.rounded 4
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
