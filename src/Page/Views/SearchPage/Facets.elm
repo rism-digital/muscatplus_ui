@@ -1,7 +1,7 @@
 module Page.Views.SearchPage.Facets exposing (..)
 
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, paddingEach, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, padding, paddingEach, paddingXY, pointer, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -20,7 +20,7 @@ import Page.UI.Attributes exposing (bodyRegular, bodySM, headingSM)
 import Page.UI.Components exposing (dropdownSelect, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
-import Page.UI.Images exposing (institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unionSvg, unknownSvg)
+import Page.UI.Images exposing (checkedBoxSvg, institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, unionSvg, unknownSvg)
 import Page.UI.Keyboard as Keyboard
 import Page.UI.Keyboard.Model exposing (Keyboard(..))
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -272,21 +272,16 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
 
         showLink =
             if List.length body.items > 10 then
-                row
+                column
                     [ width fill
+                    , bodySM
                     ]
-                    [ column
-                        [ width fill
-                        , bodySM
+                    [ el
+                        [ onClick (UserClickedFacetExpand facetAlias)
+                        , pointer
+                        , alignRight
                         ]
-                        [ el
-                            [ alignRight
-                            , paddingXY 0 5
-                            , onClick (UserClickedFacetExpand facetAlias)
-                            , pointer
-                            ]
-                            (text showMoreText)
-                        ]
+                        (text showMoreText)
                     ]
 
             else
@@ -321,7 +316,9 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
 
         behaviourDropdown =
             el
-                [ alignRight ]
+                [ alignLeft
+                , width (px 50)
+                ]
                 (dropdownSelect
                     (\inp -> UserChangedFacetBehaviour (parseStringToFacetBehaviour inp facetAlias))
                     listOfBehavioursForDropdown
@@ -332,6 +329,8 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
     row
         [ width (px 400)
         , alignTop
+        , Border.width 1
+        , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
             [ width fill
@@ -339,41 +338,27 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
             ]
             [ row
                 [ width fill
-                , paddingEach
-                    { top = 0
-                    , right = 0
-                    , left = 0
-                    , bottom = 10
-                    }
                 , alignTop
+                , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+                , padding 10
                 ]
                 [ column
                     [ width fill
                     , alignLeft
                     , alignTop
+                    , Font.color (colourScheme.white |> convertColorToElementColor)
                     ]
                     [ h6 language body.label ]
-                , column
-                    [ width fill
-                    , alignRight
-                    , bodySM
-                    ]
-                    [ row
-                        [ width fill
-                        , alignRight
-                        ]
-                        [ behaviourDropdown
-                        , el
-                            [ width (px 20)
-                            , height (px 10)
-                            , alignRight
-                            ]
-                            behaviourIcon
-                        ]
-                    ]
                 ]
             , row
-                [ width fill ]
+                [ width fill
+                , padding 5
+                ]
+                []
+            , row
+                [ width fill
+                , padding 10
+                ]
                 [ column
                     [ width fill
                     , spacing 5
@@ -381,9 +366,38 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
                     (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
                 ]
             , row
-                [ width fill ]
-                []
-            , showLink
+                [ width fill
+                , padding 10
+                ]
+                [ column
+                    [ width fill
+                    , bodySM
+                    , alignLeft
+                    ]
+                    [ row
+                        [ alignLeft
+                        , spacing 10
+                        ]
+                        [ el
+                            [ width (px 20)
+                            , height (px 10)
+                            ]
+                            behaviourIcon
+                        , behaviourDropdown
+                        , el
+                            [ width (px 20)
+                            , height (px 20)
+                            ]
+                            (sortNumericDescSvg colourScheme.slateGrey)
+                        , el
+                            [ width (px 20)
+                            , height (px 20)
+                            ]
+                            (checkedBoxSvg colourScheme.slateGrey)
+                        ]
+                    ]
+                , showLink
+                ]
             ]
         ]
 

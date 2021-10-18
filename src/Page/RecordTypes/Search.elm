@@ -2,7 +2,7 @@ module Page.RecordTypes.Search exposing (..)
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder, andThen, bool, float, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (optional, required)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
@@ -120,11 +120,23 @@ type alias ToggleFacet =
     }
 
 
+type SelectFacetMode
+    = CheckboxSelect
+    | TextInputSelect
+
+
+type SelectFacetSort
+    = CountOrder
+    | IndexOrder
+
+
 type alias SelectFacet =
     { alias : String
     , label : LanguageMap
     , items : List FacetItem
     , behaviours : FacetBehaviour
+    , mode : SelectFacetMode
+    , sort : SelectFacetSort
     }
 
 
@@ -324,6 +336,8 @@ selectFacetDecoder =
         |> required "label" languageMapLabelDecoder
         |> required "items" (Decode.list facetItemDecoder)
         |> required "behaviours" facetBehaviourDecoder
+        |> hardcoded CheckboxSelect
+        |> hardcoded CountOrder
 
 
 notationFacetDecoder : Decoder NotationFacet
