@@ -350,6 +350,20 @@ update msg model =
         Msg.UserClickedPianoKeyboardSearchSubmitButton ->
             Search.searchSubmit model
 
+        Msg.UserClickedPianoKeyboardSearchClearButton ->
+            let
+                activeSearch =
+                    model.activeSearch
+
+                -- Reset the keyboard to the initial state
+                newSearch =
+                    { activeSearch | keyboard = Keyboard.initModel }
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            Search.searchSubmit newModel
+
         Msg.UserMovedRangeSlider sliderAlias sliderMsg ->
             let
                 fireUpdate =

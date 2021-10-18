@@ -3,7 +3,6 @@ module Page.UI.Keyboard exposing (..)
 import Array
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, maximum, minimum, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Events exposing (onClick)
-import Element.Input as Input
 import Language exposing (Language)
 import List.Extra as LE
 import Page.UI.Images exposing (backspaceSvg)
@@ -141,19 +140,6 @@ update msg model =
             in
             buildUpdateQuery noteData model
 
-        UserClickedClearAllNotes ->
-            let
-                initialModel =
-                    initModel
-
-                query =
-                    initialModel.query
-
-                noteData =
-                    query.noteData
-            in
-            buildUpdateQuery noteData initialModel
-
         _ ->
             ( model, Cmd.none )
 
@@ -212,11 +198,6 @@ view language (Keyboard model config) =
                             , pointer
                             ]
                             (backspaceSvg colourScheme.black)
-                        , el
-                            [ onClick UserClickedClearAllNotes
-                            , pointer
-                            ]
-                            (text "Clear")
                         ]
                     ]
                 ]

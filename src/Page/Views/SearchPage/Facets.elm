@@ -472,7 +472,7 @@ viewKeyboardControl language keyboard =
                     |> Element.map UserInteractedWithPianoKeyboard
                 ]
             , row
-                []
+                [ spacing 10 ]
                 [ Input.button
                     [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
                     , Border.rounded 5
@@ -488,6 +488,22 @@ viewKeyboardControl language keyboard =
                     ]
                     { onPress = buttonMsg
                     , label = text "Search"
+                    }
+                , Input.button
+                    [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
+                    , Border.rounded 5
+                    , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+                    , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
+                    , paddingXY 10 10
+                    , height (px 50)
+                    , width fill
+                    , Font.center
+                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                    , headingSM
+                    , htmlAttribute (HA.style "cursor" "pointer")
+                    ]
+                    { onPress = Just UserClickedPianoKeyboardSearchClearButton
+                    , label = text "Clear"
                     }
                 ]
             ]

@@ -420,7 +420,7 @@ viewSearchControlSection model =
 
         activeFilters =
             case resp of
-                Response (SearchData body) ->
+                Response (SearchData _) ->
                     viewActiveFilters language activeSearch
 
                 _ ->

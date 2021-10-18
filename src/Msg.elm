@@ -89,6 +89,7 @@ type Msg
     | UserInputTextInQueryBox String
     | UserInteractedWithPianoKeyboard Keyboard.Msg
     | UserClickedPianoKeyboardSearchSubmitButton
+    | UserClickedPianoKeyboardSearchClearButton
     | UserMovedRangeSlider String RangeSlider.Msg
     | UserRequestedUrlChange UrlRequest
     | UserResizedWindow Device
