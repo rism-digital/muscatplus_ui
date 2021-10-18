@@ -21,7 +21,7 @@ view model =
 
         pageView =
             case response of
-                Loading ->
+                Loading _ ->
                     -- TODO: Show source loading page
                     none
 

@@ -15,8 +15,18 @@ searchSubmit model =
         oldPage =
             model.page
 
+        oldData =
+            case oldPage.response of
+                Response serverdata ->
+                    Just serverdata
+
+                _ ->
+                    Nothing
+
         newPage =
-            { oldPage | response = Page.Model.Loading }
+            { oldPage
+                | response = Page.Model.Loading oldData
+            }
 
         oldSearch =
             model.activeSearch

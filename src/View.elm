@@ -142,7 +142,7 @@ loadingIndicator model =
 
         loadingView =
             case status of
-                Loading ->
+                Loading _ ->
                     row
                         [ width fill
                         ]

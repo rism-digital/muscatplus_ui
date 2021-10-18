@@ -457,7 +457,7 @@ update msg model =
 
                 newSearch =
                     { oldSearch
-                        | preview = Loading
+                        | preview = Loading Nothing
                         , selectedResult = Just url
                     }
             in
@@ -499,8 +499,6 @@ update msg model =
                 cmd =
                     Cmd.batch
                         [ Nav.pushUrl model.key url
-
-                        --, createRequest Msg.ServerRespondedWithData recordResponseDecoder url
                         , resetViewportOf "search-results-list"
                         ]
             in

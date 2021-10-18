@@ -121,6 +121,9 @@ searchModeSelectorRouter model =
                 Response (SearchData data) ->
                     searchModeSelectorView model data.modes
 
+                Loading (Just (SearchData oldData)) ->
+                    searchModeSelectorView model oldData.modes
+
                 _ ->
                     searchModeSelectorLoading
     in
@@ -157,7 +160,10 @@ searchResultsViewRouter model =
 
         sectionView =
             case resp of
-                Loading ->
+                Loading (Just (SearchData oldData)) ->
+                    viewSearchResultsSection model oldData
+
+                Loading _ ->
                     viewSearchResultsLoading model
 
                 Response (SearchData body) ->
@@ -266,9 +272,12 @@ viewSearchResultsControlPanel model =
 
         renderedPreview =
             case preview of
-                Loading ->
+                Loading Nothing ->
                     -- TODO: Make a preview loading view
                     viewPreviewLoading
+
+                Loading (Just oldData) ->
+                    viewPreviewRouter language oldData
 
                 Response resp ->
                     viewPreviewRouter language resp

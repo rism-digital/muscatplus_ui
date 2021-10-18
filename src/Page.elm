@@ -18,7 +18,7 @@ init initialUrl =
         initialRoute =
             parseUrl initialUrl
     in
-    { response = Loading
+    { response = Loading Nothing
     , route = initialRoute
     , url = initialUrl
     , currentTab = DefaultRecordViewTab

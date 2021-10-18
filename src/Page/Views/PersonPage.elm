@@ -21,7 +21,7 @@ view model =
 
         pageView =
             case response of
-                Loading ->
+                Loading _ ->
                     none
 
                 Response (PersonData body) ->
