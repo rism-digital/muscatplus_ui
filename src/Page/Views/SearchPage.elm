@@ -315,67 +315,75 @@ viewSearchPageSort model =
 
         selectorView =
             case page.response of
-                Response (SearchData data) ->
-                    let
-                        pagination =
-                            data.pagination
+                Response (SearchData body) ->
+                    viewPaginationSortSelector language activeSearch body
 
-                        thisPage =
-                            formatNumberByLanguage (toFloat pagination.thisPage) language
-
-                        totalPages =
-                            formatNumberByLanguage (toFloat pagination.totalPages) language
-
-                        pageLabel =
-                            extractLabelFromLanguageMap language localTranslations.page
-
-                        pageInfo =
-                            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
-
-                        sorting =
-                            data.sorts
-
-                        listOfLabelsForResultSort =
-                            List.map
-                                (\d -> ( d.alias, extractLabelFromLanguageMap language d.label ))
-                                sorting
-
-                        chosenSort =
-                            Maybe.withDefault "relevance" activeSearch.selectedResultSort
-                    in
-                    row
-                        [ width fill ]
-                        [ column
-                            [ width (fillPortion 2) ]
-                            [ text pageInfo ]
-                        , column
-                            [ width (fillPortion 3) ]
-                            [ row
-                                [ width fill
-                                , spacing 10
-                                ]
-                                [ column
-                                    [ width shrink ]
-                                    [ text "Sort by" ]
-                                , column
-                                    [ width fill ]
-                                    [ el
-                                        []
-                                        (dropdownSelect
-                                            (\inp -> UserChangedResultSorting inp)
-                                            listOfLabelsForResultSort
-                                            (\inp -> inp)
-                                            chosenSort
-                                        )
-                                    ]
-                                ]
-                            ]
-                        ]
+                Loading (Just (SearchData body)) ->
+                    viewPaginationSortSelector language activeSearch body
 
                 _ ->
                     none
     in
     selectorView
+
+
+viewPaginationSortSelector : Language -> ActiveSearch -> SearchBody -> Element Msg
+viewPaginationSortSelector language activeSearch body =
+    let
+        pagination =
+            body.pagination
+
+        thisPage =
+            formatNumberByLanguage (toFloat pagination.thisPage) language
+
+        totalPages =
+            formatNumberByLanguage (toFloat pagination.totalPages) language
+
+        pageLabel =
+            extractLabelFromLanguageMap language localTranslations.page
+
+        pageInfo =
+            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
+
+        sorting =
+            body.sorts
+
+        listOfLabelsForResultSort =
+            List.map
+                (\d -> ( d.alias, extractLabelFromLanguageMap language d.label ))
+                sorting
+
+        chosenSort =
+            Maybe.withDefault "relevance" activeSearch.selectedResultSort
+    in
+    row
+        [ width fill ]
+        [ column
+            [ width (fillPortion 2) ]
+            [ text pageInfo ]
+        , column
+            [ width (fillPortion 3) ]
+            [ row
+                [ width fill
+                , spacing 10
+                ]
+                [ column
+                    [ width shrink ]
+                    [ text "Sort by" ]
+                , column
+                    [ width fill ]
+                    [ el
+                        []
+                        (dropdownSelect
+                            (\inp -> UserChangedResultSorting inp)
+                            listOfLabelsForResultSort
+                            (\inp -> inp)
+                            chosenSort
+                        )
+                    ]
+                ]
+            ]
+        ]
 
 
 viewSearchResultsError : Model -> Element Msg
@@ -415,12 +423,18 @@ viewSearchControlSection model =
                 Response (SearchData body) ->
                     viewSearchControls language activeSearch body
 
+                Loading (Just (SearchData body)) ->
+                    viewSearchControls language activeSearch body
+
                 _ ->
                     none
 
         activeFilters =
             case resp of
                 Response (SearchData _) ->
+                    viewActiveFilters language activeSearch
+
+                Loading (Just (SearchData _)) ->
                     viewActiveFilters language activeSearch
 
                 _ ->
