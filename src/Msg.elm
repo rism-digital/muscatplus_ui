@@ -5,7 +5,7 @@ import Element exposing (Device)
 import Http
 import Http.Detailed
 import Page.Model exposing (CurrentRecordViewTab)
-import Page.Query exposing (FacetBehaviour)
+import Page.Query exposing (FacetBehaviour, FacetMode, FacetSort)
 import Page.RecordTypes.Search exposing (FacetItem)
 import Page.Response exposing (ServerData)
 import Page.UI.Facets.RangeSlider as RangeSlider
@@ -69,6 +69,8 @@ type Msg
     | ClientJumpedToId
     | ClientResetViewport
     | UserChangedFacetBehaviour FacetBehaviour
+    | UserChangedFacetSort FacetSort
+    | UserChangedFacetMode FacetMode
     | UserChangedLanguageSelect String
     | UserChangedResultSorting String
     | UserClickedClosePreviewWindow

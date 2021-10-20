@@ -44,9 +44,7 @@ searchSubmit model =
             { oldSearch | preview = NoResponseToShow }
 
         url =
-            serverUrl
-                [ "search" ]
-                (List.append textQueryParameters notationQueryParameters)
+            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
     in
     ( { model
         | page = newPage

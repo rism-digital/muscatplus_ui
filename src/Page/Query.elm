@@ -1,8 +1,8 @@
-module Page.Query exposing (FacetBehaviour(..), Filter(..), QueryArgs, buildQueryParameters, defaultQueryArgs, parseStringToFacetBehaviour, queryParamsParser)
+module Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Filter(..), QueryArgs, buildQueryParameters, defaultQueryArgs, parseStringToFacetBehaviour, queryParamsParser)
 
 import Config as C
+import Dict exposing (Dict)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
-import Page.UI.Keyboard.Query exposing (notationParamParser)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
@@ -33,9 +33,19 @@ type FacetBehaviour
     | UnionBehaviour String
 
 
+{-|
+
+    The default sort order is set by the server
+
+-}
 type FacetSort
-    = CountSort String
-    | AlphaSort String
+    = CountSortOrder String
+    | AlphaSortOrder String
+
+
+type FacetMode
+    = CheckboxSelect String
+    | TextInputSelect String
 
 
 type alias QueryArgs =
@@ -46,7 +56,8 @@ type alias QueryArgs =
     , rows : Int
     , mode : ResultMode
     , facetBehaviours : List FacetBehaviour
-    , facetSorts : List FacetSort
+    , facetSorts : Dict String FacetSort
+    , facetModes : Dict String FacetMode
     }
 
 
@@ -59,7 +70,8 @@ defaultQueryArgs =
     , rows = C.defaultRows
     , mode = SourcesMode
     , facetBehaviours = []
-    , facetSorts = []
+    , facetSorts = Dict.empty
+    , facetModes = Dict.empty
     }
 
 
@@ -130,20 +142,36 @@ buildQueryParameters queryArgs =
                 queryArgs.facetBehaviours
 
         fsParams =
-            List.map
-                (\facetSort ->
-                    let
-                        sortStringValue =
-                            case facetSort of
-                                AlphaSort fieldName ->
-                                    fieldName ++ ":alpha"
+            Dict.toList queryArgs.facetSorts
+                |> List.map
+                    (\( key, facetSort ) ->
+                        let
+                            sortStringValue =
+                                case facetSort of
+                                    AlphaSortOrder fieldName ->
+                                        fieldName ++ ":alpha"
 
-                                CountSort fieldName ->
-                                    fieldName ++ ":count"
-                    in
-                    Url.Builder.string "fs" sortStringValue
-                )
-                queryArgs.facetSorts
+                                    CountSortOrder fieldName ->
+                                        fieldName ++ ":count"
+                        in
+                        Url.Builder.string "fs" sortStringValue
+                    )
+
+        fmParams =
+            Dict.toList queryArgs.facetModes
+                |> List.map
+                    (\( key, facetMode ) ->
+                        let
+                            modeStringValue =
+                                case facetMode of
+                                    TextInputSelect fieldName ->
+                                        fieldName ++ ":text"
+
+                                    CheckboxSelect fieldName ->
+                                        fieldName ++ ":check"
+                        in
+                        Url.Builder.string "fm" modeStringValue
+                    )
 
         pageParam =
             [ Url.Builder.string "page" (String.fromInt queryArgs.page) ]
@@ -156,7 +184,7 @@ buildQueryParameters queryArgs =
                 Nothing ->
                     []
     in
-    List.concat [ qParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam ]
+    List.concat [ qParam, modeParam, fqParams, fbParams, fsParams, fmParams, pageParam, sortParam ]
 
 
 queryParamsParser : Q.Parser QueryArgs
@@ -171,6 +199,7 @@ queryParamsParser =
         |> apply modeParamParser
         |> apply fbParamParser
         |> apply fsParamParser
+        |> apply fmParamParser
 
 
 fqParamParser : Q.Parser (List Filter)
@@ -204,30 +233,60 @@ facetBehaviourQueryStringToBehaviour fbList =
         )
 
 
-fsParamParser : Q.Parser (List FacetSort)
+fsParamParser : Q.Parser (Dict String FacetSort)
 fsParamParser =
     Q.custom "fs" (\a -> facetSortQueryStringToFacetSort a)
 
 
-facetSortQueryStringToFacetSort : List String -> List FacetSort
+facetSortQueryStringToFacetSort : List String -> Dict String FacetSort
 facetSortQueryStringToFacetSort fsList =
-    List.concat
-        (List.map
-            (\a ->
-                case String.split ":" a of
-                    [ field, value ] ->
-                        case value of
-                            "alpha" ->
-                                [ AlphaSort field ]
+    List.filterMap
+        (\a ->
+            case String.split ":" a of
+                [ field, value ] ->
+                    case value of
+                        "alpha" ->
+                            Just ( field, AlphaSortOrder field )
 
-                            _ ->
-                                [ CountSort field ]
+                        "count" ->
+                            Just ( field, CountSortOrder field )
 
-                    _ ->
-                        []
-            )
-            fsList
+                        _ ->
+                            Nothing
+
+                _ ->
+                    Nothing
         )
+        fsList
+        |> Dict.fromList
+
+
+fmParamParser : Q.Parser (Dict String FacetMode)
+fmParamParser =
+    Q.custom "fm" (\a -> facetModeQueryStringToFacetMode a)
+
+
+facetModeQueryStringToFacetMode : List String -> Dict String FacetMode
+facetModeQueryStringToFacetMode fmList =
+    List.filterMap
+        (\a ->
+            case String.split ":" a of
+                [ k, v ] ->
+                    case v of
+                        "check" ->
+                            Just ( k, CheckboxSelect k )
+
+                        "text" ->
+                            Just ( k, TextInputSelect k )
+
+                        _ ->
+                            Nothing
+
+                _ ->
+                    Nothing
+        )
+        fmList
+        |> Dict.fromList
 
 
 modeParamParser : Q.Parser ResultMode

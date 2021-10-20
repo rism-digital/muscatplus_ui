@@ -10,7 +10,7 @@ import Msg exposing (Msg)
 import Page.Converters exposing (convertFacetToFilter, convertFacetToResultMode)
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Model exposing (CurrentRecordViewTab(..), Response(..))
-import Page.Query exposing (FacetBehaviour(..), Filter(..), buildQueryParameters)
+import Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Filter(..), buildQueryParameters)
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..))
 import Page.Response.DataResponse
 import Page.Response.PageSearchResponse
@@ -325,6 +325,90 @@ update msg model =
                     { model | activeSearch = newSearch }
             in
             Search.searchSubmit newModel
+
+        Msg.UserChangedFacetSort sort ->
+            let
+                oldSearch =
+                    model.activeSearch
+
+                oldQuery =
+                    oldSearch.query
+
+                oldSorts =
+                    oldQuery.facetSorts
+
+                alias =
+                    case sort of
+                        CountSortOrder a ->
+                            a
+
+                        AlphaSortOrder a ->
+                            a
+
+                -- overwrites the existing value with
+                -- a new one. The value
+                -- of sort is already swapped in the view function.
+                newSorts =
+                    Dict.insert alias sort oldSorts
+
+                newQuery =
+                    { oldQuery | facetSorts = newSorts }
+
+                newSearch =
+                    { oldSearch | query = newQuery }
+
+                textQueryParameters =
+                    buildQueryParameters newSearch.query
+
+                url =
+                    serverUrl [ "search" ] textQueryParameters
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            ( newModel, Nav.pushUrl model.key url )
+
+        Msg.UserChangedFacetMode mode ->
+            let
+                oldSearch =
+                    model.activeSearch
+
+                oldQuery =
+                    oldSearch.query
+
+                oldModes =
+                    oldQuery.facetModes
+
+                alias =
+                    case mode of
+                        CheckboxSelect a ->
+                            a
+
+                        TextInputSelect a ->
+                            a
+
+                -- overwrites the existing value with
+                -- a new one. The value
+                -- of sort is already swapped in the view function.
+                newModes =
+                    Dict.insert alias mode oldModes
+
+                newQuery =
+                    { oldQuery | facetModes = newModes }
+
+                newSearch =
+                    { oldSearch | query = newQuery }
+
+                textQueryParameters =
+                    buildQueryParameters newSearch.query
+
+                url =
+                    serverUrl [ "search" ] textQueryParameters
+
+                newModel =
+                    { model | activeSearch = newSearch }
+            in
+            ( newModel, Nav.pushUrl model.key url )
 
         Msg.UserInteractedWithPianoKeyboard subMsg ->
             let

@@ -6,21 +6,21 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input as Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
+import Element.Input as Input exposing (checkbox, defaultCheckbox, labelHidden, labelLeft, labelRight)
 import Html
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import List.Extra as LE
 import Msg exposing (Msg(..))
 import Page.Converters exposing (convertFacetToFilter)
-import Page.Query exposing (FacetBehaviour(..), Filter(..), parseStringToFacetBehaviour)
+import Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Filter(..), parseStringToFacetBehaviour)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
+import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetModes(..), FacetSorts(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingSM)
 import Page.UI.Components exposing (dropdownSelect, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
-import Page.UI.Images exposing (checkedBoxSvg, institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, unionSvg, unknownSvg)
+import Page.UI.Images exposing (checkedBoxSvg, editSvg, institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, unionSvg, unknownSvg)
 import Page.UI.Keyboard as Keyboard
 import Page.UI.Keyboard.Model exposing (Keyboard(..))
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -147,30 +147,43 @@ viewFacet facetKey language activeSearch body =
         activeFilters =
             query.filters
 
-        activeSliders =
-            activeSearch.sliders
-
-        activeKeyboard =
-            activeSearch.keyboard
-
-        facetBehaviours =
-            query.facetBehaviours
-
-        expandedFacets =
-            activeSearch.expandedFacets
-
         facetView =
             case facetConf of
                 Just (ToggleFacetData facet) ->
                     viewToggleFacet language activeFilters facet
 
                 Just (RangeFacetData facet) ->
+                    let
+                        activeSliders =
+                            activeSearch.sliders
+                    in
                     viewRangeFacet language activeSliders activeFilters facet
 
                 Just (SelectFacetData facet) ->
-                    viewSelectFacet language facetBehaviours activeFilters expandedFacets facet
+                    let
+                        facetSorts =
+                            query.facetSorts
+
+                        expandedFacets =
+                            activeSearch.expandedFacets
+
+                        facetBehaviours =
+                            query.facetBehaviours
+
+                        facetConfig =
+                            { facetBehaviours = facetBehaviours
+                            , facetSorts = facetSorts
+                            , activeFilters = activeFilters
+                            , expandedFacets = expandedFacets
+                            }
+                    in
+                    viewSelectFacet language facetConfig facet
 
                 Just (NotationFacetData facet) ->
+                    let
+                        activeKeyboard =
+                            activeSearch.keyboard
+                    in
                     viewKeyboardControl language activeKeyboard
 
                 _ ->
@@ -240,14 +253,20 @@ viewRangeFacet language activeSliders activeFilters body =
         ]
 
 
+type alias SelectFacetConfig =
+    { facetBehaviours : List FacetBehaviour
+    , facetSorts : Dict String FacetSort
+    , activeFilters : List Filter
+    , expandedFacets : List String
+    }
+
+
 viewSelectFacet :
     Language
-    -> List FacetBehaviour
-    -> List Filter
-    -> List String
+    -> SelectFacetConfig
     -> SelectFacet
     -> Element Msg
-viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
+viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facetSorts } body =
     let
         facetAlias =
             body.alias
@@ -286,6 +305,67 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
 
             else
                 none
+
+        -- show the opposite icon from the current value so that
+        -- we can show the user a control to toggle the behaviour
+        toggledSortIcon sortType =
+            case sortType of
+                FacetSortCount ->
+                    sortAlphaDescSvg colourScheme.slateGrey
+
+                FacetSortAlpha ->
+                    sortNumericDescSvg colourScheme.slateGrey
+
+        toggledSortMsg sortType =
+            case sortType of
+                FacetSortCount ->
+                    AlphaSortOrder facetAlias
+
+                FacetSortAlpha ->
+                    CountSortOrder facetAlias
+
+        sorts =
+            body.sorts
+
+        modes =
+            body.modes
+
+        toggledModeIcon modeType =
+            case modeType of
+                FacetModeCheck ->
+                    editSvg colourScheme.slateGrey
+
+                FacetModeText ->
+                    checkedBoxSvg colourScheme.slateGrey
+
+        toggledModeMsg modeType =
+            case modeType of
+                FacetModeCheck ->
+                    TextInputSelect facetAlias
+
+                FacetModeText ->
+                    CheckboxSelect facetAlias
+
+        facetBodyDisplay modeType =
+            case modeType of
+                FacetModeCheck ->
+                    column
+                        [ width fill
+                        , spacing 5
+                        ]
+                        (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
+
+                FacetModeText ->
+                    column
+                        [ width fill ]
+                        [ Input.text
+                            []
+                            { onChange = \a -> NothingHappened
+                            , text = ""
+                            , placeholder = Nothing
+                            , label = labelHidden ""
+                            }
+                        ]
 
         behaviourOptions =
             body.behaviours
@@ -353,19 +433,9 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
                 ]
             , row
                 [ width fill
-                , padding 5
-                ]
-                []
-            , row
-                [ width fill
                 , padding 10
                 ]
-                [ column
-                    [ width fill
-                    , spacing 5
-                    ]
-                    (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
-                ]
+                [ facetBodyDisplay modes.current ]
             , row
                 [ width fill
                 , padding 10
@@ -388,13 +458,15 @@ viewSelectFacet language facetBehaviours activeFilters expandedFacets body =
                         , el
                             [ width (px 20)
                             , height (px 20)
+                            , onClick (UserChangedFacetSort (toggledSortMsg sorts.current))
                             ]
-                            (sortNumericDescSvg colourScheme.slateGrey)
+                            (toggledSortIcon sorts.current)
                         , el
                             [ width (px 20)
                             , height (px 20)
+                            , onClick (UserChangedFacetMode (toggledModeMsg modes.current))
                             ]
-                            (checkedBoxSvg colourScheme.slateGrey)
+                            (toggledModeIcon modes.current)
                         ]
                     ]
                 , showLink

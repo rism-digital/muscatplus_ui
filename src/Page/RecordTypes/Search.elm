@@ -2,7 +2,7 @@ module Page.RecordTypes.Search exposing (..)
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder, andThen, bool, float, int, list, nullable, string)
-import Json.Decode.Pipeline exposing (hardcoded, optional, required)
+import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
@@ -120,23 +120,13 @@ type alias ToggleFacet =
     }
 
 
-type SelectFacetMode
-    = CheckboxSelect
-    | TextInputSelect
-
-
-type SelectFacetSort
-    = CountOrder
-    | IndexOrder
-
-
 type alias SelectFacet =
     { alias : String
     , label : LanguageMap
     , items : List FacetItem
-    , behaviours : FacetBehaviour
-    , mode : SelectFacetMode
-    , sort : SelectFacetSort
+    , behaviours : FacetBehaviourOptions
+    , sorts : FacetSortOptions
+    , modes : FacetModeOptions
     }
 
 
@@ -146,15 +136,48 @@ type alias NotationFacet =
     }
 
 
-type alias FacetBehaviour =
+type FacetBehaviours
+    = FacetBehaviourIntersection
+    | FacetBehaviourUnion
+
+
+type alias FacetBehaviourOptions =
     { label : LanguageMap
-    , items : List FacetBehaviourLabelValue
+    , items : List FacetOptionsLabelValue
+    , default : FacetBehaviours
+    , current : FacetBehaviours
     }
 
 
-type alias FacetBehaviourLabelValue =
+type FacetSorts
+    = FacetSortCount
+    | FacetSortAlpha
+
+
+type alias FacetSortOptions =
+    { label : LanguageMap
+    , items : List FacetOptionsLabelValue
+    , default : FacetSorts
+    , current : FacetSorts
+    }
+
+
+type alias FacetOptionsLabelValue =
     { label : LanguageMap
     , value : String
+    }
+
+
+type FacetModes
+    = FacetModeCheck
+    | FacetModeText
+
+
+type alias FacetModeOptions =
+    { label : LanguageMap
+    , items : List FacetOptionsLabelValue
+    , default : FacetModes
+    , current : FacetModes
     }
 
 
@@ -202,10 +225,6 @@ searchResultDecoder =
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "flags" (Decode.maybe searchResultFlagsDecoder) Nothing
-
-
-
---|> optional "flags" (Decode.maybe searchResultFlagsDecoder) Nothing
 
 
 searchResultFlagsDecoder : Decoder SearchResultFlags
@@ -335,9 +354,9 @@ selectFacetDecoder =
         |> required "alias" string
         |> required "label" languageMapLabelDecoder
         |> required "items" (Decode.list facetItemDecoder)
-        |> required "behaviours" facetBehaviourDecoder
-        |> hardcoded CheckboxSelect
-        |> hardcoded CountOrder
+        |> required "behaviours" facetBehaviourOptionsDecoder
+        |> required "sorts" facetSortOptionsDecoder
+        |> required "modes" facetModeOptionsDecoder
 
 
 notationFacetDecoder : Decoder NotationFacet
@@ -363,16 +382,87 @@ facetItemDecoder =
         |> required "count" float
 
 
-facetBehaviourDecoder : Decoder FacetBehaviour
-facetBehaviourDecoder =
-    Decode.succeed FacetBehaviour
+facetBehaviourOptionsDecoder : Decoder FacetBehaviourOptions
+facetBehaviourOptionsDecoder =
+    Decode.succeed FacetBehaviourOptions
         |> required "label" languageMapLabelDecoder
-        |> required "items" (list facetBehaviourLabelValueDecoder)
+        |> required "items" (list facetOptionsLabelValueDecoder)
+        |> required "default" facetBehavioursDecoder
+        |> required "current" facetBehavioursDecoder
 
 
-facetBehaviourLabelValueDecoder : Decoder FacetBehaviourLabelValue
-facetBehaviourLabelValueDecoder =
-    Decode.succeed FacetBehaviourLabelValue
+facetBehavioursDecoder : Decoder FacetBehaviours
+facetBehavioursDecoder =
+    Decode.string
+        |> Decode.andThen
+            (\str ->
+                case str of
+                    "intersection" ->
+                        Decode.succeed FacetBehaviourIntersection
+
+                    "union" ->
+                        Decode.succeed FacetBehaviourUnion
+
+                    _ ->
+                        Decode.fail ("Unknown value " ++ str ++ " for facet behaviour")
+            )
+
+
+facetSortOptionsDecoder : Decoder FacetSortOptions
+facetSortOptionsDecoder =
+    Decode.succeed FacetSortOptions
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list facetOptionsLabelValueDecoder)
+        |> required "default" facetSortDecoder
+        |> required "current" facetSortDecoder
+
+
+facetSortDecoder : Decoder FacetSorts
+facetSortDecoder =
+    Decode.string
+        |> Decode.andThen
+            (\str ->
+                case str of
+                    "count" ->
+                        Decode.succeed FacetSortCount
+
+                    "alpha" ->
+                        Decode.succeed FacetSortAlpha
+
+                    _ ->
+                        Decode.fail ("Unknown value " ++ str ++ " for facet sort")
+            )
+
+
+facetModeOptionsDecoder : Decoder FacetModeOptions
+facetModeOptionsDecoder =
+    Decode.succeed FacetModeOptions
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list facetOptionsLabelValueDecoder)
+        |> required "default" facetModeDecoder
+        |> required "current" facetModeDecoder
+
+
+facetModeDecoder : Decoder FacetModes
+facetModeDecoder =
+    Decode.string
+        |> Decode.andThen
+            (\str ->
+                case str of
+                    "check" ->
+                        Decode.succeed FacetModeCheck
+
+                    "text" ->
+                        Decode.succeed FacetModeText
+
+                    _ ->
+                        Decode.fail ("Unknown value " ++ str ++ " for facet mode")
+            )
+
+
+facetOptionsLabelValueDecoder : Decoder FacetOptionsLabelValue
+facetOptionsLabelValueDecoder =
+    Decode.succeed FacetOptionsLabelValue
         |> required "label" languageMapLabelDecoder
         |> required "value" string
 
