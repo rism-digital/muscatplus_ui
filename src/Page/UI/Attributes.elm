@@ -11,7 +11,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerH
 
 bodyFont : Attribute msg
 bodyFont =
-    Font.family [ Font.typeface "Inter UI", Font.sansSerif ]
+    Font.family [ Font.typeface "Noto Sans", Font.sansSerif ]
 
 
 bodyFontColour : Attribute msg
