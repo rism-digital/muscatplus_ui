@@ -16,7 +16,7 @@ module Page.RecordTypes.Shared exposing
 import Json.Decode as Decode exposing (Decoder, andThen, bool, float, list, string)
 import Json.Decode.Extra exposing (datetime)
 import Json.Decode.Pipeline exposing (required)
-import Language exposing (LanguageMap, LanguageNumericMap, languageMapDecoder)
+import Language exposing (LanguageMap, languageMapDecoder)
 import Page.RecordTypes exposing (RecordType, recordTypeFromJsonType)
 import Time
 
@@ -90,18 +90,30 @@ recordHistoryDecoder =
 
 
 type alias SourceRecordDescriptors =
-    { sourceType : SourceType
-    , contentType : SourceContentType
-    , recordType : SourceRecordType
+    { sourceType : SourceTypeRecordBody
+    , contentTypes : List SourceContentTypeRecordBody
+    , recordType : SourceRecordTypeRecordBody
     }
+
+
+type alias SourceTypeRecordBody =
+    { label : LanguageMap, type_ : SourceType }
+
+
+type alias SourceContentTypeRecordBody =
+    { label : LanguageMap, type_ : SourceContentType }
+
+
+type alias SourceRecordTypeRecordBody =
+    { label : LanguageMap, type_ : SourceRecordType }
 
 
 sourceRecordDescriptorsDecoder : Decoder SourceRecordDescriptors
 sourceRecordDescriptorsDecoder =
     Decode.succeed SourceRecordDescriptors
-        |> required "sourceType" sourceTypeDecoder
-        |> required "contentType" sourceContentTypeDecoder
-        |> required "recordType" sourceRecordTypeDecoder
+        |> required "sourceType" sourceTypeRecordBodyDecoder
+        |> required "contentTypes" (list sourceContentTypeRecordBodyDecoder)
+        |> required "recordType" sourceRecordTypeRecordBodyDecoder
 
 
 type SourceType
@@ -126,6 +138,13 @@ sourceTypeFromJsonType jsonType =
         |> List.head
         |> Maybe.withDefault ( "", UnspecifiedSource )
         |> Tuple.second
+
+
+sourceTypeRecordBodyDecoder : Decoder SourceTypeRecordBody
+sourceTypeRecordBodyDecoder =
+    Decode.succeed SourceTypeRecordBody
+        |> required "label" languageMapLabelDecoder
+        |> required "type" sourceTypeDecoder
 
 
 sourceTypeDecoder : Decoder SourceType
@@ -156,6 +175,13 @@ sourceRecordTypeFromJsonType jsonType =
         |> Tuple.second
 
 
+sourceRecordTypeRecordBodyDecoder : Decoder SourceRecordTypeRecordBody
+sourceRecordTypeRecordBodyDecoder =
+    Decode.succeed SourceRecordTypeRecordBody
+        |> required "label" languageMapLabelDecoder
+        |> required "type" sourceRecordTypeDecoder
+
+
 sourceRecordTypeDecoder : Decoder SourceRecordType
 sourceRecordTypeDecoder =
     Decode.string
@@ -184,6 +210,13 @@ sourceContentTypeFromJsonType jsonType =
         |> List.head
         |> Maybe.withDefault ( "", MusicalContent )
         |> Tuple.second
+
+
+sourceContentTypeRecordBodyDecoder : Decoder SourceContentTypeRecordBody
+sourceContentTypeRecordBodyDecoder =
+    Decode.succeed SourceContentTypeRecordBody
+        |> required "label" languageMapLabelDecoder
+        |> required "type" sourceContentTypeDecoder
 
 
 sourceContentTypeDecoder : Decoder SourceContentType
