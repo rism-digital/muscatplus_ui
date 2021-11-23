@@ -8,7 +8,7 @@ import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFes
 import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitutionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
-import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
+import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, SourceRecordDescriptors, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder, sourceRecordDescriptorsDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 
 
@@ -17,6 +17,7 @@ type alias FullSourceBody =
     , id : String
     , label : LanguageMap
     , typeLabel : LanguageMap
+    , record : SourceRecordDescriptors
     , partOf : Maybe PartOfSectionBody
     , contents : Maybe ContentsSectionBody
     , materialGroups : Maybe MaterialGroupsSectionBody
@@ -129,6 +130,7 @@ sourceBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
+        |> required "record" sourceRecordDescriptorsDecoder
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "contents" (Decode.maybe contentsSectionBodyDecoder) Nothing
         |> optional "materialGroups" (Decode.maybe materialGroupsSectionBodyDecoder) Nothing
