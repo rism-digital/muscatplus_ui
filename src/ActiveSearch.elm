@@ -2,7 +2,9 @@ module ActiveSearch exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
+import List.Extra as LE
 import Page.Query exposing (Filter, QueryArgs)
+import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.Route exposing (Route(..))
 import Page.UI.Keyboard as Keyboard
 
@@ -50,6 +52,35 @@ setActiveSearch newSearch oldRecord =
     { oldRecord | activeSearch = newSearch }
 
 
+toSelectedMode : { a | selectedMode : ResultMode } -> ResultMode
+toSelectedMode model =
+    model.selectedMode
+
+
 toKeyboard : { a | keyboard : Keyboard.Model } -> Keyboard.Model
 toKeyboard model =
     model.keyboard
+
+
+setKeyboard : Keyboard.Model -> { a | keyboard : Keyboard.Model } -> { a | keyboard : Keyboard.Model }
+setKeyboard newKeyboard oldRecord =
+    { oldRecord | keyboard = newKeyboard }
+
+
+toExpandedFacets : { a | expandedFacets : List String } -> List String
+toExpandedFacets model =
+    model.expandedFacets
+
+
+setExpandedFacets : List String -> { a | expandedFacets : List String } -> { a | expandedFacets : List String }
+setExpandedFacets newFacets oldRecord =
+    { oldRecord | expandedFacets = newFacets }
+
+
+toggleExpandedFacets : String -> List String -> List String
+toggleExpandedFacets newFacet oldFacets =
+    if List.member newFacet oldFacets then
+        LE.remove newFacet oldFacets
+
+    else
+        newFacet :: oldFacets

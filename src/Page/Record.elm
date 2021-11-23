@@ -8,6 +8,7 @@ import Page.Route exposing (Route)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
+import Viewport exposing (jumpToId)
 
 
 type alias Model =
@@ -65,8 +66,10 @@ update session msg model =
         UserClickedRecordViewTabPagination url ->
             ( model, Cmd.none )
 
-        UserClickedToCItem item ->
-            ( model, Cmd.none )
+        UserClickedToCItem idParam ->
+            ( model
+            , jumpToId NothingHappened idParam
+            )
 
         UserInputTextInPageQueryBox query ->
             ( model, Cmd.none )

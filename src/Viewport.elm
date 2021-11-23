@@ -1,7 +1,6 @@
 module Viewport exposing (..)
 
 import Browser.Dom as Dom
-import Msg exposing (Msg(..))
 import Task
 
 

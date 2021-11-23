@@ -122,18 +122,18 @@ view model =
                 , width fill
                 , height fill
                 ]
-                [ loadingIndicator pageSession model
-                , siteHeader pageSession model
+                [ loadingIndicator model
+                , siteHeader pageSession
                 , pageView
-                , siteFooter pageSession model
+                , siteFooter pageSession
                 ]
             )
         ]
     }
 
 
-loadingIndicator : Session -> Model -> Element Msg
-loadingIndicator session model =
+loadingIndicator : Model -> Element Msg
+loadingIndicator model =
     let
         loadingView =
             row
@@ -156,12 +156,21 @@ loadingIndicator session model =
         SourcePage _ pageModel ->
             chooseView pageModel.response
 
+        PersonPage _ pageModel ->
+            chooseView pageModel.response
+
+        InstitutionPage _ pageModel ->
+            chooseView pageModel.response
+
+        FrontPage _ pageModel ->
+            chooseView pageModel.response
+
         _ ->
             none
 
 
-siteHeader : Session -> Model -> Element Msg
-siteHeader session model =
+siteHeader : Session -> Element Msg
+siteHeader session =
     row
         [ width fill
         , height (px headerHeight)
@@ -209,8 +218,8 @@ siteHeader session model =
         ]
 
 
-siteFooter : Session -> Model -> Element Msg
-siteFooter session model =
+siteFooter : Session -> Element Msg
+siteFooter session =
     let
         muscatLink =
             if session.showMuscatLinks == True then

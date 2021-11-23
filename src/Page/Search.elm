@@ -1,14 +1,15 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, toActiveSearch, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setExpandedFacets, setKeyboard, toActiveSearch, toExpandedFacets, toKeyboard, toSelectedMode, toggleExpandedFacets)
 import Browser.Navigation as Nav
-import List.Extra as LE
 import Page.Converters exposing (convertFacetToResultMode)
 import Page.Query exposing (Filter(..), buildQueryParameters, resetPage, setFilters, setMode, setQuery, setQueryArgs, setSort, toFilters, toQueryArgs, toggleFilters)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
+import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery, setNotation, toNotation)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
@@ -28,13 +29,42 @@ type alias Msg =
 
 init : Route -> SearchPageModel
 init route =
-    load route Nothing
-
-
-load : Route -> Maybe ServerData -> SearchPageModel
-load route oldData =
-    { response = Loading oldData
+    { response = Loading Nothing
     , activeSearch = ActiveSearch.init route
+    , preview = NoResponseToShow
+    , selectedResult = Nothing
+    }
+
+
+load : SearchPageModel -> SearchPageModel
+load oldModel =
+    let
+        oldData =
+            case oldModel.response of
+                Response serverData ->
+                    Just serverData
+
+                _ ->
+                    Nothing
+
+        oldKeyboard =
+            toActiveSearch oldModel
+                |> toKeyboard
+
+        oldRenderedNotation =
+            oldKeyboard
+                |> toNotation
+
+        newKeyboard =
+            oldKeyboard
+                |> setNotation oldRenderedNotation
+
+        newActiveSearch =
+            toActiveSearch oldModel
+                |> setKeyboard newKeyboard
+    in
+    { response = Loading oldData
+    , activeSearch = newActiveSearch
     , preview = NoResponseToShow
     , selectedResult = Nothing
     }
@@ -100,10 +130,28 @@ update : Session -> SearchMsg -> SearchPageModel -> ( SearchPageModel, Cmd Searc
 update session msg model =
     case msg of
         ServerRespondedWithSearchData (Ok ( _, response )) ->
+            let
+                currentMode =
+                    toActiveSearch model
+                        |> toSelectedMode
+
+                keyboardQuery =
+                    toActiveSearch model
+                        |> toKeyboard
+                        |> toKeyboardQuery
+
+                notationRenderCmd =
+                    case currentMode of
+                        IncipitsMode ->
+                            Cmd.map UserInteractedWithPianoKeyboard (buildNotationRequestQuery keyboardQuery)
+
+                        _ ->
+                            Cmd.none
+            in
             ( { model
                 | response = Response response
               }
-            , Cmd.none
+            , notationRenderCmd
             )
 
         ServerRespondedWithSearchData (Err error) ->
@@ -142,8 +190,19 @@ update session msg model =
         UserChangedFacetMode facetMode ->
             ( model, Cmd.none )
 
-        UserClickedFacetExpand facet ->
-            ( model, Cmd.none )
+        UserClickedFacetExpand alias ->
+            let
+                newExpandedFacets =
+                    toActiveSearch model
+                        |> toExpandedFacets
+                        |> toggleExpandedFacets alias
+
+                newModel =
+                    toActiveSearch model
+                        |> setExpandedFacets newExpandedFacets
+                        |> flip setActiveSearch model
+            in
+            ( newModel, Cmd.none )
 
         UserClickedFacetItem facet item isClicked ->
             ( model, Cmd.none )
@@ -206,7 +265,33 @@ update session msg model =
             searchSubmit session newModel
 
         UserClickedRemoveActiveFilter activeAlias activeValue ->
-            ( model, Cmd.none )
+            let
+                activeSearch =
+                    toActiveSearch model
+
+                oldFilters =
+                    activeSearch
+                        |> toQueryArgs
+                        |> toFilters
+
+                newFilters =
+                    List.filter
+                        (\(Filter filterAlias filterValue) ->
+                            not ((filterAlias == activeAlias) && (filterValue == activeValue))
+                        )
+                        oldFilters
+
+                newQueryArgs =
+                    activeSearch
+                        |> toQueryArgs
+                        |> setFilters newFilters
+
+                newModel =
+                    activeSearch
+                        |> setQueryArgs newQueryArgs
+                        |> flip setActiveSearch model
+            in
+            searchSubmit session newModel
 
         UserClickedClearSearchQueryBox ->
             let
@@ -271,13 +356,34 @@ update session msg model =
             )
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
-            ( model, Cmd.none )
+            let
+                oldKeyboard =
+                    toActiveSearch model
+                        |> toKeyboard
+
+                ( keyboardModel, keyboardCmd ) =
+                    Keyboard.update keyboardMsg oldKeyboard
+
+                newModel =
+                    toActiveSearch model
+                        |> setKeyboard keyboardModel
+                        |> flip setActiveSearch model
+            in
+            ( newModel
+            , Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
+            )
 
         UserClickedPianoKeyboardSearchSubmitButton ->
-            ( model, Cmd.none )
+            searchSubmit session model
 
         UserClickedPianoKeyboardSearchClearButton ->
-            ( model, Cmd.none )
+            let
+                newModel =
+                    toActiveSearch model
+                        |> setKeyboard Keyboard.initModel
+                        |> flip setActiveSearch model
+            in
+            searchSubmit session newModel
 
         NothingHappened ->
             ( model, Cmd.none )

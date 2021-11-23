@@ -54,6 +54,16 @@ initModel =
     }
 
 
+toNotation : { a | notation : Maybe String } -> Maybe String
+toNotation model =
+    model.notation
+
+
+setNotation : Maybe String -> { a | notation : Maybe String } -> { a | notation : Maybe String }
+setNotation newNotation oldRecord =
+    { oldRecord | notation = newNotation }
+
+
 buildUpdateQuery : Maybe (List String) -> Model -> ( Model, Cmd Msg )
 buildUpdateQuery newNoteData model =
     let
@@ -93,8 +103,12 @@ buildNotationRequestQuery keyboardQuery =
 update : Msg -> KeyboardModel -> ( KeyboardModel, Cmd Msg )
 update msg model =
     case msg of
-        ServerRespondedWithRenderedNotation (Ok ( metadata, response )) ->
-            ( { model | notation = Just response }, Cmd.none )
+        ServerRespondedWithRenderedNotation (Ok ( _, response )) ->
+            ( { model
+                | notation = Just response
+              }
+            , Cmd.none
+            )
 
         ServerRespondedWithRenderedNotation (Err error) ->
             ( model, Cmd.none )

@@ -1,5 +1,6 @@
 module Update exposing (..)
 
+import ActiveSearch exposing (setActiveSearch, toActiveSearch)
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (setDevice)
@@ -9,7 +10,7 @@ import Msg exposing (Msg)
 import Page.Front as FrontPage
 import Page.NotFound as NotFoundPage
 import Page.Record as RecordPage
-import Page.Route as Route exposing (Route(..), parseUrl, setRoute, setUrl)
+import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Response exposing (Response(..))
@@ -49,12 +50,7 @@ changePage url model =
                 newPageModel =
                     case model of
                         SearchPage _ pageModel ->
-                            case pageModel.response of
-                                Response serverData ->
-                                    SearchPage.load route (Just serverData)
-
-                                _ ->
-                                    SearchPage.init route
+                            SearchPage.load pageModel
 
                         _ ->
                             SearchPage.init route
@@ -156,13 +152,13 @@ update msg model =
             RecordPage.update session recordMsg pageModel
                 |> updateWith (PlacePage session) Msg.UserInteractedWithRecordPage model
 
-        ( Msg.UserInteractedWithNotFoundPage notFoundMsg, _ ) ->
+        ( Msg.UserInteractedWithNotFoundPage _, _ ) ->
             ( model, Cmd.none )
 
         ( Msg.NothingHappened, _ ) ->
             ( model, Cmd.none )
 
-        ( _, _ ) ->
+        _ ->
             ( model, Cmd.none )
 
 
