@@ -11,6 +11,11 @@ type alias KeyboardModel =
     }
 
 
+toKeyboardQuery : { a | query : KeyboardQuery } -> KeyboardQuery
+toKeyboardQuery model =
+    model.query
+
+
 type alias KeyboardQuery =
     { clef : Clef
     , timeSignature : TimeSignature

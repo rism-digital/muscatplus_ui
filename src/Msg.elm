@@ -2,14 +2,10 @@ module Msg exposing (Msg(..))
 
 import Browser exposing (UrlRequest)
 import Element exposing (Device)
-import Http
-import Http.Detailed
-import Page.Model exposing (CurrentRecordViewTab)
-import Page.Query exposing (FacetBehaviour, FacetMode, FacetSort)
-import Page.RecordTypes.Search exposing (FacetItem)
-import Page.Response exposing (ServerData)
-import Page.UI.Facets.RangeSlider as RangeSlider
-import Page.UI.Keyboard as Keyboard
+import Page.Front as Front
+import Page.NotFound as NotFound
+import Page.Record as Record
+import Page.Search as Search
 import Url exposing (Url)
 
 
@@ -62,37 +58,12 @@ import Url exposing (Url)
 
 -}
 type Msg
-    = ServerRespondedWithData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
-    | ServerRespondedWithPreview (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
-    | ServerRespondedWithPageSearch (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
-    | ClientChangedUrl Url
-    | ClientJumpedToId
-    | ClientResetViewport
-    | UserChangedFacetBehaviour FacetBehaviour
-    | UserChangedFacetSort FacetSort
-    | UserChangedFacetMode FacetMode
+    = ClientChangedUrl Url
     | UserChangedLanguageSelect String
-    | UserChangedResultSorting String
-    | UserClickedClosePreviewWindow
-    | UserClickedFacetExpand String
-    | UserClickedFacetItem String FacetItem Bool
-    | UserClickedFacetToggle String
-    | UserClickedModeItem String FacetItem Bool
-    | UserClickedPageSearchSubmitButton String
-    | UserClickedRecordViewTab CurrentRecordViewTab
-    | UserClickedRecordViewTabPagination String
-    | UserClickedRemoveActiveFilter String String
-    | UserClickedClearSearchQueryBox
-    | UserClickedSearchResultsPagination String
-    | UserClickedSearchResultForPreview String
-    | UserTriggeredSearchSubmit
-    | UserClickedToCItem String
-    | UserInputTextInPageQueryBox String
-    | UserInputTextInQueryBox String
-    | UserInteractedWithPianoKeyboard Keyboard.Msg
-    | UserClickedPianoKeyboardSearchSubmitButton
-    | UserClickedPianoKeyboardSearchClearButton
-    | UserMovedRangeSlider String RangeSlider.Msg
     | UserRequestedUrlChange UrlRequest
     | UserResizedWindow Device
+    | UserInteractedWithFrontPage Front.Msg
+    | UserInteractedWithSearchPage Search.Msg
+    | UserInteractedWithRecordPage Record.Msg
+    | UserInteractedWithNotFoundPage NotFound.Msg
     | NothingHappened -- for stubbing out messages and development, a.k.a. 'NoOp'

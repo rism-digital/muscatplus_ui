@@ -1,4 +1,4 @@
-module Page.Route exposing (Route(..), parseUrl)
+module Page.Route exposing (Route(..), parseUrl, setRoute, setUrl)
 
 import Page.Query exposing (QueryArgs, queryParamsParser)
 import Page.UI.Keyboard.Model exposing (KeyboardQuery)
@@ -41,3 +41,13 @@ routeParser =
         , P.map FestivalPageRoute (s "festivals" </> P.int)
         , P.map SubjectPageRoute (s "subjects" </> P.int)
         ]
+
+
+setRoute : Route -> { a | route : Route } -> { a | route : Route }
+setRoute newRoute oldRecord =
+    { oldRecord | route = newRoute }
+
+
+setUrl : Url -> { a | url : Url } -> { a | url : Url }
+setUrl newUrl oldRecord =
+    { oldRecord | url = newUrl }

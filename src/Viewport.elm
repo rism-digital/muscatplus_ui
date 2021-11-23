@@ -10,8 +10,8 @@ import Task
     Scrolls the Browser viewport so that the ID is visible.
 
 -}
-jumpToId : String -> Cmd Msg
-jumpToId id =
+jumpToId : msg -> String -> Cmd msg
+jumpToId sendMsg id =
     Dom.getElement id
         |> Task.andThen
             (\info ->
@@ -21,18 +21,19 @@ jumpToId id =
             )
         |> Task.attempt
             (\_ ->
-                ClientJumpedToId
+                sendMsg
             )
 
 
-resetViewport : Cmd Msg
-resetViewport =
+resetViewport : msg -> Cmd msg
+resetViewport sendMsg =
     Dom.setViewport 0 0
-        |> Task.attempt (\_ -> ClientResetViewport)
+        |> Task.attempt
+            (\_ -> sendMsg)
 
 
-resetViewportOf : String -> Cmd Msg
-resetViewportOf id =
+resetViewportOf : msg -> String -> Cmd msg
+resetViewportOf sendMsg id =
     Dom.setViewportOf id 0 0
         |> Task.attempt
-            (\_ -> ClientResetViewport)
+            (\_ -> sendMsg)

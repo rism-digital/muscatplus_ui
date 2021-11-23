@@ -14,7 +14,7 @@ import Page.RecordTypes.Place exposing (placeBodyDecoder)
 import Page.RecordTypes.Root exposing (frontBodyDecoder)
 import Page.RecordTypes.Search exposing (searchBodyDecoder)
 import Page.RecordTypes.Source exposing (sourceBodyDecoder)
-import Page.Response exposing (ServerData(..))
+import Response exposing (ServerData(..))
 
 
 recordResponseDecoder : Decoder ServerData

@@ -253,13 +253,14 @@ dropdownSelectOption val name choiceFn currentChoice =
 
 -}
 searchKeywordInput :
-    { submitMsg : msg
-    , changeMsg : String -> msg
-    }
+    Language
+    ->
+        { submitMsg : msg
+        , changeMsg : String -> msg
+        }
     -> String
-    -> Language
     -> Element msg
-searchKeywordInput msgs queryText currentLanguage =
+searchKeywordInput language msgs queryText =
     row
         [ centerX
         , centerY
@@ -282,9 +283,9 @@ searchKeywordInput msgs queryText currentLanguage =
                 , paddingXY 10 12
                 ]
                 { onChange = \inp -> msgs.changeMsg inp
-                , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap currentLanguage localTranslations.queryEnter)))
+                , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
                 , text = queryText
-                , label = Input.labelHidden (extractLabelFromLanguageMap currentLanguage localTranslations.search)
+                , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                 }
             ]
         , column
@@ -302,7 +303,7 @@ searchKeywordInput msgs queryText currentLanguage =
                 , headingSM
                 ]
                 { onPress = Just msgs.submitMsg
-                , label = text (extractLabelFromLanguageMap currentLanguage localTranslations.search)
+                , label = text (extractLabelFromLanguageMap language localTranslations.search)
                 }
             ]
         ]

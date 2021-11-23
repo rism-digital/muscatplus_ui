@@ -90,7 +90,7 @@ buildNotationRequestQuery keyboardQuery =
     createSvgRequest ServerRespondedWithRenderedNotation url
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> KeyboardModel -> ( KeyboardModel, Cmd Msg )
 update msg model =
     case msg of
         ServerRespondedWithRenderedNotation (Ok ( metadata, response )) ->

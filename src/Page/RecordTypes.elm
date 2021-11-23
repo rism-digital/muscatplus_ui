@@ -13,32 +13,22 @@ type RecordType
     | Unknown
 
 
+recordTypeOptions : List ( String, RecordType )
+recordTypeOptions =
+    [ ( "rism:Source", Source )
+    , ( "rism:Person", Person )
+    , ( "rism:Institution", Institution )
+    , ( "rism:Incipit", Incipit )
+    , ( "rism:Place", Place )
+    , ( "rism:LiturgicalFestival", Festival )
+    , ( "Collection", CollectionSearchResult )
+    , ( "rism:Root", Root )
+    ]
+
+
 recordTypeFromJsonType : String -> RecordType
 recordTypeFromJsonType jsonType =
-    case jsonType of
-        "rism:Source" ->
-            Source
-
-        "rism:Person" ->
-            Person
-
-        "rism:Institution" ->
-            Institution
-
-        "rism:Incipit" ->
-            Incipit
-
-        "rism:Place" ->
-            Place
-
-        "rism:LiturgicalFestival" ->
-            Festival
-
-        "Collection" ->
-            CollectionSearchResult
-
-        "rism:Root" ->
-            Root
-
-        _ ->
-            Unknown
+    List.filter (\( str, _ ) -> str == jsonType) recordTypeOptions
+        |> List.head
+        |> Maybe.withDefault ( "", Unknown )
+        |> Tuple.second

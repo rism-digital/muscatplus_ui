@@ -9,7 +9,7 @@ import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, label)
 
 
-viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element Msg
+viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
 viewRelationshipsSection language relSection =
     row
         [ width fill

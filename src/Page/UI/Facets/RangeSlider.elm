@@ -31,7 +31,6 @@ Copied and customized from <https://github.com/stephenreddek/elm-range-slider/>
 
 -}
 
-import Browser
 import Browser.Events
 import Css
 import Css.Global

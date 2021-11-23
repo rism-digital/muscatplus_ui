@@ -1,7 +1,27 @@
-module Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Filter(..), QueryArgs, buildQueryParameters, defaultQueryArgs, parseStringToFacetBehaviour, queryParamsParser)
+module Page.Query exposing
+    ( FacetBehaviour(..)
+    , FacetMode(..)
+    , FacetSort(..)
+    , Filter(..)
+    , QueryArgs
+    , buildQueryParameters
+    , defaultQueryArgs
+    , parseStringToFacetBehaviour
+    , queryParamsParser
+    , resetPage
+    , setFilters
+    , setMode
+    , setQuery
+    , setQueryArgs
+    , setSort
+    , toFilters
+    , toQueryArgs
+    , toggleFilters
+    )
 
 import Config as C
 import Dict exposing (Dict)
+import List.Extra as LE
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
@@ -59,6 +79,72 @@ type alias QueryArgs =
     , facetSorts : Dict String FacetSort
     , facetModes : Dict String FacetMode
     }
+
+
+toQueryArgs : { a | query : QueryArgs } -> QueryArgs
+toQueryArgs activeSearch =
+    activeSearch.query
+
+
+setQueryArgs : QueryArgs -> { a | query : QueryArgs } -> { a | query : QueryArgs }
+setQueryArgs newQuery oldRecord =
+    { oldRecord | query = newQuery }
+
+
+toMode : { a | mode : ResultMode } -> ResultMode
+toMode queryArgs =
+    queryArgs.mode
+
+
+toFilters : { a | filters : List Filter } -> List Filter
+toFilters queryArgs =
+    queryArgs.filters
+
+
+toggleFilters : Filter -> List Filter -> List Filter
+toggleFilters newFilter oldFilters =
+    if List.member newFilter oldFilters == True then
+        LE.remove newFilter oldFilters
+
+    else
+        newFilter :: oldFilters
+
+
+setFilters : List Filter -> { a | filters : List Filter } -> { a | filters : List Filter }
+setFilters newFilters oldRecord =
+    { oldRecord | filters = newFilters }
+
+
+setMode : ResultMode -> { a | mode : ResultMode } -> { a | mode : ResultMode }
+setMode newMode oldRecord =
+    { oldRecord | mode = newMode }
+
+
+setQuery : Maybe String -> { a | query : Maybe String } -> { a | query : Maybe String }
+setQuery newQuery oldRecord =
+    { oldRecord | query = newQuery }
+
+
+setSort : Maybe String -> { a | sort : Maybe String } -> { a | sort : Maybe String }
+setSort newSort oldRecord =
+    { oldRecord | sort = newSort }
+
+
+setPage : Int -> { a | page : Int } -> { a | page : Int }
+setPage pageNum oldRecord =
+    -- ensure the page number is 1 or greater
+    if pageNum < 1 then
+        { oldRecord | page = 1 }
+
+    else
+        { oldRecord | page = pageNum }
+
+
+{-| Resets the page number to the first page.
+-}
+resetPage : { a | page : Int } -> { a | page : Int }
+resetPage oldRecord =
+    setPage 1 oldRecord
 
 
 defaultQueryArgs : QueryArgs
@@ -144,7 +230,7 @@ buildQueryParameters queryArgs =
         fsParams =
             Dict.toList queryArgs.facetSorts
                 |> List.map
-                    (\( key, facetSort ) ->
+                    (\( _, facetSort ) ->
                         let
                             sortStringValue =
                                 case facetSort of
@@ -160,7 +246,7 @@ buildQueryParameters queryArgs =
         fmParams =
             Dict.toList queryArgs.facetModes
                 |> List.map
-                    (\( key, facetMode ) ->
+                    (\( _, facetMode ) ->
                         let
                             modeStringValue =
                                 case facetMode of
@@ -295,7 +381,7 @@ modeParamParser =
 
 
 filterQueryStringToFilter : List String -> List Filter
-filterQueryStringToFilter fqlist =
+filterQueryStringToFilter fqList =
     -- discards any filters that do not conform to the expected values
     -- TODO: Convert this to a parser that can handle colons in the 'values'
     List.concat
@@ -308,13 +394,13 @@ filterQueryStringToFilter fqlist =
                     _ ->
                         []
             )
-            fqlist
+            fqList
         )
 
 
 modeQueryStringToResultMode : List String -> ResultMode
-modeQueryStringToResultMode modelist =
-    List.map (\a -> parseStringToResultMode a) modelist
+modeQueryStringToResultMode modeList =
+    List.map (\a -> parseStringToResultMode a) modeList
         |> List.head
         |> Maybe.withDefault SourcesMode
 

@@ -8,7 +8,7 @@ import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (label)
 
 
-viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element Msg
+viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element msg
 viewExternalAuthoritiesSection language extSection =
     row
         [ width fill
@@ -38,7 +38,7 @@ viewExternalAuthoritiesSection language extSection =
         ]
 
 
-viewExternalAuthority : Language -> ExternalAuthorityBody -> Element Msg
+viewExternalAuthority : Language -> ExternalAuthorityBody -> Element msg
 viewExternalAuthority language authority =
     paragraph
         []

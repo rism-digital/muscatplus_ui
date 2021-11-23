@@ -1,6 +1,6 @@
 module Page.Views.Incipits exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, htmlAttribute, maximum, minimum, paddingXY, px, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, maximum, minimum, paddingXY, row, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language)
@@ -73,25 +73,22 @@ viewIncipit language incipit =
 -}
 viewRenderedIncipits : List RenderedIncipit -> Element msg
 viewRenderedIncipits incipits =
-    let
-        incipitSVG =
-            List.map
-                (\rendered ->
-                    case rendered of
-                        RenderedIncipit RenderedSVG svgdata ->
-                            viewSVGRenderedIncipit svgdata
-
-                        _ ->
-                            Element.none
-                )
-                incipits
-    in
     row
         [ paddingXY 0 10
         , width (fill |> minimum 400 |> maximum 1000)
         , htmlAttribute (HTA.class "search-results-rendered-incipit")
         ]
-        incipitSVG
+        (List.map
+            (\rendered ->
+                case rendered of
+                    RenderedIncipit RenderedSVG svgdata ->
+                        viewSVGRenderedIncipit svgdata
+
+                    _ ->
+                        Element.none
+            )
+            incipits
+        )
 
 
 {-|
@@ -102,16 +99,9 @@ viewRenderedIncipits incipits =
 -}
 viewSVGRenderedIncipit : String -> Element msg
 viewSVGRenderedIncipit incipitData =
-    let
-        svgData =
-            SvgParser.parse incipitData
+    case SvgParser.parse incipitData of
+        Ok html ->
+            Element.html html
 
-        svgResponse =
-            case svgData of
-                Ok html ->
-                    Element.html html
-
-                Err _ ->
-                    text "Could not parse SVG"
-    in
-    svgResponse
+        Err _ ->
+            text "Could not parse SVG"

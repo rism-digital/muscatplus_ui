@@ -1,56 +1,67 @@
 module Model exposing (..)
 
-import Browser.Navigation as Nav
-import Device exposing (detectDevice)
-import Element exposing (Device)
-import Flags exposing (Flags)
-import Language exposing (Language, parseLocaleToLanguage)
-import Msg exposing (Msg)
-import Page
-import Search exposing (ActiveSearch)
-import Url exposing (Url)
+import Page.Front as Front
+import Page.NotFound as NotFound
+import Page.Record as Record
+import Page.Search as Search
+import Session exposing (Session)
 
 
-type alias Model =
-    { page : Page.Model
-    , device : Device
-    , language : Language
-    , activeSearch : ActiveSearch
-    , key : Nav.Key
-    , showMuscatLinks : Bool
-    }
+type Model
+    = NotFoundPage Session NotFound.Model
+    | SearchPage Session Search.Model
+    | FrontPage Session Front.Model
+    | SourcePage Session Record.Model
+    | PersonPage Session Record.Model
+    | InstitutionPage Session Record.Model
+    | PlacePage Session Record.Model
 
 
-{-|
+toSession : Model -> Session
+toSession model =
+    case model of
+        NotFoundPage session _ ->
+            session
 
-    The initial model state
+        SearchPage session _ ->
+            session
 
--}
-init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags initialUrl key =
-    let
-        language =
-            flags.locale
-                |> parseLocaleToLanguage
+        FrontPage session _ ->
+            session
 
-        initialDevice =
-            detectDevice flags.windowWidth flags.windowHeight
+        SourcePage session _ ->
+            session
 
-        initialPage =
-            Page.init initialUrl
+        PersonPage session _ ->
+            session
 
-        initialSearch =
-            Search.init initialPage.route
+        InstitutionPage session _ ->
+            session
 
-        initialCmd =
-            Page.initialCmd initialUrl
-    in
-    ( { page = initialPage
-      , device = initialDevice
-      , language = language
-      , activeSearch = initialSearch
-      , key = key
-      , showMuscatLinks = flags.showMuscatLinks
-      }
-    , initialCmd
-    )
+        PlacePage session _ ->
+            session
+
+
+updateSession : Model -> Session -> Model
+updateSession model newSession =
+    case model of
+        NotFoundPage _ pageModel ->
+            NotFoundPage newSession pageModel
+
+        SearchPage _ pageModel ->
+            SearchPage newSession pageModel
+
+        FrontPage _ pageModel ->
+            FrontPage newSession pageModel
+
+        SourcePage _ pageModel ->
+            SourcePage newSession pageModel
+
+        PersonPage _ pageModel ->
+            PersonPage newSession pageModel
+
+        InstitutionPage _ pageModel ->
+            InstitutionPage newSession pageModel
+
+        PlacePage _ pageModel ->
+            PlacePage newSession pageModel

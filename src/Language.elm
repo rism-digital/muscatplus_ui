@@ -1,8 +1,6 @@
 module Language exposing
     ( Language(..)
     , LanguageMap
-    , LanguageNumericMap
-    , LanguageNumericValues(..)
     , LanguageValues(..)
     , dateFormatter
     , extractLabelFromLanguageMap
@@ -12,6 +10,7 @@ module Language exposing
     , languageOptionsForDisplay
     , localTranslations
     , parseLocaleToLanguage
+    , setLanguage
     )
 
 import DateFormat
@@ -37,21 +36,13 @@ type LanguageValues
     = LanguageValues Language (List String)
 
 
-{-|
-
-    Used for cases where the values being decoded are numbers, not strings
-
--}
-type LanguageNumericValues
-    = LanguageNumericValues Language (List Int)
-
-
 type alias LanguageMap =
     List LanguageValues
 
 
-type alias LanguageNumericMap =
-    List LanguageNumericValues
+setLanguage : Language -> { a | language : Language } -> { a | language : Language }
+setLanguage newValue oldRecord =
+    { oldRecord | language = newValue }
 
 
 {-|
