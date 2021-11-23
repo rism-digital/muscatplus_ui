@@ -1,12 +1,13 @@
 {
-  "name": "muscatplus_search_ui",
+  "name": "muscatplus_ui",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "chokidar": "^3.5.1",
-    "chokidar-cli": "^2.1.0",
+    "chokidar-cli": "^3.0.0",
+    "elm-json": "^0.2.10",
     "elm-live": "^4.0.2",
     "elm-review": "^2.5.2",
     "uglify-js": "^3.12.2"
