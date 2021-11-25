@@ -4,15 +4,14 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, maximum, minimum, none, paddingXY, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Msg exposing (Msg(..))
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult)
 import Page.Search.Views.Results exposing (viewResultFlags)
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (h5, searchKeywordInput)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Pagination exposing (viewPagination)
 import Response exposing (Response(..), ServerData(..))
 
 

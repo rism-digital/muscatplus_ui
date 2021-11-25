@@ -1,7 +1,7 @@
 module Page.UI.Attributes exposing (..)
 
 import Color exposing (toCssString)
-import Element exposing (Attr, Attribute, htmlAttribute, width)
+import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, paddingXY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -11,7 +11,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerH
 
 bodyFont : Attribute msg
 bodyFont =
-    Font.family [ Font.typeface "Noto Sans", Font.sansSerif ]
+    Font.family [ Font.typeface "Noto Sans Display", Font.sansSerif ]
 
 
 bodyFontColour : Attribute msg
@@ -48,9 +48,51 @@ searchColumnVerticalSize : Attribute msg
 searchColumnVerticalSize =
     let
         otherElementsHeight =
-            headerHeight + footerHeight + searchHeaderHeight
+            footerHeight + searchHeaderHeight
     in
     htmlAttribute (HA.style "height" ("calc(100vh - " ++ String.fromInt otherElementsHeight ++ "px)"))
+
+
+labelFieldColumnAttributes : List (Attribute msg)
+labelFieldColumnAttributes =
+    [ width (fillPortion 1)
+    , alignTop
+    ]
+
+
+valueFieldColumnAttributes : List (Attribute msg)
+valueFieldColumnAttributes =
+    [ width (fillPortion 6)
+    , alignTop
+    ]
+
+
+sectionBorderStyles : List (Attribute msg)
+sectionBorderStyles =
+    [ Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
+    , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+    , paddingXY lineSpacing 0
+    ]
+
+
+widthFillHeightFill : List (Attribute msg)
+widthFillHeightFill =
+    [ width fill
+    , height fill
+    , alignTop
+    ]
+
+
+{-|
+
+    The attribute equivalent of Element.none.
+    Returns a no-op attribute, which is useful for
+    conditionally applying something-or-nothing for attributes.
+
+-}
+emptyAttribute : Attribute msg
+emptyAttribute =
+    htmlAttribute (HA.classList [])
 
 
 minimalDropShadow : Attribute msg
@@ -73,43 +115,67 @@ linkColour =
         )
 
 
+baseSize : Float
+baseSize =
+    16.0
 
--- Based on the 'Major Third' scales given at https://type-scale.com/
+
+lineSpacing : Int
+lineSpacing =
+    round (baseSize * 0.8)
+
+
+sectionSpacing : Int
+sectionSpacing =
+    round (baseSize * 1.8)
+
+
+{-| <https://spencermortensen.com/articles/typographic-scale/>
+-}
+ratioCalc : Float -> Int
+ratioCalc size =
+    round (baseSize * (2.0 ^ (size / 6.0)))
 
 
 fontBaseSize : Attr decorative msg
 fontBaseSize =
-    Font.size 16
+    Font.size (ratioCalc 0.0)
 
 
 headingXXL : Attr decorative msg
 headingXXL =
-    Font.size 49
+    -- 14*(2^(5/6))
+    Font.size (ratioCalc 5.0)
 
 
 headingXL : Attr decorative msg
 headingXL =
-    Font.size 39
+    -- 14*(2^(4/6))
+    Font.size (ratioCalc 4.0)
 
 
 headingLG : Attr decorative msg
 headingLG =
-    Font.size 31
+    -- 14*(2^(3/6))
+    Font.size (ratioCalc 3.0)
 
 
 headingMD : Attr decorative msg
 headingMD =
-    Font.size 25
+    -- 14*(2^(2/6))
+    Font.size (ratioCalc 2.0)
 
 
 headingSM : Attr decorative msg
 headingSM =
-    Font.size 20
+    -- 14*(2^(1/6))
+    Font.size (ratioCalc 1.0)
 
 
 headingXS : Attr decorative msg
 headingXS =
-    Font.size 16
+    -- 14*(2^(0/6))
+    Font.size (ratioCalc 0.0)
 
 
 bodyRegular : Attr decorative msg
@@ -119,14 +185,14 @@ bodyRegular =
 
 bodySM : Attr decorative msg
 bodySM =
-    Font.size 13
+    Font.size 12
 
 
 bodyXS : Attr decorative msg
 bodyXS =
-    Font.size 10
+    Font.size 11
 
 
 bodyXXS : Attr decorative msg
 bodyXXS =
-    Font.size 8
+    Font.size 10

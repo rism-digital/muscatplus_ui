@@ -1,25 +1,25 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignBottom, alignRight, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Html.Attributes as HTA
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
+import Language exposing (Language, formatNumberByLanguage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
-import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h4, viewRecordHistory, viewSummaryField)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Notes exposing (viewNotesSection)
 import Page.Record.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.Record.Views.PersonPage.SourcesTab exposing (viewPersonSourcesTab)
-import Page.Views.Relationship exposing (viewRelationshipsSection)
+import Page.RecordTypes.Person exposing (PersonBody)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Components exposing (viewSummaryField)
+import Page.UI.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
+import Page.UI.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Notes exposing (viewNotesSection)
+import Page.UI.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
+import Page.UI.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewFullPersonPage :
@@ -38,19 +38,6 @@ viewFullPersonPage language model body =
         searchParams =
             model.activeSearch
 
-        recordUri =
-            row
-                [ width fill ]
-                [ el
-                    []
-                    (text (extractLabelFromLanguageMap language localTranslations.recordURI ++ ": "))
-                , link
-                    [ linkColour ]
-                    { url = body.id
-                    , label = text body.id
-                    }
-                ]
-
         pageBodyView =
             case currentTab of
                 DefaultRecordViewTab ->
@@ -67,29 +54,19 @@ viewFullPersonPage language model body =
         , height fill
         ]
         [ column
-            [ width fill
-            , height fill
-            , spacing 5
-            ]
+            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
             [ row
-                [ width fill
-                , htmlAttribute (HTA.id body.sectionToc)
-                ]
-                [ h4 language body.label ]
-            , recordUri
-            , viewTabSwitcher language currentTab body
-            , pageBodyView
-            , row
-                [ width fill
-                , alignBottom
-                ]
+                widthFillHeightFill
                 [ column
-                    [ width fill
-                    , alignRight
-                    ]
-                    [ viewRecordHistory body.recordHistory language
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ pageHeaderTemplate language body
+                    , pageUriTemplate language body
                     ]
                 ]
+
+            --, viewTabSwitcher language currentTab body
+            , pageBodyView
+            , pageFooterTemplate language body
             ]
         ]
 
@@ -168,9 +145,12 @@ viewTabSwitcher language currentTab body =
 viewDescriptionTab : Language -> PersonBody -> Element msg
 viewDescriptionTab language body =
     row
-        [ width fill ]
+        widthFillHeightFill
         [ column
-            [ width fill ]
+            [ width fill
+            , spacing sectionSpacing
+            , alignTop
+            ]
             [ viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
             , viewMaybe (viewSummaryField language) body.summary
             , viewMaybe (viewNameVariantsSection language) body.nameVariants

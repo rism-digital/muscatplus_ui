@@ -1,4 +1,4 @@
-module Page.Views.ExternalResources exposing (..)
+module Page.UI.ExternalResources exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, paddingXY, paragraph, row, spacing, text, width)
 import Html.Attributes as HTA

@@ -33,7 +33,6 @@ init initialRoute =
             { initialKeyboardModel | query = kqargs }
     in
     { query = qargs
-    , selectedMode = initialMode
     , expandedFacets = []
     , activeFacets = []
     , sliders = Dict.empty

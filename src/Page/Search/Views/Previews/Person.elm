@@ -2,15 +2,14 @@ module Page.Search.Views.Previews.Person exposing (..)
 
 import Element exposing (Element, column, el, fill, height, link, none, paddingXY, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
-import Msg exposing (Msg)
 import Page.Record.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4, viewSummaryField)
-import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Notes exposing (viewNotesSection)
-import Page.Views.Relationship exposing (viewRelationshipsSection)
+import Page.UI.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Notes exposing (viewNotesSection)
+import Page.UI.Relationship exposing (viewRelationshipsSection)
 
 
 viewPersonPreview : Language -> PersonBody -> Element msg

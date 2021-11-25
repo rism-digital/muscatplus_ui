@@ -4,7 +4,6 @@ import Element exposing (Element, alignLeft, alignTop, centerY, column, fill, he
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
-import Msg exposing (Msg)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.UI.Animations exposing (loadingBox)
 import Page.UI.Attributes exposing (searchColumnVerticalSize)

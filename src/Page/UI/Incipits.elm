@@ -1,61 +1,28 @@
-module Page.Views.Incipits exposing (..)
+module Page.UI.Incipits exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, maximum, minimum, paddingXY, row, spacing, text, width)
-import Element.Border as Border
+import Element exposing (Element, column, fill, htmlAttribute, maximum, minimum, paddingXY, row, spacing, text, width)
 import Html.Attributes as HTA
 import Language exposing (Language)
 import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Components exposing (h5, viewSummaryField)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.Views.Helpers exposing (viewMaybe)
+import Page.UI.Attributes exposing (sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Components exposing (viewSummaryField)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.SectionTemplate exposing (sectionTemplate)
 import SvgParser
 
 
 viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
 viewIncipitsSection language incipSection =
-    row
-        [ width fill
-        , height fill
-        , paddingXY 0 20
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 20
-            , alignTop
-            ]
-            [ row
-                [ width fill
-                , htmlAttribute (HTA.id incipSection.sectionToc)
-                ]
-                [ h5 language incipSection.label ]
-            , column
-                [ width fill
-                , spacing 20
-                , alignTop
-                ]
-                (List.map (\l -> viewIncipit language l) incipSection.items)
-            ]
-        ]
+    sectionTemplate language incipSection (List.map (\incipit -> viewIncipit language incipit) incipSection.items)
 
 
 viewIncipit : Language -> IncipitBody -> Element msg
 viewIncipit language incipit =
     row
-        [ width fill
-        , height fill
-        , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
-        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , paddingXY 10 0
-        , alignTop
-        ]
+        (List.append widthFillHeightFill sectionBorderStyles)
         [ column
-            [ height fill
-            , width fill
-            , spacing 10
-            , alignTop
-            ]
+            widthFillHeightFill
             [ viewMaybe (viewSummaryField language) incipit.summary
             , viewMaybe viewRenderedIncipits incipit.rendered
             ]
@@ -74,8 +41,7 @@ viewIncipit language incipit =
 viewRenderedIncipits : List RenderedIncipit -> Element msg
 viewRenderedIncipits incipits =
     row
-        [ paddingXY 0 10
-        , width (fill |> minimum 400 |> maximum 1000)
+        [ width (fill |> minimum 400 |> maximum 1000)
         , htmlAttribute (HTA.class "search-results-rendered-incipit")
         ]
         (List.map

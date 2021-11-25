@@ -5,15 +5,15 @@ import Element exposing (Element, alignLeft, alignTop, column, el, fill, height,
 import Element.Events exposing (onClick)
 import Language exposing (Language)
 import List.Extra as LE
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (backspaceSvg)
+import Page.UI.Incipits exposing (viewSVGRenderedIncipit)
 import Page.UI.Keyboard.Keyboard exposing (blackKeyWidth, octaveConfig, renderKey, whiteKeyWidthScale)
 import Page.UI.Keyboard.Model exposing (Clef(..), Keyboard(..), KeyboardConfig, KeyboardModel, KeyboardQuery)
 import Page.UI.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.UI.Keyboard.PAE exposing (createPAENote)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.UI.Style exposing (colourScheme)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Incipits exposing (viewSVGRenderedIncipit)
 import Request exposing (createSvgRequest, serverUrl)
 
 

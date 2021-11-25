@@ -17,8 +17,8 @@ import Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Fi
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetModes(..), FacetSorts(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingSM)
-import Page.UI.Components exposing (dropdownSelect, h6)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingMD, headingSM)
+import Page.UI.Components exposing (dropdownSelect, h5, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Images exposing (checkedBoxSvg, editSvg, institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, unionSvg, unknownSvg)
@@ -33,9 +33,10 @@ viewModeItems selectedMode language typeFacet =
     let
         rowLabel =
             row
-                [ Font.semiBold
+                [ Font.medium
                 , height fill
                 , centerY
+                , headingMD
                 ]
                 [ text (extractLabelFromLanguageMap language typeFacet.label) ]
     in
@@ -62,7 +63,7 @@ viewModeItem selectedMode language fitem =
 
         iconTmpl svg =
             el
-                [ width (px 16)
+                [ width (px 20)
                 , height fill
                 , centerX
                 , centerY
@@ -95,7 +96,6 @@ viewModeItem selectedMode language fitem =
         baseRowStyle =
             [ alignLeft
             , Font.center
-            , Font.regular
             , height fill
             , Border.widthEach { top = 0, left = 0, bottom = 1, right = 0 }
             ]
@@ -123,7 +123,7 @@ viewModeItem selectedMode language fitem =
                 , checked = False
                 , label =
                     labelLeft
-                        [ bodyRegular
+                        [ headingMD
                         , alignLeft
                         ]
                         (text (fullLabel ++ " (" ++ itemCount ++ ")"))
@@ -240,7 +240,7 @@ viewRangeFacet language activeSliders activeFilters body =
                 [ width fill
                 , alignTop
                 ]
-                [ h6 language body.label ]
+                [ h5 language body.label ]
             , row
                 [ width fill
                 , paddingXY 20 10
@@ -407,7 +407,6 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
         [ width (px 400)
         , alignTop
         , Border.width 1
-        , Border.rounded 4
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column

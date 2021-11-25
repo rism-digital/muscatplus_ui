@@ -3,7 +3,7 @@ module Page.Search exposing (..)
 import ActiveSearch exposing (setActiveSearch, setExpandedFacets, setKeyboard, toActiveSearch, toExpandedFacets, toKeyboard, toSelectedMode, toggleExpandedFacets)
 import Browser.Navigation as Nav
 import Page.Converters exposing (convertFacetToResultMode)
-import Page.Query exposing (Filter(..), buildQueryParameters, resetPage, setFilters, setMode, setQuery, setQueryArgs, setSort, toFilters, toQueryArgs, toggleFilters)
+import Page.Query exposing (Filter(..), buildQueryParameters, resetPage, setFilters, setMode, setQuery, setQueryArgs, setSort, toFilters, toMode, toQueryArgs, toggleFilters)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
@@ -133,7 +133,8 @@ update session msg model =
             let
                 currentMode =
                     toActiveSearch model
-                        |> toSelectedMode
+                        |> toQueryArgs
+                        |> toMode
 
                 keyboardQuery =
                     toActiveSearch model
@@ -252,10 +253,13 @@ update session msg model =
 
         UserClickedModeItem facet item isClicked ->
             let
+                newMode =
+                    convertFacetToResultMode item
+
                 newQuery =
                     toActiveSearch model
                         |> toQueryArgs
-                        |> setMode (convertFacetToResultMode item)
+                        |> setMode newMode
 
                 newModel =
                     toActiveSearch model

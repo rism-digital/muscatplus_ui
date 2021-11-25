@@ -1,12 +1,13 @@
-module Page.Views.Relationship exposing (..)
+module Page.UI.Relationship exposing (..)
 
 import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, link, none, paddingXY, row, spacing, text, width)
+import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Msg exposing (Msg)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h5, label)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
@@ -29,6 +30,10 @@ viewRelationshipsSection language relSection =
                 [ h5 language relSection.label ]
             , row
                 [ width fill
+                , alignTop
+                , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
+                , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+                , paddingXY 10 0
                 ]
                 [ column
                     [ width fill
@@ -81,7 +86,7 @@ viewRelationshipBody language body =
                     ]
                     (label language body.label)
                 , row
-                    [ width (fillPortion 4)
+                    [ width (fillPortion 6)
                     , alignTop
                     ]
                     [ relatedToView

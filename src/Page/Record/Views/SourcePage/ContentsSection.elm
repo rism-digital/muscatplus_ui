@@ -1,73 +1,56 @@
 module Page.Record.Views.SourcePage.ContentsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, paddingXY, row, spacing, text, width)
-import Html.Attributes as HTA
+import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Msg exposing (Msg)
-import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
-import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h5, h6, viewSummaryField)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Relationship exposing (viewRelationshipBody)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Components exposing (fieldValueWrapper, label, viewSummaryField)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Relationship exposing (viewRelationshipBody)
+import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewContentsSection : Language -> ContentsSectionBody -> Element msg
 viewContentsSection language contents =
-    row
-        [ width fill
-        , paddingXY 0 20
-        ]
-        [ column
-            [ width fill
-            , spacing 10
-            ]
+    let
+        sectionBody =
             [ row
-                [ width fill
-                , htmlAttribute (HTA.id contents.sectionToc)
+                (List.append widthFillHeightFill sectionBorderStyles)
+                [ column
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ viewMaybe (viewRelationshipBody language) contents.creator
+                    , Maybe.withDefault [] contents.summary
+                        |> viewSummaryField language
+                    , viewMaybe (viewSubjectsSection language) contents.subjects
+                    ]
                 ]
-                [ h5 language contents.label ]
-            , viewMaybe (viewRelationshipBody language) contents.creator
-            , Maybe.withDefault [] contents.summary
-                |> viewSummaryField language
-            , viewMaybe (viewSubjectsSection language) contents.subjects
             ]
-        ]
+    in
+    sectionTemplate language contents sectionBody
 
 
 viewSubjectsSection : Language -> SubjectsSectionBody -> Element msg
 viewSubjectsSection language subjectSection =
-    row
-        [ width fill
-        , height fill
-        , paddingXY 0 20
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 20
-            , alignTop
-            ]
-            [ row
-                [ width fill ]
-                [ h6 language subjectSection.label ]
+    fieldValueWrapper
+        [ wrappedRow
+            widthFillHeightFill
+            [ column
+                labelFieldColumnAttributes
+                [ label language subjectSection.label ]
             , column
-                [ width fill
-                , spacing 20
-                , alignTop
+                valueFieldColumnAttributes
+                [ textColumn
+                    [ spacing lineSpacing ]
+                    (List.map (\l -> viewSubject language l) subjectSection.items)
                 ]
-                (List.map (\l -> viewSubject language l) subjectSection.items)
             ]
         ]
 
 
 viewSubject : Language -> Subject -> Element msg
 viewSubject language subject =
-    row
-        [ width fill ]
-        [ link
-            [ linkColour ]
-            { url = subject.id
-            , label = text (extractLabelFromLanguageMap language subject.term)
-            }
-        ]
+    link
+        [ linkColour ]
+        { url = subject.id
+        , label = text (extractLabelFromLanguageMap language subject.term)
+        }

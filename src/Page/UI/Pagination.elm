@@ -1,14 +1,13 @@
-module Page.Views.Pagination exposing (..)
+module Page.UI.Pagination exposing (..)
 
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, pointer, px, row, shrink, text, width)
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
-import Msg exposing (Msg(..))
 import Page.RecordTypes.Search exposing (SearchPagination)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 import Page.UI.Style exposing (colourScheme)
-import Page.Views.Helpers exposing (viewMaybe)
 
 
 viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg

@@ -12,7 +12,7 @@ import Html.Attributes as HA
 import Html.Events as HE
 import Language exposing (Language, LanguageMap, dateFormatter, extractLabelFromLanguageMap, extractTextFromLanguageMap, localTranslations, parseLocaleToLanguage)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Time exposing (utc)
@@ -31,17 +31,17 @@ headingHelper attrib language heading =
 
 h1 : Language -> LanguageMap -> Element msg
 h1 language heading =
-    headingHelper [ headingXXL, Region.heading 1 ] language heading
+    headingHelper [ headingXXL, Region.heading 1, Font.medium ] language heading
 
 
 h2 : Language -> LanguageMap -> Element msg
 h2 language heading =
-    headingHelper [ headingXL, Region.heading 2 ] language heading
+    headingHelper [ headingXL, Region.heading 2, Font.medium ] language heading
 
 
 h3 : Language -> LanguageMap -> Element msg
 h3 language heading =
-    headingHelper [ headingLG, Region.heading 3 ] language heading
+    headingHelper [ headingLG, Region.heading 3, Font.medium ] language heading
 
 
 h4 : Language -> LanguageMap -> Element msg
@@ -56,7 +56,7 @@ h5 language heading =
 
 h6 : Language -> LanguageMap -> Element msg
 h6 language heading =
-    headingHelper [ headingXS, Font.semiBold, Region.heading 6 ] language heading
+    headingHelper [ headingXS, Region.heading 6, Font.medium ] language heading
 
 
 label : Language -> LanguageMap -> Element msg
@@ -69,8 +69,7 @@ label language langmap =
 value : Language -> LanguageMap -> Element msg
 value language langmap =
     textColumn
-        [ spacing 10
-        , bodyRegular
+        [ bodyRegular
         ]
         (styledParagraphs (extractTextFromLanguageMap language langmap))
 
@@ -78,10 +77,19 @@ value language langmap =
 concatenatedValue : Language -> LanguageMap -> Element msg
 concatenatedValue language langmap =
     textColumn
-        [ spacing 10
-        , bodyRegular
+        [ bodyRegular
         ]
         [ styledList (extractTextFromLanguageMap language langmap) ]
+
+
+fieldValueWrapper : List (Element msg) -> Element msg
+fieldValueWrapper content =
+    wrappedRow
+        widthFillHeightFill
+        [ column
+            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            content
+        ]
 
 
 viewLabelValueField :
@@ -90,39 +98,21 @@ viewLabelValueField :
     -> List LabelValue
     -> Element msg
 viewLabelValueField fmt language field =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            (List.map
-                (\f ->
-                    wrappedRow
-                        [ width fill
-                        , height fill
-                        , paddingXY 0 10
-                        , alignTop
-                        ]
-                        [ column
-                            [ width (fillPortion 1)
-                            , alignTop
-                            ]
-                            [ label language f.label ]
-                        , column
-                            [ width (fillPortion 4)
-                            , alignTop
-                            ]
-                            [ fmt language f.value ]
-                        ]
-                )
-                field
+    fieldValueWrapper
+        (List.map
+            (\f ->
+                wrappedRow
+                    widthFillHeightFill
+                    [ column
+                        labelFieldColumnAttributes
+                        [ label language f.label ]
+                    , column
+                        valueFieldColumnAttributes
+                        [ fmt language f.value ]
+                    ]
             )
-        ]
+            field
+        )
 
 
 viewSummaryField : Language -> List LabelValue -> Element msg
@@ -147,7 +137,7 @@ styledParagraphs textList =
     List.map
         (\t ->
             paragraph
-                []
+                [ spacing lineSpacing ]
                 [ el [] (text t) ]
         )
         textList
@@ -275,15 +265,15 @@ searchKeywordInput language msgs queryText =
                 [ width fill
                 , height (px 50)
                 , Border.widthEach { bottom = 2, top = 2, left = 2, right = 0 }
-                , Border.roundEach { topLeft = 5, bottomLeft = 5, topRight = 0, bottomRight = 0 }
+                , Border.rounded 0
                 , htmlAttribute (HA.autocomplete False)
                 , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
                 , onEnter msgs.submitMsg
                 , headingSM
-                , paddingXY 10 12
+                , paddingXY 10 10
                 ]
                 { onChange = \inp -> msgs.changeMsg inp
-                , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
+                , placeholder = Just (Input.placeholder [ headingLG ] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
                 , text = queryText
                 , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                 }
@@ -292,7 +282,6 @@ searchKeywordInput language msgs queryText =
             [ width (fillPortion 1) ]
             [ Input.button
                 [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
-                , Border.roundEach { topLeft = 0, bottomLeft = 0, topRight = 5, bottomRight = 5 }
                 , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
                 , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
                 , paddingXY 10 10
@@ -300,7 +289,7 @@ searchKeywordInput language msgs queryText =
                 , width fill
                 , Font.center
                 , Font.color (colourScheme.white |> convertColorToElementColor)
-                , headingSM
+                , headingLG
                 ]
                 { onPress = Just msgs.submitMsg
                 , label = text (extractLabelFromLanguageMap language localTranslations.search)
@@ -309,8 +298,8 @@ searchKeywordInput language msgs queryText =
         ]
 
 
-viewRecordHistory : RecordHistory -> Language -> Element msg
-viewRecordHistory history language =
+viewRecordHistory : Language -> RecordHistory -> Element msg
+viewRecordHistory language history =
     let
         createdDateFormatted =
             dateFormatter utc history.created
@@ -325,21 +314,14 @@ viewRecordHistory history language =
             extractLabelFromLanguageMap language history.updatedLabel ++ ": " ++ updatedDateFormatted
     in
     row
-        [ width fill
-        ]
+        widthFillHeightFill
         [ column
-            [ width fill
-            , spacing 10
-            ]
+            (List.append [ spacing lineSpacing ] widthFillHeightFill)
             [ el
-                [ alignRight
-                , bodySM
-                ]
+                []
                 (text created)
             , el
-                [ alignRight
-                , bodySM
-                ]
+                []
                 (text updated)
             ]
         ]
@@ -356,7 +338,6 @@ makeFlagIcon colours iconImage iconLabel =
         , padding 4
         , Border.width 1
         , Border.color (colours.foreground |> convertColorToElementColor)
-        , Border.rounded 4
         , Background.color (colours.background |> convertColorToElementColor)
         ]
         [ row

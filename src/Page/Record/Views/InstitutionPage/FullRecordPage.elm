@@ -12,13 +12,14 @@ import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.InstitutionPage.SourcesTab exposing (viewInstitutionSourcesTab)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h4, viewRecordHistory, viewSummaryField)
+import Page.UI.Components exposing (h1, h4, viewRecordHistory, viewSummaryField)
+import Page.UI.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
+import Page.UI.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Notes exposing (viewNotesSection)
+import Page.UI.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
+import Page.UI.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.Views.ExternalResources exposing (viewExternalResourcesSection)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Notes exposing (viewNotesSection)
-import Page.Views.Relationship exposing (viewRelationshipsSection)
 
 
 viewFullInstitutionPage :
@@ -36,19 +37,6 @@ viewFullInstitutionPage language page body =
 
         searchParams =
             page.activeSearch
-
-        recordUri =
-            row
-                [ width fill ]
-                [ el
-                    []
-                    (text (extractLabelFromLanguageMap language localTranslations.recordURI ++ ": "))
-                , link
-                    [ linkColour ]
-                    { url = body.id
-                    , label = text body.id
-                    }
-                ]
 
         pageBodyView =
             case currentTab of
@@ -70,25 +58,11 @@ viewFullInstitutionPage language page body =
             , height fill
             , spacing 5
             ]
-            [ row
-                [ width fill
-                , htmlAttribute (HTA.id body.sectionToc)
-                ]
-                [ h4 language body.label ]
-            , recordUri
+            [ pageHeaderTemplate language body
+            , pageUriTemplate language body
             , viewTabSwitcher language currentTab body
             , pageBodyView
-            , row
-                [ width fill
-                , alignBottom
-                ]
-                [ column
-                    [ width fill
-                    , alignRight
-                    ]
-                    [ viewRecordHistory body.recordHistory language
-                    ]
-                ]
+            , pageFooterTemplate language body
             ]
         ]
 

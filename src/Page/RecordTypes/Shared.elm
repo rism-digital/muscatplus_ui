@@ -154,14 +154,14 @@ sourceTypeDecoder =
 
 
 type SourceRecordType
-    = SourceContentsRecord
+    = SourceItemRecord
     | SourceCollectionRecord
     | SourceCompositeRecord
 
 
 sourceRecordTypeOptions : List ( String, SourceRecordType )
 sourceRecordTypeOptions =
-    [ ( "rism:ContentsRecord", SourceContentsRecord )
+    [ ( "rism:ItemRecord", SourceItemRecord )
     , ( "rism:CollectionRecord", SourceCollectionRecord )
     , ( "rism:CompositeRecord", SourceCompositeRecord )
     ]
@@ -171,7 +171,7 @@ sourceRecordTypeFromJsonType : String -> SourceRecordType
 sourceRecordTypeFromJsonType jsonType =
     List.filter (\( str, _ ) -> str == jsonType) sourceRecordTypeOptions
         |> List.head
-        |> Maybe.withDefault ( "", SourceContentsRecord )
+        |> Maybe.withDefault ( "", SourceItemRecord )
         |> Tuple.second
 
 

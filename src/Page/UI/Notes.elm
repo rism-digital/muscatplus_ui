@@ -1,4 +1,4 @@
-module Page.Views.Notes exposing (..)
+module Page.UI.Notes exposing (..)
 
 import Element exposing (Element, alignTop, fill, row, spacing, width)
 import Language exposing (Language)

@@ -6,27 +6,11 @@ import Language exposing (Language, LanguageMap, localTranslations)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.TablesOfContents exposing (createSectionLink, createTocLink)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.Views.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewMaybe)
 
 
 createPersonRecordToc : Language -> PersonBody -> Element RecordMsg
 createPersonRecordToc language body =
-    let
-        topEntry =
-            createTocLink language localTranslations.recordTop (UserClickedToCItem body.sectionToc)
-
-        nameVariantsSection =
-            viewMaybe (createSectionLink language) body.nameVariants
-
-        relationshipsSection =
-            viewMaybe (createSectionLink language) body.relationships
-
-        notesSection =
-            viewMaybe (createSectionLink language) body.notes
-
-        externalResourcesSection =
-            viewMaybe (createSectionLink language) body.externalResources
-    in
     el
         [ Border.width 1
         , alignRight
@@ -41,11 +25,11 @@ createPersonRecordToc language body =
                 [ width fill
                 , spacing 5
                 ]
-                [ topEntry
-                , nameVariantsSection
-                , relationshipsSection
-                , notesSection
-                , externalResourcesSection
+                [ createTocLink language localTranslations.recordTop (UserClickedToCItem body.sectionToc)
+                , viewMaybe (createSectionLink language) body.nameVariants
+                , viewMaybe (createSectionLink language) body.relationships
+                , viewMaybe (createSectionLink language) body.notes
+                , viewMaybe (createSectionLink language) body.externalResources
                 ]
             ]
         )

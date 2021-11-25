@@ -15,6 +15,7 @@ module Page.Query exposing
     , setQueryArgs
     , setSort
     , toFilters
+    , toMode
     , toQueryArgs
     , toggleFilters
     )

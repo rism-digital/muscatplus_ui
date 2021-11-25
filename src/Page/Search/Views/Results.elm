@@ -8,11 +8,11 @@ import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByL
 import Page.RecordTypes.Search exposing (IncipitResultFlags, InstitutionResultFlags, PersonResultFlags, SearchResult, SearchResultFlags(..), SourceResultFlags)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (bodyRegular)
-import Page.UI.Components exposing (h5, makeFlagIcon)
+import Page.UI.Components exposing (h3, makeFlagIcon)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (digitizedImagesSvg, musicNotationSvg, penSvg, sourcesSvg)
+import Page.UI.Incipits exposing (viewRenderedIncipits)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Incipits exposing (viewRenderedIncipits)
 
 
 viewSearchResult : Language -> Maybe String -> SearchResult -> Element SearchMsg
@@ -52,7 +52,7 @@ viewSearchResult language selectedResult result =
                 [ Font.color (fontLinkColor |> convertColorToElementColor)
                 , width fill
                 ]
-                (h5 language result.label)
+                (h3 language result.label)
 
         resultFlags : Element msg
         resultFlags =
@@ -124,6 +124,14 @@ viewSearchResult language selectedResult result =
                 ]
                 [ resultTitle
                 ]
+            , row
+                [ width fill
+                , alignLeft
+                ]
+                [ link
+                    [ Font.color (fontLinkColor |> convertColorToElementColor) ]
+                    { url = result.id, label = text result.id }
+                ]
             , summary
             , partOf
             , resultFlags
@@ -189,21 +197,13 @@ viewSourceFlags language flags =
                 none
 
         numExemplars =
-            if flags.numberOfExemplars > 0 then
-                let
-                    labelText =
-                        if flags.numberOfExemplars == 1 then
-                            "1 Exemplar"
-
-                        else
-                            formatNumberByLanguage (toFloat flags.numberOfExemplars) language ++ " Exemplars"
-                in
+            if flags.numberOfExemplars > 1 then
                 makeFlagIcon
                     { foreground = colourScheme.white
                     , background = colourScheme.darkOrange
                     }
                     (penSvg colourScheme.white)
-                    labelText
+                    (formatNumberByLanguage (toFloat flags.numberOfExemplars) language ++ " Exemplars")
 
             else
                 none

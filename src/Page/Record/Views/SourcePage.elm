@@ -4,9 +4,10 @@ import Element exposing (Element, column, fill, height, none, padding, row, widt
 import Element.Background as Background
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Response exposing (Response(..), ServerData(..))
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
+import Page.UI.Attributes exposing (sectionSpacing, widthFillHeightFill)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
@@ -17,18 +18,18 @@ view session model =
             case model.response of
                 Response (SourceData body) ->
                     viewFullSourcePage session.language body
+
                 _ ->
                     none
     in
     row
-        [ width fill
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
-            [ width fill
-            , height fill
-            , padding 20
-            , Background.color (colourScheme.white |> convertColorToElementColor)
-            ]
+            (List.append
+                [ padding sectionSpacing
+                , Background.color (colourScheme.white |> convertColorToElementColor)
+                ]
+                widthFillHeightFill
+            )
             [ pageView ]
         ]

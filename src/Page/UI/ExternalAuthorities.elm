@@ -1,20 +1,17 @@
-module Page.Views.ExternalAuthorities exposing (..)
+module Page.UI.ExternalAuthorities exposing (..)
 
 import Element exposing (Element, alignLeft, alignTop, column, fill, fillPortion, link, paddingXY, paragraph, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Msg exposing (Msg)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
-import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Attributes exposing (linkColour, widthFillHeightFill)
 import Page.UI.Components exposing (label)
 
 
 viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element msg
 viewExternalAuthoritiesSection language extSection =
     row
-        [ width fill
-        , alignLeft
-        , paddingXY 0 20
-        ]
+        widthFillHeightFill
         [ column
             [ width fill
             , alignTop
@@ -28,9 +25,8 @@ viewExternalAuthoritiesSection language extSection =
                     ]
                     [ label language extSection.label ]
                 , column
-                    [ width (fillPortion 4)
+                    [ width (fillPortion 6)
                     , alignTop
-                    , spacing 10
                     ]
                     (List.map (viewExternalAuthority language) extSection.items)
                 ]

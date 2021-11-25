@@ -11,7 +11,6 @@ import Response exposing (Response)
 
 type alias ActiveSearch =
     { query : QueryArgs
-    , selectedMode : ResultMode
     , expandedFacets : List String
     , activeFacets : List ActiveFacet
     , sliders : Dict String RangeSlider

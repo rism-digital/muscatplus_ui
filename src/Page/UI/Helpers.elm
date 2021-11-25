@@ -1,6 +1,7 @@
-module Page.Views.Helpers exposing (..)
+module Page.UI.Helpers exposing (..)
 
-import Element exposing (Element, none)
+import Element exposing (Attribute, Element, htmlAttribute, none)
+import Html.Attributes as HTA
 
 
 {-|

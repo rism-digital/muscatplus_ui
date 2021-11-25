@@ -103,9 +103,9 @@ colours =
         , alpha = 1
         }
     , cream =
-        { red = 248
-        , green = 244
-        , blue = 238
+        { red = 252
+        , green = 250
+        , blue = 248
         , alpha = 1
         }
     , white =

@@ -1,5 +1,6 @@
 module Page.Search.Views exposing (..)
 
+import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.ActiveFacet exposing (ActiveFacet(..))
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
@@ -9,6 +10,7 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
+import Page.Query exposing (toMode, toQueryArgs)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
@@ -17,12 +19,12 @@ import Page.Search.Views.Facets exposing (viewFacet, viewModeItems)
 import Page.Search.Views.Loading exposing (searchModeSelectorLoading, viewSearchResultsLoading)
 import Page.Search.Views.Previews exposing (viewPreviewLoading, viewPreviewRouter)
 import Page.Search.Views.Results exposing (viewSearchResult)
-import Page.UI.Attributes exposing (headerBottomBorder, minimalDropShadow, searchColumnVerticalSize)
+import Page.UI.Attributes exposing (headingSM, searchColumnVerticalSize, widthFillHeightFill)
 import Page.UI.Components exposing (dropdownSelect, searchKeywordInput)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg)
+import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Pagination exposing (viewPagination)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -30,14 +32,9 @@ import Session exposing (Session)
 view : Session -> SearchPageModel -> Element SearchMsg
 view session model =
     row
-        [ width fill
-        , height fill
-        , centerX
-        ]
+        (List.append [ centerX ] widthFillHeightFill)
         [ column
-            [ width fill
-            , height fill
-            ]
+            widthFillHeightFill
             [ viewTopBar session.language model
             , viewSearchBody session.language model
             ]
@@ -47,15 +44,9 @@ view session model =
 viewSearchBody : Language -> SearchPageModel -> Element SearchMsg
 viewSearchBody language model =
     row
-        [ width fill
-        , height fill
-        , clipY
-        ]
+        (List.append [ clipY ] widthFillHeightFill)
         [ column
-            [ alignTop
-            , width fill
-            , height fill
-            ]
+            widthFillHeightFill
             [ searchResultsViewRouter language model ]
         ]
 
@@ -82,12 +73,11 @@ viewTopBar lang model =
         , height (px searchHeaderHeight)
         , Border.widthEach { top = 0, left = 0, bottom = 2, right = 0 }
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-        , minimalDropShadow
         ]
         [ column
-            [ width fill ]
+            widthFillHeightFill
             [ row
-                [ width fill ]
+                widthFillHeightFill
                 [ column
                     [ width (fill |> minimum 800 |> maximum 1100)
                     , alignTop
@@ -123,17 +113,15 @@ searchModeSelectorRouter language model =
 searchModeSelectorView : Language -> SearchPageModel -> Maybe ModeFacet -> Element SearchMsg
 searchModeSelectorView lang model modeFacet =
     let
-        activeSearch =
-            model.activeSearch
-
         currentMode =
-            activeSearch.selectedMode
+            toActiveSearch model
+                |> toQueryArgs
+                |> toMode
     in
     row
-        [ width fill ]
+        widthFillHeightFill
         [ column
-            [ width fill
-            ]
+            widthFillHeightFill
             [ viewMaybe (viewModeItems currentMode lang) modeFacet
             ]
         ]
@@ -197,14 +185,9 @@ viewSearchResultsSection language model body =
 viewSearchResultsListPanel : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
 viewSearchResultsListPanel language model body =
     row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
+        widthFillHeightFill
         [ column
-            [ width fill
-            , height fill
-            ]
+            widthFillHeightFill
             [ viewSearchResultsList language model body
             , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
             ]
@@ -214,10 +197,7 @@ viewSearchResultsListPanel language model body =
 viewSearchResultsList : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
 viewSearchResultsList language model body =
     row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
+        widthFillHeightFill
         [ column
             [ width fill
             , alignTop
@@ -252,14 +232,9 @@ viewSearchResultsControlPanel language model =
                     none
     in
     row
-        [ width fill
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
-            [ width fill
-            , height fill
-            , inFront renderedPreview
-            ]
+            (List.append [ inFront renderedPreview ] widthFillHeightFill)
             [ viewSearchControlSection language model ]
         ]
 
@@ -392,7 +367,6 @@ viewSearchControlSection language model =
             ]
             [ row
                 [ width fill
-                , headerBottomBorder
                 , paddingXY 0 10
                 ]
                 [ column
@@ -403,9 +377,8 @@ viewSearchControlSection language model =
                     [ row
                         [ width fill ]
                         [ el
-                            [ Font.size 16
-                            , Font.semiBold
-                            , alignTop
+                            [ headingSM
+                            , Font.medium
                             ]
                             (text "Active search parameters")
                         ]
@@ -423,11 +396,11 @@ viewSearchControlSection language model =
                     , alignTop
                     ]
                     [ row
-                        [ width fill ]
+                        [ width fill
+                        ]
                         [ el
-                            [ Font.size 16
-                            , Font.semiBold
-                            , alignTop
+                            [ headingSM
+                            , Font.medium
                             ]
                             (text "Search controls")
                         ]
@@ -441,8 +414,13 @@ viewSearchControlSection language model =
 viewSearchControls : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
 viewSearchControls language activeSearch body =
     let
+        currentMode =
+            activeSearch
+                |> toQueryArgs
+                |> toMode
+
         facetLayout =
-            case activeSearch.selectedMode of
+            case currentMode of
                 IncipitsMode ->
                     viewFacetsForIncipitsMode language activeSearch body
 
@@ -505,7 +483,6 @@ viewActiveSearchQuery language query =
     row
         [ width shrink
         , Background.color (colourScheme.red |> convertColorToElementColor)
-        , Border.rounded 5
         , padding 5
         , spacing 5
         , Font.semiBold
@@ -546,7 +523,6 @@ viewActiveFilter language (ActiveFacet facetType facetLabel facetAlias facetValu
     row
         [ width shrink
         , Background.color (colourScheme.red |> convertColorToElementColor)
-        , Border.rounded 5
         , padding 5
         , spacing 5
         , Font.semiBold
@@ -573,9 +549,7 @@ viewActiveFilter language (ActiveFacet facetType facetLabel facetAlias facetValu
 viewFacetsForIncipitsMode : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
 viewFacetsForIncipitsMode language activeSearch body =
     row
-        [ width fill
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
             [ width fill
             , height fill
@@ -588,10 +562,7 @@ viewFacetsForIncipitsMode language activeSearch body =
                     ]
                 ]
             , row
-                [ width fill
-                , height fill
-                , alignTop
-                ]
+                widthFillHeightFill
                 [ column
                     [ width fill
                     , height fill
@@ -603,23 +574,14 @@ viewFacetsForIncipitsMode language activeSearch body =
                     ]
                 ]
             , row
-                [ width fill
-                , height fill
-                , alignTop
-                ]
+                widthFillHeightFill
                 [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
+                    widthFillHeightFill
                     [ viewFacet "composer" language activeSearch body
                     , viewFacet "clef" language activeSearch body
                     ]
                 , column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
+                    widthFillHeightFill
                     [ viewFacet "date-range" language activeSearch body
                     ]
                 ]
@@ -630,9 +592,7 @@ viewFacetsForIncipitsMode language activeSearch body =
 viewFacetsForSourcesMode : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
 viewFacetsForSourcesMode language activeSearch body =
     row
-        [ width fill
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
             [ width fill
             , height fill
@@ -659,9 +619,7 @@ viewFacetsForSourcesMode language activeSearch body =
 viewFacetsForPeopleMode : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
 viewFacetsForPeopleMode language activeSearch body =
     row
-        [ width fill
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
             [ width fill
             , height fill
@@ -676,9 +634,7 @@ viewFacetsForPeopleMode language activeSearch body =
 viewFacetsForInstitutionsMode : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
 viewFacetsForInstitutionsMode language activeSearch body =
     row
-        [ width fill
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
             [ width fill
             , height fill

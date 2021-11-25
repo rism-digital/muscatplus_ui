@@ -7,11 +7,11 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult)
 import Page.Search.Views.Results exposing (viewResultFlags)
-import Page.UI.Attributes exposing (bodyRegular)
+import Page.UI.Attributes exposing (bodyRegular, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (h5, searchKeywordInput)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Pagination exposing (viewPagination)
 import Response exposing (Response(..), ServerData(..))
 
 
@@ -41,9 +41,11 @@ viewPersonSourcesTab language sourcesUrl pageSearch searchData =
                     none
     in
     row
-        [ width fill ]
+        widthFillHeightFill
         [ column
-            [ width fill ]
+            [ width fill
+            , spacing sectionSpacing
+            ]
             [ row
                 [ width fill ]
                 [ column

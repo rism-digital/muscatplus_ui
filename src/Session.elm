@@ -16,6 +16,7 @@ type alias Session =
     , url : Url
     , route : Route
     , showMuscatLinks : Bool
+    , expandedSidebar : Bool
     }
 
 
@@ -41,4 +42,5 @@ init flags url key =
     , url = url
     , route = route
     , showMuscatLinks = muscatLinks
+    , expandedSidebar = False
     }

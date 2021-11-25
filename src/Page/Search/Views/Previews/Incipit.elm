@@ -5,8 +5,8 @@ import Language exposing (Language, extractLabelFromLanguageMap, localTranslatio
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (linkColour)
 import Page.UI.Components exposing (h4)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Incipits exposing (viewIncipit)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Incipits exposing (viewIncipit)
 
 
 viewIncipitPreview : Language -> IncipitBody -> Element msg

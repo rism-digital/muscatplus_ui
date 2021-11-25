@@ -10,10 +10,10 @@ import Page.Record.Views.SourcePage.ReferencesNotesSection exposing (viewReferen
 import Page.Record.Views.SourcePage.SourceItemsSection exposing (viewSourceItemsSection)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h4)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Incipits exposing (viewIncipitsSection)
-import Page.Views.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Components exposing (h1, h4)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Incipits exposing (viewIncipitsSection)
+import Page.UI.Relationship exposing (viewRelationshipsSection)
 
 
 viewSourcePreview : Language -> FullSourceBody -> Element msg
@@ -42,7 +42,7 @@ viewSourcePreview language body =
             ]
             [ row
                 [ width fill ]
-                [ h4 language body.label ]
+                [ h1 language body.label ]
             , fullSourceLink
             , row
                 [ width fill ]

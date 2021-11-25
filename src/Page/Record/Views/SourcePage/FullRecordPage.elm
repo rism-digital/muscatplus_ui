@@ -1,14 +1,8 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (..)
 
-import Element exposing (Element, column, el, fill, height, htmlAttribute, link, row, spacing, text, width)
-import Html.Attributes as HTA
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Element exposing (Element, column, fill, height, maximum, minimum, row, spacing, width)
+import Language exposing (Language)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h4, viewRecordHistory)
-import Page.Views.Helpers exposing (viewMaybe)
-import Page.Views.Incipits exposing (viewIncipitsSection)
 import Page.Record.Views.SourcePage.ContentsSection exposing (viewContentsSection)
 import Page.Record.Views.SourcePage.ExemplarsSection exposing (viewExemplarsSection)
 import Page.Record.Views.SourcePage.MaterialGroupsSection exposing (viewMaterialGroupsSection)
@@ -16,41 +10,22 @@ import Page.Record.Views.SourcePage.PartOfSection exposing (viewPartOfSection)
 import Page.Record.Views.SourcePage.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
 import Page.Record.Views.SourcePage.SourceItemsSection exposing (viewSourceItemsSection)
+import Page.RecordTypes.Source exposing (FullSourceBody)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Incipits exposing (viewIncipitsSection)
+import Page.UI.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 
 
 viewFullSourcePage : Language -> FullSourceBody -> Element RecordMsg
 viewFullSourcePage language body =
     let
-        recordUri =
+        pageBodyView =
             row
-                [ width fill ]
-                [ el
-                    []
-                    (text (extractLabelFromLanguageMap language localTranslations.recordURI ++ ": "))
-                , link
-                    [ linkColour ]
-                    { url = body.id, label = text body.id }
-                ]
-    in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 5
-            ]
-            [ row
-                [ width fill
-                , htmlAttribute (HTA.id body.sectionToc)
-                ]
-                [ h4 language body.label ]
-            , recordUri
-            , row
-                [ width fill ]
+                widthFillHeightFill
                 [ column
                     [ width fill
+                    , spacing sectionSpacing
                     ]
                     [ viewMaybe (viewPartOfSection language) body.partOf
                     , viewMaybe (viewContentsSection language) body.contents
@@ -62,12 +37,22 @@ viewFullSourcePage language body =
                     , viewMaybe (viewSourceItemsSection language) body.items
                     ]
                 ]
-            , row
-                [ width fill ]
+    in
+    row
+        [ width (fill |> minimum 800 |> maximum 1400)
+        , height fill
+        ]
+        [ column
+            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ row
+                widthFillHeightFill
                 [ column
-                    [ width fill ]
-                    [ viewRecordHistory body.recordHistory language
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ pageHeaderTemplate language body
+                    , pageUriTemplate language body
                     ]
                 ]
+            , pageBodyView
+            , pageFooterTemplate language body
             ]
         ]

@@ -102,12 +102,12 @@ toggle toggle_ isDisabled isError =
 
             else
                 pointer
-        , width <| Css.rem 3
-        , height <| Css.rem 1.5
+        , width <| Css.rem 2
+        , height <| Css.rem 1
         , boxSizing borderBox
         , backgroundColor <| toggleColor toggle_ isDisabled isError
         , border3 (px 1) solid (toggleColor toggle_ isDisabled isError)
-        , borderRadius <| Css.rem 1.5
+        , borderRadius <| Css.rem 1.2
         , transition
             [ Transitions.backgroundColor 400
             , Transitions.borderColor 400
@@ -127,7 +127,7 @@ toggle toggle_ isDisabled isError =
                  else
                     hex "f1f1f1"
                 )
-            , borderRadius <| Css.rem 1.3
+            , borderRadius <| Css.rem 1
             ]
         , after
             [ display block
@@ -136,24 +136,24 @@ toggle toggle_ isDisabled isError =
             , left <| px 1
             , bottom <| px 1
             , property "content" "''"
-            , width <| Css.rem 1.3
+            , width <| Css.rem 0.8
             , backgroundColor <|
                 if isDisabled then
                     hex "eee"
 
                 else
                     hex "fff"
-            , borderRadius <| Css.rem 1.3
+            , borderRadius <| Css.rem 1
             , boxShadow4 (px 0) (px 2) (px 5) (rgba 0 0 0 0.3)
             , transition
-                [ Transitions.margin 400
+                [ Transitions.margin 300
                 ]
             , marginLeft
                 (if toggle_ then
-                    Css.rem 1.45
+                    Css.rem 0.9
 
                  else
-                    Css.rem 0
+                    Css.rem 0.1
                 )
             ]
         ]

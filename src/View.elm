@@ -18,8 +18,9 @@ import Page.Record.Views.SourcePage
 import Page.Record.Views.SourcePage.TableOfContents exposing (createSourceRecordToc)
 import Page.Route exposing (Route(..))
 import Page.Search.Views
+import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, headerBottomBorder, headingMD, linkColour, minimalDropShadow, pageBackground)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, pageBackground)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight, headerHeight)
@@ -117,15 +118,22 @@ view model =
             , pageBackground
             , inFront pageToc
             ]
-            (column
-                [ centerX
-                , width fill
+            (row
+                [ width fill
                 , height fill
                 ]
-                [ loadingIndicator model
-                , siteHeader pageSession
-                , pageView
-                , siteFooter pageSession
+                [ Page.SideBar.Views.view model
+                , column
+                    [ centerX
+                    , width fill
+                    , height fill
+                    ]
+                    [ loadingIndicator model
+
+                    --, siteHeader pageSession
+                    , pageView
+                    , siteFooter pageSession
+                    ]
                 ]
             )
         ]
@@ -174,36 +182,22 @@ siteHeader session =
     row
         [ width fill
         , height (px headerHeight)
-        , headerBottomBorder
         ]
         [ column
             [ width fill
             , height fill
             , centerX
-            , paddingXY 20 0
             ]
             [ row
                 [ width fill
                 , height fill
+                , paddingXY 20 0
                 ]
                 [ column
                     [ width (px 200)
-                    , Font.semiBold
-                    , headingMD
                     , centerY
                     ]
-                    [ link
-                        [ Font.color (colourScheme.darkBlue |> convertColorToElementColor) ]
-                        { url = "/", label = text "RISM Online" }
-                    ]
-                , column
-                    [ width (fillPortion 8)
-                    , centerY
-                    ]
-                    [ link
-                        [ linkColour ]
-                        { url = "/", label = text (extractLabelFromLanguageMap session.language localTranslations.home) }
-                    ]
+                    []
                 , column
                     [ width (fillPortion 2)
                     , alignRight
@@ -232,7 +226,6 @@ siteFooter session =
         [ width fill
         , height (px footerHeight)
         , footerBackground
-        , minimalDropShadow
         , Region.footer
         ]
         [ column

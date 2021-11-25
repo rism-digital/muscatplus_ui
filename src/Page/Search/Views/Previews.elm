@@ -7,7 +7,6 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes
 import Language exposing (Language)
-import Msg exposing (Msg(..))
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.Search.Views.Previews.Incipit exposing (viewIncipitPreview)
 import Page.Search.Views.Previews.Institution exposing (viewInstitutionPreview)

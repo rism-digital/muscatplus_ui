@@ -4,9 +4,10 @@ import Element exposing (Element, column, fill, height, none, padding, row, widt
 import Element.Background as Background
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Response exposing (Response(..), ServerData(..))
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
+import Page.UI.Attributes exposing (sectionSpacing, widthFillHeightFill)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
@@ -22,13 +23,11 @@ view session model =
                     none
     in
     row
-        [ width fill
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
             [ width fill
             , height fill
-            , padding 20
+            , padding sectionSpacing
             , Background.color (colourScheme.white |> convertColorToElementColor)
             ]
             [ pageView ]
