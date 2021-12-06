@@ -50,17 +50,21 @@ viewFullInstitutionPage language page body =
                     none
     in
     row
-        [ width (fill |> minimum 800 |> maximum 1400)
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
-            [ width fill
-            , height fill
-            , spacing 5
-            ]
-            [ pageHeaderTemplate language body
-            , pageUriTemplate language body
-            , viewTabSwitcher language currentTab body
+            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ row
+                [ width fill
+                , alignTop
+                ]
+                [ column
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ pageHeaderTemplate language body
+                    , pageUriTemplate language body
+                    ]
+                ]
+
+            --, viewTabSwitcher language currentTab body
             , pageBodyView
             , pageFooterTemplate language body
             ]

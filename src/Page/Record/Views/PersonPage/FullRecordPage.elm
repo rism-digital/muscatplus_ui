@@ -50,9 +50,7 @@ viewFullPersonPage language model body =
                     none
     in
     row
-        [ width (fill |> minimum 800 |> maximum 1400)
-        , height fill
-        ]
+        widthFillHeightFill
         [ column
             (List.append [ spacing sectionSpacing ] widthFillHeightFill)
             [ row

@@ -26,6 +26,7 @@ viewFullSourcePage language body =
                 [ column
                     [ width fill
                     , spacing sectionSpacing
+                    , alignTop
                     ]
                     [ viewMaybe (viewPartOfSection language) body.partOf
                     , viewMaybe (viewContentsSection language) body.contents
