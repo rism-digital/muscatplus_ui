@@ -19,3 +19,12 @@ viewMaybe : (a -> Element msg) -> Maybe a -> Element msg
 viewMaybe viewFunc body =
     Maybe.map viewFunc body
         |> Maybe.withDefault none
+
+
+viewIf : Element msg -> Bool -> Element msg
+viewIf viewFunc condition =
+    if condition == True then
+        viewFunc
+
+    else
+        none

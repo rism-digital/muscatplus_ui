@@ -16,23 +16,24 @@ viewSearchResultsLoading language model =
         [ width fill
         ]
         [ column
-            [ width (fill |> minimum 600 |> maximum 1100)
+            [ width fill
             , Background.color (colourScheme.white |> convertColorToElementColor)
             , searchColumnVerticalSize
             , scrollbarY
             , alignTop
             ]
             []
-        , column
-            [ Border.widthEach { top = 0, left = 2, right = 0, bottom = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-            , width (fill |> minimum 800)
-            , padding 20
-            , searchColumnVerticalSize
-            , scrollbarY
-            , alignTop
-            ]
-            []
+
+        --, column
+        --    [ Border.widthEach { top = 0, left = 2, right = 0, bottom = 0 }
+        --    , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+        --    , width (fill |> minimum 800)
+        --    , padding 20
+        --    , searchColumnVerticalSize
+        --    , scrollbarY
+        --    , alignTop
+        --    ]
+        --    []
         ]
 
 

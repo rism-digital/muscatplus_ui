@@ -3,7 +3,7 @@ module Page.Search.Views exposing (..)
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.ActiveFacet exposing (ActiveFacet(..))
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignRight, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, maximum, minimum, none, onLeft, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -154,11 +154,39 @@ searchResultsViewRouter language model =
 
 viewSearchResultsSection : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
 viewSearchResultsSection language model body =
+    let
+        renderedPreview =
+            case model.preview of
+                Loading Nothing ->
+                    -- TODO: Make a preview loading view
+                    viewPreviewLoading
+
+                Loading (Just oldData) ->
+                    column
+                        [ width (fillPortion 2)
+                        , height fill
+                        ]
+                        [ viewPreviewRouter language oldData ]
+
+                Response resp ->
+                    column
+                        [ width (fillPortion 2)
+                        , height fill
+                        ]
+                        [ viewPreviewRouter language resp ]
+
+                Error _ ->
+                    none
+
+                NoResponseToShow ->
+                    none
+    in
     row
         [ width fill
+        , height fill
         ]
         [ column
-            [ width (fill |> minimum 600 |> maximum 1100)
+            [ width (fillPortion 3)
             , Background.color (colourScheme.white |> convertColorToElementColor)
             , searchColumnVerticalSize
             , scrollbarY
@@ -167,18 +195,20 @@ viewSearchResultsSection language model body =
             ]
             [ viewSearchResultsListPanel language model body
             ]
-        , column
-            [ Border.widthEach { top = 0, left = 2, right = 0, bottom = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-            , Background.color (colourScheme.cream |> convertColorToElementColor)
-            , width (fill |> minimum 800)
-            , padding 20
-            , searchColumnVerticalSize
-            , scrollbarY
-            , alignTop
-            ]
-            [ viewSearchResultsControlPanel language model
-            ]
+        , renderedPreview
+
+        --, column
+        --    [ Border.widthEach { top = 0, left = 2, right = 0, bottom = 0 }
+        --    , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+        --    , Background.color (colourScheme.cream |> convertColorToElementColor)
+        --    , width (fill |> minimum 800)
+        --    , padding 20
+        --    , searchColumnVerticalSize
+        --    , scrollbarY
+        --    , alignTop
+        --    ]
+        --    [ viewSearchResultsControlPanel language model
+        --    ]
         ]
 
 

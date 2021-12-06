@@ -1,41 +1,25 @@
 module Page.UI.ExternalResources exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, link, paddingXY, paragraph, row, spacing, text, width)
-import Html.Attributes as HTA
+import Element exposing (Element, column, fill, link, paragraph, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
-import Page.UI.Attributes exposing (linkColour)
-import Page.UI.Components exposing (h5)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
+import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
 viewExternalResourcesSection language extSection =
-    row
-        [ width fill
-        , height fill
-        , paddingXY 0 20
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 20
-            , alignTop
-            ]
+    let
+        sectionBody =
             [ row
-                [ width fill
-                , htmlAttribute (HTA.id extSection.sectionToc)
-                ]
-                [ h5 language extSection.label ]
-            , row
-                [ width fill ]
+                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
                 [ column
-                    [ width fill
-                    , spacing 15
-                    ]
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
                     (List.map (\l -> viewExternalResource language l) extSection.items)
                 ]
             ]
-        ]
+    in
+    sectionTemplate language extSection sectionBody
 
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg

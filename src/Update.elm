@@ -12,9 +12,11 @@ import Page.NotFound as NotFoundPage
 import Page.Record as RecordPage
 import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
+import Page.SideBar as SideBar
 import Ports.LocalStorage exposing (saveLanguagePreference)
 import Response exposing (Response(..))
 import Url exposing (Url)
+import Utlities exposing (flip)
 
 
 changePage : Url -> Model -> ( Model, Cmd Msg )
@@ -101,7 +103,7 @@ update msg model =
                 newModel =
                     toSession model
                         |> setLanguage (parseLocaleToLanguage language)
-                        |> updateSession model
+                        |> flip updateSession model
             in
             ( newModel
             , saveLanguagePreference language
@@ -124,9 +126,22 @@ update msg model =
                 newModel =
                     toSession model
                         |> setDevice device
-                        |> updateSession model
+                        |> flip updateSession model
             in
             ( newModel, Cmd.none )
+
+        ( Msg.UserInteractedWithSideBar sideBarMsg, _ ) ->
+            let
+                ( newSession, sidebarCmd ) =
+                    toSession model
+                        |> SideBar.update sideBarMsg
+
+                newModel =
+                    updateSession newSession model
+            in
+            ( newModel
+            , Cmd.map Msg.UserInteractedWithSideBar sidebarCmd
+            )
 
         ( Msg.UserInteractedWithFrontPage frontMsg, FrontPage session pageModel ) ->
             FrontPage.update frontMsg pageModel

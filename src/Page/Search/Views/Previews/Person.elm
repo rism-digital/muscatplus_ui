@@ -4,17 +4,26 @@ import Element exposing (Element, column, el, fill, height, link, none, paddingX
 import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
 import Page.Record.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (h4, viewSummaryField)
 import Page.UI.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Notes exposing (viewNotesSection)
+import Page.UI.PageTemplate exposing (pageHeaderTemplate, pageUriTemplate)
 import Page.UI.Relationship exposing (viewRelationshipsSection)
 
 
 viewPersonPreview : Language -> PersonBody -> Element msg
 viewPersonPreview language body =
     let
+        summaryBody labels =
+            row
+                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                [ column
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ viewSummaryField language labels ]
+                ]
+
         sourcesLink =
             case body.sources of
                 Just _ ->
@@ -38,30 +47,34 @@ viewPersonPreview language body =
                     { url = body.id, label = text body.id }
                 , sourcesLink
                 ]
-    in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 5
-            ]
-            [ row
-                [ width fill ]
-                [ h4 language body.label ]
-            , personLink
-            , row
-                [ width fill ]
+
+        pageBodyView =
+            row
+                widthFillHeightFill
                 [ column
-                    [ width fill ]
-                    [ viewMaybe (viewSummaryField language) body.summary
+                    [ width fill
+                    , spacing sectionSpacing
+                    ]
+                    [ viewMaybe summaryBody body.summary
                     , viewMaybe (viewNameVariantsSection language) body.nameVariants
                     , viewMaybe (viewRelationshipsSection language) body.relationships
                     , viewMaybe (viewNotesSection language) body.notes
                     , viewMaybe (viewExternalResourcesSection language) body.externalResources
                     ]
                 ]
+    in
+    row
+        widthFillHeightFill
+        [ column
+            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ row
+                widthFillHeightFill
+                [ column
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ pageHeaderTemplate language body
+                    , pageUriTemplate language body
+                    ]
+                ]
+            , pageBodyView
             ]
         ]

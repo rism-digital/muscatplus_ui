@@ -9,4 +9,5 @@ type alias SearchPageModel =
     , activeSearch : ActiveSearch
     , preview : Response
     , selectedResult : Maybe String
+    , showFacetPanel : Bool
     }

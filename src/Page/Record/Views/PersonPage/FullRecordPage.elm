@@ -11,7 +11,7 @@ import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.Record.Views.PersonPage.SourcesTab exposing (viewPersonSourcesTab)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.ExternalResources exposing (viewExternalResourcesSection)
@@ -56,7 +56,9 @@ viewFullPersonPage language model body =
         [ column
             (List.append [ spacing sectionSpacing ] widthFillHeightFill)
             [ row
-                widthFillHeightFill
+                [ width fill
+                , alignTop
+                ]
                 [ column
                     (List.append [ spacing lineSpacing ] widthFillHeightFill)
                     [ pageHeaderTemplate language body
@@ -144,6 +146,15 @@ viewTabSwitcher language currentTab body =
 
 viewDescriptionTab : Language -> PersonBody -> Element msg
 viewDescriptionTab language body =
+    let
+        summaryBody labels =
+            row
+                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                [ column
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ viewSummaryField language labels ]
+                ]
+    in
     row
         widthFillHeightFill
         [ column
@@ -151,8 +162,8 @@ viewDescriptionTab language body =
             , spacing sectionSpacing
             , alignTop
             ]
-            [ viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-            , viewMaybe (viewSummaryField language) body.summary
+            [ viewMaybe summaryBody body.summary
+            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
             , viewMaybe (viewNameVariantsSection language) body.nameVariants
             , viewMaybe (viewRelationshipsSection language) body.relationships
             , viewMaybe (viewNotesSection language) body.notes

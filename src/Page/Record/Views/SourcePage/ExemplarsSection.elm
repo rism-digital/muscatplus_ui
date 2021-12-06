@@ -80,6 +80,6 @@ viewExemplarRelationships language body =
     row
         widthFillHeightFill
         [ column
-            widthFillHeightFill
+            (List.append [ spacing lineSpacing ] widthFillHeightFill)
             (List.map (\l -> viewRelationshipBody language l) body.items)
         ]

@@ -33,6 +33,7 @@ init route =
     , activeSearch = ActiveSearch.init route
     , preview = NoResponseToShow
     , selectedResult = Nothing
+    , showFacetPanel = False
     }
 
 
@@ -67,6 +68,7 @@ load oldModel =
     , activeSearch = newActiveSearch
     , preview = NoResponseToShow
     , selectedResult = Nothing
+    , showFacetPanel = oldModel.showFacetPanel
     }
 
 
@@ -189,6 +191,9 @@ update session msg model =
             ( model, Cmd.none )
 
         UserChangedFacetMode facetMode ->
+            ( model, Cmd.none )
+
+        UserClickedFacetPanelToggle ->
             ( model, Cmd.none )
 
         UserClickedFacetExpand alias ->

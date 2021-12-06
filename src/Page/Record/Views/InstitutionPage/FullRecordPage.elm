@@ -1,6 +1,6 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignBottom, alignRight, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignRight, alignTop, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -11,7 +11,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.InstitutionPage.SourcesTab exposing (viewInstitutionSourcesTab)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (h1, h4, viewRecordHistory, viewSummaryField)
 import Page.UI.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.ExternalResources exposing (viewExternalResourcesSection)
@@ -140,12 +140,24 @@ viewTabSwitcher language currentTab body =
 
 viewDescriptionTab : Language -> InstitutionBody -> Element msg
 viewDescriptionTab language body =
+    let
+        summaryBody labels =
+            row
+                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                [ column
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ viewSummaryField language labels ]
+                ]
+    in
     row
-        [ width fill ]
+        widthFillHeightFill
         [ column
-            [ width fill ]
-            [ viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-            , viewMaybe (viewSummaryField language) body.summary
+            [ width fill
+            , alignTop
+            , spacing sectionSpacing
+            ]
+            [ viewMaybe summaryBody body.summary
+            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
             , viewMaybe (viewRelationshipsSection language) body.relationships
             , viewMaybe (viewNotesSection language) body.notes
             , viewMaybe (viewExternalResourcesSection language) body.externalResources

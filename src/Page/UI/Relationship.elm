@@ -5,43 +5,25 @@ import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
 import Page.UI.Components exposing (h5, label)
+import Page.UI.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
 viewRelationshipsSection language relSection =
-    row
-        [ width fill
-        , height fill
-        , paddingXY 0 20
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 20
-            , alignTop
-            ]
+    let
+        sectionBody =
             [ row
-                [ width fill
-                , htmlAttribute (HTA.id relSection.sectionToc)
-                ]
-                [ h5 language relSection.label ]
-            , row
-                [ width fill
-                , alignTop
-                , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
-                , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-                , paddingXY 10 0
-                ]
+                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
                 [ column
-                    [ width fill
-                    ]
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
                     (List.map (\t -> viewRelationshipBody language t) relSection.items)
                 ]
             ]
-        ]
+    in
+    sectionTemplate language relSection sectionBody
 
 
 viewRelationshipBody : Language -> RelationshipBody -> Element msg

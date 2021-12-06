@@ -122,7 +122,7 @@ view model =
                 [ width fill
                 , height fill
                 ]
-                [ Page.SideBar.Views.view model
+                [ Element.map Msg.UserInteractedWithSideBar (Page.SideBar.Views.view pageSession)
                 , column
                     [ centerX
                     , width fill

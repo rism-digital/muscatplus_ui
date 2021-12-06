@@ -17,7 +17,7 @@ import Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Fi
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetModes(..), FacetSorts(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingMD, headingSM)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingMD, headingSM, headingXS)
 import Page.UI.Components exposing (dropdownSelect, h5, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
@@ -36,7 +36,7 @@ viewModeItems selectedMode language typeFacet =
                 [ Font.medium
                 , height fill
                 , centerY
-                , headingMD
+                , headingSM
                 ]
                 [ text (extractLabelFromLanguageMap language typeFacet.label) ]
     in
@@ -123,7 +123,7 @@ viewModeItem selectedMode language fitem =
                 , checked = False
                 , label =
                     labelLeft
-                        [ headingMD
+                        [ headingSM
                         , alignLeft
                         ]
                         (text (fullLabel ++ " (" ++ itemCount ++ ")"))

@@ -142,21 +142,18 @@ extractTextFromLanguageMap lang langMap =
 
         lastResort =
             [ "[No language value found]" ]
+    in
+    case firstChoice of
+        Just (LanguageValues _ t) ->
+            t
 
-        chosenLangValues =
-            case firstChoice of
+        Nothing ->
+            case fallback of
                 Just (LanguageValues _ t) ->
                     t
 
                 Nothing ->
-                    case fallback of
-                        Just (LanguageValues _ t) ->
-                            t
-
-                        Nothing ->
-                            lastResort
-    in
-    chosenLangValues
+                    lastResort
 
 
 languageDecoder : String -> Decoder Language

@@ -1,18 +1,34 @@
 module Page.Front.Views exposing (..)
 
-import Element exposing (Element, alignTop, centerX, column, fill, height, maximum, minimum, none, paddingXY, paragraph, row, text, width)
+import Element exposing (Element, alignTop, centerX, column, el, fill, height, maximum, minimum, none, paddingXY, paragraph, row, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg)
 import Page.RecordTypes.Root exposing (RootBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
+import Page.SideBar.Msg exposing (SideBarOption(..))
+import Page.UI.Attributes exposing (headingMD, headingXL)
 import Response exposing (Response(..), ServerData(..))
-import Page.UI.Attributes exposing (headingMD)
 import Session exposing (Session)
 
 
 view : Session -> FrontPageModel -> Element FrontMsg
 view session model =
+    let
+        bodyView =
+            case session.showFrontSearchInterface of
+                SourceSearchOption ->
+                    sourceSearchFrontPage
+
+                PeopleSearchOption ->
+                    peopleSearchFrontPage
+
+                InstitutionSearchOption ->
+                    institutionSearchFrontPage
+
+                IncipitSearchOption ->
+                    incipitSearchFrontPage
+    in
     row
         [ width fill
         , height fill
@@ -26,10 +42,48 @@ view session model =
             ]
             [ row
                 [ width fill ]
-                [ ]
-            , viewWelcomeMessageRouter session model
+                []
+            , bodyView
+
+            --, viewWelcomeMessageRouter session model
             ]
         ]
+
+
+sourceSearchFrontPage : Element msg
+sourceSearchFrontPage =
+    row
+        [ width fill
+        , centerX
+        ]
+        [ el [ headingXL ] (text "Source search") ]
+
+
+peopleSearchFrontPage : Element msg
+peopleSearchFrontPage =
+    row
+        [ width fill
+        , centerX
+        ]
+        [ el [ headingXL ] (text "People search") ]
+
+
+institutionSearchFrontPage : Element msg
+institutionSearchFrontPage =
+    row
+        [ width fill
+        , centerX
+        ]
+        [ el [ headingXL ] (text "Institution search") ]
+
+
+incipitSearchFrontPage : Element msg
+incipitSearchFrontPage =
+    row
+        [ width fill
+        , centerX
+        ]
+        [ el [ headingXL ] (text "Incipit search") ]
 
 
 viewWelcomeMessageRouter : Session -> FrontPageModel -> Element msg
@@ -40,6 +94,7 @@ viewWelcomeMessageRouter session model =
 
         _ ->
             none
+
 
 viewWelcomeMessage : Language -> RootBody -> Element msg
 viewWelcomeMessage language body =

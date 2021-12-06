@@ -1,6 +1,6 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (..)
 
-import Element exposing (Element, column, fill, height, maximum, minimum, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, maximum, minimum, row, spacing, width)
 import Language exposing (Language)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourcePage.ContentsSection exposing (viewContentsSection)
@@ -45,7 +45,9 @@ viewFullSourcePage language body =
         [ column
             (List.append [ spacing sectionSpacing ] widthFillHeightFill)
             [ row
-                widthFillHeightFill
+                [ width fill
+                , alignTop
+                ]
                 [ column
                     (List.append [ spacing lineSpacing ] widthFillHeightFill)
                     [ pageHeaderTemplate language body

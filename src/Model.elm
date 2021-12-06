@@ -42,8 +42,8 @@ toSession model =
             session
 
 
-updateSession : Model -> Session -> Model
-updateSession model newSession =
+updateSession : Session -> Model -> Model
+updateSession newSession model =
     case model of
         NotFoundPage _ pageModel ->
             NotFoundPage newSession pageModel

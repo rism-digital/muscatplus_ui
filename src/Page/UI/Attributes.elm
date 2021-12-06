@@ -11,7 +11,10 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerH
 
 bodyFont : Attribute msg
 bodyFont =
-    Font.family [ Font.typeface "Noto Sans Display", Font.sansSerif ]
+    Font.family
+        [ Font.typeface "Noto Sans Display"
+        , Font.sansSerif
+        ]
 
 
 bodyFontColour : Attribute msg
@@ -117,7 +120,7 @@ linkColour =
 
 baseSize : Float
 baseSize =
-    16.0
+    14.0
 
 
 lineSpacing : Int

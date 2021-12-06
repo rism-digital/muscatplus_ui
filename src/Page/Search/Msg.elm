@@ -20,6 +20,7 @@ type SearchMsg
     | UserClickedFacetExpand String
     | UserClickedFacetItem String FacetItem Bool
     | UserClickedFacetToggle String
+    | UserClickedFacetPanelToggle
     | UserMovedRangeSlider String RangeSlider.Msg
     | UserChangedResultSorting String
     | UserClickedModeItem String FacetItem Bool

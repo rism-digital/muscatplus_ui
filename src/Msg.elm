@@ -6,6 +6,7 @@ import Page.Front as Front
 import Page.NotFound as NotFound
 import Page.Record as Record
 import Page.Search as Search
+import Page.SideBar as SideBar
 import Url exposing (Url)
 
 
@@ -66,4 +67,5 @@ type Msg
     | UserInteractedWithSearchPage Search.Msg
     | UserInteractedWithRecordPage Record.Msg
     | UserInteractedWithNotFoundPage NotFound.Msg
+    | UserInteractedWithSideBar SideBar.Msg
     | NothingHappened -- for stubbing out messages and development, a.k.a. 'NoOp'
