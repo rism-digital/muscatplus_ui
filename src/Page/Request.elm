@@ -21,8 +21,13 @@ createErrorMessage error =
         Http.Detailed.BadBody _ _ message ->
             "Unexpected response: " ++ message
 
-        Http.Detailed.BadStatus _ message ->
-            message
+        Http.Detailed.BadStatus metadata message ->
+            case metadata.statusCode of
+                404 ->
+                    metadata.statusText
+
+                _ ->
+                    "A bad status was received"
 
         _ ->
             "A problem happened with the request"

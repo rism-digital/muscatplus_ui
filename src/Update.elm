@@ -1,6 +1,5 @@
 module Update exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, toActiveSearch)
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (setDevice)
@@ -14,7 +13,6 @@ import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Ports.LocalStorage exposing (saveLanguagePreference)
-import Response exposing (Response(..))
 import Url exposing (Url)
 import Utlities exposing (flip)
 
@@ -167,8 +165,9 @@ update msg model =
             RecordPage.update session recordMsg pageModel
                 |> updateWith (PlacePage session) Msg.UserInteractedWithRecordPage model
 
-        ( Msg.UserInteractedWithNotFoundPage _, _ ) ->
-            ( model, Cmd.none )
+        ( Msg.UserInteractedWithNotFoundPage notFoundMsg, NotFoundPage session pageModel ) ->
+            NotFoundPage.update session notFoundMsg pageModel
+                |> updateWith (NotFoundPage session) Msg.UserInteractedWithNotFoundPage model
 
         ( Msg.NothingHappened, _ ) ->
             ( model, Cmd.none )

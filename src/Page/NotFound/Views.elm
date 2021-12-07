@@ -3,8 +3,8 @@ module Page.NotFound.Views exposing (view)
 import Element exposing (Element, column, fill, height, padding, row, text, width)
 import Element.Background as Background
 import Page.NotFound.Model exposing (NotFoundPageModel)
-import Response exposing (Response(..))
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..))
 import Session exposing (Session)
 
 
