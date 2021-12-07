@@ -29,11 +29,11 @@ viewFacetsForSourcesMode language model body =
                 |> Maybe.withDefault ""
     in
     row
-        (List.append [ padding 20, alignTop ] widthFillHeightFill)
+        (List.append [ padding 20 ] widthFillHeightFill)
         [ column
-            (List.append [ spacing sectionSpacing, alignTop ] widthFillHeightFill)
+            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
             [ row
-                (List.append [ alignTop ] widthFillHeightFill)
+                (List.append [] widthFillHeightFill)
                 [ column
                     [ width (fill |> minimum 800 |> maximum 1100)
                     , alignTop

@@ -2,12 +2,12 @@ module Page.Search.Views.Facets exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input as Input exposing (checkbox, defaultCheckbox, labelHidden, labelLeft, labelRight)
+import Element.Input as Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
 import Element.Region as Region
 import Html
 import Html.Attributes as HA
@@ -18,11 +18,11 @@ import Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Fi
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetSorts(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingSM, lineSpacing, widthFillHeightFill)
-import Page.UI.Components exposing (dropdownSelect, h5, h6)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, facetBorderBottom, headingLG, headingSM, lineSpacing, widthFillHeightFill)
+import Page.UI.Components exposing (dropdownSelect, h5)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
-import Page.UI.Images exposing (checkedBoxSvg, editSvg, institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, unionSvg, unknownSvg)
+import Page.UI.Images exposing (institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, unionSvg, unknownSvg)
 import Page.UI.Keyboard as Keyboard
 import Page.UI.Keyboard.Model exposing (Keyboard(..))
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -140,7 +140,7 @@ viewFacetSection :
     -> Element SearchMsg
 viewFacetSection language title facets =
     row
-        (List.append [ alignTop ] widthFillHeightFill)
+        (List.concat [ widthFillHeightFill, facetBorderBottom ])
         [ column
             (List.append [ spacing lineSpacing, alignTop ] widthFillHeightFill)
             [ row
@@ -230,7 +230,7 @@ viewToggleFacet language activeFilters facet =
         [ column
             []
             [ row
-                []
+                [ paddingXY 10 0 ]
                 [ el []
                     (Toggle.view isActive (UserClickedFacetToggle facet.alias)
                         |> Toggle.setLabel (extractLabelFromLanguageMap language facet.label)
@@ -303,7 +303,17 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
                 body.items
 
             else
-                List.take 10 body.items
+                List.take 12 body.items
+
+        numberOfHiddenItems =
+            List.length body.items - 12
+
+        truncatedNote =
+            if List.length body.items == 200 then
+                el [ alignLeft ] (text "Top 200 values")
+
+            else
+                none
 
         -- TODO: Translate!
         showMoreText =
@@ -311,10 +321,10 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
                 "Show fewer"
 
             else
-                "Show more"
+                "Show " ++ String.fromInt numberOfHiddenItems ++ " more"
 
         showLink =
-            if List.length body.items > 10 then
+            if List.length body.items > 12 then
                 column
                     [ width fill
                     , bodySM
@@ -406,6 +416,7 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
                 [ width fill
                 , alignTop
                 , padding 10
+                , spacing lineSpacing
                 ]
                 [ column
                     [ width fill
@@ -449,6 +460,11 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
                             , onClick (UserChangedFacetSort (toggledSortMsg sorts.current))
                             ]
                             (toggledSortIcon sorts.current)
+                        , el
+                            [ width shrink
+                            , alignLeft
+                            ]
+                            truncatedNote
                         ]
                     ]
                 , showLink
@@ -494,18 +510,22 @@ viewFacetItem language facetAlias activeFilters fitem =
         [ row
             [ width fill
             , alignLeft
+            , spacing 5
             ]
             [ checkbox
                 [ Element.htmlAttribute (HA.alt fullLabel)
                 , alignLeft
+                , width fill
                 ]
                 { onChange = \selected -> UserClickedFacetItem facetAlias fitem selected
                 , icon = defaultCheckbox
                 , checked = shouldBeChecked
                 , label =
                     labelRight
-                        [ bodyRegular ]
-                        (text (SE.softEllipsis 30 fullLabel))
+                        [ bodyRegular
+                        , width fill
+                        ]
+                        (paragraph [ width fill ] [ text (SE.softEllipsis 50 fullLabel) ])
                 }
             , el
                 [ alignLeft
