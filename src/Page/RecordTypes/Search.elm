@@ -126,7 +126,6 @@ type alias SelectFacet =
     , items : List FacetItem
     , behaviours : FacetBehaviourOptions
     , sorts : FacetSortOptions
-    , modes : FacetModeOptions
     }
 
 
@@ -165,19 +164,6 @@ type alias FacetSortOptions =
 type alias FacetOptionsLabelValue =
     { label : LanguageMap
     , value : String
-    }
-
-
-type FacetModes
-    = FacetModeCheck
-    | FacetModeText
-
-
-type alias FacetModeOptions =
-    { label : LanguageMap
-    , items : List FacetOptionsLabelValue
-    , default : FacetModes
-    , current : FacetModes
     }
 
 
@@ -356,7 +342,6 @@ selectFacetDecoder =
         |> required "items" (Decode.list facetItemDecoder)
         |> required "behaviours" facetBehaviourOptionsDecoder
         |> required "sorts" facetSortOptionsDecoder
-        |> required "modes" facetModeOptionsDecoder
 
 
 notationFacetDecoder : Decoder NotationFacet
@@ -431,32 +416,6 @@ facetSortDecoder =
 
                     _ ->
                         Decode.fail ("Unknown value " ++ str ++ " for facet sort")
-            )
-
-
-facetModeOptionsDecoder : Decoder FacetModeOptions
-facetModeOptionsDecoder =
-    Decode.succeed FacetModeOptions
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list facetOptionsLabelValueDecoder)
-        |> required "default" facetModeDecoder
-        |> required "current" facetModeDecoder
-
-
-facetModeDecoder : Decoder FacetModes
-facetModeDecoder =
-    Decode.string
-        |> Decode.andThen
-            (\str ->
-                case str of
-                    "check" ->
-                        Decode.succeed FacetModeCheck
-
-                    "text" ->
-                        Decode.succeed FacetModeText
-
-                    _ ->
-                        Decode.fail ("Unknown value " ++ str ++ " for facet mode")
             )
 
 

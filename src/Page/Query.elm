@@ -16,6 +16,7 @@ module Page.Query exposing
     , setSort
     , toFilters
     , toMode
+    , toQuery
     , toQueryArgs
     , toggleFilters
     )
@@ -119,6 +120,11 @@ setFilters newFilters oldRecord =
 setMode : ResultMode -> { a | mode : ResultMode } -> { a | mode : ResultMode }
 setMode newMode oldRecord =
     { oldRecord | mode = newMode }
+
+
+toQuery : { a | query : Maybe String } -> Maybe String
+toQuery qargs =
+    qargs.query
 
 
 setQuery : Maybe String -> { a | query : Maybe String } -> { a | query : Maybe String }

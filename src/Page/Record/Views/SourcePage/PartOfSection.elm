@@ -2,9 +2,9 @@ module Page.Record.Views.SourcePage.PartOfSection exposing (..)
 
 import Element exposing (Element, fill, link, row, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
 import Page.UI.Attributes exposing (linkColour)
-import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewPartOfSection : Language -> PartOfSectionBody -> Element msg

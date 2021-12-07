@@ -3,6 +3,7 @@ module Page.Record.Views.SourcePage.FullRecordPage exposing (..)
 import Element exposing (Element, alignTop, column, fill, height, maximum, minimum, row, spacing, width)
 import Language exposing (Language)
 import Page.Record.Msg exposing (RecordMsg)
+import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 import Page.Record.Views.SourcePage.ContentsSection exposing (viewContentsSection)
 import Page.Record.Views.SourcePage.ExemplarsSection exposing (viewExemplarsSection)
 import Page.Record.Views.SourcePage.MaterialGroupsSection exposing (viewMaterialGroupsSection)
@@ -14,7 +15,6 @@ import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Incipits exposing (viewIncipitsSection)
-import Page.UI.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 
 
 viewFullSourcePage : Language -> FullSourceBody -> Element RecordMsg

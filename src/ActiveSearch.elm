@@ -20,9 +20,6 @@ init initialRoute =
                 _ ->
                     ( Page.Query.defaultQueryArgs, Keyboard.defaultKeyboardQuery )
 
-        initialMode =
-            qargs.mode
-
         initialSort =
             qargs.sort
 

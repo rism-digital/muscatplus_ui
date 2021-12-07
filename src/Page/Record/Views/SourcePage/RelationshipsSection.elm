@@ -2,9 +2,9 @@ module Page.Record.Views.SourcePage.RelationshipsSection exposing (..)
 
 import Element exposing (Element)
 import Language exposing (Language)
+import Page.Record.Views.Relationship exposing (viewRelationshipBody)
+import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
-import Page.UI.Relationship exposing (viewRelationshipBody)
-import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg

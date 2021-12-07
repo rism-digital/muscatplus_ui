@@ -2,12 +2,13 @@ module Page.Search.Views.Facets exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input exposing (checkbox, defaultCheckbox, labelHidden, labelLeft, labelRight)
+import Element.Region as Region
 import Html
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
@@ -15,9 +16,9 @@ import List.Extra as LE
 import Page.Converters exposing (convertFacetToFilter)
 import Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Filter(..), parseStringToFacetBehaviour)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetModes(..), FacetSorts(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
+import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetSorts(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingMD, headingSM, headingXS)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingSM, lineSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (dropdownSelect, h5, h6)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
@@ -129,6 +130,32 @@ viewModeItem selectedMode language fitem =
                         (text (fullLabel ++ " (" ++ itemCount ++ ")"))
                 }
             )
+        ]
+
+
+viewFacetSection :
+    Language
+    -> String
+    -> List (Element SearchMsg)
+    -> Element SearchMsg
+viewFacetSection language title facets =
+    row
+        (List.append [ alignTop ] widthFillHeightFill)
+        [ column
+            (List.append [ spacing lineSpacing, alignTop ] widthFillHeightFill)
+            [ row
+                widthFillHeightFill
+                [ el
+                    [ headingLG, Region.heading 3, Font.medium ]
+                    (text title)
+                ]
+            , row
+                (List.append [ alignTop ] widthFillHeightFill)
+                [ column
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    facets
+                ]
+            ]
         ]
 
 
@@ -324,46 +351,6 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
         sorts =
             body.sorts
 
-        modes =
-            body.modes
-
-        toggledModeIcon modeType =
-            case modeType of
-                FacetModeCheck ->
-                    editSvg colourScheme.slateGrey
-
-                FacetModeText ->
-                    checkedBoxSvg colourScheme.slateGrey
-
-        toggledModeMsg modeType =
-            case modeType of
-                FacetModeCheck ->
-                    TextInputSelect facetAlias
-
-                FacetModeText ->
-                    CheckboxSelect facetAlias
-
-        facetBodyDisplay modeType =
-            case modeType of
-                FacetModeCheck ->
-                    column
-                        [ width fill
-                        , spacing 5
-                        ]
-                        (List.map (\fItem -> viewFacetItem language facetAlias activeFilters fItem) facetItems)
-
-                FacetModeText ->
-                    column
-                        [ width fill ]
-                        [ Input.text
-                            []
-                            { onChange = \a -> NothingHappened
-                            , text = ""
-                            , placeholder = Nothing
-                            , label = labelHidden ""
-                            }
-                        ]
-
         behaviourOptions =
             body.behaviours
 
@@ -402,11 +389,13 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
                     (\inp -> parseStringToFacetBehaviour inp facetAlias)
                     chosenOption
                 )
+
+        groupedFacetItems =
+            LE.greedyGroupsOf 4 facetItems
     in
     row
-        [ width (px 400)
+        [ width fill
         , alignTop
-        , Border.width 1
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
@@ -416,22 +405,25 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
             [ row
                 [ width fill
                 , alignTop
-                , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                 , padding 10
                 ]
                 [ column
                     [ width fill
                     , alignLeft
                     , alignTop
-                    , Font.color (colourScheme.white |> convertColorToElementColor)
                     ]
-                    [ h6 language body.label ]
+                    [ h5 language body.label ]
                 ]
             , row
                 [ width fill
                 , padding 10
                 ]
-                [ facetBodyDisplay modes.current ]
+                [ column
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    (List.map (\fRow -> viewFacetItemRow language facetAlias activeFilters fRow) groupedFacetItems)
+                ]
             , row
                 [ width fill
                 , padding 10
@@ -457,18 +449,22 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
                             , onClick (UserChangedFacetSort (toggledSortMsg sorts.current))
                             ]
                             (toggledSortIcon sorts.current)
-                        , el
-                            [ width (px 20)
-                            , height (px 20)
-                            , onClick (UserChangedFacetMode (toggledModeMsg modes.current))
-                            ]
-                            (toggledModeIcon modes.current)
                         ]
                     ]
                 , showLink
                 ]
             ]
         ]
+
+
+viewFacetItemRow : Language -> String -> List Filter -> List FacetItem -> Element SearchMsg
+viewFacetItemRow language facetAlias activeFilters facetRow =
+    row
+        [ width fill
+        , spacing lineSpacing
+        , alignLeft
+        ]
+        (List.map (\fitem -> viewFacetItem language facetAlias activeFilters fitem) facetRow)
 
 
 viewFacetItem :
@@ -491,25 +487,32 @@ viewFacetItem language facetAlias activeFilters fitem =
         shouldBeChecked =
             List.member asFilter activeFilters
     in
-    row
-        [ width fill ]
-        [ checkbox
-            [ Element.htmlAttribute (HA.alt fullLabel)
+    column
+        [ width (px 250)
+        , alignLeft
+        ]
+        [ row
+            [ width fill
             , alignLeft
             ]
-            { onChange = \selected -> UserClickedFacetItem facetAlias fitem selected
-            , icon = defaultCheckbox
-            , checked = shouldBeChecked
-            , label =
-                labelRight
-                    [ bodyRegular ]
-                    (text (SE.softEllipsis 30 fullLabel))
-            }
-        , el
-            [ alignRight
-            , bodyRegular
+            [ checkbox
+                [ Element.htmlAttribute (HA.alt fullLabel)
+                , alignLeft
+                ]
+                { onChange = \selected -> UserClickedFacetItem facetAlias fitem selected
+                , icon = defaultCheckbox
+                , checked = shouldBeChecked
+                , label =
+                    labelRight
+                        [ bodyRegular ]
+                        (text (SE.softEllipsis 30 fullLabel))
+                }
+            , el
+                [ alignLeft
+                , bodyRegular
+                ]
+                (text (formatNumberByLanguage count language))
             ]
-            (text (formatNumberByLanguage count language))
         ]
 
 

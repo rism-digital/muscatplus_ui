@@ -3,7 +3,7 @@ module Page.Search.Views exposing (..)
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.ActiveFacet exposing (ActiveFacet(..))
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignRight, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, maximum, minimum, none, onLeft, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -11,16 +11,16 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
 import Page.Query exposing (toMode, toQueryArgs)
-import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.Search.Views.Facets exposing (viewFacet, viewModeItems)
+import Page.Search.Views.Facets exposing (viewModeItems)
 import Page.Search.Views.Loading exposing (searchModeSelectorLoading, viewSearchResultsLoading)
 import Page.Search.Views.Previews exposing (viewPreviewLoading, viewPreviewRouter)
 import Page.Search.Views.Results exposing (viewSearchResult)
-import Page.UI.Attributes exposing (headingSM, searchColumnVerticalSize, widthFillHeightFill)
-import Page.UI.Components exposing (dropdownSelect, searchKeywordInput)
+import Page.Search.Views.SearchControls exposing (viewSearchControls)
+import Page.UI.Attributes exposing (searchColumnVerticalSize, sectionSpacing, widthFillHeightFill)
+import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Pagination exposing (viewPagination)
@@ -53,21 +53,6 @@ viewSearchBody language model =
 
 viewTopBar : Language -> SearchPageModel -> Element SearchMsg
 viewTopBar lang model =
-    let
-        msgs =
-            { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserInputTextInQueryBox
-            }
-
-        activeSearch =
-            model.activeSearch
-
-        activeQuery =
-            activeSearch.query
-
-        qText =
-            Maybe.withDefault "" activeQuery.query
-    in
     row
         [ width fill
         , height (px searchHeaderHeight)
@@ -76,16 +61,7 @@ viewTopBar lang model =
         ]
         [ column
             widthFillHeightFill
-            [ row
-                widthFillHeightFill
-                [ column
-                    [ width (fill |> minimum 800 |> maximum 1100)
-                    , alignTop
-                    , paddingXY 20 10
-                    ]
-                    [ searchKeywordInput lang msgs qText ]
-                ]
-            , searchModeSelectorRouter lang model
+            [ searchModeSelectorRouter lang model
             ]
         ]
 
@@ -162,32 +138,30 @@ viewSearchResultsSection language model body =
                     viewPreviewLoading
 
                 Loading (Just oldData) ->
-                    column
-                        [ width (fillPortion 2)
-                        , height fill
-                        ]
-                        [ viewPreviewRouter language oldData ]
+                    viewPreviewRouter language oldData
 
                 Response resp ->
-                    column
-                        [ width (fillPortion 2)
-                        , height fill
-                        ]
-                        [ viewPreviewRouter language resp ]
+                    viewPreviewRouter language resp
 
                 Error _ ->
                     none
 
                 NoResponseToShow ->
                     none
+
+        activeSearch =
+            model.activeSearch
+
+        activeQuery =
+            activeSearch.query
     in
     row
         [ width fill
         , height fill
+        , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
             [ width (fillPortion 3)
-            , Background.color (colourScheme.white |> convertColorToElementColor)
             , searchColumnVerticalSize
             , scrollbarY
             , alignTop
@@ -195,20 +169,12 @@ viewSearchResultsSection language model body =
             ]
             [ viewSearchResultsListPanel language model body
             ]
-        , renderedPreview
-
-        --, column
-        --    [ Border.widthEach { top = 0, left = 2, right = 0, bottom = 0 }
-        --    , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-        --    , Background.color (colourScheme.cream |> convertColorToElementColor)
-        --    , width (fill |> minimum 800)
-        --    , padding 20
-        --    , searchColumnVerticalSize
-        --    , scrollbarY
-        --    , alignTop
-        --    ]
-        --    [ viewSearchResultsControlPanel language model
-        --    ]
+        , column
+            [ width (fillPortion 2)
+            , height fill
+            , inFront renderedPreview
+            ]
+            [ viewSearchControls language model body ]
         ]
 
 
@@ -231,41 +197,8 @@ viewSearchResultsList language model body =
         [ column
             [ width fill
             , alignTop
-            , spacing 20
             ]
             (List.map (\result -> viewSearchResult language model.selectedResult result) body.items)
-        ]
-
-
-viewSearchResultsControlPanel : Language -> SearchPageModel -> Element SearchMsg
-viewSearchResultsControlPanel language model =
-    let
-        preview =
-            model.preview
-
-        renderedPreview =
-            case preview of
-                Loading Nothing ->
-                    -- TODO: Make a preview loading view
-                    viewPreviewLoading
-
-                Loading (Just oldData) ->
-                    viewPreviewRouter language oldData
-
-                Response resp ->
-                    viewPreviewRouter language resp
-
-                Error _ ->
-                    none
-
-                NoResponseToShow ->
-                    none
-    in
-    row
-        widthFillHeightFill
-        [ column
-            (List.append [ inFront renderedPreview ] widthFillHeightFill)
-            [ viewSearchControlSection language model ]
         ]
 
 
@@ -355,131 +288,6 @@ viewSearchResultsError language model =
             none
 
 
-viewSearchControlSection : Language -> SearchPageModel -> Element SearchMsg
-viewSearchControlSection language model =
-    let
-        resp =
-            model.response
-
-        activeSearch =
-            model.activeSearch
-
-        controlView =
-            case resp of
-                Response (SearchData body) ->
-                    viewSearchControls language activeSearch body
-
-                Loading (Just (SearchData body)) ->
-                    viewSearchControls language activeSearch body
-
-                _ ->
-                    none
-
-        activeFilters =
-            case resp of
-                Response (SearchData _) ->
-                    viewActiveFilters language activeSearch
-
-                Loading (Just (SearchData _)) ->
-                    viewActiveFilters language activeSearch
-
-                _ ->
-                    none
-    in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 20
-            ]
-            [ row
-                [ width fill
-                , paddingXY 0 10
-                ]
-                [ column
-                    [ width fill
-                    , alignTop
-                    , spacing 20
-                    ]
-                    [ row
-                        [ width fill ]
-                        [ el
-                            [ headingSM
-                            , Font.medium
-                            ]
-                            (text "Active search parameters")
-                        ]
-                    , viewSearchPageSort language model
-                    , activeFilters
-                    ]
-                ]
-            , row
-                [ width fill
-                ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , spacing 20
-                    , alignTop
-                    ]
-                    [ row
-                        [ width fill
-                        ]
-                        [ el
-                            [ headingSM
-                            , Font.medium
-                            ]
-                            (text "Search controls")
-                        ]
-                    , controlView
-                    ]
-                ]
-            ]
-        ]
-
-
-viewSearchControls : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
-viewSearchControls language activeSearch body =
-    let
-        currentMode =
-            activeSearch
-                |> toQueryArgs
-                |> toMode
-
-        facetLayout =
-            case currentMode of
-                IncipitsMode ->
-                    viewFacetsForIncipitsMode language activeSearch body
-
-                SourcesMode ->
-                    viewFacetsForSourcesMode language activeSearch body
-
-                PeopleMode ->
-                    viewFacetsForPeopleMode language activeSearch body
-
-                InstitutionsMode ->
-                    viewFacetsForInstitutionsMode language activeSearch body
-
-                LiturgicalFestivalsMode ->
-                    none
-    in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 20
-            ]
-            [ facetLayout
-            ]
-        ]
-
-
 viewActiveFilters : Language -> ActiveSearch -> Element SearchMsg
 viewActiveFilters language activeSearch =
     let
@@ -503,7 +311,7 @@ viewActiveFilters language activeSearch =
     row
         []
         [ column
-            [ spacing 10 ]
+            [ spacing sectionSpacing ]
             activeControls
         ]
 
@@ -572,105 +380,5 @@ viewActiveFilter language (ActiveFacet facetType facetLabel facetAlias facetValu
                 , onClick (SearchMsg.UserClickedRemoveActiveFilter facetAlias facetValue)
                 ]
                 (closeWindowSvg colourScheme.white)
-            ]
-        ]
-
-
-viewFacetsForIncipitsMode : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
-viewFacetsForIncipitsMode language activeSearch body =
-    row
-        widthFillHeightFill
-        [ column
-            [ width fill
-            , height fill
-            , spacing 15
-            ]
-            [ row
-                [ width fill ]
-                [ column [ width fill ]
-                    [ viewFacet "notation" language activeSearch body
-                    ]
-                ]
-            , row
-                widthFillHeightFill
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing 10
-                    ]
-                    [ viewFacet "is-mensural" language activeSearch body
-                    , viewFacet "has-notation" language activeSearch body
-                    ]
-                ]
-            , row
-                widthFillHeightFill
-                [ column
-                    widthFillHeightFill
-                    [ viewFacet "composer" language activeSearch body
-                    , viewFacet "clef" language activeSearch body
-                    ]
-                , column
-                    widthFillHeightFill
-                    [ viewFacet "date-range" language activeSearch body
-                    ]
-                ]
-            ]
-        ]
-
-
-viewFacetsForSourcesMode : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
-viewFacetsForSourcesMode language activeSearch body =
-    row
-        widthFillHeightFill
-        [ column
-            [ width fill
-            , height fill
-            , spacing 15
-            ]
-            [ viewFacet "hide-source-contents" language activeSearch body
-            , viewFacet "hide-source-collections" language activeSearch body
-            , viewFacet "hide-composite-volumes" language activeSearch body
-            , viewFacet "has-incipits" language activeSearch body
-            , viewFacet "has-digitization" language activeSearch body
-            , viewFacet "date-range" language activeSearch body
-            , viewFacet "num-holdings" language activeSearch body
-            , viewFacet "holding-institution" language activeSearch body
-            , viewFacet "source-type" language activeSearch body
-            , viewFacet "content-types" language activeSearch body
-            , viewFacet "material-group-types" language activeSearch body
-            , viewFacet "subjects" language activeSearch body
-            , viewFacet "text-language" language activeSearch body
-            , viewFacet "format-extent" language activeSearch body
-            ]
-        ]
-
-
-viewFacetsForPeopleMode : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
-viewFacetsForPeopleMode language activeSearch body =
-    row
-        widthFillHeightFill
-        [ column
-            [ width fill
-            , height fill
-            , spacing 15
-            ]
-            [ viewFacet "person-role" language activeSearch body
-            , viewFacet "date-range" language activeSearch body
-            ]
-        ]
-
-
-viewFacetsForInstitutionsMode : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
-viewFacetsForInstitutionsMode language activeSearch body =
-    row
-        widthFillHeightFill
-        [ column
-            [ width fill
-            , height fill
-            , spacing 15
-            ]
-            [ viewFacet "date-range" language activeSearch body
-            , viewFacet "city" language activeSearch body
             ]
         ]

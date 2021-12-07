@@ -1,24 +1,23 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignBottom, alignRight, alignTop, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, none, padding, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Html.Attributes as HTA
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
+import Language exposing (Language, formatNumberByLanguage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
+import Page.Record.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
+import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Record.Views.InstitutionPage.SourcesTab exposing (viewInstitutionSourcesTab)
+import Page.Record.Views.Notes exposing (viewNotesSection)
+import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
+import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
-import Page.UI.Components exposing (h1, h4, viewRecordHistory, viewSummaryField)
-import Page.UI.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.UI.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Notes exposing (viewNotesSection)
-import Page.UI.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
-import Page.UI.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 

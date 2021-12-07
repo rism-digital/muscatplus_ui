@@ -1,14 +1,13 @@
 module Page.Record.Views.SourcePage.SourceItemsSection exposing (..)
 
-import Element exposing (Element, column, fill, height, link, row, spacing, text, width)
-import Element.Font as Font
+import Element exposing (Element, column, fill, link, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
-import Page.UI.Attributes exposing (headingSM, headingXS, lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
+import Page.UI.Attributes exposing (headingSM, lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewSourceItemsSection : Language -> SourceItemsSectionBody -> Element msg

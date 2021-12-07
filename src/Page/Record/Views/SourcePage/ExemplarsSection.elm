@@ -2,6 +2,8 @@ module Page.Record.Views.SourcePage.ExemplarsSection exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.Record.Views.Relationship exposing (viewRelationshipBody)
+import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
@@ -9,8 +11,6 @@ import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Components exposing (fieldValueWrapper, label, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Relationship exposing (viewRelationshipBody)
-import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg

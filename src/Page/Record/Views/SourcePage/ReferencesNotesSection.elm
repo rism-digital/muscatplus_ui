@@ -2,6 +2,7 @@ module Page.Record.Views.SourcePage.ReferencesNotesSection exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, link, paddingXY, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
@@ -9,7 +10,6 @@ import Page.RecordTypes.Source exposing (LiturgicalFestivalsSectionBody, Perform
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
 import Page.UI.Components exposing (h3, h6, viewParagraphField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewReferencesNotesSection : Language -> ReferencesNotesSectionBody -> Element msg

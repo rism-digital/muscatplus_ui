@@ -206,4 +206,4 @@ headerHeight =
 
 searchHeaderHeight : Int
 searchHeaderHeight =
-    120
+    80

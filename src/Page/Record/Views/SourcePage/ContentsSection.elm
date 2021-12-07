@@ -2,12 +2,12 @@ module Page.Record.Views.SourcePage.ContentsSection exposing (..)
 
 import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.Record.Views.Relationship exposing (viewRelationshipBody)
+import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Source exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Components exposing (fieldValueWrapper, label, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Relationship exposing (viewRelationshipBody)
-import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewContentsSection : Language -> ContentsSectionBody -> Element msg

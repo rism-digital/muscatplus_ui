@@ -1,7 +1,7 @@
 module Page.UI.Components exposing (..)
 
 import Color exposing (Color)
-import Element exposing (Element, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, padding, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, padding, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -10,9 +10,9 @@ import Element.Region as Region
 import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
-import Language exposing (Language, LanguageMap, dateFormatter, extractLabelFromLanguageMap, extractTextFromLanguageMap, localTranslations, parseLocaleToLanguage)
+import Language exposing (Language, LanguageMap, dateFormatter, extractLabelFromLanguageMap, extractTextFromLanguageMap, localTranslations)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Time exposing (utc)
@@ -264,16 +264,17 @@ searchKeywordInput language msgs queryText =
             [ Input.text
                 [ width fill
                 , height (px 50)
-                , Border.widthEach { bottom = 2, top = 2, left = 2, right = 0 }
+                , Border.widthEach { bottom = 1, top = 1, left = 1, right = 1 }
                 , Border.rounded 0
                 , htmlAttribute (HA.autocomplete False)
-                , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+                , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+                , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
                 , onEnter msgs.submitMsg
-                , headingSM
-                , paddingXY 10 10
+                , headingLG
+                , paddingXY 10 12
                 ]
                 { onChange = \inp -> msgs.changeMsg inp
-                , placeholder = Just (Input.placeholder [ headingLG ] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
+                , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
                 , text = queryText
                 , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                 }
@@ -294,35 +295,6 @@ searchKeywordInput language msgs queryText =
                 { onPress = Just msgs.submitMsg
                 , label = text (extractLabelFromLanguageMap language localTranslations.search)
                 }
-            ]
-        ]
-
-
-viewRecordHistory : Language -> RecordHistory -> Element msg
-viewRecordHistory language history =
-    let
-        createdDateFormatted =
-            dateFormatter utc history.created
-
-        updatedDateFormatted =
-            dateFormatter utc history.updated
-
-        created =
-            extractLabelFromLanguageMap language history.createdLabel ++ ": " ++ createdDateFormatted
-
-        updated =
-            extractLabelFromLanguageMap language history.updatedLabel ++ ": " ++ updatedDateFormatted
-    in
-    row
-        widthFillHeightFill
-        [ column
-            (List.append [ spacing lineSpacing ] widthFillHeightFill)
-            [ el
-                []
-                (text created)
-            , el
-                []
-                (text updated)
             ]
         ]
 

@@ -1,6 +1,6 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, maximum, minimum, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, none, padding, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -8,17 +8,17 @@ import Element.Font as Font
 import Language exposing (Language, formatNumberByLanguage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
+import Page.Record.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
+import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
+import Page.Record.Views.Notes exposing (viewNotesSection)
+import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 import Page.Record.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.Record.Views.PersonPage.SourcesTab exposing (viewPersonSourcesTab)
+import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (viewSummaryField)
-import Page.UI.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.UI.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Notes exposing (viewNotesSection)
-import Page.UI.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
-import Page.UI.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 

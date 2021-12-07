@@ -2,13 +2,13 @@ module Page.Record.Views.SourcePage.MaterialGroupsSection exposing (..)
 
 import Element exposing (Element, column, row)
 import Language exposing (Language)
+import Page.Record.Views.Relationship exposing (viewRelationshipBody)
+import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
 import Page.UI.Attributes exposing (sectionBorderStyles, widthFillHeightFill)
 import Page.UI.Components exposing (viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Relationship exposing (viewRelationshipBody)
-import Page.UI.SectionTemplate exposing (sectionTemplate)
 
 
 viewMaterialGroupsSection : Language -> MaterialGroupsSectionBody -> Element msg

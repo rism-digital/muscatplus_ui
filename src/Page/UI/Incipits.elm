@@ -3,12 +3,12 @@ module Page.UI.Incipits exposing (..)
 import Element exposing (Element, column, fill, htmlAttribute, maximum, minimum, paddingXY, row, spacing, text, width)
 import Html.Attributes as HTA
 import Language exposing (Language)
+import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
 import Page.UI.Attributes exposing (sectionBorderStyles, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.SectionTemplate exposing (sectionTemplate)
 import SvgParser
 
 
