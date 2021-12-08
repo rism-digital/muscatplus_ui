@@ -2,7 +2,7 @@ module Page.Search.Views.Facets exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, mouseOver, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -19,7 +19,7 @@ import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetSorts(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (bodyRegular, bodySM, facetBorderBottom, headingLG, headingSM, lineSpacing, widthFillHeightFill)
-import Page.UI.Components exposing (dropdownSelect, h5)
+import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h5)
 import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
 import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Images exposing (institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, unionSvg, unknownSvg)
@@ -427,11 +427,9 @@ viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facet
                 ]
             , row
                 [ width fill
-                , padding 10
                 ]
                 [ column
                     [ width fill
-                    , spacing lineSpacing
                     ]
                     (List.map (\fRow -> viewFacetItemRow language facetAlias activeFilters fRow) groupedFacetItems)
                 ]
@@ -506,19 +504,22 @@ viewFacetItem language facetAlias activeFilters fitem =
     column
         [ width (px 250)
         , alignLeft
+        , alignTop
+        , padding 5
+        , mouseOver [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
         ]
         [ row
             [ width fill
             , alignLeft
-            , spacing 5
             ]
             [ checkbox
                 [ Element.htmlAttribute (HA.alt fullLabel)
                 , alignLeft
+                , alignTop
                 , width fill
                 ]
                 { onChange = \selected -> UserClickedFacetItem facetAlias fitem selected
-                , icon = defaultCheckbox
+                , icon = basicCheckbox
                 , checked = shouldBeChecked
                 , label =
                     labelRight
