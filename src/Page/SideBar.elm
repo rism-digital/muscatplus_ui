@@ -1,6 +1,7 @@
 module Page.SideBar exposing (..)
 
 import Browser.Navigation as Nav
+import Language exposing (parseLocaleToLanguage)
 import Page.SideBar.Msg exposing (SideBarMsg(..))
 import Session exposing (AnimatedSideBar(..), Session)
 
@@ -27,4 +28,9 @@ update msg session =
         UserClickedSideBarOptionForFrontPage sidebarOption ->
             ( { session | showFrontSearchInterface = sidebarOption }
             , Nav.pushUrl session.key "/"
+            )
+
+        UserChangedLanguageSelect lang ->
+            ( { session | language = parseLocaleToLanguage lang }
+            , Cmd.none
             )

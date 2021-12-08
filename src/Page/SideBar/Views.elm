@@ -1,14 +1,16 @@
 module Page.SideBar.Views exposing (..)
 
 import Color exposing (Color)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, mouseOver, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, mouseOver, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
+import Language exposing (languageOptionsForDisplay, parseLocaleToLanguage)
 import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..))
 import Page.UI.Animations exposing (animatedColumn, animatedEl)
 import Page.UI.Attributes exposing (headingMD)
+import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, roLogoSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
@@ -17,7 +19,7 @@ import Simple.Animation as Animation
 import Simple.Animation.Property as P
 
 
-animatedLabel : String -> Element msg
+animatedLabel : Element msg -> Element msg
 animatedLabel labelText =
     animatedEl
         (Animation.fromTo
@@ -27,8 +29,9 @@ animatedLabel labelText =
         )
         [ headingMD
         , Font.medium
+        , width fill
         ]
-        (text labelText)
+        labelText
 
 
 dividingLine : Element msg
@@ -47,51 +50,93 @@ dividingLine =
         ]
 
 
-menuOption :
-    { option : SideBarOption
-    , icon : Color -> Element SideBarMsg
-    , label : String
+unlinkedMenuOption :
+    { icon : Color -> Element SideBarMsg
+    , label : Element SideBarMsg
     , showLabel : Bool
-    , currentlyHovered : Bool
     }
     -> Element SideBarMsg
-menuOption cfg =
+unlinkedMenuOption cfg =
+    menuOptionTemplate
+        { icon = cfg.icon colourScheme.slateGrey
+        , label = cfg.label
+        , showLabel = cfg.showLabel
+        }
+        []
+
+
+menuOption :
+    { icon : Color -> Element SideBarMsg
+    , label : Element SideBarMsg
+    , showLabel : Bool
+    }
+    -> SideBarOption
+    -> Bool
+    -> Element SideBarMsg
+menuOption cfg option currentlyHovered =
     let
         fontColour =
-            if cfg.currentlyHovered == True then
+            if currentlyHovered == True then
                 colourScheme.white
 
             else
                 colourScheme.slateGrey
 
         hoverStyles =
-            if cfg.currentlyHovered == True then
+            if currentlyHovered == True then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                 ]
 
             else
                 []
+
+        icon =
+            cfg.icon fontColour
+
+        additionalOptions =
+            List.concat
+                [ [ pointer
+                  , onClick (UserClickedSideBarOptionForFrontPage option)
+                  , onMouseEnter (UserMouseEnteredSideBarOption option)
+                  , onMouseLeave (UserMouseExitedSideBarOption option)
+                  , Font.color (fontColour |> convertColorToElementColor)
+                  ]
+                , hoverStyles
+                ]
+
+        newCfg =
+            { icon = icon
+            , label = cfg.label
+            , showLabel = cfg.showLabel
+            }
     in
-    row
-        (List.append
+    menuOptionTemplate newCfg additionalOptions
+
+
+menuOptionTemplate :
+    { icon : Element SideBarMsg
+    , label : Element SideBarMsg
+    , showLabel : Bool
+    }
+    -> List (Attribute SideBarMsg)
+    -> Element SideBarMsg
+menuOptionTemplate cfg additionalAttributes =
+    let
+        rowAttributes =
             [ width fill
             , alignTop
             , spacing 10
             , paddingXY 30 10
-            , Font.color (fontColour |> convertColorToElementColor)
-            , onMouseEnter (UserMouseEnteredSideBarOption cfg.option)
-            , onMouseLeave (UserMouseExitedSideBarOption cfg.option)
-            , pointer
-            , onClick (UserClickedSideBarOptionForFrontPage cfg.option)
             ]
-            hoverStyles
-        )
+    in
+    row
+        (List.concat [ rowAttributes, additionalAttributes ])
         [ el
             [ width (px 25)
             , alignLeft
             , centerY
             ]
-            (cfg.icon fontColour)
+            cfg.icon
         , viewIf (animatedLabel cfg.label) cfg.showLabel
         ]
 
@@ -194,25 +239,11 @@ view session =
                 , alignTop
                 , spacing 10
                 ]
-                [ row
-                    [ width fill
-                    , alignTop
-                    , spacing 10
-                    , paddingXY 30 10
-                    , Font.color (colourScheme.slateGrey |> convertColorToElementColor)
-                    , mouseOver
-                        [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
-                        ]
-                    , pointer
-                    ]
-                    [ el
-                        [ width (px 25)
-                        , alignLeft
-                        , centerY
-                        ]
-                        (languagesSvg colourScheme.slateGrey)
-                    ]
+                [ unlinkedMenuOption
+                    { icon = languagesSvg
+                    , label = el [ width fill ] (dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage session.language)
+                    , showLabel = showLabels
+                    }
                 ]
             ]
         , dividingLine
@@ -230,33 +261,33 @@ view session =
                 , spacing 10
                 ]
                 [ menuOption
-                    { option = SourceSearchOption
-                    , icon = sourcesSvg
-                    , label = "Sources"
+                    { icon = sourcesSvg
+                    , label = text "Sources"
                     , showLabel = showLabels
-                    , currentlyHovered = checkHover SourceSearchOption
                     }
+                    SourceSearchOption
+                    (checkHover SourceSearchOption)
                 , menuOption
-                    { option = PeopleSearchOption
-                    , icon = peopleSvg
-                    , label = "People"
+                    { icon = peopleSvg
+                    , label = text "People"
                     , showLabel = showLabels
-                    , currentlyHovered = checkHover PeopleSearchOption
                     }
+                    PeopleSearchOption
+                    (checkHover PeopleSearchOption)
                 , menuOption
-                    { option = InstitutionSearchOption
-                    , icon = institutionSvg
-                    , label = "Institutions"
+                    { icon = institutionSvg
+                    , label = text "Institutions"
                     , showLabel = showLabels
-                    , currentlyHovered = checkHover InstitutionSearchOption
                     }
+                    InstitutionSearchOption
+                    (checkHover InstitutionSearchOption)
                 , menuOption
-                    { option = IncipitSearchOption
-                    , icon = musicNotationSvg
-                    , label = "Incipits"
+                    { icon = musicNotationSvg
+                    , label = text "Incipits"
                     , showLabel = showLabels
-                    , currentlyHovered = checkHover IncipitSearchOption
                     }
+                    IncipitSearchOption
+                    (checkHover IncipitSearchOption)
                 ]
             ]
         , dividingLine

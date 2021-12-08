@@ -7,6 +7,7 @@ type SideBarMsg
     | UserClickedSideBarOptionForFrontPage SideBarOption
     | UserMouseEnteredSideBarOption SideBarOption
     | UserMouseExitedSideBarOption SideBarOption
+    | UserChangedLanguageSelect String
 
 
 type SideBarOption
