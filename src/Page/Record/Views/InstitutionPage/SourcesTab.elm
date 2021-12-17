@@ -24,7 +24,7 @@ viewInstitutionSourcesTab language sourcesUrl pageSearch searchData =
             }
 
         pageQuery =
-            pageSearch.query
+            pageSearch.nextQuery
 
         qText =
             Maybe.withDefault "" pageQuery.query

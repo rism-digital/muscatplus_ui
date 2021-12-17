@@ -1,5 +1,6 @@
 module Page.RecordTypes.Shared exposing
-    ( LabelBooleanValue
+    ( FacetAlias
+    , LabelBooleanValue
     , LabelNumericValue
     , LabelValue
     , RecordHistory
@@ -19,6 +20,10 @@ import Json.Decode.Pipeline exposing (required)
 import Language exposing (LanguageMap, languageMapDecoder)
 import Page.RecordTypes exposing (RecordType, recordTypeFromJsonType)
 import Time
+
+
+type alias FacetAlias =
+    String
 
 
 type alias LabelValue =

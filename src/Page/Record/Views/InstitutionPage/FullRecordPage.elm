@@ -113,7 +113,8 @@ viewTabSwitcher language currentTab body =
                                     ( colourScheme.white, colourScheme.black )
 
                         sourceCount =
-                            formatNumberByLanguage (toFloat sources.totalItems) language
+                            toFloat sources.totalItems
+                                |> formatNumberByLanguage language
                     in
                     column
                         [ Border.width 1

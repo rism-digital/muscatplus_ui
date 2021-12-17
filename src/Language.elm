@@ -254,8 +254,8 @@ italianLocale =
     Returns a string corresponding to the formatted number.
 
 -}
-formatNumberByLanguage : Float -> Language -> String
-formatNumberByLanguage num lang =
+formatNumberByLanguage : Language -> Float -> String
+formatNumberByLanguage lang num =
     let
         formatterLocale =
             case lang of
@@ -340,7 +340,7 @@ localTranslations =
         , LanguageValues Polish [ "Strona główna" ]
         ]
     , queryEnter =
-        [ LanguageValues English [ "Enter your query" ]
+        [ LanguageValues English [ "Words anywhere" ]
         , LanguageValues German [ "Eingabe Ihrer Anfrage" ]
         , LanguageValues French [ "Entrez votre requête" ]
         , LanguageValues Italian [ "Inserisci la tua richiesta" ]

@@ -14,10 +14,10 @@ viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
 viewPagination language pagination clickMsg =
     let
         thisPage =
-            formatNumberByLanguage (toFloat pagination.thisPage) language
+            formatNumberByLanguage language (toFloat pagination.thisPage)
 
         totalPages =
-            formatNumberByLanguage (toFloat pagination.totalPages) language
+            formatNumberByLanguage language (toFloat pagination.totalPages)
 
         pageLabel =
             extractLabelFromLanguageMap language localTranslations.page

@@ -4,7 +4,7 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
 import List.Extra as LE
 import Page.Query exposing (Filter, QueryArgs)
-import Page.RecordTypes.ResultMode exposing (ResultMode)
+import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Route exposing (Route(..))
 import Page.UI.Keyboard as Keyboard
 
@@ -29,10 +29,9 @@ init initialRoute =
         updatedKeyboardModel =
             { initialKeyboardModel | query = kqargs }
     in
-    { query = qargs
+    { needsProbing = False
+    , nextQuery = qargs
     , expandedFacets = []
-    , activeFacets = []
-    , sliders = Dict.empty
     , keyboard = updatedKeyboardModel
     , selectedResultSort = initialSort
     }
@@ -46,11 +45,6 @@ toActiveSearch model =
 setActiveSearch : ActiveSearch -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
 setActiveSearch newSearch oldRecord =
     { oldRecord | activeSearch = newSearch }
-
-
-toSelectedMode : { a | selectedMode : ResultMode } -> ResultMode
-toSelectedMode model =
-    model.selectedMode
 
 
 toKeyboard : { a | keyboard : Keyboard.Model } -> Keyboard.Model
@@ -80,3 +74,22 @@ toggleExpandedFacets newFacet oldFacets =
 
     else
         newFacet :: oldFacets
+
+
+
+--toActiveFacets : { a | activeFacets : Dict FacetAlias (List String) } -> Dict FacetAlias (List String)
+--toActiveFacets model =
+--    model.activeFacets
+--
+--
+--setActiveFacets :
+--    Dict FacetAlias (List String)
+--    -> { a | activeFacets : Dict FacetAlias (List String) }
+--    -> { a | activeFacets : Dict FacetAlias (List String) }
+--setActiveFacets newValue oldRecord =
+--    { oldRecord | activeFacets = newValue }
+
+
+setNeedsProbing : Bool -> { a | needsProbing : Bool } -> { a | needsProbing : Bool }
+setNeedsProbing newValue oldRecord =
+    { oldRecord | needsProbing = newValue }

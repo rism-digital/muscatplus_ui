@@ -1,15 +1,35 @@
 module Page.Search.Views.SearchControls.Sources exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, fill, maximum, minimum, padding, row, spacing, width)
-import Language exposing (Language)
-import Page.Query exposing (toQuery, toQueryArgs)
+import Element exposing (Element, alignTop, column, el, fill, height, maximum, minimum, padding, paddingXY, px, row, shrink, spacing, text, width)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
+import Element.Input as Input
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
+import Page.Query exposing (toNextQuery, toQuery)
+import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
-import Page.Search.Msg as SearchMsg exposing (SearchMsg)
+import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
-import Page.UI.Attributes exposing (sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (facetBorderBottom, headingLG, headingMD, headingSM, lineSpacing, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (searchKeywordInput)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+
+
+viewProbeResponseNumbers : Language -> ProbeData -> Element SearchMsg
+viewProbeResponseNumbers language probeData =
+    let
+        formattedNumber =
+            probeData.totalItems
+                |> toFloat
+                |> formatNumberByLanguage language
+    in
+    el
+        [ headingSM ]
+        (text ("Results with filters applied: " ++ formattedNumber))
 
 
 viewFacetsForSourcesMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
@@ -24,21 +44,78 @@ viewFacetsForSourcesMode language model body =
             toActiveSearch model
 
         qText =
-            toQueryArgs activeSearch
+            toNextQuery activeSearch
                 |> toQuery
                 |> Maybe.withDefault ""
     in
     row
-        (List.append [ padding 20 ] widthFillHeightFill)
+        (List.append
+            [ padding 10 ]
+            widthFillHeightFill
+        )
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            (List.append [ spacing lineSpacing ] widthFillHeightFill)
             [ row
-                (List.append [] widthFillHeightFill)
+                widthFillHeightFill
                 [ column
-                    [ width (fill |> minimum 800 |> maximum 1100)
+                    [ width fill
                     , alignTop
                     ]
                     [ searchKeywordInput language msgs qText ]
+                ]
+            , row
+                (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                [ column
+                    [ width shrink ]
+                    [ Input.button
+                        [ Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+                        , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
+                        , paddingXY 10 10
+                        , height (px 40)
+                        , width (px 100)
+                        , Font.center
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , headingSM
+                        ]
+                        { onPress = Just msgs.submitMsg
+                        , label = text (extractLabelFromLanguageMap language localTranslations.search)
+                        }
+                    ]
+                , column
+                    [ width shrink ]
+                    [ Input.button
+                        [ Border.color (colourScheme.midGrey |> convertColorToElementColor)
+                        , Background.color (colourScheme.midGrey |> convertColorToElementColor)
+                        , paddingXY 10 10
+                        , height (px 40)
+                        , width (px 100)
+                        , Font.center
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , headingSM
+                        ]
+                        { onPress = Just NothingHappened
+                        , label = text "Reset"
+                        }
+                    ]
+                , column
+                    [ width fill ]
+                    [ viewMaybe (viewProbeResponseNumbers language) model.probeResponse ]
+                ]
+            , row
+                (List.append [ width fill ] facetBorderBottom)
+                [ column
+                    widthFillHeightFill
+                    [ el
+                        [ width fill
+                        , headingMD
+                        ]
+                        (text "Refinements")
+                    ]
+                ]
+            , viewFacetSection language
+                "People"
+                [ viewFacet "composer" language activeSearch body
+                , viewFacet "people" language activeSearch body
                 ]
             , viewFacetSection language
                 "Digitization"

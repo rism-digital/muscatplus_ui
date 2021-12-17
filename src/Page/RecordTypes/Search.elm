@@ -4,6 +4,7 @@ import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder, andThen, bool, float, int, list, nullable, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
+import List.Extra as LE
 import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
 import Page.RecordTypes.Shared exposing (LabelBooleanValue, LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
@@ -82,6 +83,8 @@ type FacetType
     | Toggle
     | Select
     | Notation
+    | Query_
+    | UnknownFacetType
 
 
 type FacetData
@@ -89,6 +92,7 @@ type FacetData
     | RangeFacetData RangeFacet
     | SelectFacetData SelectFacet
     | NotationFacetData NotationFacet
+    | QueryFacetData QueryFacet
 
 
 type alias ModeFacet =
@@ -135,9 +139,55 @@ type alias NotationFacet =
     }
 
 
+type alias QueryFacet =
+    { alias : String
+    , label : LanguageMap
+    , behaviours : FacetBehaviourOptions
+    , suggestions : String
+    }
+
+
+toBehaviours : { a | behaviours : FacetBehaviourOptions } -> FacetBehaviourOptions
+toBehaviours facet =
+    facet.behaviours
+
+
 type FacetBehaviours
     = FacetBehaviourIntersection
     | FacetBehaviourUnion
+
+
+facetBehaviourOptions : List ( String, FacetBehaviours )
+facetBehaviourOptions =
+    [ ( "union", FacetBehaviourUnion )
+    , ( "intersection", FacetBehaviourIntersection )
+    ]
+
+
+{-|
+
+    Returns a Facet Behaviour from a given string
+
+-}
+parseStringToFacetBehaviour : String -> FacetBehaviours
+parseStringToFacetBehaviour inp =
+    Dict.fromList facetBehaviourOptions
+        |> Dict.get inp
+        |> Maybe.withDefault FacetBehaviourIntersection
+
+
+parseFacetBehaviourToString : FacetBehaviours -> String
+parseFacetBehaviourToString beh =
+    LE.findMap
+        (\( alias, behaviour ) ->
+            if beh == behaviour then
+                Just alias
+
+            else
+                Nothing
+        )
+        facetBehaviourOptions
+        |> Maybe.withDefault "intersection"
 
 
 type alias FacetBehaviourOptions =
@@ -148,9 +198,57 @@ type alias FacetBehaviourOptions =
     }
 
 
+toCurrentBehaviour : { a | current : FacetBehaviours } -> FacetBehaviours
+toCurrentBehaviour options =
+    options.current
+
+
+toBehaviourItems : { a | items : List FacetOptionsLabelValue } -> List FacetOptionsLabelValue
+toBehaviourItems options =
+    options.items
+
+
+{-|
+
+    The default sort order is set by the server
+
+-}
 type FacetSorts
     = FacetSortCount
     | FacetSortAlpha
+
+
+facetSortOptions : List ( String, FacetSorts )
+facetSortOptions =
+    [ ( "alpha", FacetSortAlpha )
+    , ( "count", FacetSortCount )
+    ]
+
+
+{-|
+
+    Returns a Facet Behaviour from a given string
+
+-}
+parseStringToFacetSort : String -> FacetSorts
+parseStringToFacetSort inp =
+    Dict.fromList facetSortOptions
+        |> Dict.get inp
+        |> Maybe.withDefault FacetSortCount
+
+
+parseFacetSortToString : FacetSorts -> String
+parseFacetSortToString beh =
+    LE.findMap
+        (\( alias, behaviour ) ->
+            if beh == behaviour then
+                Just alias
+
+            else
+                Nothing
+        )
+        facetSortOptions
+        |> Maybe.withDefault "intersection"
 
 
 type alias FacetSortOptions =
@@ -163,7 +261,7 @@ type alias FacetSortOptions =
 
 type alias FacetOptionsLabelValue =
     { label : LanguageMap
-    , value : String
+    , value : FacetBehaviours
     }
 
 
@@ -175,15 +273,12 @@ type alias SortData =
 
 {-|
 
-    FacetItem is a facet type, a query value, a label (language map),
+    FacetItem is a a query value, a label (language map),
     and the count of documents in the response.
 
     E.g.,
 
     FacetItem "source" {'none': {'some label'}} 123
-
-    Facet items get converted to Filters when selected, which are what are used to initiate
-    changes to the API requests.
 
 -}
 type FacetItem
@@ -289,6 +384,12 @@ facetResponseConverter typeValue =
         Notation ->
             Decode.map (\r -> NotationFacetData r) notationFacetDecoder
 
+        Query_ ->
+            Decode.map (\r -> QueryFacetData r) queryFacetDecoder
+
+        UnknownFacetType ->
+            Decode.fail ("Unknown facet type " ++ typeValue)
+
 
 facetTypeFromJsonType : String -> FacetType
 facetTypeFromJsonType facetType =
@@ -305,8 +406,11 @@ facetTypeFromJsonType facetType =
         "rism:NotationFacet" ->
             Notation
 
+        "rism:QueryFacet" ->
+            Query_
+
         _ ->
-            Select
+            UnknownFacetType
 
 
 rangeFacetDecoder : Decoder RangeFacet
@@ -351,6 +455,15 @@ notationFacetDecoder =
         |> required "label" languageMapLabelDecoder
 
 
+queryFacetDecoder : Decoder QueryFacet
+queryFacetDecoder =
+    Decode.succeed QueryFacet
+        |> required "alias" string
+        |> required "label" languageMapLabelDecoder
+        |> required "behaviours" facetBehaviourOptionsDecoder
+        |> required "suggestions" string
+
+
 modeFacetDecoder : Decoder ModeFacet
 modeFacetDecoder =
     Decode.succeed ModeFacet
@@ -380,17 +493,7 @@ facetBehavioursDecoder : Decoder FacetBehaviours
 facetBehavioursDecoder =
     Decode.string
         |> Decode.andThen
-            (\str ->
-                case str of
-                    "intersection" ->
-                        Decode.succeed FacetBehaviourIntersection
-
-                    "union" ->
-                        Decode.succeed FacetBehaviourUnion
-
-                    _ ->
-                        Decode.fail ("Unknown value " ++ str ++ " for facet behaviour")
-            )
+            (\str -> Decode.succeed (parseStringToFacetBehaviour str))
 
 
 facetSortOptionsDecoder : Decoder FacetSortOptions
@@ -423,7 +526,7 @@ facetOptionsLabelValueDecoder : Decoder FacetOptionsLabelValue
 facetOptionsLabelValueDecoder =
     Decode.succeed FacetOptionsLabelValue
         |> required "label" languageMapLabelDecoder
-        |> required "value" string
+        |> required "value" facetBehavioursDecoder
 
 
 searchSortsDecoder : Decoder SortData

@@ -1,33 +1,32 @@
 module Page.Query exposing
-    ( FacetBehaviour(..)
-    , FacetMode(..)
-    , FacetSort(..)
-    , Filter(..)
+    ( Filter(..)
     , QueryArgs
     , buildQueryParameters
     , defaultQueryArgs
-    , parseStringToFacetBehaviour
     , queryParamsParser
     , resetPage
+    , setFacetBehaviours
     , setFilters
     , setMode
+    , setNextQuery
     , setQuery
-    , setQueryArgs
     , setSort
+    , toFacetBehaviours
     , toFilters
     , toMode
+    , toNextQuery
     , toQuery
-    , toQueryArgs
-    , toggleFilters
     )
 
 import Config as C
 import Dict exposing (Dict)
-import List.Extra as LE
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
+import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetSorts(..), parseFacetBehaviourToString, parseFacetSortToString, parseStringToFacetBehaviour, parseStringToFacetSort)
+import Page.RecordTypes.Shared exposing (FacetAlias)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
+import Utlities exposing (fromListDedupe)
 
 
 {-|
@@ -41,56 +40,26 @@ type Filter
     = Filter String String
 
 
-{-|
-
-    The behaviour carries the facet alias as a parameter
-
-    IntersectionBehaviour "source-type"
-    UnionBehaviour "holding-institution"
-    etc.
-
--}
-type FacetBehaviour
-    = IntersectionBehaviour String
-    | UnionBehaviour String
-
-
-{-|
-
-    The default sort order is set by the server
-
--}
-type FacetSort
-    = CountSortOrder String
-    | AlphaSortOrder String
-
-
-type FacetMode
-    = CheckboxSelect String
-    | TextInputSelect String
-
-
 type alias QueryArgs =
     { query : Maybe String
-    , filters : List Filter
+    , filters : Dict FacetAlias (List String)
     , sort : Maybe String
     , page : Int
     , rows : Int
     , mode : ResultMode
-    , facetBehaviours : List FacetBehaviour
-    , facetSorts : Dict String FacetSort
-    , facetModes : Dict String FacetMode
+    , facetBehaviours : Dict FacetAlias FacetBehaviours
+    , facetSorts : Dict FacetAlias FacetSorts
     }
 
 
-toQueryArgs : { a | query : QueryArgs } -> QueryArgs
-toQueryArgs activeSearch =
-    activeSearch.query
+toNextQuery : { a | nextQuery : QueryArgs } -> QueryArgs
+toNextQuery activeSearch =
+    activeSearch.nextQuery
 
 
-setQueryArgs : QueryArgs -> { a | query : QueryArgs } -> { a | query : QueryArgs }
-setQueryArgs newQuery oldRecord =
-    { oldRecord | query = newQuery }
+setNextQuery : QueryArgs -> { a | nextQuery : QueryArgs } -> { a | nextQuery : QueryArgs }
+setNextQuery newQuery oldRecord =
+    { oldRecord | nextQuery = newQuery }
 
 
 toMode : { a | mode : ResultMode } -> ResultMode
@@ -98,21 +67,12 @@ toMode queryArgs =
     queryArgs.mode
 
 
-toFilters : { a | filters : List Filter } -> List Filter
+toFilters : { a | filters : Dict FacetAlias (List String) } -> Dict FacetAlias (List String)
 toFilters queryArgs =
     queryArgs.filters
 
 
-toggleFilters : Filter -> List Filter -> List Filter
-toggleFilters newFilter oldFilters =
-    if List.member newFilter oldFilters == True then
-        LE.remove newFilter oldFilters
-
-    else
-        newFilter :: oldFilters
-
-
-setFilters : List Filter -> { a | filters : List Filter } -> { a | filters : List Filter }
+setFilters : Dict FacetAlias (List String) -> { a | filters : Dict FacetAlias (List String) } -> { a | filters : Dict FacetAlias (List String) }
 setFilters newFilters oldRecord =
     { oldRecord | filters = newFilters }
 
@@ -147,6 +107,16 @@ setPage pageNum oldRecord =
         { oldRecord | page = pageNum }
 
 
+toFacetBehaviours : { a | facetBehaviours : Dict FacetAlias FacetBehaviours } -> Dict FacetAlias FacetBehaviours
+toFacetBehaviours query =
+    query.facetBehaviours
+
+
+setFacetBehaviours : Dict FacetAlias FacetBehaviours -> { a | facetBehaviours : Dict FacetAlias FacetBehaviours } -> { a | facetBehaviours : Dict FacetAlias FacetBehaviours }
+setFacetBehaviours newBehaviours oldRecord =
+    { oldRecord | facetBehaviours = newBehaviours }
+
+
 {-| Resets the page number to the first page.
 -}
 resetPage : { a | page : Int } -> { a | page : Int }
@@ -157,31 +127,14 @@ resetPage oldRecord =
 defaultQueryArgs : QueryArgs
 defaultQueryArgs =
     { query = Nothing
-    , filters = []
+    , filters = Dict.empty
     , sort = Nothing
     , page = 1
     , rows = C.defaultRows
     , mode = SourcesMode
-    , facetBehaviours = []
+    , facetBehaviours = Dict.empty
     , facetSorts = Dict.empty
-    , facetModes = Dict.empty
     }
-
-
-{-|
-
-    Returns a partially-applied Facet Behaviour to which a
-    facet alias can be given.
-
--}
-parseStringToFacetBehaviour : String -> (String -> FacetBehaviour)
-parseStringToFacetBehaviour inp =
-    case inp of
-        "union" ->
-            UnionBehaviour
-
-        _ ->
-            IntersectionBehaviour
 
 
 {-|
@@ -205,66 +158,36 @@ buildQueryParameters queryArgs =
             [ Url.Builder.string "mode" (parseResultModeToString queryArgs.mode) ]
 
         fqParams =
-            List.map
-                (\filt ->
+            List.concatMap
+                (\( alias, filts ) ->
                     let
-                        (Filter fieldName fieldValue) =
-                            filt
+                        createPrefixedField val =
+                            if String.isEmpty val == True then
+                                Nothing
 
-                        queryStringValue =
-                            fieldName ++ ":" ++ fieldValue
+                            else
+                                Just (alias ++ ":" ++ val)
+
+                        allFilts =
+                            List.filterMap (\s -> createPrefixedField s) filts
                     in
-                    Url.Builder.string "fq" queryStringValue
+                    List.map (Url.Builder.string "fq") allFilts
                 )
-                queryArgs.filters
+                (Dict.toList queryArgs.filters)
 
         fbParams =
             List.map
-                (\facetBehaviour ->
-                    let
-                        behaviourStringValue =
-                            case facetBehaviour of
-                                IntersectionBehaviour fieldName ->
-                                    fieldName ++ ":intersection"
-
-                                UnionBehaviour fieldName ->
-                                    fieldName ++ ":union"
-                    in
-                    Url.Builder.string "fb" behaviourStringValue
+                (\( alias, facetBehaviour ) ->
+                    Url.Builder.string "fb" (alias ++ ":" ++ parseFacetBehaviourToString facetBehaviour)
                 )
-                queryArgs.facetBehaviours
+                (Dict.toList queryArgs.facetBehaviours)
 
         fsParams =
-            Dict.toList queryArgs.facetSorts
-                |> List.map
-                    (\( _, facetSort ) ->
-                        let
-                            sortStringValue =
-                                case facetSort of
-                                    AlphaSortOrder fieldName ->
-                                        fieldName ++ ":alpha"
-
-                                    CountSortOrder fieldName ->
-                                        fieldName ++ ":count"
-                        in
-                        Url.Builder.string "fs" sortStringValue
-                    )
-
-        fmParams =
-            Dict.toList queryArgs.facetModes
-                |> List.map
-                    (\( _, facetMode ) ->
-                        let
-                            modeStringValue =
-                                case facetMode of
-                                    TextInputSelect fieldName ->
-                                        fieldName ++ ":text"
-
-                                    CheckboxSelect fieldName ->
-                                        fieldName ++ ":check"
-                        in
-                        Url.Builder.string "fm" modeStringValue
-                    )
+            List.map
+                (\( alias, sort ) ->
+                    Url.Builder.string "fs" (alias ++ ":" ++ parseFacetSortToString sort)
+                )
+                (Dict.toList queryArgs.facetSorts)
 
         pageParam =
             [ Url.Builder.string "page" (String.fromInt queryArgs.page) ]
@@ -277,7 +200,7 @@ buildQueryParameters queryArgs =
                 Nothing ->
                     []
     in
-    List.concat [ qParam, modeParam, fqParams, fbParams, fsParams, fmParams, pageParam, sortParam ]
+    List.concat [ qParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam ]
 
 
 queryParamsParser : Q.Parser QueryArgs
@@ -292,94 +215,45 @@ queryParamsParser =
         |> apply modeParamParser
         |> apply fbParamParser
         |> apply fsParamParser
-        |> apply fmParamParser
 
 
-fqParamParser : Q.Parser (List Filter)
+fqParamParser : Q.Parser (Dict FacetAlias (List String))
 fqParamParser =
     Q.custom "fq" (\a -> filterQueryStringToFilter a)
 
 
-fbParamParser : Q.Parser (List FacetBehaviour)
+fbParamParser : Q.Parser (Dict FacetAlias FacetBehaviours)
 fbParamParser =
     Q.custom "fb" (\a -> facetBehaviourQueryStringToBehaviour a)
 
 
-facetBehaviourQueryStringToBehaviour : List String -> List FacetBehaviour
+facetBehaviourQueryStringToBehaviour : List String -> Dict FacetAlias FacetBehaviours
 facetBehaviourQueryStringToBehaviour fbList =
-    List.concat
-        (List.map
-            (\a ->
-                case String.split ":" a of
-                    [ field, value ] ->
-                        case value of
-                            "union" ->
-                                [ UnionBehaviour field ]
-
-                            _ ->
-                                [ IntersectionBehaviour field ]
-
-                    _ ->
-                        []
+    List.filterMap stringSplitToList fbList
+        |> Dict.fromList
+        |> Dict.map
+            (\_ value ->
+                List.head value
+                    |> Maybe.withDefault "intersection"
+                    |> parseStringToFacetBehaviour
             )
-            fbList
-        )
 
 
-fsParamParser : Q.Parser (Dict String FacetSort)
+fsParamParser : Q.Parser (Dict String FacetSorts)
 fsParamParser =
     Q.custom "fs" (\a -> facetSortQueryStringToFacetSort a)
 
 
-facetSortQueryStringToFacetSort : List String -> Dict String FacetSort
+facetSortQueryStringToFacetSort : List String -> Dict String FacetSorts
 facetSortQueryStringToFacetSort fsList =
-    List.filterMap
-        (\a ->
-            case String.split ":" a of
-                [ field, value ] ->
-                    case value of
-                        "alpha" ->
-                            Just ( field, AlphaSortOrder field )
-
-                        "count" ->
-                            Just ( field, CountSortOrder field )
-
-                        _ ->
-                            Nothing
-
-                _ ->
-                    Nothing
-        )
-        fsList
+    List.filterMap stringSplitToList fsList
         |> Dict.fromList
-
-
-fmParamParser : Q.Parser (Dict String FacetMode)
-fmParamParser =
-    Q.custom "fm" (\a -> facetModeQueryStringToFacetMode a)
-
-
-facetModeQueryStringToFacetMode : List String -> Dict String FacetMode
-facetModeQueryStringToFacetMode fmList =
-    List.filterMap
-        (\a ->
-            case String.split ":" a of
-                [ k, v ] ->
-                    case v of
-                        "check" ->
-                            Just ( k, CheckboxSelect k )
-
-                        "text" ->
-                            Just ( k, TextInputSelect k )
-
-                        _ ->
-                            Nothing
-
-                _ ->
-                    Nothing
-        )
-        fmList
-        |> Dict.fromList
+        |> Dict.map
+            (\_ value ->
+                List.head value
+                    |> Maybe.withDefault "alpha"
+                    |> parseStringToFacetSort
+            )
 
 
 modeParamParser : Q.Parser ResultMode
@@ -387,22 +261,22 @@ modeParamParser =
     Q.custom "mode" (\a -> modeQueryStringToResultMode a)
 
 
-filterQueryStringToFilter : List String -> List Filter
+filterQueryStringToFilter : List String -> Dict FacetAlias (List String)
 filterQueryStringToFilter fqList =
     -- discards any filters that do not conform to the expected values
     -- TODO: Convert this to a parser that can handle colons in the 'values'
-    List.concat
-        (List.map
-            (\a ->
-                case String.split ":" a of
-                    [ field, value ] ->
-                        [ Filter field value ]
+    List.filterMap stringSplitToList fqList
+        |> fromListDedupe (\a b -> List.append a b)
 
-                    _ ->
-                        []
-            )
-            fqList
-        )
+
+stringSplitToList : String -> Maybe ( String, List String )
+stringSplitToList str =
+    case String.split ":" str of
+        alias :: values ->
+            Just ( alias, values )
+
+        _ ->
+            Nothing
 
 
 modeQueryStringToResultMode : List String -> ResultMode

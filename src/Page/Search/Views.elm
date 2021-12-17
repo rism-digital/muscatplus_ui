@@ -10,7 +10,7 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
-import Page.Query exposing (toMode, toQueryArgs)
+import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
@@ -91,7 +91,7 @@ searchModeSelectorView lang model modeFacet =
     let
         currentMode =
             toActiveSearch model
-                |> toQueryArgs
+                |> toNextQuery
                 |> toMode
     in
     row
@@ -148,12 +148,6 @@ viewSearchResultsSection language model body =
 
                 NoResponseToShow ->
                     none
-
-        activeSearch =
-            model.activeSearch
-
-        activeQuery =
-            activeSearch.query
     in
     row
         [ width fill
@@ -226,10 +220,10 @@ viewPaginationSortSelector language activeSearch body =
             body.pagination
 
         thisPage =
-            formatNumberByLanguage (toFloat pagination.thisPage) language
+            formatNumberByLanguage language (toFloat pagination.thisPage)
 
         totalPages =
-            formatNumberByLanguage (toFloat pagination.totalPages) language
+            formatNumberByLanguage language (toFloat pagination.totalPages)
 
         pageLabel =
             extractLabelFromLanguageMap language localTranslations.page
@@ -286,99 +280,3 @@ viewSearchResultsError language model =
 
         _ ->
             none
-
-
-viewActiveFilters : Language -> ActiveSearch -> Element SearchMsg
-viewActiveFilters language activeSearch =
-    let
-        activeFacets =
-            activeSearch.activeFacets
-
-        activeQuery =
-            activeSearch.query
-
-        activeFacetControls =
-            List.map (viewActiveFilter language) activeFacets
-
-        activeControls =
-            case activeQuery.query of
-                Just q ->
-                    viewActiveSearchQuery language q :: activeFacetControls
-
-                Nothing ->
-                    activeFacetControls
-    in
-    row
-        []
-        [ column
-            [ spacing sectionSpacing ]
-            activeControls
-        ]
-
-
-viewActiveSearchQuery : Language -> String -> Element SearchMsg
-viewActiveSearchQuery language query =
-    row
-        [ width shrink
-        , Background.color (colourScheme.red |> convertColorToElementColor)
-        , padding 5
-        , spacing 5
-        , Font.semiBold
-        , Font.color (colourScheme.white |> convertColorToElementColor)
-        ]
-        [ column
-            [ width (fillPortion 3) ]
-            [ el
-                []
-                (text ("Query: " ++ query))
-            ]
-        , column
-            [ width (fillPortion 1)
-            ]
-            [ el
-                [ width (px 20)
-                , onClick SearchMsg.UserClickedClearSearchQueryBox
-                ]
-                (closeWindowSvg colourScheme.white)
-            ]
-        ]
-
-
-viewActiveFilter : Language -> ActiveFacet -> Element SearchMsg
-viewActiveFilter language (ActiveFacet facetType facetLabel facetAlias facetValue friendlyValue) =
-    let
-        label =
-            extractLabelFromLanguageMap language facetLabel
-
-        value =
-            case friendlyValue of
-                Just v ->
-                    extractLabelFromLanguageMap language v
-
-                Nothing ->
-                    facetValue
-    in
-    row
-        [ width shrink
-        , Background.color (colourScheme.red |> convertColorToElementColor)
-        , padding 5
-        , spacing 5
-        , Font.semiBold
-        , Font.color (colourScheme.white |> convertColorToElementColor)
-        ]
-        [ column
-            [ width (fillPortion 3) ]
-            [ el
-                []
-                (text (label ++ ": " ++ value))
-            ]
-        , column
-            [ width (fillPortion 1)
-            ]
-            [ el
-                [ width (px 20)
-                , onClick (SearchMsg.UserClickedRemoveActiveFilter facetAlias facetValue)
-                ]
-                (closeWindowSvg colourScheme.white)
-            ]
-        ]

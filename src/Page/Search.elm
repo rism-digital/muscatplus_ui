@@ -1,13 +1,16 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setExpandedFacets, setKeyboard, toActiveSearch, toExpandedFacets, toKeyboard, toSelectedMode, toggleExpandedFacets)
+import ActiveSearch exposing (setActiveSearch, setExpandedFacets, setKeyboard, setNeedsProbing, toActiveSearch, toExpandedFacets, toKeyboard, toggleExpandedFacets)
 import Browser.Navigation as Nav
+import Dict
+import List.Extra as LE
 import Page.Converters exposing (convertFacetToResultMode)
-import Page.Query exposing (Filter(..), buildQueryParameters, resetPage, setFilters, setMode, setQuery, setQueryArgs, setSort, toFilters, toMode, toQueryArgs, toggleFilters)
+import Page.Query exposing (Filter(..), buildQueryParameters, resetPage, setFacetBehaviours, setFilters, setMode, setNextQuery, setQuery, setSort, toFacetBehaviours, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
-import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
+import Page.RecordTypes.Search exposing (FacetItem(..), toBehaviours)
+import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.Search.Model exposing (SearchPageModel)
+import Page.Search.Model exposing (SearchPageModel, setActiveSuggestion)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery, setNotation, toNotation)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
@@ -34,6 +37,8 @@ init route =
     , preview = NoResponseToShow
     , selectedResult = Nothing
     , showFacetPanel = False
+    , activeSuggestion = Nothing
+    , probeResponse = Nothing
     }
 
 
@@ -69,6 +74,8 @@ load oldModel =
     , preview = NoResponseToShow
     , selectedResult = Nothing
     , showFacetPanel = oldModel.showFacetPanel
+    , activeSuggestion = Nothing
+    , probeResponse = Nothing
     }
 
 
@@ -90,14 +97,14 @@ searchSubmit session model =
 
         resetQueryArgs =
             activeSearch
-                |> toQueryArgs
+                |> toNextQuery
                 |> resetPage
 
         -- when submitting a new search, reset the page
         -- to the first page.
         pageResetModel =
             activeSearch
-                |> setQueryArgs resetQueryArgs
+                |> setNextQuery resetQueryArgs
                 |> flip setActiveSearch model
 
         notationQueryParameters =
@@ -110,7 +117,7 @@ searchSubmit session model =
         textQueryParameters =
             pageResetModel
                 |> toActiveSearch
-                |> toQueryArgs
+                |> toNextQuery
                 |> buildQueryParameters
 
         newModel =
@@ -128,19 +135,40 @@ searchSubmit session model =
     )
 
 
+probeSubmit : Session -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
+probeSubmit _ model =
+    let
+        notationQueryParameters =
+            toActiveSearch model
+                |> toKeyboard
+                |> toKeyboardQuery
+                |> buildNotationQueryParameters
+
+        textQueryParameters =
+            toActiveSearch model
+                |> toNextQuery
+                |> buildQueryParameters
+
+        probeUrl =
+            List.append textQueryParameters notationQueryParameters
+                |> serverUrl [ "probe" ]
+    in
+    ( model
+    , createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+    )
+
+
 update : Session -> SearchMsg -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
 update session msg model =
     case msg of
         ServerRespondedWithSearchData (Ok ( _, response )) ->
             let
                 currentMode =
-                    toActiveSearch model
-                        |> toQueryArgs
+                    toNextQuery model.activeSearch
                         |> toMode
 
                 keyboardQuery =
-                    toActiveSearch model
-                        |> toKeyboard
+                    toKeyboard model.activeSearch
                         |> toKeyboardQuery
 
                 notationRenderCmd =
@@ -164,7 +192,17 @@ update session msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithSearchPreview (Ok ( metadata, response )) ->
+        ServerRespondedWithProbeData (Ok ( _, response )) ->
+            ( { model
+                | probeResponse = Just response
+              }
+            , Cmd.none
+            )
+
+        ServerRespondedWithProbeData (Err _) ->
+            ( model, Cmd.none )
+
+        ServerRespondedWithSearchPreview (Ok ( _, response )) ->
             ( { model
                 | preview = Response response
               }
@@ -173,10 +211,18 @@ update session msg model =
 
         ServerRespondedWithSearchPreview (Err error) ->
             ( { model
-                | response = Error (createErrorMessage error)
+                | preview = Error (createErrorMessage error)
               }
             , Cmd.none
             )
+
+        ServerRespondedWithSuggestionData (Ok ( metadata, response )) ->
+            ( setActiveSuggestion (Just response) model
+            , Cmd.none
+            )
+
+        ServerRespondedWithSuggestionData (Err error) ->
+            ( model, Cmd.none )
 
         ClientJumpedToId ->
             ( model, Cmd.none )
@@ -184,59 +230,147 @@ update session msg model =
         ClientResetViewport ->
             ( model, Cmd.none )
 
-        UserChangedFacetBehaviour facetBehaviour ->
-            ( model, Cmd.none )
+        UserChangedFacetBehaviour alias facetBehaviour ->
+            toNextQuery model.activeSearch
+                |> toFacetBehaviours
+                |> Dict.insert alias facetBehaviour
+                |> flip setFacetBehaviours (toNextQuery model.activeSearch)
+                |> flip setNextQuery model.activeSearch
+                |> flip setActiveSearch model
+                |> probeSubmit session
 
-        UserChangedFacetSort facetSort ->
-            ( model, Cmd.none )
-
-        UserChangedFacetMode facetMode ->
+        UserChangedFacetSort alias facetSort ->
             ( model, Cmd.none )
 
         UserClickedFacetPanelToggle ->
             ( model, Cmd.none )
 
-        UserClickedFacetExpand alias ->
+        UserEnteredTextInQueryFacet alias text ->
             let
-                newExpandedFacets =
-                    toActiveSearch model
-                        |> toExpandedFacets
-                        |> toggleExpandedFacets alias
+                activeFacets =
+                    toNextQuery model.activeSearch
+                        |> toFilters
+
+                newActiveFilters =
+                    Dict.update alias
+                        (\existingValues ->
+                            case existingValues of
+                                Just [] ->
+                                    Just [ text ]
+
+                                Just (_ :: xs) ->
+                                    Just (text :: xs)
+
+                                Nothing ->
+                                    Just [ text ]
+                        )
+                        activeFacets
 
                 newModel =
-                    toActiveSearch model
-                        |> setExpandedFacets newExpandedFacets
+                    toNextQuery model.activeSearch
+                        |> setFilters newActiveFilters
+                        |> flip setNextQuery model.activeSearch
                         |> flip setActiveSearch model
             in
             ( newModel, Cmd.none )
 
-        UserClickedFacetItem facet item isClicked ->
-            ( model, Cmd.none )
-
-        UserClickedFacetToggle label ->
+        UserHitEnterInQueryFacet alias currentBehaviour ->
             let
-                newFilter =
-                    Filter label "true"
-
-                newFilters =
-                    toActiveSearch model
-                        |> toQueryArgs
+                activeFilters =
+                    toNextQuery model.activeSearch
                         |> toFilters
-                        |> toggleFilters newFilter
 
-                newQueryArgs =
-                    toActiveSearch model
-                        |> toQueryArgs
-                        |> setFilters newFilters
+                newActiveFilters =
+                    Dict.update alias
+                        (\existingValues ->
+                            case existingValues of
+                                Just [] ->
+                                    Just []
+
+                                Just (x :: xs) ->
+                                    Just ("" :: x :: xs)
+
+                                Nothing ->
+                                    Just []
+                        )
+                        activeFilters
+
+                newActiveBehaviours =
+                    toNextQuery model.activeSearch
+                        |> toFacetBehaviours
+                        |> Dict.insert alias currentBehaviour
+            in
+            toNextQuery model.activeSearch
+                |> setFilters newActiveFilters
+                |> setFacetBehaviours newActiveBehaviours
+                |> flip setNextQuery model.activeSearch
+                |> setNeedsProbing True
+                |> flip setActiveSearch model
+                |> probeSubmit session
+
+        UserClickedFacetExpand alias ->
+            let
+                newExpandedFacets =
+                    toExpandedFacets model.activeSearch
+                        |> toggleExpandedFacets alias
 
                 newModel =
-                    toActiveSearch model
-                        |> setQueryArgs newQueryArgs
+                    setExpandedFacets newExpandedFacets model.activeSearch
                         |> flip setActiveSearch model
             in
-            searchSubmit session newModel
+            ( newModel, Cmd.none )
 
-        UserMovedRangeSlider facet slider ->
+        UserClickedFacetItem alias facetValue isClicked ->
+            let
+                activeFilters =
+                    toNextQuery model.activeSearch
+                        |> toFilters
+
+                newActiveFilters =
+                    Dict.update alias
+                        (\existingValues ->
+                            case existingValues of
+                                Just list ->
+                                    if List.member facetValue list == False then
+                                        Just (facetValue :: list)
+
+                                    else
+                                        Just (LE.remove facetValue list)
+
+                                Nothing ->
+                                    Just [ facetValue ]
+                        )
+                        activeFilters
+            in
+            toNextQuery model.activeSearch
+                |> setFilters newActiveFilters
+                |> flip setNextQuery model.activeSearch
+                |> setNeedsProbing True
+                |> flip setActiveSearch model
+                |> probeSubmit session
+
+        UserClickedFacetToggle alias ->
+            let
+                oldFilters =
+                    toNextQuery model.activeSearch
+                        |> toFilters
+
+                newFilters =
+                    if Dict.member alias oldFilters == True then
+                        Dict.remove alias oldFilters
+
+                    else
+                        Dict.insert alias [ "true" ] oldFilters
+
+                newQueryArgs =
+                    toNextQuery model.activeSearch
+                        |> setFilters newFilters
+            in
+            setNextQuery newQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+                |> probeSubmit session
+
+        UserMovedRangeSlider alias slider ->
             ( model, Cmd.none )
 
         UserChangedResultSorting sort ->
@@ -245,76 +379,38 @@ update session msg model =
                     Just sort
 
                 newQueryArgs =
-                    toActiveSearch model
-                        |> toQueryArgs
+                    toNextQuery model.activeSearch
                         |> setSort sortValue
-
-                newModel =
-                    toActiveSearch model
-                        |> setQueryArgs newQueryArgs
-                        |> flip setActiveSearch model
             in
-            searchSubmit session newModel
+            setNextQuery newQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
 
-        UserClickedModeItem facet item isClicked ->
+        UserClickedModeItem alias item isClicked ->
             let
                 newMode =
                     convertFacetToResultMode item
 
                 newQuery =
-                    toActiveSearch model
-                        |> toQueryArgs
+                    toNextQuery model.activeSearch
                         |> setMode newMode
-
-                newModel =
-                    toActiveSearch model
-                        |> setQueryArgs newQuery
-                        |> flip setActiveSearch model
             in
-            searchSubmit session newModel
+            setNextQuery newQuery model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
 
-        UserClickedRemoveActiveFilter activeAlias activeValue ->
-            let
-                activeSearch =
-                    toActiveSearch model
-
-                oldFilters =
-                    activeSearch
-                        |> toQueryArgs
-                        |> toFilters
-
-                newFilters =
-                    List.filter
-                        (\(Filter filterAlias filterValue) ->
-                            not ((filterAlias == activeAlias) && (filterValue == activeValue))
-                        )
-                        oldFilters
-
-                newQueryArgs =
-                    activeSearch
-                        |> toQueryArgs
-                        |> setFilters newFilters
-
-                newModel =
-                    activeSearch
-                        |> setQueryArgs newQueryArgs
-                        |> flip setActiveSearch model
-            in
-            searchSubmit session newModel
+        UserClickedRemoveActiveFilter alias value ->
+            ( model, Cmd.none )
 
         UserClickedClearSearchQueryBox ->
             let
                 newQuery =
-                    toActiveSearch model
-                        |> toQueryArgs
+                    toNextQuery model.activeSearch
                         |> setQuery Nothing
-
-                newModel =
-                    toActiveSearch model
-                        |> setQueryArgs newQuery
-                        |> flip setActiveSearch model
             in
-            searchSubmit session newModel
+            setNextQuery newQuery model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
 
         UserClickedSearchResultsPagination url ->
             ( model
@@ -336,13 +432,11 @@ update session msg model =
                         Just queryText
 
                 newQueryArgs =
-                    toActiveSearch model
-                        |> toQueryArgs
+                    toNextQuery model.activeSearch
                         |> setQuery newText
 
                 newModel =
-                    toActiveSearch model
-                        |> setQueryArgs newQueryArgs
+                    setNextQuery newQueryArgs model.activeSearch
                         |> flip setActiveSearch model
             in
             ( newModel
@@ -367,15 +461,13 @@ update session msg model =
         UserInteractedWithPianoKeyboard keyboardMsg ->
             let
                 oldKeyboard =
-                    toActiveSearch model
-                        |> toKeyboard
+                    toKeyboard model.activeSearch
 
                 ( keyboardModel, keyboardCmd ) =
                     Keyboard.update keyboardMsg oldKeyboard
 
                 newModel =
-                    toActiveSearch model
-                        |> setKeyboard keyboardModel
+                    setKeyboard keyboardModel model.activeSearch
                         |> flip setActiveSearch model
             in
             ( newModel
@@ -386,13 +478,9 @@ update session msg model =
             searchSubmit session model
 
         UserClickedPianoKeyboardSearchClearButton ->
-            let
-                newModel =
-                    toActiveSearch model
-                        |> setKeyboard Keyboard.initModel
-                        |> flip setActiveSearch model
-            in
-            searchSubmit session newModel
+            setKeyboard Keyboard.initModel model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
 
         NothingHappened ->
             ( model, Cmd.none )

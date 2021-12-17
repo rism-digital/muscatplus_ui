@@ -134,6 +134,6 @@ formatStat stat language =
             Maybe.withDefault 0.0 (String.toFloat statValue)
 
         statValueFormatted =
-            formatNumberByLanguage statValueNumber language
+            formatNumberByLanguage language statValueNumber
     in
     statValueFormatted ++ " " ++ statLabel

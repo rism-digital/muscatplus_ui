@@ -18,12 +18,8 @@ type alias FriendlyFacetValue =
     Maybe LanguageMap
 
 
-type alias FacetAlias =
-    String
-
-
 type ActiveFacet
-    = ActiveFacet FacetType FacetLabel FacetAlias FacetValue FriendlyFacetValue
+    = ActiveFacet FacetLabel FacetValue FriendlyFacetValue
 
 
 {-|
@@ -41,35 +37,35 @@ convertFilterToActiveFacet filter facets =
 
         facetData =
             Dict.get alias facets
-
-        activeFacet =
-            case facetData of
-                Just d ->
-                    let
-                        ( facetType, facetLabel, friendlyValue ) =
-                            case d of
-                                ToggleFacetData f ->
-                                    ( Toggle, f.label, Nothing )
-
-                                RangeFacetData f ->
-                                    ( Range, f.label, Nothing )
-
-                                SelectFacetData f ->
-                                    let
-                                        -- FacetItem String LanguageMap Float
-                                        friendlyFacetValue =
-                                            List.filter (\(FacetItem itmVal _ _) -> value == itmVal) f.items
-                                                |> List.head
-                                                |> Maybe.map (\(FacetItem _ itmFriendly _) -> itmFriendly)
-                                    in
-                                    ( Select, f.label, friendlyFacetValue )
-
-                                NotationFacetData f ->
-                                    ( Notation, f.label, Nothing )
-                    in
-                    Just (ActiveFacet facetType facetLabel alias value friendlyValue)
-
-                Nothing ->
-                    Nothing
     in
-    activeFacet
+    case facetData of
+        Just d ->
+            let
+                ( facetType, facetLabel, friendlyValue ) =
+                    case d of
+                        ToggleFacetData f ->
+                            ( Toggle, f.label, Nothing )
+
+                        RangeFacetData f ->
+                            ( Range, f.label, Nothing )
+
+                        SelectFacetData f ->
+                            let
+                                -- FacetItem String LanguageMap Float
+                                friendlyFacetValue =
+                                    List.filter (\(FacetItem itmVal _ _) -> value == itmVal) f.items
+                                        |> List.head
+                                        |> Maybe.map (\(FacetItem _ itmFriendly _) -> itmFriendly)
+                            in
+                            ( Select, f.label, friendlyFacetValue )
+
+                        NotationFacetData f ->
+                            ( Notation, f.label, Nothing )
+
+                        QueryFacetData f ->
+                            ( Query_, f.label, Nothing )
+            in
+            Just (ActiveFacet facetLabel value friendlyValue)
+
+        Nothing ->
+            Nothing

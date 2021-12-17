@@ -203,7 +203,7 @@ viewSourceFlags language flags =
                     , background = colourScheme.darkOrange
                     }
                     (penSvg colourScheme.white)
-                    (formatNumberByLanguage (toFloat flags.numberOfExemplars) language ++ " Exemplars")
+                    (formatNumberByLanguage language (toFloat flags.numberOfExemplars) ++ " Exemplars")
 
             else
                 none
@@ -229,7 +229,7 @@ viewPersonFlags language flags =
                             "1 Source"
 
                         else
-                            formatNumberByLanguage (toFloat flags.numberOfSources) language ++ " Sources"
+                            formatNumberByLanguage language (toFloat flags.numberOfSources) ++ " Sources"
                 in
                 makeFlagIcon
                     { foreground = colourScheme.white
@@ -259,7 +259,7 @@ viewInstitutionFlags language flags =
                             "1 Source"
 
                         else
-                            formatNumberByLanguage (toFloat flags.numberOfSources) language ++ " Sources"
+                            formatNumberByLanguage language (toFloat flags.numberOfSources) ++ " Sources"
                 in
                 makeFlagIcon
                     { foreground = colourScheme.white

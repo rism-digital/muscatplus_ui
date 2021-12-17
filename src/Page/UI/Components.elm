@@ -263,37 +263,16 @@ searchKeywordInput language msgs queryText =
             ]
             [ Input.text
                 [ width fill
-                , height (px 50)
-                , Border.widthEach { bottom = 1, top = 1, left = 1, right = 1 }
-                , Border.rounded 0
                 , htmlAttribute (HA.autocomplete False)
-                , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-                , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+                , Border.rounded 0
                 , onEnter msgs.submitMsg
-                , headingLG
+                , headingSM
                 , paddingXY 10 12
                 ]
                 { onChange = \inp -> msgs.changeMsg inp
                 , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
                 , text = queryText
                 , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
-                }
-            ]
-        , column
-            [ width (fillPortion 1) ]
-            [ Input.button
-                [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
-                , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-                , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
-                , paddingXY 10 10
-                , height (px 50)
-                , width fill
-                , Font.center
-                , Font.color (colourScheme.white |> convertColorToElementColor)
-                , headingLG
-                ]
-                { onPress = Just msgs.submitMsg
-                , label = text (extractLabelFromLanguageMap language localTranslations.search)
                 }
             ]
         ]

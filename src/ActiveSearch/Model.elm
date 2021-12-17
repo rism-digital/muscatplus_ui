@@ -1,19 +1,25 @@
 module ActiveSearch.Model exposing (..)
 
-import ActiveSearch.ActiveFacet exposing (ActiveFacet)
-import Dict exposing (Dict)
 import Page.Query exposing (QueryArgs)
-import Page.RecordTypes.ResultMode exposing (ResultMode)
-import Page.UI.Facets.RangeSlider exposing (RangeSlider)
 import Page.UI.Keyboard as Keyboard
-import Response exposing (Response)
 
 
+{-|
+
+    The 'nextQuery' parameter is what is modified by the search options, and
+    will form the "next query" that is sent to the server when the user submits
+    their search.
+
+    The other options help keep track of the state of search options, UI config,
+    etc.
+
+-}
 type alias ActiveSearch =
-    { query : QueryArgs
+    { needsProbing : Bool
+    , nextQuery : QueryArgs
     , expandedFacets : List String
-    , activeFacets : List ActiveFacet
-    , sliders : Dict String RangeSlider
+
+    --, activeFacets : Dict FacetAlias (List String)
     , keyboard : Keyboard.Model
     , selectedResultSort : Maybe String
     }

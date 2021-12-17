@@ -2,31 +2,25 @@ module Page.Search.Views.Facets exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, mouseOver, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, spacingXY, text, width)
-import Element.Background as Background
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input as Input exposing (checkbox, defaultCheckbox, labelLeft, labelRight)
+import Element.Input exposing (checkbox, labelLeft)
 import Element.Region as Region
-import Html
-import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
-import List.Extra as LE
-import Page.Converters exposing (convertFacetToFilter)
-import Page.Query exposing (FacetBehaviour(..), FacetMode(..), FacetSort(..), Filter(..), parseStringToFacetBehaviour)
+import Page.Query exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), FacetSorts(..), ModeFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
+import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetData(..), FacetItem(..), FacetSorts(..), ModeFacet, QueryFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, facetBorderBottom, headingLG, headingSM, lineSpacing, widthFillHeightFill)
-import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h5)
-import Page.UI.Facets.RangeSlider as RangeSlider exposing (RangeSlider)
-import Page.UI.Facets.Toggle as Toggle
-import Page.UI.Images exposing (institutionSvg, intersectionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, unionSvg, unknownSvg)
-import Page.UI.Keyboard as Keyboard
-import Page.UI.Keyboard.Model exposing (Keyboard(..))
+import Page.Search.Views.Facets.NotationFacet exposing (viewKeyboardControl)
+import Page.Search.Views.Facets.QueryFacet exposing (viewQueryFacet)
+import Page.Search.Views.Facets.RangeFacet exposing (viewRangeFacet)
+import Page.Search.Views.Facets.SelectFacet exposing (viewSelectFacet)
+import Page.Search.Views.Facets.ToggleFacet exposing (viewToggleFacet)
+import Page.UI.Attributes exposing (facetBorderBottom, headingMD, headingSM, lineSpacing, widthFillHeightFill)
+import Page.UI.Images exposing (chevronDownSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import String.Extra as SE
 
 
 viewModeItems : ResultMode -> Language -> ModeFacet -> Element SearchMsg
@@ -109,7 +103,7 @@ viewModeItem selectedMode language fitem =
                 Border.color (colourScheme.cream |> convertColorToElementColor) :: baseRowStyle
 
         itemCount =
-            formatNumberByLanguage count language
+            formatNumberByLanguage language count
     in
     row
         rowStyle
@@ -144,10 +138,20 @@ viewFacetSection language title facets =
         [ column
             (List.append [ spacing lineSpacing, alignTop ] widthFillHeightFill)
             [ row
-                widthFillHeightFill
-                [ el
-                    [ headingLG, Region.heading 3, Font.medium ]
-                    (text title)
+                (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                [ column
+                    [ alignLeft ]
+                    [ el
+                        [ alignLeft
+                        , width (px 10)
+                        , pointer
+                        , onClick NothingHappened -- TODO: Implement collapsing behaviour!
+                        ]
+                        (chevronDownSvg colourScheme.lightBlue)
+                    ]
+                , column
+                    [ headingMD, Region.heading 3, Font.medium, alignLeft ]
+                    [ text title ]
                 ]
             , row
                 (List.append [ alignTop ] widthFillHeightFill)
@@ -169,7 +173,7 @@ viewFacet facetKey language activeSearch body =
             Dict.get facetKey facetDict
 
         query =
-            activeSearch.query
+            activeSearch.nextQuery
 
         activeFilters =
             query.filters
@@ -179,11 +183,7 @@ viewFacet facetKey language activeSearch body =
             viewToggleFacet language activeFilters facet
 
         Just (RangeFacetData facet) ->
-            let
-                activeSliders =
-                    activeSearch.sliders
-            in
-            viewRangeFacet language activeSliders activeFilters facet
+            viewRangeFacet language activeFilters facet
 
         Just (SelectFacetData facet) ->
             let
@@ -193,12 +193,8 @@ viewFacet facetKey language activeSearch body =
                 expandedFacets =
                     activeSearch.expandedFacets
 
-                facetBehaviours =
-                    query.facetBehaviours
-
                 facetConfig =
-                    { facetBehaviours = facetBehaviours
-                    , facetSorts = facetSorts
+                    { facetSorts = facetSorts
                     , activeFilters = activeFilters
                     , expandedFacets = expandedFacets
                     }
@@ -212,406 +208,8 @@ viewFacet facetKey language activeSearch body =
             in
             viewKeyboardControl language activeKeyboard
 
+        Just (QueryFacetData facet) ->
+            viewQueryFacet language facet activeSearch
+
         _ ->
             none
-
-
-viewToggleFacet : Language -> List Filter -> ToggleFacet -> Element SearchMsg
-viewToggleFacet language activeFilters facet =
-    let
-        facetAlias =
-            facet.alias
-
-        isActive =
-            List.any (\(Filter alias _) -> alias == facetAlias) activeFilters
-    in
-    row
-        []
-        [ column
-            []
-            [ row
-                [ paddingXY 10 0 ]
-                [ el []
-                    (Toggle.view isActive (UserClickedFacetToggle facet.alias)
-                        |> Toggle.setLabel (extractLabelFromLanguageMap language facet.label)
-                        |> Toggle.render
-                    )
-                ]
-            ]
-        ]
-
-
-viewRangeFacet : Language -> Dict String RangeSlider -> List Filter -> RangeFacet -> Element SearchMsg
-viewRangeFacet language activeSliders activeFilters body =
-    let
-        facetAlias =
-            body.alias
-
-        toggleSlider =
-            case Dict.get facetAlias activeSliders of
-                Just slider ->
-                    html (Html.map (UserMovedRangeSlider facetAlias) <| RangeSlider.view slider)
-
-                Nothing ->
-                    none
-    in
-    row
-        [ width fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            [ row
-                [ width fill
-                , alignTop
-                ]
-                [ h5 language body.label ]
-            , row
-                [ width fill
-                , paddingXY 20 10
-                ]
-                [ el [] toggleSlider ]
-            ]
-        ]
-
-
-type alias SelectFacetConfig =
-    { facetBehaviours : List FacetBehaviour
-    , facetSorts : Dict String FacetSort
-    , activeFilters : List Filter
-    , expandedFacets : List String
-    }
-
-
-viewSelectFacet :
-    Language
-    -> SelectFacetConfig
-    -> SelectFacet
-    -> Element SearchMsg
-viewSelectFacet language { facetBehaviours, activeFilters, expandedFacets, facetSorts } body =
-    let
-        facetAlias =
-            body.alias
-
-        isExpanded =
-            List.member facetAlias expandedFacets
-
-        facetItems =
-            if isExpanded == True then
-                body.items
-
-            else
-                List.take 12 body.items
-
-        numberOfHiddenItems =
-            List.length body.items - 12
-
-        truncatedNote =
-            if List.length body.items == 200 then
-                el [ alignLeft ] (text "Top 200 values")
-
-            else
-                none
-
-        -- TODO: Translate!
-        showMoreText =
-            if isExpanded == True then
-                "Show fewer"
-
-            else
-                "Show " ++ String.fromInt numberOfHiddenItems ++ " more"
-
-        showLink =
-            if List.length body.items > 12 then
-                column
-                    [ width fill
-                    , bodySM
-                    ]
-                    [ el
-                        [ onClick (UserClickedFacetExpand facetAlias)
-                        , pointer
-                        , alignRight
-                        ]
-                        (text showMoreText)
-                    ]
-
-            else
-                none
-
-        -- show the opposite icon from the current value so that
-        -- we can show the user a control to toggle the behaviour
-        toggledSortIcon sortType =
-            case sortType of
-                FacetSortCount ->
-                    sortAlphaDescSvg colourScheme.slateGrey
-
-                FacetSortAlpha ->
-                    sortNumericDescSvg colourScheme.slateGrey
-
-        toggledSortMsg sortType =
-            case sortType of
-                FacetSortCount ->
-                    AlphaSortOrder facetAlias
-
-                FacetSortAlpha ->
-                    CountSortOrder facetAlias
-
-        sorts =
-            body.sorts
-
-        behaviourOptions =
-            body.behaviours
-
-        listOfBehavioursForDropdown =
-            List.map (\v -> ( v.value, extractLabelFromLanguageMap language v.label )) behaviourOptions.items
-
-        chosenOption =
-            LE.find
-                (\v ->
-                    case v of
-                        IntersectionBehaviour f ->
-                            f == facetAlias
-
-                        UnionBehaviour f ->
-                            f == facetAlias
-                )
-                facetBehaviours
-                |> Maybe.withDefault (IntersectionBehaviour facetAlias)
-
-        behaviourIcon =
-            case chosenOption of
-                UnionBehaviour _ ->
-                    unionSvg colourScheme.slateGrey
-
-                IntersectionBehaviour _ ->
-                    intersectionSvg colourScheme.slateGrey
-
-        behaviourDropdown =
-            el
-                [ alignLeft
-                , width (px 50)
-                ]
-                (dropdownSelect
-                    (\inp -> UserChangedFacetBehaviour (parseStringToFacetBehaviour inp facetAlias))
-                    listOfBehavioursForDropdown
-                    (\inp -> parseStringToFacetBehaviour inp facetAlias)
-                    chosenOption
-                )
-
-        groupedFacetItems =
-            LE.greedyGroupsOf 4 facetItems
-    in
-    row
-        [ width fill
-        , alignTop
-        , Background.color (colourScheme.white |> convertColorToElementColor)
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            [ row
-                [ width fill
-                , alignTop
-                , padding 10
-                , spacing lineSpacing
-                ]
-                [ column
-                    [ width fill
-                    , alignLeft
-                    , alignTop
-                    ]
-                    [ h5 language body.label ]
-                ]
-            , row
-                [ width fill
-                ]
-                [ column
-                    [ width fill
-                    ]
-                    (List.map (\fRow -> viewFacetItemRow language facetAlias activeFilters fRow) groupedFacetItems)
-                ]
-            , row
-                [ width fill
-                , padding 10
-                ]
-                [ column
-                    [ width fill
-                    , bodySM
-                    , alignLeft
-                    ]
-                    [ row
-                        [ alignLeft
-                        , spacing 10
-                        ]
-                        [ el
-                            [ width (px 20)
-                            , height (px 10)
-                            ]
-                            behaviourIcon
-                        , behaviourDropdown
-                        , el
-                            [ width (px 20)
-                            , height (px 20)
-                            , onClick (UserChangedFacetSort (toggledSortMsg sorts.current))
-                            ]
-                            (toggledSortIcon sorts.current)
-                        , el
-                            [ width shrink
-                            , alignLeft
-                            ]
-                            truncatedNote
-                        ]
-                    ]
-                , showLink
-                ]
-            ]
-        ]
-
-
-viewFacetItemRow : Language -> String -> List Filter -> List FacetItem -> Element SearchMsg
-viewFacetItemRow language facetAlias activeFilters facetRow =
-    row
-        [ width fill
-        , spacing lineSpacing
-        , alignLeft
-        ]
-        (List.map (\fitem -> viewFacetItem language facetAlias activeFilters fitem) facetRow)
-
-
-viewFacetItem :
-    Language
-    -> String
-    -> List Filter
-    -> FacetItem
-    -> Element SearchMsg
-viewFacetItem language facetAlias activeFilters fitem =
-    let
-        (FacetItem value label count) =
-            fitem
-
-        fullLabel =
-            extractLabelFromLanguageMap language label
-
-        asFilter =
-            convertFacetToFilter facetAlias fitem
-
-        shouldBeChecked =
-            List.member asFilter activeFilters
-    in
-    column
-        [ width (px 250)
-        , alignLeft
-        , alignTop
-        , padding 5
-        , mouseOver [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
-        ]
-        [ row
-            [ width fill
-            , alignLeft
-            ]
-            [ checkbox
-                [ Element.htmlAttribute (HA.alt fullLabel)
-                , alignLeft
-                , alignTop
-                , width fill
-                ]
-                { onChange = \selected -> UserClickedFacetItem facetAlias fitem selected
-                , icon = basicCheckbox
-                , checked = shouldBeChecked
-                , label =
-                    labelRight
-                        [ bodyRegular
-                        , width fill
-                        ]
-                        (paragraph [ width fill ] [ text (SE.softEllipsis 50 fullLabel) ])
-                }
-            , el
-                [ alignLeft
-                , bodyRegular
-                ]
-                (text (formatNumberByLanguage count language))
-            ]
-        ]
-
-
-viewKeyboardControl : Language -> Keyboard.Model -> Element SearchMsg
-viewKeyboardControl language keyboard =
-    let
-        keyboardConfig =
-            { numOctaves = 3 }
-
-        keyboardQuery =
-            keyboard.query
-
-        queryLen =
-            Maybe.withDefault [] keyboardQuery.noteData
-                |> List.length
-
-        cursor =
-            if queryLen < 4 then
-                "not-allowed"
-
-            else
-                "pointer"
-
-        ( buttonMsg, buttonColor, buttonBorder ) =
-            if queryLen < 4 then
-                ( Nothing
-                , colourScheme.darkGrey |> convertColorToElementColor
-                , colourScheme.slateGrey |> convertColorToElementColor
-                )
-
-            else
-                ( Just UserClickedPianoKeyboardSearchSubmitButton
-                , colourScheme.darkBlue |> convertColorToElementColor
-                , colourScheme.darkBlue |> convertColorToElementColor
-                )
-    in
-    row
-        []
-        [ column
-            []
-            [ row []
-                [ Keyboard.view language (Keyboard keyboard keyboardConfig)
-                    |> Element.map UserInteractedWithPianoKeyboard
-                ]
-            , row
-                [ spacing 10 ]
-                [ Input.button
-                    [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
-                    , Border.rounded 5
-                    , Border.color buttonBorder
-                    , Background.color buttonColor
-                    , paddingXY 10 10
-                    , height (px 50)
-                    , width fill
-                    , Font.center
-                    , Font.color (colourScheme.white |> convertColorToElementColor)
-                    , headingSM
-                    , htmlAttribute (HA.style "cursor" cursor)
-                    ]
-                    { onPress = buttonMsg
-                    , label = text "Search"
-                    }
-                , Input.button
-                    [ Border.widthEach { bottom = 1, top = 1, left = 0, right = 1 }
-                    , Border.rounded 5
-                    , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-                    , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
-                    , paddingXY 10 10
-                    , height (px 50)
-                    , width fill
-                    , Font.center
-                    , Font.color (colourScheme.white |> convertColorToElementColor)
-                    , headingSM
-                    , htmlAttribute (HA.style "cursor" "pointer")
-                    ]
-                    { onPress = Just UserClickedPianoKeyboardSearchClearButton
-                    , label = text "Clear"
-                    }
-                ]
-            ]
-        ]

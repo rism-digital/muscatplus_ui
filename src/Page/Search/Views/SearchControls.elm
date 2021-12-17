@@ -1,9 +1,9 @@
 module Page.Search.Views.SearchControls exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, fill, height, none, row, scrollbarY, shrink, width)
+import Element exposing (Element, alignTop, column, fill, height, maximum, minimum, none, row, scrollbarY, shrink, width)
 import Language exposing (Language)
-import Page.Query exposing (toMode, toQueryArgs)
+import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
@@ -19,7 +19,7 @@ viewSearchControls language model body =
     let
         currentMode =
             toActiveSearch model
-                |> toQueryArgs
+                |> toNextQuery
                 |> toMode
 
         facetLayout =
@@ -40,7 +40,7 @@ viewSearchControls language model body =
                     none
     in
     row
-        [ width fill
+        [ width (fill |> minimum 800)
         , height fill
         , scrollbarY
         ]
