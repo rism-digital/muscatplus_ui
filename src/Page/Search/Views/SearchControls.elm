@@ -1,7 +1,7 @@
 module Page.Search.Views.SearchControls exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignBottom, column, fill, height, minimum, none, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignTop, column, fill, height, minimum, none, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -105,11 +105,12 @@ viewSearchControls language model body =
                     none
     in
     row
-        [ width (fill |> minimum 800)
+        [ width (px 800)
         , height fill
+        , alignTop
         ]
         [ column
-            widthFillHeightFill
+            (List.append [ alignTop ] widthFillHeightFill)
             [ facetLayout
             , viewSearchButtons language model
             ]

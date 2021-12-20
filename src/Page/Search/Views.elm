@@ -162,6 +162,7 @@ viewSearchResultsSection language model body =
         , column
             [ width (fillPortion 2)
             , height fill
+            , alignTop
             , inFront renderedPreview
             ]
             [ viewSearchControls language model body ]

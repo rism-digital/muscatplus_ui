@@ -23,7 +23,7 @@ viewPartOfSection language partOf =
     in
     row
         [ width (fill |> maximum 600)
-        , Border.widthEach { top = 6, left = 1, right = 1, bottom = 1 }
+        , Border.widthEach { top = 10, left = 1, right = 1, bottom = 1 }
         , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
         , paddingXY 10 20
         ]

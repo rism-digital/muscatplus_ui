@@ -1,15 +1,14 @@
 module Page.Search.Views.Facets.SelectFacet exposing (..)
 
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, maximum, mouseOver, none, padding, paragraph, pointer, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Input exposing (checkbox, labelRight)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import List.Extra as LE
-import Page.Converters exposing (convertFacetToFilter)
-import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviours, toCurrentBehaviour)
+import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (bodyRegular, bodySM, lineSpacing)
@@ -60,7 +59,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
         -- TODO: Translate!
         showMoreText =
             if isExpanded == True then
-                "Show fewer"
+                "Collapse options list"
 
             else
                 "Show " ++ String.fromInt numberOfHiddenItems ++ " more"
@@ -137,11 +136,12 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                 )
 
         groupedFacetItems =
-            LE.greedyGroupsOf 4 facetItems
+            LE.greedyGroupsOf 3 facetItems
     in
     row
         [ width fill
         , alignTop
+        , alignLeft
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
@@ -211,7 +211,7 @@ viewSelectFacetItemRow : Language -> String -> Dict FacetAlias (List String) -> 
 viewSelectFacetItemRow language facetAlias activeFilters facetRow =
     row
         [ width fill
-        , spacing lineSpacing
+        , spacingXY (lineSpacing * 2) lineSpacing
         , alignLeft
         ]
         (List.map (\fitem -> viewSelectFacetItem language facetAlias activeFilters fitem) facetRow)
@@ -237,7 +237,7 @@ viewSelectFacetItem language facetAlias activeFilters fitem =
                 |> List.member value
     in
     column
-        [ width (px 250)
+        [ width (px 220)
         , alignLeft
         , alignTop
         , padding 5
@@ -264,8 +264,9 @@ viewSelectFacetItem language facetAlias activeFilters fitem =
                         (paragraph [ width fill ] [ text (SE.softEllipsis 50 fullLabel) ])
                 }
             , el
-                [ alignLeft
+                [ alignRight
                 , bodyRegular
+                , alignTop
                 ]
                 (text (formatNumberByLanguage language count))
             ]

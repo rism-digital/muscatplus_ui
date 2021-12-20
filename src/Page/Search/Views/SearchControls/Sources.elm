@@ -73,7 +73,7 @@ viewFacetsForSourcesMode language model body =
                         [ width fill
                         , headingMD
                         ]
-                        (text "Refinements")
+                        (text "Record type refinements")
                     ]
                 ]
             , viewFacetSection language
