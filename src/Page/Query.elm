@@ -7,15 +7,15 @@ module Page.Query exposing
     , resetPage
     , setFacetBehaviours
     , setFilters
+    , setKeywordQuery
     , setMode
     , setNextQuery
-    , setQuery
     , setSort
     , toFacetBehaviours
     , toFilters
+    , toKeywordQuery
     , toMode
     , toNextQuery
-    , toQuery
     )
 
 import Config as C
@@ -41,7 +41,7 @@ type Filter
 
 
 type alias QueryArgs =
-    { query : Maybe String
+    { keywordQuery : Maybe String
     , filters : Dict FacetAlias (List String)
     , sort : Maybe String
     , page : Int
@@ -82,14 +82,14 @@ setMode newMode oldRecord =
     { oldRecord | mode = newMode }
 
 
-toQuery : { a | query : Maybe String } -> Maybe String
-toQuery qargs =
-    qargs.query
+toKeywordQuery : { a | keywordQuery : Maybe String } -> Maybe String
+toKeywordQuery qargs =
+    qargs.keywordQuery
 
 
-setQuery : Maybe String -> { a | query : Maybe String } -> { a | query : Maybe String }
-setQuery newQuery oldRecord =
-    { oldRecord | query = newQuery }
+setKeywordQuery : Maybe String -> { a | keywordQuery : Maybe String } -> { a | keywordQuery : Maybe String }
+setKeywordQuery newQuery oldRecord =
+    { oldRecord | keywordQuery = newQuery }
 
 
 setSort : Maybe String -> { a | sort : Maybe String } -> { a | sort : Maybe String }
@@ -126,7 +126,7 @@ resetPage oldRecord =
 
 defaultQueryArgs : QueryArgs
 defaultQueryArgs =
-    { query = Nothing
+    { keywordQuery = Nothing
     , filters = Dict.empty
     , sort = Nothing
     , page = 1
@@ -147,7 +147,7 @@ buildQueryParameters : QueryArgs -> List QueryParameter
 buildQueryParameters queryArgs =
     let
         qParam =
-            case queryArgs.query of
+            case queryArgs.keywordQuery of
                 Just q ->
                     [ Url.Builder.string "q" q ]
 

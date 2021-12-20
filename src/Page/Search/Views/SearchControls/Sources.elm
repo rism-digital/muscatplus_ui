@@ -7,7 +7,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
-import Page.Query exposing (toNextQuery, toQuery)
+import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
@@ -45,7 +45,7 @@ viewFacetsForSourcesMode language model body =
 
         qText =
             toNextQuery activeSearch
-                |> toQuery
+                |> toKeywordQuery
                 |> Maybe.withDefault ""
     in
     row

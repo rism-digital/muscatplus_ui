@@ -27,7 +27,7 @@ viewPersonSourcesTab language sourcesUrl pageSearch searchData =
             pageSearch.nextQuery
 
         qText =
-            Maybe.withDefault "" pageQuery.query
+            Maybe.withDefault "" pageQuery.keywordQuery
 
         resultsView =
             case searchData of
