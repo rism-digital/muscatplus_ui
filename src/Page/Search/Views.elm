@@ -1,13 +1,10 @@
 module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import ActiveSearch.ActiveFacet exposing (ActiveFacet(..))
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events exposing (onClick)
-import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
 import Page.Query exposing (toMode, toNextQuery)
@@ -19,10 +16,9 @@ import Page.Search.Views.Loading exposing (searchModeSelectorLoading, viewSearch
 import Page.Search.Views.Previews exposing (viewPreviewLoading, viewPreviewRouter)
 import Page.Search.Views.Results exposing (viewSearchResult)
 import Page.Search.Views.SearchControls exposing (viewSearchControls)
-import Page.UI.Attributes exposing (searchColumnVerticalSize, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (searchColumnVerticalSize, widthFillHeightFill)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Response exposing (Response(..), ServerData(..))
