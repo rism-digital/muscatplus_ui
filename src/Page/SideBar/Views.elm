@@ -12,7 +12,7 @@ import Page.UI.Animations exposing (animatedColumn, animatedEl)
 import Page.UI.Attributes exposing (headingMD)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, roLogoSvg, sourcesSvg)
+import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, roLogoSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
 import Session exposing (AnimatedSideBar(..), Session)
 import Simple.Animation as Animation
@@ -209,9 +209,9 @@ view session =
         ]
         [ row
             [ width (px 60)
-            , height (px 100)
+            , height (px 80)
             , alignLeft
-            , paddingXY 0 20
+            , paddingXY 0 10
             ]
             [ column
                 [ alignTop
@@ -220,9 +220,9 @@ view session =
                 [ el
                     [ centerY
                     , alignTop
-                    , paddingXY 10 0
+                    , paddingXY 14 0
                     ]
-                    (roLogoSvg (headerHeight + 10))
+                    (rismLogo colourScheme.lightBlue headerHeight)
                 ]
             ]
         , dividingLine
