@@ -1,10 +1,11 @@
 module Page.Record.Views.SourcePage.PartOfSection exposing (..)
 
-import Element exposing (Element, fill, link, row, text, width)
+import Element exposing (Element, column, el, fill, height, link, maximum, paddingXY, row, spacing, text, width)
+import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
-import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Attributes exposing (headingSM, lineSpacing, linkColour)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewPartOfSection : Language -> PartOfSectionBody -> Element msg
@@ -13,17 +14,38 @@ viewPartOfSection language partOf =
         source =
             partOf.source
 
-        sectionHeader =
-            { sectionToc = ""
-            , label = partOf.label
-            }
-
+        --sectionHeader =
+        --    { sectionToc = ""
+        --    , label =
+        --    }
         sectionBody =
-            [ link
-                [ linkColour ]
-                { url = source.id
-                , label = text (extractLabelFromLanguageMap language source.label)
-                }
-            ]
+            []
     in
-    sectionTemplate language sectionHeader sectionBody
+    row
+        [ width (fill |> maximum 600)
+        , Border.widthEach { top = 6, left = 1, right = 1, bottom = 1 }
+        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , paddingXY 10 20
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , spacing lineSpacing
+            ]
+            [ row
+                [ width fill ]
+                [ el [ headingSM ] (text "This record is part of a collection: ") -- TODO: Translate!
+                , link
+                    [ linkColour
+                    , headingSM
+                    ]
+                    { url = source.id
+                    , label = text (extractLabelFromLanguageMap language source.label)
+                    }
+                ]
+            ]
+        ]
+
+
+
+-- sectionTemplate language sectionHeader sectionBody
