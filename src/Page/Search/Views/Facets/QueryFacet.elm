@@ -2,14 +2,18 @@ module Page.Search.Views.Facets.QueryFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingXY, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, below, column, el, fill, height, htmlAttribute, mouseOver, none, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Query exposing (toFacetBehaviours, toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), QueryFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviourItems, toBehaviours, toCurrentBehaviour)
+import Page.RecordTypes.Shared exposing (FacetAlias, LabelValue)
+import Page.RecordTypes.Suggestion exposing (ActiveSuggestion(..), toAlias, toSuggestionList)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (headingSM, lineSpacing)
 import Page.UI.Components exposing (dropdownSelect, h6)
@@ -94,6 +98,21 @@ viewQueryFacet language facet activeSearch =
 
                 FacetBehaviourIntersection ->
                     intersectionSvg colourScheme.slateGrey
+
+        suggestionUrl =
+            facet.suggestions
+
+        activeSuggestion =
+            case activeSearch.activeSuggestion of
+                Just suggestions ->
+                    if toAlias suggestions == facetAlias then
+                        viewSuggestionDropdown language facetAlias currentBehaviourOption suggestions
+
+                    else
+                        none
+
+                Nothing ->
+                    none
     in
     row
         [ width fill
@@ -121,11 +140,12 @@ viewQueryFacet language facet activeSearch =
                     , onEnter (UserHitEnterInQueryFacet facet.alias currentBehaviourOption)
                     , headingSM
                     , paddingXY 10 12
+                    , below activeSuggestion
                     ]
                     { label = Input.labelHidden (extractLabelFromLanguageMap language facet.label)
                     , placeholder = Just (Input.placeholder [] (text "Add terms to your query"))
                     , text = textValue
-                    , onChange = \input -> UserEnteredTextInQueryFacet facet.alias input
+                    , onChange = \input -> UserEnteredTextInQueryFacet facet.alias input suggestionUrl
                     }
                 ]
             , row
@@ -162,4 +182,38 @@ viewQueryFacet language facet activeSearch =
                     )
                 ]
             ]
+        ]
+
+
+viewSuggestionDropdown : Language -> FacetAlias -> FacetBehaviours -> ActiveSuggestion -> Element SearchMsg
+viewSuggestionDropdown language facetAlias currentBehaviour activeSuggestions =
+    column
+        [ width (px 500)
+        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , spacing 5
+        , Border.width 1
+        , Border.color (colourScheme.darkGrey |> convertColorToElementColor)
+        ]
+        (toSuggestionList activeSuggestions
+            |> List.map (viewSuggestionItem language facetAlias currentBehaviour)
+        )
+
+
+viewSuggestionItem : Language -> FacetAlias -> FacetBehaviours -> LabelValue -> Element SearchMsg
+viewSuggestionItem language facetAlias currentBehaviour suggestionItem =
+    let
+        suggestValue =
+            extractLabelFromLanguageMap language suggestionItem.label
+    in
+    row
+        [ width fill
+        , pointer
+        , mouseOver
+            [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+            , Font.color (colourScheme.white |> convertColorToElementColor)
+            ]
+        , padding 10
+        , onClick (UserChoseOptionFromQueryFacetSuggest facetAlias suggestValue currentBehaviour)
+        ]
+        [ text suggestValue
         ]

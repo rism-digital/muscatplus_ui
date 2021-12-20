@@ -1,22 +1,23 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setExpandedFacets, setKeyboard, setNeedsProbing, toActiveSearch, toExpandedFacets, toKeyboard, toggleExpandedFacets)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setKeyboard, setNeedsProbing, toActiveSearch, toActiveSuggestion, toExpandedFacets, toKeyboard, toggleExpandedFacets)
 import Browser.Navigation as Nav
 import Dict
 import List.Extra as LE
 import Page.Converters exposing (convertFacetToResultMode)
-import Page.Query exposing (Filter(..), buildQueryParameters, resetPage, setFacetBehaviours, setFilters, setMode, setNextQuery, setQuery, setSort, toFacetBehaviours, toFilters, toMode, toNextQuery)
+import Page.Query exposing (Filter(..), buildQueryParameters, resetPage, setFacetBehaviours, setFilters, setKeywordQuery, setMode, setNextQuery, setSort, toFacetBehaviours, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
-import Page.RecordTypes.Search exposing (FacetItem(..), toBehaviours)
-import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetItem(..))
+import Page.RecordTypes.Shared exposing (FacetAlias)
+import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.Search.Model exposing (SearchPageModel, setActiveSuggestion)
+import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery, setNotation, toNotation)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
-import Response exposing (Response(..), ServerData)
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
 import Utlities exposing (flip)
@@ -37,7 +38,6 @@ init route =
     , preview = NoResponseToShow
     , selectedResult = Nothing
     , showFacetPanel = False
-    , activeSuggestion = Nothing
     , probeResponse = Nothing
     }
 
@@ -74,7 +74,6 @@ load oldModel =
     , preview = NoResponseToShow
     , selectedResult = Nothing
     , showFacetPanel = oldModel.showFacetPanel
-    , activeSuggestion = Nothing
     , probeResponse = Nothing
     }
 
@@ -158,6 +157,72 @@ probeSubmit _ model =
     )
 
 
+updateQueryFacetValues : Session -> SearchPageModel -> String -> FacetBehaviours -> ( SearchPageModel, Cmd SearchMsg )
+updateQueryFacetValues session model alias currentBehaviour =
+    let
+        activeFilters =
+            toNextQuery model.activeSearch
+                |> toFilters
+
+        newActiveFilters =
+            Dict.update alias
+                (\existingValues ->
+                    case existingValues of
+                        Just [] ->
+                            Just []
+
+                        Just (x :: xs) ->
+                            Just ("" :: x :: xs)
+
+                        Nothing ->
+                            Just []
+                )
+                activeFilters
+
+        newActiveBehaviours =
+            toNextQuery model.activeSearch
+                |> toFacetBehaviours
+                |> Dict.insert alias currentBehaviour
+    in
+    toNextQuery model.activeSearch
+        |> setFilters newActiveFilters
+        |> setFacetBehaviours newActiveBehaviours
+        |> flip setNextQuery model.activeSearch
+        |> setNeedsProbing True
+        |> setActiveSuggestion Nothing
+        |> flip setActiveSearch model
+        |> probeSubmit session
+
+
+updateQueryFacetFilters : FacetAlias -> String -> SearchPageModel -> SearchPageModel
+updateQueryFacetFilters alias text model =
+    let
+        activeFacets =
+            toNextQuery model.activeSearch
+                |> toFilters
+
+        newActiveFilters =
+            Dict.update alias
+                (\existingValues ->
+                    case existingValues of
+                        Just [] ->
+                            Just [ text ]
+
+                        Just (_ :: xs) ->
+                            Just (text :: xs)
+
+                        Nothing ->
+                            Just [ text ]
+                )
+                activeFacets
+    in
+    toNextQuery model.activeSearch
+        |> setFilters newActiveFilters
+        |> flip setNextQuery model.activeSearch
+        |> setActiveSuggestion Nothing
+        |> flip setActiveSearch model
+
+
 update : Session -> SearchMsg -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
 update session msg model =
     case msg of
@@ -178,9 +243,18 @@ update session msg model =
 
                         _ ->
                             Cmd.none
+
+                totalItems =
+                    case response of
+                        SearchData body ->
+                            Just { totalItems = body.totalItems }
+
+                        _ ->
+                            Nothing
             in
             ( { model
                 | response = Response response
+                , probeResponse = totalItems
               }
             , notationRenderCmd
             )
@@ -216,8 +290,13 @@ update session msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithSuggestionData (Ok ( metadata, response )) ->
-            ( setActiveSuggestion (Just response) model
+        ServerRespondedWithSuggestionData (Ok ( _, response )) ->
+            let
+                newModel =
+                    setActiveSuggestion (Just response) model.activeSearch
+                        |> flip setActiveSearch model
+            in
+            ( newModel
             , Cmd.none
             )
 
@@ -245,68 +324,37 @@ update session msg model =
         UserClickedFacetPanelToggle ->
             ( model, Cmd.none )
 
-        UserEnteredTextInQueryFacet alias text ->
+        UserEnteredTextInQueryFacet alias text suggestionUrl ->
             let
-                activeFacets =
-                    toNextQuery model.activeSearch
-                        |> toFilters
-
-                newActiveFilters =
-                    Dict.update alias
-                        (\existingValues ->
-                            case existingValues of
-                                Just [] ->
-                                    Just [ text ]
-
-                                Just (_ :: xs) ->
-                                    Just (text :: xs)
-
-                                Nothing ->
-                                    Just [ text ]
-                        )
-                        activeFacets
-
                 newModel =
-                    toNextQuery model.activeSearch
-                        |> setFilters newActiveFilters
-                        |> flip setNextQuery model.activeSearch
-                        |> flip setActiveSearch model
+                    updateQueryFacetFilters alias text model
+
+                ( suggestModel, suggestionCmd ) =
+                    if String.length text > 3 then
+                        ( newModel, createSuggestRequestWithDecoder ServerRespondedWithSuggestionData (String.append suggestionUrl text) )
+
+                    else if String.length text == 0 then
+                        let
+                            clearSuggestionModel =
+                                setActiveSuggestion Nothing newModel.activeSearch
+                                    |> flip setActiveSearch newModel
+                        in
+                        ( clearSuggestionModel, Cmd.none )
+
+                    else
+                        ( newModel, Cmd.none )
             in
-            ( newModel, Cmd.none )
+            ( suggestModel, suggestionCmd )
+
+        UserChoseOptionFromQueryFacetSuggest alias selectedValue currentBehaviour ->
+            let
+                newModel =
+                    updateQueryFacetFilters alias selectedValue model
+            in
+            updateQueryFacetValues session newModel alias currentBehaviour
 
         UserHitEnterInQueryFacet alias currentBehaviour ->
-            let
-                activeFilters =
-                    toNextQuery model.activeSearch
-                        |> toFilters
-
-                newActiveFilters =
-                    Dict.update alias
-                        (\existingValues ->
-                            case existingValues of
-                                Just [] ->
-                                    Just []
-
-                                Just (x :: xs) ->
-                                    Just ("" :: x :: xs)
-
-                                Nothing ->
-                                    Just []
-                        )
-                        activeFilters
-
-                newActiveBehaviours =
-                    toNextQuery model.activeSearch
-                        |> toFacetBehaviours
-                        |> Dict.insert alias currentBehaviour
-            in
-            toNextQuery model.activeSearch
-                |> setFilters newActiveFilters
-                |> setFacetBehaviours newActiveBehaviours
-                |> flip setNextQuery model.activeSearch
-                |> setNeedsProbing True
-                |> flip setActiveSearch model
-                |> probeSubmit session
+            updateQueryFacetValues session model alias currentBehaviour
 
         UserClickedFacetExpand alias ->
             let
@@ -406,7 +454,7 @@ update session msg model =
             let
                 newQuery =
                     toNextQuery model.activeSearch
-                        |> setQuery Nothing
+                        |> setKeywordQuery Nothing
             in
             setNextQuery newQuery model.activeSearch
                 |> flip setActiveSearch model
@@ -433,15 +481,13 @@ update session msg model =
 
                 newQueryArgs =
                     toNextQuery model.activeSearch
-                        |> setQuery newText
+                        |> setKeywordQuery newText
 
                 newModel =
                     setNextQuery newQueryArgs model.activeSearch
                         |> flip setActiveSearch model
             in
-            ( newModel
-            , Cmd.none
-            )
+            probeSubmit session newModel
 
         UserClickedClosePreviewWindow ->
             ( { model

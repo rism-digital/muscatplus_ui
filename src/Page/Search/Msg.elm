@@ -24,7 +24,8 @@ type SearchMsg
     | UserClickedFacetItem FacetAlias String Bool
     | UserClickedFacetToggle FacetAlias
     | UserClickedFacetPanelToggle
-    | UserEnteredTextInQueryFacet FacetAlias String
+    | UserEnteredTextInQueryFacet FacetAlias String String
+    | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
     | UserHitEnterInQueryFacet FacetAlias FacetBehaviours
     | UserMovedRangeSlider String RangeSlider.Msg
     | UserChangedResultSorting String

@@ -5,6 +5,7 @@ import Dict exposing (Dict)
 import List.Extra as LE
 import Page.Query exposing (Filter, QueryArgs)
 import Page.RecordTypes.Shared exposing (FacetAlias)
+import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Route exposing (Route(..))
 import Page.UI.Keyboard as Keyboard
 
@@ -34,6 +35,7 @@ init initialRoute =
     , expandedFacets = []
     , keyboard = updatedKeyboardModel
     , selectedResultSort = initialSort
+    , activeSuggestion = Nothing
     }
 
 
@@ -74,6 +76,16 @@ toggleExpandedFacets newFacet oldFacets =
 
     else
         newFacet :: oldFacets
+
+
+toActiveSuggestion : { a | activeSuggestion : Maybe ActiveSuggestion } -> Maybe ActiveSuggestion
+toActiveSuggestion model =
+    model.activeSuggestion
+
+
+setActiveSuggestion : Maybe ActiveSuggestion -> { a | activeSuggestion : Maybe ActiveSuggestion } -> { a | activeSuggestion : Maybe ActiveSuggestion }
+setActiveSuggestion newValue oldRecord =
+    { oldRecord | activeSuggestion = newValue }
 
 
 
