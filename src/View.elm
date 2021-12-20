@@ -177,41 +177,6 @@ loadingIndicator model =
             none
 
 
-siteHeader : Session -> Element Msg
-siteHeader session =
-    row
-        [ width fill
-        , height (px headerHeight)
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , centerX
-            ]
-            [ row
-                [ width fill
-                , height fill
-                , paddingXY 20 0
-                ]
-                [ column
-                    [ width (px 200)
-                    , centerY
-                    ]
-                    []
-                , column
-                    [ width (fillPortion 2)
-                    , alignRight
-                    ]
-                    [ row
-                        [ alignRight
-                        ]
-                        [ dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage session.language ]
-                    ]
-                ]
-            ]
-        ]
-
-
 siteFooter : Session -> Element Msg
 siteFooter session =
     let
