@@ -1,7 +1,7 @@
 module Page.Search.Views.SearchControls.Sources exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, el, fill, height, maximum, minimum, padding, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, maximum, minimum, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -50,7 +50,9 @@ viewFacetsForSourcesMode language model body =
     in
     row
         (List.append
-            [ padding 10 ]
+            [ padding 10
+            , scrollbarY
+            ]
             widthFillHeightFill
         )
         [ column
@@ -62,44 +64,6 @@ viewFacetsForSourcesMode language model body =
                     , alignTop
                     ]
                     [ searchKeywordInput language msgs qText ]
-                ]
-            , row
-                (List.append [ spacing lineSpacing ] widthFillHeightFill)
-                [ column
-                    [ width shrink ]
-                    [ Input.button
-                        [ Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-                        , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
-                        , paddingXY 10 10
-                        , height (px 40)
-                        , width (px 100)
-                        , Font.center
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
-                        , headingSM
-                        ]
-                        { onPress = Just msgs.submitMsg
-                        , label = text (extractLabelFromLanguageMap language localTranslations.search)
-                        }
-                    ]
-                , column
-                    [ width shrink ]
-                    [ Input.button
-                        [ Border.color (colourScheme.midGrey |> convertColorToElementColor)
-                        , Background.color (colourScheme.midGrey |> convertColorToElementColor)
-                        , paddingXY 10 10
-                        , height (px 40)
-                        , width (px 100)
-                        , Font.center
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
-                        , headingSM
-                        ]
-                        { onPress = Just NothingHappened
-                        , label = text "Reset"
-                        }
-                    ]
-                , column
-                    [ width fill ]
-                    [ viewMaybe (viewProbeResponseNumbers language) model.probeResponse ]
                 ]
             , row
                 (List.append [ width fill ] facetBorderBottom)
