@@ -2,7 +2,7 @@ module Page.Search.Views.Facets.QueryFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, below, column, el, fill, height, htmlAttribute, mouseOver, none, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, below, column, el, fill, height, htmlAttribute, mouseOver, none, padding, paddingXY, pointer, px, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -15,10 +15,10 @@ import Page.RecordTypes.Search exposing (FacetBehaviours(..), QueryFacet, parseF
 import Page.RecordTypes.Shared exposing (FacetAlias, LabelValue)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion(..), toAlias, toSuggestionList)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (headingSM, lineSpacing)
-import Page.UI.Components exposing (dropdownSelect, h6)
+import Page.UI.Attributes exposing (bodySM, headingSM, lineSpacing)
+import Page.UI.Components exposing (dropdownSelect, h5, h6)
 import Page.UI.Events exposing (onEnter)
-import Page.UI.Images exposing (intersectionSvg, unionSvg)
+import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
@@ -73,9 +73,27 @@ viewQueryFacet language facet activeSearch =
                     el
                         [ padding 5
                         , Border.color (colourScheme.lightOrange |> convertColorToElementColor)
+                        , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , Font.medium
+                        , bodySM
                         , Border.width 1
                         ]
-                        (text t)
+                        (row
+                            [ spacing 5 ]
+                            [ column
+                                []
+                                [ text t ]
+                            , column
+                                []
+                                [ el
+                                    [ width (px 20)
+                                    , onClick (UserRemovedItemFromQueryFacet facetAlias t)
+                                    ]
+                                    (closeWindowSvg colourScheme.white)
+                                ]
+                            ]
+                        )
                 )
                 (List.reverse activeValues)
 
@@ -83,7 +101,7 @@ viewQueryFacet language facet activeSearch =
         interspersedOptions =
             case enteredOptions of
                 [] ->
-                    [ el [ Font.italic ] (text "Add a term to your query above, and hit enter. Multiple terms and wildcards are supported.") ]
+                    [ el [ Font.italic ] (text "Type your term in the text box, and hit enter. Multiple terms and wildcards are supported.") ]
 
                 _ ->
                     List.intersperse joinWordEl enteredOptions
@@ -130,7 +148,7 @@ viewQueryFacet language facet activeSearch =
                 [ width fill
                 , alignTop
                 ]
-                [ h6 language facet.label ]
+                [ h5 language facet.label ]
             , row
                 [ width fill ]
                 [ Input.text
@@ -148,7 +166,7 @@ viewQueryFacet language facet activeSearch =
                     , onChange = \input -> UserEnteredTextInQueryFacet facet.alias input suggestionUrl
                     }
                 ]
-            , row
+            , wrappedRow
                 [ width fill
                 , spacing lineSpacing
                 ]
