@@ -319,6 +319,8 @@ localTranslations :
     , viewRecord : List LanguageValues
     , recordURI : List LanguageValues
     , recordTop : List LanguageValues
+    , applyFilters : List LanguageValues
+    , resetAll : List LanguageValues
     }
 localTranslations =
     { search =
@@ -401,4 +403,8 @@ localTranslations =
         [ LanguageValues English [ "Record URI (Permalink)" ] ]
     , recordTop =
         [ LanguageValues English [ "Record top" ] ]
+    , applyFilters =
+        [ LanguageValues English [ "Apply filters" ] ]
+    , resetAll =
+        [ LanguageValues English [ "Reset all" ] ]
     }
