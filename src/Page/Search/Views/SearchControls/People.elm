@@ -19,7 +19,7 @@ viewFacetsForPeopleMode language model body =
     let
         msgs =
             { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserInputTextInQueryBox
+            , changeMsg = SearchMsg.UserInputTextInKeywordQueryBox
             }
 
         activeSearch =
@@ -71,10 +71,8 @@ viewFacetsForPeopleMode language model body =
                     ]
                 ]
             , viewFacetSection language
-                "Roles"
                 [ viewFacet "person-role" language activeSearch body ]
             , viewFacetSection language
-                "Dates"
                 [ viewFacet "date-range" language activeSearch body ]
             ]
         ]

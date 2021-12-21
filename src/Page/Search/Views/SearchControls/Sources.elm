@@ -37,7 +37,7 @@ viewFacetsForSourcesMode language model body =
     let
         msgs =
             { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserInputTextInQueryBox
+            , changeMsg = SearchMsg.UserInputTextInKeywordQueryBox
             }
 
         activeSearch =
@@ -77,27 +77,43 @@ viewFacetsForSourcesMode language model body =
                     ]
                 ]
             , viewFacetSection language
-                "People"
                 [ viewFacet "composer" language activeSearch body
                 , viewFacet "people" language activeSearch body
                 ]
             , viewFacetSection language
-                "Digitization"
-                [ viewFacet "has-digitization" language activeSearch body ]
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill
+                        , alignTop
+                        , spacing lineSpacing
+                        ]
+                        [ viewFacet "hide-source-contents" language activeSearch body
+                        , viewFacet "hide-source-collections" language activeSearch body
+                        , viewFacet "hide-composite-volumes" language activeSearch body
+                        ]
+                    , column
+                        [ width fill
+                        , alignTop
+                        , spacing lineSpacing
+                        ]
+                        [ viewFacet "has-digitization" language activeSearch body ]
+                    , column
+                        [ width fill
+                        , alignTop
+                        , spacing lineSpacing
+                        ]
+                        [ viewFacet "has-incipits" language activeSearch body ]
+                    ]
+                ]
             , viewFacetSection language
-                "Incipits"
-                [ viewFacet "has-incipits" language activeSearch body ]
-            , viewFacetSection language
-                "Record types"
-                [ viewFacet "hide-source-contents" language activeSearch body
-                , viewFacet "hide-source-collections" language activeSearch body
-                , viewFacet "hide-composite-volumes" language activeSearch body
-                , viewFacet "source-type" language activeSearch body
+                [ viewFacet "source-type" language activeSearch body
                 , viewFacet "content-types" language activeSearch body
                 , viewFacet "material-group-types" language activeSearch body
                 ]
             , viewFacetSection language
-                "Format, Extent, Language"
                 [ viewFacet "text-language" language activeSearch body
                 , viewFacet "format-extent" language activeSearch body
                 ]
@@ -105,7 +121,6 @@ viewFacetsForSourcesMode language model body =
             --, viewFacet "date-range" language activeSearch body
             --, viewFacet "num-holdings" language activeSearch body
             , viewFacetSection language
-                "Subjects"
                 [ viewFacet "subjects" language activeSearch body ]
 
             --, viewFacet "holding-institution" language activeSearch body
