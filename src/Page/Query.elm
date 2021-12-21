@@ -6,12 +6,14 @@ module Page.Query exposing
     , queryParamsParser
     , resetPage
     , setFacetBehaviours
+    , setFacetSorts
     , setFilters
     , setKeywordQuery
     , setMode
     , setNextQuery
     , setSort
     , toFacetBehaviours
+    , toFacetSorts
     , toFilters
     , toKeywordQuery
     , toMode
@@ -115,6 +117,16 @@ toFacetBehaviours query =
 setFacetBehaviours : Dict FacetAlias FacetBehaviours -> { a | facetBehaviours : Dict FacetAlias FacetBehaviours } -> { a | facetBehaviours : Dict FacetAlias FacetBehaviours }
 setFacetBehaviours newBehaviours oldRecord =
     { oldRecord | facetBehaviours = newBehaviours }
+
+
+toFacetSorts : { a | facetSorts : Dict FacetAlias FacetSorts } -> Dict FacetAlias FacetSorts
+toFacetSorts query =
+    query.facetSorts
+
+
+setFacetSorts : Dict FacetAlias FacetSorts -> { a | facetSorts : Dict FacetAlias FacetSorts } -> { a | facetSorts : Dict FacetAlias FacetSorts }
+setFacetSorts newValues oldRecord =
+    { oldRecord | facetSorts = newValues }
 
 
 {-| Resets the page number to the first page.

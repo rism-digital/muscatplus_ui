@@ -129,10 +129,9 @@ viewModeItem selectedMode language fitem =
 
 viewFacetSection :
     Language
-    -> String
     -> List (Element SearchMsg)
     -> Element SearchMsg
-viewFacetSection language title facets =
+viewFacetSection language facets =
     row
         (List.concat [ widthFillHeightFill, facetBorderBottom ])
         [ column
@@ -149,9 +148,6 @@ viewFacetSection language title facets =
                         ]
                         (chevronDownSvg colourScheme.lightBlue)
                     ]
-                , column
-                    [ headingMD, Region.heading 3, Font.medium, alignLeft ]
-                    [ text title ]
                 ]
             , row
                 (List.append [ alignTop ] widthFillHeightFill)

@@ -11,7 +11,7 @@ import List.Extra as LE
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, lineSpacing)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, bodyXS, lineSpacing)
 import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h5)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -25,6 +25,56 @@ type alias SelectFacetConfig =
     }
 
 
+{-| Show the opposite icon from the current value so that
+we can show the user a control to toggle the behaviour
+-}
+sortIcon : FacetSorts -> Element msg
+sortIcon sortType =
+    case sortType of
+        FacetSortCount ->
+            sortAlphaDescSvg colourScheme.slateGrey
+
+        FacetSortAlpha ->
+            sortNumericDescSvg colourScheme.slateGrey
+
+
+toggledSortType : FacetSorts -> FacetSorts
+toggledSortType sortType =
+    case sortType of
+        FacetSortAlpha ->
+            FacetSortCount
+
+        FacetSortCount ->
+            FacetSortAlpha
+
+
+sortFacetItemList : Language -> FacetSorts -> List FacetItem -> List FacetItem
+sortFacetItemList language sortBy facetItems =
+    case sortBy of
+        FacetSortAlpha ->
+            List.sortBy
+                (\i ->
+                    let
+                        (FacetItem _ langmap _) =
+                            i
+                    in
+                    extractLabelFromLanguageMap language langmap
+                )
+                facetItems
+
+        FacetSortCount ->
+            List.sortBy
+                (\i ->
+                    let
+                        (FacetItem _ _ count) =
+                            i
+                    in
+                    count
+                )
+                facetItems
+                |> List.reverse
+
+
 viewSelectFacet :
     Language
     -> SelectFacetConfig
@@ -35,23 +85,41 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
         facetAlias =
             body.alias
 
+        serverDefaultSort =
+            body.defaultSort
+
+        chosenSort =
+            case Dict.get facetAlias facetSorts of
+                Just userSetSort ->
+                    userSetSort
+
+                Nothing ->
+                    serverDefaultSort
+
+        sortedItems =
+            sortFacetItemList language chosenSort body.items
+
         isExpanded =
             List.member facetAlias expandedFacets
 
         facetItems =
             if isExpanded == True then
-                body.items
+                sortedItems
 
             else
-                List.take 12 body.items
+                List.take 12 sortedItems
 
         numberOfHiddenItems =
-            List.length body.items - 12
+            List.length sortedItems - 12
 
         -- TODO: Explain this better; why 200 items?
         truncatedNote =
-            if List.length body.items == 200 then
-                el [ alignLeft ] (text "Top 200 values shown")
+            if List.length sortedItems == 200 then
+                el
+                    [ alignLeft
+                    , bodyXS
+                    ]
+                    (text "Top 200 values shown")
 
             else
                 none
@@ -65,7 +133,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                 "Show " ++ String.fromInt numberOfHiddenItems ++ " more"
 
         showLink =
-            if List.length body.items > 12 then
+            if List.length sortedItems > 12 then
                 column
                     [ width fill
                     , bodySM
@@ -80,27 +148,6 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
 
             else
                 none
-
-        -- show the opposite icon from the current value so that
-        -- we can show the user a control to toggle the behaviour
-        toggledSortIcon sortType =
-            case sortType of
-                FacetSortCount ->
-                    sortAlphaDescSvg colourScheme.slateGrey
-
-                FacetSortAlpha ->
-                    sortNumericDescSvg colourScheme.slateGrey
-
-        toggledSortType sortType =
-            case sortType of
-                FacetSortAlpha ->
-                    FacetSortCount
-
-                FacetSortCount ->
-                    FacetSortAlpha
-
-        sorts =
-            body.sorts
 
         behaviourOptions =
             body.behaviours
@@ -159,7 +206,13 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                     , alignLeft
                     , alignTop
                     ]
-                    [ h5 language body.label ]
+                    [ row
+                        [ spacing 10
+                        ]
+                        [ h5 language body.label
+                        , truncatedNote
+                        ]
+                    ]
                 ]
             , row
                 [ width fill
@@ -191,14 +244,9 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                         , el
                             [ width (px 20)
                             , height (px 20)
-                            , onClick (UserChangedFacetSort facetAlias (toggledSortType sorts.current))
+                            , onClick (UserChangedFacetSort facetAlias (toggledSortType chosenSort))
                             ]
-                            (toggledSortIcon sorts.current)
-                        , el
-                            [ width shrink
-                            , alignLeft
-                            ]
-                            truncatedNote
+                            (sortIcon chosenSort)
                         ]
                     ]
                 , showLink

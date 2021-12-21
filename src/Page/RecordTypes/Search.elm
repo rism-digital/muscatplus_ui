@@ -22,6 +22,16 @@ type alias SearchBody =
     }
 
 
+toFacets : { a | facets : Facets } -> Facets
+toFacets body =
+    body.facets
+
+
+setFacets : Facets -> { a | facets : Facets } -> { a | facets : Facets }
+setFacets newFacets oldRecord =
+    { oldRecord | facets = newFacets }
+
+
 type alias SearchResult =
     { id : String
     , label : LanguageMap
@@ -129,8 +139,18 @@ type alias SelectFacet =
     , label : LanguageMap
     , items : List FacetItem
     , behaviours : FacetBehaviourOptions
-    , sorts : FacetSortOptions
+    , defaultSort : FacetSorts
     }
+
+
+toSelectFacetItems : { a | items : List FacetItem } -> List FacetItem
+toSelectFacetItems facetBlock =
+    facetBlock.items
+
+
+setSelectFacetItems : List FacetItem -> { a | items : List FacetItem } -> { a | items : List FacetItem }
+setSelectFacetItems newItems oldRecord =
+    { oldRecord | items = newItems }
 
 
 type alias NotationFacet =
@@ -251,12 +271,19 @@ parseFacetSortToString beh =
         |> Maybe.withDefault "intersection"
 
 
-type alias FacetSortOptions =
-    { label : LanguageMap
-    , items : List FacetOptionsLabelValue
-    , default : FacetSorts
-    , current : FacetSorts
-    }
+toCurrentSort : { a | current : FacetSorts } -> FacetSorts
+toCurrentSort options =
+    options.current
+
+
+toggleFacetSorts : FacetSorts -> FacetSorts
+toggleFacetSorts oldValue =
+    case oldValue of
+        FacetSortCount ->
+            FacetSortAlpha
+
+        FacetSortAlpha ->
+            FacetSortCount
 
 
 type alias FacetOptionsLabelValue =
@@ -445,7 +472,7 @@ selectFacetDecoder =
         |> required "label" languageMapLabelDecoder
         |> required "items" (Decode.list facetItemDecoder)
         |> required "behaviours" facetBehaviourOptionsDecoder
-        |> required "sorts" facetSortOptionsDecoder
+        |> required "defaultSort" facetSortDecoder
 
 
 notationFacetDecoder : Decoder NotationFacet
@@ -494,15 +521,6 @@ facetBehavioursDecoder =
     Decode.string
         |> Decode.andThen
             (\str -> Decode.succeed (parseStringToFacetBehaviour str))
-
-
-facetSortOptionsDecoder : Decoder FacetSortOptions
-facetSortOptionsDecoder =
-    Decode.succeed FacetSortOptions
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list facetOptionsLabelValueDecoder)
-        |> required "default" facetSortDecoder
-        |> required "current" facetSortDecoder
 
 
 facetSortDecoder : Decoder FacetSorts

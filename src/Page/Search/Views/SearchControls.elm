@@ -26,7 +26,8 @@ viewSearchButtons language model =
     let
         msgs =
             { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserInputTextInQueryBox
+            , changeMsg = SearchMsg.UserInputTextInKeywordQueryBox
+            , resetMsg = SearchMsg.UserResetAllFilters
             }
     in
     row
@@ -48,13 +49,13 @@ viewSearchButtons language model =
                 , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
                 , paddingXY 10 10
                 , height (px 40)
-                , width (px 100)
+                , width shrink
                 , Font.center
                 , Font.color (colourScheme.white |> convertColorToElementColor)
                 , headingSM
                 ]
                 { onPress = Just msgs.submitMsg
-                , label = text (extractLabelFromLanguageMap language localTranslations.search)
+                , label = text (extractLabelFromLanguageMap language localTranslations.applyFilters)
                 }
             ]
         , column
@@ -69,8 +70,8 @@ viewSearchButtons language model =
                 , Font.color (colourScheme.white |> convertColorToElementColor)
                 , headingSM
                 ]
-                { onPress = Just NothingHappened
-                , label = text "Reset"
+                { onPress = Just msgs.resetMsg
+                , label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
                 }
             ]
         , column

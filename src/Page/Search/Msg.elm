@@ -6,7 +6,6 @@ import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetItem, FacetSorts)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
-import Page.UI.Facets.RangeSlider as RangeSlider
 import Page.UI.Keyboard as Keyboard
 import Response exposing (ServerData)
 
@@ -27,17 +26,18 @@ type SearchMsg
     | UserEnteredTextInQueryFacet FacetAlias String String
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
     | UserHitEnterInQueryFacet FacetAlias FacetBehaviours
-    | UserMovedRangeSlider String RangeSlider.Msg
+    | UserRemovedItemFromQueryFacet FacetAlias String
     | UserChangedResultSorting String
     | UserClickedModeItem String FacetItem Bool
     | UserClickedRemoveActiveFilter String String
     | UserClickedClearSearchQueryBox
     | UserClickedSearchResultsPagination String
     | UserTriggeredSearchSubmit
-    | UserInputTextInQueryBox String
+    | UserInputTextInKeywordQueryBox String
     | UserClickedClosePreviewWindow
     | UserClickedSearchResultForPreview String
     | UserInteractedWithPianoKeyboard Keyboard.Msg
     | UserClickedPianoKeyboardSearchSubmitButton
     | UserClickedPianoKeyboardSearchClearButton
+    | UserResetAllFilters
     | NothingHappened
