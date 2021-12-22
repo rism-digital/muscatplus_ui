@@ -1,7 +1,7 @@
 module Page.SideBar.Views exposing (..)
 
 import Color exposing (Color)
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, mouseOver, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -12,7 +12,7 @@ import Page.UI.Animations exposing (animatedColumn, animatedEl)
 import Page.UI.Attributes exposing (headingMD)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, roLogoSvg, sourcesSvg)
+import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
 import Session exposing (AnimatedSideBar(..), Session)
 import Simple.Animation as Animation

@@ -1,11 +1,11 @@
 module Page.UI.Keyboard.Keyboard exposing (..)
 
-import Element exposing (Attr, Attribute, Element, alignLeft, alignTop, el, html, htmlAttribute, moveLeft)
+import Element exposing (Attribute, Element, alignLeft, alignTop, el, html, htmlAttribute, moveLeft)
 import Html.Attributes
 import Page.UI.Keyboard.Model exposing (Key(..), KeyNoteName(..))
 import Page.UI.Keyboard.PAE exposing (keyNoteNameToNoteString)
-import Svg exposing (Svg, svg)
-import Svg.Attributes exposing (cursor, d, height, pointerEvents, style, transform, version, viewBox, width, x, x1, x2, y, y1, y2)
+import Svg exposing (svg)
+import Svg.Attributes exposing (cursor, d, height, pointerEvents, style, version, viewBox, width, x, x1, x2, y, y1, y2)
 import Svg.Events exposing (onClick)
 
 

@@ -1,12 +1,12 @@
 module Page.UI.Attributes exposing (..)
 
 import Color exposing (toCssString)
-import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, paddingXY, spacing, width)
+import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, paddingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA exposing (style)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight, headerHeight, minMaxFillDesktop, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight, minMaxFillDesktop, searchHeaderHeight)
 
 
 bodyFont : Attribute msg

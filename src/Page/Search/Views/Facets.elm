@@ -7,9 +7,7 @@ import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input exposing (checkbox, labelLeft)
-import Element.Region as Region
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
-import Page.Query exposing (Filter(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetData(..), FacetItem(..), FacetSorts(..), ModeFacet, QueryFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.Search.Msg exposing (SearchMsg(..))
@@ -18,7 +16,7 @@ import Page.Search.Views.Facets.QueryFacet exposing (viewQueryFacet)
 import Page.Search.Views.Facets.RangeFacet exposing (viewRangeFacet)
 import Page.Search.Views.Facets.SelectFacet exposing (viewSelectFacet)
 import Page.Search.Views.Facets.ToggleFacet exposing (viewToggleFacet)
-import Page.UI.Attributes exposing (facetBorderBottom, headingMD, headingSM, lineSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (facetBorderBottom, headingSM, lineSpacing, widthFillHeightFill)
 import Page.UI.Images exposing (chevronDownSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 

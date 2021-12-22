@@ -1,22 +1,16 @@
 module Page.Search.Views.SearchControls.Sources exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, el, fill, height, maximum, minimum, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Font as Font
-import Element.Input as Input
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
+import Element exposing (Element, alignTop, column, el, fill, padding, row, scrollbarY, spacing, text, width)
+import Language exposing (Language, formatNumberByLanguage)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
-import Page.UI.Attributes exposing (facetBorderBottom, headingLG, headingMD, headingSM, lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (facetBorderBottom, headingMD, headingSM, lineSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (searchKeywordInput)
-import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewProbeResponseNumbers : Language -> ProbeData -> Element SearchMsg

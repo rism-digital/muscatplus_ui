@@ -2,7 +2,7 @@ module Page.UI.Animations exposing (animatedColumn, animatedEl, animatedRow, loa
 
 import Css exposing (absolute, animationDuration, animationName, backgroundColor, backgroundImage, before, block, display, height, hidden, left, linearGradient2, overflow, pct, position, property, px, relative, rgb, rgba, sec, stop2, toRight, top, width)
 import Css.Animations exposing (keyframes)
-import Element exposing (Element, el, fill, htmlAttribute, none, text)
+import Element exposing (Element, htmlAttribute, none)
 import Element.Background as Background
 import Html.Attributes as HA
 import Html.Styled exposing (Attribute, div, toUnstyled)

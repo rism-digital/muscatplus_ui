@@ -96,17 +96,6 @@ update msg model =
         ( Msg.ClientChangedUrl url, _ ) ->
             changePage url model
 
-        ( Msg.UserChangedLanguageSelect language, _ ) ->
-            let
-                newModel =
-                    toSession model
-                        |> setLanguage (parseLocaleToLanguage language)
-                        |> flip updateSession model
-            in
-            ( newModel
-            , saveLanguagePreference language
-            )
-
         ( Msg.UserRequestedUrlChange urlRequest, _ ) ->
             let
                 session =

@@ -10,12 +10,11 @@ import Element.Region as Region
 import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
-import Language exposing (Language, LanguageMap, dateFormatter, extractLabelFromLanguageMap, extractTextFromLanguageMap, localTranslations)
-import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, localTranslations)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Events exposing (onEnter)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Time exposing (utc)
+import Page.UI.Style exposing (convertColorToElementColor)
 
 
 {-|

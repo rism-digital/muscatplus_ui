@@ -1,14 +1,12 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setKeyboard, setNeedsProbing, toActiveSearch, toActiveSuggestion, toExpandedFacets, toKeyboard, toggleExpandedFacets)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setKeyboard, setNeedsProbing, toActiveSearch, toExpandedFacets, toKeyboard, toggleExpandedFacets)
 import Browser.Navigation as Nav
 import Dict
-import Language exposing (Language, extractLabelFromLanguageMap)
 import List.Extra as LE
-import Page.Converters exposing (convertFacetToResultMode)
-import Page.Query exposing (Filter(..), buildQueryParameters, defaultQueryArgs, resetPage, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNextQuery, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
-import Page.RecordTypes.ResultMode exposing (ResultMode(..))
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..), setFacets, setSelectFacetItems, toCurrentSort, toggleFacetSorts)
+import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNextQuery, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Route exposing (Route)
@@ -133,6 +131,15 @@ searchSubmit session model =
         [ Nav.pushUrl session.key searchUrl
         ]
     )
+
+
+convertFacetToResultMode : FacetItem -> ResultMode
+convertFacetToResultMode facet =
+    let
+        (FacetItem qval _ _) =
+            facet
+    in
+    parseStringToResultMode qval
 
 
 probeSubmit : Session -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )

@@ -36,7 +36,7 @@ recordPageRequest initialUrl =
 update : Session -> RecordMsg -> RecordPageModel -> ( RecordPageModel, Cmd RecordMsg )
 update session msg model =
     case msg of
-        ServerRespondedWithRecordData (Ok ( metadata, response )) ->
+        ServerRespondedWithRecordData (Ok ( _, response )) ->
             ( { model
                 | response = Response response
               }
@@ -50,7 +50,7 @@ update session msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithPageSearch (Ok ( metadata, response )) ->
+        ServerRespondedWithPageSearch (Ok ( _, response )) ->
             ( model, Cmd.none )
 
         ServerRespondedWithPageSearch (Err error) ->

@@ -1,7 +1,6 @@
 module Page.UI.Helpers exposing (..)
 
-import Element exposing (Attribute, Element, htmlAttribute, none)
-import Html.Attributes as HTA
+import Element exposing (Element, none)
 
 
 {-|

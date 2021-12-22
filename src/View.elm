@@ -1,10 +1,10 @@
 module View exposing (view)
 
 import Browser
-import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
+import Element exposing (Element, alignRight, centerX, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
 import Element.Font as Font
 import Element.Region as Region
-import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, localTranslations, parseLocaleToLanguage)
+import Language exposing (extractLabelFromLanguageMap, localTranslations)
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg(..))
 import Page.Front.Views
@@ -21,9 +21,8 @@ import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, pageBackground)
-import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Images exposing (rismLogo)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight, headerHeight)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 

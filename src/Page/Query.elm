@@ -1,6 +1,5 @@
 module Page.Query exposing
-    ( Filter(..)
-    , QueryArgs
+    ( QueryArgs
     , buildQueryParameters
     , defaultQueryArgs
     , queryParamsParser
@@ -23,23 +22,12 @@ module Page.Query exposing
 import Config as C
 import Dict exposing (Dict)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetSorts(..), parseFacetBehaviourToString, parseFacetSortToString, parseStringToFacetBehaviour, parseStringToFacetSort)
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, parseFacetBehaviourToString, parseFacetSortToString, parseStringToFacetBehaviour, parseStringToFacetSort)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
 import Utlities exposing (fromListDedupe)
-
-
-{-|
-
-    A filter represents a selected filter query; The values are the
-    field name and the value, e.g., "Filter type source". This will then
-    get converted to a list of URL parameters, `fq=type:source`.
-
--}
-type Filter
-    = Filter String String
 
 
 type alias QueryArgs =

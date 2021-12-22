@@ -60,7 +60,6 @@ import Url exposing (Url)
 -}
 type Msg
     = ClientChangedUrl Url
-    | UserChangedLanguageSelect String
     | UserRequestedUrlChange UrlRequest
     | UserResizedWindow Device
     | UserInteractedWithFrontPage Front.Msg
