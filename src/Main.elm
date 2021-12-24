@@ -10,6 +10,7 @@ import Page.NotFound as NotFound
 import Page.Record as Record
 import Page.Route as Route exposing (Route(..))
 import Page.Search as Search
+import Page.SideBar as Sidebar
 import Session
 import Subscriptions
 import Update
@@ -46,30 +47,48 @@ init flags initialUrl key =
     case route of
         FrontPageRoute ->
             ( FrontPage session Front.init
-            , Cmd.map Msg.UserInteractedWithFrontPage (Front.frontPageRequest initialUrl)
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithFrontPage (Front.frontPageRequest initialUrl)
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
             )
 
         SearchPageRoute _ _ ->
             ( SearchPage session (Search.init route)
-            , Cmd.map Msg.UserInteractedWithSearchPage (Search.searchPageRequest initialUrl)
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithSearchPage (Search.searchPageRequest initialUrl)
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
             )
 
         PersonPageRoute _ ->
             ( PersonPage session (Record.init route)
-            , Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
             )
 
         InstitutionPageRoute _ ->
             ( InstitutionPage session (Record.init route)
-            , Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
             )
 
         SourcePageRoute _ ->
             ( SourcePage session (Record.init route)
-            , Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
             )
 
         _ ->
             ( NotFoundPage session NotFound.init
-            , Cmd.map Msg.UserInteractedWithNotFoundPage (NotFound.initialCmd initialUrl)
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithNotFoundPage (NotFound.initialCmd initialUrl)
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
             )

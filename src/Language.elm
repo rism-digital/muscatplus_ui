@@ -321,6 +321,7 @@ localTranslations :
     , recordTop : List LanguageValues
     , applyFilters : List LanguageValues
     , resetAll : List LanguageValues
+    , globalCollection : List LanguageValues
     }
 localTranslations =
     { search =
@@ -407,4 +408,6 @@ localTranslations =
         [ LanguageValues English [ "Apply filters" ] ]
     , resetAll =
         [ LanguageValues English [ "Reset all" ] ]
+    , globalCollection =
+        [ LanguageValues English [ "Global collection" ] ]
     }

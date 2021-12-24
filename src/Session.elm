@@ -2,9 +2,11 @@ module Session exposing (..)
 
 import Browser.Navigation as Nav
 import Device exposing (detectDevice)
+import Dict exposing (Dict)
 import Element exposing (Device)
 import Flags exposing (Flags)
-import Language exposing (Language, parseLocaleToLanguage)
+import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
+import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Route exposing (Route, parseUrl)
 import Page.SideBar.Msg exposing (SideBarOption(..))
 import Url exposing (Url)
@@ -22,7 +24,7 @@ import Url exposing (Url)
     but this doesn't mean that the sidebar "owns" the session.
 
 -}
-type AnimatedSideBar
+type SideBarAnimationStatus
     = Expanding
     | Collapsing
     | NoAnimation
@@ -35,9 +37,12 @@ type alias Session =
     , url : Url
     , route : Route
     , showMuscatLinks : Bool
-    , expandedSideBar : AnimatedSideBar
+    , expandedSideBar : SideBarAnimationStatus
     , showFrontSearchInterface : SideBarOption
     , currentlyHoveredOption : Maybe SideBarOption
+    , currentlyHoveredNationalCollectionChooser : Bool
+    , restrictedToNationalCollection : Maybe CountryCode
+    , allNationalCollections : Dict CountryCode LanguageMap
     }
 
 
@@ -66,4 +71,7 @@ init flags url key =
     , expandedSideBar = NoAnimation
     , showFrontSearchInterface = SourceSearchOption
     , currentlyHoveredOption = Nothing
+    , currentlyHoveredNationalCollectionChooser = False
+    , restrictedToNationalCollection = Nothing
+    , allNationalCollections = Dict.empty
     }

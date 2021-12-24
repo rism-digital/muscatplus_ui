@@ -2,11 +2,13 @@ module Page.RecordTypes.Shared exposing
     ( FacetAlias
     , LabelBooleanValue
     , LabelNumericValue
+    , LabelStringValue
     , LabelValue
     , RecordHistory
     , SourceRecordDescriptors
     , labelBooleanValueDecoder
     , labelNumericValueDecoder
+    , labelStringValueDecoder
     , labelValueDecoder
     , languageMapLabelDecoder
     , recordHistoryDecoder
@@ -44,6 +46,12 @@ type alias LabelBooleanValue =
     }
 
 
+type alias LabelStringValue =
+    { label : LanguageMap
+    , value : String
+    }
+
+
 type alias RecordHistory =
     { createdLabel : LanguageMap
     , created : Time.Posix
@@ -71,6 +79,13 @@ labelBooleanValueDecoder =
     Decode.succeed LabelBooleanValue
         |> required "label" languageMapLabelDecoder
         |> required "value" bool
+
+
+labelStringValueDecoder : Decoder LabelStringValue
+labelStringValueDecoder =
+    Decode.succeed LabelStringValue
+        |> required "label" languageMapLabelDecoder
+        |> required "value" string
 
 
 languageMapLabelDecoder : Decoder LanguageMap

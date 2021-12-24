@@ -1,16 +1,33 @@
-module Page.UI.Animations exposing (animatedColumn, animatedEl, animatedRow, loadingBox, progressBar)
+module Page.UI.Animations exposing (animatedColumn, animatedEl, animatedLabel, animatedRow, loadingBox, progressBar)
 
 import Css exposing (absolute, animationDuration, animationName, backgroundColor, backgroundImage, before, block, display, height, hidden, left, linearGradient2, overflow, pct, position, property, px, relative, rgb, rgba, sec, stop2, toRight, top, width)
 import Css.Animations exposing (keyframes)
-import Element exposing (Element, htmlAttribute, none)
+import Element exposing (Element, fill, htmlAttribute, none)
 import Element.Background as Background
+import Element.Font as Font
 import Html.Attributes as HA
 import Html.Styled exposing (Attribute, div, toUnstyled)
 import Html.Styled.Attributes exposing (css)
+import Page.UI.Attributes exposing (headingMD)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Simple.Animation as Animation exposing (Animation)
 import Simple.Animation.Animated as Animated
 import Simple.Animation.Property as P
+
+
+animatedLabel : Element msg -> Element msg
+animatedLabel labelText =
+    animatedEl
+        (Animation.fromTo
+            { duration = 300, options = [] }
+            [ P.opacity 0.0 ]
+            [ P.opacity 1.0 ]
+        )
+        [ headingMD
+        , Font.medium
+        , Element.width fill
+        ]
+        labelText
 
 
 progressBarAnimation : Animation

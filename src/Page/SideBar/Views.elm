@@ -8,30 +8,15 @@ import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Language exposing (languageOptionsForDisplay, parseLocaleToLanguage)
 import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..))
-import Page.UI.Animations exposing (animatedColumn, animatedEl)
-import Page.UI.Attributes exposing (headingMD)
+import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
+import Page.UI.Animations exposing (animatedColumn, animatedLabel)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
-import Session exposing (AnimatedSideBar(..), Session)
+import Session exposing (Session, SideBarAnimationStatus(..))
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
-
-
-animatedLabel : Element msg -> Element msg
-animatedLabel labelText =
-    animatedEl
-        (Animation.fromTo
-            { duration = 300, options = [] }
-            [ P.opacity 0.0 ]
-            [ P.opacity 1.0 ]
-        )
-        [ headingMD
-        , Font.medium
-        , width fill
-        ]
-        labelText
 
 
 dividingLine : Element msg
@@ -95,8 +80,7 @@ menuOption cfg option currentlyHovered =
 
         additionalOptions =
             List.concat
-                [ [ pointer
-                  , onClick (UserClickedSideBarOptionForFrontPage option)
+                [ [ onClick (UserClickedSideBarOptionForFrontPage option)
                   , onMouseEnter (UserMouseEnteredSideBarOption option)
                   , onMouseLeave (UserMouseExitedSideBarOption option)
                   , Font.color (fontColour |> convertColorToElementColor)
@@ -127,6 +111,7 @@ menuOptionTemplate cfg additionalAttributes =
             , alignTop
             , spacing 10
             , paddingXY 30 10
+            , pointer
             ]
     in
     row
@@ -210,7 +195,7 @@ view session =
         [ row
             [ width (px 60)
             , height (px 80)
-            , alignLeft
+            , centerX
             , paddingXY 0 10
             ]
             [ column
@@ -220,10 +205,24 @@ view session =
                 [ el
                     [ centerY
                     , alignTop
-                    , paddingXY 14 0
                     ]
                     (rismLogo colourScheme.lightBlue headerHeight)
                 ]
+            ]
+        , row
+            [ width fill
+            , height shrink
+            , alignLeft
+            , paddingXY 0 10
+            ]
+            [ column
+                [ width fill
+                , height fill
+                , centerX
+                , alignTop
+                , spacing 10
+                ]
+                [ viewNationalCollectionChooserMenuOption session ]
             ]
         , dividingLine
         , row
@@ -241,7 +240,10 @@ view session =
                 ]
                 [ unlinkedMenuOption
                     { icon = languagesSvg
-                    , label = el [ width fill ] (dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage session.language)
+                    , label =
+                        el
+                            [ width fill ]
+                            (dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage session.language)
                     , showLabel = showLabels
                     }
                 ]
