@@ -39,10 +39,6 @@ createErrorMessage error =
             "A Bad URL was supplied: " ++ url
 
         Http.Detailed.BadBody _ _ message ->
-            let
-                _ =
-                    Debug.log "bad body " message
-            in
             "Unexpected response: " ++ message
 
         Http.Detailed.BadStatus metadata message ->
