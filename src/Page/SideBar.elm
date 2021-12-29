@@ -4,6 +4,7 @@ import Browser.Navigation as Nav
 import Language exposing (parseLocaleToLanguage)
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarMsg(..))
+import Ports.LocalStorage exposing (saveLanguagePreference)
 import Session exposing (Session, SideBarAnimationStatus(..))
 
 
@@ -57,5 +58,5 @@ update msg session =
 
         UserChangedLanguageSelect lang ->
             ( { session | language = parseLocaleToLanguage lang }
-            , Cmd.none
+            , saveLanguagePreference lang
             )

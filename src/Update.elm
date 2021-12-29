@@ -3,7 +3,6 @@ module Update exposing (..)
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (setDevice)
-import Language exposing (parseLocaleToLanguage, setLanguage)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.Front as FrontPage
@@ -12,7 +11,6 @@ import Page.Record as RecordPage
 import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
-import Ports.LocalStorage exposing (saveLanguagePreference)
 import Url exposing (Url)
 import Utlities exposing (flip)
 
