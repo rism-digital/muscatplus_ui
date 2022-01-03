@@ -4,7 +4,7 @@ import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedF
 import Browser.Navigation as Nav
 import Dict
 import List.Extra as LE
-import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNextQuery, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
+import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -87,13 +87,32 @@ searchPagePreviewRequest previewUrl =
     createRequestWithDecoder ServerRespondedWithSearchPreview previewUrl
 
 
+addNationalCollectionFilter : Maybe String -> SearchPageModel -> SearchPageModel
+addNationalCollectionFilter ncFilter model =
+    let
+        oldQuery =
+            toActiveSearch model
+                |> toNextQuery
+
+        newQuery =
+            oldQuery
+                |> setNationalCollection ncFilter
+
+        newModel =
+            toActiveSearch model
+                |> setNextQuery newQuery
+                |> flip setActiveSearch model
+    in
+    newModel
+
+
 searchSubmit : Session -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
 searchSubmit session model =
     let
         activeSearch =
             toActiveSearch model
 
-        resetQueryArgs =
+        resetPageInQueryArgs =
             activeSearch
                 |> toNextQuery
                 |> resetPage
@@ -102,24 +121,25 @@ searchSubmit session model =
         -- to the first page.
         pageResetModel =
             activeSearch
-                |> setNextQuery resetQueryArgs
+                |> setNextQuery resetPageInQueryArgs
                 |> flip setActiveSearch model
 
         notationQueryParameters =
-            pageResetModel
-                |> toActiveSearch
+            toActiveSearch pageResetModel
                 |> toKeyboard
                 |> toKeyboardQuery
                 |> buildNotationQueryParameters
 
+        nationalCollectionSetModel =
+            addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
+
         textQueryParameters =
-            pageResetModel
-                |> toActiveSearch
+            toActiveSearch nationalCollectionSetModel
                 |> toNextQuery
                 |> buildQueryParameters
 
         newModel =
-            { pageResetModel
+            { nationalCollectionSetModel
                 | preview = NoResponseToShow
             }
 
@@ -143,16 +163,19 @@ convertFacetToResultMode facet =
 
 
 probeSubmit : Session -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
-probeSubmit _ model =
+probeSubmit session model =
     let
+        newModel =
+            addNationalCollectionFilter session.restrictedToNationalCollection model
+
         notationQueryParameters =
-            toActiveSearch model
+            toActiveSearch newModel
                 |> toKeyboard
                 |> toKeyboardQuery
                 |> buildNotationQueryParameters
 
         textQueryParameters =
-            toActiveSearch model
+            toActiveSearch newModel
                 |> toNextQuery
                 |> buildQueryParameters
 
@@ -160,7 +183,7 @@ probeSubmit _ model =
             List.append textQueryParameters notationQueryParameters
                 |> serverUrl [ "probe" ]
     in
-    ( model
+    ( newModel
     , createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
     )
 

@@ -31,22 +31,22 @@ viewNationalCollectionChooserMenuOption session =
             case session.restrictedToNationalCollection of
                 Just countryCode ->
                     column
-                        [ width fill
+                        [ width (px 30)
                         , centerX
                         , centerY
                         ]
                         [ el
                             [ width (px 25)
-                            , centerY
                             , centerX
+                            , centerY
                             ]
                             (flagSvg colourScheme.white)
                         , el
                             [ width (px 25)
+                            , centerX
+                            , centerY
                             , Font.bold
                             , headingMD
-                            , centerY
-                            , centerX
                             , Font.color (colourScheme.white |> convertColorToElementColor)
                             ]
                             (text countryCode)
@@ -54,17 +54,16 @@ viewNationalCollectionChooserMenuOption session =
 
                 Nothing ->
                     column
-                        [ width fill
+                        [ width (px 30)
                         , centerX
                         , centerY
                         ]
                         [ el
                             [ width (px 25)
-                            , alignLeft
-                            , centerY
                             , centerX
+                            , centerY
                             ]
-                            (globeSvg colourScheme.midGrey)
+                            (globeSvg colourScheme.slateGrey)
                         ]
 
         iconBackgroundColor =
@@ -102,23 +101,36 @@ viewNationalCollectionChooserMenuOption session =
 
                 Nothing ->
                     extractLabelFromLanguageMap session.language localTranslations.globalCollection
+
+        labelEl =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    el
+                        [ Font.color (colourScheme.white |> convertColorToElementColor)
+                        , headingLG
+                        ]
+                        (text iconLabel)
+
+                Nothing ->
+                    el
+                        [ Font.color (colourScheme.slateGrey |> convertColorToElementColor)
+                        , headingLG
+                        ]
+                        (text iconLabel)
     in
     row
         [ width fill
         , alignTop
-        , alignLeft
-        , spacing 10
-        , paddingXY 0 10
+        , spacing 20
+        , paddingXY 30 10
         , pointer
         , onRight viewChooser
-
-        --, onRight (viewNationalCollectionChooser session)
         , onMouseEnter UserMouseEnteredCountryChooser
         , onMouseLeave UserMouseExitedCountryChooser
         , iconBackgroundColor
         ]
         [ sidebarIcon
-        , viewIf (animatedLabel (el [ alignLeft, Font.color (colourScheme.white |> convertColorToElementColor) ] (text iconLabel))) showLabels
+        , viewIf (animatedLabel labelEl) showLabels
         ]
 
 

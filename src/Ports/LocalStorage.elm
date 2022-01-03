@@ -1,4 +1,9 @@
 port module Ports.LocalStorage exposing (..)
 
+import Json.Encode as Encode
 
-port saveLanguagePreference : String -> Cmd msg
+
+port saveLanguagePreference : Encode.Value -> Cmd msg
+
+
+port saveNationalCollectionSelection : Encode.Value -> Cmd msg

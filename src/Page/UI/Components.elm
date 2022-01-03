@@ -97,8 +97,8 @@ viewLabelValueField :
     -> List LabelValue
     -> Element msg
 viewLabelValueField fmt language field =
-    fieldValueWrapper
-        (List.map
+    fieldValueWrapper <|
+        List.map
             (\f ->
                 wrappedRow
                     widthFillHeightFill
@@ -111,7 +111,6 @@ viewLabelValueField fmt language field =
                     ]
             )
             field
-        )
 
 
 viewSummaryField : Language -> List LabelValue -> Element msg

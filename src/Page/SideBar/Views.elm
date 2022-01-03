@@ -12,7 +12,6 @@ import Language exposing (languageOptionsForDisplay, parseLocaleToLanguage)
 import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..))
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedLabel)
-import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
@@ -217,7 +216,7 @@ view session =
             [ width fill
             , height shrink
             , alignLeft
-            , paddingXY 0 10
+            , paddingXY 0 20
             ]
             [ column
                 [ width fill

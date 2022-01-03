@@ -9,6 +9,7 @@ module Page.Query exposing
     , setFilters
     , setKeywordQuery
     , setMode
+    , setNationalCollection
     , setNextQuery
     , setSort
     , toFacetBehaviours
@@ -16,6 +17,7 @@ module Page.Query exposing
     , toFilters
     , toKeywordQuery
     , toMode
+    , toNationalCollection
     , toNextQuery
     )
 
@@ -37,6 +39,7 @@ type alias QueryArgs =
     , page : Int
     , rows : Int
     , mode : ResultMode
+    , nationalCollection : Maybe String
     , facetBehaviours : Dict FacetAlias FacetBehaviours
     , facetSorts : Dict FacetAlias FacetSorts
     }
@@ -97,6 +100,16 @@ setPage pageNum oldRecord =
         { oldRecord | page = pageNum }
 
 
+toNationalCollection : { a | nationalCollection : Maybe String } -> Maybe String
+toNationalCollection qargs =
+    qargs.nationalCollection
+
+
+setNationalCollection : Maybe String -> { a | nationalCollection : Maybe String } -> { a | nationalCollection : Maybe String }
+setNationalCollection newValue oldRecord =
+    { oldRecord | nationalCollection = newValue }
+
+
 toFacetBehaviours : { a | facetBehaviours : Dict FacetAlias FacetBehaviours } -> Dict FacetAlias FacetBehaviours
 toFacetBehaviours query =
     query.facetBehaviours
@@ -132,6 +145,7 @@ defaultQueryArgs =
     , page = 1
     , rows = C.defaultRows
     , mode = SourcesMode
+    , nationalCollection = Nothing
     , facetBehaviours = Dict.empty
     , facetSorts = Dict.empty
     }
@@ -155,7 +169,17 @@ buildQueryParameters queryArgs =
                     []
 
         modeParam =
-            [ Url.Builder.string "mode" (parseResultModeToString queryArgs.mode) ]
+            [ Url.Builder.string "mode" <|
+                parseResultModeToString queryArgs.mode
+            ]
+
+        ncParam =
+            case queryArgs.nationalCollection of
+                Just countryPrefix ->
+                    [ Url.Builder.string "nc" countryPrefix ]
+
+                Nothing ->
+                    []
 
         fqParams =
             List.concatMap
@@ -178,19 +202,27 @@ buildQueryParameters queryArgs =
         fbParams =
             List.map
                 (\( alias, facetBehaviour ) ->
-                    Url.Builder.string "fb" (alias ++ ":" ++ parseFacetBehaviourToString facetBehaviour)
+                    Url.Builder.string "fb" <|
+                        alias
+                            ++ ":"
+                            ++ parseFacetBehaviourToString facetBehaviour
                 )
                 (Dict.toList queryArgs.facetBehaviours)
 
         fsParams =
             List.map
                 (\( alias, sort ) ->
-                    Url.Builder.string "fs" (alias ++ ":" ++ parseFacetSortToString sort)
+                    Url.Builder.string "fs" <|
+                        alias
+                            ++ ":"
+                            ++ parseFacetSortToString sort
                 )
                 (Dict.toList queryArgs.facetSorts)
 
         pageParam =
-            [ Url.Builder.string "page" (String.fromInt queryArgs.page) ]
+            [ Url.Builder.string "page" <|
+                String.fromInt queryArgs.page
+            ]
 
         sortParam =
             case queryArgs.sort of
@@ -200,7 +232,7 @@ buildQueryParameters queryArgs =
                 Nothing ->
                     []
     in
-    List.concat [ qParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam ]
+    List.concat [ qParam, ncParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam ]
 
 
 queryParamsParser : Q.Parser QueryArgs
@@ -213,6 +245,7 @@ queryParamsParser =
         |> apply pageParamParser
         |> apply rowsParamParser
         |> apply modeParamParser
+        |> apply (Q.string "nc")
         |> apply fbParamParser
         |> apply fsParamParser
 
@@ -289,26 +322,24 @@ modeQueryStringToResultMode modeList =
 pageParamParser : Q.Parser Int
 pageParamParser =
     -- returns 1 if the page parameter cannot be parsed to an int.
-    Q.custom "page"
-        (\stringList ->
+    Q.custom "page" <|
+        \stringList ->
             case stringList of
                 [ str ] ->
                     Maybe.withDefault 1 (String.toInt str)
 
                 _ ->
                     1
-        )
 
 
 rowsParamParser : Q.Parser Int
 rowsParamParser =
     -- returns the default rows if the rows parameter cannot be parsed to an int.
-    Q.custom "rows"
-        (\stringList ->
+    Q.custom "rows" <|
+        \stringList ->
             case stringList of
                 [ str ] ->
                     Maybe.withDefault 1 (String.toInt str)
 
                 _ ->
                     C.defaultRows
-        )

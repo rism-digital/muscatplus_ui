@@ -6,4 +6,5 @@ type alias Flags =
     , windowWidth : Int
     , windowHeight : Int
     , showMuscatLinks : Bool
+    , nationalCollection : Maybe String
     }

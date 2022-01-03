@@ -33,8 +33,9 @@
 <div id="elm"></div>
 <script>
     const LANGUAGE_KEY = "language";
-    const MUSCAT_KEY = "muscat-links";
+    const MUSCAT_KEY = "muscatLinks";
     const MUSCAT_VAL = "C13F7D99-B08D-492C-AF47-D91245CDD96F";
+    const NATIONAL_COLLECTION_KEY = "nationalCollection";
 
     function getStoredLanguage() /* -> null | string */
     {
@@ -46,9 +47,29 @@
         localStorage.setItem(LANGUAGE_KEY, lang);
     }
 
+    function getNationalCollectionSelection()
+    {
+        return localStorage.getItem(NATIONAL_COLLECTION_KEY);
+    }
+
+    function setNationalCollectionSelection(countryPrefix)
+    {
+        localStorage.setItem(NATIONAL_COLLECTION_KEY, countryPrefix);
+    }
+
+    function removeNationalCollectionSelection()
+    {
+        localStorage.removeItem(NATIONAL_COLLECTION_KEY);
+    }
+
     const detectLanguage = () =>
     {
         return getStoredLanguage() || navigator.language.split("-")[0];
+    }
+
+    const detectNationalCollectionFilter = () =>
+    {
+        return getNationalCollectionSelection();
     }
 
     /*
@@ -65,19 +86,55 @@
         return linkSet !== null && linkSet === MUSCAT_VAL;
     }
 
-    var app = Elm.Main.init({
+    const app = Elm.Main.init({
         node: document.getElementById('elm'),
         flags: {
             locale: detectLanguage(),
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight,
-            showMuscatLinks: detectMuscatLinks()
+            showMuscatLinks: detectMuscatLinks(),
+            nationalCollection: detectNationalCollectionFilter()
         }
     });
 
-    app.ports.saveLanguagePreference.subscribe( (lang) => {
+    /**
+     * Receives a string from Elm and sets the user's language preference
+     * in local storage
+     *
+     * @param {string} lang
+     * @return {function}
+     */
+    const languagePreferenceSubscription = ( lang ) =>
+    {
         setStoredLanguage(lang);
-    });
+    }
+
+    app.ports.saveLanguagePreference.subscribe( languagePreferenceSubscription );
+
+    /**
+     *  Receives string or null from Elm and sets the local storage value
+     *  accordingly.
+     *
+     * @param {?string} countryPrefix
+     * @return {function}
+     * **/
+    const nationalCollectionSubscription = (countryPrefix) =>
+    {
+        if (countryPrefix !== null)
+        {
+            setNationalCollectionSelection(countryPrefix);
+        }
+        else
+        {
+            removeNationalCollectionSelection();
+        }
+
+        app.ports.incomingSearchActionTriggered.send(null);
+
+    }
+
+    app.ports.saveNationalCollectionSelection.subscribe ( nationalCollectionSubscription );
+
 </script>
 </body>
 </html>

@@ -2,10 +2,11 @@ module Page.SideBar exposing (..)
 
 import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer
+import Json.Encode as Encode
 import Language exposing (parseLocaleToLanguage)
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarMsg(..))
-import Ports.LocalStorage exposing (saveLanguagePreference)
+import Ports.LocalStorage exposing (saveLanguagePreference, saveNationalCollectionSelection)
 import Session exposing (Session, SideBarAnimationStatus(..))
 
 
@@ -43,32 +44,77 @@ update msg session =
             Debouncer.update update updateDebouncer subMsg session
 
         UserMouseEnteredSideBar ->
-            ( { session | expandedSideBar = Expanding }, Cmd.none )
+            ( { session
+                | expandedSideBar = Expanding
+              }
+            , Cmd.none
+            )
 
         UserMouseExitedSideBar ->
-            ( { session | expandedSideBar = Collapsing }, Cmd.none )
+            ( { session
+                | expandedSideBar = Collapsing
+              }
+            , Cmd.none
+            )
 
         UserMouseEnteredSideBarOption button ->
-            ( { session | currentlyHoveredOption = Just button }, Cmd.none )
+            ( { session
+                | currentlyHoveredOption = Just button
+              }
+            , Cmd.none
+            )
 
         UserMouseExitedSideBarOption button ->
-            ( { session | currentlyHoveredOption = Nothing }, Cmd.none )
+            ( { session
+                | currentlyHoveredOption = Nothing
+              }
+            , Cmd.none
+            )
 
         UserClickedSideBarOptionForFrontPage sidebarOption ->
-            ( { session | showFrontSearchInterface = sidebarOption }
+            ( { session
+                | showFrontSearchInterface = sidebarOption
+              }
             , Nav.pushUrl session.key "/"
             )
 
         UserMouseEnteredCountryChooser ->
-            ( { session | currentlyHoveredNationalCollectionChooser = True }, Cmd.none )
+            ( { session
+                | currentlyHoveredNationalCollectionChooser = True
+              }
+            , Cmd.none
+            )
 
         UserMouseExitedCountryChooser ->
-            ( { session | currentlyHoveredNationalCollectionChooser = False }, Cmd.none )
+            ( { session
+                | currentlyHoveredNationalCollectionChooser = False
+              }
+            , Cmd.none
+            )
 
         UserChoseNationalCollection countryCode ->
-            ( { session | restrictedToNationalCollection = countryCode }, Cmd.none )
+            let
+                encodedSelection =
+                    case countryCode of
+                        Just c ->
+                            Encode.string c
+
+                        Nothing ->
+                            Encode.null
+            in
+            ( { session
+                | restrictedToNationalCollection = countryCode
+              }
+            , saveNationalCollectionSelection encodedSelection
+            )
 
         UserChangedLanguageSelect lang ->
-            ( { session | language = parseLocaleToLanguage lang }
-            , saveLanguagePreference lang
+            let
+                encodedLang =
+                    Encode.string lang
+            in
+            ( { session
+                | language = parseLocaleToLanguage lang
+              }
+            , saveLanguagePreference encodedLang
             )

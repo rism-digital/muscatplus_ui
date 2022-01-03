@@ -68,6 +68,9 @@ init flags url key =
 
         muscatLinks =
             flags.showMuscatLinks
+
+        nationalCollectionFilter =
+            flags.nationalCollection
     in
     { key = key
     , language = language
@@ -80,6 +83,6 @@ init flags url key =
     , showFrontSearchInterface = SourceSearchOption
     , currentlyHoveredOption = Nothing
     , currentlyHoveredNationalCollectionChooser = False
-    , restrictedToNationalCollection = Nothing
+    , restrictedToNationalCollection = nationalCollectionFilter
     , allNationalCollections = Dict.empty
     }

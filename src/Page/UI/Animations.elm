@@ -26,6 +26,7 @@ animatedLabel labelText =
         [ headingMD
         , Font.medium
         , Element.width fill
+        , Element.alignLeft
         ]
         labelText
 

@@ -157,6 +157,10 @@ update msg model =
                 |> updateWith (NotFoundPage session) Msg.UserInteractedWithNotFoundPage model
 
         ( Msg.NothingHappened, _ ) ->
+            let
+                _ =
+                    Debug.log "Nothing happened!" "From Subscriptions"
+            in
             ( model, Cmd.none )
 
         _ ->
