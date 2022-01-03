@@ -106,7 +106,7 @@ viewSearchControls language model body =
                     none
     in
     row
-        [ width (px 800)
+        [ width fill
         , height fill
         , alignTop
         ]

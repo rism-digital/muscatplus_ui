@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, maximum, none, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -151,7 +151,7 @@ viewSearchResultsSection language model body =
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
-            [ width (fillPortion 3)
+            [ width fill
             , searchColumnVerticalSize
             , scrollbarY
             , alignTop
@@ -160,7 +160,7 @@ viewSearchResultsSection language model body =
             [ viewSearchResultsListPanel language model body
             ]
         , column
-            [ width (fillPortion 2)
+            [ width (fill |> maximum 800)
             , height fill
             , alignTop
             , inFront renderedPreview
