@@ -1,15 +1,18 @@
 module Page.SideBar.Views exposing (..)
 
 import Color exposing (Color)
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Debouncer.Messages exposing (provideInput)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
+import Html.Attributes as HTA
 import Language exposing (languageOptionsForDisplay, parseLocaleToLanguage)
 import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..))
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedLabel)
+import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
@@ -156,7 +159,7 @@ view session =
                         , options = []
                         }
                         [ P.property "width" "90px" ]
-                        [ P.property "width" "200px" ]
+                        [ P.property "width" "250px" ]
                     , True
                     )
 
@@ -165,7 +168,7 @@ view session =
                         { duration = 200
                         , options = []
                         }
-                        [ P.property "width" "200px" ]
+                        [ P.property "width" "250px" ]
                         [ P.property "width" "90px" ]
                     , False
                     )
@@ -186,11 +189,12 @@ view session =
         , height fill
         , alignTop
         , alignLeft
+        , htmlAttribute <| HTA.style "z-index" "20"
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , Border.widthEach { left = 0, right = 2, top = 0, bottom = 0 }
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-        , onMouseEnter UserMouseEnteredSideBar
-        , onMouseLeave UserMouseExitedSideBar
+        , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
+        , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         ]
         [ row
             [ width (px 60)

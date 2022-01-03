@@ -1,7 +1,7 @@
 module View exposing (view)
 
 import Browser
-import Element exposing (Element, alignRight, centerX, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
+import Element exposing (Element, alignRight, alignTop, centerX, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
 import Element.Font as Font
 import Element.Region as Region
 import Language exposing (extractLabelFromLanguageMap, localTranslations)
@@ -115,13 +115,18 @@ view model =
             , bodyFontColour
             , fontBaseSize
             , pageBackground
-            , inFront pageToc
             ]
             (row
                 [ width fill
                 , height fill
                 ]
-                [ Element.map Msg.UserInteractedWithSideBar (Page.SideBar.Views.view pageSession)
+                [ column
+                    [ width (px 90)
+                    , height fill
+                    , alignTop
+                    , inFront (Element.map Msg.UserInteractedWithSideBar (Page.SideBar.Views.view pageSession))
+                    ]
+                    []
                 , column
                     [ centerX
                     , width fill

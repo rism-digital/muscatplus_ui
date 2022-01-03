@@ -1,6 +1,7 @@
 module Page.SideBar exposing (..)
 
 import Browser.Navigation as Nav
+import Debouncer.Messages as Debouncer
 import Language exposing (parseLocaleToLanguage)
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarMsg(..))
@@ -17,6 +18,14 @@ countryListRequest =
     createCountryCodeRequestWithDecoder ServerRespondedWithCountryCodeList
 
 
+updateDebouncer : Debouncer.UpdateConfig SideBarMsg Session
+updateDebouncer =
+    { mapMsg = ClientDebouncedSideBarMessages
+    , getDebouncer = .sideBarExpansionDebouncer
+    , setDebouncer = \debouncer s -> { s | sideBarExpansionDebouncer = debouncer }
+    }
+
+
 update : SideBarMsg -> Session -> ( Session, Cmd SideBarMsg )
 update msg session =
     case msg of
@@ -29,6 +38,9 @@ update msg session =
 
         ServerRespondedWithCountryCodeList (Err error) ->
             ( session, Cmd.none )
+
+        ClientDebouncedSideBarMessages subMsg ->
+            Debouncer.update update updateDebouncer subMsg session
 
         UserMouseEnteredSideBar ->
             ( { session | expandedSideBar = Expanding }, Cmd.none )

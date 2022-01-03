@@ -1,6 +1,7 @@
 module Session exposing (..)
 
 import Browser.Navigation as Nav
+import Debouncer.Messages as Debouncer exposing (Debouncer)
 import Device exposing (detectDevice)
 import Dict exposing (Dict)
 import Element exposing (Device)
@@ -8,8 +9,13 @@ import Flags exposing (Flags)
 import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Route exposing (Route, parseUrl)
-import Page.SideBar.Msg exposing (SideBarOption(..))
+import Page.SideBar.Msg exposing (SideBarMsg, SideBarOption(..))
 import Url exposing (Url)
+
+
+sideBarExpandDelay : Int
+sideBarExpandDelay =
+    250
 
 
 {-|
@@ -38,6 +44,7 @@ type alias Session =
     , route : Route
     , showMuscatLinks : Bool
     , expandedSideBar : SideBarAnimationStatus
+    , sideBarExpansionDebouncer : Debouncer SideBarMsg
     , showFrontSearchInterface : SideBarOption
     , currentlyHoveredOption : Maybe SideBarOption
     , currentlyHoveredNationalCollectionChooser : Bool
@@ -69,6 +76,7 @@ init flags url key =
     , route = route
     , showMuscatLinks = muscatLinks
     , expandedSideBar = NoAnimation
+    , sideBarExpansionDebouncer = Debouncer.debounce sideBarExpandDelay |> Debouncer.toDebouncer
     , showFrontSearchInterface = SourceSearchOption
     , currentlyHoveredOption = Nothing
     , currentlyHoveredNationalCollectionChooser = False
