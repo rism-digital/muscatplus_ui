@@ -99,7 +99,9 @@ viewFacetsForSourcesMode language model body =
                         , alignTop
                         , spacing lineSpacing
                         ]
-                        [ viewFacet "has-incipits" language activeSearch body ]
+                        [ viewFacet "is-arrangement" language activeSearch body
+                        , viewFacet "has-incipits" language activeSearch body
+                        ]
                     ]
                 ]
             , viewFacetSection language

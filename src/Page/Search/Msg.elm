@@ -27,6 +27,7 @@ type SearchMsg
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
     | UserHitEnterInQueryFacet FacetAlias FacetBehaviours
     | UserRemovedItemFromQueryFacet FacetAlias String
+    | UserEnteredTextInRangeFacet FacetAlias ( String, String )
     | UserChangedResultSorting String
     | UserClickedModeItem String FacetItem Bool
     | UserClickedRemoveActiveFilter String String

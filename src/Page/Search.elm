@@ -401,7 +401,7 @@ update session msg model =
 
         UserRemovedItemFromQueryFacet alias query ->
             let
-                activeFacets =
+                activeFilters =
                     toNextQuery model.activeSearch
                         |> toFilters
 
@@ -415,7 +415,25 @@ update session msg model =
                                 Nothing ->
                                     Nothing
                         )
-                        activeFacets
+                        activeFilters
+            in
+            toNextQuery model.activeSearch
+                |> setFilters newActiveFilters
+                |> flip setNextQuery model.activeSearch
+                |> flip setActiveSearch model
+                |> probeSubmit session
+
+        UserEnteredTextInRangeFacet alias ( lower, upper ) ->
+            let
+                activeFilters =
+                    toNextQuery model.activeSearch
+                        |> toFilters
+
+                rangeString =
+                    "[" ++ lower ++ " TO " ++ upper ++ "]"
+
+                newActiveFilters =
+                    Dict.insert alias [ rangeString ] activeFilters
             in
             toNextQuery model.activeSearch
                 |> setFilters newActiveFilters
