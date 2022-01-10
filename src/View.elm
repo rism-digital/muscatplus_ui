@@ -1,9 +1,12 @@
 module View exposing (view)
 
 import Browser
+import Css exposing (display)
+import Css.Global
 import Element exposing (Element, alignRight, alignTop, centerX, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
 import Element.Font as Font
 import Element.Region as Region
+import Html.Styled exposing (fromUnstyled, toUnstyled)
 import Language exposing (extractLabelFromLanguageMap, localTranslations)
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg(..))
@@ -22,7 +25,7 @@ import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, pageBackground)
 import Page.UI.Images exposing (rismLogo)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight)
+import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor, footerHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -106,10 +109,22 @@ view model =
 
                 _ ->
                     defaultView
+
+        globalLinkColor =
+            let
+                { red, green, blue, alpha } =
+                    colours.lightBlue
+            in
+            [ Css.color (Css.rgb red green blue) ]
     in
     { title = pageTitle
     , body =
-        [ layout
+        [ toUnstyled
+            (Css.Global.global
+                [ Css.Global.a globalLinkColor
+                ]
+            )
+        , layout
             [ width fill
             , bodyFont
             , bodyFontColour
