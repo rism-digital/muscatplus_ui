@@ -13,6 +13,9 @@ module Page.RecordTypes.Shared exposing
     , languageMapLabelDecoder
     , recordHistoryDecoder
     , sourceRecordDescriptorsDecoder
+    , toLabel
+    , toNumericValue
+    , toValue
     , typeDecoder
     )
 
@@ -34,10 +37,25 @@ type alias LabelValue =
     }
 
 
+toLabel : { a | label : LanguageMap } -> LanguageMap
+toLabel labelValue =
+    labelValue.label
+
+
+toValue : { a | value : LanguageMap } -> LanguageMap
+toValue labelValue =
+    labelValue.value
+
+
 type alias LabelNumericValue =
     { label : LanguageMap
     , value : Float
     }
+
+
+toNumericValue : { a | value : Float } -> Float
+toNumericValue labelValue =
+    labelValue.value
 
 
 type alias LabelBooleanValue =
