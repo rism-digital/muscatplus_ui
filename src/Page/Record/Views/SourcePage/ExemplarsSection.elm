@@ -9,7 +9,7 @@ import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
-import Page.UI.Components exposing (fieldValueWrapper, label, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
 
@@ -55,7 +55,7 @@ viewExternalResourcesSection language linkSection =
             widthFillHeightFill
             [ column
                 labelFieldColumnAttributes
-                [ label language linkSection.label ]
+                [ renderLabel language linkSection.label ]
             , column
                 valueFieldColumnAttributes
                 [ textColumn

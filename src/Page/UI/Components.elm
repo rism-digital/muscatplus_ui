@@ -58,27 +58,27 @@ h6 language heading =
     headingHelper [ headingXS, Region.heading 6, Font.medium ] language heading
 
 
-label : Language -> LanguageMap -> Element msg
-label language langmap =
+renderLabel : Language -> LanguageMap -> Element msg
+renderLabel language langmap =
     paragraph
         [ Font.medium, bodyRegular ]
         [ text (extractLabelFromLanguageMap language langmap) ]
 
 
-value : Language -> LanguageMap -> Element msg
-value language langmap =
+renderValue : Language -> LanguageMap -> Element msg
+renderValue language value =
     textColumn
         [ bodyRegular
         ]
-        (styledParagraphs (extractTextFromLanguageMap language langmap))
+        (styledParagraphs (extractTextFromLanguageMap language value))
 
 
-concatenatedValue : Language -> LanguageMap -> Element msg
-concatenatedValue language langmap =
+renderConcatenatedValue : Language -> LanguageMap -> Element msg
+renderConcatenatedValue language concatValue =
     textColumn
         [ bodyRegular
         ]
-        [ styledList (extractTextFromLanguageMap language langmap) ]
+        [ styledList (extractTextFromLanguageMap language concatValue) ]
 
 
 fieldValueWrapper : List (Element msg) -> Element msg
@@ -104,7 +104,7 @@ viewLabelValueField fmt language field =
                     widthFillHeightFill
                     [ column
                         labelFieldColumnAttributes
-                        [ label language f.label ]
+                        [ renderLabel language f.label ]
                     , column
                         valueFieldColumnAttributes
                         [ fmt language f.value ]
@@ -115,12 +115,12 @@ viewLabelValueField fmt language field =
 
 viewSummaryField : Language -> List LabelValue -> Element msg
 viewSummaryField language field =
-    viewLabelValueField concatenatedValue language field
+    viewLabelValueField renderConcatenatedValue language field
 
 
 viewParagraphField : Language -> List LabelValue -> Element msg
 viewParagraphField language field =
-    viewLabelValueField value language field
+    viewLabelValueField renderValue language field
 
 
 {-|

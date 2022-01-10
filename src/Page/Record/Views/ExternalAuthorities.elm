@@ -4,7 +4,7 @@ import Element exposing (Element, column, link, row, spacing, text, textColumn, 
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
-import Page.UI.Components exposing (fieldValueWrapper, label)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
 
 
 viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element msg
@@ -18,7 +18,7 @@ viewExternalAuthoritiesSection language extSection =
                     widthFillHeightFill
                     [ column
                         labelFieldColumnAttributes
-                        [ label language extSection.label ]
+                        [ renderLabel language extSection.label ]
                     , column
                         valueFieldColumnAttributes
                         [ textColumn

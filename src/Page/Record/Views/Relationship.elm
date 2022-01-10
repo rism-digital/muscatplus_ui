@@ -5,7 +5,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
-import Page.UI.Components exposing (label)
+import Page.UI.Components exposing (renderLabel)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
@@ -63,7 +63,7 @@ viewRelationshipBody language body =
                     [ width (fillPortion 1)
                     , alignTop
                     ]
-                    (label language body.label)
+                    (renderLabel language body.label)
                 , row
                     [ width (fillPortion 6)
                     , alignTop

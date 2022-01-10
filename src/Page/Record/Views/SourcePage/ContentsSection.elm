@@ -6,7 +6,7 @@ import Page.Record.Views.Relationship exposing (viewRelationshipBody)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Source exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
-import Page.UI.Components exposing (fieldValueWrapper, label, viewSummaryField)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
 
@@ -36,7 +36,7 @@ viewSubjectsSection language subjectSection =
             widthFillHeightFill
             [ column
                 labelFieldColumnAttributes
-                [ label language subjectSection.label ]
+                [ renderLabel language subjectSection.label ]
             , column
                 valueFieldColumnAttributes
                 [ textColumn
