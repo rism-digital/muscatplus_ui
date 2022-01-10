@@ -3,6 +3,7 @@ module Page.Query exposing
     , buildQueryParameters
     , defaultQueryArgs
     , queryParamsParser
+    , rangeStringParser
     , resetPage
     , setFacetBehaviours
     , setFacetSorts
@@ -26,6 +27,7 @@ import Dict exposing (Dict)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, parseFacetBehaviourToString, parseFacetSortToString, parseStringToFacetBehaviour, parseStringToFacetSort)
 import Page.RecordTypes.Shared exposing (FacetAlias)
+import Parser as P exposing ((|.), (|=), Parser)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
@@ -343,3 +345,45 @@ rowsParamParser =
 
                 _ ->
                     C.defaultRows
+
+
+{-|
+
+    Takes a range query string, such as "[1900 TO 2000]", and parses
+    it to a tuple pair representing the start and end dates. Also supports
+    wildcards, e.g., "[* TO 1700]", "[1700 TO *]" and "[* TO *]".
+
+    If the query string cannot be parsed it returns a ("*", "*") pair.
+
+-}
+rangeStringParser : String -> ( String, String )
+rangeStringParser rString =
+    let
+        isStar : Char -> Bool
+        isStar c =
+            c == '*'
+
+        oneOfParser : Parser String
+        oneOfParser =
+            P.oneOf
+                [ P.map String.fromFloat P.float
+                , P.map identity <| P.getChompedString (P.chompIf isStar)
+                ]
+
+        qParser =
+            P.succeed Tuple.pair
+                |. P.symbol "["
+                |= oneOfParser
+                |. P.spaces
+                |. P.symbol "TO"
+                |. P.spaces
+                |= oneOfParser
+                |. P.symbol "]"
+                |. P.end
+    in
+    case P.run qParser rString of
+        Ok res ->
+            res
+
+        Err _ ->
+            ( "*", "*" )
