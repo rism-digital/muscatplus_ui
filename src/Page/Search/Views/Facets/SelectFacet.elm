@@ -153,7 +153,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
             body.behaviours
 
         currentBehaviourOption =
-            toCurrentBehaviour body.behaviours
+            toCurrentBehaviour behaviourOptions
 
         listOfBehavioursForDropdown =
             List.map

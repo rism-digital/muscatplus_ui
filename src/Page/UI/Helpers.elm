@@ -15,8 +15,8 @@ import Element exposing (Element, none)
 
 -}
 viewMaybe : (a -> Element msg) -> Maybe a -> Element msg
-viewMaybe viewFunc body =
-    Maybe.map viewFunc body
+viewMaybe viewFunc maybeBody =
+    Maybe.map viewFunc maybeBody
         |> Maybe.withDefault none
 
 

@@ -120,10 +120,9 @@ minimalDropShadow =
 
 linkColour : Attribute msg
 linkColour =
-    Font.color
-        (colourScheme.lightBlue
-            |> convertColorToElementColor
-        )
+    colourScheme.lightBlue
+        |> convertColorToElementColor
+        |> Font.color
 
 
 baseSize : Float
