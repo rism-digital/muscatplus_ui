@@ -1,6 +1,9 @@
 module Utlities exposing (..)
 
 import Dict exposing (Dict)
+import Element exposing (Element)
+import Html.Parser exposing (Node(..))
+import Html.Parser.Util exposing (toVirtualDom)
 
 
 flip : (a -> b -> c) -> b -> a -> c
@@ -48,3 +51,28 @@ filterMap f dict =
         )
         Dict.empty
         dict
+
+
+{-| Utility functions to work with html.
+
+@docs mapHrefRecursive
+@docs postBodyToVirtualDom
+
+From <https://gist.github.com/panthershark/d6e4fee5b5d07ee500683cd989ae69a8>
+Uses hecrj/html-parser
+parsed an html string, transforms hrefs in links, and converts to vdom which can be used in views.
+
+-}
+toLinkedHtml : String -> Result String (List (Element msg))
+toLinkedHtml htmlString =
+    case Html.Parser.run htmlString of
+        Ok nodes ->
+            let
+                elementList =
+                    toVirtualDom nodes
+                        |> List.map Element.html
+            in
+            Ok elementList
+
+        Err _ ->
+            Err "Invalid Html"

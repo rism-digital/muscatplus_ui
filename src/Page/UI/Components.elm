@@ -15,6 +15,7 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Style exposing (convertColorToElementColor)
+import Utlities exposing (toLinkedHtml)
 
 
 {-|
@@ -132,18 +133,27 @@ viewParagraphField language field =
 -}
 styledParagraphs : List String -> List (Element msg)
 styledParagraphs textList =
+    let
+        parsedHtml t =
+            case toLinkedHtml t of
+                Ok elements ->
+                    elements
+
+                Err errMsg ->
+                    [ text errMsg ]
+    in
     List.map
         (\t ->
-            paragraph
-                [ spacing lineSpacing ]
-                [ el [] (text t) ]
+            parsedHtml t
+                |> paragraph
+                    [ spacing lineSpacing ]
         )
         textList
 
 
 {-|
 
-    Concatenate lists with a semicolon. Useful for rendering lists of smaller values,
+    Concatenate lists into a single line with a semicolon separator. Useful for rendering lists of smaller values,
     like instrumentation.
 
 -}
