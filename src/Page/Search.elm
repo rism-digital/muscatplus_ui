@@ -1,17 +1,18 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setKeyboard, setNeedsProbing, toActiveSearch, toExpandedFacets, toKeyboard, toggleExpandedFacets)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setKeyboard, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toRangeFacetValues, toggleExpandedFacets)
 import Browser.Navigation as Nav
-import Dict
+import Dict exposing (Dict)
 import List.Extra as LE
 import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..))
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..), RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
+import Page.Search.Utilities exposing (createRangeString, parseRangeFilterValue)
 import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery, setNotation, toNotation)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
@@ -38,6 +39,7 @@ init route =
     , selectedResult = Nothing
     , showFacetPanel = False
     , probeResponse = Nothing
+    , applyFilterPrompt = False
     }
 
 
@@ -74,6 +76,7 @@ load oldModel =
     , selectedResult = Nothing
     , showFacetPanel = oldModel.showFacetPanel
     , probeResponse = Nothing
+    , applyFilterPrompt = False
     }
 
 
@@ -219,7 +222,6 @@ updateQueryFacetValues session model alias currentBehaviour =
         |> setFilters newActiveFilters
         |> setFacetBehaviours newActiveBehaviours
         |> flip setNextQuery model.activeSearch
-        |> setNeedsProbing True
         |> setActiveSuggestion Nothing
         |> flip setActiveSearch model
         |> probeSubmit session
@@ -286,6 +288,7 @@ update session msg model =
             ( { model
                 | response = Response response
                 , probeResponse = totalItems
+                , applyFilterPrompt = False
               }
             , notationRenderCmd
             )
@@ -300,6 +303,7 @@ update session msg model =
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             ( { model
                 | probeResponse = Just response
+                , applyFilterPrompt = True
               }
             , Cmd.none
             )
@@ -423,21 +427,82 @@ update session msg model =
                 |> flip setActiveSearch model
                 |> probeSubmit session
 
-        UserEnteredTextInRangeFacet alias ( lower, upper ) ->
+        UserEnteredTextInRangeFacet alias inputBox value ->
             let
-                activeFilters =
-                    toNextQuery model.activeSearch
-                        |> toFilters
+                rangeFacetValues =
+                    toRangeFacetValues model.activeSearch
+
+                newRangeFacetValues =
+                    Dict.update alias
+                        (\existingValues ->
+                            case existingValues of
+                                Just ( lower, upper ) ->
+                                    case inputBox of
+                                        LowerRangeValue ->
+                                            Just ( value, upper )
+
+                                        UpperRangeValue ->
+                                            Just ( lower, value )
+
+                                Nothing ->
+                                    case inputBox of
+                                        LowerRangeValue ->
+                                            Just ( value, "*" )
+
+                                        UpperRangeValue ->
+                                            Just ( "*", value )
+                        )
+                        rangeFacetValues
+
+                newModel =
+                    setRangeFacetValues newRangeFacetValues model.activeSearch
+                        |> flip setActiveSearch model
+            in
+            ( newModel, Cmd.none )
+
+        UserFocusedRangeFacet alias valueType ->
+            ( model, Cmd.none )
+
+        UserLostFocusRangeFacet alias valueType ->
+            let
+                rangeFacetValues =
+                    toRangeFacetValues model.activeSearch
+
+                ( lowerValue, upperValue ) =
+                    Dict.get alias rangeFacetValues
+                        |> Maybe.withDefault ( "*", "*" )
+
+                newLowerValue =
+                    if lowerValue == "" then
+                        "*"
+
+                    else
+                        lowerValue
+
+                newUpperValue =
+                    if upperValue == "" then
+                        "*"
+
+                    else
+                        upperValue
 
                 rangeString =
-                    "[" ++ lower ++ " TO " ++ upper ++ "]"
+                    createRangeString newLowerValue newUpperValue
 
                 newActiveFilters =
-                    Dict.insert alias [ rangeString ] activeFilters
+                    toNextQuery model.activeSearch
+                        |> toFilters
+                        |> Dict.insert alias [ rangeString ]
+
+                -- ensure the range facet also displays the correct value
+                newRangeFacetValues =
+                    toRangeFacetValues model.activeSearch
+                        |> Dict.insert alias ( newLowerValue, newUpperValue )
             in
             toNextQuery model.activeSearch
                 |> setFilters newActiveFilters
                 |> flip setNextQuery model.activeSearch
+                |> setRangeFacetValues newRangeFacetValues
                 |> flip setActiveSearch model
                 |> probeSubmit session
 
@@ -478,7 +543,6 @@ update session msg model =
             toNextQuery model.activeSearch
                 |> setFilters newActiveFilters
                 |> flip setNextQuery model.activeSearch
-                |> setNeedsProbing True
                 |> flip setActiveSearch model
                 |> probeSubmit session
 

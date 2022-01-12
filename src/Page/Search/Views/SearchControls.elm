@@ -1,7 +1,7 @@
 module Page.Search.Views.SearchControls exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignBottom, alignTop, column, fill, height, none, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerY, column, el, fill, height, none, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -29,6 +29,20 @@ viewSearchButtons language model =
             , changeMsg = SearchMsg.UserInputTextInKeywordQueryBox
             , resetMsg = SearchMsg.UserResetAllFilters
             }
+
+        -- TODO: Translate
+        updateMsg =
+            if model.applyFilterPrompt == True then
+                el
+                    [ width fill
+                    , height (px 30)
+                    , headingSM
+                    , Font.bold
+                    ]
+                    (text "Apply filters to update search results")
+
+            else
+                none
     in
     row
         [ alignBottom
@@ -38,45 +52,60 @@ viewSearchButtons language model =
         --, Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
         , minimalDropShadow
         , width fill
-        , height (px 80)
+        , height (px 100)
         , paddingXY 20 0
-        , spacing lineSpacing
+        , centerY
         ]
         [ column
-            [ width shrink ]
-            [ Input.button
-                [ Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-                , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
-                , paddingXY 10 10
-                , height (px 40)
-                , width shrink
-                , Font.center
-                , Font.color (colourScheme.white |> convertColorToElementColor)
-                , headingSM
-                ]
-                { onPress = Just msgs.submitMsg
-                , label = text (extractLabelFromLanguageMap language localTranslations.applyFilters)
-                }
+            [ width fill
+            , height fill
+            , centerY
             ]
-        , column
-            [ width shrink ]
-            [ Input.button
-                [ Border.color (colourScheme.midGrey |> convertColorToElementColor)
-                , Background.color (colourScheme.midGrey |> convertColorToElementColor)
-                , paddingXY 10 10
-                , height (px 40)
-                , width (px 100)
-                , Font.center
-                , Font.color (colourScheme.white |> convertColorToElementColor)
-                , headingSM
+            [ row
+                [ width fill
+                , height fill
+                , spacing lineSpacing
+                , centerY
                 ]
-                { onPress = Just msgs.resetMsg
-                , label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
-                }
+                [ column
+                    [ width shrink ]
+                    [ Input.button
+                        [ Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+                        , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
+                        , paddingXY 10 10
+                        , height (px 40)
+                        , width shrink
+                        , Font.center
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , headingSM
+                        ]
+                        { onPress = Just msgs.submitMsg
+                        , label = text (extractLabelFromLanguageMap language localTranslations.applyFilters)
+                        }
+                    ]
+                , column
+                    [ width shrink ]
+                    [ Input.button
+                        [ Border.color (colourScheme.midGrey |> convertColorToElementColor)
+                        , Background.color (colourScheme.midGrey |> convertColorToElementColor)
+                        , paddingXY 10 10
+                        , height (px 40)
+                        , width (px 100)
+                        , Font.center
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , headingSM
+                        ]
+                        { onPress = Just msgs.resetMsg
+                        , label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
+                        }
+                    ]
+                , column
+                    [ width fill ]
+                    [ updateMsg
+                    , viewMaybe (viewProbeResponseNumbers language) model.probeResponse
+                    ]
+                ]
             ]
-        , column
-            [ width fill ]
-            [ viewMaybe (viewProbeResponseNumbers language) model.probeResponse ]
         ]
 
 

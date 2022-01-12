@@ -65,7 +65,7 @@ viewFacetsForPeopleMode language model body =
                         [ width fill
                         , headingMD
                         ]
-                        (text "Record type refinements")
+                        (text "Person record filters")
                     ]
                 ]
             , viewFacetSection language

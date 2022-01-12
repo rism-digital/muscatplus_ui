@@ -1,88 +1,56 @@
 module Page.Search.Views.Facets.RangeFacet exposing (..)
 
+import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignTop, column, fill, padding, paddingXY, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, inFront, mouseOver, none, padding, paddingXY, paragraph, px, row, spacing, text, width)
+import Element.Events as Events
 import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)
-import Page.Query exposing (rangeStringParser)
-import Page.RecordTypes.Search exposing (RangeFacet)
-import Page.RecordTypes.Shared exposing (FacetAlias, toNumericValue)
+import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (h5)
+import Page.UI.Images exposing (assistanceSvg)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
-viewRangeFacet : Language -> Dict FacetAlias (List String) -> RangeFacet -> Element SearchMsg
-viewRangeFacet language activeFilters body =
+validateInput : String -> String -> Element msg
+validateInput boxIndicator value =
     let
-        rangeValues =
-            body.range
+        checkValue =
+            String.trim value
 
+        -- TODO: Translate!
+        errorMessage : Maybe String
+        errorMessage =
+            if String.trim checkValue /= "*" && String.trim checkValue /= "" && not (String.all Char.isDigit <| String.trim checkValue) then
+                Just (boxIndicator ++ ": Please enter only numbers or a '*'")
+
+            else if String.length checkValue > 4 then
+                Just (boxIndicator ++ ": Values of more than four digits are not valid")
+
+            else
+                Nothing
+    in
+    case errorMessage of
+        Nothing ->
+            none
+
+        Just eMsg ->
+            row
+                []
+                [ paragraph [] [ text eMsg ] ]
+
+
+viewRangeFacet : Language -> ActiveSearch -> RangeFacet -> Element SearchMsg
+viewRangeFacet language activeSearch body =
+    let
         facetAlias =
             body.alias
 
-        lowerValue =
-            toNumericValue rangeValues.lower
-
-        upperValue =
-            toNumericValue rangeValues.upper
-
-        -- returns a list of fully composed range query string, e.g.,
-        -- ["[* TO 1900]"]. If it doesn't
-        currentValue : List String
-        currentValue =
-            Dict.get facetAlias activeFilters
-                |> Maybe.withDefault []
-
-        ( upperParsedValue, lowerParsedValue ) =
-            case currentValue of
-                [] ->
-                    ( "*", "*" )
-
-                x :: _ ->
-                    rangeStringParser x
-
-        parsedLowerValue : Float
-        parsedLowerValue =
-            if lowerParsedValue == "*" then
-                lowerValue
-
-            else
-                String.toFloat lowerParsedValue
-                    |> Maybe.withDefault lowerValue
-
-        parsedUpperValue : Float
-        parsedUpperValue =
-            if upperParsedValue == "*" then
-                upperValue
-
-            else
-                String.toFloat upperParsedValue
-                    |> Maybe.withDefault upperValue
-
-        lowerValueIsOutOfRange : Bool
-        lowerValueIsOutOfRange =
-            parsedLowerValue < lowerValue || parsedLowerValue > upperValue
-
-        upperValueIsOutOfRange : Bool
-        upperValueIsOutOfRange =
-            parsedUpperValue > upperValue || parsedUpperValue < lowerValue
-
-        lowerValueValidate : String -> String
-        lowerValueValidate inp =
-            if String.all Char.isDigit inp || inp == "*" then
-                inp
-
-            else
-                lowerParsedValue
-
-        upperValueValidate : String -> String
-        upperValueValidate inp =
-            if String.all Char.isDigit inp || inp == "*" then
-                inp
-
-            else
-                upperParsedValue
+        ( lowerValue, upperValue ) =
+            Dict.get facetAlias activeSearch.rangeFacetValues
+                |> Maybe.withDefault ( "*", "*" )
     in
     row
         [ width fill
@@ -100,6 +68,13 @@ viewRangeFacet language activeFilters body =
                 , spacing lineSpacing
                 ]
                 [ column
+                    []
+                    [ el
+                        [ width (px 12)
+                        ]
+                        (assistanceSvg colourScheme.slateGrey)
+                    ]
+                , column
                     [ width fill
                     , alignLeft
                     , alignTop
@@ -111,28 +86,61 @@ viewRangeFacet language activeFilters body =
                 ]
             , row
                 [ width fill
+                , alignTop
+                , padding 10
+                ]
+                [ paragraph [] [ text "Filter using four digit year values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would find all records from 1650 onwards." ] ]
+            , row
+                [ width fill
                 , paddingXY 20 10
+                , spacing lineSpacing
                 ]
                 [ column
                     [ spacing lineSpacing ]
                     [ Input.text
-                        [ width (px 80) ]
-                        { onChange = \c -> UserEnteredTextInRangeFacet facetAlias ( lowerValueValidate c, upperParsedValue )
-                        , text = lowerParsedValue
+                        [ width (px 80)
+                        , Events.onLoseFocus (UserLostFocusRangeFacet facetAlias LowerRangeValue)
+                        , Events.onFocus (UserFocusedRangeFacet facetAlias LowerRangeValue)
+                        ]
+                        { onChange = \c -> UserEnteredTextInRangeFacet facetAlias LowerRangeValue c
+                        , text = lowerValue
                         , placeholder = Nothing
                         , label = labelHidden ""
                         }
                     ]
                 , column
                     []
+                    [ text "TO" ]
+                , column
+                    [ spacing lineSpacing ]
                     [ Input.text
-                        [ width (px 80) ]
-                        { onChange = \c -> UserEnteredTextInRangeFacet facetAlias ( lowerParsedValue, upperValueValidate c )
-                        , text = upperParsedValue
+                        [ width (px 80)
+                        , Events.onLoseFocus (UserLostFocusRangeFacet facetAlias UpperRangeValue)
+                        , Events.onFocus (UserFocusedRangeFacet facetAlias UpperRangeValue)
+                        ]
+                        { onChange = \c -> UserEnteredTextInRangeFacet facetAlias UpperRangeValue c
+                        , text = upperValue
                         , placeholder = Nothing
                         , label = labelHidden ""
                         }
                     ]
+                , column
+                    [ width fill ]
+                    [ validateInput "Lower range" lowerValue
+                    , validateInput "Upper range" upperValue
+                    ]
                 ]
             ]
         ]
+
+
+
+{--
+
+    Default is "*" on upper/lower range
+    User focuses the box, the "*" disappears.
+    User enters number or "*"
+    User can only enter up to four numbers; entering more will not add / remove any previously entered numbers
+    If user deletes numbers, then the input box does not add anything until the focus is lost on the box.
+
+-}

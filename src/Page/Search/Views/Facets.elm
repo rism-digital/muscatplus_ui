@@ -177,7 +177,7 @@ viewFacet facetKey language activeSearch body =
             viewToggleFacet language activeFilters facet
 
         Just (RangeFacetData facet) ->
-            viewRangeFacet language activeFilters facet
+            viewRangeFacet language activeSearch facet
 
         Just (SelectFacetData facet) ->
             let

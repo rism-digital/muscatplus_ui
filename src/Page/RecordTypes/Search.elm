@@ -119,6 +119,11 @@ type alias RangeFacet =
     }
 
 
+type RangeFacetValue
+    = LowerRangeValue
+    | UpperRangeValue
+
+
 type alias RangeMinMaxValues =
     { lower : LabelNumericValue
     , upper : LabelNumericValue

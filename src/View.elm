@@ -110,6 +110,7 @@ view model =
                 _ ->
                     defaultView
 
+        -- set the colour for links (a tags) globally.
         globalLinkColor =
             let
                 { red, green, blue, alpha } =

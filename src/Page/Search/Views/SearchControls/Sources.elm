@@ -67,13 +67,15 @@ viewFacetsForSourcesMode language model body =
                         [ width fill
                         , headingMD
                         ]
-                        (text "Record type refinements")
+                        (text "Source record filters")
                     ]
                 ]
             , viewFacetSection language
                 [ viewFacet "composer" language activeSearch body
                 , viewFacet "people" language activeSearch body
                 ]
+            , viewFacetSection language
+                [ viewFacet "date-range" language activeSearch body ]
             , viewFacetSection language
                 [ row
                     [ width fill

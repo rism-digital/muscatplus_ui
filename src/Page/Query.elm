@@ -353,7 +353,8 @@ rowsParamParser =
     it to a tuple pair representing the start and end dates. Also supports
     wildcards, e.g., "[* TO 1700]", "[1700 TO *]" and "[* TO *]".
 
-    If the query string cannot be parsed it returns a ("*", "*") pair.
+    If the query string cannot be parsed it returns a ("", "") pair, and lets
+    the downstream components do any validation on this input.
 
 -}
 rangeStringParser : String -> ( String, String )
@@ -363,6 +364,9 @@ rangeStringParser rString =
         isStar c =
             c == '*'
 
+        -- chooses one of the following for valid input
+        --  - A number (float)
+        --  - A star "*"
         oneOfParser : Parser String
         oneOfParser =
             P.oneOf
@@ -386,4 +390,4 @@ rangeStringParser rString =
             res
 
         Err _ ->
-            ( "*", "*" )
+            ( "", "" )

@@ -17,6 +17,7 @@ type alias SearchPageModel =
     , selectedResult : Maybe String
     , showFacetPanel : Bool
     , probeResponse : Maybe ProbeData
+    , applyFilterPrompt : Bool
     }
 
 

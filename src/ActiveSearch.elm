@@ -1,8 +1,10 @@
 module ActiveSearch exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
+import Dict exposing (Dict)
 import List.Extra as LE
 import Page.Query
+import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Route exposing (Route(..))
 import Page.UI.Keyboard as Keyboard
@@ -28,12 +30,12 @@ init initialRoute =
         updatedKeyboardModel =
             { initialKeyboardModel | query = kqargs }
     in
-    { needsProbing = False
-    , nextQuery = qargs
+    { nextQuery = qargs
     , expandedFacets = []
     , keyboard = updatedKeyboardModel
     , selectedResultSort = initialSort
     , activeSuggestion = Nothing
+    , rangeFacetValues = Dict.empty
     }
 
 
@@ -86,20 +88,11 @@ setActiveSuggestion newValue oldRecord =
     { oldRecord | activeSuggestion = newValue }
 
 
-
---toActiveFacets : { a | activeFacets : Dict FacetAlias (List String) } -> Dict FacetAlias (List String)
---toActiveFacets model =
---    model.activeFacets
---
---
---setActiveFacets :
---    Dict FacetAlias (List String)
---    -> { a | activeFacets : Dict FacetAlias (List String) }
---    -> { a | activeFacets : Dict FacetAlias (List String) }
---setActiveFacets newValue oldRecord =
---    { oldRecord | activeFacets = newValue }
+toRangeFacetValues : { a | rangeFacetValues : Dict FacetAlias ( String, String ) } -> Dict FacetAlias ( String, String )
+toRangeFacetValues model =
+    model.rangeFacetValues
 
 
-setNeedsProbing : Bool -> { a | needsProbing : Bool } -> { a | needsProbing : Bool }
-setNeedsProbing newValue oldRecord =
-    { oldRecord | needsProbing = newValue }
+setRangeFacetValues : Dict FacetAlias ( String, String ) -> { a | rangeFacetValues : Dict FacetAlias ( String, String ) } -> { a | rangeFacetValues : Dict FacetAlias ( String, String ) }
+setRangeFacetValues newValue oldRecord =
+    { oldRecord | rangeFacetValues = newValue }

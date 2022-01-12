@@ -1,6 +1,8 @@
 module ActiveSearch.Model exposing (..)
 
+import Dict exposing (Dict)
 import Page.Query exposing (QueryArgs)
+import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.UI.Keyboard as Keyboard
 
@@ -16,9 +18,9 @@ import Page.UI.Keyboard as Keyboard
 
 -}
 type alias ActiveSearch =
-    { needsProbing : Bool
-    , nextQuery : QueryArgs
+    { nextQuery : QueryArgs
     , expandedFacets : List String
+    , rangeFacetValues : Dict FacetAlias ( String, String )
 
     --, activeFacets : Dict FacetAlias (List String)
     , keyboard : Keyboard.Model

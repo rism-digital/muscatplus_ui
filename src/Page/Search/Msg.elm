@@ -3,7 +3,7 @@ module Page.Search.Msg exposing (SearchMsg(..))
 import Http
 import Http.Detailed
 import Page.RecordTypes.Probe exposing (ProbeData)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetItem, FacetSorts)
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetItem, FacetSorts, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.UI.Keyboard as Keyboard
@@ -27,7 +27,9 @@ type SearchMsg
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
     | UserHitEnterInQueryFacet FacetAlias FacetBehaviours
     | UserRemovedItemFromQueryFacet FacetAlias String
-    | UserEnteredTextInRangeFacet FacetAlias ( String, String )
+    | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
+    | UserFocusedRangeFacet FacetAlias RangeFacetValue
+    | UserLostFocusRangeFacet FacetAlias RangeFacetValue
     | UserChangedResultSorting String
     | UserClickedModeItem String FacetItem Bool
     | UserClickedRemoveActiveFilter String String
