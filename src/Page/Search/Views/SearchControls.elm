@@ -6,8 +6,10 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toMode, toNextQuery)
+import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
@@ -15,10 +17,34 @@ import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.SearchControls.Incipits exposing (viewFacetsForIncipitsMode)
 import Page.Search.Views.SearchControls.Institutions exposing (viewFacetsForInstitutionsMode)
 import Page.Search.Views.SearchControls.People exposing (viewFacetsForPeopleMode)
-import Page.Search.Views.SearchControls.Sources exposing (viewFacetsForSourcesMode, viewProbeResponseNumbers)
+import Page.Search.Views.SearchControls.Sources exposing (viewFacetsForSourcesMode)
 import Page.UI.Attributes exposing (headingSM, lineSpacing, minimalDropShadow, widthFillHeightFill)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+
+
+viewProbeResponseNumbers : Language -> ProbeData -> Element SearchMsg
+viewProbeResponseNumbers language probeData =
+    let
+        formattedNumber =
+            probeData.totalItems
+                |> toFloat
+                |> formatNumberByLanguage language
+    in
+    el
+        [ headingSM ]
+        (text ("Results with filters applied: " ++ formattedNumber))
+
+
+viewUpdateMessage : Language -> Element SearchMsg
+viewUpdateMessage language =
+    el
+        [ width fill
+        , height (px 30)
+        , headingSM
+        , Font.bold
+        ]
+        (text "Apply filters to update search results")
 
 
 viewSearchButtons : Language -> SearchPageModel -> Element SearchMsg
@@ -29,20 +55,6 @@ viewSearchButtons language model =
             , changeMsg = SearchMsg.UserInputTextInKeywordQueryBox
             , resetMsg = SearchMsg.UserResetAllFilters
             }
-
-        -- TODO: Translate
-        updateMsg =
-            if model.applyFilterPrompt == True then
-                el
-                    [ width fill
-                    , height (px 30)
-                    , headingSM
-                    , Font.bold
-                    ]
-                    (text "Apply filters to update search results")
-
-            else
-                none
     in
     row
         [ alignBottom
@@ -101,7 +113,7 @@ viewSearchButtons language model =
                     ]
                 , column
                     [ width fill ]
-                    [ updateMsg
+                    [ viewIf (viewUpdateMessage language) model.applyFilterPrompt
                     , viewMaybe (viewProbeResponseNumbers language) model.probeResponse
                     ]
                 ]

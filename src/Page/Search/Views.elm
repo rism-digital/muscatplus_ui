@@ -6,7 +6,8 @@ import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fi
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
@@ -160,7 +161,7 @@ viewSearchResultsSection language model body =
             [ viewSearchResultsListPanel language model body
             ]
         , column
-            [ width (fill |> maximum 800)
+            [ width (fill |> maximum 1000)
             , height fill
             , alignTop
             , inFront renderedPreview

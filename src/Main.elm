@@ -48,39 +48,47 @@ init flags initialUrl key =
         FrontPageRoute ->
             ( FrontPage session Front.init
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithFrontPage (Front.frontPageRequest initialUrl)
+                [ Cmd.map Msg.UserInteractedWithFrontPage <| Front.frontPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
 
         SearchPageRoute _ _ ->
-            ( SearchPage session (Search.init route)
+            ( SearchPage session <| Search.init route
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithSearchPage (Search.searchPageRequest initialUrl)
+                [ Cmd.map Msg.UserInteractedWithSearchPage <| Search.searchPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
 
         PersonPageRoute _ ->
-            ( PersonPage session (Record.init route)
+            ( PersonPage session <| Record.init route
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
 
         InstitutionPageRoute _ ->
-            ( InstitutionPage session (Record.init route)
+            ( InstitutionPage session <| Record.init route
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
 
         SourcePageRoute _ ->
-            ( SourcePage session (Record.init route)
+            ( SourcePage session <| Record.init route
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage (Record.recordPageRequest initialUrl)
+                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
+            )
+
+        PlacePageRoute _ ->
+            ( PlacePage session <| Record.init route
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
@@ -88,7 +96,7 @@ init flags initialUrl key =
         _ ->
             ( NotFoundPage session NotFound.init
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithNotFoundPage (NotFound.initialCmd initialUrl)
+                [ Cmd.map Msg.UserInteractedWithNotFoundPage <| NotFound.initialCmd initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )

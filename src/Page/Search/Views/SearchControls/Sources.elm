@@ -2,28 +2,14 @@ module Page.Search.Views.SearchControls.Sources exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, el, fill, padding, row, scrollbarY, spacing, text, width)
-import Language exposing (Language, formatNumberByLanguage)
+import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
-import Page.UI.Attributes exposing (facetBorderBottom, headingMD, headingSM, lineSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (searchKeywordInput)
-
-
-viewProbeResponseNumbers : Language -> ProbeData -> Element SearchMsg
-viewProbeResponseNumbers language probeData =
-    let
-        formattedNumber =
-            probeData.totalItems
-                |> toFloat
-                |> formatNumberByLanguage language
-    in
-    el
-        [ headingSM ]
-        (text ("Results with filters applied: " ++ formattedNumber))
 
 
 viewFacetsForSourcesMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg

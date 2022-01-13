@@ -1,13 +1,14 @@
 module View exposing (view)
 
 import Browser
-import Css exposing (display)
+import Css
 import Css.Global
 import Element exposing (Element, alignRight, alignTop, centerX, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
 import Element.Font as Font
 import Element.Region as Region
-import Html.Styled exposing (fromUnstyled, toUnstyled)
-import Language exposing (extractLabelFromLanguageMap, localTranslations)
+import Html.Styled exposing (toUnstyled)
+import Language exposing (extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg(..))
 import Page.Front.Views
@@ -100,6 +101,16 @@ view model =
                 InstitutionPage session pageModel ->
                     case pageModel.response of
                         Response (InstitutionData body) ->
+                            ( extractLabelFromLanguageMap session.language body.label
+                            , none
+                            )
+
+                        _ ->
+                            defaultView
+
+                PlacePage session pageModel ->
+                    case pageModel.response of
+                        Response (PlaceData body) ->
                             ( extractLabelFromLanguageMap session.language body.label
                             , none
                             )
