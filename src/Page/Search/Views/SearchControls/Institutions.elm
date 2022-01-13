@@ -25,7 +25,6 @@ viewFacetsForInstitutionsMode language model body =
         )
         [ column
             (List.append [ spacing lineSpacing ] widthFillHeightFill)
-            [ viewFacet "date-range" language activeSearch body
-            , viewFacet "city" language activeSearch body
+            [ viewFacet "city" language activeSearch body
             ]
         ]
