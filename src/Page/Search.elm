@@ -377,7 +377,7 @@ update session msg model =
                     updateQueryFacetFilters alias text model
 
                 ( suggestModel, suggestionCmd ) =
-                    if String.length text > 3 then
+                    if String.length text > 2 then
                         ( newModel, createSuggestRequestWithDecoder ServerRespondedWithSuggestionData (String.append suggestionUrl text) )
 
                     else if String.length text == 0 then
