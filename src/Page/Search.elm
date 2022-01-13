@@ -676,8 +676,9 @@ update session msg model =
 
         UserResetAllFilters ->
             setNextQuery defaultQueryArgs model.activeSearch
+                |> setRangeFacetValues Dict.empty
                 |> flip setActiveSearch model
-                |> searchSubmit session
+                |> probeSubmit session
 
         NothingHappened ->
             ( model, Cmd.none )
