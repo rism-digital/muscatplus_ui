@@ -1,7 +1,7 @@
 module Page.UI.Components exposing (..)
 
 import Color exposing (Color)
-import Element exposing (Element, alignRight, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, padding, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, padding, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -16,6 +16,7 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Style exposing (convertColorToElementColor)
+import Page.UI.Tooltip exposing (facetHelp)
 import Utlities exposing (toLinkedHtml)
 
 
@@ -246,6 +247,12 @@ dropdownSelectOption val name choiceFn currentChoice =
         [ HT.text name ]
 
 
+keywordInputHelp =
+    """
+    Use this to find any words, anywhere in a record.
+    """
+
+
 {-|
 
     Used for the main search input box.
@@ -261,28 +268,49 @@ searchKeywordInput :
     -> Element msg
 searchKeywordInput language msgs queryText =
     row
-        [ centerX
-        , centerY
-        , width fill
+        [ width fill
+        , alignTop
+        , alignLeft
         ]
         [ column
-            [ width (fillPortion 11)
-            , height shrink
+            [ width fill
             , alignRight
+            , spacing lineSpacing
             ]
-            [ Input.text
+            [ row
                 [ width fill
-                , htmlAttribute (HA.autocomplete False)
-                , Border.rounded 0
-                , onEnter msgs.submitMsg
-                , headingSM
-                , paddingXY 10 12
+                , alignTop
+                , spacing lineSpacing
                 ]
-                { onChange = \inp -> msgs.changeMsg inp
-                , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
-                , text = queryText
-                , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
-                }
+                [ column
+                    [ alignTop ]
+                    [ facetHelp keywordInputHelp ]
+                , column
+                    [ width fill
+                    , alignLeft
+                    , alignTop
+                    ]
+                    [ row
+                        [ spacing 10 ]
+                        [ h5 language localTranslations.keywordQuery ]
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ Input.text
+                    [ width fill
+                    , htmlAttribute (HA.autocomplete False)
+                    , Border.rounded 0
+                    , onEnter msgs.submitMsg
+                    , headingSM
+                    , paddingXY 10 12
+                    ]
+                    { onChange = \inp -> msgs.changeMsg inp
+                    , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
+                    , text = queryText
+                    , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
+                    }
+                ]
             ]
         ]
 

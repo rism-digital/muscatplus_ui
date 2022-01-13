@@ -2,7 +2,7 @@ module Page.Search.Views.Facets.RangeFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, inFront, mouseOver, none, padding, paddingXY, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, column, fill, none, padding, paddingXY, paragraph, px, row, spacing, text, width)
 import Element.Events as Events
 import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)
@@ -10,8 +10,14 @@ import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (h5)
-import Page.UI.Images exposing (assistanceSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Tooltip exposing (facetHelp)
+
+
+rangeFacetHelp =
+    """
+    Filter using four digit year values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would
+    find all records from 1650 onwards.
+    """
 
 
 validateInput : String -> String -> Element msg
@@ -60,20 +66,16 @@ viewRangeFacet language activeSearch body =
         [ column
             [ width fill
             , alignTop
+            , spacing lineSpacing
             ]
             [ row
                 [ width fill
                 , alignTop
-                , padding 10
                 , spacing lineSpacing
                 ]
                 [ column
-                    []
-                    [ el
-                        [ width (px 12)
-                        ]
-                        (assistanceSvg colourScheme.slateGrey)
-                    ]
+                    [ alignTop ]
+                    [ facetHelp rangeFacetHelp ]
                 , column
                     [ width fill
                     , alignLeft
@@ -84,12 +86,6 @@ viewRangeFacet language activeSearch body =
                         [ h5 language body.label ]
                     ]
                 ]
-            , row
-                [ width fill
-                , alignTop
-                , padding 10
-                ]
-                [ paragraph [] [ text "Filter using four digit year values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would find all records from 1650 onwards." ] ]
             , row
                 [ width fill
                 , paddingXY 20 10

@@ -15,7 +15,16 @@ import Page.UI.Attributes exposing (bodyRegular, bodySM, bodyXS, lineSpacing)
 import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h5)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Tooltip exposing (facetHelp)
 import String.Extra as SE
+
+
+selectFacetHelp =
+    """
+    Select from the list of values. You can order the values alphabetically or numerically (the count of the number of
+    results) using the sort control below. You can also change the behaviour of how multiple values are combined, selecting
+    either "AND" (all values must be present in a document) and "OR" (only one of the values must be present in a document).
+    """
 
 
 type alias SelectFacetConfig =
@@ -189,19 +198,21 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
         [ width fill
         , alignTop
         , alignLeft
-        , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
             [ width fill
             , alignTop
+            , spacing lineSpacing
             ]
             [ row
                 [ width fill
                 , alignTop
-                , padding 10
                 , spacing lineSpacing
                 ]
                 [ column
+                    [ alignTop ]
+                    [ facetHelp selectFacetHelp ]
+                , column
                     [ width fill
                     , alignLeft
                     , alignTop

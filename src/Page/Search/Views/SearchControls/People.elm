@@ -1,14 +1,14 @@
 module Page.Search.Views.SearchControls.People exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, el, fill, padding, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, padding, row, scrollbarY, spacing, text, width)
 import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
-import Page.UI.Attributes exposing (headingMD, lineSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (searchKeywordInput)
 
 
@@ -29,12 +29,12 @@ viewFacetsForPeopleMode language model body =
                 |> Maybe.withDefault ""
     in
     row
-        (List.append
-            [ padding 10
-            , scrollbarY
-            ]
-            widthFillHeightFill
-        )
+        [ padding 10
+        , scrollbarY
+        , width fill
+        , alignTop
+        , height fill
+        ]
         [ column
             [ spacing lineSpacing
             , width fill
@@ -49,18 +49,9 @@ viewFacetsForPeopleMode language model body =
                     [ searchKeywordInput language msgs qText ]
                 ]
             , row
-                (List.append
-                    [ width fill
-                    , alignTop
-                    ]
-                    []
-                 --facetBorderBottom
-                )
+                (List.append [ width fill ] facetBorderBottom)
                 [ column
-                    (List.append
-                        []
-                        widthFillHeightFill
-                    )
+                    widthFillHeightFill
                     [ el
                         [ width fill
                         , headingMD

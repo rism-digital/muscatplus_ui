@@ -1,7 +1,7 @@
 module Page.Search.Views.SearchControls.Sources exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, el, fill, padding, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, padding, row, scrollbarY, spacing, text, width)
 import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
@@ -29,14 +29,17 @@ viewFacetsForSourcesMode language model body =
                 |> Maybe.withDefault ""
     in
     row
-        (List.append
-            [ padding 10
-            , scrollbarY
-            ]
-            widthFillHeightFill
-        )
+        [ padding 10
+        , scrollbarY
+        , width fill
+        , alignTop
+        , height fill
+        ]
         [ column
-            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            [ spacing lineSpacing
+            , width fill
+            , alignTop
+            ]
             [ row
                 widthFillHeightFill
                 [ column
@@ -57,8 +60,17 @@ viewFacetsForSourcesMode language model body =
                     ]
                 ]
             , viewFacetSection language
-                [ viewFacet "composer" language activeSearch body
-                , viewFacet "people" language activeSearch body
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill ]
+                        [ viewFacet "composer" language activeSearch body ]
+                    , column
+                        [ width fill ]
+                        [ viewFacet "people" language activeSearch body ]
+                    ]
                 ]
             , viewFacetSection language
                 [ viewFacet "date-range" language activeSearch body ]

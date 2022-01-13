@@ -20,6 +20,14 @@ import Page.UI.Components exposing (dropdownSelect, h5, h6)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Tooltip exposing (facetHelp)
+
+
+queryFacetHelp =
+    """
+    Type your term in the text box, and hit enter. Multiple terms and wildcards are supported.
+    Use the controls at the bottom to select between "AND" or "OR" behaviours when combining terms.
+    """
 
 
 viewQueryFacet : Language -> QueryFacet -> ActiveSearch -> Element SearchMsg
@@ -101,7 +109,7 @@ viewQueryFacet language facet activeSearch =
         interspersedOptions =
             case enteredOptions of
                 [] ->
-                    [ el [ Font.italic ] (text "Type your term in the text box, and hit enter. Multiple terms and wildcards are supported.") ]
+                    [ none ]
 
                 _ ->
                     List.intersperse joinWordEl enteredOptions
@@ -135,9 +143,7 @@ viewQueryFacet language facet activeSearch =
     row
         [ width fill
         , alignTop
-        , padding 10
-        , Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
-        , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+        , alignLeft
         ]
         [ column
             [ width fill
@@ -147,8 +153,21 @@ viewQueryFacet language facet activeSearch =
             [ row
                 [ width fill
                 , alignTop
+                , spacing lineSpacing
                 ]
-                [ h5 language facet.label ]
+                [ column
+                    [ alignTop ]
+                    [ facetHelp queryFacetHelp ]
+                , column
+                    [ width fill
+                    , alignLeft
+                    , alignTop
+                    ]
+                    [ row
+                        [ spacing 10 ]
+                        [ h5 language facet.label ]
+                    ]
+                ]
             , row
                 [ width fill ]
                 [ Input.text

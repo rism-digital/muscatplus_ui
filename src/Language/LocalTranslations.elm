@@ -12,6 +12,7 @@ import Language exposing (Language(..), LanguageValues(..))
 localTranslations :
     { search : List LanguageValues
     , home : List LanguageValues
+    , keywordQuery : List LanguageValues
     , queryEnter : List LanguageValues
     , next : List LanguageValues
     , previous : List LanguageValues
@@ -43,6 +44,9 @@ localTranslations =
         , LanguageValues Spanish [ "Página principal" ]
         , LanguageValues Portugese [ "Início" ]
         , LanguageValues Polish [ "Strona główna" ]
+        ]
+    , keywordQuery =
+        [ LanguageValues English [ "Keyword query" ]
         ]
     , queryEnter =
         [ LanguageValues English [ "Words anywhere" ]
