@@ -1,7 +1,8 @@
 module Page.Search.Views.Previews.Person exposing (..)
 
 import Element exposing (Element, column, el, fill, link, none, paddingXY, row, spacing, text, width)
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Record.Views.Notes exposing (viewNotesSection)
 import Page.Record.Views.PageTemplate exposing (pageHeaderTemplate, pageUriTemplate)

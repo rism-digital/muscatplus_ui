@@ -4,7 +4,8 @@ import Element exposing (Element, alignRight, column, el, fill, htmlAttribute, m
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HTA
-import Language exposing (Language, localTranslations)
+import Language exposing (Language)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.TablesOfContents exposing (createSectionLink, createTocLink)
 import Page.RecordTypes.Source exposing (FullSourceBody)

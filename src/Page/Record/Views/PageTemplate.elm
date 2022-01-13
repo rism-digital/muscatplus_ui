@@ -2,7 +2,8 @@ module Page.Record.Views.PageTemplate exposing (..)
 
 import Element exposing (Element, alignBottom, alignRight, column, el, fill, htmlAttribute, link, row, text, width)
 import Html.Attributes as HTA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Views.RecordHistory exposing (viewRecordHistory)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.UI.Attributes exposing (headingLG, linkColour)

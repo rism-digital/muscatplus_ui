@@ -1,7 +1,8 @@
 module Page.Front.Views exposing (..)
 
 import Element exposing (Element, alignTop, centerX, column, el, fill, height, maximum, minimum, none, paddingXY, paragraph, row, text, width)
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg)
 import Page.RecordTypes.Root exposing (RootBody)

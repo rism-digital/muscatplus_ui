@@ -6,7 +6,8 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.SideBar.Msg exposing (SideBarMsg(..))
 import Page.UI.Animations exposing (animatedLabel)

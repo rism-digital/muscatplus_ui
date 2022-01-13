@@ -1,8 +1,9 @@
 module Page.Record.Views.PersonPage.TableOfContents exposing (..)
 
-import Element exposing (Element, alignRight, column, el, fill, moveDown, moveLeft, none, padding, px, row, spacing, width)
+import Element exposing (Element, alignRight, column, el, fill, moveDown, moveLeft, padding, px, row, spacing, width)
 import Element.Border as Border
-import Language exposing (Language, LanguageMap, localTranslations)
+import Language exposing (Language, LanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.TablesOfContents exposing (createSectionLink, createTocLink)
 import Page.RecordTypes.Person exposing (PersonBody)

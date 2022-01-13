@@ -1,7 +1,8 @@
 module Page.Search.Views.Previews.Incipit exposing (..)
 
 import Element exposing (Element, column, el, fill, link, row, spacing, text, width)
-import Language exposing (Language, extractLabelFromLanguageMap, localTranslations)
+import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Views.PageTemplate exposing (pageUriTemplate)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing, widthFillHeightFill)
