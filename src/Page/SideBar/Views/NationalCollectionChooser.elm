@@ -1,12 +1,11 @@
 module Page.SideBar.Views.NationalCollectionChooser exposing (..)
 
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, htmlAttribute, height, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
-import Html.Attributes
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
@@ -47,7 +46,7 @@ viewNationalCollectionChooserMenuOption session =
                             [ width (px 40)
                             , centerX
                             , centerY
-                            , htmlAttribute (Html.Attributes.style "text-align" "center")
+                            , Font.center
                             , Font.bold
                             , headingMD
                             , Font.color (colourScheme.white |> convertColorToElementColor)
@@ -72,7 +71,7 @@ viewNationalCollectionChooserMenuOption session =
         iconBackgroundColor =
             case session.restrictedToNationalCollection of
                 Just _ ->
-                    footerBackground
+                    Background.color (colourScheme.turquoise |> convertColorToElementColor)
 
                 Nothing ->
                     emptyAttribute
