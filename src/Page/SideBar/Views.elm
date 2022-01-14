@@ -48,6 +48,7 @@ unlinkedMenuOption cfg =
         { icon = cfg.icon colourScheme.slateGrey
         , label = cfg.label
         , showLabel = cfg.showLabel
+        , isCurrent = False
         }
         []
 
@@ -56,6 +57,7 @@ menuOption :
     { icon : Color -> Element SideBarMsg
     , label : Element SideBarMsg
     , showLabel : Bool
+    , isCurrent : Bool
     }
     -> SideBarOption
     -> Bool
@@ -63,14 +65,14 @@ menuOption :
 menuOption cfg option currentlyHovered =
     let
         fontColour =
-            if currentlyHovered == True then
+            if currentlyHovered == True || cfg.isCurrent == True then
                 colourScheme.white
 
             else
                 colourScheme.slateGrey
 
         hoverStyles =
-            if currentlyHovered == True then
+            if currentlyHovered == True || cfg.isCurrent == True then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                 ]
 
@@ -94,6 +96,7 @@ menuOption cfg option currentlyHovered =
             { icon = icon
             , label = cfg.label
             , showLabel = cfg.showLabel
+            , isCurrent = cfg.isCurrent
             }
     in
     menuOptionTemplate newCfg additionalOptions
@@ -103,6 +106,7 @@ menuOptionTemplate :
     { icon : Element SideBarMsg
     , label : Element SideBarMsg
     , showLabel : Bool
+    , isCurrent : Bool
     }
     -> List (Attribute SideBarMsg)
     -> Element SideBarMsg
@@ -147,8 +151,14 @@ view session =
         currentlyHoveredOption =
             session.currentlyHoveredOption
 
+        currentlySelectedOption =
+            session.showFrontSearchInterface
+
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
+
+        checkSelected opt =
+            opt == currentlySelectedOption
 
         ( sideAnimation, showLabels ) =
             case sideBarAnimation of
@@ -269,6 +279,7 @@ view session =
                     { icon = sourcesSvg
                     , label = text "Sources"
                     , showLabel = showLabels
+                    , isCurrent = checkSelected SourceSearchOption
                     }
                     SourceSearchOption
                     (checkHover SourceSearchOption)
@@ -276,6 +287,7 @@ view session =
                     { icon = peopleSvg
                     , label = text "People"
                     , showLabel = showLabels
+                    , isCurrent = checkSelected PeopleSearchOption
                     }
                     PeopleSearchOption
                     (checkHover PeopleSearchOption)
@@ -283,6 +295,7 @@ view session =
                     { icon = institutionSvg
                     , label = text "Institutions"
                     , showLabel = showLabels
+                    , isCurrent = checkSelected InstitutionSearchOption
                     }
                     InstitutionSearchOption
                     (checkHover InstitutionSearchOption)
@@ -290,6 +303,7 @@ view session =
                     { icon = musicNotationSvg
                     , label = text "Incipits"
                     , showLabel = showLabels
+                    , isCurrent = checkSelected IncipitSearchOption
                     }
                     IncipitSearchOption
                     (checkHover IncipitSearchOption)
