@@ -71,7 +71,7 @@ viewNationalCollectionChooserMenuOption session =
         iconBackgroundColor =
             case session.restrictedToNationalCollection of
                 Just _ ->
-                    footerBackground
+                    Background.color (colourScheme.turquoise |> convertColorToElementColor)
 
                 Nothing ->
                     emptyAttribute
