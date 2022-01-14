@@ -2,7 +2,7 @@ module Page.Search.Views.Facets.QueryFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, below, column, el, fill, height, htmlAttribute, mouseOver, none, padding, paddingXY, pointer, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, below, column, el, fill, height, htmlAttribute, mouseOver, none, padding, paddingXY, pointer, px, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -157,7 +157,7 @@ viewQueryFacet language facet activeSearch =
                 ]
                 [ column
                     [ alignTop ]
-                    [ facetHelp queryFacetHelp ]
+                    [ facetHelp above queryFacetHelp ]
                 , column
                     [ width fill
                     , alignLeft

@@ -1,7 +1,7 @@
 module Page.UI.Components exposing (..)
 
 import Color exposing (Color)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, padding, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, padding, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -284,7 +284,7 @@ searchKeywordInput language msgs queryText =
                 ]
                 [ column
                     [ alignTop ]
-                    [ facetHelp keywordInputHelp ]
+                    [ facetHelp below keywordInputHelp ]
                 , column
                     [ width fill
                     , alignLeft

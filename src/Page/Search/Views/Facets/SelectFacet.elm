@@ -1,7 +1,7 @@
 module Page.Search.Views.Facets.SelectFacet exposing (..)
 
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Input exposing (checkbox, labelRight)
@@ -211,7 +211,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                 ]
                 [ column
                     [ alignTop ]
-                    [ facetHelp selectFacetHelp ]
+                    [ facetHelp above selectFacetHelp ]
                 , column
                     [ width fill
                     , alignLeft

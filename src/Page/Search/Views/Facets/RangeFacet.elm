@@ -2,7 +2,7 @@ module Page.Search.Views.Facets.RangeFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignTop, column, fill, none, padding, paddingXY, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, column, fill, none, padding, paddingXY, paragraph, px, row, spacing, text, width)
 import Element.Events as Events
 import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)
@@ -75,7 +75,7 @@ viewRangeFacet language activeSearch body =
                 ]
                 [ column
                     [ alignTop ]
-                    [ facetHelp rangeFacetHelp ]
+                    [ facetHelp above rangeFacetHelp ]
                 , column
                     [ width fill
                     , alignLeft

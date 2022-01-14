@@ -9,11 +9,11 @@ import Page.UI.Images exposing (assistanceSvg)
 import Page.UI.Style exposing (colourScheme)
 
 
-facetHelp : String -> Element msg
-facetHelp helpText =
+facetHelp : (Element msg -> Attribute msg) -> String -> Element msg
+facetHelp position helpText =
     el
         [ width (px 12)
-        , tooltip above (helpBubble helpText)
+        , tooltip position (helpBubble helpText)
         ]
         (assistanceSvg colourScheme.slateGrey)
 
@@ -34,14 +34,14 @@ helpBubble str =
 
 
 tooltip : (Element msg -> Attribute msg) -> Element Never -> Attribute msg
-tooltip usher tooltip_ =
+tooltip position tooltip_ =
     inFront <|
         el
             [ width fill
             , height fill
             , transparent True
             , mouseOver [ transparent False ]
-            , (usher << Element.map never) <|
+            , (position << Element.map never) <|
                 el [ htmlAttribute (Html.Attributes.style "pointerEvents" "none") ]
                     tooltip_
             ]
