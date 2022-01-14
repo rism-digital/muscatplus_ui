@@ -1,17 +1,18 @@
 module Page.SideBar.Views.NationalCollectionChooser exposing (..)
 
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, htmlAttribute, height, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
+import Html.Attributes
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.SideBar.Msg exposing (SideBarMsg(..))
 import Page.UI.Animations exposing (animatedLabel)
-import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, sectionSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, footerBackground, headingLG, headingMD, sectionSpacing)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (flagSvg, globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -43,9 +44,10 @@ viewNationalCollectionChooserMenuOption session =
                             ]
                             (flagSvg colourScheme.white)
                         , el
-                            [ width (px 25)
+                            [ width (px 40)
                             , centerX
                             , centerY
+                            , htmlAttribute (Html.Attributes.style "text-align" "center")
                             , Font.bold
                             , headingMD
                             , Font.color (colourScheme.white |> convertColorToElementColor)
@@ -70,7 +72,7 @@ viewNationalCollectionChooserMenuOption session =
         iconBackgroundColor =
             case session.restrictedToNationalCollection of
                 Just _ ->
-                    Background.color (colourScheme.turquoise |> convertColorToElementColor)
+                    footerBackground
 
                 Nothing ->
                     emptyAttribute
