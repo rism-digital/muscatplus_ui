@@ -9,7 +9,7 @@ type RecordType
     | Incipit
     | Festival
     | CollectionSearchResult
-    | Root
+    | Front
     | Unknown
 
 
@@ -22,7 +22,7 @@ recordTypeOptions =
     , ( "rism:Place", Place )
     , ( "rism:LiturgicalFestival", Festival )
     , ( "Collection", CollectionSearchResult )
-    , ( "rism:Root", Root )
+    , ( "rism:Front", Front )
     ]
 
 

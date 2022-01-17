@@ -1,7 +1,7 @@
 module Page.UI.Attributes exposing (..)
 
 import Color exposing (toCssString)
-import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, paddingXY, width)
+import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, modular, paddingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -149,7 +149,12 @@ ratioCalc size =
 
 fontBaseSize : Attr decorative msg
 fontBaseSize =
-    Font.size (ratioCalc 0.0)
+    Font.size (ratioCalc 1.0)
+
+
+headingHero : Attr decoative msg
+headingHero =
+    Font.size (ratioCalc 8.0)
 
 
 headingXXL : Attr decorative msg

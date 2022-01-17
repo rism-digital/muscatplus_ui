@@ -1,15 +1,11 @@
 module Page.Front.Views exposing (..)
 
-import Element exposing (Element, alignTop, centerX, column, el, fill, height, maximum, minimum, none, paddingXY, paragraph, row, text, width)
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
-import Language.LocalTranslations exposing (localTranslations)
+import Element exposing (Element, alignTop, centerX, column, el, fill, height, maximum, minimum, paddingXY, row, text, width)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg)
-import Page.RecordTypes.Root exposing (RootBody)
-import Page.RecordTypes.Shared exposing (LabelValue)
+import Page.Front.Views.SourceSearch exposing (sourceSearchPanelView)
 import Page.SideBar.Msg exposing (SideBarOption(..))
-import Page.UI.Attributes exposing (headingMD, headingXL)
-import Response exposing (Response(..), ServerData(..))
+import Page.UI.Attributes exposing (headingXL)
 import Session exposing (Session)
 
 
@@ -19,7 +15,7 @@ view session model =
         bodyView =
             case session.showFrontSearchInterface of
                 SourceSearchOption ->
-                    sourceSearchFrontPage
+                    sourceSearchFrontPage session model
 
                 PeopleSearchOption ->
                     peopleSearchFrontPage
@@ -45,19 +41,22 @@ view session model =
                 [ width fill ]
                 []
             , bodyView
-
-            --, viewWelcomeMessageRouter session model
             ]
         ]
 
 
-sourceSearchFrontPage : Element msg
-sourceSearchFrontPage =
+sourceSearchFrontPage : Session -> FrontPageModel -> Element FrontMsg
+sourceSearchFrontPage session model =
     row
         [ width fill
         , centerX
         ]
-        [ el [ headingXL ] (text "Source search") ]
+        [ column
+            [ width fill
+            , height fill
+            ]
+            [ sourceSearchPanelView session model ]
+        ]
 
 
 peopleSearchFrontPage : Element msg
@@ -85,56 +84,3 @@ incipitSearchFrontPage =
         , centerX
         ]
         [ el [ headingXL ] (text "Incipit search") ]
-
-
-viewWelcomeMessageRouter : Session -> FrontPageModel -> Element msg
-viewWelcomeMessageRouter session model =
-    case model.response of
-        Response (RootData body) ->
-            viewWelcomeMessage session.language body
-
-        _ ->
-            none
-
-
-viewWelcomeMessage : Language -> RootBody -> Element msg
-viewWelcomeMessage language body =
-    let
-        stats =
-            body.stats
-
-        searchLabel =
-            extractLabelFromLanguageMap language localTranslations.search
-
-        formattedStats =
-            List.map (\t -> formatStat t language) stats
-
-        allStats =
-            String.join " — " formattedStats
-    in
-    row
-        [ width fill
-        , paddingXY 0 20
-        ]
-        [ paragraph
-            [ headingMD ]
-            [ text (searchLabel ++ " " ++ allStats) ]
-        ]
-
-
-formatStat : LabelValue -> Language -> String
-formatStat stat language =
-    let
-        statLabel =
-            extractLabelFromLanguageMap language stat.label
-
-        statValue =
-            extractLabelFromLanguageMap language stat.value
-
-        statValueNumber =
-            Maybe.withDefault 0.0 (String.toFloat statValue)
-
-        statValueFormatted =
-            formatNumberByLanguage language statValueNumber
-    in
-    statValueFormatted ++ " " ++ statLabel

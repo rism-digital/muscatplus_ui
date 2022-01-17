@@ -8,8 +8,8 @@ import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
+import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, widthFillHeightFill)
-import Page.UI.Components exposing (searchKeywordInput)
 
 
 viewFacetsForPeopleMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg

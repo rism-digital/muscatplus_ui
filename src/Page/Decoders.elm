@@ -7,11 +7,11 @@ import Page.RecordTypes
         , recordTypeFromJsonType
         )
 import Page.RecordTypes.Festival exposing (liturgicalFestivalBodyDecoder)
+import Page.RecordTypes.Front exposing (frontBodyDecoder)
 import Page.RecordTypes.Incipit exposing (incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)
 import Page.RecordTypes.Person exposing (personBodyDecoder)
 import Page.RecordTypes.Place exposing (placeBodyDecoder)
-import Page.RecordTypes.Root exposing (frontBodyDecoder)
 import Page.RecordTypes.Search exposing (searchBodyDecoder)
 import Page.RecordTypes.Source exposing (sourceBodyDecoder)
 import Response exposing (ServerData(..))
@@ -58,9 +58,9 @@ placeResponseDecoder =
     Decode.map PlaceData placeBodyDecoder
 
 
-rootResponseDecoder : Decoder ServerData
-rootResponseDecoder =
-    Decode.map RootData frontBodyDecoder
+frontResponseDecoder : Decoder ServerData
+frontResponseDecoder =
+    Decode.map FrontData frontBodyDecoder
 
 
 recordResponseConverter : String -> Decoder ServerData
@@ -87,8 +87,8 @@ recordResponseConverter typevalue =
         CollectionSearchResult ->
             searchResponseDecoder
 
-        Root ->
-            rootResponseDecoder
+        Front ->
+            frontResponseDecoder
 
         -- TODO: This is obviously wrong! Fix it with the actual response types
         --       once we have a clear idea of what they are.

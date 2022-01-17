@@ -39,6 +39,17 @@ init initialRoute =
     }
 
 
+empty : ActiveSearch
+empty =
+    { nextQuery = Page.Query.defaultQueryArgs
+    , expandedFacets = []
+    , keyboard = Keyboard.initModel
+    , selectedResultSort = Nothing
+    , activeSuggestion = Nothing
+    , rangeFacetValues = Dict.empty
+    }
+
+
 toActiveSearch : { a | activeSearch : ActiveSearch } -> ActiveSearch
 toActiveSearch model =
     model.activeSearch

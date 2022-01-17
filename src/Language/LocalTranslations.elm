@@ -4,6 +4,9 @@ module Language.LocalTranslations exposing (..)
 
     Local translations that do not come from the server
 
+    Some values use string interpolation for providing additional information after
+    translation.
+
 -}
 
 import Language exposing (Language(..), LanguageValues(..))
@@ -13,6 +16,7 @@ localTranslations :
     { search : List LanguageValues
     , home : List LanguageValues
     , keywordQuery : List LanguageValues
+    , searchNumberOfRecords : List LanguageValues
     , queryEnter : List LanguageValues
     , next : List LanguageValues
     , previous : List LanguageValues
@@ -48,6 +52,8 @@ localTranslations =
     , keywordQuery =
         [ LanguageValues English [ "Keyword query" ]
         ]
+    , searchNumberOfRecords =
+        [ LanguageValues English [ "Search {{ numberOfRecords }} {{ recordType }}" ] ]
     , queryEnter =
         [ LanguageValues English [ "Words anywhere" ]
         , LanguageValues German [ "Eingabe Ihrer Anfrage" ]

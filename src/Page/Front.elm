@@ -1,10 +1,13 @@
 module Page.Front exposing (..)
 
+import ActiveSearch exposing (setActiveSearch)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
+import Page.Query exposing (setKeywordQuery, setNextQuery, toNextQuery)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Response exposing (Response(..))
 import Url exposing (Url)
+import Utlities exposing (flip)
 
 
 type alias Model =
@@ -17,7 +20,9 @@ type alias Msg =
 
 init : FrontPageModel
 init =
-    { response = Loading Nothing }
+    { response = Loading Nothing
+    , activeSearch = ActiveSearch.empty
+    }
 
 
 frontPageRequest : Url -> Cmd FrontMsg
@@ -41,6 +46,28 @@ update msg model =
               }
             , Cmd.none
             )
+
+        UserInputTextInKeywordQueryBox queryText ->
+            let
+                newText =
+                    if String.isEmpty queryText then
+                        Nothing
+
+                    else
+                        Just queryText
+
+                newQueryArgs =
+                    toNextQuery model.activeSearch
+                        |> setKeywordQuery newText
+
+                newModel =
+                    setNextQuery newQueryArgs model.activeSearch
+                        |> flip setActiveSearch model
+            in
+            ( newModel, Cmd.none )
+
+        UserTriggeredSearchSubmit ->
+            ( model, Cmd.none )
 
         NothingHappened ->
             ( model, Cmd.none )

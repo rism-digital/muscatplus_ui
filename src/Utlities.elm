@@ -4,6 +4,7 @@ import Dict exposing (Dict)
 import Element exposing (Element)
 import Html.Parser exposing (Node(..))
 import Html.Parser.Util exposing (toVirtualDom)
+import Regex
 
 
 flip : (a -> b -> c) -> b -> a -> c
@@ -76,3 +77,29 @@ toLinkedHtml htmlString =
 
         Err _ ->
             Err "Invalid Html"
+
+
+{-| Interpolate a named placeholder
+"What happened to the {{ food }}? Maybe {{ person }} ate it?"
+|> String.Format.namedValue "food" "cake"
+|> String.Format.namedValue "person" "Joe"
+-- "What happened to the cake? Maybe Joe ate it?"
+
+Minimal code taken from
+
+<https://github.com/jorgengranseth/elm-string-format/blob/1.0.1/src/String/Format.elm>
+
+-}
+namedValue : String -> String -> String -> String
+namedValue name val =
+    let
+        placeholder =
+            regex <| "{{\\s*" ++ name ++ "\\s*}}"
+    in
+    Regex.replace placeholder (\_ -> val)
+
+
+regex : String -> Regex.Regex
+regex =
+    Regex.fromString
+        >> Maybe.withDefault Regex.never

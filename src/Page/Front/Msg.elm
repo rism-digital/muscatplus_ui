@@ -7,4 +7,6 @@ import Response exposing (ServerData)
 
 type FrontMsg
     = ServerRespondedWithFrontData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
+    | UserInputTextInKeywordQueryBox String
+    | UserTriggeredSearchSubmit
     | NothingHappened
