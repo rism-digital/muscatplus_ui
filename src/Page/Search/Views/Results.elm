@@ -124,14 +124,6 @@ viewSearchResult language selectedResult result =
                 ]
                 [ resultTitle
                 ]
-            , row
-                [ width fill
-                , alignLeft
-                ]
-                [ link
-                    [ Font.color (fontLinkColor |> convertColorToElementColor) ]
-                    { url = result.id, label = text result.id }
-                ]
             , summary
             , partOf
             , resultFlags
