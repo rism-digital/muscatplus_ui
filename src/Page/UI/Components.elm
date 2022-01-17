@@ -1,22 +1,18 @@
 module Page.UI.Components exposing (..)
 
 import Color exposing (Color)
-import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, html, htmlAttribute, padding, paddingXY, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, column, el, height, html, htmlAttribute, none, padding, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Element.Input as Input
 import Element.Region as Region
 import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
-import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes, widthFillHeightFill)
-import Page.UI.Events exposing (onEnter)
 import Page.UI.Style exposing (convertColorToElementColor)
-import Page.UI.Tooltip exposing (facetHelp)
 import Utlities exposing (toLinkedHtml)
 
 
