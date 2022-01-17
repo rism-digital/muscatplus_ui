@@ -18,7 +18,6 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp)
 import String.Extra as SE
 
-
 selectFacetHelp =
     """
     Select from the list of values. You can order the values alphabetically or numerically (the count of the number of
@@ -118,18 +117,19 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
             else
                 List.take 12 sortedItems
 
-        numberOfHiddenItems =
-            List.length sortedItems - 12
+        totalItems =
+            List.length sortedItems
+
+        isTruncated = (totalItems == 200)
 
         -- TODO: Explain this better; why 200 items?
         truncatedNote =
-            if List.length sortedItems == 200 then
+            if isTruncated then
                 el
                     [ alignLeft
                     , bodyXS
                     ]
-                    (text "Top 200 values shown")
-
+                    (text ("List truncated to " ++ String.fromInt totalItems ++ " values"))
             else
                 none
 
@@ -137,9 +137,11 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
         showMoreText =
             if isExpanded == True then
                 "Collapse options list"
-
             else
-                "Show " ++ String.fromInt numberOfHiddenItems ++ " more"
+                if isTruncated then
+                    "Show 200 first values"
+                else
+                    "Show all " ++ String.fromInt totalItems ++ " values"
 
         showLink =
             if List.length sortedItems > 12 then
