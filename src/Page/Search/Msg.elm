@@ -18,9 +18,9 @@ type SearchMsg
     | ClientJumpedToId
     | ClientResetViewport
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
-    | UserChangedFacetSort FacetAlias FacetSorts
-    | UserClickedFacetExpand String
-    | UserClickedFacetItem FacetAlias String Bool
+    | UserChangedSelectFacetSort FacetAlias FacetSorts
+    | UserClickedSelectFacetExpand String
+    | UserClickedSelectFacetItem FacetAlias String Bool
     | UserClickedFacetToggle FacetAlias
     | UserClickedFacetPanelToggle
     | UserEnteredTextInQueryFacet FacetAlias String String

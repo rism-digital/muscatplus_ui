@@ -353,7 +353,7 @@ update session msg model =
                 |> flip setActiveSearch model
                 |> probeSubmit session
 
-        UserChangedFacetSort alias facetSort ->
+        UserChangedSelectFacetSort alias facetSort ->
             let
                 newFacetSorts =
                     toNextQuery model.activeSearch
@@ -506,7 +506,7 @@ update session msg model =
                 |> flip setActiveSearch model
                 |> probeSubmit session
 
-        UserClickedFacetExpand alias ->
+        UserClickedSelectFacetExpand alias ->
             let
                 newExpandedFacets =
                     toExpandedFacets model.activeSearch
@@ -518,7 +518,7 @@ update session msg model =
             in
             ( newModel, Cmd.none )
 
-        UserClickedFacetItem alias facetValue isClicked ->
+        UserClickedSelectFacetItem alias facetValue isClicked ->
             let
                 activeFilters =
                     toNextQuery model.activeSearch

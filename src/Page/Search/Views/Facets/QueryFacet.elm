@@ -14,9 +14,8 @@ import Page.Query exposing (toFacetBehaviours, toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), QueryFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviourItems, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias, LabelValue)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion(..), toAlias, toSuggestionList)
-import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (bodySM, headingSM, lineSpacing)
-import Page.UI.Components exposing (dropdownSelect, h5, h6)
+import Page.UI.Components exposing (dropdownSelect, h5)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -30,14 +29,29 @@ queryFacetHelp =
     """
 
 
-viewQueryFacet : Language -> QueryFacet -> ActiveSearch -> Element SearchMsg
-viewQueryFacet language facet activeSearch =
+type alias QueryFacetConfig msg =
+    { language : Language
+    , activeSearch : ActiveSearch
+    , queryFacet : QueryFacet
+    , userRemovedMsg : String -> String -> msg
+    , userHitEnterMsg : String -> FacetBehaviours -> msg
+    , userEnteredTextMsg : FacetAlias -> String -> String -> msg
+    , userChangedBehaviourMsg : FacetAlias -> FacetBehaviours -> msg
+    , userChoseOptionMsg : FacetAlias -> String -> FacetBehaviours -> msg
+    }
+
+
+viewQueryFacet : QueryFacetConfig msg -> Element msg
+viewQueryFacet config =
     let
         facetAlias =
-            facet.alias
+            .alias config.queryFacet
+
+        facetLabel =
+            .label config.queryFacet
 
         currentValues =
-            toNextQuery activeSearch
+            toNextQuery config.activeSearch
                 |> toFilters
                 |> Dict.get facetAlias
 
@@ -52,17 +66,17 @@ viewQueryFacet language facet activeSearch =
                 |> Maybe.withDefault []
 
         facetBehaviours =
-            toBehaviours facet
+            toBehaviours config.queryFacet
                 |> toBehaviourItems
 
         serverBehaviourOption =
-            toBehaviours facet
+            toBehaviours config.queryFacet
                 |> toCurrentBehaviour
 
         -- if an override hasn't been set in the facetBehaviours
         -- then choose the behaviour that came from the server.
         currentBehaviourOption =
-            toNextQuery activeSearch
+            toNextQuery config.activeSearch
                 |> toFacetBehaviours
                 |> Dict.get facetAlias
                 |> Maybe.withDefault serverBehaviourOption
@@ -96,14 +110,15 @@ viewQueryFacet language facet activeSearch =
                                 []
                                 [ el
                                     [ width (px 20)
-                                    , onClick (UserRemovedItemFromQueryFacet facetAlias t)
+                                    , onClick (config.userRemovedMsg facetAlias t)
                                     ]
                                     (closeWindowSvg colourScheme.white)
                                 ]
                             ]
                         )
                 )
-                (List.reverse activeValues)
+            <|
+                List.reverse activeValues
 
         -- TODO: Translate
         interspersedOptions =
@@ -115,7 +130,7 @@ viewQueryFacet language facet activeSearch =
                     List.intersperse joinWordEl enteredOptions
 
         listOfBehavioursForDropdown =
-            List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap language v.label )) facetBehaviours
+            List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )) facetBehaviours
 
         behaviourIcon =
             case currentBehaviourOption of
@@ -126,13 +141,13 @@ viewQueryFacet language facet activeSearch =
                     intersectionSvg colourScheme.slateGrey
 
         suggestionUrl =
-            facet.suggestions
+            .suggestions config.queryFacet
 
         activeSuggestion =
-            case activeSearch.activeSuggestion of
+            case .activeSuggestion config.activeSearch of
                 Just suggestions ->
                     if toAlias suggestions == facetAlias then
-                        viewSuggestionDropdown language facetAlias currentBehaviourOption suggestions
+                        viewSuggestionDropdown config currentBehaviourOption suggestions
 
                     else
                         none
@@ -165,7 +180,7 @@ viewQueryFacet language facet activeSearch =
                     ]
                     [ row
                         [ spacing 10 ]
-                        [ h5 language facet.label ]
+                        [ h5 config.language facetLabel ]
                     ]
                 ]
             , row
@@ -174,15 +189,15 @@ viewQueryFacet language facet activeSearch =
                     [ width (px 400)
                     , Border.rounded 0
                     , htmlAttribute (HA.autocomplete False)
-                    , onEnter (UserHitEnterInQueryFacet facet.alias currentBehaviourOption)
+                    , onEnter (config.userHitEnterMsg facetAlias currentBehaviourOption)
                     , headingSM
                     , paddingXY 10 12
                     , below activeSuggestion
                     ]
-                    { label = Input.labelHidden (extractLabelFromLanguageMap language facet.label)
-                    , placeholder = Just (Input.placeholder [] (text "Add terms to your query"))
+                    { label = Input.labelHidden (extractLabelFromLanguageMap config.language facetLabel)
+                    , placeholder = Just <| Input.placeholder [] (text "Add terms to your query")
                     , text = textValue
-                    , onChange = \input -> UserEnteredTextInQueryFacet facet.alias input suggestionUrl
+                    , onChange = \input -> config.userEnteredTextMsg facetAlias input suggestionUrl
                     }
                 ]
             , wrappedRow
@@ -212,7 +227,7 @@ viewQueryFacet language facet activeSearch =
                     , width (px 50)
                     ]
                     (dropdownSelect
-                        (\inp -> UserChangedFacetBehaviour facetAlias (parseStringToFacetBehaviour inp))
+                        (\inp -> config.userChangedBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp)
                         listOfBehavioursForDropdown
                         (\inp -> parseStringToFacetBehaviour inp)
                         currentBehaviourOption
@@ -222,8 +237,8 @@ viewQueryFacet language facet activeSearch =
         ]
 
 
-viewSuggestionDropdown : Language -> FacetAlias -> FacetBehaviours -> ActiveSuggestion -> Element SearchMsg
-viewSuggestionDropdown language facetAlias currentBehaviour activeSuggestions =
+viewSuggestionDropdown : QueryFacetConfig msg -> FacetBehaviours -> ActiveSuggestion -> Element msg
+viewSuggestionDropdown config currentBehaviour activeSuggestions =
     column
         [ width (px 500)
         , Background.color (colourScheme.white |> convertColorToElementColor)
@@ -232,15 +247,18 @@ viewSuggestionDropdown language facetAlias currentBehaviour activeSuggestions =
         , Border.color (colourScheme.darkGrey |> convertColorToElementColor)
         ]
         (toSuggestionList activeSuggestions
-            |> List.map (viewSuggestionItem language facetAlias currentBehaviour)
+            |> List.map (viewSuggestionItem config currentBehaviour)
         )
 
 
-viewSuggestionItem : Language -> FacetAlias -> FacetBehaviours -> LabelValue -> Element SearchMsg
-viewSuggestionItem language facetAlias currentBehaviour suggestionItem =
+viewSuggestionItem : QueryFacetConfig msg -> FacetBehaviours -> LabelValue -> Element msg
+viewSuggestionItem config currentBehaviour suggestionItem =
     let
+        facetAlias =
+            .alias config.queryFacet
+
         suggestValue =
-            extractLabelFromLanguageMap language suggestionItem.label
+            extractLabelFromLanguageMap config.language suggestionItem.label
     in
     row
         [ width fill
@@ -250,7 +268,7 @@ viewSuggestionItem language facetAlias currentBehaviour suggestionItem =
             , Font.color (colourScheme.white |> convertColorToElementColor)
             ]
         , padding 10
-        , onClick (UserChoseOptionFromQueryFacetSuggest facetAlias suggestValue currentBehaviour)
+        , onClick (config.userChoseOptionMsg facetAlias suggestValue currentBehaviour)
         ]
         [ text suggestValue
         ]

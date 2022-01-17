@@ -9,13 +9,14 @@ import Element.Font as Font
 import Element.Input exposing (checkbox, labelLeft)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetData(..), FacetItem(..), FacetSorts(..), ModeFacet, QueryFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
-import Page.Search.Msg exposing (SearchMsg(..))
+import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetData(..), FacetItem(..), FacetSorts(..), Facets, ModeFacet, QueryFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
+import Page.RecordTypes.Shared exposing (FacetAlias)
+import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets.NotationFacet exposing (viewKeyboardControl)
-import Page.Search.Views.Facets.QueryFacet exposing (viewQueryFacet)
-import Page.Search.Views.Facets.RangeFacet exposing (viewRangeFacet)
-import Page.Search.Views.Facets.SelectFacet exposing (viewSelectFacet)
-import Page.Search.Views.Facets.ToggleFacet exposing (viewToggleFacet)
+import Page.Search.Views.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
+import Page.Search.Views.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
+import Page.Search.Views.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
+import Page.Search.Views.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
 import Page.UI.Attributes exposing (facetBorderBottom, headingSM, lineSpacing, widthFillHeightFill)
 import Page.UI.Images exposing (chevronDownSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -157,14 +158,17 @@ viewFacetSection language facets =
         ]
 
 
-viewFacet : String -> Language -> ActiveSearch -> SearchBody -> Element SearchMsg
-viewFacet facetKey language activeSearch body =
+viewFacet :
+    FacetAlias
+    -> Language
+    -> ActiveSearch
+    -> { a | facets : Facets }
+    -> Element SearchMsg
+viewFacet alias language activeSearch body =
     let
-        facetDict =
-            body.facets
-
         facetConf =
-            Dict.get facetKey facetDict
+            body.facets
+                |> Dict.get alias
 
         query =
             activeSearch.nextQuery
@@ -174,26 +178,45 @@ viewFacet facetKey language activeSearch body =
     in
     case facetConf of
         Just (ToggleFacetData facet) ->
-            viewToggleFacet language activeFilters facet
+            let
+                toggleFacetConfig : ToggleFacetConfig SearchMsg
+                toggleFacetConfig =
+                    { language = language
+                    , activeSearch = activeSearch
+                    , toggleFacet = facet
+                    , userClickedFacetToggleMsg = SearchMsg.UserClickedFacetToggle
+                    }
+            in
+            viewToggleFacet toggleFacetConfig
 
         Just (RangeFacetData facet) ->
-            viewRangeFacet language activeSearch facet
+            let
+                rangeFacetConfig : RangeFacetConfig SearchMsg
+                rangeFacetConfig =
+                    { language = language
+                    , activeSearch = activeSearch
+                    , rangeFacet = facet
+                    , userEnteredTextMsg = SearchMsg.UserEnteredTextInRangeFacet
+                    , userFocusedMsg = SearchMsg.UserFocusedRangeFacet
+                    , userLostFocusMsg = SearchMsg.UserLostFocusRangeFacet
+                    }
+            in
+            viewRangeFacet rangeFacetConfig
 
         Just (SelectFacetData facet) ->
             let
-                facetSorts =
-                    query.facetSorts
-
-                expandedFacets =
-                    activeSearch.expandedFacets
-
-                facetConfig =
-                    { facetSorts = facetSorts
-                    , activeFilters = activeFilters
-                    , expandedFacets = expandedFacets
+                selectFacetConfig : SelectFacetConfig SearchMsg
+                selectFacetConfig =
+                    { language = language
+                    , activeSearch = activeSearch
+                    , selectFacet = facet
+                    , userClickedFacetExpandMsg = SearchMsg.UserClickedSelectFacetExpand
+                    , userChangedFacetBehaviourMsg = SearchMsg.UserChangedFacetBehaviour
+                    , userChangedSelectFacetSortMsg = SearchMsg.UserChangedSelectFacetSort
+                    , userSelectedFacetItemMsg = SearchMsg.UserClickedSelectFacetItem
                     }
             in
-            viewSelectFacet language facetConfig facet
+            viewSelectFacet selectFacetConfig
 
         Just (NotationFacetData facet) ->
             let
@@ -203,7 +226,20 @@ viewFacet facetKey language activeSearch body =
             viewKeyboardControl language activeKeyboard
 
         Just (QueryFacetData facet) ->
-            viewQueryFacet language facet activeSearch
+            let
+                queryFacetConfig : QueryFacetConfig SearchMsg
+                queryFacetConfig =
+                    { language = language
+                    , queryFacet = facet
+                    , activeSearch = activeSearch
+                    , userRemovedMsg = SearchMsg.UserRemovedItemFromQueryFacet
+                    , userHitEnterMsg = SearchMsg.UserHitEnterInQueryFacet
+                    , userEnteredTextMsg = SearchMsg.UserEnteredTextInQueryFacet
+                    , userChangedBehaviourMsg = SearchMsg.UserChangedFacetBehaviour
+                    , userChoseOptionMsg = SearchMsg.UserChoseOptionFromQueryFacetSuggest
+                    }
+            in
+            viewQueryFacet queryFacetConfig
 
         _ ->
             none

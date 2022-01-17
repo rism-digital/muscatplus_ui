@@ -1,19 +1,32 @@
 module Page.Search.Views.Facets.ToggleFacet exposing (..)
 
+import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
 import Element exposing (Element, column, el, paddingXY, row)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.Query exposing (toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (ToggleFacet)
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Facets.Toggle as Toggle
 
 
-viewToggleFacet : Language -> Dict FacetAlias (List String) -> ToggleFacet -> Element SearchMsg
-viewToggleFacet language activeFilters facet =
+type alias ToggleFacetConfig msg =
+    { language : Language
+    , activeSearch : ActiveSearch
+    , toggleFacet : ToggleFacet
+    , userClickedFacetToggleMsg : FacetAlias -> msg
+    }
+
+
+viewToggleFacet : ToggleFacetConfig msg -> Element msg
+viewToggleFacet config =
     let
         facetAlias =
-            facet.alias
+            .alias config.toggleFacet
+
+        activeFilters =
+            toNextQuery config.activeSearch
+                |> toFilters
 
         isActive =
             Dict.member facetAlias activeFilters
@@ -25,8 +38,8 @@ viewToggleFacet language activeFilters facet =
             [ row
                 [ paddingXY 10 0 ]
                 [ el []
-                    (Toggle.view isActive (UserClickedFacetToggle facet.alias)
-                        |> Toggle.setLabel (extractLabelFromLanguageMap language facet.label)
+                    (Toggle.view isActive (config.userClickedFacetToggleMsg facetAlias)
+                        |> Toggle.setLabel (extractLabelFromLanguageMap config.language (.label config.toggleFacet))
                         |> Toggle.render
                     )
                 ]

@@ -7,7 +7,7 @@ import Language exposing (LanguageMap)
 import List.Extra as LE
 import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
-import Page.RecordTypes.Shared exposing (LabelBooleanValue, LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
+import Page.RecordTypes.Shared exposing (FacetAlias, LabelBooleanValue, LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 
 
@@ -85,7 +85,7 @@ type alias SearchPagination =
 
 
 type alias Facets =
-    Dict String FacetData
+    Dict FacetAlias FacetData
 
 
 type FacetType

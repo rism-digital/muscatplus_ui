@@ -2,12 +2,12 @@ module Page.Search.Views.Facets.RangeFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, above, alignLeft, alignTop, column, fill, none, padding, paddingXY, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, column, fill, none, paddingXY, paragraph, px, row, spacing, text, width)
 import Element.Events as Events
 import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
-import Page.Search.Msg exposing (SearchMsg(..))
+import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (h5)
 import Page.UI.Tooltip exposing (facetHelp)
@@ -48,14 +48,24 @@ validateInput boxIndicator value =
                 [ paragraph [] [ text eMsg ] ]
 
 
-viewRangeFacet : Language -> ActiveSearch -> RangeFacet -> Element SearchMsg
-viewRangeFacet language activeSearch body =
+type alias RangeFacetConfig msg =
+    { language : Language
+    , rangeFacet : RangeFacet
+    , activeSearch : ActiveSearch
+    , userLostFocusMsg : FacetAlias -> RangeFacetValue -> msg
+    , userFocusedMsg : FacetAlias -> RangeFacetValue -> msg
+    , userEnteredTextMsg : FacetAlias -> RangeFacetValue -> String -> msg
+    }
+
+
+viewRangeFacet : RangeFacetConfig msg -> Element msg
+viewRangeFacet config =
     let
         facetAlias =
-            body.alias
+            .alias config.rangeFacet
 
         ( lowerValue, upperValue ) =
-            Dict.get facetAlias activeSearch.rangeFacetValues
+            Dict.get facetAlias (.rangeFacetValues config.activeSearch)
                 |> Maybe.withDefault ( "*", "*" )
     in
     row
@@ -83,7 +93,7 @@ viewRangeFacet language activeSearch body =
                     ]
                     [ row
                         [ spacing 10 ]
-                        [ h5 language body.label ]
+                        [ h5 config.language (.label config.rangeFacet) ]
                     ]
                 ]
             , row
@@ -95,10 +105,10 @@ viewRangeFacet language activeSearch body =
                     [ spacing lineSpacing ]
                     [ Input.text
                         [ width (px 80)
-                        , Events.onLoseFocus (UserLostFocusRangeFacet facetAlias LowerRangeValue)
-                        , Events.onFocus (UserFocusedRangeFacet facetAlias LowerRangeValue)
+                        , Events.onLoseFocus (config.userLostFocusMsg facetAlias LowerRangeValue)
+                        , Events.onFocus (config.userFocusedMsg facetAlias LowerRangeValue)
                         ]
-                        { onChange = \c -> UserEnteredTextInRangeFacet facetAlias LowerRangeValue c
+                        { onChange = \c -> config.userEnteredTextMsg facetAlias LowerRangeValue c
                         , text = lowerValue
                         , placeholder = Nothing
                         , label = labelHidden ""
@@ -111,10 +121,10 @@ viewRangeFacet language activeSearch body =
                     [ spacing lineSpacing ]
                     [ Input.text
                         [ width (px 80)
-                        , Events.onLoseFocus (UserLostFocusRangeFacet facetAlias UpperRangeValue)
-                        , Events.onFocus (UserFocusedRangeFacet facetAlias UpperRangeValue)
+                        , Events.onLoseFocus (config.userLostFocusMsg facetAlias UpperRangeValue)
+                        , Events.onFocus (config.userFocusedMsg facetAlias UpperRangeValue)
                         ]
-                        { onChange = \c -> UserEnteredTextInRangeFacet facetAlias UpperRangeValue c
+                        { onChange = \c -> config.userEnteredTextMsg facetAlias UpperRangeValue c
                         , text = upperValue
                         , placeholder = Nothing
                         , label = labelHidden ""

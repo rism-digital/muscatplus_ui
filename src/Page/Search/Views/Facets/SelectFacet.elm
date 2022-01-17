@@ -1,5 +1,6 @@
 module Page.Search.Views.Facets.SelectFacet exposing (..)
 
+import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
 import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, spacingXY, text, width)
 import Element.Background as Background
@@ -8,6 +9,7 @@ import Element.Input exposing (checkbox, labelRight)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import List.Extra as LE
+import Page.Query exposing (toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Search.Msg exposing (SearchMsg(..))
@@ -18,6 +20,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp)
 import String.Extra as SE
 
+
 selectFacetHelp =
     """
     Select from the list of values. You can order the values alphabetically or numerically (the count of the number of
@@ -26,10 +29,14 @@ selectFacetHelp =
     """
 
 
-type alias SelectFacetConfig =
-    { facetSorts : Dict String FacetSorts
-    , activeFilters : Dict FacetAlias (List String)
-    , expandedFacets : List String
+type alias SelectFacetConfig msg =
+    { language : Language
+    , selectFacet : SelectFacet
+    , activeSearch : ActiveSearch
+    , userClickedFacetExpandMsg : String -> msg
+    , userChangedFacetBehaviourMsg : FacetAlias -> FacetBehaviours -> msg
+    , userChangedSelectFacetSortMsg : FacetAlias -> FacetSorts -> msg
+    , userSelectedFacetItemMsg : FacetAlias -> String -> Bool -> msg
     }
 
 
@@ -84,17 +91,33 @@ sortFacetItemList language sortBy facetItems =
 
 
 viewSelectFacet :
-    Language
-    -> SelectFacetConfig
-    -> SelectFacet
-    -> Element SearchMsg
-viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
+    SelectFacetConfig msg
+    -> Element msg
+viewSelectFacet config =
     let
         facetAlias =
-            body.alias
+            .alias config.selectFacet
+
+        facetLabel =
+            .label config.selectFacet
 
         serverDefaultSort =
-            body.defaultSort
+            .defaultSort config.selectFacet
+
+        activeSearch =
+            config.activeSearch
+
+        query =
+            toNextQuery activeSearch
+
+        activeFilters =
+            query.filters
+
+        facetItemList =
+            .items config.selectFacet
+
+        facetSorts =
+            query.facetSorts
 
         chosenSort =
             case Dict.get facetAlias facetSorts of
@@ -105,10 +128,10 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                     serverDefaultSort
 
         sortedItems =
-            sortFacetItemList language chosenSort body.items
+            sortFacetItemList config.language chosenSort facetItemList
 
         isExpanded =
-            List.member facetAlias expandedFacets
+            List.member facetAlias activeSearch.expandedFacets
 
         facetItems =
             if isExpanded == True then
@@ -120,7 +143,8 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
         totalItems =
             List.length sortedItems
 
-        isTruncated = (totalItems == 200)
+        isTruncated =
+            totalItems == 200
 
         -- TODO: Explain this better; why 200 items?
         truncatedNote =
@@ -130,6 +154,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                     , bodyXS
                     ]
                     (text ("List truncated to " ++ String.fromInt totalItems ++ " values"))
+
             else
                 none
 
@@ -137,11 +162,12 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
         showMoreText =
             if isExpanded == True then
                 "Collapse options list"
+
+            else if isTruncated then
+                "Show 200 first values"
+
             else
-                if isTruncated then
-                    "Show 200 first values"
-                else
-                    "Show all " ++ String.fromInt totalItems ++ " values"
+                "Show all " ++ String.fromInt totalItems ++ " values"
 
         showLink =
             if List.length sortedItems > 12 then
@@ -150,7 +176,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                     , bodySM
                     ]
                     [ el
-                        [ onClick (UserClickedFacetExpand facetAlias)
+                        [ onClick (config.userClickedFacetExpandMsg facetAlias)
                         , pointer
                         , alignRight
                         ]
@@ -161,7 +187,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                 none
 
         behaviourOptions =
-            body.behaviours
+            .behaviours config.selectFacet
 
         currentBehaviourOption =
             toCurrentBehaviour behaviourOptions
@@ -169,7 +195,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
         listOfBehavioursForDropdown =
             List.map
                 (\v ->
-                    ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap language v.label )
+                    ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )
                 )
                 behaviourOptions.items
 
@@ -187,7 +213,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                 , width (px 50)
                 ]
                 (dropdownSelect
-                    (\inp -> UserChangedFacetBehaviour facetAlias (parseStringToFacetBehaviour inp))
+                    (\inp -> config.userChangedFacetBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp)
                     listOfBehavioursForDropdown
                     (\inp -> parseStringToFacetBehaviour inp)
                     currentBehaviourOption
@@ -222,7 +248,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                     [ row
                         [ spacing 10
                         ]
-                        [ h5 language body.label
+                        [ h5 config.language facetLabel
                         , truncatedNote
                         ]
                     ]
@@ -233,7 +259,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                 [ column
                     [ width fill
                     ]
-                    (List.map (\fRow -> viewSelectFacetItemRow language facetAlias activeFilters fRow) groupedFacetItems)
+                    (List.map (\fRow -> viewSelectFacetItemRow config fRow) groupedFacetItems)
                 ]
             , row
                 [ width fill
@@ -257,7 +283,7 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
                         , el
                             [ width (px 20)
                             , height (px 20)
-                            , onClick (UserChangedFacetSort facetAlias (toggledSortType chosenSort))
+                            , onClick (config.userChangedSelectFacetSortMsg facetAlias <| toggledSortType chosenSort)
                             ]
                             (sortIcon chosenSort)
                         ]
@@ -268,29 +294,36 @@ viewSelectFacet language { activeFilters, expandedFacets, facetSorts } body =
         ]
 
 
-viewSelectFacetItemRow : Language -> String -> Dict FacetAlias (List String) -> List FacetItem -> Element SearchMsg
-viewSelectFacetItemRow language facetAlias activeFilters facetRow =
+viewSelectFacetItemRow : SelectFacetConfig msg -> List FacetItem -> Element msg
+viewSelectFacetItemRow config facetRow =
     row
         [ width fill
         , spacingXY (lineSpacing * 2) lineSpacing
         , alignLeft
         ]
-        (List.map (\fitem -> viewSelectFacetItem language facetAlias activeFilters fitem) facetRow)
+        (List.map (\fitem -> viewSelectFacetItem config fitem) facetRow)
 
 
 viewSelectFacetItem :
-    Language
-    -> String
-    -> Dict FacetAlias (List String)
+    SelectFacetConfig msg
     -> FacetItem
-    -> Element SearchMsg
-viewSelectFacetItem language facetAlias activeFilters fitem =
+    -> Element msg
+viewSelectFacetItem config fitem =
     let
         (FacetItem value label count) =
             fitem
 
+        facetAlias =
+            .alias config.selectFacet
+
+        nextQuery =
+            .nextQuery config.activeSearch
+
+        activeFilters =
+            nextQuery.filters
+
         fullLabel =
-            extractLabelFromLanguageMap language label
+            extractLabelFromLanguageMap config.language label
 
         shouldBeChecked =
             Dict.get facetAlias activeFilters
@@ -314,7 +347,7 @@ viewSelectFacetItem language facetAlias activeFilters fitem =
                 , alignTop
                 , width fill
                 ]
-                { onChange = \selected -> UserClickedFacetItem facetAlias value selected
+                { onChange = \selected -> config.userSelectedFacetItemMsg facetAlias value selected
                 , icon = basicCheckbox
                 , checked = shouldBeChecked
                 , label =
@@ -329,6 +362,6 @@ viewSelectFacetItem language facetAlias activeFilters fitem =
                 , bodyRegular
                 , alignTop
                 ]
-                (text (formatNumberByLanguage language count))
+                (text <| formatNumberByLanguage config.language count)
             ]
         ]

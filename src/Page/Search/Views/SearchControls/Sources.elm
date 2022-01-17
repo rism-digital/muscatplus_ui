@@ -4,7 +4,7 @@ import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, el, fill, height, padding, row, scrollbarY, spacing, text, width)
 import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.RecordTypes.Search exposing (SearchBody)
+import Page.RecordTypes.Search exposing (Facets, SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
@@ -12,7 +12,7 @@ import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, widthFillHeightFill)
 
 
-viewFacetsForSourcesMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+viewFacetsForSourcesMode : Language -> SearchPageModel -> { a | facets : Facets } -> Element SearchMsg
 viewFacetsForSourcesMode language model body =
     let
         msgs =
