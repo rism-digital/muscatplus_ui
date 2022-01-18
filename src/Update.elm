@@ -27,7 +27,7 @@ changePage url model =
                 |> setUrl url
     in
     case route of
-        Route.FrontPageRoute ->
+        Route.FrontPageRoute queryArgs ->
             ( FrontPage newSession FrontPage.init
             , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
             )
@@ -129,7 +129,7 @@ update msg model =
             )
 
         ( Msg.UserInteractedWithFrontPage frontMsg, FrontPage session pageModel ) ->
-            FrontPage.update frontMsg pageModel
+            FrontPage.update session frontMsg pageModel
                 |> updateWith (FrontPage session) Msg.UserInteractedWithFrontPage model
 
         ( Msg.UserInteractedWithSearchPage searchMsg, SearchPage session pageModel ) ->

@@ -35,22 +35,30 @@ frontKeywordQueryInput language msgs queryText =
             , spacing sectionSpacing
             ]
             [ row
-                [ width fill ]
-                [ Input.text
-                    [ width fill
-                    , height (px 60)
-                    , centerY
-                    , htmlAttribute (HA.autocomplete False)
-                    , Border.rounded 0
-                    , onEnter msgs.submitMsg
-                    , headingLG
-                    , paddingXY 10 20
+                [ width fill
+                , spacing lineSpacing
+                ]
+                [ column
+                    [ width <| fillPortion 6 ]
+                    [ Input.text
+                        [ width fill
+                        , height (px 60)
+                        , centerY
+                        , htmlAttribute (HA.autocomplete False)
+                        , Border.rounded 0
+                        , onEnter msgs.submitMsg
+                        , headingLG
+                        , paddingXY 10 20
+                        ]
+                        { onChange = \inp -> msgs.changeMsg inp
+                        , placeholder = Just (Input.placeholder [ height fill ] <| el [ centerY ] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
+                        , text = queryText
+                        , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
+                        }
                     ]
-                    { onChange = \inp -> msgs.changeMsg inp
-                    , placeholder = Just (Input.placeholder [ height fill ] <| el [ centerY ] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
-                    , text = queryText
-                    , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
-                    }
+                , column
+                    [ width <| fillPortion 1, height fill, Background.color (colourScheme.lightBlue |> convertColorToElementColor) ]
+                    [ el [ centerY, width fill, Font.center ] (text "Search") ]
                 ]
             ]
         ]
