@@ -21,7 +21,7 @@ type SearchMsg
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand String
     | UserClickedSelectFacetItem FacetAlias String Bool
-    | UserClickedFacetToggle FacetAlias
+    | UserClickedToggleFacet FacetAlias
     | UserClickedFacetPanelToggle
     | UserEnteredTextInQueryFacet FacetAlias String String
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours

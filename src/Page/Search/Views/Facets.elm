@@ -184,7 +184,7 @@ viewFacet alias language activeSearch body =
                     { language = language
                     , activeSearch = activeSearch
                     , toggleFacet = facet
-                    , userClickedFacetToggleMsg = SearchMsg.UserClickedFacetToggle
+                    , userClickedFacetToggleMsg = SearchMsg.UserClickedToggleFacet
                     }
             in
             viewToggleFacet toggleFacetConfig
