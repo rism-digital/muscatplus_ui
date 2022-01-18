@@ -27,3 +27,19 @@ type SideBarOption
     | PeopleSearchOption
     | InstitutionSearchOption
     | IncipitSearchOption
+
+
+sideBarOptionToModeString : SideBarOption -> String
+sideBarOptionToModeString option =
+    case option of
+        SourceSearchOption ->
+            "sources"
+
+        PeopleSearchOption ->
+            "people"
+
+        InstitutionSearchOption ->
+            "institutions"
+
+        IncipitSearchOption ->
+            "incipits"

@@ -1,7 +1,9 @@
 module Page.Query exposing
-    ( QueryArgs
+    ( FrontQueryArgs
+    , QueryArgs
     , buildQueryParameters
     , defaultQueryArgs
+    , frontQueryParamsParser
     , queryParamsParser
     , rangeStringParser
     , resetPage
@@ -44,6 +46,19 @@ type alias QueryArgs =
     , nationalCollection : Maybe String
     , facetBehaviours : Dict FacetAlias FacetBehaviours
     , facetSorts : Dict FacetAlias FacetSorts
+    }
+
+
+{-|
+
+    A subset of the query args that are supported for the front page
+    request. This is primarily to allow for a link to the initial page mode
+    and national collections.
+
+-}
+type alias FrontQueryArgs =
+    { mode : ResultMode
+    , nationalCollection : Maybe String
     }
 
 
@@ -250,6 +265,12 @@ queryParamsParser =
         |> apply (Q.string "nc")
         |> apply fbParamParser
         |> apply fsParamParser
+
+
+frontQueryParamsParser : Q.Parser FrontQueryArgs
+frontQueryParamsParser =
+    Q.map FrontQueryArgs modeParamParser
+        |> apply (Q.string "nc")
 
 
 fqParamParser : Q.Parser (Dict FacetAlias (List String))

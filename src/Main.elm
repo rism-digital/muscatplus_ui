@@ -45,8 +45,8 @@ init flags initialUrl key =
             Session.init flags initialUrl key
     in
     case route of
-        FrontPageRoute ->
-            ( FrontPage session Front.init
+        FrontPageRoute _ ->
+            ( FrontPage session <| Front.init
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithFrontPage <| Front.frontPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest

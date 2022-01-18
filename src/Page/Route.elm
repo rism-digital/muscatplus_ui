@@ -1,6 +1,6 @@
 module Page.Route exposing (Route(..), parseUrl, setRoute, setUrl)
 
-import Page.Query exposing (QueryArgs, queryParamsParser)
+import Page.Query exposing (FrontQueryArgs, QueryArgs, frontQueryParamsParser, queryParamsParser)
 import Page.UI.Keyboard.Model exposing (KeyboardQuery)
 import Page.UI.Keyboard.Query exposing (notationParamParser)
 import Url exposing (Url)
@@ -8,7 +8,7 @@ import Url.Parser as P exposing ((</>), (<?>), s)
 
 
 type Route
-    = FrontPageRoute
+    = FrontPageRoute FrontQueryArgs
     | SearchPageRoute QueryArgs KeyboardQuery
     | SourcePageRoute Int
     | PersonPageRoute Int
@@ -32,7 +32,7 @@ parseUrl url =
 routeParser : P.Parser (Route -> a) a
 routeParser =
     P.oneOf
-        [ P.map FrontPageRoute P.top
+        [ P.map FrontPageRoute (P.top <?> frontQueryParamsParser)
         , P.map SearchPageRoute (s "search" <?> queryParamsParser <?> notationParamParser)
         , P.map SourcePageRoute (s "sources" </> P.int)
         , P.map PersonPageRoute (s "people" </> P.int)
