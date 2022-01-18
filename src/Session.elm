@@ -8,7 +8,8 @@ import Element exposing (Device)
 import Flags exposing (Flags)
 import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
 import Page.RecordTypes.Countries exposing (CountryCode)
-import Page.Route exposing (Route, parseUrl)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
+import Page.Route exposing (Route(..), parseUrl)
 import Page.SideBar.Msg exposing (SideBarMsg, SideBarOption(..))
 import Url exposing (Url)
 
@@ -66,11 +67,54 @@ init flags url key =
         route =
             parseUrl url
 
+        initialMode =
+            case route of
+                FrontPageRoute qargs ->
+                    case qargs.mode of
+                        SourcesMode ->
+                            SourceSearchOption
+
+                        PeopleMode ->
+                            PeopleSearchOption
+
+                        InstitutionsMode ->
+                            InstitutionSearchOption
+
+                        IncipitsMode ->
+                            IncipitSearchOption
+
+                        _ ->
+                            SourceSearchOption
+
+                _ ->
+                    SourceSearchOption
+
+        nationalCollectionFromUrl =
+            case route of
+                FrontPageRoute qargs ->
+                    qargs.nationalCollection
+
+                _ ->
+                    Nothing
+
+        nationalCollectionFromLocalStorage =
+            flags.nationalCollection
+
         muscatLinks =
             flags.showMuscatLinks
 
         nationalCollectionFilter =
-            flags.nationalCollection
+            case nationalCollectionFromLocalStorage of
+                Just nc ->
+                    Just nc
+
+                Nothing ->
+                    case nationalCollectionFromUrl of
+                        Just nc ->
+                            Just nc
+
+                        Nothing ->
+                            Nothing
     in
     { key = key
     , language = language
@@ -80,7 +124,7 @@ init flags url key =
     , showMuscatLinks = muscatLinks
     , expandedSideBar = NoAnimation
     , sideBarExpansionDebouncer = Debouncer.debounce sideBarExpandDelay |> Debouncer.toDebouncer
-    , showFrontSearchInterface = SourceSearchOption
+    , showFrontSearchInterface = initialMode
     , currentlyHoveredOption = Nothing
     , currentlyHoveredNationalCollectionChooser = False
     , restrictedToNationalCollection = nationalCollectionFilter
