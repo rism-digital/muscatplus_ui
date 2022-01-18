@@ -1,6 +1,7 @@
 module Page.UI.Components exposing (..)
 
 import Color exposing (Color)
+import Css
 import Element exposing (Element, column, el, height, html, htmlAttribute, none, padding, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
@@ -9,10 +10,12 @@ import Element.Region as Region
 import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
+import Html.Styled as HS exposing (toUnstyled)
+import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes, widthFillHeightFill)
-import Page.UI.Style exposing (convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Utlities exposing (toLinkedHtml)
 
 
@@ -337,3 +340,38 @@ basicCheckbox checked =
             )
         ]
         Element.none
+
+
+dividerWithText : String -> Element msg
+dividerWithText dividerText =
+    let
+        { red, green, blue, alpha } =
+            colours.slateGrey
+
+        beforeAndAfterStyles =
+            [ Css.property "content" "\"\""
+            , Css.flexGrow <| Css.num 1
+            , Css.height <| Css.px 1
+            , Css.lineHeight <| Css.px 0
+            , Css.fontSize <| Css.px 0
+            , Css.margin2 (Css.px 0) (Css.px 8)
+            , Css.backgroundColor <| Css.rgba red green blue 0.32
+            ]
+
+        finalEl =
+            HS.div
+                [ HSA.css
+                    [ Css.before beforeAndAfterStyles
+                    , Css.after beforeAndAfterStyles
+                    , Css.displayFlex
+                    , Css.flexBasis <| Css.pct 100
+                    , Css.alignItems Css.center
+                    , Css.color <| Css.rgba red green blue 1
+                    , Css.margin2 (Css.px 8) (Css.px 0)
+                    , Css.textTransform Css.uppercase
+                    ]
+                ]
+                [ HS.text dividerText ]
+    in
+    toUnstyled finalEl
+        |> html
