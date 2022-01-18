@@ -5,7 +5,7 @@ import Debouncer.Messages as Debouncer
 import Json.Encode as Encode
 import Language exposing (parseLocaleToLanguage)
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
-import Page.SideBar.Msg exposing (SideBarMsg(..))
+import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption, sideBarOptionToModeString)
 import Ports.LocalStorage exposing (saveLanguagePreference, saveNationalCollectionSelection)
 import Session exposing (Session, SideBarAnimationStatus(..))
 
@@ -72,10 +72,15 @@ update msg session =
             )
 
         UserClickedSideBarOptionForFrontPage sidebarOption ->
+            let
+                --- TODO: Fix this to work with `nc` parameter as well
+                modeString =
+                    sideBarOptionToModeString sidebarOption
+            in
             ( { session
                 | showFrontSearchInterface = sidebarOption
               }
-            , Nav.pushUrl session.key "/"
+            , Nav.pushUrl session.key <| "/?mode=" ++ modeString
             )
 
         UserMouseEnteredCountryChooser ->
@@ -94,6 +99,9 @@ update msg session =
 
         UserChoseNationalCollection countryCode ->
             let
+                -- TODO: Change this to trigger a reload of the facets from the
+                --     server so we get the values that are good for the national
+                --     collection that they are searching on.
                 encodedSelection =
                     case countryCode of
                         Just c ->
