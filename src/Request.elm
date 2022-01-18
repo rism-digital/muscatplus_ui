@@ -26,9 +26,7 @@ serverUrl pathSegments queryParameters =
 
 
 createRequest :
-    (Result (Http.Detailed.Error String) ( Http.Metadata, a )
-     -> msg
-    )
+    (Result (Http.Detailed.Error String) ( Http.Metadata, a ) -> msg)
     -> Decoder a
     -> String
     -> Cmd msg
@@ -37,9 +35,7 @@ createRequest responseMsg responseDecoder url =
 
 
 createSvgRequest :
-    (Result (Http.Detailed.Error String) ( Http.Metadata, String )
-     -> msg
-    )
+    (Result (Http.Detailed.Error String) ( Http.Metadata, String ) -> msg)
     -> String
     -> Cmd msg
 createSvgRequest responseMsg url =
