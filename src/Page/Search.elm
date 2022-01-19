@@ -12,7 +12,7 @@ import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedFacetBehaviour, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery, setNotation, toNotation)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
@@ -239,19 +239,9 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserChangedSelectFacetSort alias facetSort ->
-            let
-                newFacetSorts =
-                    toNextQuery model.activeSearch
-                        |> toFacetSorts
-                        |> Dict.insert alias facetSort
-
-                newModel =
-                    toNextQuery model.activeSearch
-                        |> setFacetSorts newFacetSorts
-                        |> flip setNextQuery model.activeSearch
-                        |> flip setActiveSearch model
-            in
-            ( newModel, Cmd.none )
+            ( userChangedSelectFacetSort alias facetSort model
+            , Cmd.none
+            )
 
         UserClickedFacetPanelToggle ->
             ( model, Cmd.none )
@@ -285,64 +275,16 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserClickedSelectFacetExpand alias ->
-            let
-                newExpandedFacets =
-                    toExpandedFacets model.activeSearch
-                        |> toggleExpandedFacets alias
-
-                newModel =
-                    setExpandedFacets newExpandedFacets model.activeSearch
-                        |> flip setActiveSearch model
-            in
-            ( newModel, Cmd.none )
+            ( userClickedSelectFacetExpand alias model
+            , Cmd.none
+            )
 
         UserClickedSelectFacetItem alias facetValue isClicked ->
-            let
-                activeFilters =
-                    toNextQuery model.activeSearch
-                        |> toFilters
-
-                newActiveFilters =
-                    Dict.update alias
-                        (\existingValues ->
-                            case existingValues of
-                                Just list ->
-                                    if List.member facetValue list == False then
-                                        Just (facetValue :: list)
-
-                                    else
-                                        Just (LE.remove facetValue list)
-
-                                Nothing ->
-                                    Just [ facetValue ]
-                        )
-                        activeFilters
-            in
-            toNextQuery model.activeSearch
-                |> setFilters newActiveFilters
-                |> flip setNextQuery model.activeSearch
-                |> flip setActiveSearch model
+            userClickedSelectFacetItem alias facetValue model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserClickedToggleFacet alias ->
-            let
-                oldFilters =
-                    toNextQuery model.activeSearch
-                        |> toFilters
-
-                newFilters =
-                    if Dict.member alias oldFilters == True then
-                        Dict.remove alias oldFilters
-
-                    else
-                        Dict.insert alias [ "true" ] oldFilters
-
-                newQueryArgs =
-                    toNextQuery model.activeSearch
-                        |> setFilters newFilters
-            in
-            setNextQuery newQueryArgs model.activeSearch
-                |> flip setActiveSearch model
+            userClickedToggleFacet alias model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserChangedResultSorting sort ->

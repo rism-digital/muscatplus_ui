@@ -19,7 +19,7 @@ type SearchMsg
     | ClientResetViewport
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
     | UserChangedSelectFacetSort FacetAlias FacetSorts
-    | UserClickedSelectFacetExpand String
+    | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String Bool
     | UserClickedToggleFacet FacetAlias
     | UserClickedFacetPanelToggle

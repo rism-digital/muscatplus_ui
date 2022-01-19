@@ -1,13 +1,14 @@
 module Page.Search.UpdateHelpers exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setRangeFacetValues, toActiveSearch, toKeyboard, toRangeFacetValues)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toRangeFacetValues, toggleExpandedFacets)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Http
 import Http.Detailed
-import Page.Query exposing (buildQueryParameters, setFacetBehaviours, setFilters, setNationalCollection, setNextQuery, toFacetBehaviours, toFilters, toNextQuery)
+import List.Extra as LE
+import Page.Query exposing (buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setNationalCollection, setNextQuery, toFacetBehaviours, toFacetSorts, toFilters, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
-import Page.RecordTypes.Search exposing (FacetBehaviours, RangeFacetValue(..))
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
@@ -291,4 +292,80 @@ userLostFocusOnRangeFacet alias model =
         |> setFilters newActiveFilters
         |> flip setNextQuery model.activeSearch
         |> setRangeFacetValues newRangeFacetValues
+        |> flip setActiveSearch model
+
+
+userClickedToggleFacet : FacetAlias -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+userClickedToggleFacet alias model =
+    let
+        oldFilters =
+            toNextQuery model.activeSearch
+                |> toFilters
+
+        newFilters =
+            if Dict.member alias oldFilters == True then
+                Dict.remove alias oldFilters
+
+            else
+                Dict.insert alias [ "true" ] oldFilters
+
+        newQueryArgs =
+            toNextQuery model.activeSearch
+                |> setFilters newFilters
+    in
+    setNextQuery newQueryArgs model.activeSearch
+        |> flip setActiveSearch model
+
+
+userClickedSelectFacetItem : FacetAlias -> String -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+userClickedSelectFacetItem alias facetValue model =
+    let
+        activeFilters =
+            toNextQuery model.activeSearch
+                |> toFilters
+
+        newActiveFilters =
+            Dict.update alias
+                (\existingValues ->
+                    case existingValues of
+                        Just list ->
+                            if List.member facetValue list == False then
+                                Just (facetValue :: list)
+
+                            else
+                                Just (LE.remove facetValue list)
+
+                        Nothing ->
+                            Just [ facetValue ]
+                )
+                activeFilters
+    in
+    toNextQuery model.activeSearch
+        |> setFilters newActiveFilters
+        |> flip setNextQuery model.activeSearch
+        |> flip setActiveSearch model
+
+
+userClickedSelectFacetExpand : FacetAlias -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+userClickedSelectFacetExpand alias model =
+    let
+        newExpandedFacets =
+            toExpandedFacets model.activeSearch
+                |> toggleExpandedFacets alias
+    in
+    setExpandedFacets newExpandedFacets model.activeSearch
+        |> flip setActiveSearch model
+
+
+userChangedSelectFacetSort : FacetAlias -> FacetSorts -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+userChangedSelectFacetSort alias facetSort model =
+    let
+        newFacetSorts =
+            toNextQuery model.activeSearch
+                |> toFacetSorts
+                |> Dict.insert alias facetSort
+    in
+    toNextQuery model.activeSearch
+        |> setFacetSorts newFacetSorts
+        |> flip setNextQuery model.activeSearch
         |> flip setActiveSearch model

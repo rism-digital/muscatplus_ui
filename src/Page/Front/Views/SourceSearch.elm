@@ -12,6 +12,7 @@ import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByL
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
+import Page.Front.Views.Facets exposing (viewFrontFacet)
 import Page.Front.Views.FrontKeywordQuery exposing (frontKeywordQueryInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
@@ -25,43 +26,6 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Utlities exposing (namedValue)
-
-
-viewFrontFacet : FacetAlias -> Language -> ActiveSearch -> { a | facets : Facets } -> Element FrontMsg
-viewFrontFacet alias language activeSearch body =
-    case Dict.get alias body.facets of
-        Just (QueryFacetData facet) ->
-            let
-                queryFacetConfig : QueryFacetConfig FrontMsg
-                queryFacetConfig =
-                    { language = language
-                    , queryFacet = facet
-                    , activeSearch = activeSearch
-                    , userRemovedMsg = FrontMsg.UserRemovedItemFromQueryFacet
-                    , userHitEnterMsg = FrontMsg.UserHitEnterInQueryFacet
-                    , userEnteredTextMsg = FrontMsg.UserEnteredTextInQueryFacet
-                    , userChangedBehaviourMsg = FrontMsg.UserChangedFacetBehaviour
-                    , userChoseOptionMsg = FrontMsg.UserChoseOptionFromQueryFacetSuggest
-                    }
-            in
-            viewQueryFacet queryFacetConfig
-
-        Just (RangeFacetData facet) ->
-            let
-                rangeFacetConfig : RangeFacetConfig FrontMsg
-                rangeFacetConfig =
-                    { language = language
-                    , rangeFacet = facet
-                    , activeSearch = activeSearch
-                    , userLostFocusMsg = FrontMsg.UserLostFocusRangeFacet
-                    , userFocusedMsg = FrontMsg.UserFocusedRangeFacet
-                    , userEnteredTextMsg = FrontMsg.UserEnteredTextInRangeFacet
-                    }
-            in
-            viewRangeFacet rangeFacetConfig
-
-        _ ->
-            none
 
 
 sourceSearchPanelRouter : Session -> FrontPageModel -> Element FrontMsg
@@ -175,6 +139,21 @@ sourceSearchPanelView session frontBody model =
                 , column
                     [ width fill ]
                     [ viewFrontFacet "people" language activeSearch frontBody ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "date-range" language activeSearch frontBody ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "source-type" language activeSearch frontBody
+                    , viewFrontFacet "content-types" language activeSearch frontBody
+                    , viewFrontFacet "material-group-types" language activeSearch frontBody
+                    ]
                 ]
             ]
         ]

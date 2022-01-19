@@ -165,18 +165,7 @@ viewFacet :
     -> { a | facets : Facets }
     -> Element SearchMsg
 viewFacet alias language activeSearch body =
-    let
-        facetConf =
-            body.facets
-                |> Dict.get alias
-
-        query =
-            activeSearch.nextQuery
-
-        activeFilters =
-            query.filters
-    in
-    case facetConf of
+    case Dict.get alias body.facets of
         Just (ToggleFacetData facet) ->
             let
                 toggleFacetConfig : ToggleFacetConfig SearchMsg

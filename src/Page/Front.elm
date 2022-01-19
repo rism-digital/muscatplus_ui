@@ -7,7 +7,7 @@ import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setNextQuery, toNextQuery)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
@@ -146,6 +146,10 @@ update session msg model =
             in
             ( newModel, Cmd.none )
 
+        UserClickedToggleFacet facetAlias ->
+            userClickedToggleFacet facetAlias model
+                |> probeSubmit ServerRespondedWithProbeData session
+
         UserRemovedItemFromQueryFacet alias query ->
             userRemovedItemFromQueryFacet alias query model
                 |> probeSubmit ServerRespondedWithProbeData session
@@ -172,6 +176,20 @@ update session msg model =
 
         UserLostFocusRangeFacet alias valueType ->
             userLostFocusOnRangeFacet alias model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UserChangedSelectFacetSort alias facetSort ->
+            ( userChangedSelectFacetSort alias facetSort model
+            , Cmd.none
+            )
+
+        UserClickedSelectFacetExpand alias ->
+            ( userClickedSelectFacetExpand alias model
+            , Cmd.none
+            )
+
+        UserClickedSelectFacetItem alias facetValue isClicked ->
+            userClickedSelectFacetItem alias facetValue model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         NothingHappened ->
