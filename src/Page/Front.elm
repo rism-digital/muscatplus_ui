@@ -25,7 +25,6 @@ init : FrontPageModel
 init =
     { response = Loading Nothing
     , activeSearch = ActiveSearch.empty
-    , facets = Dict.empty
     , probeResponse = Nothing
     , applyFilterPrompt = False
     }

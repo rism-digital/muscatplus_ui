@@ -11,6 +11,7 @@ import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
 import Page.Front.Views.FrontKeywordQuery exposing (frontKeywordQueryInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
+import Page.RecordTypes.Front exposing (FrontBody)
 import Page.RecordTypes.Search exposing (FacetData(..), Facets)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Search.Views.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
@@ -59,8 +60,18 @@ viewFrontFacet alias language activeSearch body =
             none
 
 
-sourceSearchPanelView : Session -> FrontPageModel -> Element FrontMsg
-sourceSearchPanelView session model =
+sourceSearchPanelRouter : Session -> FrontPageModel -> Element FrontMsg
+sourceSearchPanelRouter session model =
+    case model.response of
+        Response (FrontData body) ->
+            sourceSearchPanelView session body model
+
+        _ ->
+            none
+
+
+sourceSearchPanelView : Session -> FrontBody -> FrontPageModel -> Element FrontMsg
+sourceSearchPanelView session frontBody model =
     let
         qText =
             toNextQuery model.activeSearch
@@ -79,32 +90,27 @@ sourceSearchPanelView session model =
             }
 
         statsHeader =
-            case model.response of
-                Response (FrontData body) ->
-                    let
-                        sourceStats =
-                            .sources body.stats
+            let
+                sourceStats =
+                    .sources frontBody.stats
 
-                        sourceNumbers =
-                            sourceStats.value
+                sourceNumbers =
+                    sourceStats.value
 
-                        formattedNumber =
-                            formatNumberByLanguage language sourceNumbers
+                formattedNumber =
+                    formatNumberByLanguage language sourceNumbers
 
-                        translatedRecordType =
-                            extractLabelFromLanguageMap language sourceStats.label
+                translatedRecordType =
+                    extractLabelFromLanguageMap language sourceStats.label
 
-                        interpolatedValue =
-                            extractLabelFromLanguageMap language localTranslations.searchNumberOfRecords
-                                |> namedValue "numberOfRecords" formattedNumber
-                                |> namedValue "recordType" translatedRecordType
-                    in
-                    paragraph
-                        [ headingHero, Region.heading 1, Font.semiBold ]
-                        [ text interpolatedValue ]
-
-                _ ->
-                    none
+                interpolatedValue =
+                    extractLabelFromLanguageMap language localTranslations.searchNumberOfRecords
+                        |> namedValue "numberOfRecords" formattedNumber
+                        |> namedValue "recordType" translatedRecordType
+            in
+            paragraph
+                [ headingHero, Region.heading 1, Font.semiBold ]
+                [ text interpolatedValue ]
     in
     row
         [ width fill
@@ -140,7 +146,10 @@ sourceSearchPanelView session model =
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "composer" language activeSearch model ]
+                    [ viewFrontFacet "composer" language activeSearch frontBody ]
+                , column
+                    [ width fill ]
+                    [ viewFrontFacet "people" language activeSearch frontBody ]
                 ]
             ]
         ]

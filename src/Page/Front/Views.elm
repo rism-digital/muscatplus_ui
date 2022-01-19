@@ -3,7 +3,7 @@ module Page.Front.Views exposing (..)
 import Element exposing (Element, alignTop, centerX, column, el, fill, height, maximum, minimum, paddingXY, row, text, width)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg)
-import Page.Front.Views.SourceSearch exposing (sourceSearchPanelView)
+import Page.Front.Views.SourceSearch exposing (sourceSearchPanelRouter, sourceSearchPanelView)
 import Page.SideBar.Msg exposing (SideBarOption(..))
 import Page.UI.Attributes exposing (headingXL)
 import Session exposing (Session)
@@ -55,7 +55,7 @@ sourceSearchFrontPage session model =
             [ width fill
             , height fill
             ]
-            [ sourceSearchPanelView session model ]
+            [ sourceSearchPanelRouter session model ]
         ]
 
 
