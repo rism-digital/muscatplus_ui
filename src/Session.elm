@@ -104,17 +104,14 @@ init flags url key =
             flags.showMuscatLinks
 
         nationalCollectionFilter =
-            case nationalCollectionFromLocalStorage of
-                Just nc ->
-                    Just nc
+            if nationalCollectionFromUrl /= Nothing then
+                nationalCollectionFromUrl
 
-                Nothing ->
-                    case nationalCollectionFromUrl of
-                        Just nc ->
-                            Just nc
+            else if nationalCollectionFromLocalStorage /= Nothing then
+                nationalCollectionFromLocalStorage
 
-                        Nothing ->
-                            Nothing
+            else
+                Nothing
     in
     { key = key
     , language = language

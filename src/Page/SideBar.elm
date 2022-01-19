@@ -4,10 +4,13 @@ import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer
 import Json.Encode as Encode
 import Language exposing (parseLocaleToLanguage)
+import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption, sideBarOptionToModeString)
 import Ports.LocalStorage exposing (saveLanguagePreference, saveNationalCollectionSelection)
+import Request exposing (serverUrl)
 import Session exposing (Session, SideBarAnimationStatus(..))
+import Url.Builder exposing (QueryParameter(..))
 
 
 type alias Msg =
@@ -25,6 +28,21 @@ updateDebouncer =
     , getDebouncer = .sideBarExpansionDebouncer
     , setDebouncer = \debouncer s -> { s | sideBarExpansionDebouncer = debouncer }
     }
+
+
+buildFrontPageUrl : SideBarOption -> Maybe CountryCode -> String
+buildFrontPageUrl sidebarOption countryCode =
+    let
+        modeParameter =
+            sideBarOptionToModeString sidebarOption
+                |> Url.Builder.string "mode"
+
+        -- Omits the parameter if the country code is Nothing by filtering it from a list.
+        ncParameter =
+            List.filterMap identity [ countryCode ]
+                |> List.map (\c -> Url.Builder.string "nc" c)
+    in
+    serverUrl [ "/" ] <| modeParameter :: ncParameter
 
 
 update : SideBarMsg -> Session -> ( Session, Cmd SideBarMsg )
@@ -73,14 +91,13 @@ update msg session =
 
         UserClickedSideBarOptionForFrontPage sidebarOption ->
             let
-                --- TODO: Fix this to work with `nc` parameter as well
-                modeString =
-                    sideBarOptionToModeString sidebarOption
+                requestUrl =
+                    buildFrontPageUrl sidebarOption session.restrictedToNationalCollection
             in
             ( { session
                 | showFrontSearchInterface = sidebarOption
               }
-            , Nav.pushUrl session.key <| "/?mode=" ++ modeString
+            , Nav.pushUrl session.key requestUrl
             )
 
         UserMouseEnteredCountryChooser ->
@@ -109,11 +126,17 @@ update msg session =
 
                         Nothing ->
                             Encode.null
+
+                requestUrl =
+                    buildFrontPageUrl session.showFrontSearchInterface countryCode
             in
             ( { session
                 | restrictedToNationalCollection = countryCode
               }
-            , saveNationalCollectionSelection encodedSelection
+            , Cmd.batch
+                [ saveNationalCollectionSelection encodedSelection
+                , Nav.pushUrl session.key requestUrl
+                ]
             )
 
         UserChangedLanguageSelect lang ->
