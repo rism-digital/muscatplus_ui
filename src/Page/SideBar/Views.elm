@@ -41,6 +41,7 @@ unlinkedMenuOption :
     { icon : Color -> Element SideBarMsg
     , label : Element SideBarMsg
     , showLabel : Bool
+    , hidden : Bool
     }
     -> Element SideBarMsg
 unlinkedMenuOption cfg =
@@ -49,6 +50,7 @@ unlinkedMenuOption cfg =
         , label = cfg.label
         , showLabel = cfg.showLabel
         , isCurrent = False
+        , hidden = cfg.hidden
         }
         []
 
@@ -58,6 +60,7 @@ menuOption :
     , label : Element SideBarMsg
     , showLabel : Bool
     , isCurrent : Bool
+    , hidden : Bool
     }
     -> SideBarOption
     -> Bool
@@ -97,6 +100,7 @@ menuOption cfg option currentlyHovered =
             , label = cfg.label
             , showLabel = cfg.showLabel
             , isCurrent = cfg.isCurrent
+            , hidden = cfg.hidden
             }
     in
     menuOptionTemplate newCfg additionalOptions
@@ -107,6 +111,7 @@ menuOptionTemplate :
     , label : Element SideBarMsg
     , showLabel : Bool
     , isCurrent : Bool
+    , hidden : Bool
     }
     -> List (Attribute SideBarMsg)
     -> Element SideBarMsg
@@ -120,6 +125,7 @@ menuOptionTemplate cfg additionalAttributes =
             , pointer
             ]
     in
+    viewIf (
     row
         (List.concat [ rowAttributes, additionalAttributes ])
         [ el
@@ -130,6 +136,7 @@ menuOptionTemplate cfg additionalAttributes =
             cfg.icon
         , viewIf (animatedLabel cfg.label) cfg.showLabel
         ]
+    ) (not cfg.hidden)
 
 
 isCurrentlyHovered : Maybe SideBarOption -> SideBarOption -> Bool
@@ -153,6 +160,13 @@ view session =
 
         currentlySelectedOption =
             session.showFrontSearchInterface
+        restrictedToNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
 
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
@@ -258,6 +272,7 @@ view session =
                             [ width fill ]
                             (dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage session.language)
                     , showLabel = showLabels
+                    , hidden = False
                     }
                 ]
             ]
@@ -280,6 +295,7 @@ view session =
                     , label = text "Sources"
                     , showLabel = showLabels
                     , isCurrent = checkSelected SourceSearchOption
+                    , hidden = False
                     }
                     SourceSearchOption
                     (checkHover SourceSearchOption)
@@ -288,6 +304,7 @@ view session =
                     , label = text "People"
                     , showLabel = showLabels
                     , isCurrent = checkSelected PeopleSearchOption
+                    , hidden = restrictedToNationalCollection
                     }
                     PeopleSearchOption
                     (checkHover PeopleSearchOption)
@@ -296,6 +313,7 @@ view session =
                     , label = text "Institutions"
                     , showLabel = showLabels
                     , isCurrent = checkSelected InstitutionSearchOption
+                    , hidden = False
                     }
                     InstitutionSearchOption
                     (checkHover InstitutionSearchOption)
@@ -304,6 +322,7 @@ view session =
                     , label = text "Incipits"
                     , showLabel = showLabels
                     , isCurrent = checkSelected IncipitSearchOption
+                    , hidden = restrictedToNationalCollection
                     }
                     IncipitSearchOption
                     (checkHover IncipitSearchOption)
