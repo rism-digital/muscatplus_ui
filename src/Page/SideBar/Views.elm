@@ -160,6 +160,7 @@ view session =
 
         currentlySelectedOption =
             session.showFrontSearchInterface
+
         restrictedToNationalCollection =
             case session.restrictedToNationalCollection of
                 Just _ ->
