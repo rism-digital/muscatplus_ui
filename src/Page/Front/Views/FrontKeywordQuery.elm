@@ -56,9 +56,6 @@ frontKeywordQueryInput language msgs queryText =
                         , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                         }
                     ]
-                , column
-                    [ width <| fillPortion 1, height fill, Background.color (colourScheme.lightBlue |> convertColorToElementColor) ]
-                    [ el [ centerY, width fill, Font.center ] (text "Search") ]
                 ]
             ]
         ]

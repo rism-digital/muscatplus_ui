@@ -2,8 +2,11 @@ module Page.Front.Views.SourceSearch exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, fill, none, paragraph, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, none, paddingXY, paragraph, px, row, shrink, spacing, text, width)
+import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
+import Element.Input as Input
 import Element.Region as Region
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
@@ -16,8 +19,9 @@ import Page.RecordTypes.Search exposing (FacetData(..), Facets)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Search.Views.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 import Page.Search.Views.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
-import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (headingHero, headingSM, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Utlities exposing (namedValue)
@@ -137,6 +141,27 @@ sourceSearchPanelView session frontBody model =
                     ]
                 ]
             , frontKeywordQueryInput language msgs qText
+            , row
+                [ width fill
+                , height <| px 60
+                ]
+                [ column
+                    []
+                    [ Input.button
+                        [ Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+                        , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
+                        , paddingXY 10 10
+                        , height (px 60)
+                        , width <| px 120
+                        , Font.center
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , headingSM
+                        ]
+                        { onPress = Just msgs.submitMsg
+                        , label = text (extractLabelFromLanguageMap language localTranslations.search)
+                        }
+                    ]
+                ]
             , row
                 [ width fill ]
                 -- TODO: Translate

@@ -1,12 +1,16 @@
 module Page.Front exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, toActiveSearch, toKeyboard)
+import Browser.Navigation as Nav
 import Dict
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
-import Page.Query exposing (setKeywordQuery, setNextQuery, toNextQuery)
+import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setNextQuery, toNextQuery)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
-import Page.Search.UpdateHelpers exposing (probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
+import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
+import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -33,6 +37,47 @@ init =
 frontPageRequest : Url -> Cmd FrontMsg
 frontPageRequest initialUrl =
     createRequestWithDecoder ServerRespondedWithFrontData (Url.toString initialUrl)
+
+
+searchSubmit : Session -> FrontPageModel -> ( FrontPageModel, Cmd FrontMsg )
+searchSubmit session model =
+    let
+        activeSearch =
+            toActiveSearch model
+
+        resetPageInQueryArgs =
+            activeSearch
+                |> toNextQuery
+                |> resetPage
+
+        -- when submitting a new search, reset the page
+        -- to the first page.
+        pageResetModel =
+            activeSearch
+                |> setNextQuery resetPageInQueryArgs
+                |> flip setActiveSearch model
+
+        notationQueryParameters =
+            toActiveSearch pageResetModel
+                |> toKeyboard
+                |> toKeyboardQuery
+                |> buildNotationQueryParameters
+
+        newModel =
+            addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
+
+        textQueryParameters =
+            toNextQuery newModel.activeSearch
+                |> buildQueryParameters
+
+        searchUrl =
+            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
+    in
+    ( newModel
+    , Cmd.batch
+        [ Nav.pushUrl session.key searchUrl
+        ]
+    )
 
 
 update : Session -> FrontMsg -> FrontPageModel -> ( FrontPageModel, Cmd FrontMsg )
@@ -80,7 +125,7 @@ update session msg model =
             ( model, Cmd.none )
 
         UserTriggeredSearchSubmit ->
-            ( model, Cmd.none )
+            searchSubmit session model
 
         UserInputTextInKeywordQueryBox queryText ->
             let
