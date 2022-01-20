@@ -41,7 +41,6 @@ unlinkedMenuOption :
     { icon : Color -> Element SideBarMsg
     , label : Element SideBarMsg
     , showLabel : Bool
-    , hidden : Bool
     }
     -> Element SideBarMsg
 unlinkedMenuOption cfg =
@@ -50,7 +49,6 @@ unlinkedMenuOption cfg =
         , label = cfg.label
         , showLabel = cfg.showLabel
         , isCurrent = False
-        , hidden = cfg.hidden
         }
         []
 
@@ -60,7 +58,6 @@ menuOption :
     , label : Element SideBarMsg
     , showLabel : Bool
     , isCurrent : Bool
-    , hidden : Bool
     }
     -> SideBarOption
     -> Bool
@@ -100,7 +97,6 @@ menuOption cfg option currentlyHovered =
             , label = cfg.label
             , showLabel = cfg.showLabel
             , isCurrent = cfg.isCurrent
-            , hidden = cfg.hidden
             }
     in
     menuOptionTemplate newCfg additionalOptions
@@ -111,7 +107,6 @@ menuOptionTemplate :
     , label : Element SideBarMsg
     , showLabel : Bool
     , isCurrent : Bool
-    , hidden : Bool
     }
     -> List (Attribute SideBarMsg)
     -> Element SideBarMsg
@@ -125,7 +120,6 @@ menuOptionTemplate cfg additionalAttributes =
             , pointer
             ]
     in
-    viewIf (
     row
         (List.concat [ rowAttributes, additionalAttributes ])
         [ el
@@ -136,7 +130,6 @@ menuOptionTemplate cfg additionalAttributes =
             cfg.icon
         , viewIf (animatedLabel cfg.label) cfg.showLabel
         ]
-    ) (not cfg.hidden)
 
 
 isCurrentlyHovered : Maybe SideBarOption -> SideBarOption -> Bool
@@ -160,14 +153,6 @@ view session =
 
         currentlySelectedOption =
             session.showFrontSearchInterface
-
-        restrictedToNationalCollection =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
 
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
@@ -206,6 +191,57 @@ view session =
                         []
                     , False
                     )
+
+        -- If a national collection is chosen this will return
+        -- false, indicating that the menu option should not
+        -- be shown when a national collection is selected.
+        showWhenChoosingNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    False
+
+                Nothing ->
+                    True
+
+        sourcesInterfaceMenuOption =
+            menuOption
+                { icon = sourcesSvg
+                , label = text "Sources"
+                , showLabel = showLabels
+                , isCurrent = checkSelected SourceSearchOption
+                }
+                SourceSearchOption
+                (checkHover SourceSearchOption)
+
+        peopleInterfaceMenuOption =
+            menuOption
+                { icon = peopleSvg
+                , label = text "People"
+                , showLabel = showLabels
+                , isCurrent = checkSelected PeopleSearchOption
+                }
+                PeopleSearchOption
+                (checkHover PeopleSearchOption)
+
+        institutionInterfaceMenuOption =
+            menuOption
+                { icon = institutionSvg
+                , label = text "Institutions"
+                , showLabel = showLabels
+                , isCurrent = checkSelected InstitutionSearchOption
+                }
+                InstitutionSearchOption
+                (checkHover InstitutionSearchOption)
+
+        incipitsInterfaceMenuOption =
+            menuOption
+                { icon = musicNotationSvg
+                , label = text "Incipits"
+                , showLabel = showLabels
+                , isCurrent = checkSelected IncipitSearchOption
+                }
+                IncipitSearchOption
+                (checkHover IncipitSearchOption)
     in
     animatedColumn
         sideAnimation
@@ -273,7 +309,6 @@ view session =
                             [ width fill ]
                             (dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage session.language)
                     , showLabel = showLabels
-                    , hidden = False
                     }
                 ]
             ]
@@ -291,42 +326,10 @@ view session =
                 , alignTop
                 , spacing 10
                 ]
-                [ menuOption
-                    { icon = sourcesSvg
-                    , label = text "Sources"
-                    , showLabel = showLabels
-                    , isCurrent = checkSelected SourceSearchOption
-                    , hidden = False
-                    }
-                    SourceSearchOption
-                    (checkHover SourceSearchOption)
-                , menuOption
-                    { icon = peopleSvg
-                    , label = text "People"
-                    , showLabel = showLabels
-                    , isCurrent = checkSelected PeopleSearchOption
-                    , hidden = restrictedToNationalCollection
-                    }
-                    PeopleSearchOption
-                    (checkHover PeopleSearchOption)
-                , menuOption
-                    { icon = institutionSvg
-                    , label = text "Institutions"
-                    , showLabel = showLabels
-                    , isCurrent = checkSelected InstitutionSearchOption
-                    , hidden = False
-                    }
-                    InstitutionSearchOption
-                    (checkHover InstitutionSearchOption)
-                , menuOption
-                    { icon = musicNotationSvg
-                    , label = text "Incipits"
-                    , showLabel = showLabels
-                    , isCurrent = checkSelected IncipitSearchOption
-                    , hidden = restrictedToNationalCollection
-                    }
-                    IncipitSearchOption
-                    (checkHover IncipitSearchOption)
+                [ sourcesInterfaceMenuOption
+                , viewIf peopleInterfaceMenuOption showWhenChoosingNationalCollection
+                , institutionInterfaceMenuOption
+                , viewIf incipitsInterfaceMenuOption showWhenChoosingNationalCollection
                 ]
             ]
         , dividingLine
