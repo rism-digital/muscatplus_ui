@@ -59,7 +59,7 @@ nationalCollectionPrefixToFlagMap =
         , ( "P", "pt.svg" )
         , ( "PE", "pe.svg" )
         , ( "PL", "pl.svg" )
-        , ( "RA", "ag.svg" )
+        , ( "RA", "ar.svg" )
         , ( "RC", "tw.svg" )
         , ( "RCH", "cl.svg" )
         , ( "RO", "ro.svg" )
@@ -153,7 +153,7 @@ viewNationalCollectionChooserMenuOption session =
         iconBackgroundColor =
             case session.restrictedToNationalCollection of
                 Just _ ->
-                    Background.color (colourScheme.turquoise |> convertColorToElementColor)
+                    Background.color (colourScheme.midGrey |> convertColorToElementColor)
 
                 Nothing ->
                     emptyAttribute
