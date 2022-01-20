@@ -59,7 +59,7 @@ nationalCollectionPrefixToFlagMap =
         , ( "P", "pt.svg" )
         , ( "PE", "pe.svg" )
         , ( "PL", "pl.svg" )
-        , ( "RA", "ag.svg" )
+        , ( "RA", "ar.svg" )
         , ( "RC", "tw.svg" )
         , ( "RCH", "cl.svg" )
         , ( "RO", "ro.svg" )
