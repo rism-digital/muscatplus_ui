@@ -153,7 +153,7 @@ viewNationalCollectionChooserMenuOption session =
         iconBackgroundColor =
             case session.restrictedToNationalCollection of
                 Just _ ->
-                    Background.color (colourScheme.midGrey |> convertColorToElementColor)
+                    Background.color (colourScheme.turquoise |> convertColorToElementColor)
 
                 Nothing ->
                     emptyAttribute
