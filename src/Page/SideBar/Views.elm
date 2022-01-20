@@ -7,6 +7,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
+import Element.Lazy exposing (lazy3)
 import Html.Attributes as HTA
 import Language exposing (languageOptionsForDisplay, parseLocaleToLanguage)
 import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..))
@@ -214,14 +215,17 @@ view session =
                 (checkHover SourceSearchOption)
 
         peopleInterfaceMenuOption =
-            menuOption
-                { icon = peopleSvg
-                , label = text "People"
-                , showLabel = showLabels
-                , isCurrent = checkSelected PeopleSearchOption
-                }
-                PeopleSearchOption
-                (checkHover PeopleSearchOption)
+            viewIf
+                (lazy3 menuOption
+                    { icon = peopleSvg
+                    , label = text "People"
+                    , showLabel = showLabels
+                    , isCurrent = checkSelected PeopleSearchOption
+                    }
+                    PeopleSearchOption
+                    (checkHover PeopleSearchOption)
+                )
+                showWhenChoosingNationalCollection
 
         institutionInterfaceMenuOption =
             menuOption
@@ -234,14 +238,17 @@ view session =
                 (checkHover InstitutionSearchOption)
 
         incipitsInterfaceMenuOption =
-            menuOption
-                { icon = musicNotationSvg
-                , label = text "Incipits"
-                , showLabel = showLabels
-                , isCurrent = checkSelected IncipitSearchOption
-                }
-                IncipitSearchOption
-                (checkHover IncipitSearchOption)
+            viewIf
+                (lazy3 menuOption
+                    { icon = musicNotationSvg
+                    , label = text "Incipits"
+                    , showLabel = showLabels
+                    , isCurrent = checkSelected IncipitSearchOption
+                    }
+                    IncipitSearchOption
+                    (checkHover IncipitSearchOption)
+                )
+                showWhenChoosingNationalCollection
     in
     animatedColumn
         sideAnimation
@@ -327,9 +334,9 @@ view session =
                 , spacing 10
                 ]
                 [ sourcesInterfaceMenuOption
-                , viewIf peopleInterfaceMenuOption showWhenChoosingNationalCollection
+                , peopleInterfaceMenuOption
                 , institutionInterfaceMenuOption
-                , viewIf incipitsInterfaceMenuOption showWhenChoosingNationalCollection
+                , incipitsInterfaceMenuOption
                 ]
             ]
         , dividingLine
