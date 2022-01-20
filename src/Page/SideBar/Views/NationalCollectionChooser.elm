@@ -1,7 +1,7 @@
 module Page.SideBar.Views.NationalCollectionChooser exposing (..)
 
-import Dict
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Dict exposing (Dict)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -11,11 +11,88 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.SideBar.Msg exposing (SideBarMsg(..))
 import Page.UI.Animations exposing (animatedLabel)
-import Page.UI.Attributes exposing (emptyAttribute, footerBackground, headingLG, headingMD, sectionSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, lineSpacing, sectionSpacing)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (flagSvg, globeSvg)
+import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session, SideBarAnimationStatus(..))
+
+
+nationalCollectionPrefixToFlagMap : Dict String String
+nationalCollectionPrefixToFlagMap =
+    Dict.fromList
+        [ ( "A", "at.svg" )
+        , ( "AND", "ad.svg" )
+        , ( "AUS", "au.svg" )
+        , ( "B", "be.svg" )
+        , ( "BOL", "bo.svg" )
+        , ( "BR", "br.svg" )
+        , ( "BY", "by.svg" )
+        , ( "CDN", "ca.svg" )
+        , ( "CH", "ch.svg" )
+        , ( "CN", "cn.svg" )
+        , ( "CO", "co.svg" )
+        , ( "CZ", "cz.svg" )
+        , ( "D", "de.svg" )
+        , ( "DK", "dk.svg" )
+        , ( "E", "es.svg" )
+        , ( "EV", "ee.svg" )
+        , ( "F", "fr.svg" )
+        , ( "FIN", "fi.svg" )
+        , ( "GB", "gb.svg" )
+        , ( "GCA", "gt.svg" )
+        , ( "GR", "gr.svg" )
+        , ( "H", "hu.svg" )
+        , ( "HK", "hk.svg" )
+        , ( "HR", "hr.svg" )
+        , ( "I", "it.svg" )
+        , ( "IL", "il.svg" )
+        , ( "IRL", "ie.svg" )
+        , ( "J", "jp.svg" )
+        , ( "LT", "lt.svg" )
+        , ( "LV", "lv.svg" )
+        , ( "M", "mt.svg" )
+        , ( "MEX", "mx.svg" )
+        , ( "N", "no.svg" )
+        , ( "NL", "nl.svg" )
+        , ( "NZ", "nz.svg" )
+        , ( "P", "pt.svg" )
+        , ( "PE", "pe.svg" )
+        , ( "PL", "pl.svg" )
+        , ( "RA", "ag.svg" )
+        , ( "RC", "tw.svg" )
+        , ( "RCH", "cl.svg" )
+        , ( "RO", "ro.svg" )
+        , ( "ROK", "kr.svg" )
+        , ( "ROU", "uy.svg" )
+        , ( "RP", "ph.svg" )
+        , ( "RUS", "ru.svg" )
+        , ( "S", "se.svg" )
+        , ( "SI", "si.svg" )
+        , ( "SK", "sk.svg" )
+        , ( "UA", "ua.svg" )
+        , ( "US", "us.svg" )
+        , ( "V", "va.svg" )
+        , ( "VE", "ve.svg" )
+        , ( "XX", "xx.svg" )
+        ]
+
+
+imageForCountryCode : String -> Element msg
+imageForCountryCode countryCode =
+    let
+        countryFlagImageName =
+            Dict.get countryCode nationalCollectionPrefixToFlagMap
+                |> Maybe.withDefault "xx.svg"
+
+        countryFlagPath =
+            "/static/images/flags/" ++ countryFlagImageName
+    in
+    image
+        [ width (px 25) ]
+        { src = countryFlagPath
+        , description = countryCode
+        }
 
 
 viewNationalCollectionChooserMenuOption : Session -> Element SideBarMsg
@@ -31,17 +108,22 @@ viewNationalCollectionChooserMenuOption session =
         sidebarIcon =
             case session.restrictedToNationalCollection of
                 Just countryCode ->
+                    let
+                        countryFlagImage =
+                            imageForCountryCode countryCode
+                    in
                     column
                         [ width (px 30)
                         , centerX
                         , centerY
+                        , spacing lineSpacing
                         ]
                         [ el
                             [ width (px 25)
                             , centerX
                             , centerY
                             ]
-                            (flagSvg colourScheme.white)
+                            countryFlagImage
                         , el
                             [ width (px 40)
                             , centerX
@@ -243,9 +325,18 @@ viewNationalCollectionColumn language ( abbr, label ) =
             [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
         , onClick (UserChoseNationalCollection (Just abbr))
         ]
-        [ paragraph
-            [ spacing 1
-            , headingMD
+        [ row
+            [ width fill ]
+            [ column
+                [ width (px 40) ]
+                [ imageForCountryCode abbr ]
+            , column
+                [ width fill ]
+                [ paragraph
+                    [ spacing 1
+                    , headingMD
+                    ]
+                    [ text (extractLabelFromLanguageMap language label ++ " (" ++ abbr ++ ")") ]
+                ]
             ]
-            [ text (extractLabelFromLanguageMap language label ++ " (" ++ abbr ++ ")") ]
         ]
