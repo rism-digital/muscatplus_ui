@@ -38,7 +38,7 @@ init route =
     , preview = NoResponseToShow
     , selectedResult = Nothing
     , showFacetPanel = False
-    , probeResponse = Nothing
+    , probeResponse = NoResponseToShow
     , applyFilterPrompt = False
     }
 
@@ -75,7 +75,7 @@ load oldModel =
     , preview = NoResponseToShow
     , selectedResult = Nothing
     , showFacetPanel = oldModel.showFacetPanel
-    , probeResponse = Nothing
+    , probeResponse = NoResponseToShow
     , applyFilterPrompt = False
     }
 
@@ -170,10 +170,10 @@ update session msg model =
                 totalItems =
                     case response of
                         SearchData body ->
-                            Just (Response { totalItems = body.totalItems })
+                            Response { totalItems = body.totalItems }
 
                         _ ->
-                            Nothing
+                            NoResponseToShow
             in
             ( { model
                 | response = Response response
@@ -192,7 +192,7 @@ update session msg model =
 
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             ( { model
-                | probeResponse = Just (Response response)
+                | probeResponse = Response response
                 , applyFilterPrompt = True
               }
             , Cmd.none

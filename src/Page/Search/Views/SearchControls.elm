@@ -129,7 +129,7 @@ viewSearchButtons language model =
                 , column
                     [ width fill ]
                     [ viewIf (viewUpdateMessage language) model.applyFilterPrompt
-                    , viewMaybe (viewProbeResponseNumbers language) model.probeResponse
+                    , viewProbeResponseNumbers language model.probeResponse
                     ]
                 ]
             ]

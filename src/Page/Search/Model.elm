@@ -16,11 +16,11 @@ type alias SearchPageModel =
     , preview : Response ServerData
     , selectedResult : Maybe String
     , showFacetPanel : Bool
-    , probeResponse : Maybe (Response ProbeData)
+    , probeResponse : Response ProbeData
     , applyFilterPrompt : Bool
     }
 
 
-setProbeResponse : Maybe ProbeData -> { a | probeResponse : Maybe ProbeData } -> { a | probeResponse : Maybe ProbeData }
+setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
 setProbeResponse newValue oldRecord =
     { oldRecord | probeResponse = newValue }
