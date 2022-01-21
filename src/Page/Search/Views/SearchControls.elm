@@ -15,8 +15,8 @@ import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.SearchControls.Incipits exposing (viewFacetsForIncipitsMode)
-import Page.Search.Views.SearchControls.Institutions exposing (viewFacetsForInstitutionsMode)
-import Page.Search.Views.SearchControls.People exposing (viewFacetsForPeopleMode)
+import Page.Search.Views.SearchControls.Institutions exposing (facetsForInstitutionsModeView)
+import Page.Search.Views.SearchControls.People exposing (facetsForPeopleModeView)
 import Page.Search.Views.SearchControls.Sources exposing (viewFacetsForSourcesMode)
 import Page.UI.Attributes exposing (headingSM, lineSpacing, minimalDropShadow, widthFillHeightFill)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
@@ -153,10 +153,10 @@ viewSearchControls language model body =
                     viewFacetsForSourcesMode language model body
 
                 PeopleMode ->
-                    viewFacetsForPeopleMode language model body
+                    facetsForPeopleModeView language model body
 
                 InstitutionsMode ->
-                    viewFacetsForInstitutionsMode language model body
+                    facetsForInstitutionsModeView language model body
 
                 LiturgicalFestivalsMode ->
                     none

@@ -10,8 +10,8 @@ import Page.Search.Views.Facets exposing (viewFacet)
 import Page.UI.Attributes exposing (lineSpacing, widthFillHeightFill)
 
 
-viewFacetsForInstitutionsMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
-viewFacetsForInstitutionsMode language model body =
+facetsForInstitutionsModeView : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+facetsForInstitutionsModeView language model body =
     let
         activeSearch =
             toActiveSearch model

@@ -12,8 +12,8 @@ import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, widthFillHeightFill)
 
 
-viewFacetsForPeopleMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
-viewFacetsForPeopleMode language model body =
+facetsForPeopleModeView : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+facetsForPeopleModeView language model body =
     let
         msgs =
             { submitMsg = SearchMsg.UserTriggeredSearchSubmit
