@@ -27,8 +27,7 @@ viewProbeResponseNumbers : Language -> ProbeData -> Element SearchMsg
 viewProbeResponseNumbers language probeData =
     let
         formattedNumber =
-            probeData.totalItems
-                |> toFloat
+            toFloat probeData.totalItems
                 |> formatNumberByLanguage language
     in
     el

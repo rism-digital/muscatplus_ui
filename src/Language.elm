@@ -157,11 +157,7 @@ extractTextFromLanguageMap lang langMap =
 
 languageDecoder : String -> Decoder Language
 languageDecoder locale =
-    let
-        lang =
-            parseLocaleToLanguage locale
-    in
-    Decode.succeed lang
+    Decode.succeed <| parseLocaleToLanguage locale
 
 
 languageValuesDecoder : ( String, List String ) -> Decoder LanguageValues
@@ -255,34 +251,30 @@ italianLocale =
 -}
 formatNumberByLanguage : Language -> Float -> String
 formatNumberByLanguage lang num =
-    let
-        formatterLocale =
-            case lang of
-                English ->
-                    englishLocale
+    case lang of
+        English ->
+            format englishLocale num
 
-                German ->
-                    germanLocale
+        German ->
+            format germanLocale num
 
-                French ->
-                    frenchLocale
+        French ->
+            format frenchLocale num
 
-                Italian ->
-                    italianLocale
+        Italian ->
+            format italianLocale num
 
-                Spanish ->
-                    spanishLocale
+        Spanish ->
+            format spanishLocale num
 
-                Portugese ->
-                    portugeseLocale
+        Portugese ->
+            format portugeseLocale num
 
-                Polish ->
-                    polishLocale
+        Polish ->
+            format polishLocale num
 
-                None ->
-                    englishLocale
-    in
-    format formatterLocale num
+        None ->
+            format englishLocale num
 
 
 

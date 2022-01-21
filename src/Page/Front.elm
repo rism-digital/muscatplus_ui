@@ -2,7 +2,6 @@ module Page.Front exposing (..)
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, toActiveSearch, toKeyboard)
 import Browser.Navigation as Nav
-import Dict
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setMode, setNextQuery, toNextQuery)
