@@ -1,7 +1,7 @@
 module Page.Record.Model exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Response exposing (Response)
+import Response exposing (Response, ServerData)
 
 
 type CurrentRecordViewTab
@@ -11,8 +11,8 @@ type CurrentRecordViewTab
 
 
 type alias RecordPageModel =
-    { response : Response
+    { response : Response ServerData
     , currentTab : CurrentRecordViewTab
-    , searchResults : Response
+    , searchResults : Response ServerData
     , activeSearch : ActiveSearch
     }

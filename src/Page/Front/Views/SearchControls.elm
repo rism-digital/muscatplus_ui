@@ -15,6 +15,7 @@ import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, sectionSp
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..))
 
 
 frontKeywordQueryInputView :
@@ -74,24 +75,39 @@ updateMessageView language =
         (text "Apply filters to update search results")
 
 
-probeResponseNumbersView : Language -> ProbeData -> Element FrontMsg
-probeResponseNumbersView language probeData =
+viewProbeResponseNumbers : Language -> Response ProbeData -> Element FrontMsg
+viewProbeResponseNumbers language probeResponse =
     let
-        formattedNumber =
-            toFloat probeData.totalItems
-                |> formatNumberByLanguage language
+        message =
+            case probeResponse of
+                Response data ->
+                    let
+                        formattedNumber =
+                            toFloat data.totalItems
+                                |> formatNumberByLanguage language
+                    in
+                    "Results with filters applied: " ++ formattedNumber
+
+                Loading _ ->
+                    "Loading results preview... "
+
+                Error _ ->
+                    "Error loading probe results"
+
+                NoResponseToShow ->
+                    ""
     in
     el
         [ headingSM ]
-        (text ("Results with filters applied: " ++ formattedNumber))
+        (text message)
 
 
-frontSearchButtonsView : Language -> FrontPageModel -> Element FrontMsg
-frontSearchButtonsView language model =
+viewFrontSearchButtons : Language -> FrontPageModel -> Element FrontMsg
+viewFrontSearchButtons language model =
     let
         msgs =
             { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserInputTextInKeywordQueryBox
+            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
             , resetMsg = FrontMsg.UserResetAllFilters
             }
     in
@@ -145,8 +161,8 @@ frontSearchButtonsView language model =
                     ]
                 , column
                     [ width fill ]
-                    [ viewIf (updateMessageView language) model.applyFilterPrompt
-                    , viewMaybe (probeResponseNumbersView language) model.probeResponse
+                    [ viewIf (viewUpdateMessage language) model.applyFilterPrompt
+                    , viewProbeResponseNumbers language model.probeResponse
                     ]
                 ]
             ]

@@ -17,9 +17,9 @@ import Page.RecordTypes.Source exposing (FullSourceBody)
     rendered while new data is being fetched.
 
 -}
-type Response
-    = Loading (Maybe ServerData)
-    | Response ServerData
+type Response data
+    = Loading (Maybe data)
+    | Response data
     | Error String
     | NoResponseToShow
 

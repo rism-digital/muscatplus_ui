@@ -16,7 +16,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 
 
-viewInstitutionSourcesTab : Language -> String -> ActiveSearch -> Response -> Element RecordMsg
+viewInstitutionSourcesTab : Language -> String -> ActiveSearch -> Response ServerData -> Element RecordMsg
 viewInstitutionSourcesTab language sourcesUrl pageSearch searchData =
     let
         msgs =

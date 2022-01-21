@@ -170,7 +170,7 @@ update session msg model =
                 totalItems =
                     case response of
                         SearchData body ->
-                            Just { totalItems = body.totalItems }
+                            Just (Response { totalItems = body.totalItems })
 
                         _ ->
                             Nothing
@@ -192,7 +192,7 @@ update session msg model =
 
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             ( { model
-                | probeResponse = Just response
+                | probeResponse = Just (Response response)
                 , applyFilterPrompt = True
               }
             , Cmd.none
@@ -336,7 +336,7 @@ update session msg model =
         UserTriggeredSearchSubmit ->
             searchSubmit session model
 
-        UserInputTextInKeywordQueryBox queryText ->
+        UserEnteredTextInKeywordQueryBox queryText ->
             let
                 newText =
                     if String.isEmpty queryText then

@@ -21,18 +21,34 @@ import Page.Search.Views.SearchControls.Sources exposing (viewFacetsForSourcesMo
 import Page.UI.Attributes exposing (headingSM, lineSpacing, minimalDropShadow, widthFillHeightFill)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..))
 
 
-viewProbeResponseNumbers : Language -> ProbeData -> Element SearchMsg
+viewProbeResponseNumbers : Language -> Response ProbeData -> Element SearchMsg
 viewProbeResponseNumbers language probeData =
     let
-        formattedNumber =
-            toFloat probeData.totalItems
-                |> formatNumberByLanguage language
+        message =
+            case probeData of
+                Response data ->
+                    let
+                        formattedNumber =
+                            toFloat data.totalItems
+                                |> formatNumberByLanguage language
+                    in
+                    "Results with filters applied: " ++ formattedNumber
+
+                Loading _ ->
+                    "Loading results preview... "
+
+                Error _ ->
+                    "Error loading probe results"
+
+                NoResponseToShow ->
+                    ""
     in
     el
         [ headingSM ]
-        (text ("Results with filters applied: " ++ formattedNumber))
+        (text message)
 
 
 viewUpdateMessage : Language -> Element SearchMsg
@@ -51,7 +67,7 @@ viewSearchButtons language model =
     let
         msgs =
             { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserInputTextInKeywordQueryBox
+            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
             , resetMsg = SearchMsg.UserResetAllFilters
             }
     in

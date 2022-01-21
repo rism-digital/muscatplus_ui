@@ -2,7 +2,7 @@ module Page.Search.Model exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Page.RecordTypes.Probe exposing (ProbeData)
-import Response exposing (Response)
+import Response exposing (Response, ServerData)
 
 
 {-|
@@ -11,12 +11,12 @@ import Response exposing (Response)
 
 -}
 type alias SearchPageModel =
-    { response : Response
+    { response : Response ServerData
     , activeSearch : ActiveSearch
-    , preview : Response
+    , preview : Response ServerData
     , selectedResult : Maybe String
     , showFacetPanel : Bool
-    , probeResponse : Maybe ProbeData
+    , probeResponse : Maybe (Response ProbeData)
     , applyFilterPrompt : Bool
     }
 

@@ -29,7 +29,7 @@ init : FrontPageModel
 init =
     { response = Loading Nothing
     , activeSearch = ActiveSearch.empty
-    , probeResponse = Nothing
+    , probeResponse = NoResponseToShow
     , applyFilterPrompt = False
     }
 
@@ -116,7 +116,7 @@ update session msg model =
 
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             ( { model
-                | probeResponse = Just response
+                | probeResponse = Response response
                 , applyFilterPrompt = True
               }
             , Cmd.none
@@ -134,7 +134,7 @@ update session msg model =
         UserResetAllFilters ->
             ( model, Cmd.none )
 
-        UserInputTextInKeywordQueryBox queryText ->
+        UserEnteredTextInKeywordQueryBox queryText ->
             let
                 newText =
                     if String.isEmpty queryText then
@@ -146,12 +146,10 @@ update session msg model =
                 newQueryArgs =
                     toNextQuery model.activeSearch
                         |> setKeywordQuery newText
-
-                newModel =
-                    setNextQuery newQueryArgs model.activeSearch
-                        |> flip setActiveSearch model
             in
-            ( newModel, Cmd.none )
+            setNextQuery newQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+                |> probeSubmit ServerRespondedWithProbeData session
 
         UserClickedToggleFacet facetAlias ->
             userClickedToggleFacet facetAlias model
