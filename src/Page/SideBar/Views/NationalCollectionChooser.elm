@@ -1,5 +1,6 @@
 module Page.SideBar.Views.NationalCollectionChooser exposing (..)
 
+import Config
 import Dict exposing (Dict)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
@@ -86,7 +87,7 @@ imageForCountryCode countryCode =
                 |> Maybe.withDefault "xx.svg"
 
         countryFlagPath =
-            "/static/images/flags/" ++ countryFlagImageName
+            Config.flagsPath ++ countryFlagImageName
     in
     image
         [ width (px 25) ]

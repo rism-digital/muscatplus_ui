@@ -6,6 +6,11 @@ serverUrl =
     "http://dev.rism.offline"
 
 
+flagsPath : String
+flagsPath =
+    "/static/images/flags/"
+
+
 minimumQueryLength : Int
 minimumQueryLength =
     3
