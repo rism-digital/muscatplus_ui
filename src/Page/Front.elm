@@ -5,9 +5,10 @@ import Browser.Navigation as Nav
 import Dict
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
-import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setNextQuery, toNextQuery)
+import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setMode, setNextQuery, toNextQuery)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.SideBar.Msg exposing (sideBarOptionToResultMode)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
@@ -66,8 +67,12 @@ searchSubmit session model =
         newModel =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
 
+        resultMode =
+            sideBarOptionToResultMode session.showFrontSearchInterface
+
         textQueryParameters =
             toNextQuery newModel.activeSearch
+                |> setMode resultMode
                 |> buildQueryParameters
 
         searchUrl =
@@ -126,6 +131,9 @@ update session msg model =
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model
+
+        UserResetAllFilters ->
+            ( model, Cmd.none )
 
         UserInputTextInKeywordQueryBox queryText ->
             let

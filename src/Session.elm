@@ -10,7 +10,7 @@ import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.Route exposing (Route(..), parseUrl)
-import Page.SideBar.Msg exposing (SideBarMsg, SideBarOption(..))
+import Page.SideBar.Msg exposing (SideBarMsg, SideBarOption(..), resultModeToSideBarOption)
 import Url exposing (Url)
 
 
@@ -70,21 +70,7 @@ init flags url key =
         initialMode =
             case route of
                 FrontPageRoute qargs ->
-                    case qargs.mode of
-                        SourcesMode ->
-                            SourceSearchOption
-
-                        PeopleMode ->
-                            PeopleSearchOption
-
-                        InstitutionsMode ->
-                            InstitutionSearchOption
-
-                        IncipitsMode ->
-                            IncipitSearchOption
-
-                        _ ->
-                            SourceSearchOption
+                    resultModeToSideBarOption qargs.mode
 
                 _ ->
                     SourceSearchOption

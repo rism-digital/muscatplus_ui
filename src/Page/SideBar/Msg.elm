@@ -6,6 +6,7 @@ import Http
 import Http.Detailed
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Countries exposing (CountryCode)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 
 
 type SideBarMsg
@@ -27,6 +28,7 @@ type SideBarOption
     | PeopleSearchOption
     | InstitutionSearchOption
     | IncipitSearchOption
+    | LiturgicalFestivalsOption
 
 
 sideBarOptionToModeString : SideBarOption -> String
@@ -43,3 +45,44 @@ sideBarOptionToModeString option =
 
         IncipitSearchOption ->
             "incipits"
+
+        LiturgicalFestivalsOption ->
+            "festivals"
+
+
+resultModeToSideBarOption : ResultMode -> SideBarOption
+resultModeToSideBarOption mode =
+    case mode of
+        SourcesMode ->
+            SourceSearchOption
+
+        PeopleMode ->
+            PeopleSearchOption
+
+        InstitutionsMode ->
+            InstitutionSearchOption
+
+        IncipitsMode ->
+            IncipitSearchOption
+
+        LiturgicalFestivalsMode ->
+            LiturgicalFestivalsOption
+
+
+sideBarOptionToResultMode : SideBarOption -> ResultMode
+sideBarOptionToResultMode option =
+    case option of
+        SourceSearchOption ->
+            SourcesMode
+
+        PeopleSearchOption ->
+            PeopleMode
+
+        InstitutionSearchOption ->
+            InstitutionsMode
+
+        IncipitSearchOption ->
+            IncipitsMode
+
+        LiturgicalFestivalsOption ->
+            LiturgicalFestivalsMode
