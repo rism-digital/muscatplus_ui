@@ -1,30 +1,53 @@
 module Page.Front.Views exposing (..)
 
-import Element exposing (Element, alignTop, centerX, column, el, fill, height, maximum, minimum, paddingXY, row, text, width)
+import Element exposing (Element, alignTop, centerX, column, fill, height, maximum, minimum, paddingXY, row, width)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg)
-import Page.Front.Views.SourceSearch exposing (sourceSearchPanelRouter, sourceSearchPanelView)
+import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
+import Page.Front.Views.InstiutionSearch exposing (institutionSearchPanelView)
+import Page.Front.Views.PeopleSearch exposing (peopleSearchPanelView)
+import Page.Front.Views.SourceSearch exposing (sourceSearchPanelView)
 import Page.SideBar.Msg exposing (SideBarOption(..))
-import Page.UI.Attributes exposing (headingXL)
+import Page.UI.Helpers exposing (viewMaybe)
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
 view : Session -> FrontPageModel -> Element FrontMsg
 view session model =
     let
-        bodyView =
+        maybeBody =
+            case model.response of
+                Response (FrontData body) ->
+                    Just body
+
+                _ ->
+                    Nothing
+
+        -- returns a partially-applied function that can be used in the viewMaybe
+        -- for the body argument
+        searchViewFn =
             case session.showFrontSearchInterface of
                 SourceSearchOption ->
-                    sourceSearchFrontPage session model
+                    sourceSearchPanelView session model
 
                 PeopleSearchOption ->
-                    peopleSearchFrontPage
+                    peopleSearchPanelView session model
 
                 InstitutionSearchOption ->
-                    institutionSearchFrontPage
+                    institutionSearchPanelView session model
 
                 IncipitSearchOption ->
-                    incipitSearchFrontPage
+                    incipitSearchPanelView session model
+
+                -- For now, show the source panel if we ever find our way to this option.
+                LiturgicalFestivalsOption ->
+                    sourceSearchPanelView session model
+
+        -- viewMaybe will be either the searchViewFn, or the `none`
+        -- element if the maybeBody parameter is Nothing.
+        searchPanelView =
+            viewMaybe searchViewFn maybeBody
     in
     row
         [ width fill
@@ -37,50 +60,6 @@ view session model =
             , centerX
             , alignTop
             ]
-            [ row
-                [ width fill ]
-                []
-            , bodyView
+            [ searchPanelView
             ]
         ]
-
-
-sourceSearchFrontPage : Session -> FrontPageModel -> Element FrontMsg
-sourceSearchFrontPage session model =
-    row
-        [ width fill
-        , centerX
-        ]
-        [ column
-            [ width fill
-            , height fill
-            ]
-            [ sourceSearchPanelRouter session model ]
-        ]
-
-
-peopleSearchFrontPage : Element msg
-peopleSearchFrontPage =
-    row
-        [ width fill
-        , centerX
-        ]
-        [ el [ headingXL ] (text "People search") ]
-
-
-institutionSearchFrontPage : Element msg
-institutionSearchFrontPage =
-    row
-        [ width fill
-        , centerX
-        ]
-        [ el [ headingXL ] (text "Institution search") ]
-
-
-incipitSearchFrontPage : Element msg
-incipitSearchFrontPage =
-    row
-        [ width fill
-        , centerX
-        ]
-        [ el [ headingXL ] (text "Incipit search") ]

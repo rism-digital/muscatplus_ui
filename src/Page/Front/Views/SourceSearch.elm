@@ -1,53 +1,34 @@
 module Page.Front.Views.SourceSearch exposing (..)
 
-import ActiveSearch.Model exposing (ActiveSearch)
-import Dict
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, none, paddingXY, paragraph, px, row, shrink, spacing, text, width)
-import Element.Background as Background
-import Element.Border as Border
+import Element exposing (Element, alignLeft, alignTop, column, fill, none, paragraph, row, spacing, text, width)
 import Element.Font as Font
-import Element.Input as Input
 import Element.Region as Region
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
 import Page.Front.Views.Facets exposing (viewFrontFacet)
-import Page.Front.Views.FrontKeywordQuery exposing (frontKeywordQueryInput)
+import Page.Front.Views.SearchControls exposing (frontKeywordQueryInputView, frontSearchButtonsView)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
-import Page.RecordTypes.Search exposing (FacetData(..), Facets)
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.Search.Views.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
-import Page.Search.Views.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
-import Page.UI.Attributes exposing (headingHero, headingSM, lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Utlities exposing (namedValue)
 
 
-sourceSearchPanelRouter : Session -> FrontPageModel -> Element FrontMsg
-sourceSearchPanelRouter session model =
-    case model.response of
-        Response (FrontData body) ->
-            sourceSearchPanelView session body model
-
-        _ ->
-            none
-
-
-sourceSearchPanelView : Session -> FrontBody -> FrontPageModel -> Element FrontMsg
-sourceSearchPanelView session frontBody model =
+sourceSearchPanelView : Session -> FrontPageModel -> FrontBody -> Element FrontMsg
+sourceSearchPanelView session model frontBody =
     let
-        qText =
-            toNextQuery model.activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         activeSearch =
             model.activeSearch
+
+        qText =
+            toNextQuery activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
 
         language =
             session.language
@@ -94,38 +75,12 @@ sourceSearchPanelView session frontBody model =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ column
-                    [ width fill
-                    , alignLeft
-                    , alignTop
-                    ]
-                    [ row
-                        [ spacing 10 ]
-                        [ statsHeader ]
-                    ]
+                [ paragraph
+                    [ headingHero, Font.semiBold ]
+                    [ text "Source records" ]
                 ]
-            , frontKeywordQueryInput language msgs qText
-            , row
-                [ width fill
-                , height <| px 60
-                ]
-                [ column
-                    []
-                    [ Input.button
-                        [ Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-                        , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
-                        , paddingXY 10 10
-                        , height (px 60)
-                        , width <| px 120
-                        , Font.center
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
-                        , headingSM
-                        ]
-                        { onPress = Just msgs.submitMsg
-                        , label = text (extractLabelFromLanguageMap language localTranslations.search)
-                        }
-                    ]
-                ]
+            , frontKeywordQueryInputView language msgs qText
+            , frontSearchButtonsView language model
             , row
                 [ width fill ]
                 -- TODO: Translate

@@ -14,6 +14,7 @@ type FrontMsg
     | ServerRespondedWithProbeData (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ))
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
     | UserTriggeredSearchSubmit
+    | UserResetAllFilters
     | UserInputTextInKeywordQueryBox String
     | UserClickedToggleFacet FacetAlias
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
