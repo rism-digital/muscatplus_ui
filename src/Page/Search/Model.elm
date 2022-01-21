@@ -19,8 +19,3 @@ type alias SearchPageModel =
     , probeResponse : Response ProbeData
     , applyFilterPrompt : Bool
     }
-
-
-setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
-setProbeResponse newValue oldRecord =
-    { oldRecord | probeResponse = newValue }
