@@ -199,6 +199,7 @@ viewFacet alias language activeSearch body =
                     { language = language
                     , activeSearch = activeSearch
                     , selectFacet = facet
+                    , numberOfColumns = 3
                     , userClickedFacetExpandMsg = SearchMsg.UserClickedSelectFacetExpand
                     , userChangedFacetBehaviourMsg = SearchMsg.UserChangedFacetBehaviour
                     , userChangedSelectFacetSortMsg = SearchMsg.UserChangedSelectFacetSort

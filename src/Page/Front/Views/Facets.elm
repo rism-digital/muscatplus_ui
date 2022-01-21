@@ -70,6 +70,7 @@ viewFrontFacet alias language activeSearch body =
                     { language = language
                     , activeSearch = activeSearch
                     , selectFacet = facet
+                    , numberOfColumns = 4
                     , userClickedFacetExpandMsg = FrontMsg.UserClickedSelectFacetExpand
                     , userChangedFacetBehaviourMsg = FrontMsg.UserChangedFacetBehaviour
                     , userChangedSelectFacetSortMsg = FrontMsg.UserChangedSelectFacetSort

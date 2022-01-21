@@ -33,6 +33,7 @@ type alias SelectFacetConfig msg =
     { language : Language
     , selectFacet : SelectFacet
     , activeSearch : ActiveSearch
+    , numberOfColumns : Int
     , userClickedFacetExpandMsg : String -> msg
     , userChangedFacetBehaviourMsg : FacetAlias -> FacetBehaviours -> msg
     , userChangedSelectFacetSortMsg : FacetAlias -> FacetSorts -> msg
@@ -109,9 +110,6 @@ viewSelectFacet config =
 
         query =
             toNextQuery activeSearch
-
-        activeFilters =
-            query.filters
 
         facetItemList =
             .items config.selectFacet
@@ -220,7 +218,7 @@ viewSelectFacet config =
                 )
 
         groupedFacetItems =
-            LE.greedyGroupsOf 3 facetItems
+            LE.greedyGroupsOf config.numberOfColumns facetItems
     in
     row
         [ width fill
