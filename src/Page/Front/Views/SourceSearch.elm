@@ -37,29 +37,6 @@ sourceSearchPanelView session model frontBody =
             { submitMsg = FrontMsg.UserTriggeredSearchSubmit
             , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
             }
-
-        statsHeader =
-            let
-                sourceStats =
-                    .sources frontBody.stats
-
-                sourceNumbers =
-                    sourceStats.value
-
-                formattedNumber =
-                    formatNumberByLanguage language sourceNumbers
-
-                translatedRecordType =
-                    extractLabelFromLanguageMap language sourceStats.label
-
-                interpolatedValue =
-                    extractLabelFromLanguageMap language localTranslations.searchNumberOfRecords
-                        |> namedValue "numberOfRecords" formattedNumber
-                        |> namedValue "recordType" translatedRecordType
-            in
-            paragraph
-                [ headingHero, Region.heading 1, Font.semiBold ]
-                [ text interpolatedValue ]
     in
     row
         [ width fill
