@@ -2,7 +2,7 @@ module Page.SideBar.Views exposing (..)
 
 import Color exposing (Color)
 import Debouncer.Messages exposing (provideInput)
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -273,11 +273,16 @@ view session =
                 [ alignTop
                 , centerX
                 ]
-                [ el
-                    [ centerY
-                    , alignTop
-                    ]
-                    (rismLogo colourScheme.lightBlue headerHeight)
+                [ link
+                    []
+                    { url = "/"
+                    , label =
+                        el
+                            [ centerY
+                            , alignTop
+                            ]
+                            (rismLogo colourScheme.lightBlue headerHeight)
+                    }
                 ]
             ]
         , row
