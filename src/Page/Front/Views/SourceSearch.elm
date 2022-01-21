@@ -8,7 +8,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
 import Page.Front.Views.Facets exposing (viewFrontFacet)
-import Page.Front.Views.SearchControls exposing (frontKeywordQueryInputView, frontSearchButtonsView)
+import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput, viewFrontSearchButtons)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -35,7 +35,7 @@ sourceSearchPanelView session model frontBody =
 
         msgs =
             { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserInputTextInKeywordQueryBox
+            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
             }
 
         statsHeader =
@@ -79,8 +79,8 @@ sourceSearchPanelView session model frontBody =
                     [ headingHero, Font.semiBold ]
                     [ text "Source records" ]
                 ]
-            , frontKeywordQueryInputView language msgs qText
-            , frontSearchButtonsView language model
+            , viewFrontKeywordQueryInput language msgs qText
+            , viewFrontSearchButtons language model
             , row
                 [ width fill ]
                 -- TODO: Translate

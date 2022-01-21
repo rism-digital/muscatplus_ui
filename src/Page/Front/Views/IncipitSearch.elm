@@ -4,7 +4,7 @@ import Element exposing (Element, alignTop, column, fill, paragraph, row, spacin
 import Element.Font as Font
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.Front.Views.SearchControls exposing (frontKeywordQueryInputView, frontSearchButtonsView)
+import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput, viewFrontSearchButtons)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
@@ -19,7 +19,7 @@ incipitSearchPanelView session model body =
 
         msgs =
             { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserInputTextInKeywordQueryBox
+            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
             }
 
         qText =
@@ -45,7 +45,7 @@ incipitSearchPanelView session model body =
                     [ headingHero, Font.semiBold ]
                     [ text "Incipit records" ]
                 ]
-            , frontKeywordQueryInputView language msgs qText
-            , frontSearchButtonsView language model
+            , viewFrontKeywordQueryInput language msgs qText
+            , viewFrontSearchButtons language model
             ]
         ]

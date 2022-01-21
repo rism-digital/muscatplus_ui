@@ -18,7 +18,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..))
 
 
-frontKeywordQueryInputView :
+viewFrontKeywordQueryInput :
     Language
     ->
         { submitMsg : msg
@@ -26,7 +26,7 @@ frontKeywordQueryInputView :
         }
     -> String
     -> Element msg
-frontKeywordQueryInputView language msgs queryText =
+viewFrontKeywordQueryInput language msgs queryText =
     row
         [ width fill
         , alignTop
@@ -64,8 +64,8 @@ frontKeywordQueryInputView language msgs queryText =
         ]
 
 
-updateMessageView : Language -> Element FrontMsg
-updateMessageView language =
+viewUpdateMessage : Language -> Element FrontMsg
+viewUpdateMessage language =
     el
         [ width fill
         , height (px 30)
