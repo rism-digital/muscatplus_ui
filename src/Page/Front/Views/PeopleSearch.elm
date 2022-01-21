@@ -4,10 +4,12 @@ import Element exposing (Element, alignTop, column, fill, paragraph, row, spacin
 import Element.Font as Font
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
+import Page.Front.Views.Facets exposing (viewFrontFacet)
 import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput, viewFrontSearchButtons)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
+import Page.UI.Components exposing (dividerWithText)
 import Session exposing (Session)
 
 
@@ -16,6 +18,9 @@ peopleSearchPanelView session model frontBody =
     let
         language =
             session.language
+
+        activeSearch =
+            model.activeSearch
 
         msgs =
             { submitMsg = FrontMsg.UserTriggeredSearchSubmit
@@ -47,5 +52,21 @@ peopleSearchPanelView session model frontBody =
                 ]
             , viewFrontKeywordQueryInput language msgs qText
             , viewFrontSearchButtons language model
+            , row
+                [ width fill ]
+                -- TODO: Translate
+                [ dividerWithText "Additional filters" ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "person-role" language activeSearch frontBody ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "date-range" language activeSearch frontBody ]
+                ]
             ]
         ]
