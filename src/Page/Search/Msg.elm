@@ -36,7 +36,7 @@ type SearchMsg
     | UserClickedClearSearchQueryBox
     | UserClickedSearchResultsPagination String
     | UserTriggeredSearchSubmit
-    | UserInputTextInKeywordQueryBox String
+    | UserEnteredTextInKeywordQueryBox String
     | UserClickedClosePreviewWindow
     | UserClickedSearchResultForPreview String
     | UserInteractedWithPianoKeyboard Keyboard.Msg

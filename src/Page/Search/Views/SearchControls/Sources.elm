@@ -17,7 +17,7 @@ viewFacetsForSourcesMode language model body =
     let
         msgs =
             { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserInputTextInKeywordQueryBox
+            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
             }
 
         activeSearch =
