@@ -1,12 +1,12 @@
 module Page.Record.Views.SourcePage.MaterialGroupsSection exposing (..)
 
-import Element exposing (Element, column, row)
+import Element exposing (Element, column, row, spacing)
 import Language exposing (Language)
 import Page.Record.Views.Relationship exposing (viewRelationshipBody)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Attributes exposing (sectionBorderStyles, widthFillHeightFill)
+import Page.UI.Attributes exposing (sectionBorderStyles, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -25,7 +25,7 @@ viewMaterialGroup language mg =
     row
         (List.append widthFillHeightFill sectionBorderStyles)
         [ column
-            widthFillHeightFill
+            (List.append widthFillHeightFill [ spacing sectionSpacing ])
             [ viewMaybe (viewSummaryField language) mg.summary
             , viewMaybe (viewParagraphField language) mg.notes
             , viewMaybe (viewMaterialGroupRelationships language) mg.relationships
