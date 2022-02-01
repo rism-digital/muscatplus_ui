@@ -1,13 +1,14 @@
 module Page.Front exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, toActiveSearch, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, toActiveSearch, toKeyboard)
 import Browser.Navigation as Nav
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setMode, setNextQuery, toNextQuery)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
-import Page.SideBar.Msg exposing (sideBarOptionToResultMode)
+import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
+import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
@@ -88,10 +89,23 @@ update : Session -> FrontMsg -> FrontPageModel -> ( FrontPageModel, Cmd FrontMsg
 update session msg model =
     case msg of
         ServerRespondedWithFrontData (Ok ( _, response )) ->
+            let
+                keyboardQuery =
+                    toKeyboard model.activeSearch
+                        |> toKeyboardQuery
+
+                notationRenderCmd =
+                    case session.showFrontSearchInterface of
+                        IncipitSearchOption ->
+                            Cmd.map UserInteractedWithPianoKeyboard (buildNotationRequestQuery keyboardQuery)
+
+                        _ ->
+                            Cmd.none
+            in
             ( { model
                 | response = Response response
               }
-            , Cmd.none
+            , notationRenderCmd
             )
 
         ServerRespondedWithFrontData (Err err) ->
@@ -196,6 +210,28 @@ update session msg model =
         UserClickedSelectFacetItem alias facetValue isClicked ->
             userClickedSelectFacetItem alias facetValue model
                 |> probeSubmit ServerRespondedWithProbeData session
+
+        UserInteractedWithPianoKeyboard keyboardMsg ->
+            let
+                ( keyboardModel, keyboardCmd ) =
+                    toKeyboard model.activeSearch
+                        |> Keyboard.update keyboardMsg
+
+                newModel =
+                    setKeyboard keyboardModel model.activeSearch
+                        |> flip setActiveSearch model
+            in
+            ( newModel
+            , Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
+            )
+
+        UserClickedPianoKeyboardSearchSubmitButton ->
+            searchSubmit session model
+
+        UserClickedPianoKeyboardSearchClearButton ->
+            setKeyboard Keyboard.initModel model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
 
         NothingHappened ->
             ( model, Cmd.none )

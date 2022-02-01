@@ -370,11 +370,9 @@ update session msg model =
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
             let
-                oldKeyboard =
-                    toKeyboard model.activeSearch
-
                 ( keyboardModel, keyboardCmd ) =
-                    Keyboard.update keyboardMsg oldKeyboard
+                    toKeyboard model.activeSearch
+                        |> Keyboard.update keyboardMsg
 
                 newModel =
                     setKeyboard keyboardModel model.activeSearch

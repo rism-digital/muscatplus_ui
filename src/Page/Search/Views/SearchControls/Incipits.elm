@@ -1,13 +1,13 @@
 module Page.Search.Views.SearchControls.Incipits exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, column, fill, height, row, width)
+import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (viewFacet)
-import Page.UI.Attributes exposing (widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, widthFillHeightFill)
 
 
 viewFacetsForIncipitsMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
@@ -17,14 +17,23 @@ viewFacetsForIncipitsMode language model body =
             toActiveSearch model
     in
     row
-        widthFillHeightFill
+        [ padding 10
+        , scrollbarY
+        , width fill
+        , alignTop
+        , height fill
+        ]
         [ column
-            [ width fill
-            , height fill
+            [ spacing lineSpacing
+            , width fill
+            , alignTop
             ]
             [ row
-                [ width fill ]
-                [ column [ width fill ]
+                widthFillHeightFill
+                [ column
+                    [ width fill
+                    , alignTop
+                    ]
                     [ viewFacet "notation" language activeSearch body
                     ]
                 ]

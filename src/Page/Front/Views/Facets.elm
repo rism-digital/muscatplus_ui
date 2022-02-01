@@ -7,6 +7,7 @@ import Language exposing (Language)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.RecordTypes.Search exposing (FacetData(..), Facets)
 import Page.RecordTypes.Shared exposing (FacetAlias)
+import Page.Search.Views.Facets.NotationFacet exposing (NotationFacetConfig, viewKeyboardControl)
 import Page.Search.Views.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 import Page.Search.Views.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 import Page.Search.Views.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
@@ -78,6 +79,19 @@ viewFrontFacet alias language activeSearch body =
                     }
             in
             viewSelectFacet selectFacetConfig
+
+        Just (NotationFacetData facet) ->
+            let
+                notationFacetConfig : NotationFacetConfig FrontMsg
+                notationFacetConfig =
+                    { language = language
+                    , keyboardFacet = activeSearch.keyboard
+                    , userClickedPianoKeyboardSearchSubmitMsg = FrontMsg.UserClickedPianoKeyboardSearchSubmitButton
+                    , userClickedClearKeyboardQueryMsg = FrontMsg.UserClickedPianoKeyboardSearchClearButton
+                    , userInteractedWithKeyboardMsg = FrontMsg.UserInteractedWithPianoKeyboard
+                    }
+            in
+            viewKeyboardControl notationFacetConfig
 
         _ ->
             none

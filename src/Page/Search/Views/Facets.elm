@@ -12,7 +12,7 @@ import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetData(..), FacetItem(..), FacetSorts(..), Facets, ModeFacet, QueryFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
-import Page.Search.Views.Facets.NotationFacet exposing (viewKeyboardControl)
+import Page.Search.Views.Facets.NotationFacet exposing (NotationFacetConfig, viewKeyboardControl)
 import Page.Search.Views.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 import Page.Search.Views.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 import Page.Search.Views.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
@@ -210,10 +210,16 @@ viewFacet alias language activeSearch body =
 
         Just (NotationFacetData facet) ->
             let
-                activeKeyboard =
-                    activeSearch.keyboard
+                notationFacetConfig : NotationFacetConfig SearchMsg
+                notationFacetConfig =
+                    { language = language
+                    , keyboardFacet = activeSearch.keyboard
+                    , userInteractedWithKeyboardMsg = SearchMsg.UserInteractedWithPianoKeyboard
+                    , userClickedClearKeyboardQueryMsg = SearchMsg.UserClickedPianoKeyboardSearchClearButton
+                    , userClickedPianoKeyboardSearchSubmitMsg = SearchMsg.UserClickedPianoKeyboardSearchSubmitButton
+                    }
             in
-            viewKeyboardControl language activeKeyboard
+            viewKeyboardControl notationFacetConfig
 
         Just (QueryFacetData facet) ->
             let

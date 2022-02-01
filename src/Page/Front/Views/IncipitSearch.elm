@@ -4,6 +4,7 @@ import Element exposing (Element, alignTop, column, fill, paragraph, row, spacin
 import Element.Font as Font
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
+import Page.Front.Views.Facets exposing (viewFrontFacet)
 import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput, viewFrontSearchButtons)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
@@ -45,7 +46,7 @@ incipitSearchPanelView session model body =
                     [ headingHero, Font.semiBold ]
                     [ text "Incipit records" ]
                 ]
-            , viewFrontKeywordQueryInput language msgs qText
+            , viewFrontFacet "notation" language model.activeSearch body
             , viewFrontSearchButtons language model
             ]
         ]

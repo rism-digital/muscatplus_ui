@@ -14,14 +14,23 @@ import Page.UI.Keyboard.Model exposing (Keyboard(..))
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
-viewKeyboardControl : Language -> Keyboard.Model -> Element SearchMsg
-viewKeyboardControl language keyboard =
+type alias NotationFacetConfig msg =
+    { language : Language
+    , keyboardFacet : Keyboard.Model
+    , userInteractedWithKeyboardMsg : Keyboard.Msg -> msg
+    , userClickedClearKeyboardQueryMsg : msg
+    , userClickedPianoKeyboardSearchSubmitMsg : msg
+    }
+
+
+viewKeyboardControl : NotationFacetConfig msg -> Element msg
+viewKeyboardControl config =
     let
         keyboardConfig =
             { numOctaves = 3 }
 
         keyboardQuery =
-            keyboard.query
+            .query config.keyboardFacet
 
         queryLen =
             Maybe.withDefault [] keyboardQuery.noteData
@@ -42,7 +51,7 @@ viewKeyboardControl language keyboard =
                 )
 
             else
-                ( Just UserClickedPianoKeyboardSearchSubmitButton
+                ( Just config.userClickedPianoKeyboardSearchSubmitMsg
                 , colourScheme.darkBlue |> convertColorToElementColor
                 , colourScheme.darkBlue |> convertColorToElementColor
                 )
@@ -52,8 +61,8 @@ viewKeyboardControl language keyboard =
         [ column
             []
             [ row []
-                [ Keyboard.view language (Keyboard keyboard keyboardConfig)
-                    |> Element.map UserInteractedWithPianoKeyboard
+                [ Keyboard.view config.language (Keyboard config.keyboardFacet keyboardConfig)
+                    |> Element.map config.userInteractedWithKeyboardMsg
                 ]
             , row
                 [ spacing 10 ]
@@ -86,7 +95,7 @@ viewKeyboardControl language keyboard =
                     , headingSM
                     , htmlAttribute (HA.style "cursor" "pointer")
                     ]
-                    { onPress = Just UserClickedPianoKeyboardSearchClearButton
+                    { onPress = Just config.userClickedClearKeyboardQueryMsg
                     , label = text "Clear"
                     }
                 ]

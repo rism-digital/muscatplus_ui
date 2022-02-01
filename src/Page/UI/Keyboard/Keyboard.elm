@@ -284,22 +284,19 @@ renderKey keyMsg idx keyConfig =
         -- start the octave numbers at C3
         octave =
             floor (toFloat idx / 12) + 3
-
-        keyDrawingFunction =
-            case keyConfig.keyType of
-                WhiteKey upperKey lowerKey ->
-                    let
-                        keyNameForLabel =
-                            case upperKey of
-                                KC ->
-                                    Just (keyNoteNameToNoteString upperKey ++ String.fromInt octave)
-
-                                _ ->
-                                    Nothing
-                    in
-                    whiteKey moveOffset keyNameForLabel (keyMsg upperKey octave) (keyMsg lowerKey octave)
-
-                BlackKey upperKey lowerKey ->
-                    blackKey moveOffset (keyMsg upperKey octave) (keyMsg lowerKey octave)
     in
-    keyDrawingFunction
+    case keyConfig.keyType of
+        WhiteKey upperKey lowerKey ->
+            let
+                keyNameForLabel =
+                    case upperKey of
+                        KC ->
+                            Just (keyNoteNameToNoteString upperKey ++ String.fromInt octave)
+
+                        _ ->
+                            Nothing
+            in
+            whiteKey moveOffset keyNameForLabel (keyMsg upperKey octave) (keyMsg lowerKey octave)
+
+        BlackKey upperKey lowerKey ->
+            blackKey moveOffset (keyMsg upperKey octave) (keyMsg lowerKey octave)
