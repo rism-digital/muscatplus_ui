@@ -1,6 +1,7 @@
 module Page.SideBar.Views exposing (..)
 
 import Color exposing (Color)
+import Config
 import Debouncer.Messages exposing (provideInput)
 import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
@@ -275,7 +276,7 @@ view session =
                 ]
                 [ link
                     []
-                    { url = "/"
+                    { url = Config.serverUrl
                     , label =
                         el
                             [ centerY

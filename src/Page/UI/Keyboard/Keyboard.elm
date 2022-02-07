@@ -265,6 +265,7 @@ renderKey keyMsg idx keyConfig =
         efInterval =
             modBy 12 idx == 5
 
+        -- adjust the padding for e-f intervals.
         indexPadding =
             if efInterval then
                 floor (toFloat (idx + 1) / 6)

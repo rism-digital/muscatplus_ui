@@ -72,7 +72,7 @@ viewUpdateMessage language =
         , headingSM
         , Font.bold
         ]
-        (text "Apply filters to update search results")
+        (text "Press search to view results")
 
 
 viewProbeResponseNumbers : Language -> Response ProbeData -> Element FrontMsg
