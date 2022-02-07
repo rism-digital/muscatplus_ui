@@ -8,6 +8,7 @@ type Keyboard
 type alias KeyboardModel =
     { query : KeyboardQuery
     , notation : Maybe String -- the rendered SVG
+    , needsProbe : Bool
     }
 
 

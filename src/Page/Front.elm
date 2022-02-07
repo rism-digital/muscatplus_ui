@@ -5,8 +5,8 @@ import Browser.Navigation as Nav
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setMode, setNextQuery, toNextQuery)
-import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
+import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
 import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
@@ -220,18 +220,31 @@ update session msg model =
                 newModel =
                     setKeyboard keyboardModel model.activeSearch
                         |> flip setActiveSearch model
+
+                probeCmd =
+                    if keyboardModel.needsProbe == True then
+                        let
+                            probeUrl =
+                                createProbeUrl session newModel.activeSearch
+                        in
+                        createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+
+                    else
+                        Cmd.none
             in
             ( newModel
-            , Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
+            , Cmd.batch
+                [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
+                , probeCmd
+                ]
             )
 
-        UserClickedPianoKeyboardSearchSubmitButton ->
-            searchSubmit session model
-
-        UserClickedPianoKeyboardSearchClearButton ->
-            setKeyboard Keyboard.initModel model.activeSearch
-                |> flip setActiveSearch model
-                |> searchSubmit session
-
+        --UserClickedPianoKeyboardSearchSubmitButton ->
+        --    searchSubmit session model
+        --
+        --UserClickedPianoKeyboardSearchClearButton ->
+        --    setKeyboard Keyboard.initModel model.activeSearch
+        --        |> flip setActiveSearch model
+        --        |> searchSubmit session
         NothingHappened ->
             ( model, Cmd.none )

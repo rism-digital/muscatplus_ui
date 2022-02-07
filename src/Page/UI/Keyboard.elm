@@ -1,6 +1,7 @@
 module Page.UI.Keyboard exposing (..)
 
 import Array
+import Config
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, maximum, minimum, paddingXY, pointer, px, row, spacing, width)
 import Element.Events exposing (onClick)
 import Language exposing (Language)
@@ -51,6 +52,7 @@ initModel : Model
 initModel =
     { query = defaultKeyboardQuery
     , notation = Nothing
+    , needsProbe = False
     }
 
 
@@ -71,10 +73,14 @@ buildUpdateQuery newNoteData model =
             model.query
 
         newQuery =
-            { query | noteData = newNoteData }
+            { query
+                | noteData = newNoteData
+            }
 
         newModel =
-            { model | query = newQuery }
+            { model
+                | query = newQuery
+            }
 
         queryParameters =
             buildNotationQueryParameters newQuery
@@ -106,6 +112,7 @@ update msg model =
         ServerRespondedWithRenderedNotation (Ok ( _, response )) ->
             ( { model
                 | notation = Just response
+                , needsProbe = False
               }
             , Cmd.none
             )
@@ -130,8 +137,18 @@ update msg model =
 
                         Nothing ->
                             [ note ]
+
+                needsProbing =
+                    if List.length noteData > Config.minimumQueryLength then
+                        True
+
+                    else
+                        False
+
+                newModel =
+                    { model | needsProbe = needsProbing }
             in
-            buildUpdateQuery (Just noteData) model
+            buildUpdateQuery (Just noteData) newModel
 
         UserClickedPianoKeyboardDeleteNote ->
             let

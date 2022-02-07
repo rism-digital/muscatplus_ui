@@ -9,6 +9,7 @@ import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput, vie
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
+import Page.UI.Components exposing (dividerWithText)
 import Session exposing (Session)
 
 
@@ -17,16 +18,6 @@ incipitSearchPanelView session model body =
     let
         language =
             session.language
-
-        msgs =
-            { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
-            }
-
-        qText =
-            toNextQuery model.activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
     in
     row
         [ width fill
@@ -48,5 +39,36 @@ incipitSearchPanelView session model body =
                 ]
             , viewFrontFacet "notation" language model.activeSearch body
             , viewFrontSearchButtons language model
+            , row
+                [ width fill ]
+                -- TODO: Translate
+                [ dividerWithText "Additional filters"
+                ]
+            , row
+                [ width fill
+                , alignTop
+                ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "composer" language model.activeSearch body
+                    ]
+                , column
+                    [ width fill ]
+                    [ viewFrontFacet "date-range" language model.activeSearch body ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "has-notation" language model.activeSearch body
+                    , viewFrontFacet "is-mensural" language model.activeSearch body
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "clef" language model.activeSearch body ]
+                ]
             ]
         ]

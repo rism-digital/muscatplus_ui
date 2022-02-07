@@ -47,8 +47,19 @@ probeSubmit msg session model =
         newModel =
             addNationalCollectionFilter session.restrictedToNationalCollection model
 
+        probeUrl =
+            createProbeUrl session model.activeSearch
+    in
+    ( newModel
+    , createProbeRequestWithDecoder msg probeUrl
+    )
+
+
+createProbeUrl : Session -> ActiveSearch -> String
+createProbeUrl session activeSearch =
+    let
         notationQueryParameters =
-            toKeyboard newModel.activeSearch
+            toKeyboard activeSearch
                 |> toKeyboardQuery
                 |> buildNotationQueryParameters
 
@@ -56,17 +67,12 @@ probeSubmit msg session model =
             sideBarOptionToResultMode session.showFrontSearchInterface
 
         textQueryParameters =
-            toNextQuery newModel.activeSearch
+            toNextQuery activeSearch
                 |> setMode resultMode
                 |> buildQueryParameters
-
-        probeUrl =
-            List.append textQueryParameters notationQueryParameters
-                |> serverUrl [ "probe" ]
     in
-    ( newModel
-    , createProbeRequestWithDecoder msg probeUrl
-    )
+    List.append textQueryParameters notationQueryParameters
+        |> serverUrl [ "probe" ]
 
 
 userRemovedItemFromQueryFacet :
