@@ -215,25 +215,9 @@ view language (Keyboard model config) =
                             |> List.indexedMap (renderKey UserClickedPianoKeyboardKey)
                         )
                     ]
-                , column
-                    [ alignTop
-                    ]
-                    [ row
-                        [ width fill
-                        , alignTop
-                        , spacing 10
-                        ]
-                        [ el
-                            [ width (px 30)
-                            , onClick UserClickedPianoKeyboardDeleteNote
-                            , pointer
-                            ]
-                            (backspaceSvg colourScheme.black)
-                        ]
-                    ]
                 ]
             , row
-                [ width (fill |> minimum 400 |> maximum 1000)
+                [ width fill
                 , height (px 120)
                 , paddingXY 0 10
                 ]

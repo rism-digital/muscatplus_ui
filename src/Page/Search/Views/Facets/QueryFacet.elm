@@ -216,6 +216,7 @@ viewQueryFacet config =
             , row
                 [ alignLeft
                 , spacing 10
+                , bodySM
                 ]
                 [ el
                     [ width (px 20)

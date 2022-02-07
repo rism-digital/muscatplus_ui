@@ -1,13 +1,15 @@
 module Page.Search.Views.SearchControls.Incipits exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
 import Language exposing (Language)
+import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
-import Page.Search.Msg exposing (SearchMsg)
-import Page.Search.Views.Facets exposing (viewFacet)
-import Page.UI.Attributes exposing (lineSpacing, widthFillHeightFill)
+import Page.Search.Msg as SearchMsg exposing (SearchMsg)
+import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
+import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
 
 
 viewFacetsForIncipitsMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
@@ -15,6 +17,16 @@ viewFacetsForIncipitsMode language model body =
     let
         activeSearch =
             toActiveSearch model
+
+        msgs =
+            { submitMsg = SearchMsg.UserTriggeredSearchSubmit
+            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+            }
+
+        qText =
+            toNextQuery activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
     in
     row
         [ padding 10
@@ -29,32 +41,72 @@ viewFacetsForIncipitsMode language model body =
             , alignTop
             ]
             [ row
-                widthFillHeightFill
+                [ width fill ]
                 [ column
-                    [ width fill
-                    , alignTop
+                    [ alignTop
+                    , alignLeft
                     ]
                     [ viewFacet "notation" language activeSearch body
                     ]
                 ]
-            , row
-                widthFillHeightFill
-                [ column
+            , viewFacetSection language
+                [ row
                     widthFillHeightFill
-                    [ viewFacet "is-mensural" language activeSearch body
-                    , viewFacet "has-notation" language activeSearch body
+                    [ column
+                        [ width fill
+                        , alignTop
+                        ]
+                        [ searchKeywordInput language msgs qText ]
                     ]
                 ]
-            , row
-                widthFillHeightFill
-                [ column
-                    widthFillHeightFill
-                    [ viewFacet "composer" language activeSearch body
-                    , viewFacet "clef" language activeSearch body
+            , viewFacetSection language
+                [ row
+                    [ width fill
+                    , alignTop
+                    , spacing sectionSpacing
                     ]
-                , column
-                    widthFillHeightFill
-                    [ viewFacet "date-range" language activeSearch body
+                    [ column
+                        [ width fill
+                        , alignTop
+                        ]
+                        [ viewFacet "composer" language model.activeSearch body
+                        ]
+                    ]
+                ]
+            , viewFacetSection language
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill ]
+                        [ viewFacet "date-range" language model.activeSearch body ]
+                    ]
+                ]
+            , viewFacetSection language
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill
+                        , alignTop
+                        , spacing lineSpacing
+                        ]
+                        [ viewFacet "is-mensural" language activeSearch body
+                        , viewFacet "has-notation" language activeSearch body
+                        ]
+                    ]
+                ]
+            , viewFacetSection language
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill ]
+                        [ viewFacet "clef" language activeSearch body
+                        ]
                     ]
                 ]
             ]

@@ -10,6 +10,7 @@ import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
 import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, widthFillHeightFill)
+import Page.UI.Components exposing (dividerWithText)
 
 
 facetsForPeopleModeView : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
@@ -49,15 +50,9 @@ facetsForPeopleModeView language model body =
                     [ searchKeywordInput language msgs qText ]
                 ]
             , row
-                (List.append [ width fill ] facetBorderBottom)
-                [ column
-                    widthFillHeightFill
-                    [ el
-                        [ width fill
-                        , headingMD
-                        ]
-                        (text "Person record filters")
-                    ]
+                [ width fill ]
+                -- TODO: Translate
+                [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
                 [ viewFacet "person-role" language activeSearch body ]

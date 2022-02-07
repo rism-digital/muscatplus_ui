@@ -91,38 +91,6 @@ viewRecordPreviewTitleBar =
         ]
 
 
-viewPreviewLoading : Element SearchMsg
-viewPreviewLoading =
-    row
-        [ width fill
-        , height fill
-        , scrollbarY
-        , alignTop
-        , padding 20
-        , Background.color (colourScheme.white |> convertColorToElementColor)
-        , Border.color (colourScheme.black |> convertColorToElementColor)
-        , Border.width 1
-        , htmlAttribute (Html.Attributes.style "z-index" "10")
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 10
-            ]
-            [ viewRecordPreviewTitleBar
-            , row
-                []
-                [ loadingBox 800 50 ]
-            , row [] [ loadingBox 700 200 ]
-            , row [] [ loadingBox 700 200 ]
-            , row [] [ loadingBox 700 200 ]
-            , row [] [ loadingBox 700 200 ]
-            , row [] [ loadingBox 700 200 ]
-            , row [] [ loadingBox 700 200 ]
-            ]
-        ]
-
-
 viewUnknownPreview : Element msg
 viewUnknownPreview =
     none

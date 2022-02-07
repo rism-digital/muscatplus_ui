@@ -2,7 +2,7 @@ module Page.Search.Views.Facets.RangeFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
-import Element exposing (Element, above, alignLeft, alignTop, column, fill, none, paddingXY, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, column, fill, none, paddingXY, paragraph, px, row, spacing, spacingXY, text, width)
 import Element.Events as Events
 import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)
@@ -18,6 +18,16 @@ rangeFacetHelp =
     Filter using four digit year values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would
     find all records from 1650 onwards.
     """
+
+
+type alias RangeFacetConfig msg =
+    { language : Language
+    , rangeFacet : RangeFacet
+    , activeSearch : ActiveSearch
+    , userLostFocusMsg : FacetAlias -> RangeFacetValue -> msg
+    , userFocusedMsg : FacetAlias -> RangeFacetValue -> msg
+    , userEnteredTextMsg : FacetAlias -> RangeFacetValue -> String -> msg
+    }
 
 
 validateInput : String -> String -> Element msg
@@ -46,16 +56,6 @@ validateInput boxIndicator value =
             row
                 []
                 [ paragraph [] [ text eMsg ] ]
-
-
-type alias RangeFacetConfig msg =
-    { language : Language
-    , rangeFacet : RangeFacet
-    , activeSearch : ActiveSearch
-    , userLostFocusMsg : FacetAlias -> RangeFacetValue -> msg
-    , userFocusedMsg : FacetAlias -> RangeFacetValue -> msg
-    , userEnteredTextMsg : FacetAlias -> RangeFacetValue -> String -> msg
-    }
 
 
 viewRangeFacet : RangeFacetConfig msg -> Element msg
@@ -98,8 +98,7 @@ viewRangeFacet config =
                 ]
             , row
                 [ width fill
-                , paddingXY 20 10
-                , spacing lineSpacing
+                , spacingXY 10 0
                 ]
                 [ column
                     [ spacing lineSpacing ]

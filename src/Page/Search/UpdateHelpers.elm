@@ -48,27 +48,23 @@ probeSubmit msg session model =
             addNationalCollectionFilter session.restrictedToNationalCollection model
 
         probeUrl =
-            createProbeUrl session model.activeSearch
+            createProbeUrl model.activeSearch
     in
     ( newModel
     , createProbeRequestWithDecoder msg probeUrl
     )
 
 
-createProbeUrl : Session -> ActiveSearch -> String
-createProbeUrl session activeSearch =
+createProbeUrl : ActiveSearch -> String
+createProbeUrl activeSearch =
     let
         notationQueryParameters =
             toKeyboard activeSearch
                 |> toKeyboardQuery
                 |> buildNotationQueryParameters
 
-        resultMode =
-            sideBarOptionToResultMode session.showFrontSearchInterface
-
         textQueryParameters =
-            toNextQuery activeSearch
-                |> setMode resultMode
+            activeSearch.nextQuery
                 |> buildQueryParameters
     in
     List.append textQueryParameters notationQueryParameters

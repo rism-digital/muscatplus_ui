@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, maximum, none, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -14,7 +14,7 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (viewModeItems)
 import Page.Search.Views.Loading exposing (searchModeSelectorLoading, viewSearchResultsLoading)
-import Page.Search.Views.Previews exposing (viewPreviewLoading, viewPreviewRouter)
+import Page.Search.Views.Previews exposing (viewPreviewRouter, viewUnknownPreview)
 import Page.Search.Views.Results exposing (viewSearchResult)
 import Page.Search.Views.SearchControls exposing (viewSearchControls)
 import Page.UI.Attributes exposing (searchColumnVerticalSize, widthFillHeightFill)
@@ -132,7 +132,7 @@ viewSearchResultsSection language model body =
             case model.preview of
                 Loading Nothing ->
                     -- TODO: Make a preview loading view
-                    viewPreviewLoading
+                    viewUnknownPreview
 
                 Loading (Just oldData) ->
                     viewPreviewRouter language oldData
@@ -161,7 +161,7 @@ viewSearchResultsSection language model body =
             [ viewSearchResultsListPanel language model body
             ]
         , column
-            [ width (fill |> maximum 1000)
+            [ width fill
             , height fill
             , alignTop
             , inFront renderedPreview

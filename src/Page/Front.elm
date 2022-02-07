@@ -40,6 +40,21 @@ frontPageRequest initialUrl =
     createRequestWithDecoder ServerRespondedWithFrontData (Url.toString initialUrl)
 
 
+frontProbeSubmit : Session -> FrontPageModel -> ( FrontPageModel, Cmd FrontMsg )
+frontProbeSubmit session model =
+    let
+        resultMode =
+            sideBarOptionToResultMode session.showFrontSearchInterface
+
+        newModel =
+            toNextQuery model.activeSearch
+                |> setMode resultMode
+                |> flip setNextQuery model.activeSearch
+                |> flip setActiveSearch model
+    in
+    probeSubmit ServerRespondedWithProbeData session newModel
+
+
 searchSubmit : Session -> FrontPageModel -> ( FrontPageModel, Cmd FrontMsg )
 searchSubmit session model =
     let
@@ -163,19 +178,19 @@ update session msg model =
             in
             setNextQuery newQueryArgs model.activeSearch
                 |> flip setActiveSearch model
-                |> probeSubmit ServerRespondedWithProbeData session
+                |> frontProbeSubmit session
 
         UserClickedToggleFacet facetAlias ->
             userClickedToggleFacet facetAlias model
-                |> probeSubmit ServerRespondedWithProbeData session
+                |> frontProbeSubmit session
 
         UserRemovedItemFromQueryFacet alias query ->
             userRemovedItemFromQueryFacet alias query model
-                |> probeSubmit ServerRespondedWithProbeData session
+                |> frontProbeSubmit session
 
         UserHitEnterInQueryFacet alias currentBehaviour ->
             updateQueryFacetValues alias currentBehaviour model
-                |> probeSubmit ServerRespondedWithProbeData session
+                |> frontProbeSubmit session
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
             userEnteredTextInQueryFacet alias query suggestionUrl ServerRespondedWithSuggestionData model
@@ -183,7 +198,7 @@ update session msg model =
         UserChoseOptionFromQueryFacetSuggest alias selectedValue currentBehaviour ->
             updateQueryFacetFilters alias selectedValue model
                 |> updateQueryFacetValues alias currentBehaviour
-                |> probeSubmit ServerRespondedWithProbeData session
+                |> frontProbeSubmit session
 
         UserEnteredTextInRangeFacet alias inputBox value ->
             ( userEnteredTextInRangeFacet alias inputBox value model
@@ -195,7 +210,7 @@ update session msg model =
 
         UserLostFocusRangeFacet alias valueType ->
             userLostFocusOnRangeFacet alias model
-                |> probeSubmit ServerRespondedWithProbeData session
+                |> frontProbeSubmit session
 
         UserChangedSelectFacetSort alias facetSort ->
             ( userChangedSelectFacetSort alias facetSort model
@@ -209,13 +224,16 @@ update session msg model =
 
         UserClickedSelectFacetItem alias facetValue isClicked ->
             userClickedSelectFacetItem alias facetValue model
-                |> probeSubmit ServerRespondedWithProbeData session
+                |> frontProbeSubmit session
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
             let
                 ( keyboardModel, keyboardCmd ) =
                     toKeyboard model.activeSearch
                         |> Keyboard.update keyboardMsg
+
+                resultMode =
+                    sideBarOptionToResultMode session.showFrontSearchInterface
 
                 newModel =
                     setKeyboard keyboardModel model.activeSearch
@@ -225,7 +243,10 @@ update session msg model =
                     if keyboardModel.needsProbe == True then
                         let
                             probeUrl =
-                                createProbeUrl session newModel.activeSearch
+                                toNextQuery newModel.activeSearch
+                                    |> setMode resultMode
+                                    |> flip setNextQuery newModel.activeSearch
+                                    |> createProbeUrl
                         in
                         createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
 
@@ -239,12 +260,5 @@ update session msg model =
                 ]
             )
 
-        --UserClickedPianoKeyboardSearchSubmitButton ->
-        --    searchSubmit session model
-        --
-        --UserClickedPianoKeyboardSearchClearButton ->
-        --    setKeyboard Keyboard.initModel model.activeSearch
-        --        |> flip setActiveSearch model
-        --        |> searchSubmit session
         NothingHappened ->
             ( model, Cmd.none )

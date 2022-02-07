@@ -8,11 +8,11 @@ import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, s
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..), RangeFacetValue(..))
-import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
+import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery, setNotation, toNotation)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
@@ -377,9 +377,23 @@ update session msg model =
                 newModel =
                     setKeyboard keyboardModel model.activeSearch
                         |> flip setActiveSearch model
+
+                probeCmd =
+                    if keyboardModel.needsProbe == True then
+                        let
+                            probeUrl =
+                                createProbeUrl newModel.activeSearch
+                        in
+                        createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+
+                    else
+                        Cmd.none
             in
             ( newModel
-            , Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
+            , Cmd.batch
+                [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
+                , probeCmd
+                ]
             )
 
         UserClickedPianoKeyboardSearchSubmitButton ->
@@ -391,8 +405,20 @@ update session msg model =
                 |> searchSubmit session
 
         UserResetAllFilters ->
-            setNextQuery defaultQueryArgs model.activeSearch
+            let
+                -- we don't reset *all* parameters; we keep the
+                -- currently selected result mode so that the user
+                -- doesn't get bounced back to the 'sources' tab.
+                currentMode =
+                    toNextQuery model.activeSearch
+                        |> toMode
+
+                adjustedQueryArgs =
+                    { defaultQueryArgs | mode = currentMode }
+            in
+            setNextQuery adjustedQueryArgs model.activeSearch
                 |> setRangeFacetValues Dict.empty
+                |> setKeyboard Keyboard.initModel
                 |> flip setActiveSearch model
                 |> searchSubmit session
 

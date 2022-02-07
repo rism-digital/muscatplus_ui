@@ -9,7 +9,8 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
 import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Components exposing (dividerWithText)
 
 
 viewFacetsForSourcesMode : Language -> SearchPageModel -> { a | facets : Facets } -> Element SearchMsg
@@ -49,23 +50,19 @@ viewFacetsForSourcesMode language model body =
                     [ searchKeywordInput language msgs qText ]
                 ]
             , row
-                (List.append [ width fill ] facetBorderBottom)
-                [ column
-                    widthFillHeightFill
-                    [ el
-                        [ width fill
-                        , headingMD
-                        ]
-                        (text "Source record filters")
-                    ]
+                [ width fill ]
+                -- TODO: Translate
+                [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
                 [ row
                     [ width fill
                     , alignTop
+                    , spacing sectionSpacing
                     ]
                     [ column
-                        [ width fill ]
+                        [ width fill
+                        ]
                         [ viewFacet "composer" language activeSearch body ]
                     , column
                         [ width fill ]
