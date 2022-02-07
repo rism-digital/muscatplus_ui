@@ -30,6 +30,4 @@ type FrontMsg
     | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String Bool
     | UserInteractedWithPianoKeyboard Keyboard.Msg
-    | UserClickedPianoKeyboardSearchSubmitButton
-    | UserClickedPianoKeyboardSearchClearButton
     | NothingHappened

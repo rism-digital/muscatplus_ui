@@ -215,8 +215,6 @@ viewFacet alias language activeSearch body =
                     { language = language
                     , keyboardFacet = activeSearch.keyboard
                     , userInteractedWithKeyboardMsg = SearchMsg.UserInteractedWithPianoKeyboard
-                    , userClickedClearKeyboardQueryMsg = SearchMsg.UserClickedPianoKeyboardSearchClearButton
-                    , userClickedPianoKeyboardSearchSubmitMsg = SearchMsg.UserClickedPianoKeyboardSearchSubmitButton
                     }
             in
             viewKeyboardControl notationFacetConfig
