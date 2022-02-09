@@ -71,6 +71,7 @@ renderValue : Language -> LanguageMap -> Element msg
 renderValue language value =
     textColumn
         [ bodyRegular
+        , spacing lineSpacing
         ]
         (styledParagraphs (extractTextFromLanguageMap language value))
 
