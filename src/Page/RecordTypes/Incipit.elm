@@ -21,7 +21,7 @@ type alias IncipitBody =
     { id : String
     , label : LanguageMap
     , summary : Maybe (List LabelValue)
-    , partOf : Maybe IncipitParentSourceBody
+    , partOf : IncipitParentSourceBody
     , rendered : Maybe (List RenderedIncipit)
     }
 
@@ -38,7 +38,7 @@ incipitBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "partOf" (Decode.maybe incipitParentSourceBodyDecoder) Nothing
+        |> required "partOf" incipitParentSourceBodyDecoder
         |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
 
 

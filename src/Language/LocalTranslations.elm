@@ -24,6 +24,7 @@ localTranslations :
     , last : List LanguageValues
     , page : List LanguageValues
     , viewRecord : List LanguageValues
+    , viewSourceRecord : List LanguageValues
     , recordURI : List LanguageValues
     , recordTop : List LanguageValues
     , applyFilters : List LanguageValues
@@ -111,6 +112,10 @@ localTranslations =
     , viewRecord =
         -- TODO: Additional translations
         [ LanguageValues English [ "View full record" ]
+        ]
+    , viewSourceRecord =
+        -- TODO: Additional translations
+        [ LanguageValues English [ "View source record" ]
         ]
     , recordURI =
         [ LanguageValues English [ "Record URI (Permalink)" ] ]

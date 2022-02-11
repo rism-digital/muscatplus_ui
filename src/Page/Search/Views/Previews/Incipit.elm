@@ -15,23 +15,18 @@ viewIncipitPreview : Language -> IncipitBody -> Element msg
 viewIncipitPreview language body =
     let
         sourceUrl =
-            case body.partOf of
-                Just partOfBody ->
-                    let
-                        sourceBody =
-                            partOfBody.source
-                    in
-                    sourceBody.id
+            .source body.partOf
+                |> .id
 
-                Nothing ->
-                    ""
+        labelLanguageMap =
+            .label body.partOf
 
         incipitLink =
             row
                 [ width fill ]
                 [ el
                     []
-                    (text (extractLabelFromLanguageMap language localTranslations.viewRecord ++ ": "))
+                    (text (extractLabelFromLanguageMap language labelLanguageMap ++ ": "))
                 , link
                     [ linkColour ]
                     { url = sourceUrl
@@ -61,7 +56,7 @@ viewIncipitPreview language body =
                         [ width fill
                         ]
                         [ h1 language body.label ]
-                    , pageUriTemplate language body
+                    , incipitLink
                     ]
                 ]
             , pageBodyView
