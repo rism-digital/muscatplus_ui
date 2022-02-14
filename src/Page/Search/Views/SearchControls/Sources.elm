@@ -115,6 +115,10 @@ viewFacetsForSourcesMode language model body =
             --, viewFacet "num-holdings" language activeSearch body
             , viewFacetSection language
                 [ viewFacet "subjects" language activeSearch body ]
+            , viewFacetSection language
+                [ viewFacet "scoring" language activeSearch body ]
+            , viewFacetSection language
+                [ viewFacet "sigla" language activeSearch body ]
 
             --, viewFacet "holding-institution" language activeSearch body
             ]

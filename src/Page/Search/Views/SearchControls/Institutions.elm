@@ -34,6 +34,7 @@ facetsForInstitutionsModeView language model body =
         , height fill
         , alignTop
         , padding 10
+        , scrollbarY
         ]
         [ column
             [ width fill
@@ -53,15 +54,7 @@ facetsForInstitutionsModeView language model body =
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
-                [ row
-                    [ width fill
-                    , alignTop
-                    , spacing sectionSpacing
-                    ]
-                    [ column
-                        [ width fill ]
-                        [ viewFacet "city" language activeSearch body ]
-                    ]
+                [ viewFacet "city" language activeSearch body
                 ]
             ]
         ]
