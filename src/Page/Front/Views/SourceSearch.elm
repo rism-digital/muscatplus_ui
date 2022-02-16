@@ -73,12 +73,69 @@ sourceSearchPanelView session model frontBody =
                     [ viewFrontFacet "date-range" language activeSearch frontBody ]
                 ]
             , row
+                [ width fill
+                , alignTop
+                ]
+                [ column
+                    [ width fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
+                    [ viewFrontFacet "hide-source-contents" language activeSearch frontBody
+                    , viewFrontFacet "hide-source-collections" language activeSearch frontBody
+                    , viewFrontFacet "hide-composite-volumes" language activeSearch frontBody
+                    ]
+                , column
+                    [ width fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
+                    [ viewFrontFacet "has-digitization" language activeSearch frontBody ]
+                , column
+                    [ width fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
+                    [ viewFrontFacet "is-arrangement" language activeSearch frontBody
+                    , viewFrontFacet "has-incipits" language activeSearch frontBody
+                    ]
+                ]
+            , row
                 [ width fill ]
                 [ column
                     [ width fill ]
                     [ viewFrontFacet "source-type" language activeSearch frontBody
                     , viewFrontFacet "content-types" language activeSearch frontBody
                     , viewFrontFacet "material-group-types" language activeSearch frontBody
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "text-language" language activeSearch frontBody
+                    , viewFrontFacet "format-extent" language activeSearch frontBody
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "subjects" language activeSearch frontBody
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "scoring" language activeSearch frontBody
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "sigla" language activeSearch frontBody
                     ]
                 ]
             ]
