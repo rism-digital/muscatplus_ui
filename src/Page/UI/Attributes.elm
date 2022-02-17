@@ -65,7 +65,7 @@ labelFieldColumnAttributes =
 
 valueFieldColumnAttributes : List (Attribute msg)
 valueFieldColumnAttributes =
-    [ width (fillPortion 6)
+    [ width (fillPortion 4)
     , alignTop
     ]
 

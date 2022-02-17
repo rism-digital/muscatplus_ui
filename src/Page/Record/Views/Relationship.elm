@@ -1,11 +1,11 @@
 module Page.Record.Views.Relationship exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, link, none, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, link, none, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
-import Page.UI.Components exposing (renderLabel)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
@@ -50,24 +50,19 @@ viewRelationshipBody language body =
                 Nothing ->
                     none
     in
-    row
-        [ width fill
-        , alignTop
-        ]
-        [ column
-            [ width fill ]
-            [ row
-                [ width fill
-                ]
-                [ el
-                    [ width (fillPortion 1)
-                    , alignTop
-                    ]
-                    (renderLabel language body.label)
-                , row
-                    [ width (fillPortion 6)
-                    , alignTop
-                    ]
+    fieldValueWrapper <|
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language body.label ]
+            , column
+                valueFieldColumnAttributes
+                [ row
+                    [ width fill ]
                     [ relatedToView
                     , qualifierLabel
                     ]

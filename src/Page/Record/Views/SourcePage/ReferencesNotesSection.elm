@@ -1,14 +1,14 @@
 module Page.Record.Views.SourcePage.ReferencesNotesSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, link, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
-import Page.UI.Components exposing (h3, h6, viewParagraphField)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField)
 import Page.UI.Helpers exposing (viewMaybe)
 
 
@@ -40,38 +40,36 @@ viewNotesSection language notes =
 
 viewPerformanceLocationsSection : Language -> PerformanceLocationsSectionBody -> Element msg
 viewPerformanceLocationsSection language body =
-    row
-        widthFillHeightFill
-        [ column
-            widthFillHeightFill
-            [ row
-                widthFillHeightFill
-                [ h3 language body.label ]
-            , row
-                widthFillHeightFill
-                [ column
-                    widthFillHeightFill
-                    (List.map (\l -> viewPerformanceLocation language l) body.items)
-                ]
+    fieldValueWrapper <|
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language body.label ]
+            , column
+                valueFieldColumnAttributes
+                (List.map (\l -> viewPerformanceLocation language l) body.items)
             ]
         ]
 
 
 viewLiturgicalFestivalsSection : Language -> LiturgicalFestivalsSectionBody -> Element msg
 viewLiturgicalFestivalsSection language body =
-    row
-        widthFillHeightFill
-        [ column
-            widthFillHeightFill
-            [ row
-                widthFillHeightFill
-                [ h3 language body.label ]
-            , row
-                widthFillHeightFill
-                [ column
-                    widthFillHeightFill
-                    (List.map (\l -> viewLiturgicalFestival language l) body.items)
-                ]
+    fieldValueWrapper <|
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language body.label ]
+            , column
+                valueFieldColumnAttributes
+                (List.map (\l -> viewLiturgicalFestival language l) body.items)
             ]
         ]
 

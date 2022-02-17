@@ -157,6 +157,8 @@ viewSearchResultsSection language model body =
             , scrollbarY
             , alignTop
             , htmlAttribute (HA.id "search-results-list")
+            , Border.widthEach { bottom = 0, top = 0, left = 0, right = 2 }
+            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
             [ viewSearchResultsListPanel language model body
             ]
