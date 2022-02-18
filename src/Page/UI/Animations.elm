@@ -44,7 +44,7 @@ progressBarAnimation =
 progressBar : Element msg
 progressBar =
     animatedEl progressBarAnimation
-        [ Element.height (Element.px 2)
+        [ Element.height (Element.px 10)
         , Element.width (Element.px 0)
         , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
         , htmlAttribute (HA.style "position" "fixed")
