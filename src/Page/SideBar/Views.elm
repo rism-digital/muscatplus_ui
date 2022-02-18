@@ -267,20 +267,21 @@ view session =
         [ row
             [ width (px 60)
             , height (px 80)
-            , centerX
-            , paddingXY 0 10
+            , paddingXY 15 10
             ]
             [ column
                 [ alignTop
-                , centerX
+                , alignLeft
+                , width fill
                 ]
                 [ link
-                    []
+                    [ width fill
+                    ]
                     { url = Config.serverUrl
                     , label =
                         el
-                            [ centerY
-                            , alignTop
+                            [ alignTop
+                            , width fill
                             ]
                             (rismLogo colourScheme.lightBlue headerHeight)
                     }
