@@ -229,7 +229,7 @@ viewFacet alias language activeSearch body =
                     , userRemovedMsg = SearchMsg.UserRemovedItemFromQueryFacet
                     , userEnteredTextMsg = SearchMsg.UserEnteredTextInQueryFacet
                     , userChangedBehaviourMsg = SearchMsg.UserChangedFacetBehaviour
-                    , userChoseOptionMsg = SearchMsg.UserChoseOptionFromQueryFacetSuggest
+                    , userChoseOptionMsg = SearchMsg.UserChoseOptionForQueryFacet
                     }
             in
             viewQueryFacet queryFacetConfig

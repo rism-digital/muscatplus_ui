@@ -203,8 +203,7 @@ update session msg model =
             userEnteredTextInQueryFacet alias query suggestionUrl ServerRespondedWithSuggestionData model
 
         UserChoseOptionFromQueryFacetSuggest alias selectedValue currentBehaviour ->
-            updateQueryFacetFilters alias selectedValue model
-                |> updateQueryFacetValues alias currentBehaviour
+            updateQueryFacetFilters alias selectedValue currentBehaviour model
                 |> frontProbeSubmit session
 
         UserEnteredTextInRangeFacet alias inputBox value ->

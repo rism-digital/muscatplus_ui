@@ -241,9 +241,8 @@ update session msg model =
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
             userEnteredTextInQueryFacet alias query suggestionUrl ServerRespondedWithSuggestionData model
 
-        UserChoseOptionFromQueryFacetSuggest alias selectedValue currentBehaviour ->
-            updateQueryFacetFilters alias selectedValue model
-                |> updateQueryFacetValues alias currentBehaviour
+        UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
+            updateQueryFacetFilters alias selectedValue currentBehaviour model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserRemovedItemFromQueryFacet alias query ->

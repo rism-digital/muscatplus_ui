@@ -106,48 +106,13 @@ userRemovedItemFromQueryFacet alias query model =
         |> flip setActiveSearch model
 
 
-updateQueryFacetValues :
-    FacetAlias
-    -> FacetBehaviours
-    -> { a | activeSearch : ActiveSearch }
-    -> { a | activeSearch : ActiveSearch }
-updateQueryFacetValues alias currentBehaviour model =
-    let
-        activeFilters =
-            toNextQuery model.activeSearch
-                |> toFilters
-
-        newActiveFilters =
-            Dict.update alias
-                (\existingValues ->
-                    case existingValues of
-                        Just s ->
-                            Just s
-
-                        Nothing ->
-                            Just []
-                )
-                activeFilters
-
-        newActiveBehaviours =
-            toNextQuery model.activeSearch
-                |> toFacetBehaviours
-                |> Dict.insert alias currentBehaviour
-    in
-    toNextQuery model.activeSearch
-        |> setFilters newActiveFilters
-        |> setFacetBehaviours newActiveBehaviours
-        |> flip setNextQuery model.activeSearch
-        |> setActiveSuggestion Nothing
-        |> flip setActiveSearch model
-
-
 updateQueryFacetFilters :
     FacetAlias
     -> String
+    -> FacetBehaviours
     -> { a | activeSearch : ActiveSearch }
     -> { a | activeSearch : ActiveSearch }
-updateQueryFacetFilters alias text model =
+updateQueryFacetFilters alias text currentBehaviour model =
     let
         activeFilters =
             toNextQuery model.activeSearch
@@ -168,12 +133,18 @@ updateQueryFacetFilters alias text model =
                 )
                 activeFilters
 
+        newActiveBehaviours =
+            toNextQuery model.activeSearch
+                |> toFacetBehaviours
+                |> Dict.insert alias currentBehaviour
+
         newQueryFacetValues =
             toQueryFacetValues model.activeSearch
                 |> Dict.remove alias
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters
+        |> setFacetBehaviours newActiveBehaviours
         |> flip setNextQuery model.activeSearch
         |> setQueryFacetValues newQueryFacetValues
         |> setActiveSuggestion Nothing
