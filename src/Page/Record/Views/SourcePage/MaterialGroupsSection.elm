@@ -6,7 +6,7 @@ import Page.Record.Views.Relationship exposing (viewRelationshipBody)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Attributes exposing (sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -38,6 +38,6 @@ viewMaterialGroupRelationships language relSection =
     row
         widthFillHeightFill
         [ column
-            widthFillHeightFill
+            (List.append widthFillHeightFill [ spacing lineSpacing ])
             (List.map (\t -> viewRelationshipBody language t) relSection.items)
         ]

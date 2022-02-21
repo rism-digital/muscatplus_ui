@@ -1,7 +1,7 @@
 module Page.UI.Attributes exposing (..)
 
 import Color exposing (toCssString)
-import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, paddingXY, width)
+import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, paddingXY, spacingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -65,7 +65,7 @@ labelFieldColumnAttributes =
 
 valueFieldColumnAttributes : List (Attribute msg)
 valueFieldColumnAttributes =
-    [ width (fillPortion 4)
+    [ width (fillPortion 3)
     , alignTop
     ]
 

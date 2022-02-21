@@ -2,7 +2,7 @@ module Page.UI.Components exposing (..)
 
 import Color exposing (Color)
 import Css
-import Element exposing (Element, alignTop, column, el, fill, height, html, htmlAttribute, none, padding, paragraph, px, row, spacing, spacingXY, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignTop, column, el, fill, height, html, htmlAttribute, none, padding, paddingEach, paragraph, px, row, spacing, spacingXY, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font

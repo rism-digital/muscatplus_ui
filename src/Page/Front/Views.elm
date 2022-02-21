@@ -49,6 +49,9 @@ view session model =
         -- element if the maybeBody parameter is Nothing.
         searchPanelView =
             viewMaybe searchViewFn maybeBody
+
+        searchControlsView =
+            viewMaybe (\_ -> viewFrontSearchButtons session.language model) maybeBody
     in
     row
         [ width fill
@@ -62,6 +65,6 @@ view session model =
             , alignTop
             ]
             [ searchPanelView
-            , viewFrontSearchButtons session.language model
+            , searchControlsView
             ]
         ]

@@ -159,7 +159,11 @@ update session msg model =
             )
 
         ServerRespondedWithProbeData (Err err) ->
-            ( model, Cmd.none )
+            ( { model
+                | probeResponse = Error (createErrorMessage err)
+              }
+            , Cmd.none
+            )
 
         UserChangedFacetBehaviour alias behaviour ->
             ( model, Cmd.none )
