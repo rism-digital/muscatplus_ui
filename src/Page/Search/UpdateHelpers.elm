@@ -6,17 +6,17 @@ import Dict
 import Http
 import Http.Detailed
 import List.Extra as LE
-import Page.Query exposing (buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setMode, setNationalCollection, setNextQuery, toFacetBehaviours, toFacetSorts, toFilters, toNextQuery)
+import Page.Query exposing (buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setNationalCollection, setNextQuery, toFacetBehaviours, toFacetSorts, toFilters, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Search.Utilities exposing (createRangeString)
-import Page.SideBar.Msg exposing (sideBarOptionToResultMode)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
+import Response exposing (Response(..))
 import Session exposing (Session)
 import Utlities exposing (flip)
 
@@ -37,15 +37,21 @@ addNationalCollectionFilter ncFilter model =
         |> flip setActiveSearch model
 
 
+setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
+setProbeResponse newResponse oldModel =
+    { oldModel | probeResponse = newResponse }
+
+
 probeSubmit :
     (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ) -> msg)
     -> Session
-    -> { a | activeSearch : ActiveSearch }
-    -> ( { a | activeSearch : ActiveSearch }, Cmd msg )
+    -> { a | activeSearch : ActiveSearch, probeResponse : Response ProbeData }
+    -> ( { a | activeSearch : ActiveSearch, probeResponse : Response ProbeData }, Cmd msg )
 probeSubmit msg session model =
     let
         newModel =
             addNationalCollectionFilter session.restrictedToNationalCollection model
+                |> setProbeResponse (Loading Nothing)
 
         probeUrl =
             createProbeUrl model.activeSearch

@@ -5,6 +5,7 @@ import Browser.Navigation as Nav
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setMode, setNextQuery, toNextQuery)
+import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
@@ -35,6 +36,11 @@ init =
     }
 
 
+setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
+setProbeResponse newResponse oldModel =
+    { oldModel | probeResponse = newResponse }
+
+
 frontPageRequest : Url -> Cmd FrontMsg
 frontPageRequest initialUrl =
     createRequestWithDecoder ServerRespondedWithFrontData (Url.toString initialUrl)
@@ -51,6 +57,7 @@ frontProbeSubmit session model =
                 |> setMode resultMode
                 |> flip setNextQuery model.activeSearch
                 |> flip setActiveSearch model
+                |> setProbeResponse (Loading Nothing)
     in
     probeSubmit ServerRespondedWithProbeData session newModel
 

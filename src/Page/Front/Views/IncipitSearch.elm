@@ -49,7 +49,6 @@ incipitSearchPanelView session model body =
                     [ text "Incipit records" ]
                 ]
             , viewFrontFacet "notation" language model.activeSearch body
-            , viewFrontSearchButtons language model
             , row
                 [ width fill ]
                 -- TODO: Translate

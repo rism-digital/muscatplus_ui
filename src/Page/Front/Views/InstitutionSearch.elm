@@ -1,6 +1,6 @@
-module Page.Front.Views.InstiutionSearch exposing (..)
+module Page.Front.Views.InstitutionSearch exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, none, paragraph, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
@@ -28,8 +28,11 @@ institutionSearchPanelView session model body =
                 |> Maybe.withDefault ""
     in
     row
-        [ width fill
+        [ padding 10
+        , scrollbarY
+        , width fill
         , alignTop
+        , height fill
         ]
         [ column
             [ width fill
@@ -46,6 +49,5 @@ institutionSearchPanelView session model body =
                     [ text "Institution authorities" ]
                 ]
             , viewFrontKeywordQueryInput language msgs qText
-            , viewFrontSearchButtons language model
             ]
         ]

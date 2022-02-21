@@ -1,6 +1,6 @@
 module Page.Front.Views.PeopleSearch exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, paragraph, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
@@ -33,8 +33,11 @@ peopleSearchPanelView session model frontBody =
                 |> Maybe.withDefault ""
     in
     row
-        [ width fill
+        [ padding 10
+        , scrollbarY
+        , width fill
         , alignTop
+        , height fill
         ]
         [ column
             [ width fill
@@ -51,7 +54,6 @@ peopleSearchPanelView session model frontBody =
                     [ text "Person authorities" ]
                 ]
             , viewFrontKeywordQueryInput language msgs qText
-            , viewFrontSearchButtons language model
             , row
                 [ width fill ]
                 -- TODO: Translate

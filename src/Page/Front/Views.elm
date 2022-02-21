@@ -4,7 +4,7 @@ import Element exposing (Element, alignTop, centerX, column, fill, height, maxim
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg)
 import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
-import Page.Front.Views.InstiutionSearch exposing (institutionSearchPanelView)
+import Page.Front.Views.InstitutionSearch exposing (institutionSearchPanelView)
 import Page.Front.Views.PeopleSearch exposing (peopleSearchPanelView)
 import Page.Front.Views.SearchControls exposing (viewFrontSearchButtons)
 import Page.Front.Views.SourceSearch exposing (sourceSearchPanelView)

@@ -95,7 +95,7 @@ viewProbeResponseNumbers language probeResponse =
                     "Error loading probe results"
 
                 NoResponseToShow ->
-                    ""
+                    "No Response to Show"
     in
     el
         [ headingSM ]

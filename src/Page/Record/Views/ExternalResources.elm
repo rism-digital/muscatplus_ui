@@ -27,7 +27,7 @@ viewExternalResource language body =
     row
         [ width fill ]
         [ paragraph
-            []
+            [ spacing lineSpacing ]
             [ link
                 [ linkColour ]
                 { url = body.url
