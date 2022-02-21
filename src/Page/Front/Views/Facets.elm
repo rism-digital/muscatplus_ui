@@ -42,7 +42,6 @@ viewFrontFacet alias language activeSearch body =
                     , queryFacet = facet
                     , activeSearch = activeSearch
                     , userRemovedMsg = FrontMsg.UserRemovedItemFromQueryFacet
-                    , userHitEnterMsg = FrontMsg.UserHitEnterInQueryFacet
                     , userEnteredTextMsg = FrontMsg.UserEnteredTextInQueryFacet
                     , userChangedBehaviourMsg = FrontMsg.UserChangedFacetBehaviour
                     , userChoseOptionMsg = FrontMsg.UserChoseOptionFromQueryFacetSuggest

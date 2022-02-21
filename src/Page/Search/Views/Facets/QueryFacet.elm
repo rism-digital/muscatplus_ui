@@ -34,7 +34,6 @@ type alias QueryFacetConfig msg =
     , activeSearch : ActiveSearch
     , queryFacet : QueryFacet
     , userRemovedMsg : String -> String -> msg
-    , userHitEnterMsg : String -> FacetBehaviours -> msg
     , userEnteredTextMsg : FacetAlias -> String -> String -> msg
     , userChangedBehaviourMsg : FacetAlias -> FacetBehaviours -> msg
     , userChoseOptionMsg : FacetAlias -> String -> FacetBehaviours -> msg
@@ -186,7 +185,7 @@ viewQueryFacet config =
                     [ width (px 400)
                     , Border.rounded 0
                     , htmlAttribute (HA.autocomplete False)
-                    , onEnter (config.userHitEnterMsg facetAlias currentBehaviourOption)
+                    , onEnter (config.userChoseOptionMsg facetAlias textValue currentBehaviourOption)
                     , headingSM
                     , paddingXY 10 12
                     , below activeSuggestion

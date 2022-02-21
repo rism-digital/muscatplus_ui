@@ -246,10 +246,6 @@ update session msg model =
                 |> updateQueryFacetValues alias currentBehaviour
                 |> probeSubmit ServerRespondedWithProbeData session
 
-        UserHitEnterInQueryFacet alias currentBehaviour ->
-            updateQueryFacetValues alias currentBehaviour model
-                |> probeSubmit ServerRespondedWithProbeData session
-
         UserRemovedItemFromQueryFacet alias query ->
             userRemovedItemFromQueryFacet alias query model
                 |> probeSubmit ServerRespondedWithProbeData session

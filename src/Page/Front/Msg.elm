@@ -20,7 +20,6 @@ type FrontMsg
     | UserClickedToggleFacet FacetAlias
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
     | UserRemovedItemFromQueryFacet FacetAlias String
-    | UserHitEnterInQueryFacet FacetAlias FacetBehaviours
     | UserEnteredTextInQueryFacet FacetAlias String String
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String

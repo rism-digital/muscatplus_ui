@@ -227,7 +227,6 @@ viewFacet alias language activeSearch body =
                     , queryFacet = facet
                     , activeSearch = activeSearch
                     , userRemovedMsg = SearchMsg.UserRemovedItemFromQueryFacet
-                    , userHitEnterMsg = SearchMsg.UserHitEnterInQueryFacet
                     , userEnteredTextMsg = SearchMsg.UserEnteredTextInQueryFacet
                     , userChangedBehaviourMsg = SearchMsg.UserChangedFacetBehaviour
                     , userChoseOptionMsg = SearchMsg.UserChoseOptionFromQueryFacetSuggest

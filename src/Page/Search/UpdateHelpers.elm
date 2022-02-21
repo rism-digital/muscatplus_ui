@@ -121,11 +121,8 @@ updateQueryFacetValues alias currentBehaviour model =
             Dict.update alias
                 (\existingValues ->
                     case existingValues of
-                        Just [] ->
-                            Just []
-
-                        Just (x :: xs) ->
-                            Just (x :: xs)
+                        Just s ->
+                            Just s
 
                         Nothing ->
                             Just []

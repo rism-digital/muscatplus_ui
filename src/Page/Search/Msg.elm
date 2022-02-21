@@ -25,7 +25,6 @@ type SearchMsg
     | UserClickedFacetPanelToggle
     | UserEnteredTextInQueryFacet FacetAlias String String
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
-    | UserHitEnterInQueryFacet FacetAlias FacetBehaviours
     | UserRemovedItemFromQueryFacet FacetAlias String
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
     | UserFocusedRangeFacet FacetAlias RangeFacetValue

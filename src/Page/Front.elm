@@ -195,10 +195,6 @@ update session msg model =
             userRemovedItemFromQueryFacet alias query model
                 |> frontProbeSubmit session
 
-        UserHitEnterInQueryFacet alias currentBehaviour ->
-            updateQueryFacetValues alias currentBehaviour model
-                |> frontProbeSubmit session
-
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
             userEnteredTextInQueryFacet alias query suggestionUrl ServerRespondedWithSuggestionData model
 
