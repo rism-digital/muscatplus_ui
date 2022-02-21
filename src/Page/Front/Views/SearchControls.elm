@@ -11,9 +11,12 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, minimalDropShadow, sectionSpacing)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf)
+import Page.UI.Images exposing (spinnerSvg)
+import Page.UI.ProbeResponse exposing (viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..))
 
@@ -73,33 +76,6 @@ viewUpdateMessage language =
         , Font.bold
         ]
         (text "Press search to view results")
-
-
-viewProbeResponseNumbers : Language -> Response ProbeData -> Element FrontMsg
-viewProbeResponseNumbers language probeResponse =
-    let
-        message =
-            case probeResponse of
-                Response data ->
-                    let
-                        formattedNumber =
-                            toFloat data.totalItems
-                                |> formatNumberByLanguage language
-                    in
-                    "Results with filters applied: " ++ formattedNumber
-
-                Loading _ ->
-                    "Loading results preview... "
-
-                Error _ ->
-                    "Error loading probe results"
-
-                NoResponseToShow ->
-                    "No Response to Show"
-    in
-    el
-        [ headingSM ]
-        (text message)
 
 
 viewFrontSearchButtons : Language -> FrontPageModel -> Element FrontMsg
