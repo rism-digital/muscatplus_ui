@@ -1,24 +1,20 @@
 module Page.Front.Views.SearchControls exposing (..)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.RecordTypes.Probe exposing (ProbeData)
-import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, sectionSpacing)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.ProbeResponse exposing (viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Response exposing (Response(..))
 
 
 viewFrontKeywordQueryInput :
@@ -115,7 +111,7 @@ viewFrontSearchButtons language model =
                         , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
                         , paddingXY 10 10
                         , height (px 60)
-                        , width (px 120)
+                        , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , headingSM
@@ -131,7 +127,7 @@ viewFrontSearchButtons language model =
                         , Background.color (colourScheme.midGrey |> convertColorToElementColor)
                         , paddingXY 10 10
                         , height (px 60)
-                        , width (px 120)
+                        , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , headingSM

@@ -117,7 +117,6 @@ viewNationalCollectionChooserMenuOption session =
                         [ width (px 30)
                         , centerX
                         , centerY
-                        , spacing lineSpacing
                         ]
                         [ el
                             [ width (px 25)
@@ -206,7 +205,7 @@ viewNationalCollectionChooserMenuOption session =
     row
         [ width fill
         , alignTop
-        , spacing 20
+        , spacing 10
         , paddingXY 30 10
         , pointer
         , onRight viewChooser
@@ -282,7 +281,7 @@ viewNationalCollectionChooser session =
                             [ width fill
                             , headingMD
                             ]
-                            (text "Global collection")
+                            (text <| extractLabelFromLanguageMap session.language localTranslations.globalCollection)
                         ]
                     ]
                 ]

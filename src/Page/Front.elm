@@ -1,13 +1,14 @@
 module Page.Front exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, toActiveSearch, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
 import Browser.Navigation as Nav
+import Dict
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
-import Page.Query exposing (buildQueryParameters, resetPage, setKeywordQuery, setMode, setNextQuery, toNextQuery)
+import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, updateQueryFacetValues, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
 import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
@@ -172,7 +173,22 @@ update session msg model =
             searchSubmit session model
 
         UserResetAllFilters ->
-            ( model, Cmd.none )
+            let
+                -- we don't reset *all* parameters; we keep the
+                -- currently selected result mode so that the user
+                -- doesn't get bounced back to the 'sources' tab.
+                currentMode =
+                    toNextQuery model.activeSearch
+                        |> toMode
+
+                adjustedQueryArgs =
+                    { defaultQueryArgs | mode = currentMode }
+            in
+            setNextQuery adjustedQueryArgs model.activeSearch
+                |> setRangeFacetValues Dict.empty
+                |> setKeyboard Keyboard.initModel
+                |> flip setActiveSearch model
+                |> frontProbeSubmit session
 
         UserEnteredTextInKeywordQueryBox queryText ->
             let

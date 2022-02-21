@@ -124,7 +124,21 @@ localTranslations =
     , applyFilters =
         [ LanguageValues English [ "Apply filters" ] ]
     , resetAll =
-        [ LanguageValues English [ "Reset all" ] ]
+        [ LanguageValues English [ "Reset all" ]
+        , LanguageValues German [ "Alles zurücksetzen" ]
+        , LanguageValues French [ "Effacer tout" ]
+        , LanguageValues Italian [ "Resetta tutto" ]
+        , LanguageValues Spanish [ "Resetear todo" ]
+        , LanguageValues Portugese [ "Reiniciar tudo" ]
+        , LanguageValues Polish [ "Zresetować wszystko" ]
+        ]
     , globalCollection =
-        [ LanguageValues English [ "Global collection" ] ]
+        [ LanguageValues English [ "Global collection" ]
+        , LanguageValues German [ "Globale Sammlung" ]
+        , LanguageValues French [ "Collecte mondiale" ]
+        , LanguageValues Italian [ "Collezione globale" ]
+        , LanguageValues Spanish [ "Colección mundial" ]
+        , LanguageValues Portugese [ "Coleção global" ]
+        , LanguageValues Polish [ "Globalna kolekcja" ]
+        ]
     }
