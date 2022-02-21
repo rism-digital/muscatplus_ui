@@ -1,13 +1,26 @@
 module Page.Record.Views.SourcePage.ContentsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, link, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, column, link, none, row, spacing, text, textColumn, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.Relationship exposing (viewRelationshipBody)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
-import Page.RecordTypes.Source exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+
+
+viewMinimalContentsSection : Language -> ContentsSectionBody -> Element msg
+viewMinimalContentsSection language contents =
+    row
+        widthFillHeightFill
+        [ column
+            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            [ viewMaybe (viewRelationshipBody language) contents.creator
+            , Maybe.withDefault [] contents.summary
+                |> viewSummaryField language
+            ]
+        ]
 
 
 viewContentsSection : Language -> ContentsSectionBody -> Element msg

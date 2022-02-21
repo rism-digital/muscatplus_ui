@@ -8,8 +8,9 @@ import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFes
 import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitutionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
-import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, SourceRecordDescriptors, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder, sourceRecordDescriptorsDecoder)
+import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
+import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, Subject, SubjectsSectionBody, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
 
 
 type alias FullSourceBody =
@@ -33,27 +34,6 @@ type alias FullSourceBody =
 type alias PartOfSectionBody =
     { label : LanguageMap
     , source : BasicSourceBody
-    }
-
-
-type alias ContentsSectionBody =
-    { sectionToc : String
-    , label : LanguageMap
-    , creator : Maybe RelationshipBody
-    , summary : Maybe (List LabelValue)
-    , subjects : Maybe SubjectsSectionBody
-    }
-
-
-type alias SubjectsSectionBody =
-    { label : LanguageMap
-    , items : List Subject
-    }
-
-
-type alias Subject =
-    { id : String
-    , term : LanguageMap
     }
 
 
@@ -147,30 +127,6 @@ partOfSectionBodyDecoder =
     Decode.succeed PartOfSectionBody
         |> required "label" languageMapLabelDecoder
         |> required "source" basicSourceBodyDecoder
-
-
-contentsSectionBodyDecoder : Decoder ContentsSectionBody
-contentsSectionBodyDecoder =
-    Decode.succeed ContentsSectionBody
-        |> hardcoded "source-record-contents-section"
-        |> required "label" languageMapLabelDecoder
-        |> optional "creator" (Decode.maybe relationshipBodyDecoder) Nothing
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "subjects" (Decode.maybe sourceSubjectsBodyDecoder) Nothing
-
-
-sourceSubjectsBodyDecoder : Decoder SubjectsSectionBody
-sourceSubjectsBodyDecoder =
-    Decode.succeed SubjectsSectionBody
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list sourceSubjectDecoder)
-
-
-sourceSubjectDecoder : Decoder Subject
-sourceSubjectDecoder =
-    Decode.succeed Subject
-        |> required "id" string
-        |> required "term" languageMapLabelDecoder
 
 
 materialGroupsSectionBodyDecoder : Decoder MaterialGroupsSectionBody

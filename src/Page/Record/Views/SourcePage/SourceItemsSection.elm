@@ -2,7 +2,9 @@ module Page.Record.Views.SourcePage.SourceItemsSection exposing (..)
 
 import Element exposing (Element, column, fill, link, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.Record.Views.Relationship exposing (viewRelationshipBody)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
+import Page.Record.Views.SourcePage.ContentsSection exposing (viewContentsSection, viewMinimalContentsSection)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (headingSM, lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
@@ -17,6 +19,10 @@ viewSourceItemsSection language siSection =
 
 viewSourceItem : Language -> BasicSourceBody -> Element msg
 viewSourceItem language source =
+    let
+        contents =
+            source.contents
+    in
     row
         (List.append [ width fill ] sectionBorderStyles)
         [ column
@@ -29,6 +35,6 @@ viewSourceItem language source =
                     ]
                     { url = source.id, label = text (extractLabelFromLanguageMap language source.label) }
                 ]
-            , viewMaybe (viewSummaryField language) source.summary
+            , viewMaybe (viewMinimalContentsSection language) source.contents
             ]
         ]
