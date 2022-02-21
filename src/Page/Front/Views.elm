@@ -1,11 +1,12 @@
 module Page.Front.Views exposing (..)
 
-import Element exposing (Element, alignTop, centerX, column, fill, height, maximum, minimum, paddingXY, row, width)
+import Element exposing (Element, alignTop, centerX, column, fill, height, maximum, minimum, none, padding, paddingXY, row, width)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg)
 import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
 import Page.Front.Views.InstiutionSearch exposing (institutionSearchPanelView)
 import Page.Front.Views.PeopleSearch exposing (peopleSearchPanelView)
+import Page.Front.Views.SearchControls exposing (viewFrontSearchButtons)
 import Page.Front.Views.SourceSearch exposing (sourceSearchPanelView)
 import Page.SideBar.Msg exposing (SideBarOption(..))
 import Page.UI.Helpers exposing (viewMaybe)
@@ -40,9 +41,9 @@ view session model =
                 IncipitSearchOption ->
                     incipitSearchPanelView session model
 
-                -- For now, show the source panel if we ever find our way to this option.
+                -- Show a blank page if this is ever the choice; it shouldn't be!
                 LiturgicalFestivalsOption ->
-                    sourceSearchPanelView session model
+                    \_ -> none
 
         -- viewMaybe will be either the searchViewFn, or the `none`
         -- element if the maybeBody parameter is Nothing.
@@ -53,13 +54,14 @@ view session model =
         [ width fill
         , height fill
         , centerX
-        , paddingXY 20 100
         ]
         [ column
             [ width (fill |> minimum 800 |> maximum 1100)
+            , height fill
             , centerX
             , alignTop
             ]
             [ searchPanelView
+            , viewFrontSearchButtons session.language model
             ]
         ]

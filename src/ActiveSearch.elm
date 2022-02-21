@@ -4,6 +4,7 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
 import List.Extra as LE
 import Page.Query
+import Page.RecordTypes.Search exposing (FacetType)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Route exposing (Route(..))
@@ -19,7 +20,9 @@ init initialRoute =
                     ( q, kq )
 
                 _ ->
-                    ( Page.Query.defaultQueryArgs, Keyboard.defaultKeyboardQuery )
+                    ( Page.Query.defaultQueryArgs
+                    , Keyboard.defaultKeyboardQuery
+                    )
 
         initialSort =
             qargs.sort
@@ -36,6 +39,7 @@ init initialRoute =
     , selectedResultSort = initialSort
     , activeSuggestion = Nothing
     , rangeFacetValues = Dict.empty
+    , queryFacetValues = Dict.empty
     }
 
 
@@ -47,6 +51,7 @@ empty =
     , selectedResultSort = Nothing
     , activeSuggestion = Nothing
     , rangeFacetValues = Dict.empty
+    , queryFacetValues = Dict.empty
     }
 
 
@@ -78,6 +83,16 @@ toExpandedFacets model =
 setExpandedFacets : List String -> { a | expandedFacets : List String } -> { a | expandedFacets : List String }
 setExpandedFacets newFacets oldRecord =
     { oldRecord | expandedFacets = newFacets }
+
+
+toQueryFacetValues : { a | queryFacetValues : Dict FacetAlias String } -> Dict FacetAlias String
+toQueryFacetValues model =
+    model.queryFacetValues
+
+
+setQueryFacetValues : Dict FacetAlias String -> { a | queryFacetValues : Dict FacetAlias String } -> { a | queryFacetValues : Dict FacetAlias String }
+setQueryFacetValues newFacetValues oldRecord =
+    { oldRecord | queryFacetValues = newFacetValues }
 
 
 toggleExpandedFacets : String -> List String -> List String

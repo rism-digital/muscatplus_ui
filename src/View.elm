@@ -63,7 +63,7 @@ view model =
         defaultView =
             ( "RISM Online", none )
 
-        ( pageTitle, pageToc ) =
+        ( pageTitle, _ ) =
             case model of
                 SearchPage session _ ->
                     ( extractLabelFromLanguageMap session.language localTranslations.search ++ " RISM"

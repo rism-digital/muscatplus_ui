@@ -1,13 +1,12 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setKeyboard, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toggleExpandedFacets)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
 import Browser.Navigation as Nav
 import Dict exposing (Dict)
-import List.Extra as LE
-import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setFacetSorts, setFilters, setKeywordQuery, setMode, setNextQuery, setSort, toFacetSorts, toFilters, toMode, toNextQuery)
+import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..), RangeFacetValue(..))
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..), FacetType(..), RangeFacetValue(..))
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
@@ -93,24 +92,18 @@ searchPagePreviewRequest previewUrl =
 searchSubmit : Session -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
 searchSubmit session model =
     let
-        activeSearch =
-            toActiveSearch model
-
         resetPageInQueryArgs =
-            activeSearch
-                |> toNextQuery
+            toNextQuery model.activeSearch
                 |> resetPage
 
         -- when submitting a new search, reset the page
         -- to the first page.
         pageResetModel =
-            activeSearch
-                |> setNextQuery resetPageInQueryArgs
+            setNextQuery resetPageInQueryArgs model.activeSearch
                 |> flip setActiveSearch model
 
         notationQueryParameters =
-            toActiveSearch pageResetModel
-                |> toKeyboard
+            toKeyboard pageResetModel.activeSearch
                 |> toKeyboardQuery
                 |> buildNotationQueryParameters
 
@@ -118,8 +111,7 @@ searchSubmit session model =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
 
         textQueryParameters =
-            toActiveSearch nationalCollectionSetModel
-                |> toNextQuery
+            toNextQuery nationalCollectionSetModel.activeSearch
                 |> buildQueryParameters
 
         newModel =

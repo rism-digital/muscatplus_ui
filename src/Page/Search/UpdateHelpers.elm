@@ -1,6 +1,6 @@
 module Page.Search.UpdateHelpers exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toRangeFacetValues, toggleExpandedFacets)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacets)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Http
@@ -119,7 +119,7 @@ updateQueryFacetValues alias currentBehaviour model =
                             Just []
 
                         Just (x :: xs) ->
-                            Just ("" :: x :: xs)
+                            Just (x :: xs)
 
                         Nothing ->
                             Just []
@@ -146,7 +146,7 @@ updateQueryFacetFilters :
     -> { a | activeSearch : ActiveSearch }
 updateQueryFacetFilters alias text model =
     let
-        activeFacets =
+        activeFilters =
             toNextQuery model.activeSearch
                 |> toFilters
 
@@ -157,17 +157,22 @@ updateQueryFacetFilters alias text model =
                         Just [] ->
                             Just [ text ]
 
-                        Just (_ :: xs) ->
-                            Just (text :: xs)
+                        Just v ->
+                            Just (text :: v)
 
                         Nothing ->
                             Just [ text ]
                 )
-                activeFacets
+                activeFilters
+
+        newQueryFacetValues =
+            toQueryFacetValues model.activeSearch
+                |> Dict.remove alias
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters
         |> flip setNextQuery model.activeSearch
+        |> setQueryFacetValues newQueryFacetValues
         |> setActiveSuggestion Nothing
         |> flip setActiveSearch model
 
@@ -181,8 +186,13 @@ userEnteredTextInQueryFacet :
     -> ( { a | activeSearch : ActiveSearch }, Cmd msg )
 userEnteredTextInQueryFacet alias query suggestionUrl msg model =
     let
+        newQueryFacetValue =
+            .queryFacetValues model.activeSearch
+                |> Dict.insert alias query
+
         newModel =
-            updateQueryFacetFilters alias query model
+            setQueryFacetValues newQueryFacetValue model.activeSearch
+                |> flip setActiveSearch model
 
         ( suggestModel, suggestionCmd ) =
             if String.length query > 2 then

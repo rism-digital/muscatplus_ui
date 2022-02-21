@@ -50,20 +50,17 @@ viewQueryFacet config =
         facetLabel =
             .label config.queryFacet
 
-        currentValues =
+        activeValues : List String
+        activeValues =
             toNextQuery config.activeSearch
                 |> toFilters
                 |> Dict.get facetAlias
+                |> Maybe.withDefault []
 
         textValue =
-            currentValues
-                |> Maybe.andThen List.head
+            .queryFacetValues config.activeSearch
+                |> Dict.get facetAlias
                 |> Maybe.withDefault ""
-
-        activeValues =
-            currentValues
-                |> Maybe.andThen List.tail
-                |> Maybe.withDefault []
 
         facetBehaviours =
             toBehaviours config.queryFacet

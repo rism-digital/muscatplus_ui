@@ -26,6 +26,11 @@ insertDedupe combine key value dict =
     Dict.update key with dict
 
 
+{-|
+
+    Creates a dictionary from a list, de-duplicating any keys
+
+-}
 fromListDedupe : (a -> a -> a) -> List ( comparable, a ) -> Dict comparable a
 fromListDedupe combine xs =
     List.foldl

@@ -105,6 +105,25 @@ type FacetData
     | QueryFacetData QueryFacet
 
 
+facetDataToFacetType : FacetData -> FacetType
+facetDataToFacetType fd =
+    case fd of
+        ToggleFacetData _ ->
+            Toggle
+
+        RangeFacetData _ ->
+            Range
+
+        SelectFacetData _ ->
+            Select
+
+        NotationFacetData _ ->
+            Notation
+
+        QueryFacetData _ ->
+            Query_
+
+
 type alias ModeFacet =
     { alias : String
     , label : LanguageMap

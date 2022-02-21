@@ -2,6 +2,7 @@ module ActiveSearch.Model exposing (..)
 
 import Dict exposing (Dict)
 import Page.Query exposing (QueryArgs)
+import Page.RecordTypes.Search exposing (FacetType)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.UI.Keyboard as Keyboard
@@ -21,8 +22,7 @@ type alias ActiveSearch =
     { nextQuery : QueryArgs
     , expandedFacets : List String
     , rangeFacetValues : Dict FacetAlias ( String, String )
-
-    --, activeFacets : Dict FacetAlias (List String)
+    , queryFacetValues : Dict FacetAlias String
     , keyboard : Keyboard.Model
     , selectedResultSort : Maybe String
     , activeSuggestion : Maybe ActiveSuggestion

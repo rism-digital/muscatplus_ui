@@ -1,6 +1,6 @@
 module Page.Front.Views.SourceSearch exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, paragraph, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
@@ -33,8 +33,11 @@ sourceSearchPanelView session model frontBody =
             }
     in
     row
-        [ width fill
+        [ padding 10
+        , scrollbarY
+        , width fill
         , alignTop
+        , height fill
         ]
         [ column
             [ width fill
@@ -51,7 +54,6 @@ sourceSearchPanelView session model frontBody =
                     [ text "Source records" ]
                 ]
             , viewFrontKeywordQueryInput language msgs qText
-            , viewFrontSearchButtons language model
             , row
                 [ width fill ]
                 -- TODO: Translate
@@ -60,10 +62,14 @@ sourceSearchPanelView session model frontBody =
             , row
                 [ width fill ]
                 [ column
-                    [ width fill ]
+                    [ width fill
+                    , alignTop
+                    ]
                     [ viewFrontFacet "composer" language activeSearch frontBody ]
                 , column
-                    [ width fill ]
+                    [ width fill
+                    , alignTop
+                    ]
                     [ viewFrontFacet "people" language activeSearch frontBody ]
                 ]
             , row
@@ -136,6 +142,13 @@ sourceSearchPanelView session model frontBody =
                 [ column
                     [ width fill ]
                     [ viewFrontFacet "sigla" language activeSearch frontBody
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "related-institutions" language activeSearch frontBody
                     ]
                 ]
             ]

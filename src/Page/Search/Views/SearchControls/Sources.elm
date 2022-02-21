@@ -1,7 +1,7 @@
 module Page.Search.Views.SearchControls.Sources exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, el, fill, height, padding, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (Facets, SearchBody)
@@ -9,7 +9,7 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
 import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (dividerWithText)
 
 
@@ -62,10 +62,13 @@ viewFacetsForSourcesMode language model body =
                     ]
                     [ column
                         [ width fill
+                        , alignTop
                         ]
                         [ viewFacet "composer" language activeSearch body ]
                     , column
-                        [ width fill ]
+                        [ width fill
+                        , alignTop
+                        ]
                         [ viewFacet "people" language activeSearch body ]
                     ]
                 ]

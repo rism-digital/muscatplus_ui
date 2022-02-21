@@ -1,6 +1,6 @@
 module Page.Front.Views.SearchControls exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -11,7 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
-import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, minimalDropShadow, sectionSpacing)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -112,8 +112,13 @@ viewFrontSearchButtons language model =
             }
     in
     row
-        [ width fill
-        , height (px 60)
+        [ alignBottom
+        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+        , Border.widthEach { top = 1, bottom = 0, left = 1, right = 1 }
+        , width fill
+        , height (px 100)
+        , paddingXY 20 0
         , centerY
         ]
         [ column
