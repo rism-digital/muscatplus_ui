@@ -1,10 +1,11 @@
 module Page.Record.Views.ExternalResources exposing (..)
 
-import Element exposing (Element, column, fill, link, paragraph, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, link, paragraph, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
 
 
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
@@ -24,14 +25,25 @@ viewExternalResourcesSection language extSection =
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg
 viewExternalResource language body =
-    row
-        [ width fill ]
-        [ paragraph
-            [ spacing lineSpacing ]
-            [ link
-                [ linkColour ]
-                { url = body.url
-                , label = text (extractLabelFromLanguageMap language body.label)
-                }
+    fieldValueWrapper <|
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language body.label ]
+            , column
+                valueFieldColumnAttributes
+                [ row
+                    [ width fill ]
+                    [ link
+                        [ linkColour ]
+                        { url = body.url
+                        , label = text body.url
+                        }
+                    ]
+                ]
             ]
         ]

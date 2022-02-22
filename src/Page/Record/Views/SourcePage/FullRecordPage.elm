@@ -3,6 +3,7 @@ module Page.Record.Views.SourcePage.FullRecordPage exposing (..)
 import Element exposing (Element, alignTop, column, fill, height, maximum, minimum, row, spacing, width)
 import Language exposing (Language)
 import Page.Record.Msg exposing (RecordMsg)
+import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 import Page.Record.Views.SourcePage.ContentsSection exposing (viewContentsSection)
 import Page.Record.Views.SourcePage.ExemplarsSection exposing (viewExemplarsSection)
@@ -36,6 +37,7 @@ viewFullSourcePage language body =
                     , viewMaybe (viewRelationshipsSection language) body.relationships
                     , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
                     , viewMaybe (viewSourceItemsSection language) body.items
+                    , viewMaybe (viewExternalResourcesSection language) body.externalResources
                     ]
                 ]
     in
