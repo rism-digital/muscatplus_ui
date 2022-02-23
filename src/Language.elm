@@ -1,10 +1,13 @@
 module Language exposing
     ( Language(..)
     , LanguageMap
+    , LanguageMapReplacementVariable(..)
     , LanguageValues(..)
     , dateFormatter
     , extractLabelFromLanguageMap
+    , extractLabelFromLanguageMapWithVariables
     , extractTextFromLanguageMap
+    , extractTextFromLanguageMapWithVariables
     , formatNumberByLanguage
     , languageMapDecoder
     , languageOptionsForDisplay
@@ -18,6 +21,7 @@ import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), Locale, base)
 import Json.Decode as Decode exposing (Decoder)
 import Time exposing (Posix, Zone)
+import Utlities exposing (namedValue)
 
 
 type Language
@@ -153,6 +157,47 @@ extractTextFromLanguageMap lang langMap =
 
                 Nothing ->
                     lastResort
+
+
+{-|
+
+    For languagemap replacements the first value is the field name,
+    and the second is the value to replace it with.
+
+-}
+type LanguageMapReplacementVariable
+    = LanguageMapReplacementVariable String String
+
+
+extractLabelFromLanguageMapWithVariables : Language -> List LanguageMapReplacementVariable -> LanguageMap -> String
+extractLabelFromLanguageMapWithVariables lang replacements langMap =
+    extractTextFromLanguageMapWithVariables lang replacements langMap
+        |> String.join ";"
+
+
+extractTextFromLanguageMapWithVariables : Language -> List LanguageMapReplacementVariable -> LanguageMap -> List String
+extractTextFromLanguageMapWithVariables lang replacements langMap =
+    let
+        langValues =
+            extractTextFromLanguageMap lang langMap
+
+        newLangValues =
+            List.map
+                (\inputString ->
+                    List.foldl
+                        (\replacementPattern currString ->
+                            let
+                                (LanguageMapReplacementVariable var val) =
+                                    replacementPattern
+                            in
+                            namedValue var val currString
+                        )
+                        inputString
+                        replacements
+                )
+                langValues
+    in
+    newLangValues
 
 
 languageDecoder : String -> Decoder Language

@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -17,7 +17,7 @@ import Page.Search.Views.Loading exposing (searchModeSelectorLoading, viewSearch
 import Page.Search.Views.Previews exposing (viewPreviewRouter, viewUnknownPreview)
 import Page.Search.Views.Results exposing (viewSearchResult)
 import Page.Search.Views.SearchControls exposing (viewSearchControls)
-import Page.UI.Attributes exposing (searchColumnVerticalSize, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, searchColumnVerticalSize, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Pagination exposing (viewPagination)
@@ -191,6 +191,9 @@ viewSearchResultsList language model body =
         [ column
             [ width fill
             , alignTop
+
+            --, spacing lineSpacing
+            --, padding 10
             ]
             (List.map (\result -> viewSearchResult language model.selectedResult result) body.items)
         ]

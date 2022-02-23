@@ -1,7 +1,7 @@
 module Page.Search.Views.SearchControls exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignBottom, alignTop, centerY, column, el, fill, height, none, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerY, column, el, fill, height, minimum, none, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -77,7 +77,7 @@ viewSearchButtons language model =
                         , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
                         , paddingXY 10 10
                         , height (px 40)
-                        , width shrink
+                        , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , headingSM
@@ -93,7 +93,7 @@ viewSearchButtons language model =
                         , Background.color (colourScheme.midGrey |> convertColorToElementColor)
                         , paddingXY 10 10
                         , height (px 40)
-                        , width (px 100)
+                        , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , headingSM

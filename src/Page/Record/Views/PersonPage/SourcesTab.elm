@@ -141,20 +141,22 @@ viewPersonSearchResult language result =
                     none
 
         summary =
-            case result.summary of
-                Just fields ->
-                    row
-                        [ width fill
-                        , bodyRegular
-                        ]
-                        [ column
-                            [ width fill
-                            ]
-                            (List.map (\l -> el [] (text (extractLabelFromLanguageMap language l.value))) fields)
-                        ]
+            none
 
-                Nothing ->
-                    none
+        --case result.summary of
+        --    Just fields ->
+        --        row
+        --            [ width fill
+        --            , bodyRegular
+        --            ]
+        --            [ column
+        --                [ width fill
+        --                ]
+        --                (List.map (\l -> el [] (text (extractLabelFromLanguageMap language l.value))) fields)
+        --            ]
+        --
+        --    Nothing ->
+        --        none
     in
     row
         [ width fill

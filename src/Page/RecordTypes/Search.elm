@@ -1,7 +1,7 @@
 module Page.RecordTypes.Search exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode as Decode exposing (Decoder, andThen, bool, float, int, list, nullable, string)
+import Json.Decode as Decode exposing (Decoder, andThen, bool, dict, float, int, list, nullable, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import List.Extra as LE
@@ -37,7 +37,7 @@ type alias SearchResult =
     , label : LanguageMap
     , type_ : RecordType
     , partOf : Maybe PartOfSectionBody
-    , summary : Maybe (List LabelValue)
+    , summary : Maybe (Dict String LabelValue)
     , flags : Maybe SearchResultFlags
     }
 
@@ -355,7 +355,7 @@ searchResultDecoder =
         |> required "label" languageMapLabelDecoder
         |> required "type" typeDecoder
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
         |> optional "flags" (Decode.maybe searchResultFlagsDecoder) Nothing
 
 
