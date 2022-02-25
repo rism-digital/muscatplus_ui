@@ -1,6 +1,6 @@
 module Page.Record.Views.SourcePage.PartOfSection exposing (..)
 
-import Element exposing (Element, column, el, fill, height, link, maximum, paddingXY, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, link, maximum, paddingXY, row, shrink, spacing, text, width)
 import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
@@ -13,16 +13,9 @@ viewPartOfSection language partOf =
     let
         source =
             partOf.source
-
-        --sectionHeader =
-        --    { sectionToc = ""
-        --    , label =
-        --    }
-        sectionBody =
-            []
     in
     row
-        [ width (fill |> maximum 600)
+        [ width shrink
         , Border.widthEach { top = 10, left = 1, right = 1, bottom = 1 }
         , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
         , paddingXY 10 20

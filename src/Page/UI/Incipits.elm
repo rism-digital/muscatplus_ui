@@ -1,6 +1,7 @@
 module Page.UI.Incipits exposing (..)
 
-import Element exposing (Element, column, fill, htmlAttribute, maximum, minimum, row, text, width)
+import Element exposing (Element, column, fill, htmlAttribute, maximum, minimum, row, shrink, text, width)
+import Element.Background as Background
 import Html.Attributes as HTA
 import Language exposing (Language)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
@@ -9,6 +10,7 @@ import Page.RecordTypes.Source exposing (IncipitsSectionBody)
 import Page.UI.Attributes exposing (sectionBorderStyles, widthFillHeightFill)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import SvgParser
 
 
@@ -41,8 +43,9 @@ viewIncipit language incipit =
 viewRenderedIncipits : List RenderedIncipit -> Element msg
 viewRenderedIncipits incipits =
     row
-        [ width (fill |> minimum 400 |> maximum 1000)
+        [ width (fill |> minimum 500 |> maximum 1000)
         , htmlAttribute (HTA.class "search-results-rendered-incipit")
+        , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         (List.map
             (\rendered ->

@@ -12,6 +12,15 @@ flip function argB argA =
     function argA argB
 
 
+choose : Bool -> a -> a -> a
+choose predicate isTrue isFalse =
+    if predicate == True then
+        isTrue
+
+    else
+        isFalse
+
+
 insertDedupe : (v -> v -> v) -> comparable -> v -> Dict comparable v -> Dict comparable v
 insertDedupe combine key value dict =
     let
