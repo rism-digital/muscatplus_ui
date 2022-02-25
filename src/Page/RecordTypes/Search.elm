@@ -32,21 +32,42 @@ setFacets newFacets oldRecord =
     { oldRecord | facets = newFacets }
 
 
-type alias SearchResult =
+type SearchResult
+    = SourceResult SourceResultBody
+    | PersonResult PersonResultBody
+    | InstitutionResult InstitutionResultBody
+    | IncipitResult IncipitResultBody
+
+
+type alias SourceResultBody =
     { id : String
     , label : LanguageMap
-    , type_ : RecordType
     , partOf : Maybe PartOfSectionBody
     , summary : Maybe (Dict String LabelValue)
-    , flags : Maybe SearchResultFlags
+    , flags : Maybe SourceResultFlags
     }
 
 
-type SearchResultFlags
-    = SourceFlags SourceResultFlags
-    | PersonFlags PersonResultFlags
-    | InstitutionFlags InstitutionResultFlags
-    | IncipitFlags IncipitResultFlags
+type alias PersonResultBody =
+    { id : String
+    , label : LanguageMap
+    , summary : Maybe (Dict String LabelValue)
+    }
+
+
+type alias InstitutionResultBody =
+    { id : String
+    , label : LanguageMap
+    , summary : Maybe (Dict String LabelValue)
+    }
+
+
+type alias IncipitResultBody =
+    { id : String
+    , label : LanguageMap
+    , summary : Maybe (Dict String LabelValue)
+    , renderedIncipits : Maybe (List RenderedIncipit)
+    }
 
 
 type alias SourceResultFlags =
@@ -55,7 +76,6 @@ type alias SourceResultFlags =
     , isContentsRecord : Bool
     , isCollectionRecord : Bool
     , hasIncipits : Bool
-    , numberOfExemplars : Int
     }
 
 
@@ -70,8 +90,7 @@ type alias InstitutionResultFlags =
 
 
 type alias IncipitResultFlags =
-    { highlightedResult : Maybe (List RenderedIncipit)
-    }
+    {}
 
 
 type alias SearchPagination =
@@ -350,23 +369,62 @@ searchBodyDecoder =
 
 searchResultDecoder : Decoder SearchResult
 searchResultDecoder =
-    Decode.succeed SearchResult
+    Decode.field "type" string
+        |> andThen searchResultTypeDecoder
+
+
+searchResultTypeDecoder : String -> Decoder SearchResult
+searchResultTypeDecoder restype =
+    case restype of
+        "rism:Source" ->
+            Decode.map (\r -> SourceResult r) sourceResultBodyDecoder
+
+        "rism:Person" ->
+            Decode.map (\r -> PersonResult r) personResultBodyDecoder
+
+        "rism:Institution" ->
+            Decode.map (\r -> InstitutionResult r) institutionResultBodyDecoder
+
+        "rism:Incipit" ->
+            Decode.map (\r -> IncipitResult r) incipitResultBodyDecoder
+
+        _ ->
+            Decode.fail ("Could not determine result type for " ++ restype)
+
+
+sourceResultBodyDecoder : Decoder SourceResultBody
+sourceResultBodyDecoder =
+    Decode.succeed SourceResultBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
-        |> required "type" typeDecoder
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
-        |> optional "flags" (Decode.maybe searchResultFlagsDecoder) Nothing
+        |> optional "flags" (Decode.maybe sourceResultFlagsDecoder) Nothing
 
 
-searchResultFlagsDecoder : Decoder SearchResultFlags
-searchResultFlagsDecoder =
-    Decode.oneOf
-        [ Decode.map (\r -> SourceFlags r) sourceResultFlagsDecoder
-        , Decode.map (\r -> PersonFlags r) personResultFlagsDecoder
-        , Decode.map (\r -> InstitutionFlags r) institutionResultFlagsDecoder
-        , Decode.map (\r -> IncipitFlags r) incipitResultFlagsDecoder
-        ]
+personResultBodyDecoder : Decoder PersonResultBody
+personResultBodyDecoder =
+    Decode.succeed PersonResultBody
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
+        |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
+
+
+institutionResultBodyDecoder : Decoder InstitutionResultBody
+institutionResultBodyDecoder =
+    Decode.succeed InstitutionResultBody
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
+        |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
+
+
+incipitResultBodyDecoder : Decoder IncipitResultBody
+incipitResultBodyDecoder =
+    Decode.succeed IncipitResultBody
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
+        |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
+        |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
 
 
 sourceResultFlagsDecoder : Decoder SourceResultFlags
@@ -377,7 +435,6 @@ sourceResultFlagsDecoder =
         |> optional "isContentsRecord" bool False
         |> optional "isCollectionRecord" bool False
         |> optional "hasIncipits" bool False
-        |> required "numberOfExemplars" int
 
 
 personResultFlagsDecoder : Decoder PersonResultFlags
@@ -395,7 +452,6 @@ institutionResultFlagsDecoder =
 incipitResultFlagsDecoder : Decoder IncipitResultFlags
 incipitResultFlagsDecoder =
     Decode.succeed IncipitResultFlags
-        |> optional "highlightedResult" (Decode.maybe (list renderedIncipitDecoder)) Nothing
 
 
 searchPaginationDecoder : Decoder SearchPagination
