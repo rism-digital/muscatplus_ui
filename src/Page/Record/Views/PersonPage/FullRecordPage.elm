@@ -13,7 +13,6 @@ import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSectio
 import Page.Record.Views.Notes exposing (viewNotesSection)
 import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 import Page.Record.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
-import Page.Record.Views.PersonPage.SourcesTab exposing (viewPersonSourcesTab)
 import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
@@ -32,19 +31,10 @@ viewFullPersonPage language model body =
         currentTab =
             model.currentTab
 
-        searchData =
-            model.searchResults
-
-        searchParams =
-            model.activeSearch
-
         pageBodyView =
             case currentTab of
                 DefaultRecordViewTab ->
                     viewDescriptionTab language body
-
-                PersonSourcesRecordSearchTab sourcesUrl ->
-                    viewPersonSourcesTab language sourcesUrl searchParams searchData
 
                 _ ->
                     none
@@ -68,78 +58,6 @@ viewFullPersonPage language model body =
             , pageBodyView
             , pageFooterTemplate language body
             ]
-        ]
-
-
-viewTabSwitcher :
-    Language
-    -> CurrentRecordViewTab
-    -> PersonBody
-    -> Element RecordMsg
-viewTabSwitcher language currentTab body =
-    let
-        descriptionTab =
-            let
-                ( backgroundColour, fontColour ) =
-                    case currentTab of
-                        DefaultRecordViewTab ->
-                            ( colourScheme.lightBlue, colourScheme.white )
-
-                        _ ->
-                            ( colourScheme.white, colourScheme.black )
-            in
-            column
-                [ Border.width 1
-                , padding 12
-                , onClick (UserClickedRecordViewTab DefaultRecordViewTab)
-                , pointer
-                , Background.color (backgroundColour |> convertColorToElementColor)
-                , Font.color (fontColour |> convertColorToElementColor)
-                ]
-                [ el
-                    []
-                    (text "Description")
-                ]
-
-        sourcesTab =
-            case body.sources of
-                Just sources ->
-                    let
-                        ( backgroundColour, fontColour ) =
-                            case currentTab of
-                                PersonSourcesRecordSearchTab _ ->
-                                    ( colourScheme.lightBlue, colourScheme.white )
-
-                                _ ->
-                                    ( colourScheme.white, colourScheme.black )
-
-                        sourceCount =
-                            toFloat sources.totalItems
-                                |> formatNumberByLanguage language
-                    in
-                    column
-                        [ Border.width 1
-                        , padding 12
-                        , onClick (UserClickedRecordViewTab (PersonSourcesRecordSearchTab sources.url))
-                        , pointer
-                        , Background.color (backgroundColour |> convertColorToElementColor)
-                        , Font.color (fontColour |> convertColorToElementColor)
-                        ]
-                        [ el
-                            []
-                            (text ("Sources (" ++ sourceCount ++ ")"))
-                        ]
-
-                Nothing ->
-                    none
-    in
-    row
-        [ width fill
-        , height (px 60)
-        , spacing 20
-        ]
-        [ descriptionTab
-        , sourcesTab
         ]
 
 

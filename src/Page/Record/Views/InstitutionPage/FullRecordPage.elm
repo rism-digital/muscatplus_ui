@@ -10,7 +10,6 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
-import Page.Record.Views.InstitutionPage.SourcesTab exposing (viewInstitutionSourcesTab)
 import Page.Record.Views.Notes exposing (viewNotesSection)
 import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
@@ -31,19 +30,10 @@ viewFullInstitutionPage language page body =
         currentTab =
             page.currentTab
 
-        searchData =
-            page.searchResults
-
-        searchParams =
-            page.activeSearch
-
         pageBodyView =
             case currentTab of
                 DefaultRecordViewTab ->
                     viewDescriptionTab language body
-
-                InstitutionSourcesRecordSearchTab sourcesUrl ->
-                    viewInstitutionSourcesTab language sourcesUrl searchParams searchData
 
                 _ ->
                     none
