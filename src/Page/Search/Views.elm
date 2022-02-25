@@ -2,22 +2,25 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toMode, toNextQuery)
-import Page.RecordTypes.Search exposing (ModeFacet, SearchBody)
+import Page.RecordTypes.Search exposing (ModeFacet, SearchBody, SearchResult(..))
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (viewModeItems)
 import Page.Search.Views.Loading exposing (searchModeSelectorLoading, viewSearchResultsLoading)
 import Page.Search.Views.Previews exposing (viewPreviewRouter, viewUnknownPreview)
-import Page.Search.Views.Results exposing (viewSearchResult)
+import Page.Search.Views.Results.IncipitResult exposing (viewIncipitSearchResult)
+import Page.Search.Views.Results.InstitutionResult exposing (viewInstitutionSearchResult)
+import Page.Search.Views.Results.PersonResult exposing (viewPersonSearchResult)
+import Page.Search.Views.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.Search.Views.SearchControls exposing (viewSearchControls)
-import Page.UI.Attributes exposing (lineSpacing, searchColumnVerticalSize, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (searchColumnVerticalSize, widthFillHeightFill)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Pagination exposing (viewPagination)
@@ -191,12 +194,25 @@ viewSearchResultsList language model body =
         [ column
             [ width fill
             , alignTop
-
-            --, spacing lineSpacing
-            --, padding 10
             ]
-            (List.map (\result -> viewSearchResult language model.selectedResult result) body.items)
+            (List.map (\result -> viewSearchResultRouter language model.selectedResult result) body.items)
         ]
+
+
+viewSearchResultRouter : Language -> Maybe String -> SearchResult -> Element SearchMsg
+viewSearchResultRouter language selectedResult res =
+    case res of
+        SourceResult body ->
+            viewSourceSearchResult language selectedResult body
+
+        PersonResult body ->
+            viewPersonSearchResult language selectedResult body
+
+        InstitutionResult body ->
+            viewInstitutionSearchResult language selectedResult body
+
+        IncipitResult body ->
+            viewIncipitSearchResult language selectedResult body
 
 
 viewSearchPageSort : Language -> SearchPageModel -> Element SearchMsg
