@@ -535,3 +535,27 @@ layerGroup =
 layerGroupSvg : Color -> Element msg
 layerGroupSvg color =
     makeSvgIcon color layerGroup
+
+
+textIcon : SvgDetails
+textIcon =
+    { viewBox = "0 0 448 512"
+    , path = "M432 32a16 16 0 0 1 16 16v80a16 16 0 0 1-16 16h-16a16 16 0 0 1-16-16V96H256v336h48a16 16 0 0 1 16 16v16a16 16 0 0 1-16 16H144a16 16 0 0 1-16-16v-16a16 16 0 0 1 16-16h48V96H48v32a16 16 0 0 1-16 16H16a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16z"
+    }
+
+
+textIconSvg : Color -> Element msg
+textIconSvg color =
+    makeSvgIcon color textIcon
+
+
+briefcase : SvgDetails
+briefcase =
+    { viewBox = "0 0 512 512"
+    , path = "M464 128h-80V80c0-26.51-21.49-48-48-48H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v256c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zM176 80h160v48H176V80zM54 176h404c3.31 0 6 2.69 6 6v74H48v-74c0-3.31 2.69-6 6-6zm404 256H54c-3.31 0-6-2.69-6-6V304h144v24c0 13.25 10.75 24 24 24h80c13.25 0 24-10.75 24-24v-24h144v122c0 3.31-2.69 6-6 6z"
+    }
+
+
+briefcaseSvg : Color -> Element msg
+briefcaseSvg color =
+    makeSvgIcon color briefcase
