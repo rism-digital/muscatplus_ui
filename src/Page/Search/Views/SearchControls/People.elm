@@ -58,5 +58,9 @@ facetsForPeopleModeView language model body =
                 [ viewFacet "person-role" language activeSearch body ]
             , viewFacetSection language
                 [ viewFacet "date-range" language activeSearch body ]
+            , viewFacetSection language
+                [ viewFacet "associated-place" language activeSearch body ]
+            , viewFacetSection language
+                [ viewFacet "gender" language activeSearch body ]
             ]
         ]
