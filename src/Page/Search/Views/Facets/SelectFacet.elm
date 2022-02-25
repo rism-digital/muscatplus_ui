@@ -17,7 +17,7 @@ import Page.UI.Attributes exposing (bodyRegular, bodySM, bodyXS, lineSpacing)
 import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h5)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.UI.Tooltip exposing (facetHelp)
+import Page.UI.Tooltip exposing (facetHelp, helpBubble, tooltip, tooltipStyle)
 import String.Extra as SE
 
 
@@ -125,6 +125,15 @@ viewSelectFacet config =
                 Nothing ->
                     serverDefaultSort
 
+        -- TODO: Translate!
+        chosenSortMessage =
+            case chosenSort of
+                FacetSortCount ->
+                    "Sort alphabetically (currently sorted by count)"
+
+                FacetSortAlpha ->
+                    "Sort by count (currently sorted alphabetically)"
+
         sortedItems =
             sortFacetItemList config.language chosenSort facetItemList
 
@@ -197,13 +206,13 @@ viewSelectFacet config =
                 )
                 behaviourOptions.items
 
-        behaviourIcon =
+        ( behaviourIcon, behaviourText ) =
             case currentBehaviourOption of
                 FacetBehaviourUnion ->
-                    unionSvg colourScheme.slateGrey
+                    ( unionSvg colourScheme.slateGrey, "Options are combined with an OR operator" )
 
                 FacetBehaviourIntersection ->
-                    intersectionSvg colourScheme.slateGrey
+                    ( intersectionSvg colourScheme.slateGrey, "Options are combined with an AND operator" )
 
         behaviourDropdown =
             el
@@ -275,6 +284,10 @@ viewSelectFacet config =
                         [ el
                             [ width (px 20)
                             , height (px 10)
+                            , tooltip above <|
+                                el
+                                    tooltipStyle
+                                    (text behaviourText)
                             ]
                             behaviourIcon
                         , behaviourDropdown
@@ -282,6 +295,10 @@ viewSelectFacet config =
                             [ width (px 20)
                             , height (px 20)
                             , onClick (config.userChangedSelectFacetSortMsg facetAlias <| toggledSortType chosenSort)
+                            , tooltip above <|
+                                el
+                                    tooltipStyle
+                                    (text chosenSortMessage)
                             ]
                             (sortIcon chosenSort)
                         ]

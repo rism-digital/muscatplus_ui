@@ -19,7 +19,7 @@ import Page.UI.Components exposing (dropdownSelect, h5)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.UI.Tooltip exposing (facetHelp)
+import Page.UI.Tooltip exposing (facetHelp, tooltip, tooltipStyle)
 
 
 queryFacetHelp =
@@ -128,13 +128,13 @@ viewQueryFacet config =
         listOfBehavioursForDropdown =
             List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )) facetBehaviours
 
-        behaviourIcon =
+        ( behaviourIcon, behaviourText ) =
             case currentBehaviourOption of
                 FacetBehaviourUnion ->
-                    unionSvg colourScheme.slateGrey
+                    ( unionSvg colourScheme.slateGrey, "Options are combined with an OR operator" )
 
                 FacetBehaviourIntersection ->
-                    intersectionSvg colourScheme.slateGrey
+                    ( intersectionSvg colourScheme.slateGrey, "Options are combined with an AND operator" )
 
         suggestionUrl =
             .suggestions config.queryFacet
@@ -217,6 +217,10 @@ viewQueryFacet config =
                 [ el
                     [ width (px 20)
                     , height (px 10)
+                    , tooltip above <|
+                        el
+                            tooltipStyle
+                            (text behaviourText)
                     ]
                     behaviourIcon
                 , el
