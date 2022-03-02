@@ -47,7 +47,7 @@ createErrorMessage error =
                     metadata.statusText
 
                 _ ->
-                    "A bad status was received"
+                    "The server sent an error status: " ++ String.fromInt metadata.statusCode
 
         _ ->
             "A problem happened with the request"
