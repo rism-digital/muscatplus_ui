@@ -54,7 +54,7 @@ init flags initialUrl key =
             )
 
         SearchPageRoute _ _ ->
-            ( SearchPage session <| Search.init route
+            ( SearchPage session <| Search.init initialUrl route
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithSearchPage <| Search.searchPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest

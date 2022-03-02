@@ -24,6 +24,29 @@ jumpToId sendMsg id =
             )
 
 
+jumpToIdIfNotVisible : msg -> String -> String -> Cmd msg
+jumpToIdIfNotVisible sendMsg parentId id =
+    Dom.getElement id
+        |> Task.andThen
+            (\info ->
+                let
+                    -- only consider the element to be in the viewport if the whole
+                    -- element is visible
+                    yPos =
+                        info.element.y + info.element.height
+
+                    viewportBottom =
+                        info.viewport.y + info.viewport.height
+                in
+                if yPos > viewportBottom then
+                    Dom.setViewportOf parentId 0 (info.element.y - info.element.height)
+
+                else
+                    Dom.setViewportOf "" 0 0
+            )
+        |> Task.attempt (\_ -> sendMsg)
+
+
 resetViewport : msg -> Cmd msg
 resetViewport sendMsg =
     Dom.setViewport 0 0

@@ -2,6 +2,7 @@ module Page.Search exposing (..)
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
 import Browser.Navigation as Nav
+import Config as C
 import Dict exposing (Dict)
 import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
@@ -19,7 +20,8 @@ import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
-import Utlities exposing (flip)
+import Utlities exposing (convertNodeIdToPath, convertPathToNodeId, flip)
+import Viewport exposing (jumpToIdIfNotVisible)
 
 
 type alias Model =
@@ -30,12 +32,17 @@ type alias Msg =
     SearchMsg
 
 
-init : Route -> SearchPageModel
-init route =
+init : Url -> Route -> SearchPageModel
+init incomingUrl route =
+    let
+        selectedResult =
+            incomingUrl.fragment
+                |> Maybe.andThen (\f -> Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f))
+    in
     { response = Loading Nothing
     , activeSearch = ActiveSearch.init route
     , preview = NoResponseToShow
-    , selectedResult = Nothing
+    , selectedResult = selectedResult
     , showFacetPanel = False
     , probeResponse = NoResponseToShow
     , applyFilterPrompt = False
@@ -45,43 +52,36 @@ init route =
 load : SearchPageModel -> SearchPageModel
 load oldModel =
     let
-        oldData =
-            case oldModel.response of
-                Response serverData ->
-                    Just serverData
-
-                _ ->
-                    Nothing
-
         oldKeyboard =
-            toActiveSearch oldModel
-                |> toKeyboard
-
-        oldRenderedNotation =
-            oldKeyboard
-                |> toNotation
-
-        newKeyboard =
-            oldKeyboard
-                |> setNotation oldRenderedNotation
+            toKeyboard oldModel.activeSearch
 
         newActiveSearch =
-            toActiveSearch oldModel
-                |> setKeyboard newKeyboard
+            toKeyboard oldModel.activeSearch
+                |> toNotation
+                |> flip setNotation oldKeyboard
+                |> flip setKeyboard oldModel.activeSearch
     in
-    { response = Loading oldData
+    { response = oldModel.response
     , activeSearch = newActiveSearch
-    , preview = NoResponseToShow
-    , selectedResult = Nothing
+    , preview = oldModel.preview
+    , selectedResult = oldModel.selectedResult
     , showFacetPanel = oldModel.showFacetPanel
-    , probeResponse = NoResponseToShow
+    , probeResponse = oldModel.probeResponse
     , applyFilterPrompt = False
     }
 
 
 searchPageRequest : Url -> Cmd SearchMsg
 searchPageRequest requestUrl =
-    createRequestWithDecoder ServerRespondedWithSearchData (Url.toString requestUrl)
+    let
+        selectedPreviewRequest =
+            Maybe.andThen (\f -> Just <| searchPagePreviewRequest (C.serverUrl ++ "/" ++ convertNodeIdToPath f)) requestUrl.fragment
+                |> Maybe.withDefault Cmd.none
+    in
+    Cmd.batch
+        [ createRequestWithDecoder ServerRespondedWithSearchData (Url.toString requestUrl)
+        , selectedPreviewRequest
+        ]
 
 
 searchPagePreviewRequest : String -> Cmd SearchMsg
@@ -159,6 +159,14 @@ update session msg model =
                         _ ->
                             Cmd.none
 
+                jumpCmd =
+                    case .fragment session.url of
+                        Just frag ->
+                            jumpToIdIfNotVisible NothingHappened "search-results-list" frag
+
+                        Nothing ->
+                            Cmd.none
+
                 totalItems =
                     case response of
                         SearchData body ->
@@ -172,7 +180,7 @@ update session msg model =
                 , probeResponse = totalItems
                 , applyFilterPrompt = False
               }
-            , notationRenderCmd
+            , Cmd.batch [ notationRenderCmd, jumpCmd ]
             )
 
         ServerRespondedWithSearchData (Err error) ->
@@ -341,18 +349,54 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserClickedClosePreviewWindow ->
+            let
+                currentUrl =
+                    session.url
+
+                newUrl =
+                    { currentUrl | fragment = Nothing }
+
+                newUrlStr =
+                    Url.toString newUrl
+            in
             ( { model
                 | preview = NoResponseToShow
                 , selectedResult = Nothing
               }
-            , Cmd.none
+            , Nav.pushUrl session.key newUrlStr
             )
 
         UserClickedSearchResultForPreview result ->
+            let
+                resultUrl =
+                    Url.fromString result
+
+                resPath =
+                    case resultUrl of
+                        Just p ->
+                            String.dropLeft 1 p.path
+                                |> convertPathToNodeId
+                                |> Just
+
+                        Nothing ->
+                            Nothing
+
+                currentUrl =
+                    session.url
+
+                newUrl =
+                    { currentUrl | fragment = resPath }
+
+                newUrlStr =
+                    Url.toString newUrl
+            in
             ( { model
                 | selectedResult = Just result
               }
-            , searchPagePreviewRequest result
+            , Cmd.batch
+                [ Nav.pushUrl session.key newUrlStr
+                , searchPagePreviewRequest result
+                ]
             )
 
         UserInteractedWithPianoKeyboard keyboardMsg ->

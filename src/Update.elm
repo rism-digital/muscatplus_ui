@@ -47,11 +47,11 @@ changePage url model =
                 -- a default search page model.
                 newPageModel =
                     case model of
-                        SearchPage _ pageModel ->
+                        SearchPage session pageModel ->
                             SearchPage.load pageModel
 
                         _ ->
-                            SearchPage.init route
+                            SearchPage.init url route
             in
             ( SearchPage newSession newPageModel
             , Cmd.map Msg.UserInteractedWithSearchPage (SearchPage.searchPageRequest url)

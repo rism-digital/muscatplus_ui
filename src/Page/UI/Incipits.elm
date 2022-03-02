@@ -1,9 +1,10 @@
 module Page.UI.Incipits exposing (..)
 
-import Element exposing (Element, column, fill, htmlAttribute, maximum, minimum, row, shrink, text, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, maximum, minimum, row, shrink, text, width)
 import Element.Background as Background
 import Html.Attributes as HTA
 import Language exposing (Language)
+import List.Extra as LE
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
@@ -12,6 +13,13 @@ import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import SvgParser
+
+
+splitWorkNumFromId : String -> String
+splitWorkNumFromId incipitId =
+    String.split "/" incipitId
+        |> LE.last
+        |> Maybe.withDefault "1.1.1"
 
 
 viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
@@ -24,7 +32,11 @@ viewIncipit language incipit =
     row
         (List.append widthFillHeightFill sectionBorderStyles)
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            , HTA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
+            ]
             [ viewMaybe (viewSummaryField language) incipit.summary
             , viewMaybe viewRenderedIncipits incipit.rendered
             ]

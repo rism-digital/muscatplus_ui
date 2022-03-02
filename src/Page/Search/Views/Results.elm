@@ -2,20 +2,22 @@ module Page.Search.Views.Results exposing (..)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, none, onLeft, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, none, onLeft, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Html.Attributes as HTA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (lineSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h3)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
-import Utlities exposing (flip)
+import Url
+import Utlities exposing (convertPathToNodeId, flip)
 
 
 type alias SearchResultSummaryConfig msg =
@@ -154,6 +156,18 @@ type alias ResultConfig =
 
 resultTemplate : ResultConfig -> Element SearchMsg
 resultTemplate cfg =
+    let
+        resultRowNodeId =
+            case Url.fromString cfg.id of
+                Just u ->
+                    String.dropLeft 1 u.path
+                        |> convertPathToNodeId
+                        |> HTA.id
+                        |> htmlAttribute
+
+                Nothing ->
+                    emptyAttribute
+    in
     row
         [ width fill
         , alignTop
@@ -166,6 +180,7 @@ resultTemplate cfg =
         , Border.dotted
         , pointer
         , paddingXY 20 20
+        , resultRowNodeId
         ]
         [ column
             [ width fill

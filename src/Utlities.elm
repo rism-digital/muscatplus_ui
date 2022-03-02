@@ -5,6 +5,7 @@ import Element exposing (Element)
 import Html.Parser exposing (Node(..))
 import Html.Parser.Util exposing (toVirtualDom)
 import Regex
+import Url exposing (Url)
 
 
 flip : (a -> b -> c) -> b -> a -> c
@@ -117,3 +118,13 @@ regex : String -> Regex.Regex
 regex =
     Regex.fromString
         >> Maybe.withDefault Regex.never
+
+
+convertPathToNodeId : String -> String
+convertPathToNodeId recordPath =
+    String.replace "/" "-" recordPath
+
+
+convertNodeIdToPath : String -> String
+convertNodeIdToPath nodeId =
+    String.replace "-" "/" nodeId
