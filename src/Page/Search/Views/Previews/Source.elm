@@ -1,6 +1,6 @@
 module Page.Search.Views.Previews.Source exposing (..)
 
-import Element exposing (Element, column, fill, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, spacing, width)
 import Language exposing (Language)
 import Page.Record.Views.PageTemplate exposing (pageHeaderTemplate, pageUriTemplate)
 import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
@@ -38,7 +38,11 @@ viewSourcePreview language body =
                 ]
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        , paddingXY 20 10
+        ]
         [ column
             (List.append [ spacing sectionSpacing ] widthFillHeightFill)
             [ row

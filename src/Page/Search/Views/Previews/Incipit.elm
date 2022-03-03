@@ -1,9 +1,7 @@
 module Page.Search.Views.Previews.Incipit exposing (..)
 
-import Element exposing (Element, column, el, fill, link, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, link, paddingXY, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Language.LocalTranslations exposing (localTranslations)
-import Page.Record.Views.PageTemplate exposing (pageUriTemplate)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing, widthFillHeightFill)
 import Page.UI.Components exposing (h1)
@@ -33,19 +31,13 @@ viewIncipitPreview language body =
                     , label = text sourceUrl
                     }
                 ]
-
-        pageBodyView =
-            row
-                widthFillHeightFill
-                [ column
-                    [ width fill
-                    , spacing sectionSpacing
-                    ]
-                    [ viewMaybe (viewIncipit language) (Just body) ]
-                ]
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        , paddingXY 20 10
+        ]
         [ column
             (List.append [ spacing sectionSpacing ] widthFillHeightFill)
             [ row
@@ -59,6 +51,13 @@ viewIncipitPreview language body =
                     , incipitLink
                     ]
                 ]
-            , pageBodyView
+            , row
+                widthFillHeightFill
+                [ column
+                    [ width fill
+                    , spacing sectionSpacing
+                    ]
+                    [ viewMaybe (viewIncipit language) (Just body) ]
+                ]
             ]
         ]

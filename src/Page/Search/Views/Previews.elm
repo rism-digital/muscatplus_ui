@@ -1,19 +1,19 @@
 module Page.Search.Views.Previews exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, maximum, minimum, none, padding, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.Search.Views.Previews.Incipit exposing (viewIncipitPreview)
 import Page.Search.Views.Previews.Institution exposing (viewInstitutionPreview)
 import Page.Search.Views.Previews.Person exposing (viewPersonPreview)
 import Page.Search.Views.Previews.Source exposing (viewSourcePreview)
-import Page.UI.Animations exposing (loadingBox)
-import Page.UI.Attributes exposing (headingXS, searchColumnVerticalSize)
+import Page.UI.Attributes exposing (headingMD, searchColumnVerticalSize)
 import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (ServerData(..))
@@ -46,10 +46,9 @@ viewPreviewRouter language previewData =
         , scrollbarY
         , alignTop
         , alignRight
-        , padding 20
         , Background.color (colourScheme.white |> convertColorToElementColor)
-        , Border.color (colourScheme.black |> convertColorToElementColor)
-        , Border.widthEach { left = 1, right = 0, top = 0, bottom = 0 }
+        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , Border.width 4
         , htmlAttribute (Html.Attributes.style "z-index" "10")
         ]
         [ column
@@ -59,18 +58,22 @@ viewPreviewRouter language previewData =
             , Background.color (colourScheme.white |> convertColorToElementColor)
             , htmlAttribute (Html.Attributes.style "z-index" "10")
             ]
-            [ viewRecordPreviewTitleBar
+            [ viewRecordPreviewTitleBar language
             , preview
             ]
         ]
 
 
-viewRecordPreviewTitleBar : Element SearchMsg
-viewRecordPreviewTitleBar =
+viewRecordPreviewTitleBar : Language -> Element SearchMsg
+viewRecordPreviewTitleBar language =
     row
         [ width fill
         , height (px 30)
-        , spacing 20
+        , spacing 10
+        , paddingXY 10 20
+        , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
         ]
         [ el
             [ alignLeft
@@ -80,14 +83,15 @@ viewRecordPreviewTitleBar =
             , height (px 25)
             , pointer
             ]
-            (closeWindowSvg colourScheme.darkOrange)
+            (closeWindowSvg colourScheme.white)
         , el
             [ alignLeft
             , centerY
-            , headingXS
+            , headingMD
             , Font.semiBold
+            , Font.color (colourScheme.white |> convertColorToElementColor)
             ]
-            (text "Record preview")
+            (text <| extractLabelFromLanguageMap language localTranslations.recordPreview)
         ]
 
 
