@@ -1,7 +1,8 @@
 module Page.Search.Views.SearchControls.Sources exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
+import ActiveSearch.Model exposing (ActiveSearch)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, text, width)
 import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (Facets, SearchBody)
@@ -13,7 +14,7 @@ import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeight
 import Page.UI.Components exposing (dividerWithText)
 
 
-viewFacetsForSourcesMode : Language -> SearchPageModel -> { a | facets : Facets } -> Element SearchMsg
+viewFacetsForSourcesMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
 viewFacetsForSourcesMode language model body =
     let
         msgs =
@@ -73,37 +74,10 @@ viewFacetsForSourcesMode language model body =
                     ]
                 ]
             , viewFacetSection language
-                [ viewFacet "date-range" language activeSearch body ]
-            , viewFacetSection language
-                [ row
-                    [ width fill
-                    , alignTop
-                    ]
-                    [ column
-                        [ width fill
-                        , alignTop
-                        , spacing lineSpacing
-                        ]
-                        [ viewFacet "hide-source-contents" language activeSearch body
-                        , viewFacet "hide-source-collections" language activeSearch body
-                        , viewFacet "hide-composite-volumes" language activeSearch body
-                        ]
-                    , column
-                        [ width fill
-                        , alignTop
-                        , spacing lineSpacing
-                        ]
-                        [ viewFacet "has-digitization" language activeSearch body ]
-                    , column
-                        [ width fill
-                        , alignTop
-                        , spacing lineSpacing
-                        ]
-                        [ viewFacet "is-arrangement" language activeSearch body
-                        , viewFacet "has-incipits" language activeSearch body
-                        ]
-                    ]
+                [ viewFacet "date-range" language activeSearch body
                 ]
+            , viewFacetSection language
+                [ viewFacetToggleSection language activeSearch body ]
             , viewFacetSection language
                 [ viewFacet "source-type" language activeSearch body
                 , viewFacet "content-types" language activeSearch body
@@ -126,3 +100,70 @@ viewFacetsForSourcesMode language model body =
             --, viewFacet "holding-institution" language activeSearch body
             ]
         ]
+
+
+viewFacetToggleSection : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
+viewFacetToggleSection language activeSearch body =
+    let
+        sourceContentsToggle =
+            viewFacet "hide-source-contents" language activeSearch body
+
+        sourceCollectionsToggle =
+            viewFacet "hide-source-collections" language activeSearch body
+
+        compositeVolumesToggle =
+            viewFacet "hide-composite-volumes" language activeSearch body
+
+        hasDigitizationToggle =
+            viewFacet "has-digitization" language activeSearch body
+
+        isArrangementToggle =
+            viewFacet "is-arrangement" language activeSearch body
+
+        hasIncipitsToggle =
+            viewFacet "has-incipits" language activeSearch body
+
+        allToggles =
+            [ sourceCollectionsToggle
+            , sourceContentsToggle
+            , compositeVolumesToggle
+            , hasDigitizationToggle
+            , isArrangementToggle
+            , hasIncipitsToggle
+            ]
+
+        allAreEmpty =
+            List.all (\a -> a == none) allToggles
+    in
+    if allAreEmpty then
+        none
+
+    else
+        row
+            [ width fill
+            , alignTop
+            ]
+            [ column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ sourceContentsToggle
+                , sourceCollectionsToggle
+                , compositeVolumesToggle
+                ]
+            , column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ hasDigitizationToggle ]
+            , column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ isArrangementToggle
+                , hasIncipitsToggle
+                ]
+            ]

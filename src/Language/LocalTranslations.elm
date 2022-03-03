@@ -30,6 +30,8 @@ localTranslations :
     , applyFilters : List LanguageValues
     , resetAll : List LanguageValues
     , globalCollection : List LanguageValues
+    , noResultsHeader : List LanguageValues
+    , noResultsBody : List LanguageValues
     }
 localTranslations =
     { search =
@@ -140,5 +142,23 @@ localTranslations =
         , LanguageValues Spanish [ "Colección mundial" ]
         , LanguageValues Portugese [ "Coleção global" ]
         , LanguageValues Polish [ "Globalna kolekcja" ]
+        ]
+    , noResultsHeader =
+        [ LanguageValues English [ "No results were found for your search" ]
+        , LanguageValues German [ "Es wurden keine Ergebnisse zu ihrer Suchanfrage gefunden" ]
+        , LanguageValues French [ "Aucun résultat n'a été trouvé pour votre recherche" ]
+        , LanguageValues Italian [ "Nessun risultato è stato trovato per la tua ricerca" ]
+        , LanguageValues Spanish [ "No se encontraron resultados para tu búsqueda" ]
+        , LanguageValues Portugese [ "Não foram encontrados resultados para a sua pesquisa" ]
+        , LanguageValues Polish [ "Nie znaleziono wyników dla Twojego wyszukiwania" ]
+        ]
+    , noResultsBody =
+        [ LanguageValues English [ "Adjust your query options, or reset all filters, to see results." ]
+        , LanguageValues German [ "Passen Sie Ihre Abfrageoptionen an oder setzen Sie alle Filter zurück, um Ergebnisse anzuzeigen." ]
+        , LanguageValues French [ "Ajustez vos options de requête ou réinitialisez tous les filtres pour voir les résultats." ]
+        , LanguageValues Italian [ "Modifica le opzioni di query o reimposta tutti i filtri per visualizzare i risultati." ]
+        , LanguageValues Spanish [ "Ajuste sus opciones de consulta o restablezca todos los filtros para ver los resultados." ]
+        , LanguageValues Portugese [ "Ajuste suas opções de consulta ou redefina todos os filtros para ver os resultados." ]
+        , LanguageValues Polish [ "Dostosuj opcje zapytania lub zresetuj wszystkie filtry, aby zobaczyć wyniki." ]
         ]
     }

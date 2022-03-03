@@ -25,46 +25,49 @@ import Utlities exposing (toLinkedHtml)
     lines are too long.
 
 -}
-headingHelper : List (Element.Attribute msg) -> Language -> LanguageMap -> Element msg
-headingHelper attrib language heading =
+renderLanguageHelper : List (Element.Attribute msg) -> Language -> LanguageMap -> Element msg
+renderLanguageHelper attrib language heading =
     paragraph attrib [ text (extractLabelFromLanguageMap language heading) ]
 
 
 h1 : Language -> LanguageMap -> Element msg
 h1 language heading =
-    headingHelper [ headingXXL, Region.heading 1, Font.medium ] language heading
+    renderLanguageHelper [ headingXXL, Region.heading 1, Font.medium ] language heading
 
 
 h2 : Language -> LanguageMap -> Element msg
 h2 language heading =
-    headingHelper [ headingXL, Region.heading 2, Font.medium ] language heading
+    renderLanguageHelper [ headingXL, Region.heading 2, Font.medium ] language heading
 
 
 h3 : Language -> LanguageMap -> Element msg
 h3 language heading =
-    headingHelper [ headingLG, Region.heading 3, Font.medium ] language heading
+    renderLanguageHelper [ headingLG, Region.heading 3, Font.medium ] language heading
 
 
 h4 : Language -> LanguageMap -> Element msg
 h4 language heading =
-    headingHelper [ headingMD, Region.heading 4, Font.medium ] language heading
+    renderLanguageHelper [ headingMD, Region.heading 4, Font.medium ] language heading
 
 
 h5 : Language -> LanguageMap -> Element msg
 h5 language heading =
-    headingHelper [ headingSM, Region.heading 5, Font.medium ] language heading
+    renderLanguageHelper [ headingSM, Region.heading 5, Font.medium ] language heading
 
 
 h6 : Language -> LanguageMap -> Element msg
 h6 language heading =
-    headingHelper [ headingXS, Region.heading 6, Font.medium ] language heading
+    renderLanguageHelper [ headingXS, Region.heading 6, Font.medium ] language heading
+
+
+renderParagraph : Language -> LanguageMap -> Element msg
+renderParagraph language langmap =
+    renderLanguageHelper [ bodyRegular, spacing lineSpacing ] language langmap
 
 
 renderLabel : Language -> LanguageMap -> Element msg
 renderLabel language langmap =
-    paragraph
-        [ Font.medium, bodyRegular ]
-        [ text (extractLabelFromLanguageMap language langmap) ]
+    renderLanguageHelper [ Font.medium, bodyRegular ] language langmap
 
 
 renderValue : Language -> LanguageMap -> Element msg

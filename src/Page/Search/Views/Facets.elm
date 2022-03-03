@@ -131,38 +131,46 @@ viewFacetSection :
     -> List (Element SearchMsg)
     -> Element SearchMsg
 viewFacetSection language facets =
-    row
-        (List.concat [ widthFillHeightFill, facetBorderBottom ])
-        [ column
-            (List.append [ spacing lineSpacing, alignTop ] widthFillHeightFill)
-            [ row
-                (List.append [ spacing lineSpacing ] widthFillHeightFill)
-                [ column
-                    [ alignLeft ]
-                    [ el
-                        [ alignLeft
-                        , width (px 10)
-                        , pointer
-                        , onClick NothingHappened -- TODO: Implement collapsing behaviour!
+    let
+        allEmpty =
+            List.all (\a -> a == none) facets
+    in
+    if allEmpty then
+        none
+
+    else
+        row
+            (List.concat [ widthFillHeightFill, facetBorderBottom ])
+            [ column
+                (List.append [ spacing lineSpacing, alignTop ] widthFillHeightFill)
+                [ row
+                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ column
+                        [ alignLeft ]
+                        [ el
+                            [ alignLeft
+                            , width (px 10)
+                            , pointer
+                            , onClick NothingHappened -- TODO: Implement collapsing behaviour!
+                            ]
+                            (chevronDownSvg colourScheme.lightBlue)
                         ]
-                        (chevronDownSvg colourScheme.lightBlue)
+                    ]
+                , row
+                    (List.append [ alignTop ] widthFillHeightFill)
+                    [ column
+                        (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                        facets
                     ]
                 ]
-            , row
-                (List.append [ alignTop ] widthFillHeightFill)
-                [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
-                    facets
-                ]
             ]
-        ]
 
 
 viewFacet :
     FacetAlias
     -> Language
     -> ActiveSearch
-    -> { a | facets : Facets }
+    -> SearchBody
     -> Element SearchMsg
 viewFacet alias language activeSearch body =
     case Dict.get alias body.facets of

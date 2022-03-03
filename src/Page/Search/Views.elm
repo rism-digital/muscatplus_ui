@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -20,8 +20,8 @@ import Page.Search.Views.Results.InstitutionResult exposing (viewInstitutionSear
 import Page.Search.Views.Results.PersonResult exposing (viewPersonSearchResult)
 import Page.Search.Views.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.Search.Views.SearchControls exposing (viewSearchControls)
-import Page.UI.Attributes exposing (searchColumnVerticalSize, widthFillHeightFill)
-import Page.UI.Components exposing (dropdownSelect)
+import Page.UI.Attributes exposing (lineSpacing, searchColumnVerticalSize, widthFillHeightFill)
+import Page.UI.Components exposing (dropdownSelect, h3, renderParagraph)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
@@ -177,12 +177,39 @@ viewSearchResultsSection language model body =
 
 viewSearchResultsListPanel : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
 viewSearchResultsListPanel language model body =
-    row
-        widthFillHeightFill
-        [ column
+    if body.totalItems == 0 then
+        viewSearchResultsNotFound language
+
+    else
+        row
             widthFillHeightFill
-            [ viewSearchResultsList language model body
-            , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
+            [ column
+                widthFillHeightFill
+                [ viewSearchResultsList language model body
+                , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
+                ]
+            ]
+
+
+viewSearchResultsNotFound : Language -> Element SearchMsg
+viewSearchResultsNotFound language =
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , alignTop
+            , padding 20
+            , spacing lineSpacing
+            ]
+            [ row
+                [ width fill ]
+                [ h3 language localTranslations.noResultsHeader ]
+            , row
+                [ width fill ]
+                [ renderParagraph language localTranslations.noResultsBody ]
             ]
         ]
 
