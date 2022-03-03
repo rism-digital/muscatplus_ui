@@ -1,6 +1,6 @@
 module Page.Front.Views.SearchControls exposing (..)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -12,8 +12,7 @@ import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, sectionSpacing)
 import Page.UI.Events exposing (onEnter)
-import Page.UI.Helpers exposing (viewIf)
-import Page.UI.ProbeResponse exposing (viewProbeResponseNumbers)
+import Page.UI.ProbeResponse exposing (hasActionableProbeResponse, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
@@ -63,15 +62,26 @@ viewFrontKeywordQueryInput language msgs queryText =
         ]
 
 
-viewUpdateMessage : Language -> Element FrontMsg
-viewUpdateMessage language =
+viewUpdateMessage : Language -> Bool -> Bool -> Element FrontMsg
+viewUpdateMessage language applyFilterPrompt hasActionableProbeResponse =
+    let
+        elMsg =
+            if applyFilterPrompt && hasActionableProbeResponse then
+                text <| extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults
+
+            else if applyFilterPrompt && not hasActionableProbeResponse then
+                text <| extractLabelFromLanguageMap language localTranslations.noResultsWouldBeFound
+
+            else
+                none
+    in
     el
         [ width fill
         , height (px 30)
         , headingSM
         , Font.bold
         ]
-        (text "Press search to view results")
+        elMsg
 
 
 viewFrontSearchButtons : Language -> FrontPageModel -> Element FrontMsg
@@ -82,6 +92,25 @@ viewFrontSearchButtons language model =
             , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
             , resetMsg = FrontMsg.UserResetAllFilters
             }
+
+        actionableProbeResponse =
+            hasActionableProbeResponse model.probeResponse
+
+        disableSubmitButton =
+            not <| actionableProbeResponse
+
+        ( submitButtonColours, submitButtonMsg, submitPointerStyle ) =
+            if disableSubmitButton then
+                ( colourScheme.midGrey |> convertColorToElementColor
+                , Nothing
+                , htmlAttribute (HA.style "cursor" "not-allowed")
+                )
+
+            else
+                ( colourScheme.darkBlue |> convertColorToElementColor
+                , Just msgs.submitMsg
+                , pointer
+                )
     in
     row
         [ alignBottom
@@ -107,24 +136,25 @@ viewFrontSearchButtons language model =
                 [ column
                     [ width shrink ]
                     [ Input.button
-                        [ Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-                        , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
+                        [ Border.color submitButtonColours
+                        , Background.color submitButtonColours
                         , paddingXY 10 10
                         , height (px 60)
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , headingSM
+                        , submitPointerStyle
                         ]
-                        { onPress = Just msgs.submitMsg
-                        , label = text (extractLabelFromLanguageMap language localTranslations.search)
+                        { onPress = submitButtonMsg
+                        , label = text (extractLabelFromLanguageMap language localTranslations.applyFilters)
                         }
                     ]
                 , column
                     [ width shrink ]
                     [ Input.button
-                        [ Border.color (colourScheme.midGrey |> convertColorToElementColor)
-                        , Background.color (colourScheme.midGrey |> convertColorToElementColor)
+                        [ Border.color (colourScheme.turquoise |> convertColorToElementColor)
+                        , Background.color (colourScheme.turquoise |> convertColorToElementColor)
                         , paddingXY 10 10
                         , height (px 60)
                         , width (shrink |> minimum 120)
@@ -138,7 +168,7 @@ viewFrontSearchButtons language model =
                     ]
                 , column
                     [ width fill ]
-                    [ viewIf (viewUpdateMessage language) model.applyFilterPrompt
+                    [ viewUpdateMessage language model.applyFilterPrompt actionableProbeResponse
                     , viewProbeResponseNumbers language model.probeResponse
                     ]
                 ]

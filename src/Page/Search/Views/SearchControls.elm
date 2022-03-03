@@ -1,15 +1,15 @@
 module Page.Search.Views.SearchControls exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignBottom, alignTop, centerY, column, el, fill, height, minimum, none, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Html.Attributes as HA
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toMode, toNextQuery)
-import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
@@ -18,24 +18,31 @@ import Page.Search.Views.SearchControls.Incipits exposing (viewFacetsForIncipits
 import Page.Search.Views.SearchControls.Institutions exposing (facetsForInstitutionsModeView)
 import Page.Search.Views.SearchControls.People exposing (facetsForPeopleModeView)
 import Page.Search.Views.SearchControls.Sources exposing (viewFacetsForSourcesMode)
-import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingSM, lineSpacing, minimalDropShadow, widthFillHeightFill)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (spinnerSvg)
-import Page.UI.ProbeResponse exposing (viewProbeResponseNumbers)
+import Page.UI.ProbeResponse exposing (hasActionableProbeResponse, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Response exposing (Response(..))
 
 
-viewUpdateMessage : Language -> Element SearchMsg
-viewUpdateMessage language =
+viewUpdateMessage : Language -> Bool -> Bool -> Element SearchMsg
+viewUpdateMessage language applyFilterPrompt hasActionableProbeResponse =
+    let
+        elMsg =
+            if applyFilterPrompt && hasActionableProbeResponse then
+                text <| extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults
+
+            else if applyFilterPrompt && not hasActionableProbeResponse then
+                text <| extractLabelFromLanguageMap language localTranslations.noResultsWouldBeFound
+
+            else
+                none
+    in
     el
         [ width fill
         , height (px 30)
         , headingSM
         , Font.bold
         ]
-        (text "Apply filters to update search results")
+        elMsg
 
 
 viewSearchButtons : Language -> SearchPageModel -> Element SearchMsg
@@ -46,6 +53,25 @@ viewSearchButtons language model =
             , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
             , resetMsg = SearchMsg.UserResetAllFilters
             }
+
+        actionableProbeResponse =
+            hasActionableProbeResponse model.probeResponse
+
+        disableSubmitButton =
+            not <| actionableProbeResponse
+
+        ( submitButtonColours, submitButtonMsg, submitPointerStyle ) =
+            if disableSubmitButton then
+                ( colourScheme.midGrey |> convertColorToElementColor
+                , Nothing
+                , htmlAttribute (HA.style "cursor" "not-allowed")
+                )
+
+            else
+                ( colourScheme.darkBlue |> convertColorToElementColor
+                , Just msgs.submitMsg
+                , pointer
+                )
     in
     row
         [ alignBottom
@@ -73,26 +99,27 @@ viewSearchButtons language model =
                 [ column
                     [ width shrink ]
                     [ Input.button
-                        [ Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-                        , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
+                        [ Border.color submitButtonColours
+                        , Background.color submitButtonColours
                         , paddingXY 10 10
-                        , height (px 40)
+                        , height (px 60)
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , headingSM
+                        , submitPointerStyle
                         ]
-                        { onPress = Just msgs.submitMsg
+                        { onPress = submitButtonMsg
                         , label = text (extractLabelFromLanguageMap language localTranslations.applyFilters)
                         }
                     ]
                 , column
                     [ width shrink ]
                     [ Input.button
-                        [ Border.color (colourScheme.midGrey |> convertColorToElementColor)
-                        , Background.color (colourScheme.midGrey |> convertColorToElementColor)
+                        [ Border.color (colourScheme.turquoise |> convertColorToElementColor)
+                        , Background.color (colourScheme.turquoise |> convertColorToElementColor)
                         , paddingXY 10 10
-                        , height (px 40)
+                        , height (px 60)
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
@@ -104,7 +131,7 @@ viewSearchButtons language model =
                     ]
                 , column
                     [ width fill ]
-                    [ viewIf (viewUpdateMessage language) model.applyFilterPrompt
+                    [ viewUpdateMessage language model.applyFilterPrompt actionableProbeResponse
                     , viewProbeResponseNumbers language model.probeResponse
                     ]
                 ]

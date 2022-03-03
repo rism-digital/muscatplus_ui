@@ -23,6 +23,7 @@ localTranslations :
     , first : List LanguageValues
     , last : List LanguageValues
     , page : List LanguageValues
+    , recordPreview : List LanguageValues
     , viewRecord : List LanguageValues
     , viewSourceRecord : List LanguageValues
     , recordURI : List LanguageValues
@@ -32,6 +33,10 @@ localTranslations :
     , globalCollection : List LanguageValues
     , noResultsHeader : List LanguageValues
     , noResultsBody : List LanguageValues
+    , resultsWithFilters : List LanguageValues
+    , errorLoadingProbeResults : List LanguageValues
+    , applyFiltersToUpdateResults : List LanguageValues
+    , noResultsWouldBeFound : List LanguageValues
     }
 localTranslations =
     { search =
@@ -111,6 +116,15 @@ localTranslations =
         , LanguageValues Portugese [ "Página" ]
         , LanguageValues Polish [ "Strona" ]
         ]
+    , recordPreview =
+        [ LanguageValues English [ "Record preview" ]
+        , LanguageValues German [ "Dokumentvorschau" ]
+        , LanguageValues French [ "Aperçu la notice" ]
+        , LanguageValues Italian [ "Anteprima la scheda" ]
+        , LanguageValues Spanish [ "Vista previa del registro" ]
+        , LanguageValues Portugese [ "Visualizar do registro" ]
+        , LanguageValues Polish [ "Zapowiedź rekordu" ]
+        ]
     , viewRecord =
         -- TODO: Additional translations
         [ LanguageValues English [ "View full record" ]
@@ -124,7 +138,14 @@ localTranslations =
     , recordTop =
         [ LanguageValues English [ "Record top" ] ]
     , applyFilters =
-        [ LanguageValues English [ "Apply filters" ] ]
+        [ LanguageValues English [ "Apply filters" ]
+        , LanguageValues German [ "Filter anwenden" ]
+        , LanguageValues French [ "Appliquer des filtres" ]
+        , LanguageValues Italian [ "Applicare filtri" ]
+        , LanguageValues Spanish [ "Aplicar filtros" ]
+        , LanguageValues Portugese [ "Aplicar filtros" ]
+        , LanguageValues Polish [ "Zastosuj filtry" ]
+        ]
     , resetAll =
         [ LanguageValues English [ "Reset all" ]
         , LanguageValues German [ "Alles zurücksetzen" ]
@@ -160,5 +181,41 @@ localTranslations =
         , LanguageValues Spanish [ "Ajuste sus opciones de consulta o restablezca todos los filtros para ver los resultados." ]
         , LanguageValues Portugese [ "Ajuste suas opções de consulta ou redefina todos os filtros para ver os resultados." ]
         , LanguageValues Polish [ "Dostosuj opcje zapytania lub zresetuj wszystkie filtry, aby zobaczyć wyniki." ]
+        ]
+    , resultsWithFilters =
+        [ LanguageValues English [ "Results with filters applied" ]
+        , LanguageValues German [ "Ergebnisse mit angewendeten Filtern" ]
+        , LanguageValues French [ "Résultats avec filtres appliqués" ]
+        , LanguageValues Italian [ "Risultati con filtri applicati" ]
+        , LanguageValues Spanish [ "Resultados con filtros aplicados" ]
+        , LanguageValues Portugese [ "Resultados com filtros aplicados" ]
+        , LanguageValues Polish [ "Wyniki z zastosowanymi filtrami" ]
+        ]
+    , errorLoadingProbeResults =
+        [ LanguageValues English [ "Error loading results" ]
+        , LanguageValues German [ "Fehler beim Laden der Ergebnisse" ]
+        , LanguageValues French [ "Erreur lors du chargement des résultats" ]
+        , LanguageValues Italian [ "Errore durante il caricamento dei risultati" ]
+        , LanguageValues Spanish [ "Error al cargar resultados" ]
+        , LanguageValues Portugese [ "Erro ao carregar os resultados" ]
+        , LanguageValues Polish [ "Błąd podczas ładowania wyników" ]
+        ]
+    , applyFiltersToUpdateResults =
+        [ LanguageValues English [ "Apply filters to update search results" ]
+        , LanguageValues German [ "Wenden Sie Filter an, um die Suchergebnisse zu aktualisieren" ]
+        , LanguageValues French [ "Appliquer des filtres pour mettre à jour les résultats de recherche" ]
+        , LanguageValues Italian [ "Applica filtri per aggiornare i risultati della ricerca" ]
+        , LanguageValues Spanish [ "Aplicar filtros para actualizar los resultados de búsqueda" ]
+        , LanguageValues Portugese [ "Aplicar filtros para atualizar os resultados da pesquisa" ]
+        , LanguageValues Polish [ "Zastosuj filtry, aby zaktualizować wyniki wyszukiwania" ]
+        ]
+    , noResultsWouldBeFound =
+        [ LanguageValues English [ "No results would be found with this search" ]
+        , LanguageValues German [ "Bei dieser Suche würden keine Ergebnisse gefunden" ]
+        , LanguageValues French [ "Aucun résultat ne sera trouvé avec cette recherche" ]
+        , LanguageValues Italian [ "Nessun risultato verrebbe trovato con questa ricerca" ]
+        , LanguageValues Spanish [ "No se encontrarían resultados con esta búsqueda" ]
+        , LanguageValues Portugese [ "Nenhum resultado seria encontrado com esta pesquisa" ]
+        , LanguageValues Polish [ "W tym wyszukiwaniu nie zostaną znalezione żadne wyniki" ]
         ]
     }
