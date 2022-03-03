@@ -57,8 +57,7 @@ init : Flags -> Url -> Nav.Key -> Session
 init flags url key =
     let
         language =
-            flags.locale
-                |> parseLocaleToLanguage
+            parseLocaleToLanguage flags.locale
 
         initialDevice =
             detectDevice flags.windowWidth flags.windowHeight
@@ -85,9 +84,6 @@ init flags url key =
         nationalCollectionFromLocalStorage =
             flags.nationalCollection
 
-        muscatLinks =
-            flags.showMuscatLinks
-
         nationalCollectionFilter =
             if nationalCollectionFromUrl /= Nothing then
                 nationalCollectionFromUrl
@@ -103,7 +99,7 @@ init flags url key =
     , device = initialDevice
     , url = url
     , route = route
-    , showMuscatLinks = muscatLinks
+    , showMuscatLinks = flags.showMuscatLinks
     , expandedSideBar = NoAnimation
     , sideBarExpansionDebouncer = Debouncer.debounce sideBarExpandDelay |> Debouncer.toDebouncer
     , showFrontSearchInterface = initialMode
