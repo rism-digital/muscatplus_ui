@@ -70,5 +70,17 @@ peopleSearchPanelView session model frontBody =
                     [ width fill ]
                     [ viewFrontFacet "date-range" language activeSearch frontBody ]
                 ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "associated-place" language activeSearch frontBody ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "gender" language activeSearch frontBody ]
+                ]
             ]
         ]
