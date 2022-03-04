@@ -31,13 +31,13 @@ viewFullSourcePage language body =
                     ]
                     [ viewMaybe (viewPartOfSection language) body.partOf
                     , viewMaybe (viewContentsSection language) body.contents
-                    , viewMaybe (viewExemplarsSection language) body.exemplars
                     , viewMaybe (viewIncipitsSection language) body.incipits
                     , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
                     , viewMaybe (viewRelationshipsSection language) body.relationships
                     , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
                     , viewMaybe (viewSourceItemsSection language) body.items
                     , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                    , viewMaybe (viewExemplarsSection language) body.exemplars
                     ]
                 ]
     in
