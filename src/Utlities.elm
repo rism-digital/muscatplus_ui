@@ -5,12 +5,6 @@ import Element exposing (Element)
 import Html.Parser exposing (Node(..))
 import Html.Parser.Util exposing (toVirtualDom)
 import Regex
-import Url exposing (Url)
-
-
-flip : (a -> b -> c) -> b -> a -> c
-flip function argB argA =
-    function argA argB
 
 
 choose : Bool -> a -> a -> a

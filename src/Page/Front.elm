@@ -3,6 +3,7 @@ module Page.Front exposing (..)
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
 import Browser.Navigation as Nav
 import Dict
+import Flip exposing (flip)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
@@ -17,7 +18,6 @@ import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
-import Utlities exposing (flip)
 
 
 type alias Model =

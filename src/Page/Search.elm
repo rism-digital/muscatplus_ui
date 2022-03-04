@@ -4,6 +4,7 @@ import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard,
 import Browser.Navigation as Nav
 import Config as C
 import Dict exposing (Dict)
+import Flip exposing (flip)
 import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
@@ -20,7 +21,7 @@ import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
-import Utlities exposing (convertNodeIdToPath, convertPathToNodeId, flip)
+import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
 import Viewport exposing (jumpToIdIfNotVisible)
 
 

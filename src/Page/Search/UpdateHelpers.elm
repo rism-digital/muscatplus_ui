@@ -3,6 +3,7 @@ module Page.Search.UpdateHelpers exposing (..)
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacets)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
+import Flip exposing (flip)
 import Http
 import Http.Detailed
 import List.Extra as LE
@@ -18,7 +19,6 @@ import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
-import Utlities exposing (flip)
 
 
 addNationalCollectionFilter :

@@ -3,6 +3,7 @@ module Update exposing (..)
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (setDevice)
+import Flip exposing (flip)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.Front as FrontPage
@@ -12,7 +13,6 @@ import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Url exposing (Url)
-import Utlities exposing (flip)
 
 
 changePage : Url -> Model -> ( Model, Cmd Msg )

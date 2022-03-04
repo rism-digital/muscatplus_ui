@@ -7,6 +7,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Flip exposing (flip)
 import Html.Attributes as HTA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
@@ -17,7 +18,7 @@ import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Url
-import Utlities exposing (convertPathToNodeId, flip)
+import Utlities exposing (convertPathToNodeId)
 
 
 type alias SearchResultSummaryConfig msg =
