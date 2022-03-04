@@ -143,6 +143,11 @@ extractTextFromLanguageMap lang langMap =
                 |> List.filter (\(LanguageValues l _) -> l == None)
                 |> List.head
 
+        modifiedEnglish =
+            langMap
+                |> List.filter (\(LanguageValues l _) -> l == English)
+                |> List.head
+
         lastResort =
             [ "[No language value found]" ]
     in
@@ -156,7 +161,12 @@ extractTextFromLanguageMap lang langMap =
                     t
 
                 Nothing ->
-                    lastResort
+                    case modifiedEnglish of
+                        Just (LanguageValues _ lv) ->
+                            List.map (\t -> t ++ " <Untranslated>") lv
+
+                        Nothing ->
+                            lastResort
 
 
 {-|
