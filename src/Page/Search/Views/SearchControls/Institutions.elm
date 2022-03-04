@@ -54,6 +54,8 @@ facetsForInstitutionsModeView language model body =
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
+                [ viewFacet "has-siglum" language activeSearch body ]
+            , viewFacetSection language
                 [ viewFacet "city" language activeSearch body
                 ]
             ]

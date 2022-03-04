@@ -4,6 +4,7 @@ import Element exposing (Element, alignTop, column, fill, height, none, padding,
 import Element.Font as Font
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
+import Page.Front.Views.Facets exposing (viewFrontFacet)
 import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput, viewFrontSearchButtons)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
@@ -12,10 +13,13 @@ import Session exposing (Session)
 
 
 institutionSearchPanelView : Session -> FrontPageModel -> FrontBody -> Element FrontMsg
-institutionSearchPanelView session model body =
+institutionSearchPanelView session model frontBody =
     let
         language =
             session.language
+
+        activeSearch =
+            model.activeSearch
 
         msgs =
             { submitMsg = FrontMsg.UserTriggeredSearchSubmit
@@ -49,5 +53,17 @@ institutionSearchPanelView session model body =
                     [ text "Institution authorities" ]
                 ]
             , viewFrontKeywordQueryInput language msgs qText
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "has-siglum" language activeSearch frontBody ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "city" language activeSearch frontBody ]
+                ]
             ]
         ]
