@@ -119,7 +119,7 @@ localTranslations =
     , recordPreview =
         [ LanguageValues English [ "Record preview" ]
         , LanguageValues German [ "Dokumentvorschau" ]
-        , LanguageValues French [ "Aperçu la notice" ]
+        , LanguageValues French [ "Aperçu de la notice" ]
         , LanguageValues Italian [ "Anteprima la scheda" ]
         , LanguageValues Spanish [ "Vista previa del registro" ]
         , LanguageValues Portugese [ "Visualizar do registro" ]
