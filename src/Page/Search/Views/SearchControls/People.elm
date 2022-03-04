@@ -55,12 +55,14 @@ facetsForPeopleModeView language model body =
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
-                [ viewFacet "person-role" language activeSearch body ]
+                [ viewFacet "roles" language activeSearch body ]
             , viewFacetSection language
                 [ viewFacet "date-range" language activeSearch body ]
             , viewFacetSection language
                 [ viewFacet "associated-place" language activeSearch body ]
             , viewFacetSection language
                 [ viewFacet "gender" language activeSearch body ]
+            , viewFacetSection language
+                [ viewFacet "profession" language activeSearch body ]
             ]
         ]

@@ -62,7 +62,7 @@ peopleSearchPanelView session model frontBody =
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "person-role" language activeSearch frontBody ]
+                    [ viewFrontFacet "roles" language activeSearch frontBody ]
                 ]
             , row
                 [ width fill ]
@@ -81,6 +81,12 @@ peopleSearchPanelView session model frontBody =
                 [ column
                     [ width fill ]
                     [ viewFrontFacet "gender" language activeSearch frontBody ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "profession" language activeSearch frontBody ]
                 ]
             ]
         ]
