@@ -47,22 +47,19 @@ viewProbeResponseNumbers language probeResponse =
             in
             el
                 []
-                (text (textMsg ++ ": " ++ formattedNumber))
+                (text <| textMsg ++ ": " ++ formattedNumber)
 
         Loading _ ->
             el
                 [ width (px 25)
                 , height (px 25)
                 ]
-                (animatedLoader <|
-                    spinnerSvg colourScheme.slateGrey
-                )
+                (animatedLoader <| spinnerSvg colourScheme.slateGrey)
 
         Error errMsg ->
             el
                 []
-            <|
-                text (extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults ++ ": " ++ errMsg)
+                (text <| extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults ++ ": " ++ errMsg)
 
         NoResponseToShow ->
             el
