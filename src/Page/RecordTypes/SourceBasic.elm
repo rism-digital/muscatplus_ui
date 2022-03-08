@@ -13,7 +13,6 @@ type alias BasicSourceBody =
     , typeLabel : LanguageMap
     , record : SourceRecordDescriptors
     , summary : Maybe (List LabelValue)
-    , contents : Maybe ContentsSectionBody
     }
 
 
@@ -25,4 +24,3 @@ basicSourceBodyDecoder =
         |> required "typeLabel" languageMapLabelDecoder
         |> required "record" sourceRecordDescriptorsDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "contents" (Decode.maybe contentsSectionBodyDecoder) Nothing
