@@ -51,8 +51,8 @@ animatedLabel labelText =
 progressBarAnimation : Animation
 progressBarAnimation =
     Animation.fromTo
-        { duration = 600
-        , options = []
+        { duration = 800
+        , options = [ Animation.easeInQuart ]
         }
         [ P.property "width" "0" ]
         [ P.property "width" "80%" ]
