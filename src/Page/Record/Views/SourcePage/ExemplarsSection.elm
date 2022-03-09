@@ -8,7 +8,7 @@ import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, Externa
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Attributes exposing (headingMD, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -42,7 +42,9 @@ viewExemplar language exemplar =
 viewHeldBy : Language -> BasicInstitutionBody -> Element msg
 viewHeldBy language body =
     link
-        [ linkColour ]
+        [ linkColour
+        , headingMD
+        ]
         { url = body.id
         , label = text (extractLabelFromLanguageMap language body.label)
         }
