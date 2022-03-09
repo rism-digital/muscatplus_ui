@@ -4,8 +4,8 @@ import Element exposing (Element, alignTop, column, fill, height, link, paragrap
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
-import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel, renderParagraph)
 
 
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
@@ -15,7 +15,7 @@ viewExternalResourcesSection language extSection =
             [ row
                 (List.concat [ widthFillHeightFill, sectionBorderStyles ])
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    (List.append [ spacing sectionSpacing ] widthFillHeightFill)
                     (List.map (\l -> viewExternalResource language l) extSection.items)
                 ]
             ]
@@ -25,25 +25,24 @@ viewExternalResourcesSection language extSection =
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg
 viewExternalResource language body =
-    fieldValueWrapper <|
-        [ wrappedRow
+    wrappedRow
+        [ width fill
+        , alignTop
+        ]
+        [ column
             [ width fill
-            , height fill
-            , alignTop
+            , spacing lineSpacing
             ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language body.label ]
-            , column
-                valueFieldColumnAttributes
-                [ row
-                    [ width fill ]
-                    [ link
-                        [ linkColour ]
-                        { url = body.url
-                        , label = text body.url
-                        }
-                    ]
+            [ row
+                [ width fill ]
+                [ renderParagraph language body.label ]
+            , row
+                [ width fill ]
+                [ link
+                    [ linkColour ]
+                    { url = body.url
+                    , label = text body.url
+                    }
                 ]
             ]
         ]
