@@ -1,6 +1,6 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toKeyboard)
 import Browser.Navigation as Nav
 import Config as C
 import Dict exposing (Dict)
