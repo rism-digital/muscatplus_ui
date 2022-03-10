@@ -1,6 +1,6 @@
 module Page.UI.Incipits exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, maximum, minimum, row, shrink, text, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, maximum, minimum, padding, paddingXY, row, shrink, text, width)
 import Element.Background as Background
 import Html.Attributes as HTA
 import Language exposing (Language)
@@ -56,6 +56,7 @@ viewRenderedIncipits : List RenderedIncipit -> Element msg
 viewRenderedIncipits incipits =
     row
         [ width (fill |> minimum 500 |> maximum 1000)
+        , paddingXY 10 0
         , htmlAttribute (HTA.class "search-results-rendered-incipit")
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
