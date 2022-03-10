@@ -54,7 +54,7 @@ probeSubmit msg session model =
                 |> setProbeResponse (Loading Nothing)
 
         probeUrl =
-            createProbeUrl model.activeSearch
+            createProbeUrl newModel.activeSearch
     in
     ( newModel
     , createProbeRequestWithDecoder msg probeUrl
