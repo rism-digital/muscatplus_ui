@@ -22,7 +22,7 @@ import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
 import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
-import Viewport exposing (jumpToIdIfNotVisible)
+import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
 type alias Model =
@@ -326,6 +326,7 @@ update session msg model =
             ( model
             , Cmd.batch
                 [ Nav.pushUrl session.key url
+                , resetViewportOf NothingHappened "search-results-list"
                 ]
             )
 
