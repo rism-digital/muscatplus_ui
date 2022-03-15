@@ -1,6 +1,6 @@
 module Page.UI.Incipits exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, maximum, minimum, padding, paddingXY, row, shrink, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, htmlAttribute, maximum, minimum, padding, paddingXY, px, row, shrink, text, width)
 import Element.Background as Background
 import Html.Attributes as HTA
 import Language exposing (Language)

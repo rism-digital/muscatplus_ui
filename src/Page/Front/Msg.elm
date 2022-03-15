@@ -6,7 +6,7 @@ import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
-import Page.UI.Keyboard as Keyboard
+import Page.UI.Keyboard.Msg exposing (KeyboardMsg)
 import Response exposing (ServerData)
 
 
@@ -28,5 +28,5 @@ type FrontMsg
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String Bool
-    | UserInteractedWithPianoKeyboard Keyboard.Msg
+    | UserInteractedWithPianoKeyboard KeyboardMsg
     | NothingHappened

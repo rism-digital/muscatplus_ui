@@ -1,13 +1,38 @@
 module Page.Search.UpdateHelpers exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacets)
+import ActiveSearch
+    exposing
+        ( setActiveSearch
+        , setActiveSuggestion
+        , setExpandedFacets
+        , setQueryFacetValues
+        , setRangeFacetValues
+        , toActiveSearch
+        , toExpandedFacets
+        , toKeyboard
+        , toQueryFacetValues
+        , toRangeFacetValues
+        , toggleExpandedFacets
+        )
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Flip exposing (flip)
 import Http
 import Http.Detailed
 import List.Extra as LE
-import Page.Query exposing (buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setNationalCollection, setNextQuery, toFacetBehaviours, toFacetSorts, toFilters, toNextQuery)
+import Page.Query
+    exposing
+        ( buildQueryParameters
+        , setFacetBehaviours
+        , setFacetSorts
+        , setFilters
+        , setNationalCollection
+        , setNextQuery
+        , toFacetBehaviours
+        , toFacetSorts
+        , toFilters
+        , toNextQuery
+        )
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)

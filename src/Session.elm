@@ -1,11 +1,13 @@
 module Session exposing (..)
 
 import Browser.Navigation as Nav
+import BrowserPreferences exposing (BrowserPreferences, browserPreferencesDecoder, defaultPreferences)
 import Debouncer.Messages as Debouncer exposing (Debouncer)
 import Device exposing (detectDevice)
 import Dict exposing (Dict)
 import Element exposing (Device)
 import Flags exposing (Flags)
+import Json.Decode exposing (decodeValue)
 import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Route exposing (Route(..), parseUrl)

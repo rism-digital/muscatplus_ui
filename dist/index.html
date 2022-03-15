@@ -36,12 +36,21 @@
     const MUSCAT_KEY = "muscat-links";
     const MUSCAT_VAL = "C13F7D99-B08D-492C-AF47-D91245CDD96F";
     const NATIONAL_COLLECTION_KEY = "national-collection";
+    const BROWSER_PREFERENCES_KEY = "browser-preferences";
+
 
     function getStoredLanguage() /* -> null | string */
     {
         return localStorage.getItem(LANGUAGE_KEY);
     }
 
+    /**
+     * Receives a string from Elm and sets the user's language preference
+     * in local storage
+     *
+     * @param {string} lang
+     * @return {function}
+     */
     function setStoredLanguage(lang)
     {
         localStorage.setItem(LANGUAGE_KEY, lang);
@@ -52,14 +61,24 @@
         return localStorage.getItem(NATIONAL_COLLECTION_KEY);
     }
 
+    /**
+     *  Receives string or null from Elm and sets the local storage value
+     *  accordingly.
+     *
+     * @param {?string} countryPrefix
+     * @return {function}
+     * **/
     function setNationalCollectionSelection(countryPrefix)
     {
-        localStorage.setItem(NATIONAL_COLLECTION_KEY, countryPrefix);
-    }
+        if (countryPrefix !== null)
+        {
+            localStorage.setItem(NATIONAL_COLLECTION_KEY, countryPrefix);
+        }
+        else
+        {
+            localStorage.removeItem(NATIONAL_COLLECTION_KEY);
+        }
 
-    function removeNationalCollectionSelection()
-    {
-        localStorage.removeItem(NATIONAL_COLLECTION_KEY);
     }
 
     const detectLanguage = () =>
@@ -70,6 +89,21 @@
     const detectNationalCollectionFilter = () =>
     {
         return getNationalCollectionSelection();
+    }
+
+    const setBrowserPreferences = (incoming) =>
+    {
+        localStorage.setItem(BROWSER_PREFERENCES_KEY, JSON.stringify(incoming));
+    }
+
+    const getBrowserPreferences = () =>
+    {
+        return JSON.parse(localStorage.getItem(BROWSER_PREFERENCES_KEY));
+    }
+
+    const resetBrowserPreferences = () =>
+    {
+        localStorage.removeItem(BROWSER_PREFERENCES_KEY);
     }
 
     /*
@@ -93,48 +127,56 @@
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight,
             showMuscatLinks: detectMuscatLinks(),
-            nationalCollection: detectNationalCollectionFilter()
+            nationalCollection: detectNationalCollectionFilter(),
+            searchPreferences: getBrowserPreferences()
         }
     });
 
     /**
-     * Receives a string from Elm and sets the user's language preference
-     * in local storage
-     *
-     * @param {string} lang
-     * @return {function}
+     * These are messages OUTGOING from Elm and INCOMING in JavaScript.
+     * @type {{ SET_NATIONAL_COLLECTION_SELECTION: string,
+     *          SAVE_LANGUAGE_PREFERENCE: string
+     *       }}
      */
-    const languagePreferenceSubscription = ( lang ) =>
+    const incomingMessages =
     {
-        setStoredLanguage(lang);
+        SAVE_LANGUAGE_PREFERENCE: "save-language-preference",
+        SET_NATIONAL_COLLECTION_SELECTION: "set-national-collection-selection"
     }
-
-    app.ports.saveLanguagePreference.subscribe( languagePreferenceSubscription );
 
     /**
-     *  Receives string or null from Elm and sets the local storage value
-     *  accordingly.
-     *
-     * @param {?string} countryPrefix
-     * @return {function}
-     * **/
-    const nationalCollectionSubscription = (countryPrefix) =>
+     * These are messages OUTGOING from JavaScript and INCOMING to Elm
+     * @type {{ TRIGGER_SEARCH: string,
+     *          TRIGGER_BROWSER_PREFERENCES_SAVE
+     *          }}
+     */
+    const outgoingMessages =
     {
-        if (countryPrefix !== null)
-        {
-            setNationalCollectionSelection(countryPrefix);
-        }
-        else
-        {
-            removeNationalCollectionSelection();
-        }
-
-        app.ports.incomingSearchActionTriggered.send(null);
+        TRIGGER_SEARCH: "trigger-search",
+        TRIGGER_BROWSER_PREFERENCES_SAVE: "trigger-browser-preferences-save"
 
     }
 
-    app.ports.saveNationalCollectionSelection.subscribe ( nationalCollectionSubscription );
-
+    /**
+        Listen for messages coming from Elm and route them accordingly.
+     */
+    app.ports.sendOutgoingMessageOnPort.subscribe( ({msg, value} ) =>
+    {
+        switch (msg) {
+            case incomingMessages.SAVE_LANGUAGE_PREFERENCE:
+                setStoredLanguage(value);
+                break;
+            case incomingMessages.SET_NATIONAL_COLLECTION_SELECTION:
+                setNationalCollectionSelection(value);
+                app.ports.receiveIncomingMessageFromPort.send({
+                    "msg": outgoingMessages.TRIGGER_SEARCH,
+                    "value": null
+                });
+                break;
+            default:
+                console.log("Could not understand " + msg );
+        }
+    });
 </script>
 </body>
 </html>

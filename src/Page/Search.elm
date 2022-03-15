@@ -1,20 +1,69 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toKeyboard)
+import ActiveSearch
+    exposing
+        ( setActiveSearch
+        , setActiveSuggestion
+        , setKeyboard
+        , setRangeFacetValues
+        , toKeyboard
+        )
 import Browser.Navigation as Nav
+import BrowserPreferences exposing (BrowserPreferences)
 import Config as C
 import Dict exposing (Dict)
 import Flip exposing (flip)
-import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toMode, toNextQuery)
+import Page.Query
+    exposing
+        ( buildQueryParameters
+        , defaultQueryArgs
+        , resetPage
+        , setKeywordQuery
+        , setMode
+        , setNextQuery
+        , setSort
+        , toMode
+        , toNextQuery
+        )
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..), FacetType(..), RangeFacetValue(..))
+import Page.RecordTypes.Search
+    exposing
+        ( FacetBehaviours
+        , FacetData(..)
+        , FacetItem(..)
+        , FacetSorts(..)
+        , FacetType(..)
+        , RangeFacetValue(..)
+        )
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
-import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery, setNotation, toNotation)
+import Page.Search.UpdateHelpers
+    exposing
+        ( addNationalCollectionFilter
+        , createProbeUrl
+        , probeSubmit
+        , updateQueryFacetFilters
+        , userChangedFacetBehaviour
+        , userChangedSelectFacetSort
+        , userClickedSelectFacetExpand
+        , userClickedSelectFacetItem
+        , userClickedToggleFacet
+        , userEnteredTextInQueryFacet
+        , userEnteredTextInRangeFacet
+        , userLostFocusOnRangeFacet
+        , userRemovedItemFromQueryFacet
+        )
+import Page.UI.Keyboard as Keyboard
+    exposing
+        ( buildNotationRequestQuery
+        , setInputMode
+        , setNotation
+        , toInputMode
+        , toNotation
+        )
 import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
 import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
@@ -50,8 +99,8 @@ init incomingUrl route =
     }
 
 
-load : SearchPageModel -> SearchPageModel
-load oldModel =
+load : Url -> SearchPageModel -> SearchPageModel
+load url oldModel =
     let
         oldKeyboard =
             toKeyboard oldModel.activeSearch
@@ -61,28 +110,53 @@ load oldModel =
                 |> toNotation
                 |> flip setNotation oldKeyboard
                 |> flip setKeyboard oldModel.activeSearch
+
+        ( previewResp, selectedResult ) =
+            case url.fragment of
+                Just _ ->
+                    ( oldModel.preview, oldModel.selectedResult )
+
+                Nothing ->
+                    ( NoResponseToShow, Nothing )
     in
     { response = oldModel.response
     , activeSearch = newActiveSearch
-    , preview = oldModel.preview
-    , selectedResult = oldModel.selectedResult
+    , preview = previewResp
+    , selectedResult = selectedResult
     , showFacetPanel = oldModel.showFacetPanel
     , probeResponse = oldModel.probeResponse
     , applyFilterPrompt = False
     }
 
 
+{-|
+
+    Merges the search preferences with the
+    preferences that were set and retrieved
+    from localStorage.
+
+-}
+applySearchPreferences : BrowserPreferences -> SearchPageModel -> SearchPageModel
+applySearchPreferences prefs oldModel =
+    toKeyboard oldModel.activeSearch
+        |> setInputMode (toInputMode prefs.keyboard)
+        |> flip setKeyboard oldModel.activeSearch
+        |> flip setActiveSearch oldModel
+
+
 searchPageRequest : Url -> Cmd SearchMsg
 searchPageRequest requestUrl =
-    let
-        selectedPreviewRequest =
-            Maybe.andThen (\f -> Just <| searchPagePreviewRequest (C.serverUrl ++ "/" ++ convertNodeIdToPath f)) requestUrl.fragment
-                |> Maybe.withDefault Cmd.none
-    in
-    Cmd.batch
-        [ createRequestWithDecoder ServerRespondedWithSearchData (Url.toString requestUrl)
-        , selectedPreviewRequest
-        ]
+    createRequestWithDecoder ServerRespondedWithSearchData (Url.toString requestUrl)
+
+
+requestPreviewIfSelected : Maybe String -> Cmd SearchMsg
+requestPreviewIfSelected selected =
+    case selected of
+        Just s ->
+            searchPagePreviewRequest s
+
+        Nothing ->
+            Cmd.none
 
 
 searchPagePreviewRequest : String -> Cmd SearchMsg
@@ -181,7 +255,10 @@ update session msg model =
                 , probeResponse = totalItems
                 , applyFilterPrompt = False
               }
-            , Cmd.batch [ notationRenderCmd, jumpCmd ]
+            , Cmd.batch
+                [ notationRenderCmd
+                , jumpCmd
+                ]
             )
 
         ServerRespondedWithSearchData (Err error) ->
@@ -323,7 +400,9 @@ update session msg model =
                 |> searchSubmit session
 
         UserClickedSearchResultsPagination url ->
-            ( model
+            ( { model
+                | preview = NoResponseToShow
+              }
             , Cmd.batch
                 [ Nav.pushUrl session.key url
                 , resetViewportOf NothingHappened "search-results-list"
@@ -397,7 +476,6 @@ update session msg model =
               }
             , Cmd.batch
                 [ Nav.pushUrl session.key newUrlStr
-                , searchPagePreviewRequest result
                 ]
             )
 

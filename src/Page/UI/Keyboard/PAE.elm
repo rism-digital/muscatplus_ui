@@ -20,18 +20,17 @@ octaveShift octNum =
 
 clefQueryStringToClef : List String -> Clef
 clefQueryStringToClef clefList =
-    let
-        clefStr =
-            List.head clefList
-                |> Maybe.withDefault ""
+    List.head clefList
+        |> Maybe.withDefault ""
+        |> clefStrToClef
 
-        clefSym =
-            List.filter (\( cs, _ ) -> cs == clefStr) clefStringMap
-                |> Dict.fromList
-                |> Dict.get clefStr
-                |> Maybe.withDefault G2
-    in
-    clefSym
+
+clefStrToClef : String -> Clef
+clefStrToClef clefStr =
+    List.filter (\( cs, _ ) -> cs == clefStr) clefStringMap
+        |> Dict.fromList
+        |> Dict.get clefStr
+        |> Maybe.withDefault G2
 
 
 clefSymToClefQueryString : Clef -> String

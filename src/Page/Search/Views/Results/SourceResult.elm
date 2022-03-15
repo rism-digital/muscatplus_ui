@@ -76,6 +76,14 @@ viewSourceSummary language iconColour summary =
                     , displayStyles = []
                     }
                     summary
+                , viewSearchResultSummaryField
+                    { language = language
+                    , icon = peopleSvg iconColour
+                    , includeLabelInValue = False
+                    , fieldName = "sourceComposer"
+                    , displayStyles = []
+                    }
+                    summary
                 ]
             , row
                 [ width fill

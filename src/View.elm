@@ -190,7 +190,17 @@ loadingIndicator model =
     in
     case model of
         SearchPage _ pageModel ->
-            chooseView pageModel.response
+            case pageModel.response of
+                Loading _ ->
+                    loadingView
+
+                _ ->
+                    case pageModel.preview of
+                        Loading _ ->
+                            loadingView
+
+                        _ ->
+                            none
 
         SourcePage _ pageModel ->
             chooseView pageModel.response

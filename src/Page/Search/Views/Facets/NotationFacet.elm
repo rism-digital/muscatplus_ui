@@ -4,12 +4,13 @@ import Element exposing (Element, centerX, row)
 import Language exposing (Language)
 import Page.UI.Keyboard as Keyboard
 import Page.UI.Keyboard.Model exposing (Keyboard(..))
+import Page.UI.Keyboard.Msg exposing (KeyboardMsg)
 
 
 type alias NotationFacetConfig msg =
     { language : Language
     , keyboardFacet : Keyboard.Model
-    , userInteractedWithKeyboardMsg : Keyboard.Msg -> msg
+    , userInteractedWithKeyboardMsg : KeyboardMsg -> msg
     }
 
 

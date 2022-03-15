@@ -6,7 +6,7 @@ import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetItem, FacetSorts, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
-import Page.UI.Keyboard as Keyboard
+import Page.UI.Keyboard.Msg exposing (KeyboardMsg)
 import Response exposing (ServerData)
 
 
@@ -38,7 +38,7 @@ type SearchMsg
     | UserEnteredTextInKeywordQueryBox String
     | UserClickedClosePreviewWindow
     | UserClickedSearchResultForPreview String
-    | UserInteractedWithPianoKeyboard Keyboard.Msg
+    | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserClickedPianoKeyboardSearchSubmitButton
     | UserClickedPianoKeyboardSearchClearButton
     | UserResetAllFilters

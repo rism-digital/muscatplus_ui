@@ -5,10 +5,16 @@ type Keyboard
     = Keyboard KeyboardModel KeyboardConfig
 
 
+type KeyboardInputMode
+    = PianoInput
+    | FormInput
+
+
 type alias KeyboardModel =
     { query : KeyboardQuery
     , notation : Maybe String -- the rendered SVG
     , needsProbe : Bool
+    , inputMode : KeyboardInputMode
     }
 
 
@@ -23,6 +29,11 @@ type alias KeyboardQuery =
     , keySignature : KeySignature
     , noteData : Maybe (List String)
     }
+
+
+setNoteData : Maybe (List String) -> { a | noteData : Maybe (List String) } -> { a | noteData : Maybe (List String) }
+setNoteData newData oldModel =
+    { oldModel | noteData = newData }
 
 
 type Key
