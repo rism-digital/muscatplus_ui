@@ -1,8 +1,8 @@
 module Page.Route exposing (Route(..), parseUrl, setRoute, setUrl)
 
+import Page.Keyboard.Model exposing (KeyboardQuery)
+import Page.Keyboard.Query exposing (notationParamParser)
 import Page.Query exposing (FrontQueryArgs, QueryArgs, frontQueryParamsParser, queryParamsParser)
-import Page.UI.Keyboard.Model exposing (KeyboardQuery)
-import Page.UI.Keyboard.Query exposing (notationParamParser)
 import Url exposing (Url)
 import Url.Parser as P exposing ((</>), (<?>), s)
 

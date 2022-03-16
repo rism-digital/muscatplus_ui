@@ -1,7 +1,7 @@
-module Page.UI.Keyboard.PAE exposing (..)
+module Page.Keyboard.PAE exposing (..)
 
 import Dict
-import Page.UI.Keyboard.Model exposing (Clef(..), KeyNoteName(..), Octave, clefStringMap, noteMap, supportedOctaves)
+import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), Octave, clefStringMap, noteMap, supportedOctaves)
 
 
 {-|

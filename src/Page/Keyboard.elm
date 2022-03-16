@@ -1,4 +1,4 @@
-module Page.UI.Keyboard exposing (..)
+module Page.Keyboard exposing (..)
 
 import Array
 import Config
@@ -6,14 +6,14 @@ import Element exposing (Element, alignLeft, alignTop, column, el, fill, height,
 import Element.Input as Input
 import Language exposing (Language)
 import List.Extra as LE
+import Page.Keyboard.Keyboard exposing (blackKeyWidth, octaveConfig, renderKey, whiteKeyWidthScale)
+import Page.Keyboard.Model exposing (Clef(..), Keyboard(..), KeyboardInputMode(..), KeyboardModel, KeyboardQuery, clefStringMap, setNoteData)
+import Page.Keyboard.Msg exposing (KeyboardMsg(..))
+import Page.Keyboard.PAE exposing (clefStrToClef, createPAENote)
+import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Incipits exposing (viewSVGRenderedIncipit)
-import Page.UI.Keyboard.Keyboard exposing (blackKeyWidth, octaveConfig, renderKey, whiteKeyWidthScale)
-import Page.UI.Keyboard.Model exposing (Clef(..), Keyboard(..), KeyboardInputMode(..), KeyboardModel, KeyboardQuery, clefStringMap, setNoteData)
-import Page.UI.Keyboard.Msg exposing (KeyboardMsg(..))
-import Page.UI.Keyboard.PAE exposing (clefStrToClef, createPAENote)
-import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (createSvgRequest, serverUrl)
 
 

@@ -1,4 +1,4 @@
-module Page.UI.Keyboard.Model exposing (..)
+module Page.Keyboard.Model exposing (..)
 
 
 type Keyboard

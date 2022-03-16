@@ -1,7 +1,7 @@
-module Page.UI.Keyboard.Query exposing (..)
+module Page.Keyboard.Query exposing (..)
 
-import Page.UI.Keyboard.Model exposing (Clef(..), KeySignature, KeyboardQuery, TimeSignature)
-import Page.UI.Keyboard.PAE exposing (clefQueryStringToClef, clefSymToClefQueryString)
+import Page.Keyboard.Model exposing (Clef(..), KeySignature, KeyboardQuery, TimeSignature)
+import Page.Keyboard.PAE exposing (clefQueryStringToClef, clefSymToClefQueryString)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q

@@ -2,11 +2,11 @@ module Page.Search.Msg exposing (SearchMsg(..))
 
 import Http
 import Http.Detailed
+import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetItem, FacetSorts, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
-import Page.UI.Keyboard.Msg exposing (KeyboardMsg)
 import Response exposing (ServerData)
 
 

@@ -1,8 +1,8 @@
-module Page.UI.Keyboard.Msg exposing (..)
+module Page.Keyboard.Msg exposing (..)
 
 import Http
 import Http.Detailed
-import Page.UI.Keyboard.Model exposing (Clef, KeyNoteName, KeyboardInputMode, Octave)
+import Page.Keyboard.Model exposing (Clef, KeyNoteName, KeyboardInputMode, Octave)
 
 
 type KeyboardMsg

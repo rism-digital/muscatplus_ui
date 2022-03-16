@@ -2,9 +2,9 @@ module Page.Search.Views.Facets.NotationFacet exposing (..)
 
 import Element exposing (Element, centerX, row)
 import Language exposing (Language)
-import Page.UI.Keyboard as Keyboard
-import Page.UI.Keyboard.Model exposing (Keyboard(..))
-import Page.UI.Keyboard.Msg exposing (KeyboardMsg)
+import Page.Keyboard as Keyboard
+import Page.Keyboard.Model exposing (Keyboard(..))
+import Page.Keyboard.Msg exposing (KeyboardMsg)
 
 
 type alias NotationFacetConfig msg =

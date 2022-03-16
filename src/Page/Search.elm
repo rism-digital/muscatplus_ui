@@ -9,10 +9,19 @@ import ActiveSearch
         , toKeyboard
         )
 import Browser.Navigation as Nav
-import BrowserPreferences exposing (BrowserPreferences)
 import Config as C
 import Dict exposing (Dict)
 import Flip exposing (flip)
+import Page.Keyboard as Keyboard
+    exposing
+        ( buildNotationRequestQuery
+        , setInputMode
+        , setNotation
+        , toInputMode
+        , toNotation
+        )
+import Page.Keyboard.Model exposing (toKeyboardQuery)
+import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query
     exposing
         ( buildQueryParameters
@@ -56,16 +65,6 @@ import Page.Search.UpdateHelpers
         , userLostFocusOnRangeFacet
         , userRemovedItemFromQueryFacet
         )
-import Page.UI.Keyboard as Keyboard
-    exposing
-        ( buildNotationRequestQuery
-        , setInputMode
-        , setNotation
-        , toInputMode
-        , toNotation
-        )
-import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
-import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -127,21 +126,6 @@ load url oldModel =
     , probeResponse = oldModel.probeResponse
     , applyFilterPrompt = False
     }
-
-
-{-|
-
-    Merges the search preferences with the
-    preferences that were set and retrieved
-    from localStorage.
-
--}
-applySearchPreferences : BrowserPreferences -> SearchPageModel -> SearchPageModel
-applySearchPreferences prefs oldModel =
-    toKeyboard oldModel.activeSearch
-        |> setInputMode (toInputMode prefs.keyboard)
-        |> flip setKeyboard oldModel.activeSearch
-        |> flip setActiveSearch oldModel
 
 
 searchPageRequest : Url -> Cmd SearchMsg

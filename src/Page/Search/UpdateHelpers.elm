@@ -20,6 +20,8 @@ import Flip exposing (flip)
 import Http
 import Http.Detailed
 import List.Extra as LE
+import Page.Keyboard.Model exposing (toKeyboardQuery)
+import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query
     exposing
         ( buildQueryParameters
@@ -39,8 +41,6 @@ import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Search.Utilities exposing (createRangeString)
-import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
-import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)

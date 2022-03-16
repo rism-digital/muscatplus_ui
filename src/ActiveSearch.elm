@@ -3,12 +3,11 @@ module ActiveSearch exposing (..)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict exposing (Dict)
 import List.Extra as LE
+import Page.Keyboard as Keyboard
 import Page.Query
-import Page.RecordTypes.Search exposing (FacetType)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Route exposing (Route(..))
-import Page.UI.Keyboard as Keyboard
 
 
 init : Route -> ActiveSearch

@@ -1,11 +1,10 @@
 module ActiveSearch.Model exposing (..)
 
 import Dict exposing (Dict)
+import Page.Keyboard as Keyboard
 import Page.Query exposing (QueryArgs)
-import Page.RecordTypes.Search exposing (FacetType)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
-import Page.UI.Keyboard as Keyboard
 
 
 {-|
