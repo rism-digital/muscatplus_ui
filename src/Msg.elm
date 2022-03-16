@@ -60,7 +60,6 @@ import Url exposing (Url)
 -}
 type Msg
     = ClientChangedUrl Url
-    | ClientRequestedBrowserPreferencesSave
     | ClientReceivedABadPortMessage String
     | UserRequestedUrlChange UrlRequest
     | UserResizedWindow Device

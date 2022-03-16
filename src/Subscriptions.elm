@@ -43,9 +43,6 @@ messageReceiverHelper model val =
                 PortReceiveTriggerSearch _ ->
                     handleIncomingSearchTrigger model
 
-                PortReceiveTriggerBrowserSave _ ->
-                    Msg.ClientRequestedBrowserPreferencesSave
-
                 PortReceivedUnknownMessage ->
                     Msg.NothingHappened
 

@@ -145,16 +145,15 @@
     }
 
     /**
-     * These are messages OUTGOING from JavaScript and INCOMING to Elm
+     * Set up a typed object for the message type values.
+     * These are messages OUTGOING from JavaScript and INCOMING to Elm.
      * @type {{ TRIGGER_SEARCH: string,
-     *          TRIGGER_BROWSER_PREFERENCES_SAVE
-     *          }}
+     *          TRIGGER_BROWSER_PREFERENCES_SAVE: string
+     *       }}
      */
     const outgoingMessages =
     {
         TRIGGER_SEARCH: "trigger-search",
-        TRIGGER_BROWSER_PREFERENCES_SAVE: "trigger-browser-preferences-save"
-
     }
 
     /**
@@ -168,10 +167,15 @@
                 break;
             case incomingMessages.SET_NATIONAL_COLLECTION_SELECTION:
                 setNationalCollectionSelection(value);
+                // after setting the national collection, send a message
+                // back to Elm telling the UI to refresh the page and perform
+                // a search with the new NC parameters. There is no value
+                // to send, so set it to null.
                 app.ports.receiveIncomingMessageFromPort.send({
                     "msg": outgoingMessages.TRIGGER_SEARCH,
                     "value": null
                 });
+
                 break;
             default:
                 console.log("Could not understand " + msg );

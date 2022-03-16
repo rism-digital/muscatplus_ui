@@ -2,7 +2,6 @@ module Update exposing (..)
 
 import Browser
 import Browser.Navigation as Nav
-import BrowserPreferences exposing (encodeBrowserPreferences)
 import Device exposing (setDevice)
 import Flip exposing (flip)
 import Model exposing (Model(..), toSession, updateSession)
@@ -13,7 +12,6 @@ import Page.Record as RecordPage
 import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
-import Page.UI.Keyboard.Model exposing (KeyboardInputMode(..))
 import Url exposing (Url)
 
 
@@ -99,9 +97,6 @@ update msg model =
     case ( msg, model ) of
         ( Msg.ClientChangedUrl url, _ ) ->
             changePage url model
-
-        ( Msg.ClientRequestedBrowserPreferencesSave, _ ) ->
-            ( model, Cmd.none )
 
         ( Msg.UserRequestedUrlChange urlRequest, _ ) ->
             let
