@@ -1,12 +1,13 @@
 port module Ports.Outgoing exposing (..)
 
 import Json.Encode as Encode
+import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 
 
 type OutgoingMessage
     = PortSendSaveLanguagePreference String
     | PortSendSetNationalCollectionSelection (Maybe String)
-    | PortSendSaveBrowserPreferences
+    | PortSendSaveSearchPreference { key : String, value : SearchPreferenceVariant }
     | PortSendUnknownMessage
 
 
@@ -32,9 +33,23 @@ convertOutgoingMessageToJsonMsg msg =
             , ( "value", encodedCollection )
             ]
 
-        PortSendSaveBrowserPreferences ->
-            [ ( "msg", Encode.string "save-browser-preferences" )
-            , ( "value", Encode.null )
+        PortSendSaveSearchPreference pref ->
+            let
+                prefValue =
+                    case pref.value of
+                        StringPreference stringPref ->
+                            Encode.string stringPref
+
+                        ListPreference listPref ->
+                            Encode.list (\a -> Encode.string a) listPref
+            in
+            [ ( "msg", Encode.string "save-search-preference" )
+            , ( "value"
+              , Encode.object
+                    [ ( "key", Encode.string pref.key )
+                    , ( "value", prefValue )
+                    ]
+              )
             ]
 
         PortSendUnknownMessage ->

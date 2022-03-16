@@ -14,7 +14,10 @@ import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Incipits exposing (viewSVGRenderedIncipit)
+import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (createSvgRequest, serverUrl)
+import SearchPreferences exposing (saveSearchPreference)
+import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 
 
 type alias Model =
@@ -84,6 +87,16 @@ toggleInputMode oldMode =
 
     else
         PianoInput
+
+
+convertInputModeToString : KeyboardInputMode -> String
+convertInputModeToString mode =
+    case mode of
+        PianoInput ->
+            "piano-input"
+
+        FormInput ->
+            "form-input"
 
 
 buildUpdateQuery : Maybe (List String) -> Model -> ( Model, Cmd KeyboardMsg )
@@ -176,10 +189,16 @@ update msg model =
             buildUpdateQuery noteData model
 
         UserToggledInputMode mode ->
+            let
+                inputPref =
+                    { key = "keyboardInputMode"
+                    , value = StringPreference <| convertInputModeToString mode
+                    }
+            in
             ( { model
                 | inputMode = mode
               }
-            , Cmd.none
+            , saveSearchPreference inputPref
             )
 
         _ ->

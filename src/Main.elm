@@ -2,16 +2,14 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import BrowserPreferences exposing (browserPreferencesDecoder, defaultPreferences)
 import Flags exposing (Flags)
-import Json.Decode as Decode exposing (decodeValue)
 import Model exposing (Model(..))
 import Msg exposing (Msg)
 import Page.Front as Front
 import Page.NotFound as NotFound
 import Page.Record as Record
 import Page.Route as Route exposing (Route(..))
-import Page.Search as Search exposing (applySearchPreferences)
+import Page.Search as Search
 import Page.SideBar as Sidebar
 import Session
 import Subscriptions
@@ -45,15 +43,6 @@ init flags initialUrl key =
 
         session =
             Session.init flags initialUrl key
-
-        browserPreferences =
-            case flags.searchPreferences of
-                Just localPreferences ->
-                    decodeValue browserPreferencesDecoder localPreferences
-                        |> Result.withDefault defaultPreferences
-
-                Nothing ->
-                    defaultPreferences
     in
     case route of
         FrontPageRoute _ ->
@@ -68,7 +57,6 @@ init flags initialUrl key =
             let
                 initialModel =
                     Search.init initialUrl route
-                        |> applySearchPreferences browserPreferences
             in
             ( SearchPage session initialModel
             , Cmd.batch

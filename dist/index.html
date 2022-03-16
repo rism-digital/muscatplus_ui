@@ -36,10 +36,14 @@
     const MUSCAT_KEY = "muscat-links";
     const MUSCAT_VAL = "C13F7D99-B08D-492C-AF47-D91245CDD96F";
     const NATIONAL_COLLECTION_KEY = "national-collection";
-    const BROWSER_PREFERENCES_KEY = "browser-preferences";
+    const SEARCH_PREFERENCES_KEY = "search-preferences";
 
-
-    function getStoredLanguage() /* -> null | string */
+    /**
+     * Gets the stored language code preference, if set.
+     *
+     * @returns {?string}
+     */
+    function getStoredLanguage()
     {
         return localStorage.getItem(LANGUAGE_KEY);
     }
@@ -53,9 +57,24 @@
      */
     function setStoredLanguage(lang)
     {
-        localStorage.setItem(LANGUAGE_KEY, lang);
+        try
+        {
+            localStorage.setItem(LANGUAGE_KEY, lang);
+        }
+        catch (e)
+        {
+            return false;
+        }
+
+        return true;
     }
 
+    /**
+     * Gets the stored national collection selection (indicated by the country
+     * code of the sigla), or null if not set.
+     *
+     * @returns {?string}
+     */
     function getNationalCollectionSelection()
     {
         return localStorage.getItem(NATIONAL_COLLECTION_KEY);
@@ -72,52 +91,109 @@
     {
         if (countryPrefix !== null)
         {
-            localStorage.setItem(NATIONAL_COLLECTION_KEY, countryPrefix);
+            try
+            {
+                localStorage.setItem(NATIONAL_COLLECTION_KEY, countryPrefix);
+            }
+            catch (err)
+            {
+                return false;
+            }
         }
         else
         {
             localStorage.removeItem(NATIONAL_COLLECTION_KEY);
         }
 
+        return true
+
     }
 
+    /**
+     * Detects the currently set language. If the user has set it in
+     * localstorage, returns this. If localstorage is null, then detect
+     * the locale of the browser, and return the first part of it.
+     *
+     * @returns {string}
+     */
     const detectLanguage = () =>
     {
         return getStoredLanguage() || navigator.language.split("-")[0];
     }
 
-    const detectNationalCollectionFilter = () =>
+    /**
+     * If the browser does not support localstorage storing (for whatever reason)
+     * then return false; otherwise return true.
+     *
+     * @param incoming {object} The JavaScript object to save. Converted to a string.
+     * @returns {boolean} True if successful; false if setItem raised an error.
+     */
+    const setSearchPreferences = (incoming) =>
     {
-        return getNationalCollectionSelection();
+        try
+        {
+            localStorage.setItem(SEARCH_PREFERENCES_KEY, JSON.stringify(incoming));
+        }
+        catch (err)
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    const setBrowserPreferences = (incoming) =>
+    /**
+     * Gets any current search preferences, or an empty object if not set.
+     *
+     * @returns {object}
+     */
+    const getSearchPreferences = () =>
     {
-        localStorage.setItem(BROWSER_PREFERENCES_KEY, JSON.stringify(incoming));
+        let _prefs = localStorage.getItem(SEARCH_PREFERENCES_KEY);
+
+        if (_prefs !== null)
+        {
+            return JSON.parse(_prefs);
+        }
+
+        return {};
     }
 
-    const getBrowserPreferences = () =>
+    const resetSearchPreferences = () =>
     {
-        return JSON.parse(localStorage.getItem(BROWSER_PREFERENCES_KEY));
+        localStorage.removeItem(SEARCH_PREFERENCES_KEY);
     }
 
-    const resetBrowserPreferences = () =>
-    {
-        localStorage.removeItem(BROWSER_PREFERENCES_KEY);
-    }
-
-    /*
-        If the user has a specific value set in localStorage,
-        then show links to Muscat. The user needs to be logged
-        in the Muscat; this won't authenticate them. Its only
-        purpose is to ensure that links to Muscat are shown only
-        if the user has explicitly enabled them.
-    */
+    /**
+     *   If the user has a specific value set in localStorage,
+     *   then show links to Muscat. The user needs to be logged
+     *   in the Muscat; this won't authenticate them. Its only
+     *   purpose is to ensure that links to Muscat are shown only
+     *   if the user has explicitly enabled them.
+     */
     const detectMuscatLinks = () =>  /* bool */
     {
         const linkSet = localStorage.getItem(MUSCAT_KEY);
 
         return linkSet !== null && linkSet === MUSCAT_VAL;
+    }
+
+    /**
+     * Takes an update message of form {updateKey: updateValue} and the
+     * current preferences, and returns a new preference object
+     * with the specific property updated.
+     *
+     * Uses object destructuring and the spread operator to
+     * update the specific key. Also relies on computed property
+     * names for the variable [updateKey].
+     *
+     * @param update {object}
+     * @param currentPrefs {object}
+     * @returns {object}
+     */
+    const applySearchPreferenceUpdate = ({key, value}, currentPrefs) =>
+    {
+        return {...currentPrefs, [key]: value}
     }
 
     const app = Elm.Main.init({
@@ -127,8 +203,8 @@
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight,
             showMuscatLinks: detectMuscatLinks(),
-            nationalCollection: detectNationalCollectionFilter(),
-            searchPreferences: getBrowserPreferences()
+            nationalCollection: getNationalCollectionSelection(),
+            searchPreferences: getSearchPreferences()
         }
     });
 
@@ -141,14 +217,14 @@
     const incomingMessages =
     {
         SAVE_LANGUAGE_PREFERENCE: "save-language-preference",
-        SET_NATIONAL_COLLECTION_SELECTION: "set-national-collection-selection"
+        SET_NATIONAL_COLLECTION_SELECTION: "set-national-collection-selection",
+        SAVE_SEARCH_PREFERENCE: "save-search-preference"
     }
 
     /**
      * Set up a typed object for the message type values.
      * These are messages OUTGOING from JavaScript and INCOMING to Elm.
-     * @type {{ TRIGGER_SEARCH: string,
-     *          TRIGGER_BROWSER_PREFERENCES_SAVE: string
+     * @type {{ TRIGGER_SEARCH: string
      *       }}
      */
     const outgoingMessages =
@@ -175,10 +251,21 @@
                     "msg": outgoingMessages.TRIGGER_SEARCH,
                     "value": null
                 });
+                break;
+            case incomingMessages.SAVE_SEARCH_PREFERENCE:
+                /*
+                    The incoming value is an object with a key string,
+                    and either a single value string, or a list of strings.
+                 */
+                let currentPrefs = getSearchPreferences();
+                let newPrefs = applySearchPreferenceUpdate(value, currentPrefs);
+
+                let _ = setSearchPreferences(newPrefs);
 
                 break;
+
             default:
-                console.log("Could not understand " + msg );
+                console.log("Could not understand incoming " + msg );
         }
     });
 </script>
