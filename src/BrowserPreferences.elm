@@ -8,14 +8,14 @@ import Page.UI.Keyboard.Preferences exposing (KeyboardPreferences, defaultKeyboa
 
 type alias BrowserPreferences =
     { keyboard : KeyboardPreferences
-    , collapsedSections : List String
+    , collapsedFacetSections : List String
     }
 
 
 defaultPreferences : BrowserPreferences
 defaultPreferences =
     { keyboard = defaultKeyboardPreferences
-    , collapsedSections = []
+    , collapsedFacetSections = []
     }
 
 
@@ -23,12 +23,12 @@ browserPreferencesDecoder : Decoder BrowserPreferences
 browserPreferencesDecoder =
     Decode.succeed BrowserPreferences
         |> required "keyboard" keyboardPreferencesDecoder
-        |> required "collapsedSections" (list string)
+        |> required "collapsedFacetSections" (list string)
 
 
 encodeBrowserPreferences : BrowserPreferences -> Encode.Value
 encodeBrowserPreferences prefs =
     Encode.object
         [ ( "keyboard", encodeKeyboardPreferences prefs.keyboard )
-        , ( "collapsedSections", Encode.list (\a -> Encode.string a) [] )
+        , ( "collapsedFacetSections", Encode.list (\a -> Encode.string a) prefs.collapsedFacetSections )
         ]
