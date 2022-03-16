@@ -15,9 +15,7 @@ import Flip exposing (flip)
 import Page.Keyboard as Keyboard
     exposing
         ( buildNotationRequestQuery
-        , setInputMode
         , setNotation
-        , toInputMode
         , toNotation
         )
 import Page.Keyboard.Model exposing (toKeyboardQuery)

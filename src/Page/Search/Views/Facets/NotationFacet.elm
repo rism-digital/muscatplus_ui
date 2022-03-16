@@ -1,6 +1,6 @@
 module Page.Search.Views.Facets.NotationFacet exposing (..)
 
-import Element exposing (Element, centerX, row)
+import Element exposing (Element, alignLeft, centerX, row)
 import Language exposing (Language)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (Keyboard(..))
@@ -21,7 +21,7 @@ viewKeyboardControl config =
             { numOctaves = 3 }
     in
     row
-        [ centerX ]
+        [ alignLeft ]
         [ Keyboard.view config.language (Keyboard config.keyboardFacet keyboardConfig)
             |> Element.map config.userInteractedWithKeyboardMsg
         ]

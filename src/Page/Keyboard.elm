@@ -2,19 +2,14 @@ module Page.Keyboard exposing (..)
 
 import Array
 import Config
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, paddingXY, px, row, text, width)
-import Element.Input as Input
+import Element exposing (Element)
 import Language exposing (Language)
 import List.Extra as LE
-import Page.Keyboard.Keyboard exposing (blackKeyWidth, octaveConfig, renderKey, whiteKeyWidthScale)
-import Page.Keyboard.Model exposing (Clef(..), Keyboard(..), KeyboardInputMode(..), KeyboardModel, KeyboardQuery, clefStringMap, setNoteData)
+import Page.Keyboard.Model exposing (Clef(..), Keyboard(..), KeyboardModel, KeyboardQuery, setNoteData)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
-import Page.Keyboard.PAE exposing (clefStrToClef, createPAENote)
+import Page.Keyboard.PAE exposing (createPAENote)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.UI.Components exposing (dropdownSelect)
-import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Incipits exposing (viewSVGRenderedIncipit)
-import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
+import Page.Keyboard.Views as KeyboardViews
 import Request exposing (createSvgRequest, serverUrl)
 import SearchPreferences exposing (saveSearchPreference)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
@@ -51,7 +46,6 @@ initModel =
     { query = defaultKeyboardQuery
     , notation = Nothing
     , needsProbe = False
-    , inputMode = PianoInput
     }
 
 
@@ -65,38 +59,9 @@ setNotation newNotation oldRecord =
     { oldRecord | notation = newNotation }
 
 
-toInputMode : { a | inputMode : KeyboardInputMode } -> KeyboardInputMode
-toInputMode model =
-    model.inputMode
-
-
-setInputMode : KeyboardInputMode -> { a | inputMode : KeyboardInputMode } -> { a | inputMode : KeyboardInputMode }
-setInputMode newMode oldModel =
-    { oldModel | inputMode = newMode }
-
-
 setQuery : KeyboardQuery -> { a | query : KeyboardQuery } -> { a | query : KeyboardQuery }
 setQuery newQuery oldModel =
     { oldModel | query = newQuery }
-
-
-toggleInputMode : KeyboardInputMode -> KeyboardInputMode
-toggleInputMode oldMode =
-    if oldMode == PianoInput then
-        FormInput
-
-    else
-        PianoInput
-
-
-convertInputModeToString : KeyboardInputMode -> String
-convertInputModeToString mode =
-    case mode of
-        PianoInput ->
-            "piano-input"
-
-        FormInput ->
-            "form-input"
 
 
 buildUpdateQuery : Maybe (List String) -> Model -> ( Model, Cmd KeyboardMsg )
@@ -188,147 +153,22 @@ update msg model =
             in
             buildUpdateQuery noteData model
 
-        UserToggledInputMode mode ->
+        UserEnteredPAEText text ->
             let
-                inputPref =
-                    { key = "keyboardInputMode"
-                    , value = StringPreference <| convertInputModeToString mode
-                    }
+                _ =
+                    Debug.log "Query text" text
             in
-            ( { model
-                | inputMode = mode
-              }
-            , saveSearchPreference inputPref
-            )
+            ( model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
 
 
+{-|
+
+    Exposes only the top level view
+
+-}
 view : Language -> Keyboard -> Element KeyboardMsg
-view language (Keyboard model config) =
-    let
-        inputView =
-            if model.inputMode == PianoInput then
-                viewPianoInput language (Keyboard model config)
-
-            else
-                viewFormInput language (Keyboard model config)
-    in
-    row
-        [ alignTop
-        , alignLeft
-        ]
-        [ column
-            [ width fill
-            , height fill
-            ]
-            [ row
-                [ width fill
-                , height fill
-                ]
-                [ column
-                    [ width <| px 120
-                    , alignTop
-                    ]
-                    [ Input.radio
-                        []
-                        { onChange = \s -> UserToggledInputMode s
-                        , options =
-                            [ Input.option PianoInput (text "Piano")
-                            , Input.option FormInput (text "Form")
-                            ]
-                        , selected = Just model.inputMode
-                        , label = Input.labelAbove [] (text "Choose input")
-                        }
-                    ]
-                , column
-                    [ width fill
-                    , height fill
-                    ]
-                    [ inputView ]
-                ]
-            , row
-                [ width fill
-                , height (px 120)
-                , paddingXY 0 10
-                ]
-                [ el
-                    [ width fill
-                    , height (px 120)
-                    ]
-                    (viewMaybe viewSVGRenderedIncipit model.notation)
-                ]
-            ]
-        ]
-
-
-viewFormInput : Language -> Keyboard -> Element KeyboardMsg
-viewFormInput language (Keyboard model config) =
-    let
-        clefSelect =
-            el
-                [ width (px 100) ]
-                (dropdownSelect
-                    (\clefStr -> UserClickedPianoKeyboardChangeClef <| clefStrToClef clefStr)
-                    (List.map (\( s, _ ) -> ( s, s )) clefStringMap)
-                    (\selected -> clefStrToClef selected)
-                    (.clef model.query)
-                )
-
-        paeInput =
-            el
-                [ width fill ]
-                (Input.text
-                    [ width fill ]
-                    { onChange = UserEnteredPAEText
-                    , text = "PAE Input"
-                    , placeholder = Nothing
-                    , label = Input.labelAbove [] (text "PAE Input")
-                    }
-                )
-    in
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ row
-                [ width fill ]
-                [ clefSelect ]
-            , row
-                [ width fill ]
-                [ paeInput ]
-            ]
-        ]
-
-
-viewPianoInput : Language -> Keyboard -> Element KeyboardMsg
-viewPianoInput language (Keyboard model config) =
-    let
-        numOctaves =
-            config.numOctaves
-
-        -- calculate the size of the div for the keyboard
-        -- subtract 1 to account for the border overlap
-        -- multiply by 7 for each white key
-        octaveWidth =
-            ((toFloat blackKeyWidth - 1) * whiteKeyWidthScale) * 7
-
-        keyboardWidth =
-            (octaveWidth * toFloat numOctaves)
-                |> ceiling
-    in
-    row
-        [ width (px keyboardWidth)
-        , height fill
-        ]
-        (List.repeat numOctaves octaveConfig
-            |> List.concat
-            |> List.indexedMap (renderKey UserClickedPianoKeyboardKey)
-        )
+view lang keyboardConfig =
+    KeyboardViews.view lang keyboardConfig

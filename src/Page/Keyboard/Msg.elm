@@ -2,7 +2,7 @@ module Page.Keyboard.Msg exposing (..)
 
 import Http
 import Http.Detailed
-import Page.Keyboard.Model exposing (Clef, KeyNoteName, KeyboardInputMode, Octave)
+import Page.Keyboard.Model exposing (Clef, KeyNoteName, Octave)
 
 
 type KeyboardMsg
@@ -10,7 +10,6 @@ type KeyboardMsg
     | ClientRequestedRenderedNotation
     | UserClickedPianoKeyboardKey KeyNoteName Octave
     | UserClickedPianoKeyboardDeleteNote
-    | UserToggledInputMode KeyboardInputMode
     | UserClickedPianoKeyboardChangeClef Clef
     | UserEnteredPAEText String
     | UserClickedPianoKeyboardChangeTimeSignature

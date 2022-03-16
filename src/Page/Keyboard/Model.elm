@@ -5,17 +5,45 @@ type Keyboard
     = Keyboard KeyboardModel KeyboardConfig
 
 
-type KeyboardInputMode
-    = PianoInput
-    | FormInput
-
-
 type alias KeyboardModel =
     { query : KeyboardQuery
     , notation : Maybe String -- the rendered SVG
     , needsProbe : Bool
-    , inputMode : KeyboardInputMode
     }
+
+
+type alias KeyNoteConfig =
+    { keyType : Key
+    }
+
+
+octaveConfig : List KeyNoteConfig
+octaveConfig =
+    [ { keyType = WhiteKey KC KCn
+      }
+    , { keyType = BlackKey KCs KDf
+      }
+    , { keyType = WhiteKey KD KDn
+      }
+    , { keyType = BlackKey KDs KEf
+      }
+    , { keyType = WhiteKey KE KEn
+      }
+    , { keyType = WhiteKey KF KFn
+      }
+    , { keyType = BlackKey KFs KGf
+      }
+    , { keyType = WhiteKey KG KGn
+      }
+    , { keyType = BlackKey KGs KAf
+      }
+    , { keyType = WhiteKey KA KAn
+      }
+    , { keyType = BlackKey KAs KBf
+      }
+    , { keyType = WhiteKey KB KBn
+      }
+    ]
 
 
 toKeyboardQuery : { a | query : KeyboardQuery } -> KeyboardQuery
