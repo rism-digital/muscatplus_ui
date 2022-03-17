@@ -15,7 +15,7 @@ import ActiveSearch
         , toggleExpandedFacets
         )
 import ActiveSearch.Model exposing (ActiveSearch)
-import Dict
+import Dict exposing (Dict)
 import Flip exposing (flip)
 import Http
 import Http.Detailed
@@ -44,6 +44,7 @@ import Page.Search.Utilities exposing (createRangeString)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
+import Utlities exposing (choose)
 
 
 addNationalCollectionFilter :
@@ -227,6 +228,42 @@ userChangedFacetBehaviour alias facetBehaviour oldModel =
         |> flip setActiveSearch oldModel
 
 
+updateRangeFacetValues : String -> RangeFacetValue -> String -> Dict FacetAlias ( String, String ) -> Dict FacetAlias ( String, String )
+updateRangeFacetValues alias inputBox value rangeFacetValues =
+    let
+        updateFn existingValues =
+            case existingValues of
+                Just ( lower, upper ) ->
+                    case inputBox of
+                        LowerRangeValue ->
+                            if value == "*" && upper == "*" then
+                                Nothing
+
+                            else
+                                Just ( value, upper )
+
+                        UpperRangeValue ->
+                            if value == "*" && lower == "*" then
+                                Nothing
+
+                            else
+                                Just ( lower, value )
+
+                Nothing ->
+                    if value == "*" then
+                        Nothing
+
+                    else
+                        case inputBox of
+                            LowerRangeValue ->
+                                Just ( value, "*" )
+
+                            UpperRangeValue ->
+                                Just ( "*", value )
+    in
+    Dict.update alias updateFn rangeFacetValues
+
+
 userEnteredTextInRangeFacet :
     FacetAlias
     -> RangeFacetValue
@@ -235,30 +272,9 @@ userEnteredTextInRangeFacet :
     -> { a | activeSearch : ActiveSearch }
 userEnteredTextInRangeFacet alias inputBox value model =
     let
-        rangeFacetValues =
-            toRangeFacetValues model.activeSearch
-
         newRangeFacetValues =
-            Dict.update alias
-                (\existingValues ->
-                    case existingValues of
-                        Just ( lower, upper ) ->
-                            case inputBox of
-                                LowerRangeValue ->
-                                    Just ( value, upper )
-
-                                UpperRangeValue ->
-                                    Just ( lower, value )
-
-                        Nothing ->
-                            case inputBox of
-                                LowerRangeValue ->
-                                    Just ( value, "*" )
-
-                                UpperRangeValue ->
-                                    Just ( "*", value )
-                )
-                rangeFacetValues
+            toRangeFacetValues model.activeSearch
+                |> updateRangeFacetValues alias inputBox value
     in
     setRangeFacetValues newRangeFacetValues model.activeSearch
         |> flip setActiveSearch model
@@ -278,30 +294,25 @@ userLostFocusOnRangeFacet alias model =
                 |> Maybe.withDefault ( "*", "*" )
 
         newLowerValue =
-            if lowerValue == "" then
-                "*"
-
-            else
-                lowerValue
+            choose (lowerValue == "") "*" lowerValue
 
         newUpperValue =
-            if upperValue == "" then
-                "*"
+            choose (upperValue == "") "*" upperValue
 
-            else
-                upperValue
-
-        rangeString =
-            createRangeString newLowerValue newUpperValue
-
-        newActiveFilters =
+        oldFilters =
             toNextQuery model.activeSearch
                 |> toFilters
-                |> Dict.insert alias [ rangeString ]
+
+        newActiveFilters =
+            if newLowerValue == "*" && newUpperValue == "*" then
+                Dict.remove alias oldFilters
+
+            else
+                Dict.insert alias (List.singleton (createRangeString newLowerValue newUpperValue)) oldFilters
 
         -- ensure the range facet also displays the correct value
         newRangeFacetValues =
-            toRangeFacetValues model.activeSearch
+            rangeFacetValues
                 |> Dict.insert alias ( newLowerValue, newUpperValue )
     in
     toNextQuery model.activeSearch
