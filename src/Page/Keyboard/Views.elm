@@ -7,12 +7,13 @@ import Page.Keyboard.Model exposing (Keyboard(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.Views.FormInput exposing (viewFormInput)
 import Page.Keyboard.Views.PianoInput exposing (viewPianoInput)
+import Page.RecordTypes.Search exposing (NotationFacet)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Incipits exposing (viewSVGRenderedIncipit)
 
 
-view : Language -> Keyboard -> Element KeyboardMsg
-view language (Keyboard model config) =
+view : NotationFacet -> Language -> Keyboard -> Element KeyboardMsg
+view notationFacet language (Keyboard model config) =
     row
         [ width fill
         , alignTop
@@ -38,7 +39,7 @@ view language (Keyboard model config) =
                     , alignTop
                     , alignLeft
                     ]
-                    [ viewFormInput language (Keyboard model config) ]
+                    [ viewFormInput language notationFacet (Keyboard model config) ]
                 ]
             , row
                 [ width fill

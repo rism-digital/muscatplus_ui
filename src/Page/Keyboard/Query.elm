@@ -1,7 +1,7 @@
 module Page.Keyboard.Query exposing (..)
 
-import Page.Keyboard.Model exposing (Clef(..), KeySignature, KeyboardQuery, TimeSignature)
-import Page.Keyboard.PAE exposing (clefQueryStringToClef, clefSymToClefQueryString)
+import Page.Keyboard.Model exposing (Clef(..), KeySignature, KeyboardQuery, QueryMode(..), TimeSignature)
+import Page.Keyboard.PAE exposing (clefQueryStringToClef, clefSymToClefQueryString, queryModeStrToQueryMode, queryModeToQueryModeStr)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
@@ -13,7 +13,8 @@ buildNotationQueryParameters notationInput =
         notes =
             case notationInput.noteData of
                 Just noteString ->
-                    List.singleton (Url.Builder.string "n" (String.join " " noteString))
+                    Url.Builder.string "n" noteString
+                        |> List.singleton
 
                 Nothing ->
                     []
@@ -26,23 +27,35 @@ buildNotationQueryParameters notationInput =
                 []
 
             else
-                List.singleton (Url.Builder.string "ic" clefString)
+                Url.Builder.string "ic" clefString
+                    |> List.singleton
 
         timeSignature =
             if String.isEmpty notationInput.timeSignature then
                 []
 
             else
-                List.singleton (Url.Builder.string "it" notationInput.timeSignature)
+                Url.Builder.string "it" notationInput.timeSignature
+                    |> List.singleton
 
         keySignature =
             if String.isEmpty notationInput.keySignature then
                 []
 
             else
-                List.singleton (Url.Builder.string "ik" notationInput.keySignature)
+                Url.Builder.string "ik" notationInput.keySignature
+                    |> List.singleton
+
+        queryMode =
+            if notationInput.queryMode == IntervalQueryMode then
+                []
+
+            else
+                queryModeToQueryModeStr notationInput.queryMode
+                    |> Url.Builder.string "im"
+                    |> List.singleton
     in
-    List.concat [ notes, clef, timeSignature, keySignature ]
+    List.concat [ notes, clef, timeSignature, keySignature, queryMode ]
 
 
 
@@ -64,27 +77,27 @@ keySigParamParser =
     Q.custom "ik" (\a -> keySigQueryStringToKeySignature a)
 
 
-noteDataParamParser : Q.Parser (Maybe (List String))
+noteDataParamParser : Q.Parser (Maybe String)
 noteDataParamParser =
     Q.custom "n"
         (\a ->
-            let
-                nVal =
-                    if List.isEmpty a then
-                        Nothing
+            if List.isEmpty a then
+                Nothing
 
-                    else
-                        Just (noteDataQueryStringToList a)
-            in
-            nVal
+            else
+                Just <| noteDataQueryStringToList a
         )
 
 
-noteDataQueryStringToList : List String -> List String
+queryModeParamParser : Q.Parser QueryMode
+queryModeParamParser =
+    Q.custom "im" (\a -> queryModeStringToQueryMode a)
+
+
+noteDataQueryStringToList : List String -> String
 noteDataQueryStringToList ndata =
     List.head ndata
         |> Maybe.withDefault ""
-        |> String.split " "
 
 
 timeSigQueryStringToTimeSignature : List String -> TimeSignature
@@ -99,9 +112,17 @@ keySigQueryStringToKeySignature ksiglist =
         |> Maybe.withDefault ""
 
 
+queryModeStringToQueryMode : List String -> QueryMode
+queryModeStringToQueryMode qmlist =
+    List.head qmlist
+        |> Maybe.andThen (\a -> Just <| queryModeStrToQueryMode a)
+        |> Maybe.withDefault IntervalQueryMode
+
+
 notationParamParser : Q.Parser KeyboardQuery
 notationParamParser =
     Q.map KeyboardQuery clefParamParser
         |> apply timeSigParamParser
         |> apply keySigParamParser
         |> apply noteDataParamParser
+        |> apply queryModeParamParser

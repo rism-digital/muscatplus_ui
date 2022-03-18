@@ -1,7 +1,7 @@
 module Page.Keyboard.PAE exposing (..)
 
 import Dict
-import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), Octave, clefStringMap, noteMap, supportedOctaves)
+import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), Octave, QueryMode(..), clefStringMap, noteMap, queryModeMap, supportedOctaves)
 
 
 {-|
@@ -27,8 +27,7 @@ clefQueryStringToClef clefList =
 
 clefStrToClef : String -> Clef
 clefStrToClef clefStr =
-    List.filter (\( cs, _ ) -> cs == clefStr) clefStringMap
-        |> Dict.fromList
+    Dict.fromList clefStringMap
         |> Dict.get clefStr
         |> Maybe.withDefault G2
 
@@ -59,3 +58,18 @@ createPAENote noteName octave =
             keyNoteNameToNoteString noteName
     in
     String.concat [ octaveModifier, noteString ]
+
+
+queryModeStrToQueryMode : String -> QueryMode
+queryModeStrToQueryMode modeStr =
+    Dict.fromList queryModeMap
+        |> Dict.get modeStr
+        |> Maybe.withDefault IntervalQueryMode
+
+
+queryModeToQueryModeStr : QueryMode -> String
+queryModeToQueryModeStr mode =
+    List.filter (\( qs, qq ) -> qq == mode) queryModeMap
+        |> List.head
+        |> Maybe.withDefault ( "interval", IntervalQueryMode )
+        |> Tuple.first

@@ -9,6 +9,7 @@ type alias KeyboardModel =
     { query : KeyboardQuery
     , notation : Maybe String -- the rendered SVG
     , needsProbe : Bool
+    , inputIsValid : Bool
     }
 
 
@@ -51,17 +52,33 @@ toKeyboardQuery model =
     model.query
 
 
+setKeyboardQuery : KeyboardQuery -> { a | query : KeyboardQuery } -> { a | query : KeyboardQuery }
+setKeyboardQuery newQuery oldModel =
+    { oldModel | query = newQuery }
+
+
 type alias KeyboardQuery =
     { clef : Clef
     , timeSignature : TimeSignature
     , keySignature : KeySignature
-    , noteData : Maybe (List String)
+    , noteData : Maybe String
+    , queryMode : QueryMode
     }
 
 
-setNoteData : Maybe (List String) -> { a | noteData : Maybe (List String) } -> { a | noteData : Maybe (List String) }
+setNoteData : Maybe String -> { a | noteData : Maybe String } -> { a | noteData : Maybe String }
 setNoteData newData oldModel =
     { oldModel | noteData = newData }
+
+
+setClef : Clef -> { a | clef : Clef } -> { a | clef : Clef }
+setClef newClef oldModel =
+    { oldModel | clef = newClef }
+
+
+setQueryMode : QueryMode -> { a | queryMode : QueryMode } -> { a | queryMode : QueryMode }
+setQueryMode newMode oldModel =
+    { oldModel | queryMode = newMode }
 
 
 type Key
@@ -90,9 +107,11 @@ type alias Octaves =
 type Clef
     = G2
     | C1
+    | C2
     | F4
     | C3
     | C1M
+    | C2M
     | G2M
     | C3M
 
@@ -132,6 +151,11 @@ type KeyNoteName
     | KBn
 
 
+type QueryMode
+    = IntervalQueryMode
+    | ExactPitchQueryMode
+
+
 supportedOctaves : Octaves
 supportedOctaves =
     [ ( 1, ",,," )
@@ -148,10 +172,12 @@ clefStringMap : List ( String, Clef )
 clefStringMap =
     [ ( "G-2", G2 )
     , ( "C-1", C1 )
+    , ( "C-2", C2 )
     , ( "F-4", F4 )
     , ( "C-3", C3 )
-    , ( "C+1", C1M )
     , ( "G+2", G2M )
+    , ( "C+1", C1M )
+    , ( "C+2", C2M )
     , ( "C+3", C3M )
     ]
 
@@ -182,4 +208,11 @@ noteMap =
     , ( "bB", KBf )
     , ( "B", KB )
     , ( "nB", KBn )
+    ]
+
+
+queryModeMap : List ( String, QueryMode )
+queryModeMap =
+    [ ( "interval", IntervalQueryMode )
+    , ( "exact-pitches", ExactPitchQueryMode )
     ]
