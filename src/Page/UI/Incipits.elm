@@ -75,15 +75,15 @@ viewRenderedIncipits incipits =
 
 {-|
 
-    Parses an Elm SVG tree (returns Html) from the JSON incipit data.
+    Parses an Elm SVG tree (returns SVG data in Html) from the JSON incipit data.
     Converts it to an elm-ui structure to match the other view functions
 
 -}
 viewSVGRenderedIncipit : String -> Element msg
 viewSVGRenderedIncipit incipitData =
     case SvgParser.parse incipitData of
-        Ok html ->
-            Element.html html
+        Ok svgData ->
+            Element.html svgData
 
         Err _ ->
             text "Could not parse SVG"

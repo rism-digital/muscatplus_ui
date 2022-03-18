@@ -221,7 +221,8 @@ viewFacet alias language activeSearch body =
                 notationFacetConfig : NotationFacetConfig SearchMsg
                 notationFacetConfig =
                     { language = language
-                    , keyboardFacet = activeSearch.keyboard
+                    , keyboardModel = activeSearch.keyboard
+                    , notationFacet = facet
                     , userInteractedWithKeyboardMsg = SearchMsg.UserInteractedWithPianoKeyboard
                     }
             in

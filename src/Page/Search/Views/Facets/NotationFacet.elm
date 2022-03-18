@@ -1,15 +1,17 @@
 module Page.Search.Views.Facets.NotationFacet exposing (..)
 
-import Element exposing (Element, alignLeft, centerX, row)
+import Element exposing (Element, alignLeft, centerX, fill, row, width)
 import Language exposing (Language)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (Keyboard(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg)
+import Page.RecordTypes.Search exposing (NotationFacet)
 
 
 type alias NotationFacetConfig msg =
     { language : Language
-    , keyboardFacet : Keyboard.Model
+    , keyboardModel : Keyboard.Model
+    , notationFacet : NotationFacet
     , userInteractedWithKeyboardMsg : KeyboardMsg -> msg
     }
 
@@ -21,7 +23,9 @@ viewKeyboardControl config =
             { numOctaves = 3 }
     in
     row
-        [ alignLeft ]
-        [ Keyboard.view config.language (Keyboard config.keyboardFacet keyboardConfig)
+        [ alignLeft
+        , width fill
+        ]
+        [ Keyboard.view config.notationFacet config.language (Keyboard config.keyboardModel keyboardConfig)
             |> Element.map config.userInteractedWithKeyboardMsg
         ]

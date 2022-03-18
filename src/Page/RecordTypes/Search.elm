@@ -7,7 +7,7 @@ import Language exposing (LanguageMap)
 import List.Extra as LE
 import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
-import Page.RecordTypes.Shared exposing (FacetAlias, LabelBooleanValue, LabelNumericValue, LabelValue, labelNumericValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
+import Page.RecordTypes.Shared exposing (FacetAlias, LabelBooleanValue, LabelNumericValue, LabelStringValue, LabelValue, labelNumericValueDecoder, labelStringValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 
 
@@ -199,6 +199,20 @@ setSelectFacetItems newItems oldRecord =
 type alias NotationFacet =
     { alias : String
     , label : LanguageMap
+    , notationOptions : FacetNotationOptions
+    }
+
+
+type alias FacetNotationOptions =
+    { clef : NotationQueryOptions
+    , keysig : NotationQueryOptions
+    , timesig : NotationQueryOptions
+    }
+
+
+type alias NotationQueryOptions =
+    { query : String
+    , options : List LabelStringValue
     }
 
 
@@ -560,6 +574,22 @@ notationFacetDecoder =
     Decode.succeed NotationFacet
         |> required "alias" string
         |> required "label" languageMapLabelDecoder
+        |> required "options" facetNotationOptionsDecoder
+
+
+facetNotationOptionsDecoder : Decoder FacetNotationOptions
+facetNotationOptionsDecoder =
+    Decode.succeed FacetNotationOptions
+        |> required "clef" notationQueryOptionsDecoder
+        |> required "keysig" notationQueryOptionsDecoder
+        |> required "timesig" notationQueryOptionsDecoder
+
+
+notationQueryOptionsDecoder : Decoder NotationQueryOptions
+notationQueryOptionsDecoder =
+    Decode.succeed NotationQueryOptions
+        |> required "query" string
+        |> required "options" (Decode.list labelStringValueDecoder)
 
 
 queryFacetDecoder : Decoder QueryFacet

@@ -137,15 +137,3 @@ viewRangeFacet config =
                 ]
             ]
         ]
-
-
-
-{--
-
-    Default is "*" on upper/lower range
-    User focuses the box, the "*" disappears.
-    User enters number or "*"
-    User can only enter up to four numbers; entering more will not add / remove any previously entered numbers
-    If user deletes numbers, then the input box does not add anything until the focus is lost on the box.
-
--}

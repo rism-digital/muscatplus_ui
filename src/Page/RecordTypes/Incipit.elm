@@ -1,6 +1,6 @@
 module Page.RecordTypes.Incipit exposing (..)
 
-import Json.Decode as Decode exposing (Decoder, list, string)
+import Json.Decode as Decode exposing (Decoder, bool, list, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
@@ -15,6 +15,12 @@ type IncipitFormat
 
 type RenderedIncipit
     = RenderedIncipit IncipitFormat String
+
+
+type alias IncipitValidationBody =
+    { isValid : Bool
+    , messages : Maybe (List LanguageMap)
+    }
 
 
 type alias IncipitBody =
@@ -71,3 +77,10 @@ renderedIncipitDecoder =
     Decode.succeed RenderedIncipit
         |> required "format" incipitFormatDecoder
         |> required "data" string
+
+
+incipitValidationBodyDecoder : Decoder IncipitValidationBody
+incipitValidationBodyDecoder =
+    Decode.succeed IncipitValidationBody
+        |> required "valid" bool
+        |> optional "messages" (Decode.maybe (Decode.list languageMapLabelDecoder)) Nothing

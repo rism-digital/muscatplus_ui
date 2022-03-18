@@ -84,7 +84,8 @@ viewFrontFacet alias language activeSearch body =
                 notationFacetConfig : NotationFacetConfig FrontMsg
                 notationFacetConfig =
                     { language = language
-                    , keyboardFacet = activeSearch.keyboard
+                    , keyboardModel = activeSearch.keyboard
+                    , notationFacet = facet
                     , userInteractedWithKeyboardMsg = FrontMsg.UserInteractedWithPianoKeyboard
                     }
             in

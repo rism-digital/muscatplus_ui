@@ -45,6 +45,7 @@ viewFacetsForIncipitsMode language model body =
                 [ column
                     [ alignTop
                     , alignLeft
+                    , width fill
                     ]
                     [ viewFacet "notation" language activeSearch body
                     ]
