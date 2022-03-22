@@ -97,5 +97,17 @@ incipitSearchPanelView session model body =
                     [ width fill ]
                     [ viewFrontFacet "clef" language model.activeSearch body ]
                 ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "key-signature" language model.activeSearch body ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFrontFacet "time-signature" language model.activeSearch body ]
+                ]
             ]
         ]

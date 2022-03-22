@@ -110,5 +110,27 @@ viewFacetsForIncipitsMode language model body =
                         ]
                     ]
                 ]
+            , viewFacetSection language
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill ]
+                        [ viewFacet "key-signature" language activeSearch body
+                        ]
+                    ]
+                ]
+            , viewFacetSection language
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill ]
+                        [ viewFacet "time-signature" language activeSearch body
+                        ]
+                    ]
+                ]
             ]
         ]
