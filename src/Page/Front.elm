@@ -12,7 +12,7 @@ import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
@@ -166,8 +166,9 @@ update session msg model =
             , Cmd.none
             )
 
-        UserChangedFacetBehaviour alias behaviour ->
-            ( model, Cmd.none )
+        UserChangedFacetBehaviour alias facetBehaviour ->
+            userChangedFacetBehaviour alias facetBehaviour model
+                |> probeSubmit ServerRespondedWithProbeData session
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model
