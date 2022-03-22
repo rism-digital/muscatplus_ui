@@ -321,7 +321,13 @@ view session =
                     , label =
                         el
                             [ width fill ]
-                            (dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage session.language)
+                            (dropdownSelect
+                                { selectedMsg = UserChangedLanguageSelect
+                                , choices = languageOptionsForDisplay
+                                , choiceFn = parseLocaleToLanguage
+                                , currentChoice = session.language
+                                }
+                            )
                     , showLabel = showLabels
                     }
                 ]

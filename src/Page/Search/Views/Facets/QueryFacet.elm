@@ -228,10 +228,11 @@ viewQueryFacet config =
                     , width (px 50)
                     ]
                     (dropdownSelect
-                        (\inp -> config.userChangedBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp)
-                        listOfBehavioursForDropdown
-                        (\inp -> parseStringToFacetBehaviour inp)
-                        currentBehaviourOption
+                        { selectedMsg = \inp -> config.userChangedBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp
+                        , choices = listOfBehavioursForDropdown
+                        , choiceFn = \inp -> parseStringToFacetBehaviour inp
+                        , currentChoice = currentBehaviourOption
+                        }
                     )
                 ]
             ]

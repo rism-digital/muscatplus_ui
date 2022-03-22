@@ -307,10 +307,11 @@ viewPaginationSortSelector language activeSearch body =
                     [ el
                         []
                         (dropdownSelect
-                            (\inp -> SearchMsg.UserChangedResultSorting inp)
-                            listOfLabelsForResultSort
-                            (\inp -> inp)
-                            chosenSort
+                            { selectedMsg = \inp -> SearchMsg.UserChangedResultSorting inp
+                            , choices = listOfLabelsForResultSort
+                            , choiceFn = \inp -> inp
+                            , currentChoice = chosenSort
+                            }
                         )
                     ]
                 ]

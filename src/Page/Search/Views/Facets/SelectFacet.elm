@@ -220,10 +220,11 @@ viewSelectFacet config =
                 , width (px 50)
                 ]
                 (dropdownSelect
-                    (\inp -> config.userChangedFacetBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp)
-                    listOfBehavioursForDropdown
-                    (\inp -> parseStringToFacetBehaviour inp)
-                    currentBehaviourOption
+                    { selectedMsg = \inp -> config.userChangedFacetBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp
+                    , choices = listOfBehavioursForDropdown
+                    , choiceFn = \inp -> parseStringToFacetBehaviour inp
+                    , currentChoice = currentBehaviourOption
+                    }
                 )
 
         groupedFacetItems =

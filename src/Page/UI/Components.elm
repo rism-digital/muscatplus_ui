@@ -216,19 +216,24 @@ dropdownSelectStyles =
     d) The selected value as a type
 
 -}
+type alias DropdownSelectConfig a msg =
+    { selectedMsg : String -> msg
+    , choices : List ( String, String )
+    , choiceFn : String -> a
+    , currentChoice : a
+    }
+
+
 dropdownSelect :
-    (String -> msg)
-    -> List ( String, String )
-    -> (String -> a)
-    -> a
+    DropdownSelectConfig a msg
     -> Element msg
-dropdownSelect msg options choiceFn currentChoice =
+dropdownSelect cfg =
     html
         (HT.div
             (List.append [] dropdownSelectParentStyles)
             [ HT.select
-                (List.append [ HE.onInput msg ] dropdownSelectStyles)
-                (List.map (\( val, name ) -> dropdownSelectOption val name choiceFn currentChoice) options)
+                (List.append [ HE.onInput cfg.selectedMsg ] dropdownSelectStyles)
+                (List.map (\( val, name ) -> dropdownSelectOption val name cfg.choiceFn cfg.currentChoice) cfg.choices)
             ]
         )
 
