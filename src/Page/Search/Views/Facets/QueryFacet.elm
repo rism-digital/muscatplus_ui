@@ -232,6 +232,9 @@ viewQueryFacet config =
                         , choices = listOfBehavioursForDropdown
                         , choiceFn = \inp -> parseStringToFacetBehaviour inp
                         , currentChoice = currentBehaviourOption
+                        , selectIdent = facetAlias ++ "-query-behaviour-select"
+                        , label = Nothing
+                        , language = config.language
                         }
                     )
                 ]

@@ -326,6 +326,9 @@ view session =
                                 , choices = languageOptionsForDisplay
                                 , choiceFn = parseLocaleToLanguage
                                 , currentChoice = session.language
+                                , selectIdent = "site-language-select"
+                                , label = Nothing
+                                , language = session.language
                                 }
                             )
                     , showLabel = showLabels

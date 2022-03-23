@@ -224,6 +224,9 @@ viewSelectFacet config =
                     , choices = listOfBehavioursForDropdown
                     , choiceFn = \inp -> parseStringToFacetBehaviour inp
                     , currentChoice = currentBehaviourOption
+                    , selectIdent = facetAlias ++ "-select-behaviour-select"
+                    , label = Nothing
+                    , language = config.language
                     }
                 )
 
