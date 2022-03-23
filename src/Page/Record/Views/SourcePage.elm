@@ -1,6 +1,6 @@
 module Page.Record.Views.SourcePage exposing (..)
 
-import Element exposing (Element, column, fill, height, none, padding, row, width)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, row, width)
 import Element.Background as Background
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
@@ -23,13 +23,16 @@ view session model =
                     none
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append
-                [ padding sectionSpacing
-                , Background.color (colourScheme.white |> convertColorToElementColor)
-                ]
-                widthFillHeightFill
-            )
+            [ width fill
+            , height fill
+            , alignTop
+            , padding sectionSpacing
+            , Background.color (colourScheme.white |> convertColorToElementColor)
+            ]
             [ pageView ]
         ]

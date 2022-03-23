@@ -1,6 +1,6 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, maximum, minimum, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, maximum, minimum, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
@@ -23,10 +23,14 @@ viewFullSourcePage language body =
     let
         pageBodyView =
             row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
                     [ width fill
                     , spacing sectionSpacing
+                    , scrollbarY
                     , alignTop
                     ]
                     [ viewMaybe (viewPartOfSection language) body.partOf
@@ -46,13 +50,21 @@ viewFullSourcePage language body =
         , height fill
         ]
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing sectionSpacing
+            ]
             [ row
                 [ width fill
                 , alignTop
                 ]
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     [ pageHeaderTemplate language body
                     , pageUriTemplate language body
                     ]
