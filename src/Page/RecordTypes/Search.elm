@@ -199,6 +199,7 @@ setSelectFacetItems newItems oldRecord =
 type alias NotationFacet =
     { alias : String
     , label : LanguageMap
+    , queryModes : NotationQueryOptions
     , notationOptions : FacetNotationOptions
     }
 
@@ -211,7 +212,8 @@ type alias FacetNotationOptions =
 
 
 type alias NotationQueryOptions =
-    { query : String
+    { label : LanguageMap
+    , query : String
     , options : List LabelStringValue
     }
 
@@ -574,6 +576,7 @@ notationFacetDecoder =
     Decode.succeed NotationFacet
         |> required "alias" string
         |> required "label" languageMapLabelDecoder
+        |> required "modes" notationQueryOptionsDecoder
         |> required "options" facetNotationOptionsDecoder
 
 
@@ -588,6 +591,7 @@ facetNotationOptionsDecoder =
 notationQueryOptionsDecoder : Decoder NotationQueryOptions
 notationQueryOptionsDecoder =
     Decode.succeed NotationQueryOptions
+        |> required "label" languageMapLabelDecoder
         |> required "query" string
         |> required "options" (Decode.list labelStringValueDecoder)
 
