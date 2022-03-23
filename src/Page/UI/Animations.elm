@@ -15,8 +15,8 @@ import Simple.Animation.Animated as Animated
 import Simple.Animation.Property as P
 
 
-animatedLoader : Element msg -> Element msg
-animatedLoader loaderImage =
+animatedLoader : List (Element.Attribute msg) -> Element msg -> Element msg
+animatedLoader attrs loaderImage =
     animatedEl
         (Animation.fromTo
             { duration = 500
@@ -26,9 +26,7 @@ animatedLoader loaderImage =
             [ P.rotate -360 ]
             []
         )
-        [ Element.width (Element.px 25)
-        , Element.height (Element.px 25)
-        ]
+        attrs
         loaderImage
 
 

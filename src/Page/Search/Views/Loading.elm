@@ -17,8 +17,8 @@ viewSearchResultsLoading language model =
         ]
         [ column
             [ width fill
+            , height fill
             , Background.color (colourScheme.white |> convertColorToElementColor)
-            , searchColumnVerticalSize
             , scrollbarY
             , alignTop
             ]

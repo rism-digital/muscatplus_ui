@@ -54,7 +54,7 @@ viewProbeResponseNumbers language probeResponse =
                 [ width (px 25)
                 , height (px 25)
                 ]
-                (animatedLoader <| spinnerSvg colourScheme.slateGrey)
+                (animatedLoader [ width (px 25), height (px 25) ] <| spinnerSvg colourScheme.slateGrey)
 
         Error errMsg ->
             el

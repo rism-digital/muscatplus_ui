@@ -1,6 +1,6 @@
 module Page.UI.Style exposing (..)
 
-import Color exposing (Color, rgb255)
+import Color exposing (Color, rgba)
 import Element exposing (Length, fill, maximum, minimum)
 
 
@@ -28,6 +28,7 @@ colours :
     , cream : RGBA
     , white : RGBA
     , black : RGBA
+    , translucentGrey : RGBA
     }
 colours =
     { darkBlue =
@@ -120,6 +121,12 @@ colours =
         , blue = 42
         , alpha = 1
         }
+    , translucentGrey =
+        { red = 119
+        , green = 136
+        , blue = 153
+        , alpha = 0.5
+        }
     }
 
 
@@ -139,6 +146,7 @@ colourScheme :
     , cream : Color
     , white : Color
     , black : Color
+    , translucentGrey : Color
     }
 colourScheme =
     { darkBlue = convertRGBAToColor colours.darkBlue
@@ -156,14 +164,20 @@ colourScheme =
     , cream = convertRGBAToColor colours.cream
     , white = convertRGBAToColor colours.white
     , black = convertRGBAToColor colours.black
+    , translucentGrey = convertRGBAToColor colours.translucentGrey
     }
 
 
 {-| Converts a RGBA of Integers to a Color value.
 -}
+scaleFrom255 : Int -> Float
+scaleFrom255 c =
+    toFloat c / 255
+
+
 convertRGBAToColor : RGBA -> Color
 convertRGBAToColor { red, green, blue, alpha } =
-    rgb255 red green blue
+    rgba (scaleFrom255 red) (scaleFrom255 green) (scaleFrom255 blue) alpha
 
 
 convertColorToElementColor : Color -> Element.Color

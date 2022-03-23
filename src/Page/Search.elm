@@ -171,9 +171,18 @@ searchSubmit session model =
             toNextQuery nationalCollectionSetModel.activeSearch
                 |> buildQueryParameters
 
+        oldData =
+            case model.response of
+                Response d ->
+                    Just d
+
+                _ ->
+                    Nothing
+
         newModel =
             { nationalCollectionSetModel
                 | preview = NoResponseToShow
+                , response = Loading oldData
             }
 
         searchUrl =
@@ -382,8 +391,18 @@ update session msg model =
                 |> searchSubmit session
 
         UserClickedSearchResultsPagination url ->
+            let
+                oldData =
+                    case model.response of
+                        Response d ->
+                            Just d
+
+                        _ ->
+                            Nothing
+            in
             ( { model
                 | preview = NoResponseToShow
+                , response = Loading oldData
               }
             , Cmd.batch
                 [ Nav.pushUrl session.key url

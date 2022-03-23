@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -20,9 +20,11 @@ import Page.Search.Views.Results.InstitutionResult exposing (viewInstitutionSear
 import Page.Search.Views.Results.PersonResult exposing (viewPersonSearchResult)
 import Page.Search.Views.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.Search.Views.SearchControls exposing (viewSearchControls)
+import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (lineSpacing, searchColumnVerticalSize, widthFillHeightFill)
 import Page.UI.Components exposing (dropdownSelect, h3, renderParagraph)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Response exposing (Response(..), ServerData(..))
@@ -32,9 +34,16 @@ import Session exposing (Session)
 view : Session -> SearchPageModel -> Element SearchMsg
 view session model =
     row
-        (List.append [ centerX ] widthFillHeightFill)
+        [ width fill
+        , height fill
+        , alignTop
+        , centerX
+        ]
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ viewTopBar session.language model
             , viewSearchBody session.language model
             ]
@@ -67,7 +76,10 @@ viewTopBar lang model =
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         ]
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ searchModeSelectorRouter lang model
             ]
         ]
@@ -113,13 +125,13 @@ searchResultsViewRouter : Language -> SearchPageModel -> Element SearchMsg
 searchResultsViewRouter language model =
     case model.response of
         Loading (Just (SearchData oldData)) ->
-            viewSearchResultsSection language model oldData
+            viewSearchResultsSection language model oldData True
 
         Loading _ ->
             viewSearchResultsLoading language model
 
         Response (SearchData body) ->
-            viewSearchResultsSection language model body
+            viewSearchResultsSection language model body False
 
         Error _ ->
             viewSearchResultsError language model
@@ -134,8 +146,8 @@ searchResultsViewRouter language model =
             viewSearchResultsError language model
 
 
-viewSearchResultsSection : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
-viewSearchResultsSection language model body =
+viewSearchResultsSection : Language -> SearchPageModel -> SearchBody -> Bool -> Element SearchMsg
+viewSearchResultsSection language model body isLoading =
     let
         renderedPreview =
             case model.preview of
@@ -164,11 +176,10 @@ viewSearchResultsSection language model body =
             [ width fill
             , height fill
             , alignTop
-            , htmlAttribute (HA.id "search-results-list")
             , Border.widthEach { bottom = 0, top = 0, left = 0, right = 2 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
-            [ viewSearchResultsListPanel language model body
+            [ viewSearchResultsListPanel language model body isLoading
             , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
             ]
         , column
@@ -181,8 +192,28 @@ viewSearchResultsSection language model body =
         ]
 
 
-viewSearchResultsListPanel : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
-viewSearchResultsListPanel language model body =
+viewSearchResultsListPanel : Language -> SearchPageModel -> SearchBody -> Bool -> Element SearchMsg
+viewSearchResultsListPanel language model body isLoading =
+    let
+        loadingScreen =
+            if isLoading == True then
+                el
+                    [ width fill
+                    , height fill
+                    , Background.color (colourScheme.translucentGrey |> convertColorToElementColor)
+                    ]
+                    (el
+                        [ width (px 50)
+                        , height (px 50)
+                        , centerX
+                        , centerY
+                        ]
+                        (animatedLoader [ width (px 50), height (px 50) ] <| spinnerSvg colourScheme.slateGrey)
+                    )
+
+            else
+                none
+    in
     if body.totalItems == 0 then
         viewSearchResultsNotFound language
 
@@ -192,11 +223,13 @@ viewSearchResultsListPanel language model body =
             , height fill
             , alignTop
             , scrollbarY
+            , htmlAttribute (HA.id "search-results-list")
             ]
             [ column
                 [ width fill
-                , height fill
+                , height shrink
                 , alignTop
+                , inFront loadingScreen
                 ]
                 [ viewSearchResultsList language model body
                 ]
@@ -229,7 +262,10 @@ viewSearchResultsNotFound language =
 viewSearchResultsList : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
 viewSearchResultsList language model body =
     row
-        widthFillHeightFill
+        [ width fill
+        , height shrink
+        , alignTop
+        ]
         [ column
             [ width fill
             , alignTop
