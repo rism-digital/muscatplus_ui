@@ -76,6 +76,16 @@ setClef newClef oldModel =
     { oldModel | clef = newClef }
 
 
+setTimeSignature : TimeSignature -> { a | timeSignature : TimeSignature } -> { a | timeSignature : TimeSignature }
+setTimeSignature newSig oldModel =
+    { oldModel | timeSignature = newSig }
+
+
+setKeySignature : KeySignature -> { a | keySignature : KeySignature } -> { a | keySignature : KeySignature }
+setKeySignature newSig oldModel =
+    { oldModel | keySignature = newSig }
+
+
 setQueryMode : QueryMode -> { a | queryMode : QueryMode } -> { a | queryMode : QueryMode }
 setQueryMode newMode oldModel =
     { oldModel | queryMode = newMode }
@@ -105,23 +115,62 @@ type alias Octaves =
 
 -}
 type Clef
-    = G2
-    | C1
+    = C1
     | C2
-    | F4
     | C3
+    | C4
+    | F3
+    | F4
+    | G1
+    | G2
+    | G2Oct
+    | G3
     | C1M
     | C2M
-    | G2M
     | C3M
+    | F3M
+    | F4M
+    | G2M
+    | G3M
 
 
-type alias TimeSignature =
-    String
+
+--type alias TimeSignature =
+--    String
 
 
-type alias KeySignature =
-    String
+type TimeSignature
+    = TNone
+    | T4_4
+    | T3_4
+    | TC
+    | TCutC
+    | T6_8
+    | TO
+    | TODot
+
+
+
+--type alias KeySignature =
+--    String
+
+
+type KeySignature
+    = KS_N
+    | KS_xF
+    | KS_xFC
+    | KS_xFCG
+    | KS_xFCGD
+    | KS_xFCGDA
+    | KS_xFCGDAE
+    | KS_xFCGDAEB
+    | KS_bBEADGCF
+    | KS_bBEADGC
+    | KS_bBEADG
+    | KS_bBEAD
+    | KS_bBEA
+    | KS_bBE
+    | KS_bB
 
 
 type KeyNoteName
@@ -170,15 +219,23 @@ supportedOctaves =
 
 clefStringMap : List ( String, Clef )
 clefStringMap =
-    [ ( "G-2", G2 )
-    , ( "C-1", C1 )
+    [ ( "C-1", C1 )
     , ( "C-2", C2 )
-    , ( "F-4", F4 )
     , ( "C-3", C3 )
-    , ( "G+2", G2M )
+    , ( "C-4", C4 )
+    , ( "F-3", F3 )
+    , ( "F-4", F4 )
+    , ( "G-1", G1 )
+    , ( "G-2", G2 )
+    , ( "G-3", G3 )
+    , ( "g-2", G2Oct )
     , ( "C+1", C1M )
     , ( "C+2", C2M )
     , ( "C+3", C3M )
+    , ( "F+3", F3M )
+    , ( "F+4", F4M )
+    , ( "G+2", G2M )
+    , ( "G+3", G3M )
     ]
 
 
@@ -215,4 +272,37 @@ queryModeMap : List ( String, QueryMode )
 queryModeMap =
     [ ( "interval", IntervalQueryMode )
     , ( "exact-pitches", ExactPitchQueryMode )
+    ]
+
+
+keySignatureMap : List ( String, KeySignature )
+keySignatureMap =
+    [ ( "n", KS_N )
+    , ( "xF", KS_xF )
+    , ( "xFC", KS_xFC )
+    , ( "xFCG", KS_xFCG )
+    , ( "xFCGD", KS_xFCGD )
+    , ( "xFCGDA", KS_xFCGDA )
+    , ( "xFCGDAE", KS_xFCGDAE )
+    , ( "xFCGDAEB", KS_xFCGDAEB )
+    , ( "bBEADGCF", KS_bBEADGCF )
+    , ( "bBEADGC", KS_bBEADGC )
+    , ( "bBEADG", KS_bBEADG )
+    , ( "bBEAD", KS_bBEAD )
+    , ( "bBEA", KS_bBEA )
+    , ( "bBE", KS_bBE )
+    , ( "bB", KS_bB )
+    ]
+
+
+timeSignatureMap : List ( String, TimeSignature )
+timeSignatureMap =
+    [ ( "-", TNone )
+    , ( "4/4", T4_4 )
+    , ( "3/4", T3_4 )
+    , ( "6/8", T6_8 )
+    , ( "c", TC )
+    , ( "c/", TCutC )
+    , ( "o", TO )
+    , ( "o.", TODot )
     ]

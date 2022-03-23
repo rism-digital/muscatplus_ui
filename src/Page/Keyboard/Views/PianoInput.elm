@@ -1,6 +1,6 @@
 module Page.Keyboard.Views.PianoInput exposing (..)
 
-import Element exposing (Attribute, Element, alignLeft, alignTop, el, fill, height, html, htmlAttribute, moveLeft, px, row, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, el, fill, height, html, htmlAttribute, moveLeft, px, row, width)
 import Html.Attributes as HA
 import Language exposing (Language)
 import Page.Keyboard.Model exposing (Key(..), KeyNoteConfig, KeyNoteName(..), Keyboard(..), octaveConfig)

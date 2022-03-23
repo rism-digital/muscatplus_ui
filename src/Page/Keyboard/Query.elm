@@ -1,7 +1,7 @@
 module Page.Keyboard.Query exposing (..)
 
-import Page.Keyboard.Model exposing (Clef(..), KeySignature, KeyboardQuery, QueryMode(..), TimeSignature)
-import Page.Keyboard.PAE exposing (clefQueryStringToClef, clefSymToClefQueryString, queryModeStrToQueryMode, queryModeToQueryModeStr)
+import Page.Keyboard.Model exposing (Clef(..), KeySignature(..), KeyboardQuery, QueryMode(..), TimeSignature(..))
+import Page.Keyboard.PAE exposing (clefQueryStringToClef, clefSymToClefQueryString, keySigStrToKeySignature, keySignatureSymToQueryStr, queryModeStrToQueryMode, queryModeToQueryModeStr, timeSigStrToTimeSignature, timeSignatureSymToQueryStr)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
@@ -30,20 +30,26 @@ buildNotationQueryParameters notationInput =
                 Url.Builder.string "ic" clefString
                     |> List.singleton
 
+        tsigStr =
+            timeSignatureSymToQueryStr notationInput.timeSignature
+
         timeSignature =
-            if String.isEmpty notationInput.timeSignature then
+            if String.isEmpty tsigStr || tsigStr == "-" then
                 []
 
             else
-                Url.Builder.string "it" notationInput.timeSignature
+                Url.Builder.string "it" tsigStr
                     |> List.singleton
 
+        ksigStr =
+            keySignatureSymToQueryStr notationInput.keySignature
+
         keySignature =
-            if String.isEmpty notationInput.keySignature then
+            if String.isEmpty ksigStr then
                 []
 
             else
-                Url.Builder.string "ik" notationInput.keySignature
+                Url.Builder.string "ik" ksigStr
                     |> List.singleton
 
         queryMode =
@@ -103,13 +109,15 @@ noteDataQueryStringToList ndata =
 timeSigQueryStringToTimeSignature : List String -> TimeSignature
 timeSigQueryStringToTimeSignature tsiglist =
     List.head tsiglist
-        |> Maybe.withDefault ""
+        |> Maybe.andThen (\a -> Just <| timeSigStrToTimeSignature a)
+        |> Maybe.withDefault TC
 
 
 keySigQueryStringToKeySignature : List String -> KeySignature
 keySigQueryStringToKeySignature ksiglist =
     List.head ksiglist
-        |> Maybe.withDefault ""
+        |> Maybe.andThen (\a -> Just <| keySigStrToKeySignature a)
+        |> Maybe.withDefault KS_N
 
 
 queryModeStringToQueryMode : List String -> QueryMode

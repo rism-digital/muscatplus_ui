@@ -1,93 +1,117 @@
 module Page.Keyboard.Views.FormInput exposing (..)
 
-import Element exposing (Attribute, Element, alignTop, centerX, centerY, column, el, fill, height, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignTop, centerX, centerY, column, el, fill, fillPortion, height, none, px, row, shrink, spacing, text, width)
+import Element.Font as Font
 import Element.Input as Input exposing (button)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Keyboard.Model exposing (Keyboard(..), QueryMode(..), clefStringMap)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
-import Page.Keyboard.PAE exposing (clefStrToClef, queryModeStrToQueryMode)
+import Page.Keyboard.PAE exposing (clefStrToClef, keySigStrToKeySignature, queryModeStrToQueryMode, timeSigStrToTimeSignature)
 import Page.RecordTypes.Search exposing (NotationFacet)
-import Page.UI.Attributes exposing (lineSpacing)
+import Page.UI.Attributes exposing (bodySM, lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
 
 
-viewFormInput : Language -> NotationFacet -> Keyboard -> Element KeyboardMsg
-viewFormInput language notationFacet (Keyboard model config) =
+viewPaeInput : Language -> NotationFacet -> Keyboard -> Element KeyboardMsg
+viewPaeInput language notationFacet (Keyboard model config) =
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill
+                , height fill
+                ]
+                [ el
+                    [ width fill ]
+                    (Input.text
+                        [ width fill ]
+                        { onChange = UserInteractedWithPAEText
+                        , text = Maybe.withDefault "" (.noteData model.query)
+                        , placeholder = Nothing
+                        , label = Input.labelLeft [] (text "PAE Input")
+                        }
+                    )
+                , el
+                    [ width (px 25)
+                    , height fill
+                    ]
+                    (button [] { onPress = Just UserRequestedProbeUpdate, label = text "R" })
+                ]
+            ]
+        ]
+
+
+viewRenderControls : Language -> NotationFacet -> Keyboard -> Element KeyboardMsg
+viewRenderControls language notationFacet (Keyboard model config) =
     let
+        clefLabel =
+            .label (.clef notationFacet.notationOptions)
+
         clefObjList =
             .options (.clef notationFacet.notationOptions)
                 |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
 
         clefSelect =
-            el
-                [ width shrink
-                ]
-                (dropdownSelect
-                    (\clefStr -> UserClickedPianoKeyboardChangeClef <| clefStrToClef clefStr)
-                    clefObjList
-                    (\selected -> clefStrToClef selected)
-                    (.clef model.query)
-                )
-
-        searchModeSelect =
-            el [ width shrink ]
-                (dropdownSelect
-                    (\s -> UserChangedQueryMode <| queryModeStrToQueryMode s)
-                    [ ( "intervals", "Intervals" ), ( "exact-pitches", "Exact Pitches" ) ]
-                    (\selected -> queryModeStrToQueryMode selected)
-                    (.queryMode model.query)
-                )
-
-        timeSigInput =
-            el
-                [ width fill ]
-                (Input.text
-                    [ width fill ]
-                    { onChange = \_ -> NothingHappenedWithTheKeyboard
-                    , text = "time sig"
-                    , placeholder = Nothing
-                    , label = Input.labelHidden "Time signature"
-                    }
-                )
-
-        keySigInput =
-            el
-                [ width fill ]
-                (Input.text
-                    [ width fill ]
-                    { onChange = \_ -> NothingHappenedWithTheKeyboard
-                    , text = "key sig"
-                    , placeholder = Nothing
-                    , label = Input.labelHidden "Key signature"
-                    }
-                )
-
-        paeText =
-            Maybe.withDefault "" (.noteData model.query)
-
-        paeInput =
             column
-                [ width fill ]
-                [ row
-                    [ width fill
-                    , height fill
-                    ]
-                    [ el
-                        [ width fill ]
-                        (Input.text
-                            [ width fill ]
-                            { onChange = UserInteractedWithPAEText
-                            , text = paeText
-                            , placeholder = Nothing
-                            , label = Input.labelHidden "PAE Input"
-                            }
-                        )
-                    , el
-                        [ width (px 25)
-                        , height fill
-                        ]
-                        (button [] { onPress = Just UserRequestedProbeUpdate, label = text "R" })
-                    ]
+                [ width shrink
+                , bodySM
+                ]
+                [ dropdownSelect
+                    { selectedMsg = \clefStr -> UserClickedPianoKeyboardChangeClef <| clefStrToClef clefStr
+                    , choices = clefObjList
+                    , choiceFn = \selected -> clefStrToClef selected
+                    , currentChoice = .clef model.query
+                    , selectIdent = "keyboard-clef-select"
+                    , label = Just clefLabel
+                    , language = language
+                    }
+                ]
+
+        tsigLabel =
+            .label (.timesig notationFacet.notationOptions)
+
+        tsigList =
+            .options (.timesig notationFacet.notationOptions)
+                |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
+
+        timeSigSelect =
+            column
+                [ width shrink
+                , bodySM
+                ]
+                [ dropdownSelect
+                    { selectedMsg = \tsigStr -> UserClickedPianoKeyboardChangeTimeSignature <| timeSigStrToTimeSignature tsigStr
+                    , choices = tsigList
+                    , choiceFn = \selected -> timeSigStrToTimeSignature selected
+                    , currentChoice = .timeSignature model.query
+                    , selectIdent = "keyboard-time-sig-select"
+                    , label = Just tsigLabel
+                    , language = language
+                    }
+                ]
+
+        keySigLabel =
+            .label (.keysig notationFacet.notationOptions)
+
+        keySigList =
+            .options (.keysig notationFacet.notationOptions)
+                |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
+
+        keySigSelect =
+            column
+                [ width shrink
+                , bodySM
+                ]
+                [ dropdownSelect
+                    { selectedMsg = \ksigStr -> UserClickedPianoKeyboardChangeKeySignature <| keySigStrToKeySignature ksigStr
+                    , choices = keySigList
+                    , choiceFn = \selected -> keySigStrToKeySignature selected
+                    , currentChoice = .keySignature model.query
+                    , selectIdent = "keyboard-key-sig-select"
+                    , label = Just keySigLabel
+                    , language = language
+                    }
                 ]
     in
     row
@@ -96,28 +120,21 @@ viewFormInput language notationFacet (Keyboard model config) =
         , alignTop
         ]
         [ column
-            [ width fill
+            [ width (px 200)
             , height fill
             , alignTop
             , spacing lineSpacing
             ]
             [ row
-                [ width fill ]
-                [ column
-                    [ width fill ]
-                    [ clefSelect ]
-                , column
-                    [ width fill ]
-                    [ searchModeSelect ]
+                [ width fill
+                ]
+                [ clefSelect
                 ]
             , row
                 [ width fill ]
-                [ keySigInput ]
+                [ timeSigSelect ]
             , row
                 [ width fill ]
-                [ timeSigInput ]
-            , row
-                [ width fill ]
-                [ paeInput ]
+                [ keySigSelect ]
             ]
         ]

@@ -1,7 +1,41 @@
 module Page.Keyboard.PAE exposing (..)
 
 import Dict
-import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), Octave, QueryMode(..), clefStringMap, noteMap, queryModeMap, supportedOctaves)
+import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), KeySignature(..), Octave, QueryMode(..), TimeSignature(..), clefStringMap, keySignatureMap, noteMap, queryModeMap, supportedOctaves, timeSignatureMap)
+
+
+{-|
+
+    Takes a list of (String, a) and returns the first string value for a given 'a', or a default value
+    if that 'a' is not found in the list.
+
+-}
+symToStringHelper :
+    { valueMap : List ( String, a )
+    , defaultValue : String
+    , target : a
+    }
+    -> String
+symToStringHelper cfg =
+    List.filter (\( _, cc ) -> cc == cfg.target) cfg.valueMap
+        |> List.map (\( s, _ ) -> s)
+        |> List.head
+        |> Maybe.withDefault cfg.defaultValue
+
+
+{-| Takes a list of (comparable, sym) and returns the sym for a given comparable, with a
+default value specified if that comparable is not available in the list.
+-}
+comparableToSymHelper :
+    { valueMap : List ( comparable, sym )
+    , defaultValue : sym
+    , target : comparable
+    }
+    -> sym
+comparableToSymHelper cfg =
+    Dict.fromList cfg.valueMap
+        |> Dict.get cfg.target
+        |> Maybe.withDefault cfg.defaultValue
 
 
 {-|
@@ -13,9 +47,11 @@ import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), Octave, QueryMod
 -}
 octaveShift : Int -> String
 octaveShift octNum =
-    Dict.fromList supportedOctaves
-        |> Dict.get octNum
-        |> Maybe.withDefault "'"
+    comparableToSymHelper
+        { valueMap = supportedOctaves
+        , defaultValue = "'"
+        , target = octNum
+        }
 
 
 clefQueryStringToClef : List String -> Clef
@@ -27,25 +63,29 @@ clefQueryStringToClef clefList =
 
 clefStrToClef : String -> Clef
 clefStrToClef clefStr =
-    Dict.fromList clefStringMap
-        |> Dict.get clefStr
-        |> Maybe.withDefault G2
+    comparableToSymHelper
+        { valueMap = clefStringMap
+        , defaultValue = G2
+        , target = clefStr
+        }
 
 
 clefSymToClefQueryString : Clef -> String
 clefSymToClefQueryString clefSym =
-    List.filter (\( _, cc ) -> cc == clefSym) clefStringMap
-        |> List.map (\( s, _ ) -> s)
-        |> List.head
-        |> Maybe.withDefault "G-2"
+    symToStringHelper
+        { valueMap = clefStringMap
+        , defaultValue = "G-2"
+        , target = clefSym
+        }
 
 
 keyNoteNameToNoteString : KeyNoteName -> String
 keyNoteNameToNoteString keyName =
-    List.filter (\( ks, kk ) -> kk == keyName) noteMap
-        |> List.head
-        |> Maybe.withDefault ( "C", KC )
-        |> Tuple.first
+    symToStringHelper
+        { valueMap = noteMap
+        , defaultValue = "C"
+        , target = keyName
+        }
 
 
 createPAENote : KeyNoteName -> Octave -> String
@@ -62,14 +102,53 @@ createPAENote noteName octave =
 
 queryModeStrToQueryMode : String -> QueryMode
 queryModeStrToQueryMode modeStr =
-    Dict.fromList queryModeMap
-        |> Dict.get modeStr
-        |> Maybe.withDefault IntervalQueryMode
+    comparableToSymHelper
+        { valueMap = queryModeMap
+        , defaultValue = IntervalQueryMode
+        , target = modeStr
+        }
 
 
 queryModeToQueryModeStr : QueryMode -> String
 queryModeToQueryModeStr mode =
-    List.filter (\( qs, qq ) -> qq == mode) queryModeMap
-        |> List.head
-        |> Maybe.withDefault ( "interval", IntervalQueryMode )
-        |> Tuple.first
+    symToStringHelper
+        { valueMap = queryModeMap
+        , defaultValue = "interval"
+        , target = mode
+        }
+
+
+timeSignatureSymToQueryStr : TimeSignature -> String
+timeSignatureSymToQueryStr timeSignature =
+    symToStringHelper
+        { valueMap = timeSignatureMap
+        , defaultValue = ""
+        , target = timeSignature
+        }
+
+
+timeSigStrToTimeSignature : String -> TimeSignature
+timeSigStrToTimeSignature tsigStr =
+    comparableToSymHelper
+        { valueMap = timeSignatureMap
+        , defaultValue = TC
+        , target = tsigStr
+        }
+
+
+keySignatureSymToQueryStr : KeySignature -> String
+keySignatureSymToQueryStr timeSignature =
+    symToStringHelper
+        { valueMap = keySignatureMap
+        , defaultValue = ""
+        , target = timeSignature
+        }
+
+
+keySigStrToKeySignature : String -> KeySignature
+keySigStrToKeySignature ksigStr =
+    comparableToSymHelper
+        { valueMap = keySignatureMap
+        , defaultValue = KS_N
+        , target = ksigStr
+        }

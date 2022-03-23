@@ -2,7 +2,7 @@ module Page.Keyboard.Msg exposing (..)
 
 import Http
 import Http.Detailed
-import Page.Keyboard.Model exposing (Clef, KeyNoteName, Octave, QueryMode)
+import Page.Keyboard.Model exposing (Clef, KeyNoteName, KeySignature, Octave, QueryMode, TimeSignature)
 import Page.RecordTypes.Incipit exposing (IncipitValidationBody)
 
 
@@ -14,8 +14,8 @@ type KeyboardMsg
     | UserClickedPianoKeyboardChangeClef Clef
     | UserInteractedWithPAEText String
     | UserRequestedProbeUpdate
-    | UserClickedPianoKeyboardChangeTimeSignature
-    | UserClickedPianoKeyboardChangeKeySignature
+    | UserClickedPianoKeyboardChangeTimeSignature TimeSignature
+    | UserClickedPianoKeyboardChangeKeySignature KeySignature
     | UserClickedPianoKeyboardSearchSubmit
     | UserChangedQueryMode QueryMode
     | NothingHappenedWithTheKeyboard
