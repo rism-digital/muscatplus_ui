@@ -44,9 +44,16 @@ view session model =
 viewSearchBody : Language -> SearchPageModel -> Element SearchMsg
 viewSearchBody language model =
     row
-        (List.append [ clipY ] widthFillHeightFill)
+        [ width fill
+        , height fill
+        , alignTop
+        , clipY
+        ]
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ searchResultsViewRouter language model ]
         ]
 
@@ -68,22 +75,15 @@ viewTopBar lang model =
 
 searchModeSelectorRouter : Language -> SearchPageModel -> Element SearchMsg
 searchModeSelectorRouter language model =
-    let
-        response =
-            model.response
+    case model.response of
+        Response (SearchData data) ->
+            searchModeSelectorView language model data.modes
 
-        modeView =
-            case response of
-                Response (SearchData data) ->
-                    searchModeSelectorView language model data.modes
+        Loading (Just (SearchData oldData)) ->
+            searchModeSelectorView language model oldData.modes
 
-                Loading (Just (SearchData oldData)) ->
-                    searchModeSelectorView language model oldData.modes
-
-                _ ->
-                    searchModeSelectorLoading
-    in
-    modeView
+        _ ->
+            searchModeSelectorLoading
 
 
 searchModeSelectorView : Language -> SearchPageModel -> Maybe ModeFacet -> Element SearchMsg
@@ -95,9 +95,15 @@ searchModeSelectorView lang model modeFacet =
                 |> toMode
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ viewMaybe (viewModeItems currentMode lang) modeFacet
             ]
         ]
@@ -156,14 +162,14 @@ viewSearchResultsSection language model body =
         ]
         [ column
             [ width fill
-            , searchColumnVerticalSize
-            , scrollbarY
+            , height fill
             , alignTop
             , htmlAttribute (HA.id "search-results-list")
             , Border.widthEach { bottom = 0, top = 0, left = 0, right = 2 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
             [ viewSearchResultsListPanel language model body
+            , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
             ]
         , column
             [ width fill
@@ -182,11 +188,17 @@ viewSearchResultsListPanel language model body =
 
     else
         row
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            , scrollbarY
+            ]
             [ column
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ viewSearchResultsList language model body
-                , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
                 ]
             ]
 
@@ -311,6 +323,9 @@ viewPaginationSortSelector language activeSearch body =
                             , choices = listOfLabelsForResultSort
                             , choiceFn = \inp -> inp
                             , currentChoice = chosenSort
+                            , selectIdent = "pagination-sort-select" -- TODO: Check that this is unique!
+                            , label = Nothing
+                            , language = language
                             }
                         )
                     ]

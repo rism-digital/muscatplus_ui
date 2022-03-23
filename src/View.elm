@@ -160,10 +160,7 @@ view model =
                     , height fill
                     ]
                     [ loadingIndicator model
-
-                    --, siteHeader pageSession
                     , pageView
-                    , siteFooter pageSession
                     ]
                 ]
             )

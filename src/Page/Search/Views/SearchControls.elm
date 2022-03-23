@@ -170,7 +170,10 @@ viewSearchControls language model body =
         , alignTop
         ]
         [ column
-            (List.append [ alignTop ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ facetLayout
             , viewSearchButtons language model
             ]

@@ -1,14 +1,16 @@
 module Page.UI.Pagination exposing (..)
 
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, pointer, px, row, shrink, text, width)
+import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
+import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
@@ -29,6 +31,8 @@ viewPagination language pagination clickMsg =
     row
         [ width fill
         , alignBottom
+        , height (px 100)
+        , minimalDropShadow
         ]
         [ column
             [ alignLeft
@@ -74,15 +78,11 @@ viewPagination language pagination clickMsg =
 
 paginationLink : Element a -> (String -> a) -> String -> Element a
 paginationLink icon clickFn url =
-    let
-        clickMsg =
-            clickFn url
-    in
     el
         [ padding 5
         , height (px 40)
         , width (px 40)
-        , onClick clickMsg
+        , onClick <| clickFn url
         , pointer
         ]
         icon
