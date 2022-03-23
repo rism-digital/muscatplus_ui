@@ -1,12 +1,10 @@
 module Page.Keyboard exposing (..)
 
-import Array
 import Config
 import Element exposing (Element)
 import Flip exposing (flip)
 import Language exposing (Language)
-import List.Extra as LE
-import Page.Keyboard.Model exposing (Clef(..), Keyboard(..), KeyboardModel, KeyboardQuery, QueryMode(..), setClef, setKeyboardQuery, setNoteData, setQueryMode, toKeyboardQuery)
+import Page.Keyboard.Model exposing (Clef(..), KeySignature(..), Keyboard(..), KeyboardModel, KeyboardQuery, QueryMode(..), TimeSignature(..), setClef, setKeySignature, setKeyboardQuery, setNoteData, setQueryMode, setTimeSignature, toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (createPAENote)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
@@ -37,8 +35,8 @@ init numOctaves =
 defaultKeyboardQuery : KeyboardQuery
 defaultKeyboardQuery =
     { clef = G2
-    , timeSignature = ""
-    , keySignature = ""
+    , timeSignature = TNone
+    , keySignature = KS_N
     , noteData = Nothing
     , queryMode = IntervalQueryMode
     }
@@ -202,6 +200,28 @@ update msg model =
             in
             ( { newModel | needsProbe = True }
             , Cmd.none
+            )
+
+        UserClickedPianoKeyboardChangeTimeSignature tsig ->
+            let
+                newModel =
+                    toKeyboardQuery model
+                        |> setTimeSignature tsig
+                        |> flip setKeyboardQuery model
+            in
+            ( newModel
+            , buildNotationRequestQuery newModel.query
+            )
+
+        UserClickedPianoKeyboardChangeKeySignature ksig ->
+            let
+                newModel =
+                    toKeyboardQuery model
+                        |> setKeySignature ksig
+                        |> flip setKeyboardQuery model
+            in
+            ( newModel
+            , buildNotationRequestQuery newModel.query
             )
 
         _ ->
