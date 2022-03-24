@@ -1,6 +1,6 @@
 module Page.Record.Views.RecordHistory exposing (..)
 
-import Element exposing (Element, column, el, row, spacing, text)
+import Element exposing (Element, alignRight, alignTop, column, el, fill, height, row, spacing, text, width)
 import Language exposing (Language, dateFormatter, extractLabelFromLanguageMap)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.UI.Attributes exposing (lineSpacing, widthFillHeightFill)
@@ -23,14 +23,21 @@ viewRecordHistory language history =
             extractLabelFromLanguageMap language history.updatedLabel ++ ": " ++ updatedDateFormatted
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            [ spacing lineSpacing
+            , width fill
+            , height fill
+            , alignTop
+            ]
             [ el
-                []
+                [ alignRight ]
                 (text created)
             , el
-                []
+                [ alignRight ]
                 (text updated)
             ]
         ]

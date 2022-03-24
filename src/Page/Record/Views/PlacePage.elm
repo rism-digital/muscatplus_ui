@@ -1,6 +1,6 @@
 module Page.Record.Views.PlacePage exposing (..)
 
-import Element exposing (Element, column, fill, none, padding, row, width)
+import Element exposing (Element, alignTop, clipY, column, fill, height, none, padding, row, width)
 import Element.Background as Background
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
@@ -17,19 +17,22 @@ view session model =
         pageView =
             case model.response of
                 Response (PlaceData body) ->
-                    viewFullPlacePage session.language model body
+                    viewFullPlacePage session model body
 
                 _ ->
                     none
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append
-                [ padding sectionSpacing
-                , Background.color <| convertColorToElementColor colourScheme.white
-                ]
-                widthFillHeightFill
-            )
+            [ width fill
+            , height fill
+            , alignTop
+            , clipY
+            , Background.color <| convertColorToElementColor colourScheme.white
+            ]
             [ pageView ]
         ]

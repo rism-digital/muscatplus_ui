@@ -19,3 +19,8 @@ minimumQueryLength =
 defaultRows : Int
 defaultRows =
     20
+
+
+muscatLinkBase : String
+muscatLinkBase =
+    "https://muscat.rism.info/admin/"

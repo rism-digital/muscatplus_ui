@@ -1,11 +1,9 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events exposing (onClick)
-import Element.Font as Font
-import Language exposing (Language, formatNumberByLanguage)
+import Language exposing (Language)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -15,48 +13,58 @@ import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTe
 import Page.Record.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Session exposing (Session)
 
 
 viewFullPersonPage :
-    Language
+    Session
     -> RecordPageModel
     -> PersonBody
     -> Element RecordMsg
-viewFullPersonPage language model body =
+viewFullPersonPage session model body =
     let
-        currentTab =
-            model.currentTab
-
         pageBodyView =
-            case currentTab of
+            case model.currentTab of
                 DefaultRecordViewTab ->
-                    viewDescriptionTab language body
+                    viewDescriptionTab session.language body
 
                 _ ->
                     none
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ row
                 [ width fill
                 , alignTop
                 ]
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
-                    [ pageHeaderTemplate language body
-                    , pageUriTemplate language body
+                    [ spacing lineSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    , padding 20
+                    , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+                    , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+                    , Background.color (colourScheme.cream |> convertColorToElementColor)
+                    ]
+                    [ pageHeaderTemplate session.language body
+                    , pageUriTemplate session.language body
                     ]
                 ]
-
-            --, viewTabSwitcher language currentTab body
             , pageBodyView
-            , pageFooterTemplate language body
+            , pageFooterTemplate session session.language body
             ]
         ]
 
@@ -66,18 +74,32 @@ viewDescriptionTab language body =
     let
         summaryBody labels =
             row
-                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                (List.append
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ spacing lineSpacing
+                    , width fill
+                    , height fill
+                    ]
                     [ viewSummaryField language labels ]
                 ]
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        , scrollbarY
+        ]
         [ column
             [ width fill
             , spacing sectionSpacing
             , alignTop
+            , padding 20
             ]
             [ viewMaybe summaryBody body.summary
             , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities

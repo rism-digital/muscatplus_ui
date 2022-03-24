@@ -1,11 +1,9 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events exposing (onClick)
-import Element.Font as Font
-import Language exposing (Language, formatNumberByLanguage)
+import Language exposing (Language)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -14,121 +12,59 @@ import Page.Record.Views.Notes exposing (viewNotesSection)
 import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Session exposing (Session)
 
 
 viewFullInstitutionPage :
-    Language
+    Session
     -> RecordPageModel
     -> InstitutionBody
     -> Element RecordMsg
-viewFullInstitutionPage language page body =
+viewFullInstitutionPage session page body =
     let
-        currentTab =
-            page.currentTab
-
         pageBodyView =
-            case currentTab of
+            case page.currentTab of
                 DefaultRecordViewTab ->
-                    viewDescriptionTab language body
+                    viewDescriptionTab session.language body
 
                 _ ->
                     none
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ row
                 [ width fill
                 , alignTop
                 ]
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
-                    [ pageHeaderTemplate language body
-                    , pageUriTemplate language body
+                    [ spacing lineSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    , padding 20
+                    , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+                    , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+                    , Background.color (colourScheme.cream |> convertColorToElementColor)
+                    ]
+                    [ pageHeaderTemplate session.language body
+                    , pageUriTemplate session.language body
                     ]
                 ]
-
-            --, viewTabSwitcher language currentTab body
             , pageBodyView
-            , pageFooterTemplate language body
+            , pageFooterTemplate session session.language body
             ]
-        ]
-
-
-viewTabSwitcher :
-    Language
-    -> CurrentRecordViewTab
-    -> InstitutionBody
-    -> Element RecordMsg
-viewTabSwitcher language currentTab body =
-    let
-        descriptionTab =
-            let
-                ( backgroundColour, fontColour ) =
-                    case currentTab of
-                        DefaultRecordViewTab ->
-                            ( colourScheme.lightBlue, colourScheme.white )
-
-                        _ ->
-                            ( colourScheme.white, colourScheme.black )
-            in
-            column
-                [ Border.width 1
-                , padding 12
-                , onClick (UserClickedRecordViewTab DefaultRecordViewTab)
-                , pointer
-                , Background.color (backgroundColour |> convertColorToElementColor)
-                , Font.color (fontColour |> convertColorToElementColor)
-                ]
-                [ el
-                    []
-                    (text "Description")
-                ]
-
-        sourcesTab =
-            case body.sources of
-                Just sources ->
-                    let
-                        ( backgroundColour, fontColour ) =
-                            case currentTab of
-                                InstitutionSourcesRecordSearchTab _ ->
-                                    ( colourScheme.lightBlue, colourScheme.white )
-
-                                _ ->
-                                    ( colourScheme.white, colourScheme.black )
-
-                        sourceCount =
-                            toFloat sources.totalItems
-                                |> formatNumberByLanguage language
-                    in
-                    column
-                        [ Border.width 1
-                        , padding 12
-                        , onClick (UserClickedRecordViewTab (InstitutionSourcesRecordSearchTab sources.url))
-                        , pointer
-                        , Background.color (backgroundColour |> convertColorToElementColor)
-                        , Font.color (fontColour |> convertColorToElementColor)
-                        ]
-                        [ el
-                            []
-                            (text ("Sources (" ++ sourceCount ++ ")"))
-                        ]
-
-                Nothing ->
-                    none
-    in
-    row
-        [ width fill
-        , height (px 60)
-        , spacing 20
-        ]
-        [ descriptionTab
-        , sourcesTab
         ]
 
 
@@ -137,18 +73,32 @@ viewDescriptionTab language body =
     let
         summaryBody labels =
             row
-                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                (List.append
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , spacing lineSpacing
+                    ]
                     [ viewSummaryField language labels ]
                 ]
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        , scrollbarY
+        ]
         [ column
             [ width fill
             , alignTop
             , spacing sectionSpacing
+            , padding 20
             ]
             [ viewMaybe summaryBody body.summary
             , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities

@@ -6,8 +6,7 @@ import Response exposing (Response, ServerData)
 
 type CurrentRecordViewTab
     = DefaultRecordViewTab
-    | PersonSourcesRecordSearchTab String
-    | InstitutionSourcesRecordSearchTab String
+    | RelatedSourcesSearchTab String
 
 
 type alias RecordPageModel =
