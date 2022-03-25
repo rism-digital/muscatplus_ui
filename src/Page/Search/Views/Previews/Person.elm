@@ -8,7 +8,7 @@ import Page.Record.Views.PageTemplate exposing (pageHeaderTemplate, pageUriTempl
 import Page.Record.Views.PersonPage.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -18,9 +18,18 @@ viewPersonPreview language body =
     let
         summaryBody labels =
             row
-                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                ([ width fill
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     [ viewSummaryField language labels ]
                 ]
     in
@@ -31,17 +40,31 @@ viewPersonPreview language body =
         , paddingXY 20 10
         ]
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing sectionSpacing
+            ]
             [ row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     [ pageHeaderTemplate language body
                     , pageUriTemplate language body
                     ]
                 ]
             , row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
                     [ width fill
                     , spacing sectionSpacing

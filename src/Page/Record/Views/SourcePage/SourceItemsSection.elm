@@ -1,11 +1,11 @@
 module Page.Record.Views.SourcePage.SourceItemsSection exposing (..)
 
-import Element exposing (Element, column, fill, link, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
-import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
+import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
 
 
@@ -20,7 +20,11 @@ viewSourceItem language source =
     row
         (List.append [ width fill ] sectionBorderStyles)
         [ column
-            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            [ spacing lineSpacing
+            , width fill
+            , height fill
+            , alignTop
+            ]
             [ row
                 [ width fill ]
                 [ link

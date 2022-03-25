@@ -78,14 +78,6 @@ sectionBorderStyles =
     ]
 
 
-widthFillHeightFill : List (Attribute msg)
-widthFillHeightFill =
-    [ width fill
-    , height fill
-    , alignTop
-    ]
-
-
 facetBorderBottom : List (Attribute msg)
 facetBorderBottom =
     [ Border.widthEach { left = 0, right = 0, top = 0, bottom = 1 }

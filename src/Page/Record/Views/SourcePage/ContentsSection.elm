@@ -1,11 +1,11 @@
 module Page.Record.Views.SourcePage.ContentsSection exposing (..)
 
-import Element exposing (Element, column, link, row, spacing, text, textColumn, wrappedRow)
+import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.Relationship exposing (viewRelationshipBody)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -13,9 +13,16 @@ import Page.UI.Helpers exposing (viewMaybe)
 viewMinimalContentsSection : Language -> ContentsSectionBody -> Element msg
 viewMinimalContentsSection language contents =
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing lineSpacing
+            ]
             [ viewMaybe (viewRelationshipBody language) contents.creator
             , Maybe.withDefault [] contents.summary
                 |> viewSummaryField language
@@ -28,9 +35,18 @@ viewContentsSection language contents =
     let
         sectionBody =
             [ row
-                (List.append widthFillHeightFill sectionBorderStyles)
+                ([ width fill
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     [ viewMaybe (viewRelationshipBody language) contents.creator
                     , Maybe.withDefault [] contents.summary
                         |> viewSummaryField language
@@ -46,7 +62,10 @@ viewSubjectsSection : Language -> SubjectsSectionBody -> Element msg
 viewSubjectsSection language subjectSection =
     fieldValueWrapper
         [ wrappedRow
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ column
                 labelFieldColumnAttributes
                 [ renderLabel language subjectSection.label ]

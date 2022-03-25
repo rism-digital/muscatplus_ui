@@ -3,7 +3,7 @@ module Page.Search.Views.Previews.Incipit exposing (..)
 import Element exposing (Element, alignTop, column, el, fill, height, link, paddingXY, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Components exposing (h1)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Incipits exposing (viewIncipit)
@@ -39,11 +39,22 @@ viewIncipitPreview language body =
         , paddingXY 20 10
         ]
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ spacing sectionSpacing
+            , width fill
+            , height fill
+            , alignTop
+            ]
             [ row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ spacing lineSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    ]
                     [ row
                         [ width fill
                         ]
@@ -52,7 +63,10 @@ viewIncipitPreview language body =
                     ]
                 ]
             , row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
                     [ width fill
                     , spacing sectionSpacing

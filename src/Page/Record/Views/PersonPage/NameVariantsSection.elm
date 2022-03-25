@@ -1,10 +1,10 @@
 module Page.Record.Views.PersonPage.NameVariantsSection exposing (..)
 
-import Element exposing (Element, column, row, spacing)
+import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Person exposing (NameVariantsSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
 
 
@@ -13,9 +13,18 @@ viewNameVariantsSection language variantsSection =
     let
         sectionBody =
             [ row
-                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                ([ width fill
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     [ viewSummaryField language variantsSection.items ]
                 ]
             ]

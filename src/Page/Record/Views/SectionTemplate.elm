@@ -1,9 +1,9 @@
 module Page.Record.Views.SectionTemplate exposing (..)
 
-import Element exposing (Element, column, fill, htmlAttribute, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, row, spacing, width)
 import Html.Attributes as HTA
 import Language exposing (Language, LanguageMap)
-import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h2)
 
 
@@ -30,9 +30,16 @@ sectionTemplate language header sectionBody =
                 htmlAttribute (HTA.id header.sectionToc)
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            [ spacing lineSpacing
+            , width fill
+            , height fill
+            , alignTop
+            ]
             [ row
                 [ width fill
                 , tocId
@@ -41,7 +48,11 @@ sectionTemplate language header sectionBody =
             , row
                 [ width fill ]
                 [ column
-                    (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+                    [ spacing lineSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    ]
                     sectionBody
                 ]
             ]

@@ -1,10 +1,10 @@
 module Page.Record.Views.ExternalResources exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, link, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, width, wrappedRow)
 import Language exposing (Language)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (renderParagraph)
 
 
@@ -13,9 +13,18 @@ viewExternalResourcesSection language extSection =
     let
         sectionBody =
             [ row
-                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                ([ width fill
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+                    [ spacing sectionSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    ]
                     (List.map (\l -> viewExternalResource language l) extSection.items)
                 ]
             ]

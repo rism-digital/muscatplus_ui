@@ -17,7 +17,7 @@ import Page.Search.Views.Facets.QueryFacet exposing (QueryFacetConfig, viewQuery
 import Page.Search.Views.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 import Page.Search.Views.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 import Page.Search.Views.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
-import Page.UI.Attributes exposing (facetBorderBottom, headingSM, lineSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (facetBorderBottom, headingSM, lineSpacing)
 import Page.UI.Images exposing (chevronDownSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
@@ -140,11 +140,25 @@ viewFacetSection language facets =
 
     else
         row
-            (List.concat [ widthFillHeightFill, facetBorderBottom ])
+            ([ width fill
+             , height fill
+             , alignTop
+             ]
+                ++ facetBorderBottom
+            )
             [ column
-                (List.append [ spacing lineSpacing, alignTop ] widthFillHeightFill)
+                [ spacing lineSpacing
+                , alignTop
+                , width fill
+                , height fill
+                , alignTop
+                ]
                 [ row
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ spacing lineSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    ]
                     [ column
                         [ alignLeft ]
                         [ el
@@ -157,9 +171,16 @@ viewFacetSection language facets =
                         ]
                     ]
                 , row
-                    (List.append [ alignTop ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
                     [ column
-                        (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                        [ spacing lineSpacing
+                        , width fill
+                        , height fill
+                        , alignTop
+                        ]
                         facets
                     ]
                 ]

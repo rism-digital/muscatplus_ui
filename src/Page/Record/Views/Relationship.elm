@@ -4,7 +4,7 @@ import Element exposing (Element, alignTop, column, el, fill, height, link, none
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
 
 
@@ -13,9 +13,18 @@ viewRelationshipsSection language relSection =
     let
         sectionBody =
             [ row
-                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                ([ width fill
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     (List.map (\t -> viewRelationshipBody language t) relSection.items)
                 ]
             ]

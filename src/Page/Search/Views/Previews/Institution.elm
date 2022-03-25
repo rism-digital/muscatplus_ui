@@ -7,7 +7,7 @@ import Page.Record.Views.Notes exposing (viewNotesSection)
 import Page.Record.Views.PageTemplate exposing (pageHeaderTemplate, pageUriTemplate)
 import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -21,17 +21,31 @@ viewInstitutionPreview language body =
         , paddingXY 20 10
         ]
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing sectionSpacing
+            ]
             [ row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     [ pageHeaderTemplate language body
                     , pageUriTemplate language body
                     ]
                 ]
             , row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
                     [ width fill
                     , spacing sectionSpacing

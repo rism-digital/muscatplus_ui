@@ -12,7 +12,7 @@ import Page.Record.Views.SourcePage.PartOfSection exposing (viewPartOfSection)
 import Page.Record.Views.SourcePage.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.Record.Views.SourcePage.SourceItemsSection exposing (viewSourceItemsSection)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Incipits exposing (viewIncipitsSection)
 
@@ -22,7 +22,10 @@ viewSourcePreview language body =
     let
         pageBodyView =
             row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
                     [ width fill
                     , spacing sectionSpacing
@@ -46,11 +49,22 @@ viewSourcePreview language body =
         , paddingXY 20 10
         ]
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing sectionSpacing
+            ]
             [ row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     [ pageHeaderTemplate language body
                     , pageUriTemplate language body
                     ]

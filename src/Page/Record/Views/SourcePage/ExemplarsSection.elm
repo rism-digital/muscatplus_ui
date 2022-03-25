@@ -8,7 +8,7 @@ import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, Externa
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
-import Page.UI.Attributes exposing (headingMD, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Attributes exposing (headingMD, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -23,13 +23,27 @@ viewExemplar language exemplar =
     let
         heldBy =
             row
-                (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
                 [ viewHeldBy language exemplar.heldBy ]
     in
     row
-        (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+        ([ width fill
+         , height fill
+         , alignTop
+         , spacing lineSpacing
+         ]
+            ++ sectionBorderStyles
+        )
         [ column
-            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing lineSpacing
+            ]
             [ heldBy
             , viewMaybe (viewSummaryField language) exemplar.summary
             , viewMaybe (viewParagraphField language) exemplar.notes
@@ -83,8 +97,15 @@ viewExternalResource language extLink =
 viewExemplarRelationships : Language -> RelationshipsSectionBody -> Element msg
 viewExemplarRelationships language body =
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append [ spacing lineSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing lineSpacing
+            ]
             (List.map (\l -> viewRelationshipBody language l) body.items)
         ]

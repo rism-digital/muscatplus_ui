@@ -9,7 +9,6 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
 import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Attributes exposing (widthFillHeightFill)
 import Page.UI.Components exposing (dividerWithText)
 
 
@@ -41,7 +40,10 @@ facetsForInstitutionsModeView language model body =
             , alignTop
             ]
             [ row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
                     [ width fill
                     , alignTop

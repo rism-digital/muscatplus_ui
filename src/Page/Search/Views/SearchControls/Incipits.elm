@@ -9,7 +9,7 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
 import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 
 
 viewFacetsForIncipitsMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
@@ -52,7 +52,10 @@ viewFacetsForIncipitsMode language model body =
                 ]
             , viewFacetSection language
                 [ row
-                    widthFillHeightFill
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
                     [ column
                         [ width fill
                         , alignTop

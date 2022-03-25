@@ -8,7 +8,7 @@ import List.Extra as LE
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (sectionBorderStyles, widthFillHeightFill)
+import Page.UI.Attributes exposing (sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -30,7 +30,12 @@ viewIncipitsSection language incipSection =
 viewIncipit : Language -> IncipitBody -> Element msg
 viewIncipit language incipit =
     row
-        (List.append widthFillHeightFill sectionBorderStyles)
+        ([ width fill
+         , height fill
+         , alignTop
+         ]
+            ++ sectionBorderStyles
+        )
         [ column
             [ width fill
             , height fill

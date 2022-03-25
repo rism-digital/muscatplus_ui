@@ -14,7 +14,7 @@ import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes)
 import Page.UI.Style exposing (colours, convertColorToElementColor)
 import Utlities exposing (toLinkedHtml)
 
@@ -90,7 +90,10 @@ renderConcatenatedValue language concatValue =
 fieldValueWrapper : List (Element msg) -> Element msg
 fieldValueWrapper content =
     wrappedRow
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
             [ width fill
             , height fill
