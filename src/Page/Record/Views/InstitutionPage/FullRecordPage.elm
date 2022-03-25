@@ -1,11 +1,11 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
-import Page.Record.Msg exposing (RecordMsg(..))
+import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
 import Page.Record.Views.Notes exposing (viewNotesSection)
@@ -31,8 +31,8 @@ viewFullInstitutionPage session page body =
                 DefaultRecordViewTab ->
                     viewDescriptionTab session.language body
 
-                _ ->
-                    none
+                RelatedSourcesSearchTab _ ->
+                    viewSourceSearchTab session.language body
     in
     row
         [ width fill
@@ -60,12 +60,20 @@ viewFullInstitutionPage session page body =
                     ]
                     [ pageHeaderTemplate session.language body
                     , pageUriTemplate session.language body
+                    , viewRecordTabBar
                     ]
                 ]
             , pageBodyView
             , pageFooterTemplate session session.language body
             ]
         ]
+
+
+viewRecordTabBar : Element msg
+viewRecordTabBar =
+    row
+        [ width fill ]
+        [ text "Hello world. " ]
 
 
 viewDescriptionTab : Language -> InstitutionBody -> Element msg
@@ -107,3 +115,8 @@ viewDescriptionTab language body =
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
             ]
         ]
+
+
+viewSourceSearchTab : Language -> InstitutionBody -> Element msg
+viewSourceSearchTab language body =
+    none

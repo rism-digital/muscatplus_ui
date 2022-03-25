@@ -2,7 +2,7 @@ module Utlities exposing (..)
 
 import Dict exposing (Dict)
 import Element exposing (Element)
-import Html.Parser exposing (Node(..))
+import Html.Parser
 import Html.Parser.Util exposing (toVirtualDom)
 import Regex
 

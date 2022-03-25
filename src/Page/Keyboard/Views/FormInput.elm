@@ -1,12 +1,11 @@
 module Page.Keyboard.Views.FormInput exposing (..)
 
-import Element exposing (Attribute, Element, alignTop, centerX, centerY, column, el, fill, fillPortion, height, none, px, row, shrink, spacing, text, width)
-import Element.Font as Font
+import Element exposing (Element, alignTop, column, el, fill, height, px, row, shrink, spacing, text, width)
 import Element.Input as Input exposing (button)
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.Keyboard.Model exposing (Keyboard(..), QueryMode(..), clefStringMap)
+import Page.Keyboard.Model exposing (Keyboard(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
-import Page.Keyboard.PAE exposing (clefStrToClef, keySigStrToKeySignature, queryModeStrToQueryMode, timeSigStrToTimeSignature)
+import Page.Keyboard.PAE exposing (clefStrToClef, keySigStrToKeySignature, timeSigStrToTimeSignature)
 import Page.RecordTypes.Search exposing (NotationFacet)
 import Page.UI.Attributes exposing (bodySM, lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)

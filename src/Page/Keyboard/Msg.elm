@@ -16,6 +16,5 @@ type KeyboardMsg
     | UserRequestedProbeUpdate
     | UserClickedPianoKeyboardChangeTimeSignature TimeSignature
     | UserClickedPianoKeyboardChangeKeySignature KeySignature
-    | UserClickedPianoKeyboardSearchSubmit
     | UserChangedQueryMode QueryMode
     | NothingHappenedWithTheKeyboard

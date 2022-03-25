@@ -384,7 +384,7 @@ basicCheckbox checked =
 dividerWithText : String -> Element msg
 dividerWithText dividerText =
     let
-        { red, green, blue, alpha } =
+        { red, green, blue } =
             colours.slateGrey
 
         beforeAndAfterStyles =

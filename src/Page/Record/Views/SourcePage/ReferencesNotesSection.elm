@@ -7,7 +7,7 @@ import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes, widthFillHeightFill)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -17,9 +17,19 @@ viewReferencesNotesSection language refNotesSection =
     let
         sectionBody =
             [ row
-                (List.append widthFillHeightFill sectionBorderStyles)
+                (List.append
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     [ viewMaybe (viewNotesSection language) refNotesSection.notes
                     , viewMaybe (viewPerformanceLocationsSection language) refNotesSection.performanceLocations
                     , viewMaybe (viewLiturgicalFestivalsSection language) refNotesSection.liturgicalFestivals
@@ -33,7 +43,10 @@ viewReferencesNotesSection language refNotesSection =
 viewNotesSection : Language -> List LabelValue -> Element msg
 viewNotesSection language notes =
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ viewParagraphField language notes
         ]
 

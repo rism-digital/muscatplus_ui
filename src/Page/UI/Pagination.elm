@@ -1,7 +1,6 @@
 module Page.UI.Pagination exposing (..)
 
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, pointer, px, row, shrink, text, width)
-import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
@@ -10,7 +9,7 @@ import Page.RecordTypes.Search exposing (SearchPagination)
 import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg

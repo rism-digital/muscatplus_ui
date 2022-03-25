@@ -1,6 +1,6 @@
 module Page.Record.Views.PlacePage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, padding, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, padding, row, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Page.Record.Model exposing (RecordPageModel)

@@ -108,7 +108,7 @@ update msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithRenderedNotation (Err error) ->
+        ServerRespondedWithRenderedNotation (Err _) ->
             ( model, Cmd.none )
 
         ServerRespondedWithNotationValidation (Ok ( _, response )) ->
@@ -118,7 +118,7 @@ update msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithNotationValidation (Err error) ->
+        ServerRespondedWithNotationValidation (Err _) ->
             ( model, Cmd.none )
 
         UserClickedPianoKeyboardKey noteName octave ->

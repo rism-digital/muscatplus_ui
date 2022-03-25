@@ -1,7 +1,7 @@
 module Page.Search.Views.Facets.SelectFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Dict exposing (Dict)
+import Dict
 import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Events exposing (onClick)
@@ -12,12 +12,11 @@ import List.Extra as LE
 import Page.Query exposing (toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (bodyRegular, bodySM, bodyXS, lineSpacing)
 import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h5)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.UI.Tooltip exposing (facetHelp, helpBubble, tooltip, tooltipStyle)
+import Page.UI.Tooltip exposing (facetHelp, tooltip, tooltipStyle)
 import String.Extra as SE
 
 

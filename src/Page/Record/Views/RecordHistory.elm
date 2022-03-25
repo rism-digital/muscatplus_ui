@@ -3,7 +3,7 @@ module Page.Record.Views.RecordHistory exposing (..)
 import Element exposing (Element, alignRight, alignTop, column, el, fill, height, row, spacing, text, width)
 import Language exposing (Language, dateFormatter, extractLabelFromLanguageMap)
 import Page.RecordTypes.Shared exposing (RecordHistory)
-import Page.UI.Attributes exposing (lineSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing)
 import Time exposing (utc)
 
 

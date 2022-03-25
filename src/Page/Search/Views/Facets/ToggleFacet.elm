@@ -1,9 +1,8 @@
 module Page.Search.Views.Facets.ToggleFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Dict exposing (Dict)
-import Element exposing (Element, column, el, htmlAttribute, paddingXY, row)
-import Html.Attributes as HTA
+import Dict
+import Element exposing (Element, column, el, paddingXY, row)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Query exposing (toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (ToggleFacet)

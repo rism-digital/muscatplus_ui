@@ -10,7 +10,7 @@ import Page.Search.Msg exposing (SearchMsg)
 import Page.Search.Views.Results exposing (resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (globeStandSvg, peopleSvg, sourcesSvg)
+import Page.UI.Images exposing (globeStandSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 
 

@@ -5,7 +5,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
-import Page.UI.Attributes exposing (headingMD, headingSM, lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
+import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour, sectionBorderStyles, widthFillHeightFill)
 import Page.UI.Components exposing (viewSummaryField)
 
 

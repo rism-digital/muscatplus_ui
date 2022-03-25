@@ -1,4 +1,10 @@
-module Page.UI.Animations exposing (animatedColumn, animatedEl, animatedLabel, animatedLoader, animatedRow, loadingBox, progressBar)
+module Page.UI.Animations exposing
+    ( animatedColumn
+    , animatedLabel
+    , animatedLoader
+    , loadingBox
+    , progressBar
+    )
 
 import Css exposing (absolute, animationDuration, animationName, backgroundColor, backgroundImage, before, block, display, height, hidden, left, linearGradient2, overflow, pct, position, property, px, relative, rgb, rgba, sec, stop2, toRight, top, width)
 import Css.Animations exposing (keyframes)
@@ -10,7 +16,7 @@ import Html.Styled exposing (Attribute, div, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Page.UI.Attributes exposing (headingMD)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Simple.Animation as Animation exposing (Animation, Option)
+import Simple.Animation as Animation exposing (Animation)
 import Simple.Animation.Animated as Animated
 import Simple.Animation.Property as P
 

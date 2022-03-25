@@ -1,7 +1,22 @@
 module Page.Keyboard.Views exposing (..)
 
-import Element exposing (Attribute, Element, alignLeft, alignRight, alignTop, centerX, column, el, fill, fillPortion, height, paddingXY, px, row, shrink, spacing, text, width)
-import Element.Input as Input
+import Element
+    exposing
+        ( Element
+        , alignLeft
+        , alignTop
+        , centerX
+        , column
+        , el
+        , fill
+        , fillPortion
+        , height
+        , paddingXY
+        , px
+        , row
+        , spacing
+        , width
+        )
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Keyboard.Model exposing (Keyboard(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))

@@ -1,7 +1,21 @@
 module Page.Keyboard.PAE exposing (..)
 
 import Dict
-import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), KeySignature(..), Octave, QueryMode(..), TimeSignature(..), clefStringMap, keySignatureMap, noteMap, queryModeMap, supportedOctaves, timeSignatureMap)
+import Page.Keyboard.Model
+    exposing
+        ( Clef(..)
+        , KeyNoteName
+        , KeySignature(..)
+        , Octave
+        , QueryMode(..)
+        , TimeSignature(..)
+        , clefStringMap
+        , keySignatureMap
+        , noteMap
+        , queryModeMap
+        , supportedOctaves
+        , timeSignatureMap
+        )
 
 
 {-|

@@ -1,7 +1,7 @@
 module Page.Search.Views.Facets exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Dict exposing (Dict)
+import Dict
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -9,7 +9,7 @@ import Element.Font as Font
 import Element.Input exposing (checkbox, labelLeft)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetData(..), FacetItem(..), FacetSorts(..), Facets, ModeFacet, QueryFacet, RangeFacet, SearchBody, SelectFacet, ToggleFacet)
+import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), ModeFacet, SearchBody)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.Search.Views.Facets.NotationFacet exposing (NotationFacetConfig, viewKeyboardControl)

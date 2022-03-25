@@ -10,7 +10,7 @@ import ActiveSearch
         )
 import Browser.Navigation as Nav
 import Config as C
-import Dict exposing (Dict)
+import Dict
 import Flip exposing (flip)
 import Page.Keyboard as Keyboard
     exposing
@@ -32,17 +32,8 @@ import Page.Query
         , toMode
         , toNextQuery
         )
-import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
-import Page.RecordTypes.Search
-    exposing
-        ( FacetBehaviours
-        , FacetData(..)
-        , FacetItem(..)
-        , FacetSorts(..)
-        , FacetType(..)
-        , RangeFacetValue(..)
-        )
+import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
@@ -507,9 +498,6 @@ update session msg model =
                 , probeCmd
                 ]
             )
-
-        UserClickedPianoKeyboardSearchSubmitButton ->
-            searchSubmit session model
 
         UserClickedPianoKeyboardSearchClearButton ->
             setKeyboard Keyboard.initModel model.activeSearch

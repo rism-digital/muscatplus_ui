@@ -39,7 +39,6 @@ type SearchMsg
     | UserClickedClosePreviewWindow
     | UserClickedSearchResultForPreview String
     | UserInteractedWithPianoKeyboard KeyboardMsg
-    | UserClickedPianoKeyboardSearchSubmitButton
     | UserClickedPianoKeyboardSearchClearButton
     | UserResetAllFilters
     | NothingHappened

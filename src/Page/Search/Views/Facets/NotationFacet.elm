@@ -1,6 +1,6 @@
 module Page.Search.Views.Facets.NotationFacet exposing (..)
 
-import Element exposing (Element, alignLeft, centerX, fill, row, width)
+import Element exposing (Element, alignLeft, fill, row, width)
 import Language exposing (Language)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (Keyboard(..))

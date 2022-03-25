@@ -1,8 +1,8 @@
 module Page.Search.Views.Facets.RangeFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Dict exposing (Dict)
-import Element exposing (Element, above, alignLeft, alignTop, column, fill, none, paddingXY, paragraph, px, row, spacing, spacingXY, text, width)
+import Dict
+import Element exposing (Element, above, alignLeft, alignTop, column, fill, none, paragraph, px, row, spacing, spacingXY, text, width)
 import Element.Events as Events
 import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)

@@ -9,7 +9,7 @@ import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..), sideBarOpti
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Session exposing (Session, SideBarAnimationStatus(..))
-import Url.Builder exposing (QueryParameter(..))
+import Url.Builder
 
 
 type alias Msg =
@@ -54,7 +54,7 @@ update msg session =
             , Cmd.none
             )
 
-        ServerRespondedWithCountryCodeList (Err error) ->
+        ServerRespondedWithCountryCodeList (Err _) ->
             ( session, Cmd.none )
 
         ClientDebouncedSideBarMessages subMsg ->
@@ -81,7 +81,7 @@ update msg session =
             , Cmd.none
             )
 
-        UserMouseExitedSideBarOption button ->
+        UserMouseExitedSideBarOption _ ->
             ( { session
                 | currentlyHoveredOption = Nothing
               }

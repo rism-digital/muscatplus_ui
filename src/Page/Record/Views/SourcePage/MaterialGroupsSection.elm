@@ -1,12 +1,12 @@
 module Page.Record.Views.SourcePage.MaterialGroupsSection exposing (..)
 
-import Element exposing (Element, column, row, spacing)
+import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
 import Page.Record.Views.Relationship exposing (viewRelationshipBody)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -23,9 +23,19 @@ viewMaterialGroupsSection language mgSection =
 viewMaterialGroup : Language -> MaterialGroupBody -> Element msg
 viewMaterialGroup language mg =
     row
-        (List.append widthFillHeightFill sectionBorderStyles)
+        (List.append
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            sectionBorderStyles
+        )
         [ column
-            (List.append widthFillHeightFill [ spacing sectionSpacing ])
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing sectionSpacing
+            ]
             [ viewMaybe (viewSummaryField language) mg.summary
             , viewMaybe (viewParagraphField language) mg.notes
             , viewMaybe (viewMaterialGroupRelationships language) mg.relationships
@@ -36,8 +46,15 @@ viewMaterialGroup language mg =
 viewMaterialGroupRelationships : Language -> RelationshipsSectionBody -> Element msg
 viewMaterialGroupRelationships language relSection =
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append widthFillHeightFill [ spacing lineSpacing ])
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing lineSpacing
+            ]
             (List.map (\t -> viewRelationshipBody language t) relSection.items)
         ]

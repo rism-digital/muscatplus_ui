@@ -1,12 +1,10 @@
 module Page.Search.Views.Loading exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, centerY, column, fill, height, maximum, minimum, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
-import Element.Border as Border
 import Language exposing (Language)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.UI.Animations exposing (loadingBox)
-import Page.UI.Attributes exposing (searchColumnVerticalSize)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 

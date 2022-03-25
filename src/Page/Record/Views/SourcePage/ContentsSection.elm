@@ -1,6 +1,6 @@
 module Page.Record.Views.SourcePage.ContentsSection exposing (..)
 
-import Element exposing (Element, column, link, none, row, spacing, text, textColumn, wrappedRow)
+import Element exposing (Element, column, link, row, spacing, text, textColumn, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.Relationship exposing (viewRelationshipBody)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)

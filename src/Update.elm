@@ -27,7 +27,7 @@ changePage url model =
                 |> setUrl url
     in
     case route of
-        Route.FrontPageRoute queryArgs ->
+        Route.FrontPageRoute _ ->
             ( FrontPage newSession FrontPage.init
             , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
             )
@@ -47,7 +47,7 @@ changePage url model =
                 -- a default search page model.
                 newPageModel =
                     case model of
-                        SearchPage session oldPageModel ->
+                        SearchPage _ oldPageModel ->
                             SearchPage.load url oldPageModel
 
                         _ ->
@@ -86,7 +86,7 @@ changePage url model =
 
 
 updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
-updateWith toModel toMsg model ( subModel, subCmd ) =
+updateWith toModel toMsg _ ( subModel, subCmd ) =
     ( toModel subModel
     , Cmd.map toMsg subCmd
     )
@@ -163,7 +163,7 @@ update msg model =
         ( Msg.NothingHappened, _ ) ->
             ( model, Cmd.none )
 
-        ( Msg.ClientReceivedABadPortMessage err, _ ) ->
+        ( Msg.ClientReceivedABadPortMessage _, _ ) ->
             ( model, Cmd.none )
 
         _ ->

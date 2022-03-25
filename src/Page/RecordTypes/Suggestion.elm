@@ -22,18 +22,10 @@ suggestionResponseDecoder =
 
 
 toAlias : ActiveSuggestion -> FacetAlias
-toAlias suggestion =
-    let
-        (ActiveSuggestion alias _) =
-            suggestion
-    in
+toAlias (ActiveSuggestion alias _) =
     alias
 
 
 toSuggestionList : ActiveSuggestion -> List LabelValue
-toSuggestionList suggestion =
-    let
-        (ActiveSuggestion _ suggestions) =
-            suggestion
-    in
+toSuggestionList (ActiveSuggestion _ suggestions) =
     suggestions

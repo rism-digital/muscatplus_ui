@@ -1,6 +1,6 @@
 module Page.Front.Views exposing (..)
 
-import Element exposing (Element, alignTop, centerX, column, fill, height, maximum, minimum, none, padding, paddingXY, row, width)
+import Element exposing (Element, alignTop, centerX, column, fill, height, maximum, minimum, none, row, width)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg)
 import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)

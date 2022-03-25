@@ -63,19 +63,10 @@ update session msg model =
         UserClickedRecordViewTab recordTab ->
             ( model, Cmd.none )
 
-        UserClickedRecordViewTabPagination url ->
-            ( model, Cmd.none )
-
         UserClickedToCItem idParam ->
             ( model
             , jumpToId NothingHappened idParam
             )
-
-        UserInputTextInPageQueryBox query ->
-            ( model, Cmd.none )
-
-        UserClickedPageSearchSubmitButton ->
-            ( model, Cmd.none )
 
         NothingHappened ->
             ( model, Cmd.none )

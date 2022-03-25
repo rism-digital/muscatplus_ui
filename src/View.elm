@@ -3,9 +3,7 @@ module View exposing (view)
 import Browser
 import Css
 import Css.Global
-import Element exposing (Element, alignRight, alignTop, centerX, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
-import Element.Font as Font
-import Element.Region as Region
+import Element exposing (Element, alignTop, centerX, column, fill, height, inFront, layout, none, px, row, width)
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -20,15 +18,12 @@ import Page.Record.Views.PersonPage.TableOfContents exposing (createPersonRecord
 import Page.Record.Views.PlacePage
 import Page.Record.Views.SourcePage
 import Page.Record.Views.SourcePage.TableOfContents exposing (createSourceRecordToc)
-import Page.Route exposing (Route(..))
 import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, pageBackground)
-import Page.UI.Images exposing (rismLogo)
-import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor, footerHeight)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, pageBackground)
+import Page.UI.Style exposing (colours)
 import Response exposing (Response(..), ServerData(..))
-import Session exposing (Session)
 
 
 view : Model -> Browser.Document Msg
@@ -124,7 +119,7 @@ view model =
         -- set the colour for links (a tags) globally.
         globalLinkColor =
             let
-                { red, green, blue, alpha } =
+                { red, green, blue } =
                     colours.lightBlue
             in
             [ Css.color (Css.rgb red green blue) ]

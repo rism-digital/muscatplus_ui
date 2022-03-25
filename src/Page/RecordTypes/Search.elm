@@ -5,9 +5,18 @@ import Json.Decode as Decode exposing (Decoder, andThen, bool, dict, float, int,
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import List.Extra as LE
-import Page.RecordTypes exposing (RecordType(..))
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
-import Page.RecordTypes.Shared exposing (FacetAlias, LabelBooleanValue, LabelNumericValue, LabelStringValue, LabelValue, labelNumericValueDecoder, labelStringValueDecoder, labelValueDecoder, languageMapLabelDecoder, typeDecoder)
+import Page.RecordTypes.Shared
+    exposing
+        ( FacetAlias
+        , LabelNumericValue
+        , LabelStringValue
+        , LabelValue
+        , labelNumericValueDecoder
+        , labelStringValueDecoder
+        , labelValueDecoder
+        , languageMapLabelDecoder
+        )
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 
 

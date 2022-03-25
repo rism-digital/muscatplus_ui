@@ -1,11 +1,11 @@
 module Page.Record.Views.ExternalResources exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, link, paragraph, row, spacing, text, width, wrappedRow)
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Element exposing (Element, alignTop, column, fill, link, row, spacing, text, width, wrappedRow)
+import Language exposing (Language)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
-import Page.UI.Components exposing (fieldValueWrapper, renderLabel, renderParagraph)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Components exposing (renderParagraph)
 
 
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
