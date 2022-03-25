@@ -30,7 +30,7 @@ type SearchMsg
     | UserFocusedRangeFacet FacetAlias RangeFacetValue
     | UserLostFocusRangeFacet FacetAlias RangeFacetValue
     | UserChangedResultSorting String
-    | UserClickedModeItem String FacetItem Bool
+    | UserClickedModeItem String FacetItem
     | UserClickedRemoveActiveFilter String String
     | UserClickedClearSearchQueryBox
     | UserClickedSearchResultsPagination String

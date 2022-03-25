@@ -355,7 +355,7 @@ update session msg model =
                 |> flip setActiveSearch model
                 |> searchSubmit session
 
-        UserClickedModeItem alias item isClicked ->
+        UserClickedModeItem alias item ->
             let
                 newMode =
                     convertFacetToResultMode item

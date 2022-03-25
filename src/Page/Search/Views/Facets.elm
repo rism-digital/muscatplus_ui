@@ -6,7 +6,7 @@ import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column,
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input exposing (checkbox, labelLeft)
+import Element.Input exposing (button, checkbox, labelLeft)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetData(..), FacetItem(..), ModeFacet, SearchBody)
@@ -67,22 +67,22 @@ viewModeItem selectedMode language fitem =
         icon =
             case value of
                 "sources" ->
-                    iconTmpl (sourcesSvg colourScheme.slateGrey)
+                    iconTmpl <| sourcesSvg colourScheme.slateGrey
 
                 "people" ->
-                    iconTmpl (peopleSvg colourScheme.slateGrey)
+                    iconTmpl <| peopleSvg colourScheme.slateGrey
 
                 "institutions" ->
-                    iconTmpl (institutionSvg colourScheme.slateGrey)
+                    iconTmpl <| institutionSvg colourScheme.slateGrey
 
                 "incipits" ->
-                    iconTmpl (musicNotationSvg colourScheme.slateGrey)
+                    iconTmpl <| musicNotationSvg colourScheme.slateGrey
 
                 "festivals" ->
-                    iconTmpl (liturgicalFestivalSvg colourScheme.slateGrey)
+                    iconTmpl <| liturgicalFestivalSvg colourScheme.slateGrey
 
                 _ ->
-                    iconTmpl (unknownSvg colourScheme.slateGrey)
+                    iconTmpl <| unknownSvg colourScheme.slateGrey
 
         rowMode =
             parseStringToResultMode value
@@ -91,12 +91,12 @@ viewModeItem selectedMode language fitem =
             [ alignLeft
             , Font.center
             , height fill
-            , Border.widthEach { top = 0, left = 0, bottom = 1, right = 0 }
+            , Border.widthEach { top = 0, left = 0, bottom = 2, right = 0 }
             ]
 
         rowStyle =
             if selectedMode == rowMode then
-                Border.color (colourScheme.darkBlue |> convertColorToElementColor) :: baseRowStyle
+                Border.color (colourScheme.lightBlue |> convertColorToElementColor) :: baseRowStyle
 
             else
                 Border.color (colourScheme.cream |> convertColorToElementColor) :: baseRowStyle
@@ -106,21 +106,22 @@ viewModeItem selectedMode language fitem =
     in
     row
         rowStyle
-        [ el [ paddingXY 5 0 ] icon
-        , el []
-            (checkbox
+        [ el
+            [ paddingXY 5 0 ]
+            icon
+        , el
+            []
+            (button
                 [ alignLeft
                 , spacing 10
                 ]
-                { onChange = \t -> UserClickedModeItem "mode" fitem t
-                , icon = \_ -> none
-                , checked = False
+                { onPress = Just <| UserClickedModeItem "mode" fitem
                 , label =
-                    labelLeft
+                    el
                         [ headingSM
                         , alignLeft
                         ]
-                        (text (fullLabel ++ " (" ++ itemCount ++ ")"))
+                        (text <| fullLabel ++ " (" ++ itemCount ++ ")")
                 }
             )
         ]
