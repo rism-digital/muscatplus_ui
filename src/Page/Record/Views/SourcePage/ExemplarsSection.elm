@@ -15,20 +15,31 @@ import Page.UI.Helpers exposing (viewMaybe)
 
 viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
 viewExemplarsSection language exemplarSection =
-    sectionTemplate language exemplarSection (List.map (\l -> viewExemplar language l) exemplarSection.items)
+    List.map (\l -> viewExemplar language l) exemplarSection.items
+        |> sectionTemplate language exemplarSection
 
 
 viewExemplar : Language -> ExemplarBody -> Element msg
 viewExemplar language exemplar =
     let
         heldBy =
-            row
-                [ width fill
-                , height fill
-                , alignTop
-                , spacing lineSpacing
+            fieldValueWrapper
+                [ wrappedRow
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    [ column
+                        labelFieldColumnAttributes
+                        [ renderLabel language exemplar.label ]
+                    , column
+                        valueFieldColumnAttributes
+                        [ textColumn
+                            [ spacing lineSpacing ]
+                            [ viewHeldBy language exemplar.heldBy ]
+                        ]
+                    ]
                 ]
-                [ viewHeldBy language exemplar.heldBy ]
     in
     row
         ([ width fill
@@ -57,7 +68,6 @@ viewHeldBy : Language -> BasicInstitutionBody -> Element msg
 viewHeldBy language body =
     link
         [ linkColour
-        , headingMD
         ]
         { url = body.id
         , label = text (extractLabelFromLanguageMap language body.label)

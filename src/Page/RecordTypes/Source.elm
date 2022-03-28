@@ -89,7 +89,8 @@ type alias ExemplarsSectionBody =
 
 
 type alias ExemplarBody =
-    { summary : Maybe (List LabelValue)
+    { label : LanguageMap
+    , summary : Maybe (List LabelValue)
     , heldBy : BasicInstitutionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , notes : Maybe (List LabelValue)
@@ -192,6 +193,7 @@ exemplarsBodyDecoder : Decoder ExemplarBody
 exemplarsBodyDecoder =
     Decode.succeed ExemplarBody
         --|> required "id" string
+        |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
