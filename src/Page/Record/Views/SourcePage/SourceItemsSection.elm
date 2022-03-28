@@ -18,7 +18,7 @@ viewSourceItemsSection language siSection =
 viewSourceItem : Language -> BasicSourceBody -> Element msg
 viewSourceItem language source =
     row
-        (List.append [ width fill ] sectionBorderStyles)
+        ([ width fill ] ++ sectionBorderStyles)
         [ column
             [ spacing lineSpacing
             , width fill

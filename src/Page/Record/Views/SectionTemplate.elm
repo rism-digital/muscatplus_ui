@@ -3,7 +3,7 @@ module Page.Record.Views.SectionTemplate exposing (..)
 import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, row, spacing, width)
 import Html.Attributes as HTA
 import Language exposing (Language, LanguageMap)
-import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (h2)
 
 
@@ -48,7 +48,7 @@ sectionTemplate language header sectionBody =
             , row
                 [ width fill ]
                 [ column
-                    [ spacing lineSpacing
+                    [ spacing sectionSpacing
                     , width fill
                     , height fill
                     , alignTop
