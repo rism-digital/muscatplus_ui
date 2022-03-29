@@ -7,7 +7,7 @@ import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSection
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
-import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
+import Page.RecordTypes.Shared exposing (LabelStringValue, LabelValue, RecordHistory, labelStringValueDecoder, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody, sourceRelationshipsSectionBodyDecoder)
 
 
@@ -28,6 +28,7 @@ type alias InstitutionBody =
     , externalAuthorities : Maybe ExternalAuthoritiesSectionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , location : Maybe LocationSectionBody
+    , addresses : Maybe LocationAddressSectionBody
     , sources : Maybe SourceRelationshipsSectionBody
     , recordHistory : RecordHistory
     }
@@ -36,6 +37,30 @@ type alias InstitutionBody =
 type alias LocationSectionBody =
     { label : LanguageMap
     , coordinates : List String
+    }
+
+
+type alias LocationAddressSectionBody =
+    { label : LanguageMap
+    , mailingAddress : Maybe (List LabelValue)
+    , website : Maybe LabelStringValue
+    , email : Maybe LabelStringValue
+    }
+
+
+type alias MailingAddressBody =
+    { label : LanguageMap }
+
+
+type alias WebsiteAddressBody =
+    { label : LanguageMap
+    , value : String
+    }
+
+
+type alias EmailAddressBody =
+    { label : LanguageMap
+    , value : String
     }
 
 
@@ -52,6 +77,7 @@ institutionBodyDecoder =
         |> optional "externalAuthorities" (Decode.maybe externalAuthoritiesSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "location" (Decode.maybe locationSectionBodyDecoder) Nothing
+        |> optional "address" (Decode.maybe locationAddressSectionBodyDecoder) Nothing
         |> optional "sources" (Decode.maybe sourceRelationshipsSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
@@ -68,3 +94,12 @@ locationSectionBodyDecoder =
     Decode.succeed LocationSectionBody
         |> required "label" languageMapLabelDecoder
         |> required "coordinates" (list string)
+
+
+locationAddressSectionBodyDecoder : Decoder LocationAddressSectionBody
+locationAddressSectionBodyDecoder =
+    Decode.succeed LocationAddressSectionBody
+        |> required "label" languageMapLabelDecoder
+        |> optional "mailingAddress" (Decode.maybe <| list labelValueDecoder) Nothing
+        |> optional "website" (Decode.maybe labelStringValueDecoder) Nothing
+        |> optional "email" (Decode.maybe labelStringValueDecoder) Nothing
