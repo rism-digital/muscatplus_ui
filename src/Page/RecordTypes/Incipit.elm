@@ -13,8 +13,26 @@ type IncipitFormat
     | UnknownFormat
 
 
+type EncodingFormat
+    = PAEEncoding
+    | MEIEncoding
+
+
 type RenderedIncipit
     = RenderedIncipit IncipitFormat String
+
+
+type EncodedIncipit
+    = EncodedIncipit EncodingFormat EncodingData
+
+
+type alias EncodingData =
+    { clef : Maybe String
+    , keysig : Maybe String
+    , timesig : Maybe String
+    , key : Maybe String
+    , data : String
+    }
 
 
 type alias IncipitValidationBody =
@@ -29,6 +47,7 @@ type alias IncipitBody =
     , summary : Maybe (List LabelValue)
     , partOf : IncipitParentSourceBody
     , rendered : Maybe (List RenderedIncipit)
+    , encodings : Maybe (List EncodedIncipit)
     }
 
 
@@ -46,6 +65,7 @@ incipitBodyDecoder =
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "partOf" incipitParentSourceBodyDecoder
         |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
+        |> optional "encodings" (Decode.maybe (list encodedIncipitDecoder)) Nothing
 
 
 incipitParentSourceBodyDecoder : Decoder IncipitParentSourceBody
@@ -84,3 +104,37 @@ incipitValidationBodyDecoder =
     Decode.succeed IncipitValidationBody
         |> required "valid" bool
         |> optional "messages" (Decode.maybe (Decode.list languageMapLabelDecoder)) Nothing
+
+
+incipitEncodingDecoder : Decoder EncodingFormat
+incipitEncodingDecoder =
+    Decode.string
+        |> Decode.andThen
+            (\mimetype ->
+                case mimetype of
+                    "application/json" ->
+                        Decode.succeed PAEEncoding
+
+                    "application/xml+mei" ->
+                        Decode.succeed MEIEncoding
+
+                    _ ->
+                        Decode.fail "Unknown encoding format"
+            )
+
+
+incipitEncodingDataDecoder : Decoder EncodingData
+incipitEncodingDataDecoder =
+    Decode.succeed EncodingData
+        |> optional "clef" (Decode.maybe string) Nothing
+        |> optional "keysig" (Decode.maybe string) Nothing
+        |> optional "timesig" (Decode.maybe string) Nothing
+        |> optional "key" (Decode.maybe string) Nothing
+        |> required "data" string
+
+
+encodedIncipitDecoder : Decoder EncodedIncipit
+encodedIncipitDecoder =
+    Decode.succeed EncodedIncipit
+        |> required "format" incipitEncodingDecoder
+        |> required "data" incipitEncodingDataDecoder
