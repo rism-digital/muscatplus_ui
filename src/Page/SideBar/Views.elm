@@ -67,14 +67,14 @@ menuOption :
 menuOption cfg option currentlyHovered =
     let
         fontColour =
-            if currentlyHovered == True || cfg.isCurrent == True then
+            if currentlyHovered || cfg.isCurrent then
                 colourScheme.white
 
             else
                 colourScheme.slateGrey
 
         hoverStyles =
-            if currentlyHovered == True || cfg.isCurrent == True then
+            if currentlyHovered || cfg.isCurrent then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                 ]
 

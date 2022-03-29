@@ -140,7 +140,7 @@ viewSelectFacet config =
             List.member facetAlias activeSearch.expandedFacets
 
         facetItems =
-            if isExpanded == True then
+            if isExpanded then
                 sortedItems
 
             else
@@ -166,7 +166,7 @@ viewSelectFacet config =
 
         -- TODO: Translate!
         showMoreText =
-            if isExpanded == True then
+            if isExpanded then
                 "Collapse options list"
 
             else if isTruncated then

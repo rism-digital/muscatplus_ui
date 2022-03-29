@@ -64,7 +64,7 @@ summaryFieldTemplate summaryCfg fieldValue =
                 String.join "; " fVal
 
         templatedVal =
-            if summaryCfg.includeLabelInValue == True then
+            if summaryCfg.includeLabelInValue then
                 fValueAsString ++ " " ++ fLabel
 
             else

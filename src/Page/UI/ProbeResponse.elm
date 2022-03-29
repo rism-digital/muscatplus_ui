@@ -14,11 +14,7 @@ hasActionableProbeResponse : Response ProbeData -> Bool
 hasActionableProbeResponse probeResponse =
     case probeResponse of
         Response d ->
-            if d.totalItems > 0 then
-                True
-
-            else
-                False
+            d.totalItems > 0
 
         -- We set this to true if the probe data is loading so that we do not falsely
         -- state that no results were available.

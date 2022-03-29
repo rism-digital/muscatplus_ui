@@ -102,9 +102,7 @@ searchSubmit session model =
             serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
     in
     ( newModel
-    , Cmd.batch
-        [ Nav.pushUrl session.key searchUrl
-        ]
+    , Nav.pushUrl session.key searchUrl
     )
 
 
@@ -263,7 +261,7 @@ update session msg model =
                         |> flip setActiveSearch model
 
                 probeCmd =
-                    if keyboardModel.needsProbe == True then
+                    if keyboardModel.needsProbe then
                         let
                             probeUrl =
                                 toNextQuery newModel.activeSearch

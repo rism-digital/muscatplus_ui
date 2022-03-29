@@ -63,7 +63,7 @@ pageFooterTemplate : Session -> Language -> { a | recordHistory : RecordHistory 
 pageFooterTemplate session language footer =
     let
         muscatLinks =
-            if session.showMuscatLinks == True then
+            if session.showMuscatLinks then
                 column
                     [ width fill
                     , alignLeft

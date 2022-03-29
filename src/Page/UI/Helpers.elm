@@ -22,7 +22,7 @@ viewMaybe viewFunc maybeBody =
 
 viewIf : Element msg -> Bool -> Element msg
 viewIf viewFunc condition =
-    if condition == True then
+    if condition then
         viewFunc
 
     else

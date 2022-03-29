@@ -210,7 +210,7 @@ buildQueryParameters queryArgs =
                 (\( alias, filts ) ->
                     let
                         createPrefixedField val =
-                            if String.isEmpty val == True then
+                            if String.isEmpty val then
                                 Nothing
 
                             else

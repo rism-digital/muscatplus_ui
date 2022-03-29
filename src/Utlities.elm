@@ -9,7 +9,7 @@ import Regex
 
 choose : Bool -> a -> a -> a
 choose predicate isTrue isFalse =
-    if predicate == True then
+    if predicate then
         isTrue
 
     else

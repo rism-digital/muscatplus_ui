@@ -196,7 +196,7 @@ viewSearchResultsListPanel : Language -> SearchPageModel -> SearchBody -> Bool -
 viewSearchResultsListPanel language model body isLoading =
     let
         loadingScreen =
-            if isLoading == True then
+            if isLoading then
                 el
                     [ width fill
                     , height fill

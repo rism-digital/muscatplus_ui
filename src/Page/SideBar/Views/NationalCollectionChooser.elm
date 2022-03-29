@@ -100,7 +100,7 @@ viewNationalCollectionChooserMenuOption : Session -> Element SideBarMsg
 viewNationalCollectionChooserMenuOption session =
     let
         viewChooser =
-            if session.currentlyHoveredNationalCollectionChooser == True then
+            if session.currentlyHoveredNationalCollectionChooser then
                 viewNationalCollectionChooser session
 
             else

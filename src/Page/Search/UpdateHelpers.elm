@@ -330,7 +330,7 @@ userClickedToggleFacet alias model =
                 |> toFilters
 
         newFilters =
-            if Dict.member alias oldFilters == True then
+            if Dict.member alias oldFilters then
                 Dict.remove alias oldFilters
 
             else
