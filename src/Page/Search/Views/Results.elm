@@ -146,16 +146,17 @@ resultIsSelected selectedResult thisId =
         }
 
 
-type alias ResultConfig =
+type alias ResultConfig msg =
     { id : String
     , language : Language
     , resultTitle : LanguageMap
     , colours : ResultColours
-    , resultBody : List (Element SearchMsg)
+    , resultBody : List (Element msg)
+    , clickMsg : String -> msg
     }
 
 
-resultTemplate : ResultConfig -> Element SearchMsg
+resultTemplate : ResultConfig msg -> Element msg
 resultTemplate cfg =
     let
         resultRowNodeId =
@@ -175,7 +176,7 @@ resultTemplate cfg =
         , alignLeft
         , Background.color (.backgroundColour cfg.colours |> convertColorToElementColor)
         , Font.color (.textColour cfg.colours |> convertColorToElementColor)
-        , onClick (UserClickedSearchResultForPreview cfg.id)
+        , onClick (cfg.clickMsg cfg.id)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
         , Border.dotted

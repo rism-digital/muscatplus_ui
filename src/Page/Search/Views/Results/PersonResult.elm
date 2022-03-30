@@ -6,7 +6,7 @@ import Element exposing (Element, column, fill, none, row, spacing, width)
 import Language exposing (Language, formatNumberByLanguage)
 import Page.RecordTypes.Search exposing (PersonResultBody, PersonResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.Search.Msg exposing (SearchMsg)
+import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Results exposing (resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -29,6 +29,7 @@ viewPersonSearchResult language selectedResult body =
         , resultTitle = body.label
         , colours = resultColours
         , resultBody = resultBody
+        , clickMsg = SearchMsg.UserClickedSearchResultForPreview
         }
 
 

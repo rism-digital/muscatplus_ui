@@ -13,5 +13,7 @@ type alias RecordPageModel =
     { response : Response ServerData
     , currentTab : CurrentRecordViewTab
     , searchResults : Response ServerData
+    , preview : Response ServerData
+    , selectedResult : Maybe String
     , activeSearch : ActiveSearch
     }

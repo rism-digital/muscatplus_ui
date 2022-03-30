@@ -8,7 +8,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Search exposing (SourceResultBody, SourceResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
-import Page.Search.Msg exposing (SearchMsg)
+import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Results exposing (resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
@@ -35,6 +35,7 @@ viewSourceSearchResult language selectedResult body =
         , resultTitle = body.label
         , colours = resultColours
         , resultBody = resultBody
+        , clickMsg = SearchMsg.UserClickedSearchResultForPreview
         }
 
 

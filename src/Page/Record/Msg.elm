@@ -11,4 +11,6 @@ type RecordMsg
     | ServerRespondedWithRecordData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserClickedToCItem String
+    | UserClickedSearchResultsPagination String
+    | UserClickedSearchResultForPreview String
     | NothingHappened

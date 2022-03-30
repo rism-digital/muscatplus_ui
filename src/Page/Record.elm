@@ -23,14 +23,21 @@ init : Route -> RecordPageModel
 init route =
     { response = Loading Nothing
     , currentTab = DefaultRecordViewTab
-    , searchResults = Loading Nothing
+    , searchResults = NoResponseToShow
     , activeSearch = ActiveSearch.init route
+    , preview = NoResponseToShow
+    , selectedResult = Nothing
     }
 
 
 recordPageRequest : Url -> Cmd RecordMsg
 recordPageRequest initialUrl =
     createRequestWithDecoder ServerRespondedWithRecordData (Url.toString initialUrl)
+
+
+recordSearchRequest : String -> Cmd RecordMsg
+recordSearchRequest searchUrl =
+    createRequestWithDecoder ServerRespondedWithPageSearch searchUrl
 
 
 update : Session -> RecordMsg -> RecordPageModel -> ( RecordPageModel, Cmd RecordMsg )
@@ -51,7 +58,7 @@ update session msg model =
             )
 
         ServerRespondedWithPageSearch (Ok ( _, response )) ->
-            ( model, Cmd.none )
+            ( { model | searchResults = Response response }, Cmd.none )
 
         ServerRespondedWithPageSearch (Err error) ->
             ( { model
@@ -61,6 +68,31 @@ update session msg model =
             )
 
         UserClickedRecordViewTab recordTab ->
+            let
+                cmd =
+                    case recordTab of
+                        DefaultRecordViewTab ->
+                            Cmd.none
+
+                        RelatedSourcesSearchTab searchUrl ->
+                            case model.searchResults of
+                                -- if there is already a response, then don't refresh it when we switch tabs
+                                Response _ ->
+                                    Cmd.none
+
+                                _ ->
+                                    recordSearchRequest searchUrl
+            in
+            ( { model
+                | currentTab = recordTab
+              }
+            , cmd
+            )
+
+        UserClickedSearchResultsPagination pageUrl ->
+            ( model, Cmd.none )
+
+        UserClickedSearchResultForPreview sourceId ->
             ( model, Cmd.none )
 
         UserClickedToCItem idParam ->

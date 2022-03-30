@@ -7,7 +7,7 @@ import Element.Font as Font
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (IncipitResultBody, IncipitResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.Search.Msg exposing (SearchMsg)
+import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Results exposing (resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg, textIconSvg)
@@ -31,6 +31,7 @@ viewIncipitSearchResult language selectedResult body =
         , resultTitle = body.label
         , colours = resultColours
         , resultBody = resultBody
+        , clickMsg = SearchMsg.UserClickedSearchResultForPreview
         }
 
 
