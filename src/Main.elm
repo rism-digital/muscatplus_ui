@@ -70,7 +70,7 @@ init flags initialUrl key =
             )
 
         PersonPageRoute _ ->
-            ( PersonPage session <| Record.init route
+            ( PersonPage session <| Record.init initialUrl route
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
@@ -78,15 +78,35 @@ init flags initialUrl key =
             )
 
         InstitutionPageRoute _ ->
-            ( InstitutionPage session <| Record.init route
+            ( InstitutionPage session <| Record.init initialUrl route
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
 
+        InstitutionSourcePageRoute _ _ ->
+            let
+                recordPath =
+                    String.replace "/sources" "" initialUrl.path
+
+                recordUrl =
+                    { initialUrl | path = recordPath }
+
+                initialModel =
+                    Record.init initialUrl route
+            in
+            ( InstitutionPage session initialModel
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest recordUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest initialUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.requestPreviewIfSelected initialModel.selectedResult
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
+            )
+
         SourcePageRoute _ ->
-            ( SourcePage session <| Record.init route
+            ( SourcePage session <| Record.init initialUrl route
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
@@ -94,7 +114,7 @@ init flags initialUrl key =
             )
 
         PlacePageRoute _ ->
-            ( PlacePage session <| Record.init route
+            ( PlacePage session <| Record.init initialUrl route
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest

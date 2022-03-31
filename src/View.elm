@@ -78,16 +78,8 @@ view model =
                 PersonPage session pageModel ->
                     case pageModel.response of
                         Response (PersonData body) ->
-                            let
-                                toc =
-                                    if pageModel.currentTab == DefaultRecordViewTab then
-                                        Element.map UserInteractedWithRecordPage (createPersonRecordToc session.language body)
-
-                                    else
-                                        none
-                            in
                             ( extractLabelFromLanguageMap session.language body.label
-                            , toc
+                            , none
                             )
 
                         _ ->

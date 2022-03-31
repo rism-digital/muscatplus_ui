@@ -5,7 +5,7 @@ import Response exposing (Response, ServerData)
 
 
 type CurrentRecordViewTab
-    = DefaultRecordViewTab
+    = DefaultRecordViewTab String
     | RelatedSourcesSearchTab String
 
 

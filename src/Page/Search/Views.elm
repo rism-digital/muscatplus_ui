@@ -156,10 +156,10 @@ viewSearchResultsSection language model body isLoading =
                     viewUnknownPreview
 
                 Loading (Just oldData) ->
-                    viewPreviewRouter language oldData
+                    viewPreviewRouter language SearchMsg.UserClickedClosePreviewWindow oldData
 
                 Response resp ->
-                    viewPreviewRouter language resp
+                    viewPreviewRouter language SearchMsg.UserClickedClosePreviewWindow resp
 
                 Error _ ->
                     none

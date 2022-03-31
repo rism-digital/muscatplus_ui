@@ -19,8 +19,8 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (ServerData(..))
 
 
-viewPreviewRouter : Language -> ServerData -> Element SearchMsg
-viewPreviewRouter language previewData =
+viewPreviewRouter : Language -> msg -> ServerData -> Element msg
+viewPreviewRouter language closeMsg previewData =
     let
         preview =
             case previewData of
@@ -58,14 +58,14 @@ viewPreviewRouter language previewData =
             , Background.color (colourScheme.white |> convertColorToElementColor)
             , htmlAttribute (Html.Attributes.style "z-index" "10")
             ]
-            [ viewRecordPreviewTitleBar language
+            [ viewRecordPreviewTitleBar language closeMsg
             , preview
             ]
         ]
 
 
-viewRecordPreviewTitleBar : Language -> Element SearchMsg
-viewRecordPreviewTitleBar language =
+viewRecordPreviewTitleBar : Language -> msg -> Element msg
+viewRecordPreviewTitleBar language closeMsg =
     row
         [ width fill
         , height (px 30)
@@ -78,7 +78,7 @@ viewRecordPreviewTitleBar language =
         [ el
             [ alignLeft
             , centerY
-            , onClick UserClickedClosePreviewWindow
+            , onClick closeMsg
             , width (px 25)
             , height (px 25)
             , pointer

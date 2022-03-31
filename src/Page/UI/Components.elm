@@ -2,7 +2,7 @@ module Page.UI.Components exposing (..)
 
 import Color exposing (Color)
 import Css
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, html, htmlAttribute, none, padding, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, html, htmlAttribute, link, none, padding, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -13,8 +13,8 @@ import Html.Events as HE
 import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
-import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes)
+import Page.RecordTypes.Shared exposing (LabelStringValue, LabelValue)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, valueFieldColumnAttributes)
 import Page.UI.Style exposing (colours, convertColorToElementColor)
 import Utlities exposing (toLinkedHtml)
 

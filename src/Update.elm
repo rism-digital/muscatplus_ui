@@ -62,22 +62,46 @@ changePage url model =
             )
 
         Route.SourcePageRoute _ ->
-            ( SourcePage newSession (RecordPage.init route)
+            ( SourcePage newSession (RecordPage.init url route)
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 
         Route.PersonPageRoute _ ->
-            ( PersonPage newSession (RecordPage.init route)
+            ( PersonPage newSession (RecordPage.init url route)
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 
         Route.InstitutionPageRoute _ ->
-            ( InstitutionPage newSession (RecordPage.init route)
+            ( InstitutionPage newSession (RecordPage.init url route)
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 
+        Route.InstitutionSourcePageRoute _ _ ->
+            let
+                recordPath =
+                    String.replace "/sources" "" url.path
+
+                recordUrl =
+                    { url | path = recordPath }
+
+                newModel =
+                    case model of
+                        InstitutionPage _ oldModel ->
+                            RecordPage.load url oldModel
+
+                        _ ->
+                            RecordPage.init url route
+            in
+            ( InstitutionPage newSession newModel
+            , Cmd.batch
+                [ RecordPage.recordPageRequest recordUrl
+                , RecordPage.requestPreviewIfSelected newModel.selectedResult
+                ]
+                |> Cmd.map Msg.UserInteractedWithRecordPage
+            )
+
         Route.PlacePageRoute _ ->
-            ( PlacePage newSession (RecordPage.init route)
+            ( PlacePage newSession (RecordPage.init url route)
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 

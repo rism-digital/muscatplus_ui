@@ -13,6 +13,7 @@ type Route
     | SourcePageRoute Int
     | PersonPageRoute Int
     | InstitutionPageRoute Int
+    | InstitutionSourcePageRoute Int QueryArgs
     | PlacePageRoute Int
     | FestivalPageRoute Int
     | SubjectPageRoute Int
@@ -37,6 +38,7 @@ routeParser =
         , P.map SourcePageRoute (s "sources" </> P.int)
         , P.map PersonPageRoute (s "people" </> P.int)
         , P.map InstitutionPageRoute (s "institutions" </> P.int)
+        , P.map InstitutionSourcePageRoute (s "institutions" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map PlacePageRoute (s "places" </> P.int)
         , P.map FestivalPageRoute (s "festivals" </> P.int)
         , P.map SubjectPageRoute (s "subjects" </> P.int)

@@ -1,13 +1,16 @@
 module Page.Record exposing (..)
 
 import ActiveSearch
+import Browser.Navigation as Nav
+import Config as C
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
-import Page.Route exposing (Route)
+import Page.Route exposing (Route(..))
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
+import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
 import Viewport exposing (jumpToId)
 
 
@@ -19,14 +22,47 @@ type alias Msg =
     RecordMsg
 
 
-init : Route -> RecordPageModel
-init route =
+init : Url -> Route -> RecordPageModel
+init incomingUrl route =
+    let
+        selectedResult =
+            incomingUrl.fragment
+                |> Maybe.andThen (\f -> Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f))
+
+        tabView =
+            case route of
+                InstitutionSourcePageRoute _ _ ->
+                    RelatedSourcesSearchTab ""
+
+                _ ->
+                    DefaultRecordViewTab ""
+    in
     { response = Loading Nothing
-    , currentTab = DefaultRecordViewTab
+    , currentTab = tabView
     , searchResults = NoResponseToShow
     , activeSearch = ActiveSearch.init route
     , preview = NoResponseToShow
-    , selectedResult = Nothing
+    , selectedResult = selectedResult
+    }
+
+
+load : Url -> RecordPageModel -> RecordPageModel
+load url oldModel =
+    let
+        ( previewResp, selectedResult ) =
+            case url.fragment of
+                Just _ ->
+                    ( oldModel.preview, oldModel.selectedResult )
+
+                Nothing ->
+                    ( NoResponseToShow, Nothing )
+    in
+    { response = oldModel.response
+    , activeSearch = oldModel.activeSearch
+    , preview = previewResp
+    , selectedResult = selectedResult
+    , currentTab = oldModel.currentTab
+    , searchResults = oldModel.searchResults
     }
 
 
@@ -35,9 +71,24 @@ recordPageRequest initialUrl =
     createRequestWithDecoder ServerRespondedWithRecordData (Url.toString initialUrl)
 
 
-recordSearchRequest : String -> Cmd RecordMsg
+recordSearchRequest : Url -> Cmd RecordMsg
 recordSearchRequest searchUrl =
-    createRequestWithDecoder ServerRespondedWithPageSearch searchUrl
+    createRequestWithDecoder ServerRespondedWithPageSearch (Url.toString searchUrl)
+
+
+requestPreviewIfSelected : Maybe String -> Cmd RecordMsg
+requestPreviewIfSelected selected =
+    case selected of
+        Just s ->
+            recordPagePreviewRequest s
+
+        Nothing ->
+            Cmd.none
+
+
+recordPagePreviewRequest : String -> Cmd RecordMsg
+recordPagePreviewRequest previewUrl =
+    createRequestWithDecoder ServerRespondedWithRecordPreview previewUrl
 
 
 update : Session -> RecordMsg -> RecordPageModel -> ( RecordPageModel, Cmd RecordMsg )
@@ -58,7 +109,11 @@ update session msg model =
             )
 
         ServerRespondedWithPageSearch (Ok ( _, response )) ->
-            ( { model | searchResults = Response response }, Cmd.none )
+            ( { model
+                | searchResults = Response response
+              }
+            , Cmd.none
+            )
 
         ServerRespondedWithPageSearch (Err error) ->
             ( { model
@@ -67,21 +122,44 @@ update session msg model =
             , Cmd.none
             )
 
+        ServerRespondedWithRecordPreview (Ok ( _, response )) ->
+            ( { model
+                | preview = Response response
+              }
+            , Cmd.none
+            )
+
+        ServerRespondedWithRecordPreview (Err error) ->
+            ( { model
+                | preview = Error (createErrorMessage error)
+              }
+            , Cmd.none
+            )
+
         UserClickedRecordViewTab recordTab ->
             let
                 cmd =
                     case recordTab of
-                        DefaultRecordViewTab ->
-                            Cmd.none
+                        DefaultRecordViewTab recordUrl ->
+                            Nav.pushUrl session.key recordUrl
 
                         RelatedSourcesSearchTab searchUrl ->
                             case model.searchResults of
                                 -- if there is already a response, then don't refresh it when we switch tabs
                                 Response _ ->
-                                    Cmd.none
+                                    Nav.pushUrl session.key searchUrl
 
                                 _ ->
-                                    recordSearchRequest searchUrl
+                                    let
+                                        searchRequest =
+                                            Url.fromString searchUrl
+                                                |> Maybe.andThen (\a -> Just <| recordSearchRequest a)
+                                                |> Maybe.withDefault Cmd.none
+                                    in
+                                    Cmd.batch
+                                        [ searchRequest
+                                        , Nav.pushUrl session.key searchUrl
+                                        ]
             in
             ( { model
                 | currentTab = recordTab
@@ -92,8 +170,53 @@ update session msg model =
         UserClickedSearchResultsPagination pageUrl ->
             ( model, Cmd.none )
 
-        UserClickedSearchResultForPreview sourceId ->
-            ( model, Cmd.none )
+        UserClickedSearchResultForPreview result ->
+            let
+                resultUrl =
+                    Url.fromString result
+
+                resPath =
+                    case resultUrl of
+                        Just p ->
+                            String.dropLeft 1 p.path
+                                |> convertPathToNodeId
+                                |> Just
+
+                        Nothing ->
+                            Nothing
+
+                currentUrl =
+                    session.url
+
+                newUrl =
+                    { currentUrl | fragment = resPath }
+
+                newUrlStr =
+                    Url.toString newUrl
+            in
+            ( { model
+                | selectedResult = Just result
+              }
+            , Nav.pushUrl session.key newUrlStr
+            )
+
+        UserClickedClosePreviewWindow ->
+            let
+                currentUrl =
+                    session.url
+
+                newUrl =
+                    { currentUrl | fragment = Nothing }
+
+                newUrlStr =
+                    Url.toString newUrl
+            in
+            ( { model
+                | preview = NoResponseToShow
+                , selectedResult = Nothing
+              }
+            , Nav.pushUrl session.key newUrlStr
+            )
 
         UserClickedToCItem idParam ->
             ( model

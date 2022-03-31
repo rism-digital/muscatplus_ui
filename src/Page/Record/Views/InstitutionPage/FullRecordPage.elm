@@ -5,7 +5,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
-import Language exposing (Language)
+import Language exposing (Language, formatNumberByLanguage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -32,7 +32,7 @@ viewFullInstitutionPage session model body =
     let
         pageBodyView =
             case model.currentTab of
-                DefaultRecordViewTab ->
+                DefaultRecordViewTab _ ->
                     viewDescriptionTab session.language body
 
                 RelatedSourcesSearchTab _ ->
@@ -92,9 +92,26 @@ viewRecordTabBar language searchUrl model body =
         currentMode =
             model.currentTab
 
+        sourceCount =
+            Maybe.andThen
+                (\a ->
+                    toFloat a.totalItems
+                        |> formatNumberByLanguage language
+                        |> Just
+                )
+                body.sources
+
+        sourceLabel =
+            case sourceCount of
+                Just n ->
+                    "Sources (" ++ n ++ ")"
+
+                Nothing ->
+                    "Sources"
+
         descriptionTabBorder =
             case currentMode of
-                DefaultRecordViewTab ->
+                DefaultRecordViewTab _ ->
                     colourScheme.lightBlue |> convertColorToElementColor
 
                 _ ->
@@ -111,9 +128,8 @@ viewRecordTabBar language searchUrl model body =
     row
         [ centerX
         , width fill
-        , height (px 30)
-        , spacing 10
-        , centerY
+        , height (px 25)
+        , spacing 15
         ]
         [ el
             [ width shrink
@@ -126,7 +142,7 @@ viewRecordTabBar language searchUrl model body =
             ]
             (button
                 []
-                { onPress = Just <| UserClickedRecordViewTab DefaultRecordViewTab
+                { onPress = Just <| UserClickedRecordViewTab (DefaultRecordViewTab body.id)
                 , label = text "Description"
                 }
             )
@@ -143,7 +159,7 @@ viewRecordTabBar language searchUrl model body =
             (button
                 []
                 { onPress = Just <| UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl)
-                , label = text "Sources"
+                , label = text sourceLabel
                 }
             )
         ]

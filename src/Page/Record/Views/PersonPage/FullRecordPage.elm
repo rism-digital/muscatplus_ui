@@ -29,7 +29,7 @@ viewFullPersonPage session model body =
     let
         pageBodyView =
             case model.currentTab of
-                DefaultRecordViewTab ->
+                DefaultRecordViewTab _ ->
                     viewDescriptionTab session.language body
 
                 _ ->

@@ -1,6 +1,6 @@
 module Page.Record.Views.InstitutionPage.SourceSearch exposing (..)
 
-import Element exposing (Element, alignTop, clipY, column, fill, height, htmlAttribute, none, row, scrollbarY, shrink, text, width)
+import Element exposing (Element, alignTop, clipY, column, fill, height, htmlAttribute, inFront, none, row, scrollbarY, shrink, text, width)
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language)
@@ -8,6 +8,7 @@ import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), SourceResultBody)
+import Page.Search.Views.Previews exposing (viewPreviewRouter)
 import Page.Search.Views.Results exposing (resultIsSelected, resultTemplate)
 import Page.Search.Views.Results.SourceResult exposing (viewSourceFlags, viewSourcePartOf, viewSourceSummary)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -66,6 +67,24 @@ viewSearchResultsError language model =
 
 viewSearchResultsSection : Language -> RecordPageModel -> SearchBody -> Bool -> Element RecordMsg
 viewSearchResultsSection language model body isLoading =
+    let
+        renderedPreview =
+            case model.preview of
+                Loading Nothing ->
+                    none
+
+                Loading (Just oldData) ->
+                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow oldData
+
+                Response resp ->
+                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow resp
+
+                Error _ ->
+                    none
+
+                NoResponseToShow ->
+                    none
+    in
     row
         [ width fill
         , height fill
@@ -84,6 +103,7 @@ viewSearchResultsSection language model body isLoading =
             [ width fill
             , height fill
             , alignTop
+            , inFront renderedPreview
             ]
             [ text "world" ]
         ]
