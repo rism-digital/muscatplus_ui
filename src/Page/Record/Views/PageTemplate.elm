@@ -28,7 +28,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Views.RecordHistory exposing (viewRecordHistory)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
-import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, linkColour)
 import Page.UI.Components exposing (h1)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
@@ -46,34 +46,30 @@ pageHeaderTemplate language header =
 pageUriTemplate : Language -> { a | id : String } -> Element msg
 pageUriTemplate language body =
     row
-        [ width fill ]
+        [ alignLeft
+        ]
         [ el
-            [ headingLG
+            [ headingSM
             ]
             (text (extractLabelFromLanguageMap language localTranslations.recordURI ++ ": "))
         , link
             [ linkColour ]
             { url = body.id
-            , label = el [ headingLG ] (text body.id)
+            , label = el [ headingSM ] (text body.id)
             }
         ]
 
 
-pageFooterTemplate : Session -> Language -> { a | recordHistory : RecordHistory } -> Element msg
+pageFooterTemplate : Session -> Language -> { a | recordHistory : RecordHistory, id : String } -> Element msg
 pageFooterTemplate session language footer =
     let
         muscatLinks =
             if session.showMuscatLinks then
-                column
+                row
                     [ width fill
                     , alignLeft
                     ]
-                    [ row
-                        [ width fill
-                        , alignLeft
-                        ]
-                        [ viewMuscatLinks session ]
-                    ]
+                    [ viewMuscatLinks session ]
 
             else
                 none
@@ -86,10 +82,16 @@ pageFooterTemplate session language footer =
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , Background.color (colourScheme.cream |> convertColorToElementColor)
         ]
-        [ muscatLinks
+        [ column
+            [ width fill
+            ]
+            [ pageUriTemplate language footer
+            , muscatLinks
+            ]
         , column
             [ width fill
             , alignRight
+            , spacing lineSpacing
             ]
             [ viewRecordHistory language footer.recordHistory
             ]

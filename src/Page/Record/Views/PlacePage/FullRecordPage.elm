@@ -43,7 +43,6 @@ viewFullPlacePage session model body =
                     , Background.color (colourScheme.cream |> convertColorToElementColor)
                     ]
                     [ pageHeaderTemplate session.language body
-                    , pageUriTemplate session.language body
                     ]
                 ]
             ]

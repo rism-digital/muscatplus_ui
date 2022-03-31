@@ -74,7 +74,6 @@ viewFullSourcePage session body =
                     , Background.color (colourScheme.cream |> convertColorToElementColor)
                     ]
                     [ pageHeaderTemplate session.language body
-                    , pageUriTemplate session.language body
                     ]
                 ]
             , pageBodyView
