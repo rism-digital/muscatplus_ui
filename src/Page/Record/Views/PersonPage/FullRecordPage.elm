@@ -73,12 +73,11 @@ viewDescriptionTab language body =
     let
         summaryBody labels =
             row
-                (List.append
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    sectionBorderStyles
+                ([ width fill
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
                 )
                 [ column
                     [ spacing lineSpacing
@@ -101,10 +100,10 @@ viewDescriptionTab language body =
             , padding 20
             ]
             [ viewMaybe summaryBody body.summary
-            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
             , viewMaybe (viewNameVariantsSection language) body.nameVariants
             , viewMaybe (viewRelationshipsSection language) body.relationships
             , viewMaybe (viewNotesSection language) body.notes
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
+            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
             ]
         ]
