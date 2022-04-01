@@ -46,7 +46,8 @@ pageHeaderTemplate language header =
 pageUriTemplate : Language -> { a | id : String } -> Element msg
 pageUriTemplate language body =
     row
-        [ alignLeft
+        [ width fill
+        , alignLeft
         ]
         [ el
             [ headingSM
@@ -84,6 +85,7 @@ pageFooterTemplate session language footer =
         ]
         [ column
             [ width fill
+            , spacing lineSpacing
             ]
             [ pageUriTemplate language footer
             , muscatLinks
@@ -105,7 +107,6 @@ viewMuscatLinks session =
             column
                 [ alignLeft
                 , width fill
-                , paddingXY 5 0
                 , spacing lineSpacing
                 ]
                 [ row
