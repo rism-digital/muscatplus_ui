@@ -72,7 +72,16 @@ changePage url model =
             )
 
         Route.InstitutionPageRoute _ ->
-            ( InstitutionPage newSession (RecordPage.init url route)
+            let
+                newModel =
+                    case model of
+                        InstitutionPage _ oldModel ->
+                            RecordPage.load url route oldModel
+
+                        _ ->
+                            RecordPage.init url route
+            in
+            ( InstitutionPage newSession newModel
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 
@@ -87,7 +96,7 @@ changePage url model =
                 newModel =
                     case model of
                         InstitutionPage _ oldModel ->
-                            RecordPage.load url oldModel
+                            RecordPage.load url route oldModel
 
                         _ ->
                             RecordPage.init url route

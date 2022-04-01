@@ -32,10 +32,10 @@ init incomingUrl route =
         tabView =
             case route of
                 InstitutionSourcePageRoute _ _ ->
-                    RelatedSourcesSearchTab ""
+                    RelatedSourcesSearchTab <| Url.toString incomingUrl
 
                 _ ->
-                    DefaultRecordViewTab ""
+                    DefaultRecordViewTab <| Url.toString incomingUrl
     in
     { response = Loading Nothing
     , currentTab = tabView
@@ -46,8 +46,8 @@ init incomingUrl route =
     }
 
 
-load : Url -> RecordPageModel -> RecordPageModel
-load url oldModel =
+load : Url -> Route -> RecordPageModel -> RecordPageModel
+load url route oldModel =
     let
         ( previewResp, selectedResult ) =
             case url.fragment of
@@ -56,12 +56,20 @@ load url oldModel =
 
                 Nothing ->
                     ( NoResponseToShow, Nothing )
+
+        tabView =
+            case route of
+                InstitutionSourcePageRoute _ _ ->
+                    RelatedSourcesSearchTab <| Url.toString url
+
+                _ ->
+                    DefaultRecordViewTab <| Url.toString url
     in
     { response = oldModel.response
     , activeSearch = oldModel.activeSearch
     , preview = previewResp
     , selectedResult = selectedResult
-    , currentTab = oldModel.currentTab
+    , currentTab = tabView
     , searchResults = oldModel.searchResults
     }
 
