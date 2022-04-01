@@ -136,5 +136,8 @@ viewMuscatLinks session =
         InstitutionPageRoute id ->
             linkTmpl <| C.muscatLinkBase ++ "institutions/" ++ String.fromInt id
 
+        InstitutionSourcePageRoute id _ ->
+            linkTmpl <| C.muscatLinkBase ++ "institutions/" ++ String.fromInt id
+
         _ ->
             none
