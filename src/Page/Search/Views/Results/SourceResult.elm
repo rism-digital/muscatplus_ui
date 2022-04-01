@@ -13,7 +13,7 @@ import Page.Search.Views.Results exposing (resultIsSelected, resultTemplate, vie
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, layerGroupSvg, musicNotationSvg, peopleSvg, sourcesSvg)
+import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, layerGroupSvg, musicNotationSvg, peopleSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
@@ -68,7 +68,9 @@ viewSourceSummary language iconColour summary =
         [ column
             [ spacing 5 ]
             [ row
-                [ width fill ]
+                [ width fill
+                , spacing 20
+                ]
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = peopleSvg iconColour
@@ -79,7 +81,7 @@ viewSourceSummary language iconColour summary =
                     summary
                 , viewSearchResultSummaryField
                     { language = language
-                    , icon = peopleSvg iconColour
+                    , icon = userCircleSvg iconColour
                     , includeLabelInValue = False
                     , fieldName = "sourceComposer"
                     , displayStyles = []
