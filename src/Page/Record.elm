@@ -51,8 +51,8 @@ load url route oldModel =
     let
         ( previewResp, selectedResult ) =
             case url.fragment of
-                Just _ ->
-                    ( oldModel.preview, oldModel.selectedResult )
+                Just f ->
+                    ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
 
                 Nothing ->
                     ( NoResponseToShow, Nothing )
