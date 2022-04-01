@@ -1,11 +1,13 @@
 module Page.Record.Views.Relationship exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, link, none, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, link, none, px, row, shrink, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
-import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody)
+import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
+import Page.UI.Images exposing (globeSvg, institutionSvg, peopleSvg, unknownSvg)
+import Page.UI.Style exposing (colourScheme)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
@@ -82,8 +84,37 @@ viewRelationshipBody language body =
 
 viewRelatedToBody : Language -> RelatedToBody -> Element msg
 viewRelatedToBody language body =
-    link
-        [ linkColour ]
-        { url = body.id
-        , label = text (extractLabelFromLanguageMap language body.label)
-        }
+    let
+        relIcon =
+            case body.type_ of
+                PersonRelationship ->
+                    peopleSvg colourScheme.slateGrey
+
+                InstitutionRelationship ->
+                    institutionSvg colourScheme.slateGrey
+
+                PlaceRelationship ->
+                    globeSvg colourScheme.slateGrey
+
+                UnknownRelationship ->
+                    none
+    in
+    el
+        [ width shrink ]
+        (row
+            [ width fill
+            , spacing 5
+            ]
+            [ el
+                [ width <| px 15
+                , height <| px 15
+                , centerY
+                ]
+                relIcon
+            , link
+                [ linkColour ]
+                { url = body.id
+                , label = text (extractLabelFromLanguageMap language body.label)
+                }
+            ]
+        )
