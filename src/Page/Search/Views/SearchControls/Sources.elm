@@ -4,12 +4,13 @@ import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
 import Language exposing (Language)
+import Page.Facets.Facets exposing (viewFacet, viewFacetSection)
+import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
-import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText)
 
@@ -29,6 +30,13 @@ viewFacetsForSourcesMode language model body =
             toNextQuery activeSearch
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
+
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , body = body
+            }
     in
     row
         [ padding 10
@@ -59,6 +67,7 @@ viewFacetsForSourcesMode language model body =
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
+                SearchMsg.NothingHappened
                 [ row
                     [ width fill
                     , alignTop
@@ -68,37 +77,44 @@ viewFacetsForSourcesMode language model body =
                         [ width fill
                         , alignTop
                         ]
-                        [ viewFacet "composer" language activeSearch body ]
+                        [ viewFacet (facetConfig "composer") facetSearchMsgConfig ]
                     , column
                         [ width fill
                         , alignTop
                         ]
-                        [ viewFacet "people" language activeSearch body ]
+                        [ viewFacet (facetConfig "people") facetSearchMsgConfig ]
                     ]
                 ]
             , viewFacetSection language
-                [ viewFacet "date-range" language activeSearch body
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "date-range") facetSearchMsgConfig
                 ]
             , viewFacetSection language
+                SearchMsg.NothingHappened
                 [ viewFacetToggleSection language activeSearch body ]
             , viewFacetSection language
-                [ viewFacet "source-type" language activeSearch body
-                , viewFacet "content-types" language activeSearch body
-                , viewFacet "material-group-types" language activeSearch body
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "source-type") facetSearchMsgConfig
+                , viewFacet (facetConfig "content-types") facetSearchMsgConfig
+                , viewFacet (facetConfig "material-group-types") facetSearchMsgConfig
                 ]
             , viewFacetSection language
-                [ viewFacet "text-language" language activeSearch body
-                , viewFacet "format-extent" language activeSearch body
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "text-language") facetSearchMsgConfig
+                , viewFacet (facetConfig "format-extent") facetSearchMsgConfig
                 ]
 
             --, viewFacet "date-range" language activeSearch body
             --, viewFacet "num-holdings" language activeSearch body
             , viewFacetSection language
-                [ viewFacet "subjects" language activeSearch body ]
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "subjects") facetSearchMsgConfig ]
             , viewFacetSection language
-                [ viewFacet "scoring" language activeSearch body ]
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "scoring") facetSearchMsgConfig ]
             , viewFacetSection language
-                [ viewFacet "sigla" language activeSearch body ]
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "sigla") facetSearchMsgConfig ]
 
             --, viewFacet "holding-institution" language activeSearch body
             ]
@@ -108,23 +124,30 @@ viewFacetsForSourcesMode language model body =
 viewFacetToggleSection : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
 viewFacetToggleSection language activeSearch body =
     let
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , body = body
+            }
+
         sourceContentsToggle =
-            viewFacet "hide-source-contents" language activeSearch body
+            viewFacet (facetConfig "hide-source-contents") facetSearchMsgConfig
 
         sourceCollectionsToggle =
-            viewFacet "hide-source-collections" language activeSearch body
+            viewFacet (facetConfig "hide-source-collections") facetSearchMsgConfig
 
         compositeVolumesToggle =
-            viewFacet "hide-composite-volumes" language activeSearch body
+            viewFacet (facetConfig "hide-composite-volumes") facetSearchMsgConfig
 
         hasDigitizationToggle =
-            viewFacet "has-digitization" language activeSearch body
+            viewFacet (facetConfig "has-digitization") facetSearchMsgConfig
 
         isArrangementToggle =
-            viewFacet "is-arrangement" language activeSearch body
+            viewFacet (facetConfig "is-arrangement") facetSearchMsgConfig
 
         hasIncipitsToggle =
-            viewFacet "has-incipits" language activeSearch body
+            viewFacet (facetConfig "has-incipits") facetSearchMsgConfig
 
         allToggles =
             [ sourceCollectionsToggle

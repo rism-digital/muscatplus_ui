@@ -1,4 +1,4 @@
-module Page.Search.Views.Facets.ToggleFacet exposing (..)
+module Page.Facets.ToggleFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict

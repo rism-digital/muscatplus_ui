@@ -43,6 +43,8 @@ init incomingUrl route =
     , activeSearch = ActiveSearch.init route
     , preview = NoResponseToShow
     , selectedResult = selectedResult
+    , applyFilterPrompt = False
+    , probeResponse = NoResponseToShow
     }
 
 
@@ -71,6 +73,8 @@ load url route oldModel =
     , selectedResult = selectedResult
     , currentTab = tabView
     , searchResults = oldModel.searchResults
+    , applyFilterPrompt = oldModel.applyFilterPrompt
+    , probeResponse = oldModel.probeResponse
     }
 
 
@@ -230,6 +234,51 @@ update session msg model =
             ( model
             , jumpToId NothingHappened idParam
             )
+
+        UserTriggeredSearchSubmit ->
+            ( model, Cmd.none )
+
+        UserEnteredTextInKeywordQueryBox query ->
+            ( model, Cmd.none )
+
+        UserClickedToggleFacet alias ->
+            ( model, Cmd.none )
+
+        UserLostFocusRangeFacet alias value ->
+            ( model, Cmd.none )
+
+        UserFocusedRangeFacet alias value ->
+            ( model, Cmd.none )
+
+        UserEnteredTextInRangeFacet alias value str ->
+            ( model, Cmd.none )
+
+        UserClickedSelectFacetExpand alias ->
+            ( model, Cmd.none )
+
+        UserChangedFacetBehaviour alias behaviour ->
+            ( model, Cmd.none )
+
+        UserChangedSelectFacetSort alias sort ->
+            ( model, Cmd.none )
+
+        UserClickedSelectFacetItem alias str sel ->
+            ( model, Cmd.none )
+
+        UserInteractedWithPianoKeyboard keyMsg ->
+            ( model, Cmd.none )
+
+        UserRemovedItemFromQueryFacet alias str ->
+            ( model, Cmd.none )
+
+        UserEnteredTextInQueryFacet alias str1 str2 ->
+            ( model, Cmd.none )
+
+        UserChoseOptionForQueryFacet alias str behaviour ->
+            ( model, Cmd.none )
+
+        UserResetAllFilters ->
+            ( model, Cmd.none )
 
         NothingHappened ->
             ( model, Cmd.none )

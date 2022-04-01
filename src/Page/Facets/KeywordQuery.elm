@@ -1,4 +1,4 @@
-module Page.Search.Views.Facets.KeywordQuery exposing (..)
+module Page.Facets.KeywordQuery exposing (..)
 
 {-|
 

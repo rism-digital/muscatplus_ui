@@ -2,9 +2,10 @@ module Page.Front.Views.InstitutionSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Page.Facets.Facets exposing (viewFacet)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.Front.Views.Facets exposing (viewFrontFacet)
+import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
 import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
@@ -30,6 +31,13 @@ institutionSearchPanelView session model frontBody =
             toNextQuery model.activeSearch
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
+
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , body = frontBody
+            }
     in
     row
         [ padding 10
@@ -57,13 +65,13 @@ institutionSearchPanelView session model frontBody =
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "has-siglum" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "has-siglum") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "city" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "city") facetFrontMsgConfig ]
                 ]
             ]
         ]

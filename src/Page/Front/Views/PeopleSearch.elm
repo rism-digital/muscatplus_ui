@@ -2,9 +2,10 @@ module Page.Front.Views.PeopleSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Page.Facets.Facets exposing (viewFacet)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.Front.Views.Facets exposing (viewFrontFacet)
+import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
 import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
@@ -25,6 +26,13 @@ peopleSearchPanelView session model frontBody =
         msgs =
             { submitMsg = FrontMsg.UserTriggeredSearchSubmit
             , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+            }
+
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , body = frontBody
             }
 
         qText =
@@ -62,31 +70,31 @@ peopleSearchPanelView session model frontBody =
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "roles" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "roles") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "date-range" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "date-range") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "associated-place" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "associated-place") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "gender" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "gender") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "profession" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "profession") facetFrontMsgConfig ]
                 ]
             ]
         ]

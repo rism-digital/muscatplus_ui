@@ -1,4 +1,4 @@
-module Page.Search.Views.Facets.SelectFacet exposing (..)
+module Page.Facets.SelectFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict

@@ -23,7 +23,7 @@ import Page.UI.ProbeResponse exposing (hasActionableProbeResponse, viewProbeResp
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
-viewUpdateMessage : Language -> Bool -> Bool -> Element SearchMsg
+viewUpdateMessage : Language -> Bool -> Bool -> Element msg
 viewUpdateMessage language applyFilterPrompt hasActionableProbeResponse =
     let
         elMsg =
