@@ -4,11 +4,12 @@ import Element exposing (Element, alignLeft, alignTop, centerY, column, fill, he
 import Element.Background as Background
 import Language exposing (Language)
 import Page.Search.Model exposing (SearchPageModel)
+import Page.Search.Msg exposing (SearchMsg)
 import Page.UI.Animations exposing (loadingBox)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
-viewSearchResultsLoading : Language -> SearchPageModel -> Element msg
+viewSearchResultsLoading : Language -> SearchPageModel SearchMsg -> Element msg
 viewSearchResultsLoading language model =
     row
         [ width fill

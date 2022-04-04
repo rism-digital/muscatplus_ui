@@ -15,7 +15,7 @@ import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText)
 
 
-viewFacetsForSourcesMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+viewFacetsForSourcesMode : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 viewFacetsForSourcesMode language model body =
     let
         msgs =

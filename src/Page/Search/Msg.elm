@@ -1,5 +1,6 @@
 module Page.Search.Msg exposing (SearchMsg(..))
 
+import Debouncer.Messages as Debouncer
 import Http
 import Http.Detailed
 import Page.Keyboard.Msg exposing (KeyboardMsg)
@@ -15,6 +16,8 @@ type SearchMsg
     | ServerRespondedWithProbeData (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ))
     | ServerRespondedWithSearchPreview (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
+    | DebouncerCapturedProbeRequest (Debouncer.Msg SearchMsg)
+    | DebouncerSettledToSendProbeRequest
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias

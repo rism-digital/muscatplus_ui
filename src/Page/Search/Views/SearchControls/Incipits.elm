@@ -13,7 +13,7 @@ import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 
 
-viewFacetsForIncipitsMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+viewFacetsForIncipitsMode : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 viewFacetsForIncipitsMode language model body =
     let
         activeSearch =

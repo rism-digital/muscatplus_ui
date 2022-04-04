@@ -13,7 +13,7 @@ import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Page.UI.Components exposing (dividerWithText)
 
 
-facetsForInstitutionsModeView : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+facetsForInstitutionsModeView : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 facetsForInstitutionsModeView language model body =
     let
         msgs =

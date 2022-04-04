@@ -10,6 +10,7 @@ import ActiveSearch
         )
 import Browser.Navigation as Nav
 import Config as C
+import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
 import Flip exposing (flip)
 import Page.Keyboard as Keyboard
@@ -63,14 +64,14 @@ import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
 type alias Model =
-    SearchPageModel
+    SearchPageModel SearchMsg
 
 
 type alias Msg =
     SearchMsg
 
 
-init : Url -> Route -> SearchPageModel
+init : Url -> Route -> SearchPageModel SearchMsg
 init incomingUrl route =
     let
         selectedResult =
@@ -83,11 +84,12 @@ init incomingUrl route =
     , selectedResult = selectedResult
     , showFacetPanel = False
     , probeResponse = NoResponseToShow
+    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     }
 
 
-load : Url -> SearchPageModel -> SearchPageModel
+load : Url -> SearchPageModel SearchMsg -> SearchPageModel SearchMsg
 load url oldModel =
     let
         oldKeyboard =
@@ -113,6 +115,7 @@ load url oldModel =
     , selectedResult = selectedResult
     , showFacetPanel = oldModel.showFacetPanel
     , probeResponse = oldModel.probeResponse
+    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     }
 
@@ -137,7 +140,7 @@ searchPagePreviewRequest previewUrl =
     createRequestWithDecoder ServerRespondedWithSearchPreview previewUrl
 
 
-searchSubmit : Session -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
+searchSubmit : Session -> SearchPageModel SearchMsg -> ( SearchPageModel SearchMsg, Cmd SearchMsg )
 searchSubmit session model =
     let
         resetPageInQueryArgs =
@@ -193,7 +196,15 @@ convertFacetToResultMode facet =
     parseStringToResultMode qval
 
 
-update : Session -> SearchMsg -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
+updateDebouncerConfig : Debouncer.UpdateConfig SearchMsg (SearchPageModel SearchMsg)
+updateDebouncerConfig =
+    { mapMsg = DebouncerCapturedProbeRequest
+    , getDebouncer = .probeDebouncer
+    , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
+    }
+
+
+update : Session -> SearchMsg -> SearchPageModel SearchMsg -> ( SearchPageModel SearchMsg, Cmd SearchMsg )
 update session msg model =
     case msg of
         ServerRespondedWithSearchData (Ok ( _, response )) ->
@@ -285,6 +296,12 @@ update session msg model =
 
         ServerRespondedWithSuggestionData (Err error) ->
             ( model, Cmd.none )
+
+        DebouncerCapturedProbeRequest searchMsg ->
+            Debouncer.update (update session) updateDebouncerConfig searchMsg model
+
+        DebouncerSettledToSendProbeRequest ->
+            probeSubmit ServerRespondedWithProbeData session model
 
         UserChangedFacetBehaviour alias facetBehaviour ->
             userChangedFacetBehaviour alias facetBehaviour model
@@ -408,10 +425,16 @@ update session msg model =
                 newQueryArgs =
                     toNextQuery model.activeSearch
                         |> setKeywordQuery newText
+
+                newModel =
+                    setNextQuery newQueryArgs model.activeSearch
+                        |> flip setActiveSearch model
+
+                debounceMsg =
+                    provideInput DebouncerSettledToSendProbeRequest
+                        |> DebouncerCapturedProbeRequest
             in
-            setNextQuery newQueryArgs model.activeSearch
-                |> flip setActiveSearch model
-                |> probeSubmit ServerRespondedWithProbeData session
+            update session debounceMsg newModel
 
         UserClickedClosePreviewWindow ->
             let

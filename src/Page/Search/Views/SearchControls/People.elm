@@ -14,7 +14,7 @@ import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dividerWithText)
 
 
-facetsForPeopleModeView : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+facetsForPeopleModeView : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 facetsForPeopleModeView language model body =
     let
         msgs =

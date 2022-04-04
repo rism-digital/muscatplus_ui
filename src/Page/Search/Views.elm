@@ -31,7 +31,7 @@ import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
-view : Session -> SearchPageModel -> Element SearchMsg
+view : Session -> SearchPageModel SearchMsg -> Element SearchMsg
 view session model =
     row
         [ width fill
@@ -50,7 +50,7 @@ view session model =
         ]
 
 
-viewSearchBody : Language -> SearchPageModel -> Element SearchMsg
+viewSearchBody : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 viewSearchBody language model =
     row
         [ width fill
@@ -67,7 +67,7 @@ viewSearchBody language model =
         ]
 
 
-viewTopBar : Language -> SearchPageModel -> Element SearchMsg
+viewTopBar : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 viewTopBar lang model =
     row
         [ width fill
@@ -85,7 +85,7 @@ viewTopBar lang model =
         ]
 
 
-searchModeSelectorRouter : Language -> SearchPageModel -> Element SearchMsg
+searchModeSelectorRouter : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 searchModeSelectorRouter language model =
     case model.response of
         Response (SearchData data) ->
@@ -98,7 +98,7 @@ searchModeSelectorRouter language model =
             searchModeSelectorLoading
 
 
-searchModeSelectorView : Language -> SearchPageModel -> Maybe ModeFacet -> Element SearchMsg
+searchModeSelectorView : Language -> SearchPageModel SearchMsg -> Maybe ModeFacet -> Element SearchMsg
 searchModeSelectorView lang model modeFacet =
     let
         currentMode =
@@ -121,7 +121,7 @@ searchModeSelectorView lang model modeFacet =
         ]
 
 
-searchResultsViewRouter : Language -> SearchPageModel -> Element SearchMsg
+searchResultsViewRouter : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 searchResultsViewRouter language model =
     case model.response of
         Loading (Just (SearchData oldData)) ->
@@ -146,7 +146,7 @@ searchResultsViewRouter language model =
             viewSearchResultsError language model
 
 
-viewSearchResultsSection : Language -> SearchPageModel -> SearchBody -> Bool -> Element SearchMsg
+viewSearchResultsSection : Language -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
 viewSearchResultsSection language model body isLoading =
     let
         renderedPreview =
@@ -192,7 +192,7 @@ viewSearchResultsSection language model body isLoading =
         ]
 
 
-viewSearchResultsListPanel : Language -> SearchPageModel -> SearchBody -> Bool -> Element SearchMsg
+viewSearchResultsListPanel : Language -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
 viewSearchResultsListPanel language model body isLoading =
     let
         loadingScreen =
@@ -259,7 +259,7 @@ viewSearchResultsNotFound language =
         ]
 
 
-viewSearchResultsList : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+viewSearchResultsList : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 viewSearchResultsList language model body =
     row
         [ width fill
@@ -290,7 +290,7 @@ viewSearchResultRouter language selectedResult res =
             viewIncipitSearchResult language selectedResult body
 
 
-viewSearchPageSort : Language -> SearchPageModel -> Element SearchMsg
+viewSearchPageSort : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 viewSearchPageSort language model =
     let
         activeSearch =
@@ -370,7 +370,7 @@ viewPaginationSortSelector language activeSearch body =
         ]
 
 
-viewSearchResultsError : Language -> SearchPageModel -> Element msg
+viewSearchResultsError : Language -> SearchPageModel SearchMsg -> Element msg
 viewSearchResultsError language model =
     case model.response of
         Error msg ->

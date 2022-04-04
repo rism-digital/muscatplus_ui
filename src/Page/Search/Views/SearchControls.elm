@@ -45,7 +45,7 @@ viewUpdateMessage language applyFilterPrompt hasActionableProbeResponse =
         elMsg
 
 
-viewSearchButtons : Language -> SearchPageModel -> Element SearchMsg
+viewSearchButtons : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 viewSearchButtons language model =
     let
         msgs =
@@ -139,7 +139,7 @@ viewSearchButtons language model =
         ]
 
 
-viewSearchControls : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+viewSearchControls : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 viewSearchControls language model body =
     let
         currentMode =
