@@ -239,7 +239,8 @@
      */
     app.ports.sendOutgoingMessageOnPort.subscribe( ({ msg, value }) =>
     {
-        switch (msg) {
+        switch (msg)
+        {
             case incomingMessages.SAVE_LANGUAGE_PREFERENCE:
                 setStoredLanguage(value);
                 break;
