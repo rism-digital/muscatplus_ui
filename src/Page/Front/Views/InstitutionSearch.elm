@@ -13,7 +13,7 @@ import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
 import Session exposing (Session)
 
 
-institutionSearchPanelView : Session -> FrontPageModel -> FrontBody -> Element FrontMsg
+institutionSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 institutionSearchPanelView session model frontBody =
     let
         language =

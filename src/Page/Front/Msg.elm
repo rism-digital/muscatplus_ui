@@ -1,5 +1,6 @@
 module Page.Front.Msg exposing (..)
 
+import Debouncer.Messages as Debouncer
 import Http
 import Http.Detailed
 import Page.Keyboard.Msg exposing (KeyboardMsg)
@@ -14,6 +15,8 @@ type FrontMsg
     = ServerRespondedWithFrontData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | ServerRespondedWithProbeData (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ))
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
+    | DebouncerCapturedProbeRequest (Debouncer.Msg FrontMsg)
+    | DebouncerSettledToSendProbeRequest
     | UserTriggeredSearchSubmit
     | UserResetAllFilters
     | UserEnteredTextInKeywordQueryBox String

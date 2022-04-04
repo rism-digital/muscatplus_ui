@@ -14,7 +14,7 @@ import Page.UI.Components exposing (dividerWithText)
 import Session exposing (Session)
 
 
-sourceSearchPanelView : Session -> FrontPageModel -> FrontBody -> Element FrontMsg
+sourceSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 sourceSearchPanelView session model frontBody =
     let
         activeSearch =

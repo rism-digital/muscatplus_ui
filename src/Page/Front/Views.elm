@@ -14,7 +14,7 @@ import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
-view : Session -> FrontPageModel -> Element FrontMsg
+view : Session -> FrontPageModel FrontMsg -> Element FrontMsg
 view session model =
     let
         maybeBody =

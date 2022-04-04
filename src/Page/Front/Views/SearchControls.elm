@@ -84,7 +84,7 @@ viewUpdateMessage language applyFilterPrompt hasActionableProbeResponse =
         elMsg
 
 
-viewFrontSearchButtons : Language -> FrontPageModel -> Element FrontMsg
+viewFrontSearchButtons : Language -> FrontPageModel FrontMsg -> Element FrontMsg
 viewFrontSearchButtons language model =
     let
         msgs =

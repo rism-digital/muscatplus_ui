@@ -14,7 +14,7 @@ import Page.UI.Components exposing (dividerWithText)
 import Session exposing (Session)
 
 
-peopleSearchPanelView : Session -> FrontPageModel -> FrontBody -> Element FrontMsg
+peopleSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 peopleSearchPanelView session model frontBody =
     let
         language =
