@@ -73,7 +73,7 @@ probeSubmit :
     -> Session
     -> { a | activeSearch : ActiveSearch, probeResponse : Response ProbeData }
     -> ( { a | activeSearch : ActiveSearch, probeResponse : Response ProbeData }, Cmd msg )
-probeSubmit msg session model =
+probeSubmit probeMsg session model =
     let
         newModel =
             addNationalCollectionFilter session.restrictedToNationalCollection model
@@ -83,7 +83,7 @@ probeSubmit msg session model =
             createProbeUrl newModel.activeSearch
     in
     ( newModel
-    , createProbeRequestWithDecoder msg probeUrl
+    , createProbeRequestWithDecoder probeMsg probeUrl
     )
 
 
