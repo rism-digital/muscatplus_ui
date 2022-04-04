@@ -5,7 +5,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.Record.Views.PageTemplate exposing (pageHeaderTemplate, pageUriTemplate)
+import Page.Record.Views.PageTemplate exposing (pageHeaderTemplate)
 import Page.RecordTypes.Place exposing (PlaceBody)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)

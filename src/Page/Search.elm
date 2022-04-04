@@ -286,12 +286,6 @@ update session msg model =
         ServerRespondedWithSuggestionData (Err error) ->
             ( model, Cmd.none )
 
-        ClientJumpedToId ->
-            ( model, Cmd.none )
-
-        ClientResetViewport ->
-            ( model, Cmd.none )
-
         UserChangedFacetBehaviour alias facetBehaviour ->
             userChangedFacetBehaviour alias facetBehaviour model
                 |> probeSubmit ServerRespondedWithProbeData session

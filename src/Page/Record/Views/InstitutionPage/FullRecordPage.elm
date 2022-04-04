@@ -1,6 +1,6 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -13,7 +13,7 @@ import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSectio
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.Record.Views.InstitutionPage.SourceSearch exposing (viewSourceSearchTab)
 import Page.Record.Views.Notes exposing (viewNotesSection)
-import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
+import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (headingSM, lineSpacing, sectionBorderStyles, sectionSpacing)

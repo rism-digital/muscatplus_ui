@@ -6,7 +6,7 @@ import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
-import Page.UI.Images exposing (globeSvg, institutionSvg, peopleSvg, unknownSvg)
+import Page.UI.Images exposing (globeSvg, institutionSvg, peopleSvg)
 import Page.UI.Style exposing (colourScheme)
 
 

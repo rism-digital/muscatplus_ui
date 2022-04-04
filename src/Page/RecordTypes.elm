@@ -7,7 +7,6 @@ type RecordType
     | Institution
     | Place
     | Incipit
-    | Festival
     | CollectionSearchResult
     | Front
     | Unknown
@@ -20,7 +19,6 @@ recordTypeOptions =
     , ( "rism:Institution", Institution )
     , ( "rism:Incipit", Incipit )
     , ( "rism:Place", Place )
-    , ( "rism:LiturgicalFestival", Festival )
     , ( "Collection", CollectionSearchResult )
     , ( "rism:Front", Front )
     ]

@@ -1,7 +1,7 @@
 module Page.Record.Views.Facets exposing (..)
 
 import Page.Facets.Facets exposing (FacetMsgConfig)
-import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
+import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 
 
 facetRecordMsgConfig : FacetMsgConfig RecordMsg

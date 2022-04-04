@@ -14,7 +14,6 @@ import Element
         , link
         , none
         , padding
-        , paddingXY
         , row
         , spacing
         , text
@@ -28,7 +27,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Views.RecordHistory exposing (viewRecordHistory)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
-import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (headingSM, lineSpacing, linkColour)
 import Page.UI.Components exposing (h1)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)

@@ -1,9 +1,7 @@
 module Page.Search.Views.Previews.Incipit exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, clipX, clipY, column, el, fill, height, html, htmlAttribute, link, none, padding, paddingXY, paragraph, px, row, scrollbarX, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, width)
 import Element.Font as Font
-import Html as HTE
-import Html.Attributes as HTA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingData, EncodingFormat(..), IncipitBody)
 import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)

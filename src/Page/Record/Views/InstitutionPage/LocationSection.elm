@@ -2,7 +2,7 @@ module Page.Record.Views.InstitutionPage.LocationSection exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, link, paddingXY, row, spacing, text, width, wrappedRow)
 import Language exposing (Language)
-import Page.RecordTypes.Institution exposing (CoordinatesSection, LocationAddressSectionBody)
+import Page.RecordTypes.Institution exposing (LocationAddressSectionBody)
 import Page.RecordTypes.Shared exposing (LabelStringValue)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, viewSummaryField)

@@ -11,7 +11,6 @@ import Flip exposing (flip)
 import Html.Attributes as HTA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h3)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)

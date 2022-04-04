@@ -10,7 +10,7 @@ import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitu
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
-import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, Subject, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
+import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
 
 
 type alias FullSourceBody =

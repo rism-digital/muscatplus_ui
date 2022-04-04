@@ -5,7 +5,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
-import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
+import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.Record.Views.SourcePage.ContentsSection exposing (viewContentsSection)
 import Page.Record.Views.SourcePage.ExemplarsSection exposing (viewExemplarsSection)
 import Page.Record.Views.SourcePage.MaterialGroupsSection exposing (viewMaterialGroupsSection)

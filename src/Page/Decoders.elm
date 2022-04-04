@@ -23,11 +23,6 @@ recordResponseDecoder =
         |> andThen recordResponseConverter
 
 
-festivalResponseDecoder : Decoder ServerData
-festivalResponseDecoder =
-    Decode.map FestivalData liturgicalFestivalBodyDecoder
-
-
 sourceResponseDecoder : Decoder ServerData
 sourceResponseDecoder =
     Decode.map SourceData sourceBodyDecoder
@@ -77,9 +72,6 @@ recordResponseConverter typevalue =
 
         Place ->
             placeResponseDecoder
-
-        Festival ->
-            festivalResponseDecoder
 
         Incipit ->
             incipitResponseDecoder

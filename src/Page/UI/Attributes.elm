@@ -1,7 +1,7 @@
 module Page.UI.Attributes exposing (..)
 
 import Color exposing (toCssString)
-import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, paddingXY, width)
+import Element exposing (Attr, Attribute, alignTop, fillPortion, htmlAttribute, paddingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font

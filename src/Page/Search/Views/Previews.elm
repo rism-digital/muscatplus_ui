@@ -8,7 +8,6 @@ import Element.Font as Font
 import Html.Attributes
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Search.Msg exposing (SearchMsg(..))
 import Page.Search.Views.Previews.Incipit exposing (viewIncipitPreview)
 import Page.Search.Views.Previews.Institution exposing (viewInstitutionPreview)
 import Page.Search.Views.Previews.Person exposing (viewPersonPreview)

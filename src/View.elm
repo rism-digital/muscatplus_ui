@@ -11,10 +11,8 @@ import Model exposing (Model(..), toSession)
 import Msg exposing (Msg(..))
 import Page.Front.Views
 import Page.NotFound.Views
-import Page.Record.Model exposing (CurrentRecordViewTab(..))
 import Page.Record.Views.InstitutionPage
 import Page.Record.Views.PersonPage
-import Page.Record.Views.PersonPage.TableOfContents exposing (createPersonRecordToc)
 import Page.Record.Views.PlacePage
 import Page.Record.Views.SourcePage
 import Page.Record.Views.SourcePage.TableOfContents exposing (createSourceRecordToc)

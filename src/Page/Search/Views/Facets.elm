@@ -1,23 +1,16 @@
 module Page.Search.Views.Facets exposing (..)
 
---import Page.Search.Views.Facets.NotationFacet exposing (NotationFacetConfig, viewKeyboardControl)
---import Page.Search.Views.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
---import Page.Search.Views.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
---import Page.Search.Views.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
---import Page.Search.Views.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
-
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, centerX, centerY, el, fill, height, paddingXY, px, row, spacing, text, width)
 import Element.Border as Border
-import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input exposing (button)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
-import Page.Facets.Facets exposing (FacetConfig, FacetMsgConfig)
+import Page.Facets.Facets exposing (FacetMsgConfig)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts, ModeFacet, RangeFacetValue, SearchBody)
+import Page.RecordTypes.Search exposing (FacetItem(..), ModeFacet)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (facetBorderBottom, headingSM, lineSpacing)
-import Page.UI.Images exposing (chevronDownSvg, institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
+import Page.UI.Attributes exposing (headingSM)
+import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
