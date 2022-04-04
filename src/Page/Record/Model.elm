@@ -1,7 +1,7 @@
 module Page.Record.Model exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Debouncer.Basic exposing (Debouncer)
+import Debouncer.Messages exposing (Debouncer)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Response exposing (Response, ServerData)
 
@@ -19,6 +19,6 @@ type alias RecordPageModel msg =
     , selectedResult : Maybe String
     , activeSearch : ActiveSearch
     , probeResponse : Response ProbeData
-    , probeDebouncer : Debouncer msg msg
+    , probeDebouncer : Debouncer msg
     , applyFilterPrompt : Bool
     }
