@@ -22,7 +22,7 @@ import Session exposing (Session)
 
 viewFullPersonPage :
     Session
-    -> RecordPageModel
+    -> RecordPageModel RecordMsg
     -> PersonBody
     -> Element RecordMsg
 viewFullPersonPage session model body =

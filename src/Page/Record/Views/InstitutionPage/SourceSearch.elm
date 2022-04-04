@@ -29,7 +29,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 
 
-viewSourceSearchTab : Language -> RecordPageModel -> InstitutionBody -> Element RecordMsg
+viewSourceSearchTab : Language -> RecordPageModel RecordMsg -> InstitutionBody -> Element RecordMsg
 viewSourceSearchTab language model body =
     row
         [ width fill
@@ -46,7 +46,7 @@ viewSourceSearchTab language model body =
         ]
 
 
-searchResultsViewRouter : Language -> RecordPageModel -> Element RecordMsg
+searchResultsViewRouter : Language -> RecordPageModel RecordMsg -> Element RecordMsg
 searchResultsViewRouter language model =
     case model.searchResults of
         Loading (Just (SearchData oldData)) ->
@@ -67,17 +67,17 @@ searchResultsViewRouter language model =
             viewSearchResultsError language model
 
 
-viewSearchResultsLoading : Language -> RecordPageModel -> Element RecordMsg
+viewSearchResultsLoading : Language -> RecordPageModel RecordMsg -> Element RecordMsg
 viewSearchResultsLoading language model =
     none
 
 
-viewSearchResultsError : Language -> RecordPageModel -> Element RecordMsg
+viewSearchResultsError : Language -> RecordPageModel RecordMsg -> Element RecordMsg
 viewSearchResultsError language model =
     none
 
 
-viewSearchResultsSection : Language -> RecordPageModel -> SearchBody -> Bool -> Element RecordMsg
+viewSearchResultsSection : Language -> RecordPageModel RecordMsg -> SearchBody -> Bool -> Element RecordMsg
 viewSearchResultsSection language model body isLoading =
     let
         renderedPreview =
@@ -121,7 +121,7 @@ viewSearchResultsSection language model body isLoading =
         ]
 
 
-viewSearchResultsListPanel : Language -> RecordPageModel -> SearchBody -> Bool -> Element RecordMsg
+viewSearchResultsListPanel : Language -> RecordPageModel RecordMsg -> SearchBody -> Bool -> Element RecordMsg
 viewSearchResultsListPanel language model body isLoading =
     row
         [ width fill
@@ -139,7 +139,7 @@ viewSearchResultsListPanel language model body isLoading =
         ]
 
 
-viewSearchResultsList : Language -> RecordPageModel -> SearchBody -> Element RecordMsg
+viewSearchResultsList : Language -> RecordPageModel RecordMsg -> SearchBody -> Element RecordMsg
 viewSearchResultsList language model body =
     row
         [ width fill
@@ -186,7 +186,7 @@ viewSourceSearchResult language selectedResult body =
         }
 
 
-viewSearchButtons : Language -> RecordPageModel -> Element RecordMsg
+viewSearchButtons : Language -> RecordPageModel RecordMsg -> Element RecordMsg
 viewSearchButtons language model =
     let
         msgs =
@@ -280,7 +280,7 @@ viewSearchButtons language model =
         ]
 
 
-viewFacetsForSourcesMode : Language -> RecordPageModel -> SearchBody -> Element RecordMsg
+viewFacetsForSourcesMode : Language -> RecordPageModel RecordMsg -> SearchBody -> Element RecordMsg
 viewFacetsForSourcesMode language model body =
     let
         msgs =
@@ -386,7 +386,7 @@ viewFacetsForSourcesMode language model body =
         ]
 
 
-viewSearchControls : Language -> RecordPageModel -> SearchBody -> Element RecordMsg
+viewSearchControls : Language -> RecordPageModel RecordMsg -> SearchBody -> Element RecordMsg
 viewSearchControls language model body =
     row
         [ width fill

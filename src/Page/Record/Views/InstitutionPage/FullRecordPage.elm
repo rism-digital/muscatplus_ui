@@ -25,7 +25,7 @@ import Session exposing (Session)
 
 viewFullInstitutionPage :
     Session
-    -> RecordPageModel
+    -> RecordPageModel RecordMsg
     -> InstitutionBody
     -> Element RecordMsg
 viewFullInstitutionPage session model body =
@@ -72,7 +72,7 @@ viewFullInstitutionPage session model body =
         ]
 
 
-viewRecordTopBarRouter : Language -> RecordPageModel -> InstitutionBody -> Element RecordMsg
+viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> InstitutionBody -> Element RecordMsg
 viewRecordTopBarRouter language model body =
     case body.sources of
         Just sourceBlock ->
@@ -86,7 +86,7 @@ viewRecordTopBarRouter language model body =
             none
 
 
-viewRecordTabBar : Language -> String -> RecordPageModel -> InstitutionBody -> Element RecordMsg
+viewRecordTabBar : Language -> String -> RecordPageModel RecordMsg -> InstitutionBody -> Element RecordMsg
 viewRecordTabBar language searchUrl model body =
     let
         currentMode =

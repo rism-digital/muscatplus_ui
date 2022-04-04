@@ -1,12 +1,16 @@
 module Page.Record exposing (..)
 
-import ActiveSearch
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion)
 import Browser.Navigation as Nav
 import Config as C
+import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
+import Flip exposing (flip)
+import Page.Query exposing (setKeywordQuery, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route(..))
+import Page.Search.UpdateHelpers exposing (probeSubmit)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -15,14 +19,14 @@ import Viewport exposing (jumpToId)
 
 
 type alias Model =
-    RecordPageModel
+    RecordPageModel RecordMsg
 
 
 type alias Msg =
     RecordMsg
 
 
-init : Url -> Route -> RecordPageModel
+init : Url -> Route -> RecordPageModel RecordMsg
 init incomingUrl route =
     let
         selectedResult =
@@ -45,10 +49,11 @@ init incomingUrl route =
     , selectedResult = selectedResult
     , applyFilterPrompt = False
     , probeResponse = NoResponseToShow
+    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     }
 
 
-load : Url -> Route -> RecordPageModel -> RecordPageModel
+load : Url -> Route -> RecordPageModel RecordMsg -> RecordPageModel RecordMsg
 load url route oldModel =
     let
         ( previewResp, selectedResult ) =
@@ -75,6 +80,7 @@ load url route oldModel =
     , searchResults = oldModel.searchResults
     , applyFilterPrompt = oldModel.applyFilterPrompt
     , probeResponse = oldModel.probeResponse
+    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     }
 
 
@@ -103,7 +109,15 @@ recordPagePreviewRequest previewUrl =
     createRequestWithDecoder ServerRespondedWithRecordPreview previewUrl
 
 
-update : Session -> RecordMsg -> RecordPageModel -> ( RecordPageModel, Cmd RecordMsg )
+updateDebouncerConfig : Debouncer.UpdateConfig RecordMsg (RecordPageModel RecordMsg)
+updateDebouncerConfig =
+    { mapMsg = DebouncerCapturedProbeRequest
+    , getDebouncer = .probeDebouncer
+    , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
+    }
+
+
+update : Session -> RecordMsg -> RecordPageModel RecordMsg -> ( RecordPageModel RecordMsg, Cmd RecordMsg )
 update session msg model =
     case msg of
         ServerRespondedWithRecordData (Ok ( _, response )) ->
@@ -147,6 +161,34 @@ update session msg model =
               }
             , Cmd.none
             )
+
+        DebouncerCapturedProbeRequest recordMsg ->
+            Debouncer.update (update session) updateDebouncerConfig recordMsg model
+
+        DebouncerSettledToSendProbeRequest ->
+            probeSubmit ServerRespondedWithProbeData session model
+
+        ServerRespondedWithProbeData (Ok ( _, response )) ->
+            ( { model
+                | probeResponse = Response response
+                , applyFilterPrompt = True
+              }
+            , Cmd.none
+            )
+
+        ServerRespondedWithProbeData (Err error) ->
+            ( model, Cmd.none )
+
+        ServerRespondedWithSuggestionData (Ok ( _, response )) ->
+            let
+                newModel =
+                    setActiveSuggestion (Just response) model.activeSearch
+                        |> flip setActiveSearch model
+            in
+            ( newModel, Cmd.none )
+
+        ServerRespondedWithSuggestionData (Err error) ->
+            ( model, Cmd.none )
 
         UserClickedRecordViewTab recordTab ->
             let
@@ -238,8 +280,28 @@ update session msg model =
         UserTriggeredSearchSubmit ->
             ( model, Cmd.none )
 
-        UserEnteredTextInKeywordQueryBox query ->
-            ( model, Cmd.none )
+        UserEnteredTextInKeywordQueryBox queryText ->
+            let
+                newText =
+                    if String.isEmpty queryText then
+                        Nothing
+
+                    else
+                        Just queryText
+
+                newQueryArgs =
+                    toNextQuery model.activeSearch
+                        |> setKeywordQuery newText
+
+                newModel =
+                    setNextQuery newQueryArgs model.activeSearch
+                        |> flip setActiveSearch model
+
+                debounceMsg =
+                    provideInput DebouncerSettledToSendProbeRequest
+                        |> DebouncerCapturedProbeRequest
+            in
+            update session debounceMsg newModel
 
         UserClickedToggleFacet alias ->
             ( model, Cmd.none )

@@ -1,6 +1,7 @@
 module Page.Record.Model exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
+import Debouncer.Basic exposing (Debouncer)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Response exposing (Response, ServerData)
 
@@ -10,7 +11,7 @@ type CurrentRecordViewTab
     | RelatedSourcesSearchTab String
 
 
-type alias RecordPageModel =
+type alias RecordPageModel msg =
     { response : Response ServerData
     , currentTab : CurrentRecordViewTab
     , searchResults : Response ServerData
@@ -18,5 +19,6 @@ type alias RecordPageModel =
     , selectedResult : Maybe String
     , activeSearch : ActiveSearch
     , probeResponse : Response ProbeData
+    , probeDebouncer : Debouncer msg msg
     , applyFilterPrompt : Bool
     }

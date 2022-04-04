@@ -14,7 +14,7 @@ import Session exposing (Session)
 
 viewFullPlacePage :
     Session
-    -> RecordPageModel
+    -> RecordPageModel RecordMsg
     -> PlaceBody
     -> Element RecordMsg
 viewFullPlacePage session model body =

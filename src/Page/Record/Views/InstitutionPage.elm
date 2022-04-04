@@ -10,7 +10,7 @@ import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
-view : Session -> RecordPageModel -> Element RecordMsg
+view : Session -> RecordPageModel RecordMsg -> Element RecordMsg
 view session model =
     let
         pageView =
