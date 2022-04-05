@@ -1,11 +1,12 @@
 module Page.Record exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setRangeFacetValues)
 import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
+import Dict
 import Flip exposing (flip)
-import Page.Query exposing (setKeywordQuery, setNextQuery, toNextQuery)
+import Page.Query exposing (defaultQueryArgs, setKeywordQuery, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
@@ -16,7 +17,7 @@ import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
 import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
-import Viewport exposing (jumpToId)
+import Viewport exposing (jumpToId, resetViewportOf)
 
 
 type alias Model =
@@ -235,7 +236,24 @@ update session msg model =
             )
 
         UserClickedSearchResultsPagination pageUrl ->
-            ( model, Cmd.none )
+            let
+                oldData =
+                    case model.searchResults of
+                        Response d ->
+                            Just d
+
+                        _ ->
+                            Nothing
+            in
+            ( { model
+                | preview = NoResponseToShow
+                , searchResults = Loading oldData
+              }
+            , Cmd.batch
+                [ Nav.pushUrl session.key pageUrl
+                , resetViewportOf NothingHappened "search-results-list"
+                ]
+            )
 
         UserClickedSearchResultForPreview result ->
             let
@@ -371,7 +389,10 @@ update session msg model =
             ( model, Cmd.none )
 
         UserResetAllFilters ->
-            ( model, Cmd.none )
+            setNextQuery defaultQueryArgs model.activeSearch
+                |> setRangeFacetValues Dict.empty
+                |> flip setActiveSearch model
+                |> searchSubmit session
 
         NothingHappened ->
             ( model, Cmd.none )

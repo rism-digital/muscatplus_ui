@@ -38,10 +38,19 @@ searchSubmit session model =
                 _ ->
                     Nothing
 
+        oldSearchData =
+            case model.searchResults of
+                Response d ->
+                    Just d
+
+                _ ->
+                    Nothing
+
         newModel =
             { nationalCollectionSetModel
                 | preview = NoResponseToShow
                 , response = Loading oldData
+                , searchResults = Loading oldSearchData
             }
 
         searchUrl =

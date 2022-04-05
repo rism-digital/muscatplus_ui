@@ -80,9 +80,16 @@ changePage url model =
 
                         _ ->
                             RecordPage.init url route
+
+                sourcesUrl =
+                    { url | path = url.path ++ "/sources" }
             in
             ( InstitutionPage newSession newModel
-            , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
+            , Cmd.batch
+                [ RecordPage.recordPageRequest url
+                , RecordPage.recordSearchRequest sourcesUrl
+                ]
+                |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
         Route.InstitutionSourcePageRoute _ _ ->
@@ -104,6 +111,7 @@ changePage url model =
             ( InstitutionPage newSession newModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
+                , RecordPage.recordSearchRequest url
                 , RecordPage.requestPreviewIfSelected newModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage

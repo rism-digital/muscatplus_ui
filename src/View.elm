@@ -162,6 +162,14 @@ loadingIndicator model =
                 ]
                 [ progressBar ]
 
+        isLoading resp =
+            case resp of
+                Loading _ ->
+                    True
+
+                _ ->
+                    False
+
         chooseView resp =
             case resp of
                 Loading _ ->
@@ -191,7 +199,11 @@ loadingIndicator model =
             chooseView pageModel.response
 
         InstitutionPage _ pageModel ->
-            chooseView pageModel.response
+            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
+                loadingView
+
+            else
+                none
 
         FrontPage _ pageModel ->
             chooseView pageModel.response

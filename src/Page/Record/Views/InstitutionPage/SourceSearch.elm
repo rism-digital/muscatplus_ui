@@ -1,6 +1,6 @@
 module Page.Record.Views.InstitutionPage.SourceSearch exposing (..)
 
-import Element exposing (Element, alignBottom, alignTop, centerY, clipY, column, fill, height, htmlAttribute, inFront, minimum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, inFront, minimum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -20,9 +20,11 @@ import Page.Search.Views.Previews exposing (viewPreviewRouter)
 import Page.Search.Views.Results exposing (resultIsSelected, resultTemplate)
 import Page.Search.Views.Results.SourceResult exposing (viewSourceFlags, viewSourcePartOf, viewSourceSummary)
 import Page.Search.Views.SearchControls exposing (viewSearchButtons, viewUpdateMessage)
+import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingSM, lineSpacing, minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.ProbeResponse exposing (hasActionableProbeResponse, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -123,6 +125,26 @@ viewSearchResultsSection language model body isLoading =
 
 viewSearchResultsListPanel : Language -> RecordPageModel RecordMsg -> SearchBody -> Bool -> Element RecordMsg
 viewSearchResultsListPanel language model body isLoading =
+    let
+        loadingScreen =
+            if isLoading then
+                el
+                    [ width fill
+                    , height fill
+                    , Background.color (colourScheme.translucentGrey |> convertColorToElementColor)
+                    ]
+                    (el
+                        [ width (px 50)
+                        , height (px 50)
+                        , centerX
+                        , centerY
+                        ]
+                        (animatedLoader [ width (px 50), height (px 50) ] <| spinnerSvg colourScheme.slateGrey)
+                    )
+
+            else
+                none
+    in
     row
         [ width fill
         , height fill
@@ -134,6 +156,7 @@ viewSearchResultsListPanel language model body isLoading =
             [ width fill
             , height shrink
             , alignTop
+            , inFront loadingScreen
             ]
             [ viewSearchResultsList language model body ]
         ]

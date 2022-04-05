@@ -18,6 +18,9 @@ view session model =
                 Response (InstitutionData body) ->
                     viewFullInstitutionPage session model body
 
+                Loading (Just (InstitutionData oldData)) ->
+                    viewFullInstitutionPage session model oldData
+
                 _ ->
                     none
     in

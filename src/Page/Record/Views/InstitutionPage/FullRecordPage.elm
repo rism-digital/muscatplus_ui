@@ -20,6 +20,7 @@ import Page.UI.Attributes exposing (headingSM, lineSpacing, sectionBorderStyles,
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
@@ -92,21 +93,17 @@ viewRecordTabBar language searchUrl model body =
         currentMode =
             model.currentTab
 
-        sourceCount =
-            Maybe.andThen
-                (\a ->
-                    toFloat a.totalItems
-                        |> formatNumberByLanguage language
-                        |> Just
-                )
-                body.sources
-
         sourceLabel =
-            case sourceCount of
-                Just n ->
-                    "Sources (" ++ n ++ ")"
+            case model.searchResults of
+                Response (SearchData searchData) ->
+                    let
+                        sourceCount =
+                            toFloat searchData.totalItems
+                                |> formatNumberByLanguage language
+                    in
+                    "Sources (" ++ sourceCount ++ ")"
 
-                Nothing ->
+                _ ->
                     "Sources"
 
         descriptionTabBorder =
