@@ -1,5 +1,6 @@
 module ActiveSearch.Model exposing (..)
 
+import Debouncer.Messages exposing (Debouncer)
 import Dict exposing (Dict)
 import Page.Keyboard as Keyboard
 import Page.Query exposing (QueryArgs)
@@ -17,7 +18,7 @@ import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
     etc.
 
 -}
-type alias ActiveSearch =
+type alias ActiveSearch msg =
     { nextQuery : QueryArgs
     , expandedFacets : List String
     , rangeFacetValues : Dict FacetAlias ( String, String )
@@ -25,4 +26,5 @@ type alias ActiveSearch =
     , keyboard : Keyboard.Model
     , selectedResultSort : Maybe String
     , activeSuggestion : Maybe ActiveSuggestion
+    , activeSuggestionDebouncer : Debouncer msg
     }

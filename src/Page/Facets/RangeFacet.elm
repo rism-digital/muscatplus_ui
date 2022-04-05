@@ -23,7 +23,7 @@ rangeFacetHelp =
 type alias RangeFacetConfig msg =
     { language : Language
     , rangeFacet : RangeFacet
-    , activeSearch : ActiveSearch
+    , activeSearch : ActiveSearch msg
     , userLostFocusMsg : FacetAlias -> RangeFacetValue -> msg
     , userFocusedMsg : FacetAlias -> RangeFacetValue -> msg
     , userEnteredTextMsg : FacetAlias -> RangeFacetValue -> String -> msg

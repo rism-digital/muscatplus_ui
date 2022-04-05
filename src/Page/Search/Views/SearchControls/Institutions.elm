@@ -34,6 +34,7 @@ facetsForInstitutionsModeView language model body =
             , language = language
             , activeSearch = activeSearch
             , body = body
+            , selectColumns = 3
             }
     in
     row

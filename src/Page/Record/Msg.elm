@@ -38,6 +38,8 @@ type RecordMsg
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserRemovedItemFromQueryFacet FacetAlias String
     | UserEnteredTextInQueryFacet FacetAlias String String
+    | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg RecordMsg)
+    | DebouncerSettledToSendQueryFacetSuggestionRequest String
     | UserChoseOptionForQueryFacet FacetAlias String FacetBehaviours
     | UserResetAllFilters
     | NothingHappened

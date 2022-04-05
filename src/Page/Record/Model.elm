@@ -17,7 +17,7 @@ type alias RecordPageModel msg =
     , searchResults : Response ServerData
     , preview : Response ServerData
     , selectedResult : Maybe String
-    , activeSearch : ActiveSearch
+    , activeSearch : ActiveSearch msg
     , probeResponse : Response ProbeData
     , probeDebouncer : Debouncer msg
     , applyFilterPrompt : Bool

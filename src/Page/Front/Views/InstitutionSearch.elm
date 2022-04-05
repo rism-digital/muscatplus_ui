@@ -37,6 +37,7 @@ institutionSearchPanelView session model frontBody =
             , language = language
             , activeSearch = activeSearch
             , body = frontBody
+            , selectColumns = 4
             }
     in
     row

@@ -8,7 +8,7 @@ import Response exposing (Response, ServerData)
 
 type alias FrontPageModel msg =
     { response : Response ServerData
-    , activeSearch : ActiveSearch
+    , activeSearch : ActiveSearch msg
     , probeResponse : Response ProbeData
     , probeDebouncer : Debouncer msg
     , applyFilterPrompt : Bool

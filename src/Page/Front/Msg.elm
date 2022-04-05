@@ -24,6 +24,8 @@ type FrontMsg
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
     | UserRemovedItemFromQueryFacet FacetAlias String
     | UserEnteredTextInQueryFacet FacetAlias String String
+    | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg FrontMsg)
+    | DebouncerSettledToSendQueryFacetSuggestionRequest String
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
     | UserFocusedRangeFacet FacetAlias RangeFacetValue

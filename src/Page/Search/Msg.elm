@@ -25,6 +25,8 @@ type SearchMsg
     | UserClickedToggleFacet FacetAlias
     | UserClickedFacetPanelToggle
     | UserEnteredTextInQueryFacet FacetAlias String String
+    | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg SearchMsg)
+    | DebouncerSettledToSendQueryFacetSuggestionRequest String
     | UserChoseOptionForQueryFacet FacetAlias String FacetBehaviours
     | UserRemovedItemFromQueryFacet FacetAlias String
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String

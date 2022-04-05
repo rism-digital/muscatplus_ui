@@ -31,7 +31,7 @@ selectFacetHelp =
 type alias SelectFacetConfig msg =
     { language : Language
     , selectFacet : SelectFacet
-    , activeSearch : ActiveSearch
+    , activeSearch : ActiveSearch msg
     , numberOfColumns : Int
     , userClickedFacetExpandMsg : String -> msg
     , userChangedFacetBehaviourMsg : FacetAlias -> FacetBehaviours -> msg

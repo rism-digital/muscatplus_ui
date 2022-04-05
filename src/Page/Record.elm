@@ -1,6 +1,6 @@
 module Page.Record exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer)
 import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
@@ -8,9 +8,10 @@ import Flip exposing (flip)
 import Page.Query exposing (setKeywordQuery, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
+import Page.Record.Search exposing (searchSubmit)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route(..))
-import Page.Search.UpdateHelpers exposing (probeSubmit)
+import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, userEnteredTextInQueryFacet)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -109,11 +110,23 @@ recordPagePreviewRequest previewUrl =
     createRequestWithDecoder ServerRespondedWithRecordPreview previewUrl
 
 
-updateDebouncerConfig : Debouncer.UpdateConfig RecordMsg (RecordPageModel RecordMsg)
-updateDebouncerConfig =
+updateDebouncerProbeConfig : Debouncer.UpdateConfig RecordMsg (RecordPageModel RecordMsg)
+updateDebouncerProbeConfig =
     { mapMsg = DebouncerCapturedProbeRequest
     , getDebouncer = .probeDebouncer
     , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
+    }
+
+
+updateDebouncerSuggestConfig : Debouncer.UpdateConfig RecordMsg (RecordPageModel RecordMsg)
+updateDebouncerSuggestConfig =
+    { mapMsg = DebouncerCapturedQueryFacetSuggestionRequest
+    , getDebouncer = \model -> .activeSuggestionDebouncer model.activeSearch
+    , setDebouncer =
+        \debouncer model ->
+            model.activeSearch
+                |> setActiveSuggestionDebouncer debouncer
+                |> flip setActiveSearch model
     }
 
 
@@ -163,7 +176,7 @@ update session msg model =
             )
 
         DebouncerCapturedProbeRequest recordMsg ->
-            Debouncer.update (update session) updateDebouncerConfig recordMsg model
+            Debouncer.update (update session) updateDebouncerProbeConfig recordMsg model
 
         DebouncerSettledToSendProbeRequest ->
             probeSubmit ServerRespondedWithProbeData session model
@@ -278,7 +291,7 @@ update session msg model =
             )
 
         UserTriggeredSearchSubmit ->
-            ( model, Cmd.none )
+            searchSubmit session model
 
         UserEnteredTextInKeywordQueryBox queryText ->
             let
@@ -333,8 +346,26 @@ update session msg model =
         UserRemovedItemFromQueryFacet alias str ->
             ( model, Cmd.none )
 
-        UserEnteredTextInQueryFacet alias str1 str2 ->
-            ( model, Cmd.none )
+        UserEnteredTextInQueryFacet alias query suggestionUrl ->
+            let
+                debounceMsg =
+                    String.append suggestionUrl query
+                        |> DebouncerSettledToSendQueryFacetSuggestionRequest
+                        |> provideInput
+                        |> DebouncerCapturedQueryFacetSuggestionRequest
+
+                newModel =
+                    userEnteredTextInQueryFacet alias query suggestionUrl model
+            in
+            update session debounceMsg newModel
+
+        DebouncerCapturedQueryFacetSuggestionRequest suggestMsg ->
+            Debouncer.update (update session) updateDebouncerSuggestConfig suggestMsg model
+
+        DebouncerSettledToSendQueryFacetSuggestionRequest suggestionUrl ->
+            ( model
+            , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
+            )
 
         UserChoseOptionForQueryFacet alias str behaviour ->
             ( model, Cmd.none )

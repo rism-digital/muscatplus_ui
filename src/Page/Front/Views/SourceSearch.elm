@@ -38,6 +38,7 @@ sourceSearchPanelView session model frontBody =
             , language = language
             , activeSearch = model.activeSearch
             , body = frontBody
+            , selectColumns = 4
             }
     in
     row

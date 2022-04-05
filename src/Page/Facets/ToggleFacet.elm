@@ -12,7 +12,7 @@ import Page.UI.Facets.Toggle as Toggle
 
 type alias ToggleFacetConfig msg =
     { language : Language
-    , activeSearch : ActiveSearch
+    , activeSearch : ActiveSearch msg
     , toggleFacet : ToggleFacet
     , userClickedFacetToggleMsg : FacetAlias -> msg
     }

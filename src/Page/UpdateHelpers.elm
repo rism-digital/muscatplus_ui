@@ -1,4 +1,4 @@
-module Page.Search.UpdateHelpers exposing (..)
+module Page.UpdateHelpers exposing (..)
 
 import ActiveSearch
     exposing
@@ -49,8 +49,8 @@ import Utlities exposing (choose)
 
 addNationalCollectionFilter :
     Maybe String
-    -> { a | activeSearch : ActiveSearch }
-    -> { a | activeSearch : ActiveSearch }
+    -> { a | activeSearch : ActiveSearch msg }
+    -> { a | activeSearch : ActiveSearch msg }
 addNationalCollectionFilter ncFilter model =
     let
         newQuery =
@@ -71,8 +71,8 @@ setProbeResponse newResponse oldModel =
 probeSubmit :
     (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ) -> msg)
     -> Session
-    -> { a | activeSearch : ActiveSearch, probeResponse : Response ProbeData }
-    -> ( { a | activeSearch : ActiveSearch, probeResponse : Response ProbeData }, Cmd msg )
+    -> { a | activeSearch : ActiveSearch msg, probeResponse : Response ProbeData }
+    -> ( { a | activeSearch : ActiveSearch msg, probeResponse : Response ProbeData }, Cmd msg )
 probeSubmit probeMsg session model =
     let
         newModel =
@@ -87,7 +87,7 @@ probeSubmit probeMsg session model =
     )
 
 
-createProbeUrl : ActiveSearch -> String
+createProbeUrl : ActiveSearch msg -> String
 createProbeUrl activeSearch =
     let
         notationQueryParameters =
@@ -106,8 +106,8 @@ createProbeUrl activeSearch =
 userRemovedItemFromQueryFacet :
     FacetAlias
     -> String
-    -> { a | activeSearch : ActiveSearch }
-    -> { a | activeSearch : ActiveSearch }
+    -> { a | activeSearch : ActiveSearch msg }
+    -> { a | activeSearch : ActiveSearch msg }
 userRemovedItemFromQueryFacet alias query model =
     let
         activeFilters =
@@ -136,8 +136,8 @@ updateQueryFacetFilters :
     FacetAlias
     -> String
     -> FacetBehaviours
-    -> { a | activeSearch : ActiveSearch }
-    -> { a | activeSearch : ActiveSearch }
+    -> { a | activeSearch : ActiveSearch msg }
+    -> { a | activeSearch : ActiveSearch msg }
 updateQueryFacetFilters alias text currentBehaviour model =
     let
         activeFilters =
@@ -181,10 +181,9 @@ userEnteredTextInQueryFacet :
     FacetAlias
     -> String
     -> String
-    -> (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ) -> msg)
-    -> { a | activeSearch : ActiveSearch }
-    -> ( { a | activeSearch : ActiveSearch }, Cmd msg )
-userEnteredTextInQueryFacet alias query suggestionUrl msg model =
+    -> { a | activeSearch : ActiveSearch msg }
+    -> { a | activeSearch : ActiveSearch msg }
+userEnteredTextInQueryFacet alias query suggestionUrl model =
     let
         newQueryFacetValue =
             .queryFacetValues model.activeSearch
@@ -193,32 +192,32 @@ userEnteredTextInQueryFacet alias query suggestionUrl msg model =
         newModel =
             setQueryFacetValues newQueryFacetValue model.activeSearch
                 |> flip setActiveSearch model
-
-        ( suggestModel, suggestionCmd ) =
-            if String.length query > 2 then
-                ( newModel
-                , createSuggestRequestWithDecoder msg (String.append suggestionUrl query)
-                )
-
-            else if String.length query == 0 then
-                let
-                    clearSuggestionModel =
-                        setActiveSuggestion Nothing newModel.activeSearch
-                            |> flip setActiveSearch newModel
-                in
-                ( clearSuggestionModel, Cmd.none )
-
-            else
-                ( newModel, Cmd.none )
     in
-    ( suggestModel, suggestionCmd )
+    if String.length query == 0 then
+        let
+            clearSuggestionModel =
+                setActiveSuggestion Nothing newModel.activeSearch
+                    |> flip setActiveSearch newModel
+        in
+        clearSuggestionModel
+
+    else
+        newModel
+
+
+textQuerySuggestionSubmit :
+    String
+    -> (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ) -> msg)
+    -> Cmd msg
+textQuerySuggestionSubmit suggestionUrl msg =
+    createSuggestRequestWithDecoder msg suggestionUrl
 
 
 userChangedFacetBehaviour :
     FacetAlias
     -> FacetBehaviours
-    -> { a | activeSearch : ActiveSearch }
-    -> { a | activeSearch : ActiveSearch }
+    -> { a | activeSearch : ActiveSearch msg }
+    -> { a | activeSearch : ActiveSearch msg }
 userChangedFacetBehaviour alias facetBehaviour oldModel =
     toNextQuery oldModel.activeSearch
         |> toFacetBehaviours
@@ -268,8 +267,8 @@ userEnteredTextInRangeFacet :
     FacetAlias
     -> RangeFacetValue
     -> String
-    -> { a | activeSearch : ActiveSearch }
-    -> { a | activeSearch : ActiveSearch }
+    -> { a | activeSearch : ActiveSearch msg }
+    -> { a | activeSearch : ActiveSearch msg }
 userEnteredTextInRangeFacet alias inputBox value model =
     let
         newRangeFacetValues =
@@ -282,8 +281,8 @@ userEnteredTextInRangeFacet alias inputBox value model =
 
 userLostFocusOnRangeFacet :
     FacetAlias
-    -> { a | activeSearch : ActiveSearch }
-    -> { a | activeSearch : ActiveSearch }
+    -> { a | activeSearch : ActiveSearch msg }
+    -> { a | activeSearch : ActiveSearch msg }
 userLostFocusOnRangeFacet alias model =
     let
         rangeFacetValues =
@@ -322,7 +321,7 @@ userLostFocusOnRangeFacet alias model =
         |> flip setActiveSearch model
 
 
-userClickedToggleFacet : FacetAlias -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+userClickedToggleFacet : FacetAlias -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userClickedToggleFacet alias model =
     let
         oldFilters =
@@ -344,7 +343,7 @@ userClickedToggleFacet alias model =
         |> flip setActiveSearch model
 
 
-userClickedSelectFacetItem : FacetAlias -> String -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+userClickedSelectFacetItem : FacetAlias -> String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userClickedSelectFacetItem alias facetValue model =
     let
         activeFilters =
@@ -373,7 +372,7 @@ userClickedSelectFacetItem alias facetValue model =
         |> flip setActiveSearch model
 
 
-userClickedSelectFacetExpand : FacetAlias -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+userClickedSelectFacetExpand : FacetAlias -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userClickedSelectFacetExpand alias model =
     let
         newExpandedFacets =
@@ -384,7 +383,7 @@ userClickedSelectFacetExpand alias model =
         |> flip setActiveSearch model
 
 
-userChangedSelectFacetSort : FacetAlias -> FacetSorts -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+userChangedSelectFacetSort : FacetAlias -> FacetSorts -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userChangedSelectFacetSort alias facetSort model =
     let
         newFacetSorts =

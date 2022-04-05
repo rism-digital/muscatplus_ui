@@ -35,6 +35,7 @@ incipitSearchPanelView session model body =
             , language = language
             , activeSearch = model.activeSearch
             , body = body
+            , selectColumns = 4
             }
     in
     row

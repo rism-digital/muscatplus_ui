@@ -35,16 +35,17 @@ type alias FacetMsgConfig msg =
     }
 
 
-type alias FacetConfig a =
+type alias FacetConfig a msg =
     { alias : FacetAlias
     , language : Language
-    , activeSearch : ActiveSearch
+    , activeSearch : ActiveSearch msg
+    , selectColumns : Int
     , body : { a | facets : Facets }
     }
 
 
 viewFacet :
-    FacetConfig a
+    FacetConfig a msg
     -> FacetMsgConfig msg
     -> Element msg
 viewFacet cfg msg =
@@ -82,7 +83,7 @@ viewFacet cfg msg =
                     { language = cfg.language
                     , activeSearch = cfg.activeSearch
                     , selectFacet = facet
-                    , numberOfColumns = 3
+                    , numberOfColumns = cfg.selectColumns
                     , userClickedFacetExpandMsg = msg.userClickedFacetExpandSelectMsg
                     , userChangedFacetBehaviourMsg = msg.userChangedFacetBehaviourSelectMsg
                     , userChangedSelectFacetSortMsg = msg.userChangedSelectFacetSortSelectMsg

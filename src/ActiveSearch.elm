@@ -1,6 +1,7 @@
 module ActiveSearch exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
+import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebouncer)
 import Dict exposing (Dict)
 import List.Extra as LE
 import Page.Keyboard as Keyboard
@@ -10,7 +11,7 @@ import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Route exposing (Route(..))
 
 
-init : Route -> ActiveSearch
+init : Route -> ActiveSearch msg
 init initialRoute =
     let
         ( qargs, kqargs ) =
@@ -37,29 +38,31 @@ init initialRoute =
     , keyboard = updatedKeyboardModel
     , selectedResultSort = initialSort
     , activeSuggestion = Nothing
+    , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
     }
 
 
-empty : ActiveSearch
+empty : ActiveSearch msg
 empty =
     { nextQuery = Page.Query.defaultQueryArgs
     , expandedFacets = []
     , keyboard = Keyboard.initModel
     , selectedResultSort = Nothing
     , activeSuggestion = Nothing
+    , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
     }
 
 
-toActiveSearch : { a | activeSearch : ActiveSearch } -> ActiveSearch
+toActiveSearch : { a | activeSearch : ActiveSearch msg } -> ActiveSearch msg
 toActiveSearch model =
     model.activeSearch
 
 
-setActiveSearch : ActiveSearch -> { a | activeSearch : ActiveSearch } -> { a | activeSearch : ActiveSearch }
+setActiveSearch : ActiveSearch msg -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 setActiveSearch newSearch oldRecord =
     { oldRecord | activeSearch = newSearch }
 
@@ -92,6 +95,11 @@ toQueryFacetValues model =
 setQueryFacetValues : Dict FacetAlias String -> { a | queryFacetValues : Dict FacetAlias String } -> { a | queryFacetValues : Dict FacetAlias String }
 setQueryFacetValues newFacetValues oldRecord =
     { oldRecord | queryFacetValues = newFacetValues }
+
+
+setActiveSuggestionDebouncer : Debouncer msg -> { a | activeSuggestionDebouncer : Debouncer msg } -> { a | activeSuggestionDebouncer : Debouncer msg }
+setActiveSuggestionDebouncer newValue oldRecord =
+    { oldRecord | activeSuggestionDebouncer = newValue }
 
 
 toggleExpandedFacets : String -> List String -> List String

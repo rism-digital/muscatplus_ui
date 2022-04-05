@@ -1,13 +1,6 @@
 module Page.Search exposing (..)
 
-import ActiveSearch
-    exposing
-        ( setActiveSearch
-        , setActiveSuggestion
-        , setKeyboard
-        , setRangeFacetValues
-        , toKeyboard
-        )
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toKeyboard)
 import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
@@ -39,22 +32,7 @@ import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder,
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.Search.UpdateHelpers
-    exposing
-        ( addNationalCollectionFilter
-        , createProbeUrl
-        , probeSubmit
-        , updateQueryFacetFilters
-        , userChangedFacetBehaviour
-        , userChangedSelectFacetSort
-        , userClickedSelectFacetExpand
-        , userClickedSelectFacetItem
-        , userClickedToggleFacet
-        , userEnteredTextInQueryFacet
-        , userEnteredTextInRangeFacet
-        , userLostFocusOnRangeFacet
-        , userRemovedItemFromQueryFacet
-        )
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -196,11 +174,23 @@ convertFacetToResultMode facet =
     parseStringToResultMode qval
 
 
-updateDebouncerConfig : Debouncer.UpdateConfig SearchMsg (SearchPageModel SearchMsg)
-updateDebouncerConfig =
+updateDebouncerProbeConfig : Debouncer.UpdateConfig SearchMsg (SearchPageModel SearchMsg)
+updateDebouncerProbeConfig =
     { mapMsg = DebouncerCapturedProbeRequest
     , getDebouncer = .probeDebouncer
     , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
+    }
+
+
+updateDebouncerSuggestConfig : Debouncer.UpdateConfig SearchMsg (SearchPageModel SearchMsg)
+updateDebouncerSuggestConfig =
+    { mapMsg = DebouncerCapturedQueryFacetSuggestionRequest
+    , getDebouncer = \model -> .activeSuggestionDebouncer model.activeSearch
+    , setDebouncer =
+        \debouncer model ->
+            model.activeSearch
+                |> setActiveSuggestionDebouncer debouncer
+                |> flip setActiveSearch model
     }
 
 
@@ -298,7 +288,7 @@ update session msg model =
             ( model, Cmd.none )
 
         DebouncerCapturedProbeRequest searchMsg ->
-            Debouncer.update (update session) updateDebouncerConfig searchMsg model
+            Debouncer.update (update session) updateDebouncerProbeConfig searchMsg model
 
         DebouncerSettledToSendProbeRequest ->
             probeSubmit ServerRespondedWithProbeData session model
@@ -316,7 +306,25 @@ update session msg model =
             ( model, Cmd.none )
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
-            userEnteredTextInQueryFacet alias query suggestionUrl ServerRespondedWithSuggestionData model
+            let
+                debounceMsg =
+                    String.append suggestionUrl query
+                        |> DebouncerSettledToSendQueryFacetSuggestionRequest
+                        |> provideInput
+                        |> DebouncerCapturedQueryFacetSuggestionRequest
+
+                newModel =
+                    userEnteredTextInQueryFacet alias query suggestionUrl model
+            in
+            update session debounceMsg newModel
+
+        DebouncerCapturedQueryFacetSuggestionRequest suggestMsg ->
+            Debouncer.update (update session) updateDebouncerSuggestConfig suggestMsg model
+
+        DebouncerSettledToSendQueryFacetSuggestionRequest suggestionUrl ->
+            ( model
+            , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
+            )
 
         UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
             updateQueryFacetFilters alias selectedValue currentBehaviour model

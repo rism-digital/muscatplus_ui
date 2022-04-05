@@ -31,7 +31,7 @@ queryFacetHelp =
 
 type alias QueryFacetConfig msg =
     { language : Language
-    , activeSearch : ActiveSearch
+    , activeSearch : ActiveSearch msg
     , queryFacet : QueryFacet
     , userRemovedMsg : String -> String -> msg
     , userEnteredTextMsg : FacetAlias -> String -> String -> msg

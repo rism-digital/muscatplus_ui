@@ -34,6 +34,7 @@ viewFacetsForIncipitsMode language model body =
             , language = language
             , activeSearch = activeSearch
             , body = body
+            , selectColumns = 4
             }
     in
     row

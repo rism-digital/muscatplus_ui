@@ -30,12 +30,13 @@ facetsForPeopleModeView language model body =
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
 
-        facetConfig : String -> FacetConfig SearchBody
+        facetConfig : String -> FacetConfig SearchBody SearchMsg
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
             , body = body
+            , selectColumns = 3
             }
     in
     row

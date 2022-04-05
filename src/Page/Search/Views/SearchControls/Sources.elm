@@ -36,6 +36,7 @@ viewFacetsForSourcesMode language model body =
             , language = language
             , activeSearch = activeSearch
             , body = body
+            , selectColumns = 4
             }
     in
     row
@@ -121,7 +122,7 @@ viewFacetsForSourcesMode language model body =
         ]
 
 
-viewFacetToggleSection : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
+viewFacetToggleSection : Language -> ActiveSearch SearchMsg -> SearchBody -> Element SearchMsg
 viewFacetToggleSection language activeSearch body =
     let
         facetConfig alias =
@@ -129,6 +130,7 @@ viewFacetToggleSection language activeSearch body =
             , language = language
             , activeSearch = activeSearch
             , body = body
+            , selectColumns = 3
             }
 
         sourceContentsToggle =

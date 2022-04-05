@@ -307,7 +307,7 @@ viewSearchPageSort language model =
             none
 
 
-viewPaginationSortSelector : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
+viewPaginationSortSelector : Language -> ActiveSearch msg -> SearchBody -> Element SearchMsg
 viewPaginationSortSelector language activeSearch body =
     let
         pagination =

@@ -13,7 +13,7 @@ import Response exposing (Response, ServerData)
 -}
 type alias SearchPageModel msg =
     { response : Response ServerData
-    , activeSearch : ActiveSearch
+    , activeSearch : ActiveSearch msg
     , preview : Response ServerData
     , selectedResult : Maybe String
     , showFacetPanel : Bool
