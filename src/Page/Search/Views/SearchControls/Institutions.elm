@@ -16,11 +16,6 @@ import Page.UI.Components exposing (dividerWithText)
 facetsForInstitutionsModeView : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 facetsForInstitutionsModeView language model body =
     let
-        msgs =
-            { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
-            }
-
         activeSearch =
             toActiveSearch model
 
@@ -57,7 +52,13 @@ facetsForInstitutionsModeView language model body =
                     [ width fill
                     , alignTop
                     ]
-                    [ searchKeywordInput language msgs qText ]
+                    [ searchKeywordInput
+                        { language = language
+                        , submitMsg = SearchMsg.UserTriggeredSearchSubmit
+                        , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        }
+                    ]
                 ]
             , row
                 [ width fill ]

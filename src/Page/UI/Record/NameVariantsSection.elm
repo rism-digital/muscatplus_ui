@@ -1,15 +1,15 @@
-module Page.Record.Views.SourcePage.RelationshipsSection exposing (..)
+module Page.UI.Record.NameVariantsSection exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
-import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
+import Page.RecordTypes.Person exposing (NameVariantsSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
-import Page.UI.Record.Relationship exposing (viewRelationshipBody)
+import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
-viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
-viewRelationshipsSection language relSection =
+viewNameVariantsSection : Language -> NameVariantsSectionBody -> Element msg
+viewNameVariantsSection language variantsSection =
     let
         sectionBody =
             [ row
@@ -25,8 +25,8 @@ viewRelationshipsSection language relSection =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    (List.map (\t -> viewRelationshipBody language t) relSection.items)
+                    [ viewSummaryField language variantsSection.items ]
                 ]
             ]
     in
-    sectionTemplate language relSection sectionBody
+    sectionTemplate language variantsSection sectionBody

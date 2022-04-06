@@ -3,10 +3,10 @@ module Page.Front.Views.InstitutionSearch exposing (..)
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Page.Facets.Facets exposing (viewFacet)
+import Page.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
-import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
@@ -21,11 +21,6 @@ institutionSearchPanelView session model frontBody =
 
         activeSearch =
             model.activeSearch
-
-        msgs =
-            { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
-            }
 
         qText =
             toNextQuery model.activeSearch
@@ -61,7 +56,12 @@ institutionSearchPanelView session model frontBody =
                     [ headingHero, Font.semiBold ]
                     [ text "Institution authorities" ]
                 ]
-            , viewFrontKeywordQueryInput language msgs qText
+            , viewFrontKeywordQueryInput
+                { language = language
+                , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                , queryText = qText
+                }
             , row
                 [ width fill ]
                 [ column

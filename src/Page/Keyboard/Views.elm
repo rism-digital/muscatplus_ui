@@ -27,7 +27,7 @@ import Page.RecordTypes.Search exposing (NotationFacet)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Incipits exposing (viewSVGRenderedIncipit)
+import Page.UI.Record.Incipits exposing (viewSVGRenderedIncipit)
 
 
 view : NotationFacet -> Language -> Keyboard -> Element KeyboardMsg

@@ -40,11 +40,15 @@ import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacet
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
-import Page.Search.Utilities exposing (createRangeString)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Utlities exposing (choose)
+
+
+createRangeString : String -> String -> String
+createRangeString lower upper =
+    "[" ++ lower ++ " TO " ++ upper ++ "]"
 
 
 addNationalCollectionFilter :

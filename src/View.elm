@@ -15,7 +15,6 @@ import Page.Record.Views.InstitutionPage
 import Page.Record.Views.PersonPage
 import Page.Record.Views.PlacePage
 import Page.Record.Views.SourcePage
-import Page.Record.Views.SourcePage.TableOfContents exposing (createSourceRecordToc)
 import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
@@ -53,58 +52,48 @@ view model =
                 NotFoundPage session pageModel ->
                     Element.map Msg.UserInteractedWithNotFoundPage (Page.NotFound.Views.view session pageModel)
 
-        defaultView =
-            ( "RISM Online", none )
+        defaultTitle =
+            "RISM Online"
 
-        ( pageTitle, _ ) =
+        pageTitle =
             case model of
                 SearchPage session _ ->
-                    ( extractLabelFromLanguageMap session.language localTranslations.search ++ " RISM"
-                    , none
-                    )
+                    extractLabelFromLanguageMap session.language localTranslations.search ++ " RISM"
 
                 SourcePage session pageModel ->
                     case pageModel.response of
                         Response (SourceData body) ->
-                            ( extractLabelFromLanguageMap session.language body.label
-                            , Element.map UserInteractedWithRecordPage (createSourceRecordToc session.language body)
-                            )
+                            extractLabelFromLanguageMap session.language body.label
 
                         _ ->
-                            defaultView
+                            defaultTitle
 
                 PersonPage session pageModel ->
                     case pageModel.response of
                         Response (PersonData body) ->
-                            ( extractLabelFromLanguageMap session.language body.label
-                            , none
-                            )
+                            extractLabelFromLanguageMap session.language body.label
 
                         _ ->
-                            defaultView
+                            defaultTitle
 
                 InstitutionPage session pageModel ->
                     case pageModel.response of
                         Response (InstitutionData body) ->
-                            ( extractLabelFromLanguageMap session.language body.label
-                            , none
-                            )
+                            extractLabelFromLanguageMap session.language body.label
 
                         _ ->
-                            defaultView
+                            defaultTitle
 
                 PlacePage session pageModel ->
                     case pageModel.response of
                         Response (PlaceData body) ->
-                            ( extractLabelFromLanguageMap session.language body.label
-                            , none
-                            )
+                            extractLabelFromLanguageMap session.language body.label
 
                         _ ->
-                            defaultView
+                            defaultTitle
 
                 _ ->
-                    defaultView
+                    defaultTitle
 
         -- set the colour for links (a tags) globally.
         globalLinkColor =

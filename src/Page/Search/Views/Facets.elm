@@ -14,6 +14,24 @@ import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNota
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
+facetSearchMsgConfig : FacetMsgConfig SearchMsg
+facetSearchMsgConfig =
+    { userClickedToggleMsg = SearchMsg.UserClickedToggleFacet
+    , userLostFocusRangeMsg = SearchMsg.UserLostFocusRangeFacet
+    , userFocusedRangeMsg = SearchMsg.UserFocusedRangeFacet
+    , userEnteredTextRangeMsg = SearchMsg.UserEnteredTextInRangeFacet
+    , userClickedFacetExpandSelectMsg = SearchMsg.UserClickedSelectFacetExpand
+    , userChangedFacetBehaviourSelectMsg = SearchMsg.UserChangedFacetBehaviour
+    , userChangedSelectFacetSortSelectMsg = SearchMsg.UserChangedSelectFacetSort
+    , userSelectedFacetItemSelectMsg = SearchMsg.UserClickedSelectFacetItem
+    , userInteractedWithPianoKeyboard = SearchMsg.UserInteractedWithPianoKeyboard
+    , userRemovedQueryMsg = SearchMsg.UserRemovedItemFromQueryFacet
+    , userEnteredTextQueryMsg = SearchMsg.UserEnteredTextInQueryFacet
+    , userChangedBehaviourQueryMsg = SearchMsg.UserChangedFacetBehaviour
+    , userChoseOptionQueryMsg = SearchMsg.UserChoseOptionForQueryFacet
+    }
+
+
 viewModeItems : ResultMode -> Language -> ModeFacet -> Element SearchMsg
 viewModeItems selectedMode language typeFacet =
     let
@@ -117,21 +135,3 @@ viewModeItem selectedMode language fitem =
                 }
             )
         ]
-
-
-facetSearchMsgConfig : FacetMsgConfig SearchMsg
-facetSearchMsgConfig =
-    { userClickedToggleMsg = SearchMsg.UserClickedToggleFacet
-    , userLostFocusRangeMsg = SearchMsg.UserLostFocusRangeFacet
-    , userFocusedRangeMsg = SearchMsg.UserFocusedRangeFacet
-    , userEnteredTextRangeMsg = SearchMsg.UserEnteredTextInRangeFacet
-    , userClickedFacetExpandSelectMsg = SearchMsg.UserClickedSelectFacetExpand
-    , userChangedFacetBehaviourSelectMsg = SearchMsg.UserChangedFacetBehaviour
-    , userChangedSelectFacetSortSelectMsg = SearchMsg.UserChangedSelectFacetSort
-    , userSelectedFacetItemSelectMsg = SearchMsg.UserClickedSelectFacetItem
-    , userInteractedWithPianoKeyboard = SearchMsg.UserInteractedWithPianoKeyboard
-    , userRemovedQueryMsg = SearchMsg.UserRemovedItemFromQueryFacet
-    , userEnteredTextQueryMsg = SearchMsg.UserEnteredTextInQueryFacet
-    , userChangedBehaviourQueryMsg = SearchMsg.UserChangedFacetBehaviour
-    , userChoseOptionQueryMsg = SearchMsg.UserChoseOptionForQueryFacet
-    }

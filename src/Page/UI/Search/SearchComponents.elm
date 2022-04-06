@@ -1,29 +1,82 @@
-module Page.Front.Views.SearchControls exposing (..)
+module Page.UI.Search.SearchComponents exposing (..)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, centerY, column, el, fill, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Front.Model exposing (FrontPageModel)
-import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, sectionSpacing)
-import Page.UI.Events exposing (onEnter)
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewProbeResponseNumbers)
+import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.UI.Animations exposing (animatedLoader)
+import Page.UI.Attributes exposing (headingSM, lineSpacing, minimalDropShadow)
+import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..))
 
 
-viewUpdateMessage : Language -> Bool -> Bool -> Element FrontMsg
-viewUpdateMessage language applyFilterPrompt hasActionableProbeResponse =
+hasActionableProbeResponse : Response ProbeData -> Bool
+hasActionableProbeResponse probeResponse =
+    case probeResponse of
+        Response d ->
+            d.totalItems > 0
+
+        -- We set this to true if the probe data is loading so that we do not falsely
+        -- state that no results were available.
+        Loading _ ->
+            True
+
+        -- If it hasn't been asked, then we don't know, so we assume it's actionable.
+        NoResponseToShow ->
+            True
+
+        _ ->
+            False
+
+
+viewProbeResponseNumbers : Language -> Response ProbeData -> Element msg
+viewProbeResponseNumbers language probeResponse =
+    case probeResponse of
+        Response data ->
+            let
+                formattedNumber =
+                    toFloat data.totalItems
+                        |> formatNumberByLanguage language
+
+                textMsg =
+                    extractLabelFromLanguageMap language localTranslations.resultsWithFilters
+            in
+            el
+                []
+                (text <| textMsg ++ ": " ++ formattedNumber)
+
+        Loading _ ->
+            el
+                [ width (px 25)
+                , height (px 25)
+                ]
+                (animatedLoader [ width (px 25), height (px 25) ] <| spinnerSvg colourScheme.slateGrey)
+
+        Error errMsg ->
+            el
+                []
+                (text <| extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults ++ ": " ++ errMsg)
+
+        NoResponseToShow ->
+            el
+                []
+                (text "")
+
+
+viewUpdateMessage : Language -> Bool -> Bool -> Element msg
+viewUpdateMessage language applyFilterPrompt actionableProbResponse =
     let
         elMsg =
-            if applyFilterPrompt && hasActionableProbeResponse then
+            if applyFilterPrompt && actionableProbResponse then
                 text <| extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults
 
-            else if applyFilterPrompt && not hasActionableProbeResponse then
+            else if applyFilterPrompt && not actionableProbResponse then
                 text <| extractLabelFromLanguageMap language localTranslations.noResultsWouldBeFound
 
             else
@@ -38,15 +91,19 @@ viewUpdateMessage language applyFilterPrompt hasActionableProbeResponse =
         elMsg
 
 
-viewFrontSearchButtons : Language -> FrontPageModel FrontMsg -> Element FrontMsg
-viewFrontSearchButtons language model =
-    let
-        msgs =
-            { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
-            , resetMsg = FrontMsg.UserResetAllFilters
-            }
+type alias SearchButtonConfig a msg =
+    { language : Language
+    , model : { a | probeResponse : Response ProbeData, applyFilterPrompt : Bool }
+    , submitMsg : msg
+    , resetMsg : msg
+    }
 
+
+viewSearchButtons :
+    SearchButtonConfig model msg
+    -> Element msg
+viewSearchButtons { language, model, submitMsg, resetMsg } =
+    let
         actionableProbeResponse =
             hasActionableProbeResponse model.probeResponse
 
@@ -62,15 +119,17 @@ viewFrontSearchButtons language model =
 
             else
                 ( colourScheme.darkBlue |> convertColorToElementColor
-                , Just msgs.submitMsg
+                , Just submitMsg
                 , pointer
                 )
     in
     row
         [ alignBottom
         , Background.color (colourScheme.white |> convertColorToElementColor)
-        , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
-        , Border.widthEach { top = 1, bottom = 0, left = 1, right = 1 }
+
+        --, Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+        --, Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , minimalDropShadow
         , width fill
         , height (px 100)
         , paddingXY 20 0
@@ -116,7 +175,7 @@ viewFrontSearchButtons language model =
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , headingSM
                         ]
-                        { onPress = Just msgs.resetMsg
+                        { onPress = Just resetMsg
                         , label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
                         }
                     ]

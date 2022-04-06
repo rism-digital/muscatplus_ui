@@ -19,11 +19,6 @@ viewFacetsForIncipitsMode language model body =
         activeSearch =
             toActiveSearch model
 
-        msgs =
-            { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
-            }
-
         qText =
             toNextQuery activeSearch
                 |> toKeywordQuery
@@ -70,7 +65,13 @@ viewFacetsForIncipitsMode language model body =
                         [ width fill
                         , alignTop
                         ]
-                        [ searchKeywordInput language msgs qText ]
+                        [ searchKeywordInput
+                            { language = language
+                            , submitMsg = SearchMsg.UserTriggeredSearchSubmit
+                            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                            , queryText = qText
+                            }
+                        ]
                     ]
                 ]
             , viewFacetSection language

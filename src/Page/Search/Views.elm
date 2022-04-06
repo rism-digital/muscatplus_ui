@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -13,19 +13,16 @@ import Page.RecordTypes.Search exposing (ModeFacet, SearchBody, SearchResult(..)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (viewModeItems)
-import Page.Search.Views.Loading exposing (searchModeSelectorLoading, viewSearchResultsLoading)
-import Page.Search.Views.Previews exposing (viewPreviewRouter, viewUnknownPreview)
-import Page.Search.Views.Results.IncipitResult exposing (viewIncipitSearchResult)
-import Page.Search.Views.Results.InstitutionResult exposing (viewInstitutionSearchResult)
-import Page.Search.Views.Results.PersonResult exposing (viewPersonSearchResult)
-import Page.Search.Views.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.Search.Views.SearchControls exposing (viewSearchControls)
-import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (lineSpacing)
-import Page.UI.Components exposing (dropdownSelect, h3, renderParagraph)
+import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Pagination exposing (viewPagination)
+import Page.UI.Record.Previews exposing (viewPreviewRouter, viewUnknownPreview)
+import Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
+import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
+import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
+import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
+import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -95,7 +92,7 @@ searchModeSelectorRouter language model =
             searchModeSelectorView language model oldData.modes
 
         _ ->
-            searchModeSelectorLoading
+            none
 
 
 searchModeSelectorView : Language -> SearchPageModel SearchMsg -> Maybe ModeFacet -> Element SearchMsg
@@ -128,22 +125,22 @@ searchResultsViewRouter language model =
             viewSearchResultsSection language model oldData True
 
         Loading _ ->
-            viewSearchResultsLoading language model
+            viewSearchResultsLoadingTmpl language
 
         Response (SearchData body) ->
             viewSearchResultsSection language model body False
 
-        Error _ ->
-            viewSearchResultsError language model
+        Error err ->
+            viewSearchResultsErrorTmpl language err
 
         NoResponseToShow ->
             -- In case we're just booting the app up, show
             -- the loading message.
-            viewSearchResultsLoading language model
+            viewSearchResultsLoadingTmpl language
 
         _ ->
             -- For any other responses, show the error.
-            viewSearchResultsError language model
+            viewSearchResultsErrorTmpl language "An unknown error occurred."
 
 
 viewSearchResultsSection : Language -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
@@ -194,28 +191,8 @@ viewSearchResultsSection language model body isLoading =
 
 viewSearchResultsListPanel : Language -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
 viewSearchResultsListPanel language model body isLoading =
-    let
-        loadingScreen =
-            if isLoading then
-                el
-                    [ width fill
-                    , height fill
-                    , Background.color (colourScheme.translucentGrey |> convertColorToElementColor)
-                    ]
-                    (el
-                        [ width (px 50)
-                        , height (px 50)
-                        , centerX
-                        , centerY
-                        ]
-                        (animatedLoader [ width (px 50), height (px 50) ] <| spinnerSvg colourScheme.slateGrey)
-                    )
-
-            else
-                none
-    in
     if body.totalItems == 0 then
-        viewSearchResultsNotFound language
+        viewSearchResultsNotFoundTmpl language
 
     else
         row
@@ -229,34 +206,11 @@ viewSearchResultsListPanel language model body isLoading =
                 [ width fill
                 , height shrink
                 , alignTop
-                , inFront loadingScreen
+                , inFront <| viewResultsListLoadingScreenTmpl isLoading
                 ]
                 [ viewSearchResultsList language model body
                 ]
             ]
-
-
-viewSearchResultsNotFound : Language -> Element SearchMsg
-viewSearchResultsNotFound language =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            , padding 20
-            , spacing lineSpacing
-            ]
-            [ row
-                [ width fill ]
-                [ h3 language localTranslations.noResultsHeader ]
-            , row
-                [ width fill ]
-                [ renderParagraph language localTranslations.noResultsBody ]
-            ]
-        ]
 
 
 viewSearchResultsList : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
@@ -278,16 +232,36 @@ viewSearchResultRouter : Language -> Maybe String -> SearchResult -> Element Sea
 viewSearchResultRouter language selectedResult res =
     case res of
         SourceResult body ->
-            viewSourceSearchResult language selectedResult body
+            viewSourceSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                }
 
         PersonResult body ->
-            viewPersonSearchResult language selectedResult body
+            viewPersonSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                }
 
         InstitutionResult body ->
-            viewInstitutionSearchResult language selectedResult body
+            viewInstitutionSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                }
 
         IncipitResult body ->
-            viewIncipitSearchResult language selectedResult body
+            viewIncipitSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                }
 
 
 viewSearchPageSort : Language -> SearchPageModel SearchMsg -> Element SearchMsg
@@ -307,7 +281,7 @@ viewSearchPageSort language model =
             none
 
 
-viewPaginationSortSelector : Language -> ActiveSearch msg -> SearchBody -> Element SearchMsg
+viewPaginationSortSelector : Language -> ActiveSearch SearchMsg -> SearchBody -> Element SearchMsg
 viewPaginationSortSelector language activeSearch body =
     let
         pagination =
@@ -368,13 +342,3 @@ viewPaginationSortSelector language activeSearch body =
                 ]
             ]
         ]
-
-
-viewSearchResultsError : Language -> SearchPageModel SearchMsg -> Element msg
-viewSearchResultsError language model =
-    case model.response of
-        Error msg ->
-            text msg
-
-        _ ->
-            none

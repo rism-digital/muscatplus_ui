@@ -18,11 +18,6 @@ import Page.UI.Components exposing (dividerWithText)
 viewFacetsForSourcesMode : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 viewFacetsForSourcesMode language model body =
     let
-        msgs =
-            { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
-            }
-
         activeSearch =
             toActiveSearch model
 
@@ -60,7 +55,13 @@ viewFacetsForSourcesMode language model body =
                     [ width fill
                     , alignTop
                     ]
-                    [ searchKeywordInput language msgs qText ]
+                    [ searchKeywordInput
+                        { language = language
+                        , submitMsg = SearchMsg.UserTriggeredSearchSubmit
+                        , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        }
+                    ]
                 ]
             , row
                 [ width fill ]

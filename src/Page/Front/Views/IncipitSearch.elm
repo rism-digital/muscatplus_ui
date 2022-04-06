@@ -25,11 +25,6 @@ incipitSearchPanelView session model body =
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
 
-        msgs =
-            { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
-            }
-
         facetConfig alias =
             { alias = alias
             , language = language
@@ -71,7 +66,13 @@ incipitSearchPanelView session model body =
                     [ width fill
                     , alignTop
                     ]
-                    [ searchKeywordInput language msgs qText ]
+                    [ searchKeywordInput
+                        { language = language
+                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        }
+                    ]
                 ]
             , row
                 [ width fill

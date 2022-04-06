@@ -17,7 +17,7 @@ type alias NotationFacetConfig msg =
 
 
 viewKeyboardControl : NotationFacetConfig msg -> Element msg
-viewKeyboardControl config =
+viewKeyboardControl { language, keyboardModel, notationFacet, userInteractedWithKeyboardMsg } =
     let
         keyboardConfig =
             { numOctaves = 3 }
@@ -26,6 +26,6 @@ viewKeyboardControl config =
         [ alignLeft
         , width fill
         ]
-        [ Keyboard.view config.notationFacet config.language (Keyboard config.keyboardModel keyboardConfig)
-            |> Element.map config.userInteractedWithKeyboardMsg
+        [ Keyboard.view notationFacet language (Keyboard keyboardModel keyboardConfig)
+            |> Element.map userInteractedWithKeyboardMsg
         ]
