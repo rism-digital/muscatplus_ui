@@ -76,50 +76,6 @@ progressBar =
         none
 
 
-{-|
-
-    Implements a loading animation that can act as a placeholder for
-    the contents.
-
--}
-loadingBox : Float -> Float -> Element msg
-loadingBox boxWidth boxHeight =
-    Element.html
-        (div [ loadingStyles boxWidth boxHeight ] []
-            |> toUnstyled
-        )
-
-
-loadingStyles : Float -> Float -> Attribute msg
-loadingStyles whooshWidth whooshHeight =
-    css
-        [ height (px whooshHeight)
-        , width (px whooshWidth)
-        , backgroundColor (rgb 250 250 250)
-        , position relative
-        , overflow hidden
-        , before
-            [ property "content" "''"
-            , display block
-            , position absolute
-            , left (px -150)
-            , top (px 0)
-            , height (pct 100)
-            , width (px 150)
-            , backgroundImage (linearGradient2 toRight (stop2 (rgba 255 255 255 0) (pct 0)) (stop2 (rgba 241 244 249 1) (pct 50)) [ stop2 (rgba 255 255 255 0) (pct 100) ])
-            , animationName
-                (keyframes
-                    [ ( 0, [ Css.Animations.property "left" "-150px" ] )
-                    , ( 100, [ Css.Animations.property "left" "100%" ] )
-                    ]
-                )
-            , animationDuration (sec 1.0)
-            , property "animation-iteration-count" "infinite"
-            , property "animation-timing-function" "cubic-bezier(0.4, 0.0, 0.2, 1)"
-            ]
-        ]
-
-
 animatedEl : Animation -> List (Element.Attribute msg) -> Element msg -> Element msg
 animatedEl =
     animatedUi Element.el
