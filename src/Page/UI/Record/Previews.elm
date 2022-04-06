@@ -1,11 +1,11 @@
 module Page.UI.Record.Previews exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Html.Attributes
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.UI.Attributes exposing (headingMD, searchColumnVerticalSize)
@@ -36,26 +36,24 @@ viewPreviewRouter language closeMsg previewData =
                     viewIncipitPreview language body
 
                 _ ->
-                    viewUnknownPreview
+                    none
     in
     row
         [ width fill
         , height fill
-        , searchColumnVerticalSize
-        , scrollbarY
+        , clipY
         , alignTop
         , alignRight
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
         , Border.width 4
-        , htmlAttribute (Html.Attributes.style "z-index" "10")
         ]
         [ column
             [ width fill
-            , spacing 10
+            , height fill
             , alignTop
             , Background.color (colourScheme.white |> convertColorToElementColor)
-            , htmlAttribute (Html.Attributes.style "z-index" "10")
+            , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
             [ viewRecordPreviewTitleBar language closeMsg
             , preview
@@ -92,8 +90,3 @@ viewRecordPreviewTitleBar language closeMsg =
             ]
             (text <| extractLabelFromLanguageMap language localTranslations.recordPreview)
         ]
-
-
-viewUnknownPreview : Element msg
-viewUnknownPreview =
-    none

@@ -1,17 +1,15 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Font as Font
-import Element.Input exposing (button)
-import Language exposing (Language, formatNumberByLanguage)
+import Language exposing (Language)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
-import Page.Record.Views.InstitutionPage.SourceSearch exposing (viewSourceSearchTab)
+import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Attributes exposing (headingSM, lineSpacing, sectionBorderStyles, sectionSpacing)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -20,7 +18,6 @@ import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
@@ -37,7 +34,7 @@ viewFullInstitutionPage session model body =
                     viewDescriptionTab session.language body
 
                 RelatedSourcesSearchTab _ ->
-                    viewSourceSearchTab session.language model body
+                    viewSourceSearchTab session.language model
     in
     row
         [ width fill
@@ -81,85 +78,15 @@ viewRecordTopBarRouter language model body =
                 none
 
             else
-                viewRecordTabBar language sourceBlock.url model body
+                viewRecordSourceSearchTabBar
+                    { language = language
+                    , searchUrl = sourceBlock.url
+                    , model = model
+                    , recordId = body.id
+                    }
 
         Nothing ->
             none
-
-
-viewRecordTabBar : Language -> String -> RecordPageModel RecordMsg -> InstitutionBody -> Element RecordMsg
-viewRecordTabBar language searchUrl model body =
-    let
-        currentMode =
-            model.currentTab
-
-        sourceLabel =
-            case model.searchResults of
-                Response (SearchData searchData) ->
-                    let
-                        sourceCount =
-                            toFloat searchData.totalItems
-                                |> formatNumberByLanguage language
-                    in
-                    "Sources (" ++ sourceCount ++ ")"
-
-                _ ->
-                    "Sources"
-
-        descriptionTabBorder =
-            case currentMode of
-                DefaultRecordViewTab _ ->
-                    colourScheme.lightBlue |> convertColorToElementColor
-
-                _ ->
-                    colourScheme.cream |> convertColorToElementColor
-
-        searchTabBorder =
-            case currentMode of
-                RelatedSourcesSearchTab _ ->
-                    colourScheme.lightBlue |> convertColorToElementColor
-
-                _ ->
-                    colourScheme.cream |> convertColorToElementColor
-    in
-    row
-        [ centerX
-        , width fill
-        , height (px 25)
-        , spacing 15
-        ]
-        [ el
-            [ width shrink
-            , height fill
-            , Font.center
-            , alignLeft
-            , pointer
-            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
-            , Border.color descriptionTabBorder
-            ]
-            (button
-                []
-                { onPress = Just <| UserClickedRecordViewTab (DefaultRecordViewTab body.id)
-                , label = text "Description"
-                }
-            )
-        , el
-            [ width shrink
-            , height fill
-            , alignLeft
-            , centerY
-            , pointer
-            , headingSM
-            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
-            , Border.color searchTabBorder
-            ]
-            (button
-                []
-                { onPress = Just <| UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl)
-                , label = text sourceLabel
-                }
-            )
-        ]
 
 
 viewDescriptionTab : Language -> InstitutionBody -> Element msg

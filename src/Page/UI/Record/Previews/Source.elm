@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews.Source exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
@@ -47,10 +47,10 @@ viewSourcePreview language body =
         , height fill
         , alignTop
         , paddingXY 20 10
+        , scrollbarY
         ]
         [ column
             [ width fill
-            , height fill
             , alignTop
             , spacing sectionSpacing
             ]

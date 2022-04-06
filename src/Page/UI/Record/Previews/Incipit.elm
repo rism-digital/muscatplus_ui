@@ -1,7 +1,8 @@
 module Page.UI.Record.Previews.Incipit exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, htmlAttribute, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingData, EncodingFormat(..), IncipitBody)
 import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
@@ -38,11 +39,11 @@ viewIncipitPreview language body =
         , height fill
         , alignTop
         , paddingXY 20 10
+        , scrollbarY
         ]
         [ column
             [ spacing sectionSpacing
             , width fill
-            , height fill
             , alignTop
             ]
             [ row

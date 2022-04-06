@@ -1,19 +1,20 @@
-module Page.Record.Views.InstitutionPage.SourceSearch exposing (..)
+module Page.Record.Views.SourceSearch exposing (..)
 
-import Element exposing (Element, alignTop, clipY, column, fill, height, htmlAttribute, inFront, none, padding, row, scrollbarY, shrink, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, inFront, none, padding, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Border as Border
+import Element.Font as Font
+import Element.Input exposing (button)
 import Html.Attributes as HA
-import Language exposing (Language)
+import Language exposing (Language, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Facets.Facets exposing (viewFacet, viewFacetSection)
 import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.Record.Model exposing (RecordPageModel)
-import Page.Record.Msg as RecordMsg exposing (RecordMsg)
+import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
-import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
-import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (headingSM, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText, h3, renderParagraph)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewRouter)
@@ -24,8 +25,11 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 
 
-viewSourceSearchTab : Language -> RecordPageModel RecordMsg -> InstitutionBody -> Element RecordMsg
-viewSourceSearchTab language model body =
+viewSourceSearchTab :
+    Language
+    -> RecordPageModel RecordMsg
+    -> Element RecordMsg
+viewSourceSearchTab language model =
     row
         [ width fill
         , height fill
@@ -316,4 +320,85 @@ viewSearchControls language model body =
                 , resetMsg = RecordMsg.UserResetAllFilters
                 }
             ]
+        ]
+
+
+viewRecordSourceSearchTabBar :
+    { language : Language
+    , model : RecordPageModel RecordMsg
+    , searchUrl : String
+    , recordId : String
+    }
+    -> Element RecordMsg
+viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
+    let
+        currentMode =
+            model.currentTab
+
+        sourceLabel =
+            case model.searchResults of
+                Response (SearchData searchData) ->
+                    let
+                        sourceCount =
+                            toFloat searchData.totalItems
+                                |> formatNumberByLanguage language
+                    in
+                    "Sources (" ++ sourceCount ++ ")"
+
+                _ ->
+                    "Sources"
+
+        descriptionTabBorder =
+            case currentMode of
+                DefaultRecordViewTab _ ->
+                    colourScheme.lightBlue |> convertColorToElementColor
+
+                _ ->
+                    colourScheme.cream |> convertColorToElementColor
+
+        searchTabBorder =
+            case currentMode of
+                RelatedSourcesSearchTab _ ->
+                    colourScheme.lightBlue |> convertColorToElementColor
+
+                _ ->
+                    colourScheme.cream |> convertColorToElementColor
+    in
+    row
+        [ centerX
+        , width fill
+        , height (px 25)
+        , spacing 15
+        ]
+        [ el
+            [ width shrink
+            , height fill
+            , Font.center
+            , alignLeft
+            , pointer
+            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+            , Border.color descriptionTabBorder
+            ]
+            (button
+                []
+                { onPress = Just <| UserClickedRecordViewTab (DefaultRecordViewTab recordId)
+                , label = text "Description"
+                }
+            )
+        , el
+            [ width shrink
+            , height fill
+            , alignLeft
+            , centerY
+            , pointer
+            , headingSM
+            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+            , Border.color searchTabBorder
+            ]
+            (button
+                []
+                { onPress = Just <| UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl)
+                , label = text sourceLabel
+                }
+            )
         ]

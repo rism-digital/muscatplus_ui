@@ -1,13 +1,16 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Language exposing (Language)
+import Element.Font as Font
+import Element.Input exposing (button)
+import Language exposing (Language, formatNumberByLanguage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
-import Page.Record.Msg exposing (RecordMsg)
+import Page.Record.Msg exposing (RecordMsg(..))
+import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
+import Page.UI.Attributes exposing (headingSM, lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -17,6 +20,7 @@ import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
@@ -32,8 +36,8 @@ viewFullPersonPage session model body =
                 DefaultRecordViewTab _ ->
                     viewDescriptionTab session.language body
 
-                _ ->
-                    none
+                RelatedSourcesSearchTab _ ->
+                    viewSourceSearchTab session.language model
     in
     row
         [ width fill
@@ -60,12 +64,32 @@ viewFullPersonPage session model body =
                     , Background.color (colourScheme.cream |> convertColorToElementColor)
                     ]
                     [ pageHeaderTemplate session.language body
+                    , viewRecordTopBarRouter session.language model body
                     ]
                 ]
             , pageBodyView
             , pageFooterTemplate session session.language body
             ]
         ]
+
+
+viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> PersonBody -> Element RecordMsg
+viewRecordTopBarRouter language model body =
+    case body.sources of
+        Just sourceBlock ->
+            if sourceBlock.totalItems == 0 then
+                none
+
+            else
+                viewRecordSourceSearchTabBar
+                    { language = language
+                    , searchUrl = sourceBlock.url
+                    , model = model
+                    , recordId = body.id
+                    }
+
+        Nothing ->
+            none
 
 
 viewDescriptionTab : Language -> PersonBody -> Element msg

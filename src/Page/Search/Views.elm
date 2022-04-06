@@ -17,7 +17,7 @@ import Page.Search.Views.SearchControls exposing (viewSearchControls)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Pagination exposing (viewPagination)
-import Page.UI.Record.Previews exposing (viewPreviewRouter, viewUnknownPreview)
+import Page.UI.Record.Previews exposing (viewPreviewRouter)
 import Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
@@ -150,7 +150,7 @@ viewSearchResultsSection language model body isLoading =
             case model.preview of
                 Loading Nothing ->
                     -- TODO: Make a preview loading view
-                    viewUnknownPreview
+                    none
 
                 Loading (Just oldData) ->
                     viewPreviewRouter language SearchMsg.UserClickedClosePreviewWindow oldData
@@ -204,7 +204,7 @@ viewSearchResultsListPanel language model body isLoading =
             ]
             [ column
                 [ width fill
-                , height shrink
+                , height fill
                 , alignTop
                 , inFront <| viewResultsListLoadingScreenTmpl isLoading
                 ]
@@ -217,11 +217,12 @@ viewSearchResultsList : Language -> SearchPageModel SearchMsg -> SearchBody -> E
 viewSearchResultsList language model body =
     row
         [ width fill
-        , height shrink
+        , height fill
         , alignTop
         ]
         [ column
             [ width fill
+            , height fill
             , alignTop
             ]
             (List.map (\result -> viewSearchResultRouter language model.selectedResult result) body.items)

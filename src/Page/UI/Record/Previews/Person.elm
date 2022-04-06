@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews.Person exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
@@ -38,10 +38,10 @@ viewPersonPreview language body =
         , height fill
         , alignTop
         , paddingXY 20 10
+        , scrollbarY
         ]
         [ column
             [ width fill
-            , height fill
             , alignTop
             , spacing sectionSpacing
             ]
@@ -62,11 +62,11 @@ viewPersonPreview language body =
                 ]
             , row
                 [ width fill
-                , height fill
                 , alignTop
                 ]
                 [ column
                     [ width fill
+                    , alignTop
                     , spacing sectionSpacing
                     ]
                     [ viewMaybe summaryBody body.summary

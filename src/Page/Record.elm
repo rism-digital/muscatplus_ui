@@ -40,6 +40,9 @@ init incomingUrl route =
                 InstitutionSourcePageRoute _ _ ->
                     RelatedSourcesSearchTab <| Url.toString incomingUrl
 
+                PersonSourcePageRoute _ _ ->
+                    RelatedSourcesSearchTab <| Url.toString incomingUrl
+
                 _ ->
                     DefaultRecordViewTab <| Url.toString incomingUrl
     in
@@ -69,6 +72,9 @@ load url route oldModel =
         tabView =
             case route of
                 InstitutionSourcePageRoute _ _ ->
+                    RelatedSourcesSearchTab <| Url.toString url
+
+                PersonSourcePageRoute _ _ ->
                     RelatedSourcesSearchTab <| Url.toString url
 
                 _ ->
