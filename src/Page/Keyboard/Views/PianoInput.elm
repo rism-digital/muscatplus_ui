@@ -11,7 +11,7 @@ import Svg.Attributes as SA
 import Svg.Events as SE
 
 
-viewPianoInput : Language -> Keyboard -> Element KeyboardMsg
+viewPianoInput : Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
 viewPianoInput language (Keyboard model config) =
     let
         numOctaves =

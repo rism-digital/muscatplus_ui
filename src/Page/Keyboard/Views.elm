@@ -30,7 +30,7 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Incipits exposing (viewSVGRenderedIncipit)
 
 
-view : NotationFacet -> Language -> Keyboard -> Element KeyboardMsg
+view : NotationFacet -> Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
 view notationFacet language (Keyboard model config) =
     let
         queryModeOptions =

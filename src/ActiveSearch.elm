@@ -5,6 +5,7 @@ import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebounce
 import Dict exposing (Dict)
 import List.Extra as LE
 import Page.Keyboard as Keyboard
+import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
@@ -67,12 +68,12 @@ setActiveSearch newSearch oldRecord =
     { oldRecord | activeSearch = newSearch }
 
 
-toKeyboard : { a | keyboard : Keyboard.Model } -> Keyboard.Model
+toKeyboard : { a | keyboard : Keyboard.Model KeyboardMsg } -> Keyboard.Model KeyboardMsg
 toKeyboard model =
     model.keyboard
 
 
-setKeyboard : Keyboard.Model -> { a | keyboard : Keyboard.Model } -> { a | keyboard : Keyboard.Model }
+setKeyboard : Keyboard.Model KeyboardMsg -> { a | keyboard : Keyboard.Model KeyboardMsg } -> { a | keyboard : Keyboard.Model KeyboardMsg }
 setKeyboard newKeyboard oldRecord =
     { oldRecord | keyboard = newKeyboard }
 

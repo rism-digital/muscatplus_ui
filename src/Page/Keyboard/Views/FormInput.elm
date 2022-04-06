@@ -11,7 +11,7 @@ import Page.UI.Attributes exposing (bodySM, lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
 
 
-viewPaeInput : Language -> NotationFacet -> Keyboard -> Element KeyboardMsg
+viewPaeInput : Language -> NotationFacet -> Keyboard KeyboardMsg -> Element KeyboardMsg
 viewPaeInput language notationFacet (Keyboard model config) =
     row
         [ width fill ]
@@ -31,17 +31,12 @@ viewPaeInput language notationFacet (Keyboard model config) =
                         , label = Input.labelLeft [] (text "PAE Input")
                         }
                     )
-                , el
-                    [ width (px 25)
-                    , height fill
-                    ]
-                    (button [] { onPress = Just UserRequestedProbeUpdate, label = text "R" })
                 ]
             ]
         ]
 
 
-viewRenderControls : Language -> NotationFacet -> Keyboard -> Element KeyboardMsg
+viewRenderControls : Language -> NotationFacet -> Keyboard KeyboardMsg -> Element KeyboardMsg
 viewRenderControls language notationFacet (Keyboard model config) =
     let
         clefLabel =

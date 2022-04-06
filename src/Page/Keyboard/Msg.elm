@@ -1,5 +1,6 @@
 module Page.Keyboard.Msg exposing (..)
 
+import Debouncer.Messages as Debouncer
 import Http
 import Http.Detailed
 import Page.Keyboard.Model exposing (Clef, KeyNoteName, KeySignature, Octave, QueryMode, TimeSignature)
@@ -13,6 +14,8 @@ type KeyboardMsg
     | UserClickedPianoKeyboardKey KeyNoteName Octave
     | UserClickedPianoKeyboardChangeClef Clef
     | UserInteractedWithPAEText String
+    | DebouncerCapturedPAEText (Debouncer.Msg KeyboardMsg)
+    | DebouncerSettledToSendPAEText
     | UserRequestedProbeUpdate
     | UserClickedPianoKeyboardChangeTimeSignature TimeSignature
     | UserClickedPianoKeyboardChangeKeySignature KeySignature

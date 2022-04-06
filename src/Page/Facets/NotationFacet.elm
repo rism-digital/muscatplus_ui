@@ -10,7 +10,7 @@ import Page.RecordTypes.Search exposing (NotationFacet)
 
 type alias NotationFacetConfig msg =
     { language : Language
-    , keyboardModel : Keyboard.Model
+    , keyboardModel : Keyboard.Model KeyboardMsg
     , notationFacet : NotationFacet
     , userInteractedWithKeyboardMsg : KeyboardMsg -> msg
     }

@@ -1,6 +1,7 @@
 module Page.Keyboard exposing (..)
 
 import Config
+import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Element exposing (Element)
 import Flip exposing (flip)
 import Language exposing (Language)
@@ -15,11 +16,11 @@ import Request exposing (createRequest, createSvgRequest, serverUrl)
 import Utlities exposing (choose)
 
 
-type alias Model =
-    KeyboardModel
+type alias Model msg =
+    KeyboardModel msg
 
 
-init : Int -> ( Keyboard, Cmd KeyboardMsg )
+init : Int -> ( Keyboard KeyboardMsg, Cmd KeyboardMsg )
 init numOctaves =
     let
         -- needs a config and a model instance
@@ -42,12 +43,13 @@ defaultKeyboardQuery =
     }
 
 
-initModel : Model
+initModel : Model msg
 initModel =
     { query = defaultKeyboardQuery
     , notation = Nothing
     , needsProbe = False
     , inputIsValid = True
+    , paeInputSearchDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     }
 
 
@@ -66,7 +68,7 @@ setQuery newQuery oldModel =
     { oldModel | query = newQuery }
 
 
-buildUpdateQuery : Maybe String -> Model -> ( Model, Cmd KeyboardMsg )
+buildUpdateQuery : Maybe String -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
 buildUpdateQuery newNoteData model =
     let
         newQuery =
@@ -75,11 +77,21 @@ buildUpdateQuery newNoteData model =
         url =
             buildNotationQueryParameters newQuery
                 |> serverUrl [ "incipits/render" ]
+
+        debounceMsg =
+            provideInput DebouncerSettledToSendPAEText
+                |> DebouncerCapturedPAEText
+
+        newModel =
+            { model
+                | query = newQuery
+            }
     in
-    ( { model
-        | query = newQuery
-      }
-    , createSvgRequest ServerRespondedWithRenderedNotation url
+    ( newModel
+    , Cmd.batch
+        [ createSvgRequest ServerRespondedWithRenderedNotation url
+        , update debounceMsg newModel |> Tuple.second
+        ]
     )
 
 
@@ -97,7 +109,15 @@ buildNotationValidationQuery keyboardQuery =
         |> createRequest ServerRespondedWithNotationValidation incipitValidationBodyDecoder
 
 
-update : KeyboardMsg -> KeyboardModel -> ( KeyboardModel, Cmd KeyboardMsg )
+updateDebouncerPAESearchConfig : Debouncer.UpdateConfig KeyboardMsg (KeyboardModel KeyboardMsg)
+updateDebouncerPAESearchConfig =
+    { mapMsg = DebouncerCapturedPAEText
+    , getDebouncer = .paeInputSearchDebouncer
+    , setDebouncer = \debouncer model -> { model | paeInputSearchDebouncer = debouncer }
+    }
+
+
+update : KeyboardMsg -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
 update msg model =
     case msg of
         ServerRespondedWithRenderedNotation (Ok ( _, response )) ->
@@ -177,6 +197,12 @@ update msg model =
             in
             buildUpdateQuery (Just newText) model
 
+        DebouncerCapturedPAEText textMsg ->
+            Debouncer.update update updateDebouncerPAESearchConfig textMsg model
+
+        DebouncerSettledToSendPAEText ->
+            ( { model | needsProbe = True }, Cmd.none )
+
         UserRequestedProbeUpdate ->
             ( { model | needsProbe = True }, Cmd.none )
 
@@ -224,7 +250,7 @@ update msg model =
             , buildNotationRequestQuery newModel.query
             )
 
-        _ ->
+        NothingHappenedWithTheKeyboard ->
             ( model, Cmd.none )
 
 
@@ -233,6 +259,6 @@ update msg model =
     Exposes only the top level view
 
 -}
-view : NotationFacet -> Language -> Keyboard -> Element KeyboardMsg
+view : NotationFacet -> Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
 view notationFacet lang keyboardConfig =
     KeyboardViews.view notationFacet lang keyboardConfig

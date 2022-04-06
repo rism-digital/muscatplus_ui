@@ -1,15 +1,18 @@
 module Page.Keyboard.Model exposing (..)
 
-
-type Keyboard
-    = Keyboard KeyboardModel KeyboardConfig
+import Debouncer.Messages exposing (Debouncer)
 
 
-type alias KeyboardModel =
+type Keyboard msg
+    = Keyboard (KeyboardModel msg) KeyboardConfig
+
+
+type alias KeyboardModel msg =
     { query : KeyboardQuery
     , notation : Maybe String -- the rendered SVG
     , needsProbe : Bool
     , inputIsValid : Bool
+    , paeInputSearchDebouncer : Debouncer msg
     }
 
 
