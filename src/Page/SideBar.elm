@@ -136,13 +136,10 @@ update msg session =
             )
 
         UserChangedLanguageSelect lang ->
-            let
-                outMsg =
-                    PortSendSaveLanguagePreference lang
-            in
             ( { session
                 | language = parseLocaleToLanguage lang
               }
-            , encodeMessageForPortSend outMsg
+            , PortSendSaveLanguagePreference lang
+                |> encodeMessageForPortSend
                 |> sendOutgoingMessageOnPort
             )

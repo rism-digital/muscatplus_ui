@@ -125,7 +125,7 @@ viewModeItem selectedMode language fitem =
                 [ alignLeft
                 , spacing 10
                 ]
-                { onPress = Just <| UserClickedModeItem "mode" fitem
+                { onPress = Just <| UserClickedModeItem fitem
                 , label =
                     el
                         [ headingSM

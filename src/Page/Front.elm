@@ -295,7 +295,7 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue isClicked ->
+        UserClickedSelectFacetItem alias facetValue ->
             userClickedSelectFacetItem alias facetValue model
                 |> frontProbeSubmit session
 

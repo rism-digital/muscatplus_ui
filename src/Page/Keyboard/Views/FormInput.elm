@@ -1,7 +1,7 @@
 module Page.Keyboard.Views.FormInput exposing (..)
 
 import Element exposing (Element, alignTop, column, el, fill, height, px, row, shrink, spacing, text, width)
-import Element.Input as Input exposing (button)
+import Element.Input as Input
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Keyboard.Model exposing (Keyboard(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))

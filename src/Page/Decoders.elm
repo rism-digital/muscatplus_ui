@@ -6,7 +6,6 @@ import Page.RecordTypes
         ( RecordType(..)
         , recordTypeFromJsonType
         )
-import Page.RecordTypes.Festival exposing (liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Front exposing (frontBodyDecoder)
 import Page.RecordTypes.Incipit exposing (incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)

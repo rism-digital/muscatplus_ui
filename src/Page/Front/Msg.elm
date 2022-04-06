@@ -32,6 +32,6 @@ type FrontMsg
     | UserLostFocusRangeFacet FacetAlias
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
-    | UserClickedSelectFacetItem FacetAlias String Bool
+    | UserClickedSelectFacetItem FacetAlias String
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | NothingHappened

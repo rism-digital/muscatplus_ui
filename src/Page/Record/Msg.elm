@@ -20,7 +20,6 @@ type RecordMsg
     | DebouncerCapturedProbeRequest (Debouncer.Msg RecordMsg)
     | DebouncerSettledToSendProbeRequest
     | UserClickedRecordViewTab CurrentRecordViewTab
-    | UserClickedToCItem String
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
     | UserClickedClosePreviewWindow
@@ -33,7 +32,7 @@ type RecordMsg
     | UserClickedSelectFacetExpand FacetAlias
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
     | UserChangedSelectFacetSort FacetAlias FacetSorts
-    | UserClickedSelectFacetItem FacetAlias String Bool
+    | UserClickedSelectFacetItem FacetAlias String
     | UserRemovedItemFromQueryFacet FacetAlias String
     | UserEnteredTextInQueryFacet FacetAlias String String
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg RecordMsg)

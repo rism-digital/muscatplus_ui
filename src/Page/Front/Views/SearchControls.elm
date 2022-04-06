@@ -1,6 +1,6 @@
 module Page.Front.Views.SearchControls exposing (..)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, centerY, column, el, fill, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -10,8 +10,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, sectionSpacing)
-import Page.UI.Events exposing (onEnter)
+import Page.UI.Attributes exposing (headingSM, lineSpacing)
 import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 

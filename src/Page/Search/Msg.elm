@@ -21,7 +21,7 @@ type SearchMsg
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
-    | UserClickedSelectFacetItem FacetAlias String Bool
+    | UserClickedSelectFacetItem FacetAlias String
     | UserClickedToggleFacet FacetAlias
     | UserClickedFacetPanelToggle
     | UserEnteredTextInQueryFacet FacetAlias String String
@@ -33,13 +33,12 @@ type SearchMsg
     | UserFocusedRangeFacet FacetAlias
     | UserLostFocusRangeFacet FacetAlias
     | UserChangedResultSorting String
-    | UserClickedModeItem String FacetItem
+    | UserClickedModeItem FacetItem
     | UserClickedSearchResultsPagination String
     | UserTriggeredSearchSubmit
     | UserEnteredTextInKeywordQueryBox String
     | UserClickedClosePreviewWindow
     | UserClickedSearchResultForPreview String
     | UserInteractedWithPianoKeyboard KeyboardMsg
-    | UserClickedPianoKeyboardSearchClearButton
     | UserResetAllFilters
     | NothingHappened

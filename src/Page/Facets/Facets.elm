@@ -11,7 +11,7 @@ import Page.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 import Page.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 import Page.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetSorts, Facets, RangeFacetValue, SearchBody)
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetSorts, Facets, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (facetBorderBottom, lineSpacing)
 import Page.UI.Images exposing (chevronDownSvg)
@@ -26,7 +26,7 @@ type alias FacetMsgConfig msg =
     , userClickedFacetExpandSelectMsg : String -> msg
     , userChangedFacetBehaviourSelectMsg : FacetAlias -> FacetBehaviours -> msg
     , userChangedSelectFacetSortSelectMsg : FacetAlias -> FacetSorts -> msg
-    , userSelectedFacetItemSelectMsg : FacetAlias -> String -> Bool -> msg
+    , userSelectedFacetItemSelectMsg : FacetAlias -> String -> msg
     , userInteractedWithPianoKeyboard : KeyboardMsg -> msg
     , userRemovedQueryMsg : String -> String -> msg
     , userEnteredTextQueryMsg : FacetAlias -> String -> String -> msg

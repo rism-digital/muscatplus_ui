@@ -36,7 +36,7 @@ type alias SelectFacetConfig msg =
     , userClickedFacetExpandMsg : String -> msg
     , userChangedFacetBehaviourMsg : FacetAlias -> FacetBehaviours -> msg
     , userChangedSelectFacetSortMsg : FacetAlias -> FacetSorts -> msg
-    , userSelectedFacetItemMsg : FacetAlias -> String -> Bool -> msg
+    , userSelectedFacetItemMsg : FacetAlias -> String -> msg
     }
 
 
@@ -365,7 +365,7 @@ viewSelectFacetItem config fitem =
                 , alignTop
                 , width fill
                 ]
-                { onChange = \selected -> config.userSelectedFacetItemMsg facetAlias value selected
+                { onChange = \_ -> config.userSelectedFacetItemMsg facetAlias value
                 , icon = basicCheckbox
                 , checked = shouldBeChecked
                 , label =

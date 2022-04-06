@@ -8,7 +8,7 @@ import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Model exposing (Model(..), toSession)
-import Msg exposing (Msg(..))
+import Msg exposing (Msg)
 import Page.Front.Views
 import Page.NotFound.Views
 import Page.Record.Views.InstitutionPage

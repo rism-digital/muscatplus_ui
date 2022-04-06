@@ -351,7 +351,7 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue _ ->
+        UserClickedSelectFacetItem alias facetValue ->
             userClickedSelectFacetItem alias facetValue model
                 |> probeSubmit ServerRespondedWithProbeData session
 
@@ -372,7 +372,7 @@ update session msg model =
                 |> flip setActiveSearch model
                 |> searchSubmit session
 
-        UserClickedModeItem alias item ->
+        UserClickedModeItem item ->
             let
                 newMode =
                     convertFacetToResultMode item
@@ -506,11 +506,6 @@ update session msg model =
                 , probeCmd
                 ]
             )
-
-        UserClickedPianoKeyboardSearchClearButton ->
-            setKeyboard Keyboard.initModel model.activeSearch
-                |> flip setActiveSearch model
-                |> searchSubmit session
 
         UserResetAllFilters ->
             let

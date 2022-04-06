@@ -303,11 +303,6 @@ update session msg model =
             , Nav.pushUrl session.key newUrlStr
             )
 
-        UserClickedToCItem idParam ->
-            ( model
-            , jumpToId NothingHappened idParam
-            )
-
         UserTriggeredSearchSubmit ->
             searchSubmit session model
 
@@ -364,7 +359,7 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue _ ->
+        UserClickedSelectFacetItem alias facetValue ->
             userClickedSelectFacetItem alias facetValue model
                 |> probeSubmit ServerRespondedWithProbeData session
 

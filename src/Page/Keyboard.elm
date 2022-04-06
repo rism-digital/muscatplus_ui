@@ -165,13 +165,6 @@ update msg model =
             in
             buildUpdateQuery (Just noteData) newModel
 
-        ClientRequestedRenderedNotation ->
-            let
-                noteData =
-                    .noteData model.query
-            in
-            buildUpdateQuery noteData model
-
         UserInteractedWithPAEText text ->
             let
                 -- Drop any characters that exceed the 1024 limit.
@@ -201,9 +194,6 @@ update msg model =
             Debouncer.update update updateDebouncerPAESearchConfig textMsg model
 
         DebouncerSettledToSendPAEText ->
-            ( { model | needsProbe = True }, Cmd.none )
-
-        UserRequestedProbeUpdate ->
             ( { model | needsProbe = True }, Cmd.none )
 
         UserClickedPianoKeyboardChangeClef clef ->

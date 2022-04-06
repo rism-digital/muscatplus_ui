@@ -28,11 +28,6 @@ sourceSearchPanelView session model frontBody =
         language =
             session.language
 
-        msgs =
-            { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
-            }
-
         facetConfig alias =
             { alias = alias
             , language = language

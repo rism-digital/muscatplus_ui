@@ -10,13 +10,11 @@ import Page.RecordTypes.Incipit exposing (IncipitValidationBody)
 type KeyboardMsg
     = ServerRespondedWithRenderedNotation (Result (Http.Detailed.Error String) ( Http.Metadata, String ))
     | ServerRespondedWithNotationValidation (Result (Http.Detailed.Error String) ( Http.Metadata, IncipitValidationBody ))
-    | ClientRequestedRenderedNotation
     | UserClickedPianoKeyboardKey KeyNoteName Octave
     | UserClickedPianoKeyboardChangeClef Clef
     | UserInteractedWithPAEText String
     | DebouncerCapturedPAEText (Debouncer.Msg KeyboardMsg)
     | DebouncerSettledToSendPAEText
-    | UserRequestedProbeUpdate
     | UserClickedPianoKeyboardChangeTimeSignature TimeSignature
     | UserClickedPianoKeyboardChangeKeySignature KeySignature
     | UserChangedQueryMode QueryMode
