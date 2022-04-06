@@ -24,8 +24,8 @@ type alias RangeFacetConfig msg =
     { language : Language
     , rangeFacet : RangeFacet
     , activeSearch : ActiveSearch msg
-    , userLostFocusMsg : FacetAlias -> RangeFacetValue -> msg
-    , userFocusedMsg : FacetAlias -> RangeFacetValue -> msg
+    , userLostFocusMsg : FacetAlias -> msg
+    , userFocusedMsg : FacetAlias -> msg
     , userEnteredTextMsg : FacetAlias -> RangeFacetValue -> String -> msg
     }
 
@@ -104,8 +104,8 @@ viewRangeFacet config =
                     [ spacing lineSpacing ]
                     [ Input.text
                         [ width (px 80)
-                        , Events.onLoseFocus (config.userLostFocusMsg facetAlias LowerRangeValue)
-                        , Events.onFocus (config.userFocusedMsg facetAlias LowerRangeValue)
+                        , Events.onLoseFocus (config.userLostFocusMsg facetAlias)
+                        , Events.onFocus (config.userFocusedMsg facetAlias)
                         ]
                         { onChange = \c -> config.userEnteredTextMsg facetAlias LowerRangeValue c
                         , text = lowerValue
@@ -120,8 +120,8 @@ viewRangeFacet config =
                     [ spacing lineSpacing ]
                     [ Input.text
                         [ width (px 80)
-                        , Events.onLoseFocus (config.userLostFocusMsg facetAlias UpperRangeValue)
-                        , Events.onFocus (config.userFocusedMsg facetAlias UpperRangeValue)
+                        , Events.onLoseFocus (config.userLostFocusMsg facetAlias)
+                        , Events.onFocus (config.userFocusedMsg facetAlias)
                         ]
                         { onChange = \c -> config.userEnteredTextMsg facetAlias UpperRangeValue c
                         , text = upperValue

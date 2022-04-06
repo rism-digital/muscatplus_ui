@@ -314,7 +314,7 @@ update session msg model =
                         |> DebouncerCapturedQueryFacetSuggestionRequest
 
                 newModel =
-                    userEnteredTextInQueryFacet alias query suggestionUrl model
+                    userEnteredTextInQueryFacet alias query model
             in
             update session debounceMsg newModel
 
@@ -339,10 +339,10 @@ update session msg model =
             , Cmd.none
             )
 
-        UserFocusedRangeFacet alias valueType ->
+        UserFocusedRangeFacet alias ->
             ( model, Cmd.none )
 
-        UserLostFocusRangeFacet alias valueType ->
+        UserLostFocusRangeFacet alias ->
             userLostFocusOnRangeFacet alias model
                 |> probeSubmit ServerRespondedWithProbeData session
 
@@ -351,7 +351,7 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue isClicked ->
+        UserClickedSelectFacetItem alias facetValue _ ->
             userClickedSelectFacetItem alias facetValue model
                 |> probeSubmit ServerRespondedWithProbeData session
 
@@ -380,19 +380,6 @@ update session msg model =
                 newQuery =
                     toNextQuery model.activeSearch
                         |> setMode newMode
-            in
-            setNextQuery newQuery model.activeSearch
-                |> flip setActiveSearch model
-                |> searchSubmit session
-
-        UserClickedRemoveActiveFilter alias value ->
-            ( model, Cmd.none )
-
-        UserClickedClearSearchQueryBox ->
-            let
-                newQuery =
-                    toNextQuery model.activeSearch
-                        |> setKeywordQuery Nothing
             in
             setNextQuery newQuery model.activeSearch
                 |> flip setActiveSearch model

@@ -184,10 +184,9 @@ updateQueryFacetFilters alias text currentBehaviour model =
 userEnteredTextInQueryFacet :
     FacetAlias
     -> String
-    -> String
     -> { a | activeSearch : ActiveSearch msg }
     -> { a | activeSearch : ActiveSearch msg }
-userEnteredTextInQueryFacet alias query suggestionUrl model =
+userEnteredTextInQueryFacet alias query model =
     let
         newQueryFacetValue =
             .queryFacetValues model.activeSearch

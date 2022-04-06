@@ -20,8 +20,8 @@ import Page.UI.Style exposing (colourScheme)
 
 type alias FacetMsgConfig msg =
     { userClickedToggleMsg : FacetAlias -> msg
-    , userLostFocusRangeMsg : FacetAlias -> RangeFacetValue -> msg
-    , userFocusedRangeMsg : FacetAlias -> RangeFacetValue -> msg
+    , userLostFocusRangeMsg : FacetAlias -> msg
+    , userFocusedRangeMsg : FacetAlias -> msg
     , userEnteredTextRangeMsg : FacetAlias -> RangeFacetValue -> String -> msg
     , userClickedFacetExpandSelectMsg : String -> msg
     , userChangedFacetBehaviourSelectMsg : FacetAlias -> FacetBehaviours -> msg

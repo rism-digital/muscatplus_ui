@@ -30,12 +30,10 @@ type SearchMsg
     | UserChoseOptionForQueryFacet FacetAlias String FacetBehaviours
     | UserRemovedItemFromQueryFacet FacetAlias String
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
-    | UserFocusedRangeFacet FacetAlias RangeFacetValue
-    | UserLostFocusRangeFacet FacetAlias RangeFacetValue
+    | UserFocusedRangeFacet FacetAlias
+    | UserLostFocusRangeFacet FacetAlias
     | UserChangedResultSorting String
     | UserClickedModeItem String FacetItem
-    | UserClickedRemoveActiveFilter String String
-    | UserClickedClearSearchQueryBox
     | UserClickedSearchResultsPagination String
     | UserTriggeredSearchSubmit
     | UserEnteredTextInKeywordQueryBox String

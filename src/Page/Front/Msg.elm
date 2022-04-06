@@ -28,8 +28,8 @@ type FrontMsg
     | DebouncerSettledToSendQueryFacetSuggestionRequest String
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
-    | UserFocusedRangeFacet FacetAlias RangeFacetValue
-    | UserLostFocusRangeFacet FacetAlias RangeFacetValue
+    | UserFocusedRangeFacet FacetAlias
+    | UserLostFocusRangeFacet FacetAlias
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String Bool

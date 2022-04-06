@@ -3,7 +3,6 @@ module Page.Record.Msg exposing (..)
 import Debouncer.Basic as Debouncer
 import Http
 import Http.Detailed
-import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Record.Model exposing (CurrentRecordViewTab)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue)
@@ -28,14 +27,13 @@ type RecordMsg
     | UserTriggeredSearchSubmit
     | UserEnteredTextInKeywordQueryBox String
     | UserClickedToggleFacet FacetAlias
-    | UserLostFocusRangeFacet FacetAlias RangeFacetValue
-    | UserFocusedRangeFacet FacetAlias RangeFacetValue
+    | UserLostFocusRangeFacet FacetAlias
+    | UserFocusedRangeFacet FacetAlias
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
     | UserClickedSelectFacetExpand FacetAlias
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetItem FacetAlias String Bool
-    | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserRemovedItemFromQueryFacet FacetAlias String
     | UserEnteredTextInQueryFacet FacetAlias String String
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg RecordMsg)

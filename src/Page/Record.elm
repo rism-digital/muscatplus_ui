@@ -12,7 +12,7 @@ import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route(..))
-import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, userEnteredTextInQueryFacet)
+import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -335,34 +335,42 @@ update session msg model =
             update session debounceMsg newModel
 
         UserClickedToggleFacet alias ->
+            userClickedToggleFacet alias model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UserLostFocusRangeFacet alias ->
+            userLostFocusOnRangeFacet alias model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UserFocusedRangeFacet alias ->
             ( model, Cmd.none )
 
-        UserLostFocusRangeFacet alias value ->
-            ( model, Cmd.none )
-
-        UserFocusedRangeFacet alias value ->
-            ( model, Cmd.none )
-
-        UserEnteredTextInRangeFacet alias value str ->
-            ( model, Cmd.none )
+        UserEnteredTextInRangeFacet alias inputBox value ->
+            ( userEnteredTextInRangeFacet alias inputBox value model
+            , Cmd.none
+            )
 
         UserClickedSelectFacetExpand alias ->
-            ( model, Cmd.none )
+            ( userClickedSelectFacetExpand alias model
+            , Cmd.none
+            )
 
-        UserChangedFacetBehaviour alias behaviour ->
-            ( model, Cmd.none )
+        UserChangedFacetBehaviour alias facetBehaviour ->
+            userChangedFacetBehaviour alias facetBehaviour model
+                |> probeSubmit ServerRespondedWithProbeData session
 
-        UserChangedSelectFacetSort alias sort ->
-            ( model, Cmd.none )
+        UserChangedSelectFacetSort alias facetSort ->
+            ( userChangedSelectFacetSort alias facetSort model
+            , Cmd.none
+            )
 
-        UserClickedSelectFacetItem alias str sel ->
-            ( model, Cmd.none )
+        UserClickedSelectFacetItem alias facetValue _ ->
+            userClickedSelectFacetItem alias facetValue model
+                |> probeSubmit ServerRespondedWithProbeData session
 
-        UserInteractedWithPianoKeyboard keyMsg ->
-            ( model, Cmd.none )
-
-        UserRemovedItemFromQueryFacet alias str ->
-            ( model, Cmd.none )
+        UserRemovedItemFromQueryFacet alias query ->
+            userRemovedItemFromQueryFacet alias query model
+                |> probeSubmit ServerRespondedWithProbeData session
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
             let
@@ -373,7 +381,7 @@ update session msg model =
                         |> DebouncerCapturedQueryFacetSuggestionRequest
 
                 newModel =
-                    userEnteredTextInQueryFacet alias query suggestionUrl model
+                    userEnteredTextInQueryFacet alias query model
             in
             update session debounceMsg newModel
 
@@ -385,8 +393,9 @@ update session msg model =
             , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
             )
 
-        UserChoseOptionForQueryFacet alias str behaviour ->
-            ( model, Cmd.none )
+        UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
+            updateQueryFacetFilters alias selectedValue currentBehaviour model
+                |> probeSubmit ServerRespondedWithProbeData session
 
         UserResetAllFilters ->
             setNextQuery defaultQueryArgs model.activeSearch
