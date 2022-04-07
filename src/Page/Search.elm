@@ -493,7 +493,7 @@ update session msg model =
                     if keyboardModel.needsProbe then
                         let
                             probeUrl =
-                                createProbeUrl newModel.activeSearch
+                                createProbeUrl session newModel.activeSearch
                         in
                         createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
 

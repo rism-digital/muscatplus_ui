@@ -40,6 +40,7 @@ import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacet
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
+import Page.Route exposing (Route(..))
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
@@ -84,15 +85,15 @@ probeSubmit probeMsg session model =
                 |> setProbeResponse (Loading Nothing)
 
         probeUrl =
-            createProbeUrl newModel.activeSearch
+            createProbeUrl session newModel.activeSearch
     in
     ( newModel
     , createProbeRequestWithDecoder probeMsg probeUrl
     )
 
 
-createProbeUrl : ActiveSearch msg -> String
-createProbeUrl activeSearch =
+createProbeUrl : Session -> ActiveSearch msg -> String
+createProbeUrl session activeSearch =
     let
         notationQueryParameters =
             toKeyboard activeSearch
@@ -102,9 +103,20 @@ createProbeUrl activeSearch =
         textQueryParameters =
             activeSearch.nextQuery
                 |> buildQueryParameters
+
+        probeUrl =
+            case session.route of
+                InstitutionSourcePageRoute id _ ->
+                    serverUrl [ "institutions", String.fromInt id, "probe" ]
+
+                PersonSourcePageRoute id _ ->
+                    serverUrl [ "people", String.fromInt id, "probe" ]
+
+                _ ->
+                    serverUrl [ "probe" ]
     in
     List.append textQueryParameters notationQueryParameters
-        |> serverUrl [ "probe" ]
+        |> probeUrl
 
 
 userRemovedItemFromQueryFacet :

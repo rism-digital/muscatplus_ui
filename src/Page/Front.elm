@@ -319,7 +319,7 @@ update session msg model =
                                 toNextQuery newModel.activeSearch
                                     |> setMode resultMode
                                     |> flip setNextQuery newModel.activeSearch
-                                    |> createProbeUrl
+                                    |> createProbeUrl session
                         in
                         createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
 
