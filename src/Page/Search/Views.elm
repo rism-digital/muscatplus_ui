@@ -222,7 +222,6 @@ viewSearchResultsList language model body =
         ]
         [ column
             [ width fill
-            , height fill
             , alignTop
             ]
             (List.map (\result -> viewSearchResultRouter language model.selectedResult result) body.items)
