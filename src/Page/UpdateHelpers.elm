@@ -28,6 +28,7 @@ import Page.Query
         , setFacetBehaviours
         , setFacetSorts
         , setFilters
+        , setMode
         , setNationalCollection
         , setNextQuery
         , toFacetBehaviours
@@ -41,6 +42,7 @@ import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Route exposing (Route(..))
+import Page.SideBar.Msg exposing (sideBarOptionToResultMode)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
@@ -95,13 +97,16 @@ probeSubmit probeMsg session model =
 createProbeUrl : Session -> ActiveSearch msg -> String
 createProbeUrl session activeSearch =
     let
+        resultMode =
+            sideBarOptionToResultMode session.showFrontSearchInterface
+
         notationQueryParameters =
             toKeyboard activeSearch
                 |> toKeyboardQuery
                 |> buildNotationQueryParameters
 
         textQueryParameters =
-            activeSearch.nextQuery
+            setMode resultMode activeSearch.nextQuery
                 |> buildQueryParameters
 
         probeUrl =

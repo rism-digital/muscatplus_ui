@@ -2,14 +2,14 @@ module Page.Front.Views exposing (..)
 
 import Element exposing (Element, alignTop, centerX, column, fill, height, maximum, minimum, none, row, width)
 import Page.Front.Model exposing (FrontPageModel)
-import Page.Front.Msg exposing (FrontMsg)
+import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
 import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
 import Page.Front.Views.InstitutionSearch exposing (institutionSearchPanelView)
 import Page.Front.Views.PeopleSearch exposing (peopleSearchPanelView)
-import Page.Front.Views.SearchControls exposing (viewFrontSearchButtons)
 import Page.Front.Views.SourceSearch exposing (sourceSearchPanelView)
 import Page.SideBar.Msg exposing (SideBarOption(..))
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Search.SearchComponents exposing (viewSearchButtons)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -51,7 +51,16 @@ view session model =
             viewMaybe searchViewFn maybeBody
 
         searchControlsView =
-            viewMaybe (\_ -> viewFrontSearchButtons session.language model) maybeBody
+            viewMaybe
+                (\_ ->
+                    viewSearchButtons
+                        { language = session.language
+                        , model = model
+                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , resetMsg = FrontMsg.UserResetAllFilters
+                        }
+                )
+                maybeBody
     in
     row
         [ width fill
