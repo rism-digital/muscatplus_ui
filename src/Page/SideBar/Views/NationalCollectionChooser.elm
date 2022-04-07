@@ -12,7 +12,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.SideBar.Msg exposing (SideBarMsg(..))
 import Page.UI.Animations exposing (animatedLabel)
-import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, sectionSpacing)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -100,7 +100,7 @@ viewNationalCollectionChooserMenuOption : Session -> Element SideBarMsg
 viewNationalCollectionChooserMenuOption session =
     let
         viewChooser =
-            if session.currentlyHoveredNationalCollectionChooser == True then
+            if session.currentlyHoveredNationalCollectionChooser then
                 viewNationalCollectionChooser session
 
             else

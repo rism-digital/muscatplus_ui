@@ -1,135 +1,92 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, el, fill, height, none, padding, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events exposing (onClick)
-import Element.Font as Font
-import Language exposing (Language, formatNumberByLanguage)
+import Language exposing (Language)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg(..))
-import Page.Record.Views.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.Record.Views.ExternalResources exposing (viewExternalResourcesSection)
-import Page.Record.Views.Notes exposing (viewNotesSection)
-import Page.Record.Views.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
-import Page.Record.Views.Relationship exposing (viewRelationshipsSection)
+import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
+import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
+import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Record.Notes exposing (viewNotesSection)
+import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
+import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Session exposing (Session)
 
 
 viewFullInstitutionPage :
-    Language
-    -> RecordPageModel
+    Session
+    -> RecordPageModel RecordMsg
     -> InstitutionBody
     -> Element RecordMsg
-viewFullInstitutionPage language page body =
+viewFullInstitutionPage session model body =
     let
-        currentTab =
-            page.currentTab
-
         pageBodyView =
-            case currentTab of
-                DefaultRecordViewTab ->
-                    viewDescriptionTab language body
+            case model.currentTab of
+                DefaultRecordViewTab _ ->
+                    viewDescriptionTab session.language body
 
-                _ ->
-                    none
+                RelatedSourcesSearchTab _ ->
+                    viewSourceSearchTab session.language model
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            (List.append [ spacing sectionSpacing ] widthFillHeightFill)
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ row
                 [ width fill
                 , alignTop
                 ]
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
-                    [ pageHeaderTemplate language body
-                    , pageUriTemplate language body
+                    [ spacing lineSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    , padding 20
+                    , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+                    , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+                    , Background.color (colourScheme.cream |> convertColorToElementColor)
+                    ]
+                    [ pageHeaderTemplate session.language body
+                    , viewRecordTopBarRouter session.language model body
                     ]
                 ]
-
-            --, viewTabSwitcher language currentTab body
             , pageBodyView
-            , pageFooterTemplate language body
+            , pageFooterTemplate session session.language body
             ]
         ]
 
 
-viewTabSwitcher :
-    Language
-    -> CurrentRecordViewTab
-    -> InstitutionBody
-    -> Element RecordMsg
-viewTabSwitcher language currentTab body =
-    let
-        descriptionTab =
-            let
-                ( backgroundColour, fontColour ) =
-                    case currentTab of
-                        DefaultRecordViewTab ->
-                            ( colourScheme.lightBlue, colourScheme.white )
+viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> InstitutionBody -> Element RecordMsg
+viewRecordTopBarRouter language model body =
+    case body.sources of
+        Just sourceBlock ->
+            if sourceBlock.totalItems == 0 then
+                none
 
-                        _ ->
-                            ( colourScheme.white, colourScheme.black )
-            in
-            column
-                [ Border.width 1
-                , padding 12
-                , onClick (UserClickedRecordViewTab DefaultRecordViewTab)
-                , pointer
-                , Background.color (backgroundColour |> convertColorToElementColor)
-                , Font.color (fontColour |> convertColorToElementColor)
-                ]
-                [ el
-                    []
-                    (text "Description")
-                ]
+            else
+                viewRecordSourceSearchTabBar
+                    { language = language
+                    , searchUrl = sourceBlock.url
+                    , model = model
+                    , recordId = body.id
+                    }
 
-        sourcesTab =
-            case body.sources of
-                Just sources ->
-                    let
-                        ( backgroundColour, fontColour ) =
-                            case currentTab of
-                                InstitutionSourcesRecordSearchTab _ ->
-                                    ( colourScheme.lightBlue, colourScheme.white )
-
-                                _ ->
-                                    ( colourScheme.white, colourScheme.black )
-
-                        sourceCount =
-                            toFloat sources.totalItems
-                                |> formatNumberByLanguage language
-                    in
-                    column
-                        [ Border.width 1
-                        , padding 12
-                        , onClick (UserClickedRecordViewTab (InstitutionSourcesRecordSearchTab sources.url))
-                        , pointer
-                        , Background.color (backgroundColour |> convertColorToElementColor)
-                        , Font.color (fontColour |> convertColorToElementColor)
-                        ]
-                        [ el
-                            []
-                            (text ("Sources (" ++ sourceCount ++ ")"))
-                        ]
-
-                Nothing ->
-                    none
-    in
-    row
-        [ width fill
-        , height (px 60)
-        , spacing 20
-        ]
-        [ descriptionTab
-        , sourcesTab
-        ]
+        Nothing ->
+            none
 
 
 viewDescriptionTab : Language -> InstitutionBody -> Element msg
@@ -137,23 +94,37 @@ viewDescriptionTab language body =
     let
         summaryBody labels =
             row
-                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                ([ width fill
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
+                )
                 [ column
-                    (List.append [ spacing lineSpacing ] widthFillHeightFill)
+                    [ width fill
+                    , height fill
+                    , spacing lineSpacing
+                    ]
                     [ viewSummaryField language labels ]
                 ]
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        , scrollbarY
+        ]
         [ column
             [ width fill
             , alignTop
             , spacing sectionSpacing
+            , padding 20
             ]
             [ viewMaybe summaryBody body.summary
-            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
+            , viewMaybe (viewLocationAddressSection language) body.location
             , viewMaybe (viewRelationshipsSection language) body.relationships
             , viewMaybe (viewNotesSection language) body.notes
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
+            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
             ]
         ]

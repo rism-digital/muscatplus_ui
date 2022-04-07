@@ -1,5 +1,7 @@
 module Flags exposing (Flags)
 
+import Json.Decode exposing (Value)
+
 
 type alias Flags =
     { locale : String
@@ -7,4 +9,5 @@ type alias Flags =
     , windowHeight : Int
     , showMuscatLinks : Bool
     , nationalCollection : Maybe String
+    , searchPreferences : Maybe Value
     }

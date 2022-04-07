@@ -3,32 +3,24 @@ module View exposing (view)
 import Browser
 import Css
 import Css.Global
-import Element exposing (Element, alignRight, alignTop, centerX, column, el, fill, fillPortion, height, inFront, layout, link, none, paddingXY, px, row, text, width)
-import Element.Font as Font
-import Element.Region as Region
+import Element exposing (Element, alignTop, centerX, column, fill, height, inFront, layout, none, px, row, width)
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Model exposing (Model(..), toSession)
-import Msg exposing (Msg(..))
+import Msg exposing (Msg)
 import Page.Front.Views
 import Page.NotFound.Views
-import Page.Record.Model exposing (CurrentRecordViewTab(..))
 import Page.Record.Views.InstitutionPage
 import Page.Record.Views.PersonPage
-import Page.Record.Views.PersonPage.TableOfContents exposing (createPersonRecordToc)
 import Page.Record.Views.PlacePage
 import Page.Record.Views.SourcePage
-import Page.Record.Views.SourcePage.TableOfContents exposing (createSourceRecordToc)
-import Page.Route exposing (Route(..))
 import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, footerBackground, pageBackground)
-import Page.UI.Images exposing (rismLogo)
-import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor, footerHeight)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, pageBackground)
+import Page.UI.Style exposing (colours)
 import Response exposing (Response(..), ServerData(..))
-import Session exposing (Session)
 
 
 view : Model -> Browser.Document Msg
@@ -60,71 +52,53 @@ view model =
                 NotFoundPage session pageModel ->
                     Element.map Msg.UserInteractedWithNotFoundPage (Page.NotFound.Views.view session pageModel)
 
-        defaultView =
-            ( "RISM Online", none )
+        defaultTitle =
+            "RISM Online"
 
-        ( pageTitle, _ ) =
+        pageTitle =
             case model of
                 SearchPage session _ ->
-                    ( extractLabelFromLanguageMap session.language localTranslations.search ++ " RISM"
-                    , none
-                    )
+                    extractLabelFromLanguageMap session.language localTranslations.search ++ " RISM"
 
                 SourcePage session pageModel ->
                     case pageModel.response of
                         Response (SourceData body) ->
-                            ( extractLabelFromLanguageMap session.language body.label
-                            , Element.map UserInteractedWithRecordPage (createSourceRecordToc session.language body)
-                            )
+                            extractLabelFromLanguageMap session.language body.label
 
                         _ ->
-                            defaultView
+                            defaultTitle
 
                 PersonPage session pageModel ->
                     case pageModel.response of
                         Response (PersonData body) ->
-                            let
-                                toc =
-                                    if pageModel.currentTab == DefaultRecordViewTab then
-                                        Element.map UserInteractedWithRecordPage (createPersonRecordToc session.language body)
-
-                                    else
-                                        none
-                            in
-                            ( extractLabelFromLanguageMap session.language body.label
-                            , toc
-                            )
+                            extractLabelFromLanguageMap session.language body.label
 
                         _ ->
-                            defaultView
+                            defaultTitle
 
                 InstitutionPage session pageModel ->
                     case pageModel.response of
                         Response (InstitutionData body) ->
-                            ( extractLabelFromLanguageMap session.language body.label
-                            , none
-                            )
+                            extractLabelFromLanguageMap session.language body.label
 
                         _ ->
-                            defaultView
+                            defaultTitle
 
                 PlacePage session pageModel ->
                     case pageModel.response of
                         Response (PlaceData body) ->
-                            ( extractLabelFromLanguageMap session.language body.label
-                            , none
-                            )
+                            extractLabelFromLanguageMap session.language body.label
 
                         _ ->
-                            defaultView
+                            defaultTitle
 
                 _ ->
-                    defaultView
+                    defaultTitle
 
         -- set the colour for links (a tags) globally.
         globalLinkColor =
             let
-                { red, green, blue, alpha } =
+                { red, green, blue } =
                     colours.lightBlue
             in
             [ Css.color (Css.rgb red green blue) ]
@@ -160,10 +134,7 @@ view model =
                     , height fill
                     ]
                     [ loadingIndicator model
-
-                    --, siteHeader pageSession
                     , pageView
-                    , siteFooter pageSession
                     ]
                 ]
             )
@@ -180,6 +151,14 @@ loadingIndicator model =
                 ]
                 [ progressBar ]
 
+        isLoading resp =
+            case resp of
+                Loading _ ->
+                    True
+
+                _ ->
+                    False
+
         chooseView resp =
             case resp of
                 Loading _ ->
@@ -190,7 +169,17 @@ loadingIndicator model =
     in
     case model of
         SearchPage _ pageModel ->
-            chooseView pageModel.response
+            case pageModel.response of
+                Loading _ ->
+                    loadingView
+
+                _ ->
+                    case pageModel.preview of
+                        Loading _ ->
+                            loadingView
+
+                        _ ->
+                            none
 
         SourcePage _ pageModel ->
             chooseView pageModel.response
@@ -199,86 +188,14 @@ loadingIndicator model =
             chooseView pageModel.response
 
         InstitutionPage _ pageModel ->
-            chooseView pageModel.response
-
-        FrontPage _ pageModel ->
-            chooseView pageModel.response
-
-        _ ->
-            none
-
-
-siteFooter : Session -> Element Msg
-siteFooter session =
-    let
-        muscatLink =
-            if session.showMuscatLinks == True then
-                viewMuscatLink session
+            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
+                loadingView
 
             else
                 none
-    in
-    row
-        [ width fill
-        , height (px footerHeight)
-        , footerBackground
-        , Region.footer
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , centerX
-            , paddingXY 20 0
-            ]
-            [ row
-                [ width fill
-                , height fill
-                , Font.color (colourScheme.white |> convertColorToElementColor)
-                , Font.semiBold
-                ]
-                [ column
-                    [ width (px 200) ]
-                    [ el
-                        []
-                        (rismLogo colourScheme.white (footerHeight - 10))
-                    ]
-                , column
-                    [ width (fillPortion 10)
-                    ]
-                    [ text "Tagline / Impressum" ]
-                , muscatLink
-                ]
-            ]
-        ]
 
-
-viewMuscatLink : Session -> Element msg
-viewMuscatLink session =
-    let
-        linkBase =
-            "https://muscat.rism.info/admin/"
-
-        linkTmpl muscatUrl =
-            column
-                [ alignRight
-                , paddingXY 5 0
-                ]
-                [ link
-                    []
-                    { url = muscatUrl
-                    , label = text "View record in Muscat"
-                    }
-                ]
-    in
-    case session.route of
-        SourcePageRoute id ->
-            linkTmpl (linkBase ++ "sources/" ++ String.fromInt id)
-
-        PersonPageRoute id ->
-            linkTmpl (linkBase ++ "people/" ++ String.fromInt id)
-
-        InstitutionPageRoute id ->
-            linkTmpl (linkBase ++ "institutions/" ++ String.fromInt id)
+        FrontPage _ pageModel ->
+            chooseView pageModel.response
 
         _ ->
             none

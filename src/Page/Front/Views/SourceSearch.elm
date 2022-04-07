@@ -2,10 +2,11 @@ module Page.Front.Views.SourceSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Page.Facets.Facets exposing (viewFacet)
+import Page.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.Front.Model exposing (FrontPageModel)
-import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
-import Page.Front.Views.Facets exposing (viewFrontFacet)
-import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput)
+import Page.Front.Msg as FrontMsg exposing (FrontMsg)
+import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
@@ -13,7 +14,7 @@ import Page.UI.Components exposing (dividerWithText)
 import Session exposing (Session)
 
 
-sourceSearchPanelView : Session -> FrontPageModel -> FrontBody -> Element FrontMsg
+sourceSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 sourceSearchPanelView session model frontBody =
     let
         activeSearch =
@@ -27,9 +28,12 @@ sourceSearchPanelView session model frontBody =
         language =
             session.language
 
-        msgs =
-            { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = model.activeSearch
+            , body = frontBody
+            , selectColumns = 4
             }
     in
     row
@@ -53,7 +57,12 @@ sourceSearchPanelView session model frontBody =
                     [ headingHero, Font.semiBold ]
                     [ text "Source records" ]
                 ]
-            , viewFrontKeywordQueryInput language msgs qText
+            , viewFrontKeywordQueryInput
+                { language = language
+                , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                , queryText = qText
+                }
             , row
                 [ width fill ]
                 -- TODO: Translate
@@ -65,18 +74,18 @@ sourceSearchPanelView session model frontBody =
                     [ width fill
                     , alignTop
                     ]
-                    [ viewFrontFacet "composer" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "composer") facetFrontMsgConfig ]
                 , column
                     [ width fill
                     , alignTop
                     ]
-                    [ viewFrontFacet "people" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "people") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "date-range" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "date-range") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill
@@ -87,23 +96,23 @@ sourceSearchPanelView session model frontBody =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ viewFrontFacet "hide-source-contents" language activeSearch frontBody
-                    , viewFrontFacet "hide-source-collections" language activeSearch frontBody
-                    , viewFrontFacet "hide-composite-volumes" language activeSearch frontBody
+                    [ viewFacet (facetConfig "hide-source-contents") facetFrontMsgConfig
+                    , viewFacet (facetConfig "hide-source-collections") facetFrontMsgConfig
+                    , viewFacet (facetConfig "hide-composite-volumes") facetFrontMsgConfig
                     ]
                 , column
                     [ width fill
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ viewFrontFacet "has-digitization" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "has-digitization") facetFrontMsgConfig ]
                 , column
                     [ width fill
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ viewFrontFacet "is-arrangement" language activeSearch frontBody
-                    , viewFrontFacet "has-incipits" language activeSearch frontBody
+                    [ viewFacet (facetConfig "is-arrangement") facetFrontMsgConfig
+                    , viewFacet (facetConfig "has-incipits") facetFrontMsgConfig
                     ]
                 ]
             , row
@@ -112,9 +121,9 @@ sourceSearchPanelView session model frontBody =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewFrontFacet "source-type" language activeSearch frontBody
-                    , viewFrontFacet "content-types" language activeSearch frontBody
-                    , viewFrontFacet "material-group-types" language activeSearch frontBody
+                    [ viewFacet (facetConfig "source-type") facetFrontMsgConfig
+                    , viewFacet (facetConfig "content-types") facetFrontMsgConfig
+                    , viewFacet (facetConfig "material-group-types") facetFrontMsgConfig
                     ]
                 ]
             , row
@@ -123,36 +132,36 @@ sourceSearchPanelView session model frontBody =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewFrontFacet "text-language" language activeSearch frontBody
-                    , viewFrontFacet "format-extent" language activeSearch frontBody
+                    [ viewFacet (facetConfig "text-language") facetFrontMsgConfig
+                    , viewFacet (facetConfig "format-extent") facetFrontMsgConfig
                     ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "subjects" language activeSearch frontBody
+                    [ viewFacet (facetConfig "subjects") facetFrontMsgConfig
                     ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "scoring" language activeSearch frontBody
+                    [ viewFacet (facetConfig "scoring") facetFrontMsgConfig
                     ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "sigla" language activeSearch frontBody
+                    [ viewFacet (facetConfig "sigla") facetFrontMsgConfig
                     ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "related-institutions" language activeSearch frontBody
+                    [ viewFacet (facetConfig "related-institutions") facetFrontMsgConfig
                     ]
                 ]
             ]

@@ -27,7 +27,7 @@ changePage url model =
                 |> setUrl url
     in
     case route of
-        Route.FrontPageRoute queryArgs ->
+        Route.FrontPageRoute _ ->
             ( FrontPage newSession FrontPage.init
             , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
             )
@@ -47,33 +47,119 @@ changePage url model =
                 -- a default search page model.
                 newPageModel =
                     case model of
-                        SearchPage session pageModel ->
-                            SearchPage.load pageModel
+                        SearchPage _ oldPageModel ->
+                            SearchPage.load url oldPageModel
 
                         _ ->
                             SearchPage.init url route
             in
             ( SearchPage newSession newPageModel
-            , Cmd.map Msg.UserInteractedWithSearchPage (SearchPage.searchPageRequest url)
+            , Cmd.batch
+                [ SearchPage.searchPageRequest url
+                , SearchPage.requestPreviewIfSelected newPageModel.selectedResult
+                ]
+                |> Cmd.map Msg.UserInteractedWithSearchPage
             )
 
         Route.SourcePageRoute _ ->
-            ( SourcePage newSession (RecordPage.init route)
+            ( SourcePage newSession (RecordPage.init url route)
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 
         Route.PersonPageRoute _ ->
-            ( PersonPage newSession (RecordPage.init route)
-            , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
+            let
+                newModel =
+                    case model of
+                        PersonPage _ oldModel ->
+                            RecordPage.load url route oldModel
+
+                        _ ->
+                            RecordPage.init url route
+
+                sourcesUrl =
+                    { url | path = url.path ++ "/sources" }
+            in
+            ( PersonPage newSession newModel
+            , Cmd.batch
+                [ RecordPage.recordPageRequest url
+                , RecordPage.recordSearchRequest sourcesUrl
+                ]
+                |> Cmd.map Msg.UserInteractedWithRecordPage
+            )
+
+        Route.PersonSourcePageRoute _ _ ->
+            let
+                recordPath =
+                    String.replace "/sources" "" url.path
+
+                recordUrl =
+                    { url | path = recordPath }
+
+                newModel =
+                    case model of
+                        PersonPage _ oldModel ->
+                            RecordPage.load url route oldModel
+
+                        _ ->
+                            RecordPage.init url route
+            in
+            ( PersonPage newSession newModel
+            , Cmd.batch
+                [ RecordPage.recordPageRequest recordUrl
+                , RecordPage.recordSearchRequest url
+                , RecordPage.requestPreviewIfSelected newModel.selectedResult
+                ]
+                |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
         Route.InstitutionPageRoute _ ->
-            ( InstitutionPage newSession (RecordPage.init route)
-            , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
+            let
+                newModel =
+                    case model of
+                        InstitutionPage _ oldModel ->
+                            RecordPage.load url route oldModel
+
+                        _ ->
+                            RecordPage.init url route
+
+                sourcesUrl =
+                    { url | path = url.path ++ "/sources" }
+            in
+            ( InstitutionPage newSession newModel
+            , Cmd.batch
+                [ RecordPage.recordPageRequest url
+                , RecordPage.recordSearchRequest sourcesUrl
+                ]
+                |> Cmd.map Msg.UserInteractedWithRecordPage
+            )
+
+        Route.InstitutionSourcePageRoute _ _ ->
+            let
+                recordPath =
+                    String.replace "/sources" "" url.path
+
+                recordUrl =
+                    { url | path = recordPath }
+
+                newModel =
+                    case model of
+                        InstitutionPage _ oldModel ->
+                            RecordPage.load url route oldModel
+
+                        _ ->
+                            RecordPage.init url route
+            in
+            ( InstitutionPage newSession newModel
+            , Cmd.batch
+                [ RecordPage.recordPageRequest recordUrl
+                , RecordPage.recordSearchRequest url
+                , RecordPage.requestPreviewIfSelected newModel.selectedResult
+                ]
+                |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
         Route.PlacePageRoute _ ->
-            ( PlacePage newSession (RecordPage.init route)
+            ( PlacePage newSession (RecordPage.init url route)
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 
@@ -82,7 +168,7 @@ changePage url model =
 
 
 updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
-updateWith toModel toMsg model ( subModel, subCmd ) =
+updateWith toModel toMsg _ ( subModel, subCmd ) =
     ( toModel subModel
     , Cmd.map toMsg subCmd
     )
@@ -157,6 +243,9 @@ update msg model =
                 |> updateWith (NotFoundPage session) Msg.UserInteractedWithNotFoundPage model
 
         ( Msg.NothingHappened, _ ) ->
+            ( model, Cmd.none )
+
+        ( Msg.ClientReceivedABadPortMessage _, _ ) ->
             ( model, Cmd.none )
 
         _ ->

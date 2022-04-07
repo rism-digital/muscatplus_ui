@@ -2,7 +2,7 @@ module Page.UI.Components exposing (..)
 
 import Color exposing (Color)
 import Css
-import Element exposing (Element, alignTop, column, el, fill, height, html, htmlAttribute, none, padding, paddingEach, paragraph, px, row, spacing, spacingXY, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, html, htmlAttribute, none, padding, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -14,8 +14,8 @@ import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes, widthFillHeightFill)
-import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes)
+import Page.UI.Style exposing (colours, convertColorToElementColor)
 import Utlities exposing (toLinkedHtml)
 
 
@@ -90,7 +90,10 @@ renderConcatenatedValue language concatValue =
 fieldValueWrapper : List (Element msg) -> Element msg
 fieldValueWrapper content =
     wrappedRow
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
             [ width fill
             , height fill
@@ -196,7 +199,7 @@ dropdownSelectStyles =
     , HA.style "border" "none"
     , HA.style "padding" "0 1.8em 0 0"
     , HA.style "margin" "0"
-    , HA.style "width" "100%"
+    , HA.style "width" "auto"
     , HA.style "font-family" "inherit"
     , HA.style "font-size" "inherit"
     , HA.style "cursor" "inherit"
@@ -208,29 +211,57 @@ dropdownSelectStyles =
     ]
 
 
-{-|
+type alias DropdownSelectConfig a msg =
+    { selectedMsg : String -> msg
+    , choices : List ( String, String )
+    , choiceFn : String -> a
+    , currentChoice : a
+    , selectIdent : String
+    , label : Maybe LanguageMap
+    , language : Language
+    }
 
-    a) Function that converts the selected value to a message value
-    b) A list of values and labels for the values
-    c) Function that converts the value to a type
-    d) The selected value as a type
 
--}
 dropdownSelect :
-    (String -> msg)
-    -> List ( String, String )
-    -> (String -> a)
-    -> a
+    DropdownSelectConfig a msg
     -> Element msg
-dropdownSelect msg options choiceFn currentChoice =
-    html
-        (HT.div
-            (List.append [] dropdownSelectParentStyles)
-            [ HT.select
-                (List.append [ HE.onInput msg ] dropdownSelectStyles)
-                (List.map (\( val, name ) -> dropdownSelectOption val name choiceFn currentChoice) options)
+dropdownSelect cfg =
+    let
+        label =
+            case cfg.label of
+                Just s ->
+                    column
+                        [ width fill
+                        , alignRight
+                        ]
+                        [ text <| extractLabelFromLanguageMap cfg.language s ]
+
+                Nothing ->
+                    none
+    in
+    row
+        [ width fill
+        , spacing lineSpacing
+        ]
+        [ label
+        , column
+            [ width fill
+            , alignLeft
             ]
-        )
+            [ html <|
+                HT.div
+                    dropdownSelectParentStyles
+                    [ HT.select
+                        (List.append
+                            [ HE.onInput cfg.selectedMsg
+                            , HA.id cfg.selectIdent
+                            ]
+                            dropdownSelectStyles
+                        )
+                        (List.map (\( val, name ) -> dropdownSelectOption val name cfg.choiceFn cfg.currentChoice) cfg.choices)
+                    ]
+            ]
+        ]
 
 
 dropdownSelectOption :
@@ -356,7 +387,7 @@ basicCheckbox checked =
 dividerWithText : String -> Element msg
 dividerWithText dividerText =
     let
-        { red, green, blue, alpha } =
+        { red, green, blue } =
             colours.slateGrey
 
         beforeAndAfterStyles =

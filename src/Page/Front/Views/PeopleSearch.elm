@@ -2,10 +2,11 @@ module Page.Front.Views.PeopleSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Page.Facets.Facets exposing (viewFacet)
+import Page.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.Front.Views.Facets exposing (viewFrontFacet)
-import Page.Front.Views.SearchControls exposing (viewFrontKeywordQueryInput, viewFrontSearchButtons)
+import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
@@ -13,7 +14,7 @@ import Page.UI.Components exposing (dividerWithText)
 import Session exposing (Session)
 
 
-peopleSearchPanelView : Session -> FrontPageModel -> FrontBody -> Element FrontMsg
+peopleSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 peopleSearchPanelView session model frontBody =
     let
         language =
@@ -22,9 +23,12 @@ peopleSearchPanelView session model frontBody =
         activeSearch =
             model.activeSearch
 
-        msgs =
-            { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , body = frontBody
+            , selectColumns = 4
             }
 
         qText =
@@ -53,7 +57,12 @@ peopleSearchPanelView session model frontBody =
                     [ headingHero, Font.semiBold ]
                     [ text "Person authorities" ]
                 ]
-            , viewFrontKeywordQueryInput language msgs qText
+            , viewFrontKeywordQueryInput
+                { language = language
+                , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                , queryText = qText
+                }
             , row
                 [ width fill ]
                 -- TODO: Translate
@@ -62,31 +71,31 @@ peopleSearchPanelView session model frontBody =
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "roles" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "roles") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "date-range" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "date-range") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "associated-place" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "associated-place") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "gender" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "gender") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "profession" language activeSearch frontBody ]
+                    [ viewFacet (facetConfig "profession") facetFrontMsgConfig ]
                 ]
             ]
         ]

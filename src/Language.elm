@@ -4,15 +4,18 @@ module Language exposing
     , LanguageMapReplacementVariable(..)
     , LanguageValues(..)
     , dateFormatter
-    , extractLabelFromLanguageMap
-    , extractLabelFromLanguageMapWithVariables
-    , extractTextFromLanguageMap
-    , extractTextFromLanguageMapWithVariables
+    ,  extractLabelFromLanguageMap
+       --, extractLabelFromLanguageMapWithVariables
+
+    ,  extractTextFromLanguageMap
+       --, extractTextFromLanguageMapWithVariables
+
     , formatNumberByLanguage
     , languageMapDecoder
     , languageOptionsForDisplay
-    , parseLocaleToLanguage
-    , setLanguage
+    ,  parseLocaleToLanguage
+       --, setLanguage
+
     )
 
 import DateFormat

@@ -3,30 +3,34 @@ module Page.Search.Views.SearchControls.Incipits exposing (..)
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignLeft, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
 import Language exposing (Language)
+import Page.Facets.Facets exposing (viewFacet, viewFacetSection)
+import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
-import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Attributes exposing (lineSpacing, sectionSpacing, widthFillHeightFill)
+import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 
 
-viewFacetsForIncipitsMode : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+viewFacetsForIncipitsMode : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 viewFacetsForIncipitsMode language model body =
     let
         activeSearch =
             toActiveSearch model
 
-        msgs =
-            { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
-            }
-
         qText =
             toNextQuery activeSearch
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
+
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , body = body
+            , selectColumns = 4
+            }
     in
     row
         [ padding 10
@@ -45,21 +49,33 @@ viewFacetsForIncipitsMode language model body =
                 [ column
                     [ alignTop
                     , alignLeft
+                    , width fill
                     ]
-                    [ viewFacet "notation" language activeSearch body
+                    [ viewFacet (facetConfig "notation") facetSearchMsgConfig
                     ]
                 ]
             , viewFacetSection language
+                SearchMsg.NothingHappened
                 [ row
-                    widthFillHeightFill
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
                     [ column
                         [ width fill
                         , alignTop
                         ]
-                        [ searchKeywordInput language msgs qText ]
+                        [ searchKeywordInput
+                            { language = language
+                            , submitMsg = SearchMsg.UserTriggeredSearchSubmit
+                            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                            , queryText = qText
+                            }
+                        ]
                     ]
                 ]
             , viewFacetSection language
+                SearchMsg.NothingHappened
                 [ row
                     [ width fill
                     , alignTop
@@ -69,21 +85,23 @@ viewFacetsForIncipitsMode language model body =
                         [ width fill
                         , alignTop
                         ]
-                        [ viewFacet "composer" language model.activeSearch body
+                        [ viewFacet (facetConfig "composer") facetSearchMsgConfig
                         ]
                     ]
                 ]
             , viewFacetSection language
+                SearchMsg.NothingHappened
                 [ row
                     [ width fill
                     , alignTop
                     ]
                     [ column
                         [ width fill ]
-                        [ viewFacet "date-range" language model.activeSearch body ]
+                        [ viewFacet (facetConfig "date-range") facetSearchMsgConfig ]
                     ]
                 ]
             , viewFacetSection language
+                SearchMsg.NothingHappened
                 [ row
                     [ width fill
                     , alignTop
@@ -93,19 +111,44 @@ viewFacetsForIncipitsMode language model body =
                         , alignTop
                         , spacing lineSpacing
                         ]
-                        [ viewFacet "is-mensural" language activeSearch body
-                        , viewFacet "has-notation" language activeSearch body
+                        [ viewFacet (facetConfig "is-mensural") facetSearchMsgConfig
+                        , viewFacet (facetConfig "has-notation") facetSearchMsgConfig
                         ]
                     ]
                 ]
             , viewFacetSection language
+                SearchMsg.NothingHappened
                 [ row
                     [ width fill
                     , alignTop
                     ]
                     [ column
                         [ width fill ]
-                        [ viewFacet "clef" language activeSearch body
+                        [ viewFacet (facetConfig "clef") facetSearchMsgConfig
+                        ]
+                    ]
+                ]
+            , viewFacetSection language
+                SearchMsg.NothingHappened
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill ]
+                        [ viewFacet (facetConfig "key-signature") facetSearchMsgConfig
+                        ]
+                    ]
+                ]
+            , viewFacetSection language
+                SearchMsg.NothingHappened
+                [ row
+                    [ width fill
+                    , alignTop
+                    ]
+                    [ column
+                        [ width fill ]
+                        [ viewFacet (facetConfig "time-signature") facetSearchMsgConfig
                         ]
                     ]
                 ]

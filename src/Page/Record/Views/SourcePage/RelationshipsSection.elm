@@ -1,11 +1,11 @@
 module Page.Record.Views.SourcePage.RelationshipsSection exposing (..)
 
-import Element exposing (Element, column, row, spacing)
+import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
-import Page.Record.Views.Relationship exposing (viewRelationshipBody)
-import Page.Record.Views.SectionTemplate exposing (sectionTemplate)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, widthFillHeightFill)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody)
+import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
@@ -13,9 +13,18 @@ viewRelationshipsSection language relSection =
     let
         sectionBody =
             [ row
-                (List.concat [ widthFillHeightFill, sectionBorderStyles ])
+                ([ width fill
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
+                )
                 [ column
-                    (List.concat [ widthFillHeightFill, [ spacing lineSpacing ] ])
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
                     (List.map (\t -> viewRelationshipBody language t) relSection.items)
                 ]
             ]

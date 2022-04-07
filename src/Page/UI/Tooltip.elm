@@ -1,6 +1,6 @@
 module Page.UI.Tooltip exposing (..)
 
-import Element exposing (Attribute, Element, above, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
+import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font

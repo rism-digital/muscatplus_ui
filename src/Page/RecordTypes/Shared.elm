@@ -5,16 +5,11 @@ module Page.RecordTypes.Shared exposing
     , LabelStringValue
     , LabelValue
     , RecordHistory
-    , labelBooleanValueDecoder
     , labelNumericValueDecoder
     , labelStringValueDecoder
     , labelValueDecoder
     , languageMapLabelDecoder
     , recordHistoryDecoder
-    , toLabel
-    , toNumericValue
-    , toValue
-    , typeDecoder
     )
 
 import Json.Decode as Decode exposing (Decoder, andThen, bool, float, list, string)

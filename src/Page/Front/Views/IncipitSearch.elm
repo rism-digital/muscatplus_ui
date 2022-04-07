@@ -2,19 +2,19 @@ module Page.Front.Views.IncipitSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Page.Facets.Facets exposing (viewFacet)
+import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.Front.Views.Facets exposing (viewFrontFacet)
-import Page.Front.Views.SearchControls exposing (viewFrontSearchButtons)
+import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
-import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText)
 import Session exposing (Session)
 
 
-incipitSearchPanelView : Session -> FrontPageModel -> FrontBody -> Element FrontMsg
+incipitSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 incipitSearchPanelView session model body =
     let
         language =
@@ -25,9 +25,12 @@ incipitSearchPanelView session model body =
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
 
-        msgs =
-            { submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = model.activeSearch
+            , body = body
+            , selectColumns = 4
             }
     in
     row
@@ -51,7 +54,7 @@ incipitSearchPanelView session model body =
                     [ headingHero, Font.semiBold ]
                     [ text "Incipit records" ]
                 ]
-            , viewFrontFacet "notation" language model.activeSearch body
+            , viewFacet (facetConfig "notation") facetFrontMsgConfig
             , row
                 [ width fill ]
                 -- TODO: Translate
@@ -63,7 +66,13 @@ incipitSearchPanelView session model body =
                     [ width fill
                     , alignTop
                     ]
-                    [ searchKeywordInput language msgs qText ]
+                    [ searchKeywordInput
+                        { language = language
+                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        }
+                    ]
                 ]
             , row
                 [ width fill
@@ -73,13 +82,13 @@ incipitSearchPanelView session model body =
                     [ width fill
                     , alignTop
                     ]
-                    [ viewFrontFacet "composer" language model.activeSearch body
+                    [ viewFacet (facetConfig "composer") facetFrontMsgConfig
                     ]
                 , column
                     [ width fill
                     , alignTop
                     ]
-                    [ viewFrontFacet "date-range" language model.activeSearch body ]
+                    [ viewFacet (facetConfig "date-range") facetFrontMsgConfig ]
                 ]
             , row
                 [ width fill ]
@@ -87,15 +96,27 @@ incipitSearchPanelView session model body =
                     [ width fill
                     , spacing lineSpacing
                     ]
-                    [ viewFrontFacet "has-notation" language model.activeSearch body
-                    , viewFrontFacet "is-mensural" language model.activeSearch body
+                    [ viewFacet (facetConfig "has-notation") facetFrontMsgConfig
+                    , viewFacet (facetConfig "is-mensural") facetFrontMsgConfig
                     ]
                 ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill ]
-                    [ viewFrontFacet "clef" language model.activeSearch body ]
+                    [ viewFacet (facetConfig "clef") facetFrontMsgConfig ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFacet (facetConfig "key-signature") facetFrontMsgConfig ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ viewFacet (facetConfig "time-signature") facetFrontMsgConfig ]
                 ]
             ]
         ]

@@ -1,6 +1,6 @@
 module Page.Front.Views.SearchControls exposing (..)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, centerY, column, el, fill, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -10,56 +10,9 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, sectionSpacing)
-import Page.UI.Events exposing (onEnter)
-import Page.UI.ProbeResponse exposing (hasActionableProbeResponse, viewProbeResponseNumbers)
+import Page.UI.Attributes exposing (headingSM, lineSpacing)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-
-
-viewFrontKeywordQueryInput :
-    Language
-    ->
-        { submitMsg : msg
-        , changeMsg : String -> msg
-        }
-    -> String
-    -> Element msg
-viewFrontKeywordQueryInput language msgs queryText =
-    row
-        [ width fill
-        , alignTop
-        , alignLeft
-        ]
-        [ column
-            [ width fill
-            , alignRight
-            , spacing sectionSpacing
-            ]
-            [ row
-                [ width fill
-                , spacing lineSpacing
-                ]
-                [ column
-                    [ width <| fillPortion 6 ]
-                    [ Input.text
-                        [ width fill
-                        , height (px 60)
-                        , centerY
-                        , htmlAttribute (HA.autocomplete False)
-                        , Border.rounded 0
-                        , onEnter msgs.submitMsg
-                        , headingLG
-                        , paddingXY 10 20
-                        ]
-                        { onChange = \inp -> msgs.changeMsg inp
-                        , placeholder = Just (Input.placeholder [ height fill ] <| el [ centerY ] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
-                        , text = queryText
-                        , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
-                        }
-                    ]
-                ]
-            ]
-        ]
 
 
 viewUpdateMessage : Language -> Bool -> Bool -> Element FrontMsg
@@ -84,7 +37,7 @@ viewUpdateMessage language applyFilterPrompt hasActionableProbeResponse =
         elMsg
 
 
-viewFrontSearchButtons : Language -> FrontPageModel -> Element FrontMsg
+viewFrontSearchButtons : Language -> FrontPageModel FrontMsg -> Element FrontMsg
 viewFrontSearchButtons language model =
     let
         msgs =

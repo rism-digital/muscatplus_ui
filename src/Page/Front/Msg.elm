@@ -1,12 +1,13 @@
 module Page.Front.Msg exposing (..)
 
+import Debouncer.Messages as Debouncer
 import Http
 import Http.Detailed
+import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
-import Page.UI.Keyboard as Keyboard
 import Response exposing (ServerData)
 
 
@@ -14,6 +15,8 @@ type FrontMsg
     = ServerRespondedWithFrontData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | ServerRespondedWithProbeData (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ))
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
+    | DebouncerCapturedProbeRequest (Debouncer.Msg FrontMsg)
+    | DebouncerSettledToSendProbeRequest
     | UserTriggeredSearchSubmit
     | UserResetAllFilters
     | UserEnteredTextInKeywordQueryBox String
@@ -21,12 +24,14 @@ type FrontMsg
     | UserChangedFacetBehaviour FacetAlias FacetBehaviours
     | UserRemovedItemFromQueryFacet FacetAlias String
     | UserEnteredTextInQueryFacet FacetAlias String String
+    | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg FrontMsg)
+    | DebouncerSettledToSendQueryFacetSuggestionRequest String
     | UserChoseOptionFromQueryFacetSuggest FacetAlias String FacetBehaviours
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
-    | UserFocusedRangeFacet FacetAlias RangeFacetValue
-    | UserLostFocusRangeFacet FacetAlias RangeFacetValue
+    | UserFocusedRangeFacet FacetAlias
+    | UserLostFocusRangeFacet FacetAlias
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
-    | UserClickedSelectFacetItem FacetAlias String Bool
-    | UserInteractedWithPianoKeyboard Keyboard.Msg
+    | UserClickedSelectFacetItem FacetAlias String
+    | UserInteractedWithPianoKeyboard KeyboardMsg
     | NothingHappened

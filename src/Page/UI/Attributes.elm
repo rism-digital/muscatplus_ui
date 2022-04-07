@@ -1,7 +1,7 @@
 module Page.UI.Attributes exposing (..)
 
 import Color exposing (toCssString)
-import Element exposing (Attr, Attribute, alignTop, fill, fillPortion, height, htmlAttribute, paddingXY, spacingXY, width)
+import Element exposing (Attr, Attribute, alignTop, fillPortion, htmlAttribute, paddingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -75,14 +75,6 @@ sectionBorderStyles =
     [ Border.widthEach { left = 2, right = 0, bottom = 0, top = 0 }
     , Border.color (colourScheme.midGrey |> convertColorToElementColor)
     , paddingXY lineSpacing 0
-    ]
-
-
-widthFillHeightFill : List (Attribute msg)
-widthFillHeightFill =
-    [ width fill
-    , height fill
-    , alignTop
     ]
 
 

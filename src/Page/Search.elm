@@ -1,39 +1,55 @@
 module Page.Search exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toKeyboard)
 import Browser.Navigation as Nav
 import Config as C
-import Dict exposing (Dict)
+import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
+import Dict
 import Flip exposing (flip)
-import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toMode, toNextQuery)
-import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.Keyboard as Keyboard
+    exposing
+        ( buildNotationRequestQuery
+        , setNotation
+        , toNotation
+        )
+import Page.Keyboard.Model exposing (toKeyboardQuery)
+import Page.Keyboard.Query exposing (buildNotationQueryParameters)
+import Page.Query
+    exposing
+        ( buildQueryParameters
+        , defaultQueryArgs
+        , resetPage
+        , setKeywordQuery
+        , setMode
+        , setNextQuery
+        , setSort
+        , toMode
+        , toNextQuery
+        )
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts(..), FacetType(..), RangeFacetValue(..))
+import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
-import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery, setNotation, toNotation)
-import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
-import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
 import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
-import Viewport exposing (jumpToIdIfNotVisible)
+import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
 type alias Model =
-    SearchPageModel
+    SearchPageModel SearchMsg
 
 
 type alias Msg =
     SearchMsg
 
 
-init : Url -> Route -> SearchPageModel
+init : Url -> Route -> SearchPageModel SearchMsg
 init incomingUrl route =
     let
         selectedResult =
@@ -46,12 +62,13 @@ init incomingUrl route =
     , selectedResult = selectedResult
     , showFacetPanel = False
     , probeResponse = NoResponseToShow
+    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     }
 
 
-load : SearchPageModel -> SearchPageModel
-load oldModel =
+load : Url -> SearchPageModel SearchMsg -> SearchPageModel SearchMsg
+load url oldModel =
     let
         oldKeyboard =
             toKeyboard oldModel.activeSearch
@@ -61,28 +78,39 @@ load oldModel =
                 |> toNotation
                 |> flip setNotation oldKeyboard
                 |> flip setKeyboard oldModel.activeSearch
+
+        ( previewResp, selectedResult ) =
+            case url.fragment of
+                Just f ->
+                    ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
+
+                Nothing ->
+                    ( NoResponseToShow, Nothing )
     in
     { response = oldModel.response
     , activeSearch = newActiveSearch
-    , preview = oldModel.preview
-    , selectedResult = oldModel.selectedResult
+    , preview = previewResp
+    , selectedResult = selectedResult
     , showFacetPanel = oldModel.showFacetPanel
     , probeResponse = oldModel.probeResponse
+    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     }
 
 
 searchPageRequest : Url -> Cmd SearchMsg
 searchPageRequest requestUrl =
-    let
-        selectedPreviewRequest =
-            Maybe.andThen (\f -> Just <| searchPagePreviewRequest (C.serverUrl ++ "/" ++ convertNodeIdToPath f)) requestUrl.fragment
-                |> Maybe.withDefault Cmd.none
-    in
-    Cmd.batch
-        [ createRequestWithDecoder ServerRespondedWithSearchData (Url.toString requestUrl)
-        , selectedPreviewRequest
-        ]
+    createRequestWithDecoder ServerRespondedWithSearchData (Url.toString requestUrl)
+
+
+requestPreviewIfSelected : Maybe String -> Cmd SearchMsg
+requestPreviewIfSelected selected =
+    case selected of
+        Just s ->
+            searchPagePreviewRequest s
+
+        Nothing ->
+            Cmd.none
 
 
 searchPagePreviewRequest : String -> Cmd SearchMsg
@@ -90,7 +118,7 @@ searchPagePreviewRequest previewUrl =
     createRequestWithDecoder ServerRespondedWithSearchPreview previewUrl
 
 
-searchSubmit : Session -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
+searchSubmit : Session -> SearchPageModel SearchMsg -> ( SearchPageModel SearchMsg, Cmd SearchMsg )
 searchSubmit session model =
     let
         resetPageInQueryArgs =
@@ -115,18 +143,25 @@ searchSubmit session model =
             toNextQuery nationalCollectionSetModel.activeSearch
                 |> buildQueryParameters
 
+        oldData =
+            case model.response of
+                Response d ->
+                    Just d
+
+                _ ->
+                    Nothing
+
         newModel =
             { nationalCollectionSetModel
                 | preview = NoResponseToShow
+                , response = Loading oldData
             }
 
         searchUrl =
             serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
     in
     ( newModel
-    , Cmd.batch
-        [ Nav.pushUrl session.key searchUrl
-        ]
+    , Nav.pushUrl session.key searchUrl
     )
 
 
@@ -139,7 +174,27 @@ convertFacetToResultMode facet =
     parseStringToResultMode qval
 
 
-update : Session -> SearchMsg -> SearchPageModel -> ( SearchPageModel, Cmd SearchMsg )
+updateDebouncerProbeConfig : Debouncer.UpdateConfig SearchMsg (SearchPageModel SearchMsg)
+updateDebouncerProbeConfig =
+    { mapMsg = DebouncerCapturedProbeRequest
+    , getDebouncer = .probeDebouncer
+    , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
+    }
+
+
+updateDebouncerSuggestConfig : Debouncer.UpdateConfig SearchMsg (SearchPageModel SearchMsg)
+updateDebouncerSuggestConfig =
+    { mapMsg = DebouncerCapturedQueryFacetSuggestionRequest
+    , getDebouncer = \model -> .activeSuggestionDebouncer model.activeSearch
+    , setDebouncer =
+        \debouncer model ->
+            model.activeSearch
+                |> setActiveSuggestionDebouncer debouncer
+                |> flip setActiveSearch model
+    }
+
+
+update : Session -> SearchMsg -> SearchPageModel SearchMsg -> ( SearchPageModel SearchMsg, Cmd SearchMsg )
 update session msg model =
     case msg of
         ServerRespondedWithSearchData (Ok ( _, response )) ->
@@ -181,7 +236,10 @@ update session msg model =
                 , probeResponse = totalItems
                 , applyFilterPrompt = False
               }
-            , Cmd.batch [ notationRenderCmd, jumpCmd ]
+            , Cmd.batch
+                [ notationRenderCmd
+                , jumpCmd
+                ]
             )
 
         ServerRespondedWithSearchData (Err error) ->
@@ -229,11 +287,11 @@ update session msg model =
         ServerRespondedWithSuggestionData (Err error) ->
             ( model, Cmd.none )
 
-        ClientJumpedToId ->
-            ( model, Cmd.none )
+        DebouncerCapturedProbeRequest searchMsg ->
+            Debouncer.update (update session) updateDebouncerProbeConfig searchMsg model
 
-        ClientResetViewport ->
-            ( model, Cmd.none )
+        DebouncerSettledToSendProbeRequest ->
+            probeSubmit ServerRespondedWithProbeData session model
 
         UserChangedFacetBehaviour alias facetBehaviour ->
             userChangedFacetBehaviour alias facetBehaviour model
@@ -248,7 +306,25 @@ update session msg model =
             ( model, Cmd.none )
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
-            userEnteredTextInQueryFacet alias query suggestionUrl ServerRespondedWithSuggestionData model
+            let
+                debounceMsg =
+                    String.append suggestionUrl query
+                        |> DebouncerSettledToSendQueryFacetSuggestionRequest
+                        |> provideInput
+                        |> DebouncerCapturedQueryFacetSuggestionRequest
+
+                newModel =
+                    userEnteredTextInQueryFacet alias query model
+            in
+            update session debounceMsg newModel
+
+        DebouncerCapturedQueryFacetSuggestionRequest suggestMsg ->
+            Debouncer.update (update session) updateDebouncerSuggestConfig suggestMsg model
+
+        DebouncerSettledToSendQueryFacetSuggestionRequest suggestionUrl ->
+            ( model
+            , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
+            )
 
         UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
             updateQueryFacetFilters alias selectedValue currentBehaviour model
@@ -263,10 +339,10 @@ update session msg model =
             , Cmd.none
             )
 
-        UserFocusedRangeFacet alias valueType ->
+        UserFocusedRangeFacet alias ->
             ( model, Cmd.none )
 
-        UserLostFocusRangeFacet alias valueType ->
+        UserLostFocusRangeFacet alias ->
             userLostFocusOnRangeFacet alias model
                 |> probeSubmit ServerRespondedWithProbeData session
 
@@ -275,7 +351,7 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue isClicked ->
+        UserClickedSelectFacetItem alias facetValue ->
             userClickedSelectFacetItem alias facetValue model
                 |> probeSubmit ServerRespondedWithProbeData session
 
@@ -296,7 +372,7 @@ update session msg model =
                 |> flip setActiveSearch model
                 |> searchSubmit session
 
-        UserClickedModeItem alias item isClicked ->
+        UserClickedModeItem item ->
             let
                 newMode =
                     convertFacetToResultMode item
@@ -309,23 +385,23 @@ update session msg model =
                 |> flip setActiveSearch model
                 |> searchSubmit session
 
-        UserClickedRemoveActiveFilter alias value ->
-            ( model, Cmd.none )
-
-        UserClickedClearSearchQueryBox ->
-            let
-                newQuery =
-                    toNextQuery model.activeSearch
-                        |> setKeywordQuery Nothing
-            in
-            setNextQuery newQuery model.activeSearch
-                |> flip setActiveSearch model
-                |> searchSubmit session
-
         UserClickedSearchResultsPagination url ->
-            ( model
+            let
+                oldData =
+                    case model.response of
+                        Response d ->
+                            Just d
+
+                        _ ->
+                            Nothing
+            in
+            ( { model
+                | preview = NoResponseToShow
+                , response = Loading oldData
+              }
             , Cmd.batch
                 [ Nav.pushUrl session.key url
+                , resetViewportOf NothingHappened "search-results-list"
                 ]
             )
 
@@ -344,10 +420,16 @@ update session msg model =
                 newQueryArgs =
                     toNextQuery model.activeSearch
                         |> setKeywordQuery newText
+
+                newModel =
+                    setNextQuery newQueryArgs model.activeSearch
+                        |> flip setActiveSearch model
+
+                debounceMsg =
+                    provideInput DebouncerSettledToSendProbeRequest
+                        |> DebouncerCapturedProbeRequest
             in
-            setNextQuery newQueryArgs model.activeSearch
-                |> flip setActiveSearch model
-                |> probeSubmit ServerRespondedWithProbeData session
+            update session debounceMsg newModel
 
         UserClickedClosePreviewWindow ->
             let
@@ -394,10 +476,7 @@ update session msg model =
             ( { model
                 | selectedResult = Just result
               }
-            , Cmd.batch
-                [ Nav.pushUrl session.key newUrlStr
-                , searchPagePreviewRequest result
-                ]
+            , Nav.pushUrl session.key newUrlStr
             )
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
@@ -411,10 +490,10 @@ update session msg model =
                         |> flip setActiveSearch model
 
                 probeCmd =
-                    if keyboardModel.needsProbe == True then
+                    if keyboardModel.needsProbe then
                         let
                             probeUrl =
-                                createProbeUrl newModel.activeSearch
+                                createProbeUrl session newModel.activeSearch
                         in
                         createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
 
@@ -427,14 +506,6 @@ update session msg model =
                 , probeCmd
                 ]
             )
-
-        UserClickedPianoKeyboardSearchSubmitButton ->
-            searchSubmit session model
-
-        UserClickedPianoKeyboardSearchClearButton ->
-            setKeyboard Keyboard.initModel model.activeSearch
-                |> flip setActiveSearch model
-                |> searchSubmit session
 
         UserResetAllFilters ->
             let

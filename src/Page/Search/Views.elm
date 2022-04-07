@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -13,45 +13,58 @@ import Page.RecordTypes.Search exposing (ModeFacet, SearchBody, SearchResult(..)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (viewModeItems)
-import Page.Search.Views.Loading exposing (searchModeSelectorLoading, viewSearchResultsLoading)
-import Page.Search.Views.Previews exposing (viewPreviewRouter, viewUnknownPreview)
-import Page.Search.Views.Results.IncipitResult exposing (viewIncipitSearchResult)
-import Page.Search.Views.Results.InstitutionResult exposing (viewInstitutionSearchResult)
-import Page.Search.Views.Results.PersonResult exposing (viewPersonSearchResult)
-import Page.Search.Views.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.Search.Views.SearchControls exposing (viewSearchControls)
-import Page.UI.Attributes exposing (lineSpacing, searchColumnVerticalSize, widthFillHeightFill)
-import Page.UI.Components exposing (dropdownSelect, h3, renderParagraph)
+import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Pagination exposing (viewPagination)
+import Page.UI.Record.Previews exposing (viewPreviewRouter)
+import Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
+import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
+import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
+import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
+import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
-view : Session -> SearchPageModel -> Element SearchMsg
+view : Session -> SearchPageModel SearchMsg -> Element SearchMsg
 view session model =
     row
-        (List.append [ centerX ] widthFillHeightFill)
+        [ width fill
+        , height fill
+        , alignTop
+        , centerX
+        ]
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ viewTopBar session.language model
             , viewSearchBody session.language model
             ]
         ]
 
 
-viewSearchBody : Language -> SearchPageModel -> Element SearchMsg
+viewSearchBody : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 viewSearchBody language model =
     row
-        (List.append [ clipY ] widthFillHeightFill)
+        [ width fill
+        , height fill
+        , alignTop
+        , clipY
+        ]
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ searchResultsViewRouter language model ]
         ]
 
 
-viewTopBar : Language -> SearchPageModel -> Element SearchMsg
+viewTopBar : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 viewTopBar lang model =
     row
         [ width fill
@@ -60,33 +73,29 @@ viewTopBar lang model =
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         ]
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ searchModeSelectorRouter lang model
             ]
         ]
 
 
-searchModeSelectorRouter : Language -> SearchPageModel -> Element SearchMsg
+searchModeSelectorRouter : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 searchModeSelectorRouter language model =
-    let
-        response =
-            model.response
+    case model.response of
+        Response (SearchData data) ->
+            searchModeSelectorView language model data.modes
 
-        modeView =
-            case response of
-                Response (SearchData data) ->
-                    searchModeSelectorView language model data.modes
+        Loading (Just (SearchData oldData)) ->
+            searchModeSelectorView language model oldData.modes
 
-                Loading (Just (SearchData oldData)) ->
-                    searchModeSelectorView language model oldData.modes
-
-                _ ->
-                    searchModeSelectorLoading
-    in
-    modeView
+        _ ->
+            none
 
 
-searchModeSelectorView : Language -> SearchPageModel -> Maybe ModeFacet -> Element SearchMsg
+searchModeSelectorView : Language -> SearchPageModel SearchMsg -> Maybe ModeFacet -> Element SearchMsg
 searchModeSelectorView lang model modeFacet =
     let
         currentMode =
@@ -95,53 +104,59 @@ searchModeSelectorView lang model modeFacet =
                 |> toMode
     in
     row
-        widthFillHeightFill
+        [ width fill
+        , height fill
+        , alignTop
+        ]
         [ column
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            ]
             [ viewMaybe (viewModeItems currentMode lang) modeFacet
             ]
         ]
 
 
-searchResultsViewRouter : Language -> SearchPageModel -> Element SearchMsg
+searchResultsViewRouter : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 searchResultsViewRouter language model =
     case model.response of
         Loading (Just (SearchData oldData)) ->
-            viewSearchResultsSection language model oldData
+            viewSearchResultsSection language model oldData True
 
         Loading _ ->
-            viewSearchResultsLoading language model
+            viewSearchResultsLoadingTmpl language
 
         Response (SearchData body) ->
-            viewSearchResultsSection language model body
+            viewSearchResultsSection language model body False
 
-        Error _ ->
-            viewSearchResultsError language model
+        Error err ->
+            viewSearchResultsErrorTmpl language err
 
         NoResponseToShow ->
             -- In case we're just booting the app up, show
             -- the loading message.
-            viewSearchResultsLoading language model
+            viewSearchResultsLoadingTmpl language
 
         _ ->
             -- For any other responses, show the error.
-            viewSearchResultsError language model
+            viewSearchResultsErrorTmpl language "An unknown error occurred."
 
 
-viewSearchResultsSection : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
-viewSearchResultsSection language model body =
+viewSearchResultsSection : Language -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
+viewSearchResultsSection language model body isLoading =
     let
         renderedPreview =
             case model.preview of
                 Loading Nothing ->
                     -- TODO: Make a preview loading view
-                    viewUnknownPreview
+                    none
 
                 Loading (Just oldData) ->
-                    viewPreviewRouter language oldData
+                    viewPreviewRouter language SearchMsg.UserClickedClosePreviewWindow oldData
 
                 Response resp ->
-                    viewPreviewRouter language resp
+                    viewPreviewRouter language SearchMsg.UserClickedClosePreviewWindow resp
 
                 Error _ ->
                     none
@@ -156,14 +171,13 @@ viewSearchResultsSection language model body =
         ]
         [ column
             [ width fill
-            , searchColumnVerticalSize
-            , scrollbarY
+            , height fill
             , alignTop
-            , htmlAttribute (HA.id "search-results-list")
             , Border.widthEach { bottom = 0, top = 0, left = 0, right = 2 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
-            [ viewSearchResultsListPanel language model body
+            [ viewSearchResultsListPanel language model body isLoading
+            , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
             ]
         , column
             [ width fill
@@ -175,49 +189,37 @@ viewSearchResultsSection language model body =
         ]
 
 
-viewSearchResultsListPanel : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
-viewSearchResultsListPanel language model body =
+viewSearchResultsListPanel : Language -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
+viewSearchResultsListPanel language model body isLoading =
     if body.totalItems == 0 then
-        viewSearchResultsNotFound language
+        viewSearchResultsNotFoundTmpl language
 
     else
         row
-            widthFillHeightFill
+            [ width fill
+            , height fill
+            , alignTop
+            , scrollbarY
+            , htmlAttribute (HA.id "search-results-list")
+            ]
             [ column
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                , inFront <| viewResultsListLoadingScreenTmpl isLoading
+                ]
                 [ viewSearchResultsList language model body
-                , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
                 ]
             ]
 
 
-viewSearchResultsNotFound : Language -> Element SearchMsg
-viewSearchResultsNotFound language =
+viewSearchResultsList : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
+viewSearchResultsList language model body =
     row
         [ width fill
         , height fill
         , alignTop
         ]
-        [ column
-            [ width fill
-            , alignTop
-            , padding 20
-            , spacing lineSpacing
-            ]
-            [ row
-                [ width fill ]
-                [ h3 language localTranslations.noResultsHeader ]
-            , row
-                [ width fill ]
-                [ renderParagraph language localTranslations.noResultsBody ]
-            ]
-        ]
-
-
-viewSearchResultsList : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
-viewSearchResultsList language model body =
-    row
-        widthFillHeightFill
         [ column
             [ width fill
             , alignTop
@@ -230,19 +232,39 @@ viewSearchResultRouter : Language -> Maybe String -> SearchResult -> Element Sea
 viewSearchResultRouter language selectedResult res =
     case res of
         SourceResult body ->
-            viewSourceSearchResult language selectedResult body
+            viewSourceSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                }
 
         PersonResult body ->
-            viewPersonSearchResult language selectedResult body
+            viewPersonSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                }
 
         InstitutionResult body ->
-            viewInstitutionSearchResult language selectedResult body
+            viewInstitutionSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                }
 
         IncipitResult body ->
-            viewIncipitSearchResult language selectedResult body
+            viewIncipitSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                }
 
 
-viewSearchPageSort : Language -> SearchPageModel -> Element SearchMsg
+viewSearchPageSort : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 viewSearchPageSort language model =
     let
         activeSearch =
@@ -259,7 +281,7 @@ viewSearchPageSort language model =
             none
 
 
-viewPaginationSortSelector : Language -> ActiveSearch -> SearchBody -> Element SearchMsg
+viewPaginationSortSelector : Language -> ActiveSearch SearchMsg -> SearchBody -> Element SearchMsg
 viewPaginationSortSelector language activeSearch body =
     let
         pagination =
@@ -307,22 +329,16 @@ viewPaginationSortSelector language activeSearch body =
                     [ el
                         []
                         (dropdownSelect
-                            (\inp -> SearchMsg.UserChangedResultSorting inp)
-                            listOfLabelsForResultSort
-                            (\inp -> inp)
-                            chosenSort
+                            { selectedMsg = \inp -> SearchMsg.UserChangedResultSorting inp
+                            , choices = listOfLabelsForResultSort
+                            , choiceFn = \inp -> inp
+                            , currentChoice = chosenSort
+                            , selectIdent = "pagination-sort-select" -- TODO: Check that this is unique!
+                            , label = Nothing
+                            , language = language
+                            }
                         )
                     ]
                 ]
             ]
         ]
-
-
-viewSearchResultsError : Language -> SearchPageModel -> Element msg
-viewSearchResultsError language model =
-    case model.response of
-        Error msg ->
-            text msg
-
-        _ ->
-            none

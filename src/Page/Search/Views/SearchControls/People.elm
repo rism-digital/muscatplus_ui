@@ -1,26 +1,22 @@
 module Page.Search.Views.SearchControls.People exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (Element, alignTop, column, el, fill, height, padding, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
 import Language exposing (Language)
+import Page.Facets.Facets exposing (FacetConfig, viewFacet, viewFacetSection)
+import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
-import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
-import Page.Search.Views.Facets exposing (viewFacet, viewFacetSection)
-import Page.Search.Views.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Attributes exposing (facetBorderBottom, headingMD, lineSpacing, widthFillHeightFill)
+import Page.Search.Msg as SearchMsg exposing (SearchMsg)
+import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
+import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dividerWithText)
 
 
-facetsForPeopleModeView : Language -> SearchPageModel -> SearchBody -> Element SearchMsg
+facetsForPeopleModeView : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 facetsForPeopleModeView language model body =
     let
-        msgs =
-            { submitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
-            }
-
         activeSearch =
             toActiveSearch model
 
@@ -28,6 +24,15 @@ facetsForPeopleModeView language model body =
             toNextQuery activeSearch
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
+
+        facetConfig : String -> FacetConfig SearchBody SearchMsg
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , body = body
+            , selectColumns = 3
+            }
     in
     row
         [ padding 10
@@ -42,12 +47,21 @@ facetsForPeopleModeView language model body =
             , alignTop
             ]
             [ row
-                widthFillHeightFill
+                [ width fill
+                , height fill
+                , alignTop
+                ]
                 [ column
                     [ width fill
                     , alignTop
                     ]
-                    [ searchKeywordInput language msgs qText ]
+                    [ searchKeywordInput
+                        { language = language
+                        , submitMsg = SearchMsg.UserTriggeredSearchSubmit
+                        , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        }
+                    ]
                 ]
             , row
                 [ width fill ]
@@ -55,14 +69,19 @@ facetsForPeopleModeView language model body =
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
-                [ viewFacet "roles" language activeSearch body ]
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "roles") facetSearchMsgConfig ]
             , viewFacetSection language
-                [ viewFacet "date-range" language activeSearch body ]
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "date-range") facetSearchMsgConfig ]
             , viewFacetSection language
-                [ viewFacet "associated-place" language activeSearch body ]
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "associated-place") facetSearchMsgConfig ]
             , viewFacetSection language
-                [ viewFacet "gender" language activeSearch body ]
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "gender") facetSearchMsgConfig ]
             , viewFacetSection language
-                [ viewFacet "profession" language activeSearch body ]
+                SearchMsg.NothingHappened
+                [ viewFacet (facetConfig "profession") facetSearchMsgConfig ]
             ]
         ]

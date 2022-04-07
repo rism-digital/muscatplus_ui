@@ -1,19 +1,20 @@
 module Page.Front exposing (..)
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
 import Browser.Navigation as Nav
+import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
 import Flip exposing (flip)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
+import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
+import Page.Keyboard.Model exposing (toKeyboardQuery)
+import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
-import Page.Search.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, updateQueryFacetFilters, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
-import Page.UI.Keyboard as Keyboard exposing (buildNotationRequestQuery)
-import Page.UI.Keyboard.Model exposing (toKeyboardQuery)
-import Page.UI.Keyboard.Query exposing (buildNotationQueryParameters)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
@@ -21,18 +22,19 @@ import Url exposing (Url)
 
 
 type alias Model =
-    FrontPageModel
+    FrontPageModel FrontMsg
 
 
 type alias Msg =
     FrontMsg
 
 
-init : FrontPageModel
+init : FrontPageModel FrontMsg
 init =
     { response = Loading Nothing
     , activeSearch = ActiveSearch.empty
     , probeResponse = NoResponseToShow
+    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     }
 
@@ -47,7 +49,7 @@ frontPageRequest initialUrl =
     createRequestWithDecoder ServerRespondedWithFrontData (Url.toString initialUrl)
 
 
-frontProbeSubmit : Session -> FrontPageModel -> ( FrontPageModel, Cmd FrontMsg )
+frontProbeSubmit : Session -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
 frontProbeSubmit session model =
     let
         resultMode =
@@ -63,7 +65,7 @@ frontProbeSubmit session model =
     probeSubmit ServerRespondedWithProbeData session newModel
 
 
-searchSubmit : Session -> FrontPageModel -> ( FrontPageModel, Cmd FrontMsg )
+searchSubmit : Session -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
 searchSubmit session model =
     let
         activeSearch =
@@ -102,13 +104,31 @@ searchSubmit session model =
             serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
     in
     ( newModel
-    , Cmd.batch
-        [ Nav.pushUrl session.key searchUrl
-        ]
+    , Nav.pushUrl session.key searchUrl
     )
 
 
-update : Session -> FrontMsg -> FrontPageModel -> ( FrontPageModel, Cmd FrontMsg )
+updateDebouncerProbeConfig : Debouncer.UpdateConfig FrontMsg (FrontPageModel FrontMsg)
+updateDebouncerProbeConfig =
+    { mapMsg = DebouncerCapturedProbeRequest
+    , getDebouncer = .probeDebouncer
+    , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
+    }
+
+
+updateDebouncerSuggestConfig : Debouncer.UpdateConfig FrontMsg (FrontPageModel FrontMsg)
+updateDebouncerSuggestConfig =
+    { mapMsg = DebouncerCapturedQueryFacetSuggestionRequest
+    , getDebouncer = \model -> .activeSuggestionDebouncer model.activeSearch
+    , setDebouncer =
+        \debouncer model ->
+            model.activeSearch
+                |> setActiveSuggestionDebouncer debouncer
+                |> flip setActiveSearch model
+    }
+
+
+update : Session -> FrontMsg -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
 update session msg model =
     case msg of
         ServerRespondedWithFrontData (Ok ( _, response )) ->
@@ -148,6 +168,12 @@ update session msg model =
             , Cmd.none
             )
 
+        DebouncerCapturedProbeRequest frontMsg ->
+            Debouncer.update (update session) updateDebouncerProbeConfig frontMsg model
+
+        DebouncerSettledToSendProbeRequest ->
+            probeSubmit ServerRespondedWithProbeData session model
+
         ServerRespondedWithSuggestionData (Err err) ->
             ( model, Cmd.none )
 
@@ -166,8 +192,9 @@ update session msg model =
             , Cmd.none
             )
 
-        UserChangedFacetBehaviour alias behaviour ->
-            ( model, Cmd.none )
+        UserChangedFacetBehaviour alias facetBehaviour ->
+            userChangedFacetBehaviour alias facetBehaviour model
+                |> probeSubmit ServerRespondedWithProbeData session
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model
@@ -202,10 +229,16 @@ update session msg model =
                 newQueryArgs =
                     toNextQuery model.activeSearch
                         |> setKeywordQuery newText
+
+                newModel =
+                    setNextQuery newQueryArgs model.activeSearch
+                        |> flip setActiveSearch model
+
+                debounceMsg =
+                    provideInput DebouncerSettledToSendProbeRequest
+                        |> DebouncerCapturedProbeRequest
             in
-            setNextQuery newQueryArgs model.activeSearch
-                |> flip setActiveSearch model
-                |> frontProbeSubmit session
+            update session debounceMsg newModel
 
         UserClickedToggleFacet facetAlias ->
             userClickedToggleFacet facetAlias model
@@ -216,7 +249,25 @@ update session msg model =
                 |> frontProbeSubmit session
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
-            userEnteredTextInQueryFacet alias query suggestionUrl ServerRespondedWithSuggestionData model
+            let
+                debounceMsg =
+                    String.append suggestionUrl query
+                        |> DebouncerSettledToSendQueryFacetSuggestionRequest
+                        |> provideInput
+                        |> DebouncerCapturedQueryFacetSuggestionRequest
+
+                newModel =
+                    userEnteredTextInQueryFacet alias query model
+            in
+            update session debounceMsg newModel
+
+        DebouncerCapturedQueryFacetSuggestionRequest incomingMsg ->
+            Debouncer.update (update session) updateDebouncerSuggestConfig incomingMsg model
+
+        DebouncerSettledToSendQueryFacetSuggestionRequest suggestionUrl ->
+            ( model
+            , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
+            )
 
         UserChoseOptionFromQueryFacetSuggest alias selectedValue currentBehaviour ->
             updateQueryFacetFilters alias selectedValue currentBehaviour model
@@ -227,10 +278,10 @@ update session msg model =
             , Cmd.none
             )
 
-        UserFocusedRangeFacet alias valueType ->
+        UserFocusedRangeFacet alias ->
             ( model, Cmd.none )
 
-        UserLostFocusRangeFacet alias valueType ->
+        UserLostFocusRangeFacet alias ->
             userLostFocusOnRangeFacet alias model
                 |> frontProbeSubmit session
 
@@ -244,7 +295,7 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue isClicked ->
+        UserClickedSelectFacetItem alias facetValue ->
             userClickedSelectFacetItem alias facetValue model
                 |> frontProbeSubmit session
 
@@ -262,13 +313,13 @@ update session msg model =
                         |> flip setActiveSearch model
 
                 probeCmd =
-                    if keyboardModel.needsProbe == True then
+                    if keyboardModel.needsProbe then
                         let
                             probeUrl =
                                 toNextQuery newModel.activeSearch
                                     |> setMode resultMode
                                     |> flip setNextQuery newModel.activeSearch
-                                    |> createProbeUrl
+                                    |> createProbeUrl session
                         in
                         createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
 

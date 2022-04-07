@@ -67,14 +67,14 @@ menuOption :
 menuOption cfg option currentlyHovered =
     let
         fontColour =
-            if currentlyHovered == True || cfg.isCurrent == True then
+            if currentlyHovered || cfg.isCurrent then
                 colourScheme.white
 
             else
                 colourScheme.slateGrey
 
         hoverStyles =
-            if currentlyHovered == True || cfg.isCurrent == True then
+            if currentlyHovered || cfg.isCurrent then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                 ]
 
@@ -321,7 +321,16 @@ view session =
                     , label =
                         el
                             [ width fill ]
-                            (dropdownSelect UserChangedLanguageSelect languageOptionsForDisplay parseLocaleToLanguage session.language)
+                            (dropdownSelect
+                                { selectedMsg = UserChangedLanguageSelect
+                                , choices = languageOptionsForDisplay
+                                , choiceFn = parseLocaleToLanguage
+                                , currentChoice = session.language
+                                , selectIdent = "site-language-select"
+                                , label = Nothing
+                                , language = session.language
+                                }
+                            )
                     , showLabel = showLabels
                     }
                 ]

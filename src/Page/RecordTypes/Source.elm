@@ -10,7 +10,7 @@ import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitu
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
-import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, Subject, SubjectsSectionBody, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
+import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
 
 
 type alias FullSourceBody =
@@ -89,7 +89,8 @@ type alias ExemplarsSectionBody =
 
 
 type alias ExemplarBody =
-    { summary : Maybe (List LabelValue)
+    { label : LanguageMap
+    , summary : Maybe (List LabelValue)
     , heldBy : BasicInstitutionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , notes : Maybe (List LabelValue)
@@ -192,6 +193,7 @@ exemplarsBodyDecoder : Decoder ExemplarBody
 exemplarsBodyDecoder =
     Decode.succeed ExemplarBody
         --|> required "id" string
+        |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing

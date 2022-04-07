@@ -1,8 +1,8 @@
 module Page.Route exposing (Route(..), parseUrl, setRoute, setUrl)
 
+import Page.Keyboard.Model exposing (KeyboardQuery)
+import Page.Keyboard.Query exposing (notationParamParser)
 import Page.Query exposing (FrontQueryArgs, QueryArgs, frontQueryParamsParser, queryParamsParser)
-import Page.UI.Keyboard.Model exposing (KeyboardQuery)
-import Page.UI.Keyboard.Query exposing (notationParamParser)
 import Url exposing (Url)
 import Url.Parser as P exposing ((</>), (<?>), s)
 
@@ -12,7 +12,9 @@ type Route
     | SearchPageRoute QueryArgs KeyboardQuery
     | SourcePageRoute Int
     | PersonPageRoute Int
+    | PersonSourcePageRoute Int QueryArgs
     | InstitutionPageRoute Int
+    | InstitutionSourcePageRoute Int QueryArgs
     | PlacePageRoute Int
     | FestivalPageRoute Int
     | SubjectPageRoute Int
@@ -36,7 +38,9 @@ routeParser =
         , P.map SearchPageRoute (s "search" <?> queryParamsParser <?> notationParamParser)
         , P.map SourcePageRoute (s "sources" </> P.int)
         , P.map PersonPageRoute (s "people" </> P.int)
+        , P.map PersonSourcePageRoute (s "people" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map InstitutionPageRoute (s "institutions" </> P.int)
+        , P.map InstitutionSourcePageRoute (s "institutions" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map PlacePageRoute (s "places" </> P.int)
         , P.map FestivalPageRoute (s "festivals" </> P.int)
         , P.map SubjectPageRoute (s "subjects" </> P.int)

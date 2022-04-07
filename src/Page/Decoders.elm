@@ -6,7 +6,6 @@ import Page.RecordTypes
         ( RecordType(..)
         , recordTypeFromJsonType
         )
-import Page.RecordTypes.Festival exposing (liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Front exposing (frontBodyDecoder)
 import Page.RecordTypes.Incipit exposing (incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)
@@ -21,11 +20,6 @@ recordResponseDecoder : Decoder ServerData
 recordResponseDecoder =
     Decode.field "type" string
         |> andThen recordResponseConverter
-
-
-festivalResponseDecoder : Decoder ServerData
-festivalResponseDecoder =
-    Decode.map FestivalData liturgicalFestivalBodyDecoder
 
 
 sourceResponseDecoder : Decoder ServerData
@@ -78,9 +72,6 @@ recordResponseConverter typevalue =
         Place ->
             placeResponseDecoder
 
-        Festival ->
-            festivalResponseDecoder
-
         Incipit ->
             incipitResponseDecoder
 
@@ -94,13 +85,3 @@ recordResponseConverter typevalue =
         --       once we have a clear idea of what they are.
         Unknown ->
             sourceResponseDecoder
-
-
-decodeFromResult : Result String a -> Decoder a
-decodeFromResult result =
-    case result of
-        Ok a ->
-            Decode.succeed a
-
-        Err errMsg ->
-            Decode.fail errMsg
