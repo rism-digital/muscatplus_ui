@@ -1,15 +1,16 @@
 module Page.UI.Pagination exposing (..)
 
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, pointer, px, row, shrink, text, width)
+import Element.Background as Background
+import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
-import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
@@ -31,7 +32,9 @@ viewPagination language pagination clickMsg =
         [ width fill
         , alignBottom
         , height (px 100)
-        , minimalDropShadow
+        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
         ]
         [ column
             [ alignLeft
