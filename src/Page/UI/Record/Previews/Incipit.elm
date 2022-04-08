@@ -3,10 +3,10 @@ module Page.UI.Record.Previews.Incipit exposing (..)
 import Element exposing (Element, alignTop, column, el, fill, height, htmlAttribute, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingData, EncodingFormat(..), IncipitBody)
 import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h1)
+import Page.UI.Components exposing (h1, h3)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Incipits exposing (viewIncipit)
 
@@ -93,8 +93,8 @@ viewEncodingsBlock language encodedIncipits =
             (List.map
                 (\encoding ->
                     case encoding of
-                        EncodedIncipit PAEEncoding paeData ->
-                            viewPaeData language paeData
+                        EncodedIncipit label PAEEncoding paeData ->
+                            viewPaeData language label paeData
 
                         _ ->
                             none
@@ -104,8 +104,8 @@ viewEncodingsBlock language encodedIncipits =
         ]
 
 
-viewPaeData : Language -> EncodingData -> Element msg
-viewPaeData language pae =
+viewPaeData : Language -> LanguageMap -> EncodingData -> Element msg
+viewPaeData language label pae =
     let
         clefRow =
             viewMaybe (viewPaeRow "@clef") pae.clef
@@ -123,24 +123,40 @@ viewPaeData language pae =
             viewPaeRow "@data" pae.data
     in
     row
-        ([ width (px 600)
-         , height fill
-         , alignTop
-         ]
-            ++ sectionBorderStyles
-        )
+        [ width fill
+        , alignTop
+        ]
         [ column
             [ width fill
             , alignTop
-            , Font.family [ Font.monospace ]
-            , bodySM
-            , spacing 5
+            , spacing lineSpacing
             ]
-            [ clefRow
-            , keysigRow
-            , timesigRow
-            , keyModeRow
-            , dataRow
+            [ row
+                [ width fill
+                , alignTop
+                ]
+                [ h3 language label ]
+            , row
+                ([ width (px 600)
+                 , height fill
+                 , alignTop
+                 ]
+                    ++ sectionBorderStyles
+                )
+                [ column
+                    [ width fill
+                    , alignTop
+                    , Font.family [ Font.monospace ]
+                    , bodySM
+                    , spacing 5
+                    ]
+                    [ clefRow
+                    , keysigRow
+                    , timesigRow
+                    , keyModeRow
+                    , dataRow
+                    ]
+                ]
             ]
         ]
 
