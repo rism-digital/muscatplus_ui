@@ -8,7 +8,7 @@ import Page.RecordTypes.Search exposing (InstitutionResultBody, InstitutionResul
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (globeStandSvg, sourcesSvg)
+import Page.UI.Images exposing (mapMarkerSvg, sourcesSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
 
@@ -44,7 +44,7 @@ viewInstitutionSummary language iconColour summary =
                 [ width fill ]
                 [ viewSearchResultSummaryField
                     { language = language
-                    , icon = globeStandSvg iconColour
+                    , icon = mapMarkerSvg iconColour
                     , includeLabelInValue = False
                     , fieldName = "countryName"
                     , displayStyles = []
