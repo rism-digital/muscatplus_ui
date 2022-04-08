@@ -20,6 +20,12 @@ init initialRoute =
                 SearchPageRoute q kq ->
                     ( q, kq )
 
+                PersonSourcePageRoute _ q ->
+                    ( q, Keyboard.defaultKeyboardQuery )
+
+                InstitutionSourcePageRoute _ q ->
+                    ( q, Keyboard.defaultKeyboardQuery )
+
                 _ ->
                     ( Page.Query.defaultQueryArgs
                     , Keyboard.defaultKeyboardQuery
