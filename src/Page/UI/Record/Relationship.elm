@@ -5,7 +5,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
-import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, peopleSvg)
+import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 
@@ -88,7 +88,7 @@ viewRelatedToBody language body =
         relIcon =
             case body.type_ of
                 PersonRelationship ->
-                    peopleSvg colourScheme.slateGrey
+                    userCircleSvg colourScheme.slateGrey
 
                 InstitutionRelationship ->
                     institutionSvg colourScheme.slateGrey
