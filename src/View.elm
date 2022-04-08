@@ -187,7 +187,11 @@ loadingIndicator model =
             chooseView pageModel.response
 
         PersonPage _ pageModel ->
-            chooseView pageModel.response
+            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
+                loadingView
+
+            else
+                none
 
         InstitutionPage _ pageModel ->
             if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
