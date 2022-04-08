@@ -2,8 +2,6 @@ module Page.Front.Views.IncipitSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
-import Page.Facets.Facets exposing (viewFacet)
-import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
@@ -11,6 +9,8 @@ import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.UI.Attributes exposing (headingHero, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText)
+import Page.UI.Facets.Facets exposing (viewFacet)
+import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 import Session exposing (Session)
 
 

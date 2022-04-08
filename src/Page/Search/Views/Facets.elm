@@ -5,11 +5,11 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
-import Page.Facets.Facets exposing (FacetMsgConfig)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), ModeFacet)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (headingSM)
+import Page.UI.Facets.Facets exposing (FacetMsgConfig)
 import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 

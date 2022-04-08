@@ -1,7 +1,7 @@
 module Page.Front.Views.Facets exposing (..)
 
-import Page.Facets.Facets exposing (FacetMsgConfig)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
+import Page.UI.Facets.Facets exposing (FacetMsgConfig)
 
 
 facetFrontMsgConfig : FacetMsgConfig FrontMsg
