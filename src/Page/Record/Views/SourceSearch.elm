@@ -335,15 +335,17 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
         currentMode =
             model.currentTab
 
+        sourceCount searchData =
+            toFloat searchData.totalItems
+                |> formatNumberByLanguage language
+
         sourceLabel =
             case model.searchResults of
                 Response (SearchData searchData) ->
-                    let
-                        sourceCount =
-                            toFloat searchData.totalItems
-                                |> formatNumberByLanguage language
-                    in
-                    "Sources (" ++ sourceCount ++ ")"
+                    "Sources (" ++ sourceCount searchData ++ ")"
+
+                Loading (Just (SearchData oldData)) ->
+                    "Sources (" ++ sourceCount oldData ++ ")"
 
                 _ ->
                     "Sources"

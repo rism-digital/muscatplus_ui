@@ -98,9 +98,14 @@ init flags initialUrl key =
             )
 
         InstitutionPageRoute _ ->
+            let
+                sourcesUrl =
+                    { initialUrl | path = initialUrl.path ++ "/sources" }
+            in
             ( InstitutionPage session <| Record.init initialUrl route
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
