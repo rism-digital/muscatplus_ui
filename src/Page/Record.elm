@@ -13,11 +13,11 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route(..))
 import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
-import Response exposing (Response(..))
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
 import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
-import Viewport exposing (jumpToId, resetViewportOf)
+import Viewport exposing (jumpToId, jumpToIdIfNotVisible, resetViewportOf)
 
 
 type alias Model =
@@ -155,10 +155,29 @@ update session msg model =
             )
 
         ServerRespondedWithPageSearch (Ok ( _, response )) ->
+            let
+                jumpCmd =
+                    case .fragment session.url of
+                        Just frag ->
+                            jumpToIdIfNotVisible NothingHappened "search-results-list" frag
+
+                        Nothing ->
+                            Cmd.none
+
+                totalItems =
+                    case response of
+                        SearchData body ->
+                            Response { totalItems = body.totalItems, modes = body.modes }
+
+                        _ ->
+                            NoResponseToShow
+            in
             ( { model
                 | searchResults = Response response
+                , probeResponse = totalItems
+                , applyFilterPrompt = False
               }
-            , Cmd.none
+            , jumpCmd
             )
 
         ServerRespondedWithPageSearch (Err error) ->
