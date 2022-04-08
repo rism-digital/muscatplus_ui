@@ -45,7 +45,7 @@ buildNotationQueryParameters notationInput =
             keySignatureSymToQueryStr notationInput.keySignature
 
         keySignature =
-            if String.isEmpty ksigStr then
+            if String.isEmpty ksigStr || ksigStr == "n" then
                 []
 
             else
