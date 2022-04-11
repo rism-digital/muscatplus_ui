@@ -51,10 +51,8 @@ summaryFieldTemplate summaryCfg fieldValue =
                 [ width <| px 20
                 , height <| px 20
                 , centerY
-                , tooltip above <|
-                    el
-                        tooltipStyle
-                        (text fLabel)
+                , el tooltipStyle (text fLabel)
+                    |> tooltip above
                 ]
                 summaryCfg.icon
 

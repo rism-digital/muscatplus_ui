@@ -287,10 +287,8 @@ viewSelectFacet config =
                         [ el
                             [ width (px 20)
                             , height (px 10)
-                            , tooltip above <|
-                                el
-                                    tooltipStyle
-                                    (text behaviourText)
+                            , el tooltipStyle (text behaviourText)
+                                |> tooltip above
                             ]
                             behaviourIcon
                         , behaviourDropdown
@@ -298,10 +296,8 @@ viewSelectFacet config =
                             [ width (px 20)
                             , height (px 20)
                             , onClick (config.userChangedSelectFacetSortMsg facetAlias <| toggledSortType chosenSort)
-                            , tooltip above <|
-                                el
-                                    tooltipStyle
-                                    (text chosenSortMessage)
+                            , el tooltipStyle (text chosenSortMessage)
+                                |> tooltip above
                             ]
                             (sortIcon chosenSort)
                         ]

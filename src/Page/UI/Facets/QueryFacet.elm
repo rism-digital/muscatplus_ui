@@ -217,10 +217,8 @@ viewQueryFacet config =
                 [ el
                     [ width (px 20)
                     , height (px 10)
-                    , tooltip above <|
-                        el
-                            tooltipStyle
-                            (text behaviourText)
+                    , el tooltipStyle (text behaviourText)
+                        |> tooltip above
                     ]
                     behaviourIcon
                 , el

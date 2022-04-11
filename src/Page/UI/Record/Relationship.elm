@@ -122,7 +122,7 @@ viewRelatedToBody language body =
                 [ width <| px 16
                 , height <| px 16
                 , centerY
-                , tooltip above <| relationshipTooltip
+                , relationshipTooltip |> tooltip above
                 ]
                 relIcon
             , link
