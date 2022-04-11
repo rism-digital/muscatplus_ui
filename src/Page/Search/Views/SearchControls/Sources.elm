@@ -31,7 +31,7 @@ viewFacetsForSourcesMode language model body =
             , language = language
             , activeSearch = activeSearch
             , body = body
-            , selectColumns = 4
+            , selectColumns = 3
             }
     in
     row
