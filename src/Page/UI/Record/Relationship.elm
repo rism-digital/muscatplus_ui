@@ -1,6 +1,6 @@
 module Page.UI.Record.Relationship exposing (..)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, link, none, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, px, row, shrink, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
@@ -8,6 +8,7 @@ import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
@@ -85,19 +86,31 @@ viewRelationshipBody language body =
 viewRelatedToBody : Language -> RelatedToBody -> Element msg
 viewRelatedToBody language body =
     let
-        relIcon =
+        ( relIcon, relationshipTooltip ) =
             case body.type_ of
                 PersonRelationship ->
-                    userCircleSvg colourScheme.slateGrey
+                    ( userCircleSvg colourScheme.slateGrey
+                    , el
+                        tooltipStyle
+                        (text "Person")
+                    )
 
                 InstitutionRelationship ->
-                    institutionSvg colourScheme.slateGrey
+                    ( institutionSvg colourScheme.slateGrey
+                    , el
+                        tooltipStyle
+                        (text "Institution")
+                    )
 
                 PlaceRelationship ->
-                    mapMarkerSvg colourScheme.slateGrey
+                    ( mapMarkerSvg colourScheme.slateGrey
+                    , el
+                        tooltipStyle
+                        (text "Place")
+                    )
 
                 UnknownRelationship ->
-                    none
+                    ( none, none )
     in
     el
         [ width shrink ]
@@ -109,6 +122,7 @@ viewRelatedToBody language body =
                 [ width <| px 16
                 , height <| px 16
                 , centerY
+                , tooltip above <| relationshipTooltip
                 ]
                 relIcon
             , link
