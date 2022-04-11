@@ -53,7 +53,8 @@ sourceSubjectDecoder : Decoder Subject
 sourceSubjectDecoder =
     Decode.succeed Subject
         |> required "id" string
-        |> required "term" languageMapLabelDecoder
+        |> required "label" languageMapLabelDecoder
+        |> required "value" string
 
 
 sourceRecordDescriptorsDecoder : Decoder SourceRecordDescriptors
@@ -175,7 +176,8 @@ sourceContentTypeDecoder =
 
 type alias Subject =
     { id : String
-    , term : LanguageMap
+    , label : LanguageMap
+    , value : String
     }
 
 
