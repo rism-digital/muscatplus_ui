@@ -404,3 +404,23 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
                 }
             )
         ]
+
+
+viewRecordTopBarDescriptionOnly : Element msg
+viewRecordTopBarDescriptionOnly =
+    row
+        [ centerX
+        , width fill
+        , height (px 25)
+        , spacing 15
+        ]
+        [ el
+            [ width shrink
+            , height fill
+            , Font.center
+            , alignLeft
+            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+            , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+            ]
+            (text "Description")
+        ]
