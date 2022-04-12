@@ -1,6 +1,6 @@
 module Page.UI.Record.ExemplarsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
@@ -9,8 +9,11 @@ import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+import Page.UI.Style exposing (colourScheme)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 
 viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
@@ -66,12 +69,31 @@ viewExemplar language exemplar =
 
 viewHeldBy : Language -> BasicInstitutionBody -> Element msg
 viewHeldBy language body =
-    link
-        [ linkColour
-        ]
-        { url = body.id
-        , label = text (extractLabelFromLanguageMap language body.label)
-        }
+    el
+        [ width shrink ]
+        (row
+            [ width fill
+            , spacing 5
+            ]
+            [ el
+                [ width <| px 16
+                , height <| px 16
+                , centerY
+                , tooltip above
+                    (el
+                        tooltipStyle
+                        (text "Held by")
+                    )
+                ]
+                (institutionSvg colourScheme.slateGrey)
+            , link
+                [ linkColour
+                ]
+                { url = body.id
+                , label = text (extractLabelFromLanguageMap language body.label)
+                }
+            ]
+        )
 
 
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
