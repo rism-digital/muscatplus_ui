@@ -313,7 +313,7 @@ viewSelectFacet config =
 viewSelectFacetItemColumn : SelectFacetConfig msg -> List FacetItem -> Element msg
 viewSelectFacetItemColumn config facetRow =
     column
-        [ width (px 280)
+        [ width (px 250)
         , alignTop
         , spacing 4
         ]
