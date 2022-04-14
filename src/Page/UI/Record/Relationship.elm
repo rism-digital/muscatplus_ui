@@ -44,7 +44,11 @@ viewRelationshipBody language body =
             -- if neither, don't show anything because we can't!
             case body.relatedTo of
                 Just rel ->
-                    viewRelatedToBody language rel
+                    if rel.type_ == PlaceRelationship then
+                        el [] (text (extractLabelFromLanguageMap language rel.label))
+
+                    else
+                        viewRelatedToBody language rel
 
                 Nothing ->
                     case body.name of
