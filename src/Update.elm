@@ -12,6 +12,7 @@ import Page.Record as RecordPage
 import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, addNationalCollectionQueryParameter)
 import Url exposing (Url)
 
 
@@ -28,8 +29,18 @@ changePage url model =
     in
     case route of
         Route.FrontPageRoute _ ->
-            ( FrontPage newSession FrontPage.init
-            , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
+            let
+                initialModel =
+                    FrontPage.init
+
+                ncAppliedModel =
+                    addNationalCollectionFilter newSession.restrictedToNationalCollection initialModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
+            in
+            ( FrontPage newSession ncAppliedModel
+            , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest ncAppliedUrl)
             )
 
         Route.NotFoundPageRoute ->
@@ -52,10 +63,16 @@ changePage url model =
 
                         _ ->
                             SearchPage.init url route
+
+                ncAppliedModel =
+                    addNationalCollectionFilter newSession.restrictedToNationalCollection newPageModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
             in
-            ( SearchPage newSession newPageModel
+            ( SearchPage newSession ncAppliedModel
             , Cmd.batch
-                [ SearchPage.searchPageRequest url
+                [ SearchPage.searchPageRequest ncAppliedUrl
                 , SearchPage.requestPreviewIfSelected newPageModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithSearchPage
@@ -68,7 +85,7 @@ changePage url model =
 
         Route.PersonPageRoute _ ->
             let
-                newModel =
+                initialModel =
                     case model of
                         PersonPage _ oldModel ->
                             RecordPage.load url route oldModel
@@ -76,10 +93,16 @@ changePage url model =
                         _ ->
                             RecordPage.init url route
 
+                ncAppliedModel =
+                    addNationalCollectionFilter newSession.restrictedToNationalCollection initialModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
+
                 sourcesUrl =
-                    { url | path = url.path ++ "/sources" }
+                    { ncAppliedUrl | path = url.path ++ "/sources" }
             in
-            ( PersonPage newSession newModel
+            ( PersonPage newSession ncAppliedModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest url
                 , RecordPage.recordSearchRequest sourcesUrl
@@ -102,11 +125,17 @@ changePage url model =
 
                         _ ->
                             RecordPage.init url route
+
+                ncAppliedModel =
+                    addNationalCollectionFilter newSession.restrictedToNationalCollection newModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
             in
-            ( PersonPage newSession newModel
+            ( PersonPage newSession ncAppliedModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest url
+                , RecordPage.recordSearchRequest ncAppliedUrl
                 , RecordPage.requestPreviewIfSelected newModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -122,8 +151,14 @@ changePage url model =
                         _ ->
                             RecordPage.init url route
 
+                ncAppliedModel =
+                    addNationalCollectionFilter newSession.restrictedToNationalCollection newModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
+
                 sourcesUrl =
-                    { url | path = url.path ++ "/sources" }
+                    { ncAppliedUrl | path = url.path ++ "/sources" }
             in
             ( InstitutionPage newSession newModel
             , Cmd.batch
@@ -148,11 +183,17 @@ changePage url model =
 
                         _ ->
                             RecordPage.init url route
+
+                ncAppliedModel =
+                    addNationalCollectionFilter newSession.restrictedToNationalCollection newModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
             in
             ( InstitutionPage newSession newModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest url
+                , RecordPage.recordSearchRequest ncAppliedUrl
                 , RecordPage.requestPreviewIfSelected newModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage

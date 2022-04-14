@@ -46,6 +46,8 @@ import Page.SideBar.Msg exposing (sideBarOptionToResultMode)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
+import Url exposing (Url)
+import Url.Builder exposing (toQuery)
 import Utlities exposing (choose)
 
 
@@ -68,6 +70,20 @@ addNationalCollectionFilter ncFilter model =
     toActiveSearch model
         |> setNextQuery newQuery
         |> flip setActiveSearch model
+
+
+addNationalCollectionQueryParameter : ActiveSearch msg -> Url -> Url
+addNationalCollectionQueryParameter activeSearch incomingUrl =
+    let
+        -- See https://github.com/elm/url/issues/37 for the reason behind the dropLeft.
+        nextQuery =
+            toNextQuery activeSearch
+                |> buildQueryParameters
+                |> toQuery
+                |> String.dropLeft 1
+                |> Just
+    in
+    { incomingUrl | query = nextQuery }
 
 
 setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }

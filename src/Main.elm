@@ -11,6 +11,7 @@ import Page.Record as Record
 import Page.Route as Route exposing (Route(..))
 import Page.Search as Search
 import Page.SideBar as Sidebar
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, addNationalCollectionQueryParameter)
 import Session
 import Subscriptions
 import Update
@@ -46,9 +47,19 @@ init flags initialUrl key =
     in
     case route of
         FrontPageRoute _ ->
-            ( FrontPage session <| Front.init
+            let
+                initialModel =
+                    Front.init
+
+                ncAppliedModel =
+                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch initialUrl
+            in
+            ( FrontPage session ncAppliedModel
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithFrontPage <| Front.frontPageRequest initialUrl
+                [ Cmd.map Msg.UserInteractedWithFrontPage <| Front.frontPageRequest ncAppliedUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
@@ -57,11 +68,17 @@ init flags initialUrl key =
             let
                 initialModel =
                     Search.init initialUrl route
+
+                ncAppliedModel =
+                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch initialUrl
             in
-            ( SearchPage session initialModel
+            ( SearchPage session ncAppliedModel
             , Cmd.batch
                 [ Cmd.batch
-                    [ Search.searchPageRequest initialUrl
+                    [ Search.searchPageRequest ncAppliedUrl
                     , Search.requestPreviewIfSelected initialModel.selectedResult
                     ]
                     |> Cmd.map Msg.UserInteractedWithSearchPage
@@ -70,28 +87,48 @@ init flags initialUrl key =
             )
 
         PersonPageRoute _ ->
-            ( PersonPage session <| Record.init initialUrl route
+            let
+                initialModel =
+                    Record.init initialUrl route
+
+                ncAppliedModel =
+                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch initialUrl
+
+                sourcesUrl =
+                    { ncAppliedUrl | path = initialUrl.path ++ "/sources" }
+            in
+            ( PersonPage session ncAppliedModel
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
 
         PersonSourcePageRoute _ _ ->
             let
+                initialModel =
+                    Record.init initialUrl route
+
+                ncAppliedModel =
+                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch initialUrl
+
                 recordPath =
                     String.replace "/sources" "" initialUrl.path
 
                 recordUrl =
                     { initialUrl | path = recordPath }
-
-                initialModel =
-                    Record.init initialUrl route
             in
-            ( PersonPage session <| Record.init initialUrl route
+            ( PersonPage session ncAppliedModel
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest recordUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest initialUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest ncAppliedUrl
                 , Cmd.map Msg.UserInteractedWithRecordPage <| Record.requestPreviewIfSelected initialModel.selectedResult
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
@@ -99,10 +136,19 @@ init flags initialUrl key =
 
         InstitutionPageRoute _ ->
             let
+                initialModel =
+                    Record.init initialUrl route
+
+                ncAppliedModel =
+                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch initialUrl
+
                 sourcesUrl =
-                    { initialUrl | path = initialUrl.path ++ "/sources" }
+                    { ncAppliedUrl | path = initialUrl.path ++ "/sources" }
             in
-            ( InstitutionPage session <| Record.init initialUrl route
+            ( InstitutionPage session ncAppliedModel
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
@@ -112,19 +158,25 @@ init flags initialUrl key =
 
         InstitutionSourcePageRoute _ _ ->
             let
+                initialModel =
+                    Record.init initialUrl route
+
+                ncAppliedModel =
+                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+
+                ncAppliedUrl =
+                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch initialUrl
+
                 recordPath =
                     String.replace "/sources" "" initialUrl.path
 
                 recordUrl =
                     { initialUrl | path = recordPath }
-
-                initialModel =
-                    Record.init initialUrl route
             in
-            ( InstitutionPage session initialModel
+            ( InstitutionPage session ncAppliedModel
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest recordUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest initialUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest ncAppliedUrl
                 , Cmd.map Msg.UserInteractedWithRecordPage <| Record.requestPreviewIfSelected initialModel.selectedResult
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
