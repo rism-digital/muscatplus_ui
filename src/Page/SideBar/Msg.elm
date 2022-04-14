@@ -19,6 +19,8 @@ type SideBarMsg
     | UserMouseExitedSideBarOption SideBarOption
     | UserMouseEnteredCountryChooser
     | UserMouseExitedCountryChooser
+    | UserMouseDownOnLanguageChooser
+    | UserMouseUpOnLanguageChooser
     | UserChoseNationalCollection (Maybe CountryCode)
     | UserChangedLanguageSelect String
 

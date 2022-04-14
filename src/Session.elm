@@ -48,6 +48,7 @@ type alias Session =
     , showFrontSearchInterface : SideBarOption
     , currentlyHoveredOption : Maybe SideBarOption
     , currentlyHoveredNationalCollectionChooser : Bool
+    , currentlyInteractingWithLanguageChooser : Bool
     , restrictedToNationalCollection : Maybe CountryCode
     , allNationalCollections : Dict CountryCode LanguageMap
     }
@@ -105,6 +106,7 @@ init flags url key =
     , showFrontSearchInterface = initialMode
     , currentlyHoveredOption = Nothing
     , currentlyHoveredNationalCollectionChooser = False
+    , currentlyInteractingWithLanguageChooser = False
     , restrictedToNationalCollection = nationalCollectionFilter
     , allNationalCollections = Dict.empty
     }

@@ -220,6 +220,8 @@ viewSelectFacet config =
                 ]
                 (dropdownSelect
                     { selectedMsg = \inp -> config.userChangedFacetBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp
+                    , mouseDownMsg = Nothing
+                    , mouseUpMsg = Nothing
                     , choices = listOfBehavioursForDropdown
                     , choiceFn = \inp -> parseStringToFacetBehaviour inp
                     , currentChoice = currentBehaviourOption

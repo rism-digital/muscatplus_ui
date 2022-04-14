@@ -349,6 +349,8 @@ viewPaginationSortSelector language activeSearch body =
                         []
                         (dropdownSelect
                             { selectedMsg = \inp -> SearchMsg.UserChangedResultSorting inp
+                            , mouseDownMsg = Nothing
+                            , mouseUpMsg = Nothing
                             , choices = listOfLabelsForResultSort
                             , choiceFn = \inp -> inp
                             , currentChoice = chosenSort

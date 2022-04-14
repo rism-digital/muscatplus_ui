@@ -5,6 +5,7 @@ import Css
 import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, html, htmlAttribute, none, padding, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Element.Region as Region
 import Html as HT exposing (Html)
@@ -14,7 +15,7 @@ import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, emptyAttribute, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes)
 import Page.UI.Style exposing (colours, convertColorToElementColor)
 import Utlities exposing (toLinkedHtml)
 
@@ -213,6 +214,8 @@ dropdownSelectStyles =
 
 type alias DropdownSelectConfig a msg =
     { selectedMsg : String -> msg
+    , mouseDownMsg : Maybe msg
+    , mouseUpMsg : Maybe msg
     , choices : List ( String, String )
     , choiceFn : String -> a
     , currentChoice : a
@@ -238,6 +241,22 @@ dropdownSelect cfg =
 
                 Nothing ->
                     none
+
+        mouseDownMsg =
+            case cfg.mouseDownMsg of
+                Just m ->
+                    HE.onMouseDown m
+
+                Nothing ->
+                    HA.classList []
+
+        mouseUpMsg =
+            case cfg.mouseUpMsg of
+                Just m ->
+                    HE.onMouseUp m
+
+                Nothing ->
+                    HA.classList []
     in
     row
         [ width fill
@@ -255,6 +274,8 @@ dropdownSelect cfg =
                         (List.append
                             [ HE.onInput cfg.selectedMsg
                             , HA.id cfg.selectIdent
+                            , mouseDownMsg
+                            , mouseUpMsg
                             ]
                             dropdownSelectStyles
                         )

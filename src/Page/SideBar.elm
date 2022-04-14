@@ -68,9 +68,17 @@ update msg session =
             )
 
         UserMouseExitedSideBar ->
-            ( { session
-                | expandedSideBar = Collapsing
-              }
+            let
+                newSession =
+                    if session.currentlyInteractingWithLanguageChooser then
+                        session
+
+                    else
+                        { session
+                            | expandedSideBar = Collapsing
+                        }
+            in
+            ( newSession
             , Cmd.none
             )
 
@@ -109,6 +117,20 @@ update msg session =
         UserMouseExitedCountryChooser ->
             ( { session
                 | currentlyHoveredNationalCollectionChooser = False
+              }
+            , Cmd.none
+            )
+
+        UserMouseDownOnLanguageChooser ->
+            ( { session
+                | currentlyInteractingWithLanguageChooser = True
+              }
+            , Cmd.none
+            )
+
+        UserMouseUpOnLanguageChooser ->
+            ( { session
+                | currentlyInteractingWithLanguageChooser = False
               }
             , Cmd.none
             )

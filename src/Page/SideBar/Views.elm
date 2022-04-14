@@ -320,9 +320,12 @@ view session =
                     { icon = languagesSvg
                     , label =
                         el
-                            [ width fill ]
+                            [ width fill
+                            ]
                             (dropdownSelect
                                 { selectedMsg = UserChangedLanguageSelect
+                                , mouseDownMsg = Just UserMouseDownOnLanguageChooser
+                                , mouseUpMsg = Just UserMouseUpOnLanguageChooser
                                 , choices = languageOptionsForDisplay
                                 , choiceFn = parseLocaleToLanguage
                                 , currentChoice = session.language
