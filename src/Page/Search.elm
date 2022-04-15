@@ -203,14 +203,13 @@ update session msg model =
                     toNextQuery model.activeSearch
                         |> toMode
 
-                keyboardQuery =
-                    toKeyboard model.activeSearch
-                        |> toKeyboardQuery
-
                 notationRenderCmd =
                     case currentMode of
                         IncipitsMode ->
-                            Cmd.map UserInteractedWithPianoKeyboard (buildNotationRequestQuery keyboardQuery)
+                            toKeyboard model.activeSearch
+                                |> toKeyboardQuery
+                                |> buildNotationRequestQuery
+                                |> Cmd.map UserInteractedWithPianoKeyboard
 
                         _ ->
                             Cmd.none
