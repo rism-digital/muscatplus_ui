@@ -61,14 +61,9 @@ addNationalCollectionFilter :
     -> { a | activeSearch : ActiveSearch msg }
     -> { a | activeSearch : ActiveSearch msg }
 addNationalCollectionFilter ncFilter model =
-    let
-        newQuery =
-            toActiveSearch model
-                |> toNextQuery
-                |> setNationalCollection ncFilter
-    in
-    toActiveSearch model
-        |> setNextQuery newQuery
+    toNextQuery model.activeSearch
+        |> setNationalCollection ncFilter
+        |> flip setNextQuery model.activeSearch
         |> flip setActiveSearch model
 
 
