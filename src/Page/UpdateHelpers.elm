@@ -7,7 +7,6 @@ import ActiveSearch
         , setExpandedFacets
         , setQueryFacetValues
         , setRangeFacetValues
-        , toActiveSearch
         , toExpandedFacets
         , toKeyboard
         , toQueryFacetValues
@@ -22,20 +21,7 @@ import Http.Detailed
 import List.Extra as LE
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query
-    exposing
-        ( buildQueryParameters
-        , setFacetBehaviours
-        , setFacetSorts
-        , setFilters
-        , setMode
-        , setNationalCollection
-        , setNextQuery
-        , toFacetBehaviours
-        , toFacetSorts
-        , toFilters
-        , toNextQuery
-        )
+import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setMode, setNationalCollection, setNextQuery, toFacetBehaviours, toFacetSorts, toFilters, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -46,7 +32,6 @@ import Page.SideBar.Msg exposing (sideBarOptionToResultMode)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
-import Url exposing (Url)
 import Url.Builder exposing (toQuery)
 import Utlities exposing (choose)
 
@@ -67,18 +52,26 @@ addNationalCollectionFilter ncFilter model =
         |> flip setActiveSearch model
 
 
-addNationalCollectionQueryParameter : ActiveSearch msg -> Url -> Url
-addNationalCollectionQueryParameter activeSearch incomingUrl =
+addNationalCollectionQueryParameter : Session -> QueryArgs -> Maybe String
+addNationalCollectionQueryParameter session qargs =
     let
-        -- See https://github.com/elm/url/issues/37 for the reason behind the dropLeft.
-        nextQuery =
-            toNextQuery activeSearch
-                |> buildQueryParameters
-                |> toQuery
-                |> String.dropLeft 1
-                |> Just
+        newQargs =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    case qargs.nationalCollection of
+                        Nothing ->
+                            { qargs | nationalCollection = session.restrictedToNationalCollection }
+
+                        Just _ ->
+                            qargs
+
+                Nothing ->
+                    qargs
     in
-    { incomingUrl | query = nextQuery }
+    buildQueryParameters newQargs
+        |> toQuery
+        |> String.dropLeft 1
+        |> Just
 
 
 setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }

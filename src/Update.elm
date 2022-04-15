@@ -35,12 +35,9 @@ changePage url model =
 
                 ncAppliedModel =
                     addNationalCollectionFilter newSession.restrictedToNationalCollection initialModel
-
-                ncAppliedUrl =
-                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
             in
             ( FrontPage newSession ncAppliedModel
-            , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest ncAppliedUrl)
+            , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
             )
 
         Route.NotFoundPageRoute ->
@@ -48,7 +45,7 @@ changePage url model =
             , Cmd.none
             )
 
-        Route.SearchPageRoute _ _ ->
+        Route.SearchPageRoute qargs _ ->
             let
                 -- set the old data on the Loading response
                 -- so that the view keeps the old appearance until
@@ -67,12 +64,15 @@ changePage url model =
                 ncAppliedModel =
                     addNationalCollectionFilter newSession.restrictedToNationalCollection newPageModel
 
-                ncAppliedUrl =
-                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
+                newQparams =
+                    addNationalCollectionQueryParameter newSession qargs
+
+                searchUrl =
+                    { url | query = newQparams }
             in
             ( SearchPage newSession ncAppliedModel
             , Cmd.batch
-                [ SearchPage.searchPageRequest ncAppliedUrl
+                [ SearchPage.searchPageRequest searchUrl
                 , SearchPage.requestPreviewIfSelected newPageModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithSearchPage
@@ -96,11 +96,16 @@ changePage url model =
                 ncAppliedModel =
                     addNationalCollectionFilter newSession.restrictedToNationalCollection initialModel
 
-                ncAppliedUrl =
-                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
+                ncAppliedQparams =
+                    case newSession.restrictedToNationalCollection of
+                        Just c ->
+                            Just ("nc=" ++ c)
+
+                        Nothing ->
+                            Nothing
 
                 sourcesUrl =
-                    { ncAppliedUrl | path = url.path ++ "/sources" }
+                    { url | path = url.path ++ "/sources", query = ncAppliedQparams }
             in
             ( PersonPage newSession ncAppliedModel
             , Cmd.batch
@@ -110,7 +115,7 @@ changePage url model =
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
-        Route.PersonSourcePageRoute _ _ ->
+        Route.PersonSourcePageRoute _ qargs ->
             let
                 recordPath =
                     String.replace "/sources" "" url.path
@@ -129,13 +134,16 @@ changePage url model =
                 ncAppliedModel =
                     addNationalCollectionFilter newSession.restrictedToNationalCollection newModel
 
-                ncAppliedUrl =
-                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
+                newQparams =
+                    addNationalCollectionQueryParameter newSession qargs
+
+                sourceUrl =
+                    { url | query = newQparams }
             in
             ( PersonPage newSession ncAppliedModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest ncAppliedUrl
+                , RecordPage.recordSearchRequest sourceUrl
                 , RecordPage.requestPreviewIfSelected newModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -154,13 +162,18 @@ changePage url model =
                 ncAppliedModel =
                     addNationalCollectionFilter newSession.restrictedToNationalCollection newModel
 
-                ncAppliedUrl =
-                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
+                ncAppliedQparams =
+                    case newSession.restrictedToNationalCollection of
+                        Just c ->
+                            Just ("nc=" ++ c)
+
+                        Nothing ->
+                            Nothing
 
                 sourcesUrl =
-                    { ncAppliedUrl | path = url.path ++ "/sources" }
+                    { url | path = url.path ++ "/sources", query = ncAppliedQparams }
             in
-            ( InstitutionPage newSession newModel
+            ( InstitutionPage newSession ncAppliedModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest url
                 , RecordPage.recordSearchRequest sourcesUrl
@@ -168,7 +181,7 @@ changePage url model =
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
-        Route.InstitutionSourcePageRoute _ _ ->
+        Route.InstitutionSourcePageRoute _ qargs ->
             let
                 recordPath =
                     String.replace "/sources" "" url.path
@@ -187,13 +200,16 @@ changePage url model =
                 ncAppliedModel =
                     addNationalCollectionFilter newSession.restrictedToNationalCollection newModel
 
-                ncAppliedUrl =
-                    addNationalCollectionQueryParameter ncAppliedModel.activeSearch url
+                newQparams =
+                    addNationalCollectionQueryParameter newSession qargs
+
+                sourceUrl =
+                    { url | query = newQparams }
             in
-            ( InstitutionPage newSession newModel
+            ( InstitutionPage newSession ncAppliedModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest ncAppliedUrl
+                , RecordPage.recordSearchRequest sourceUrl
                 , RecordPage.requestPreviewIfSelected newModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage

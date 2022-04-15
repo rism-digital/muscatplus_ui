@@ -17,7 +17,7 @@ import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
 import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
-import Viewport exposing (jumpToId, jumpToIdIfNotVisible, resetViewportOf)
+import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
 type alias Model =
