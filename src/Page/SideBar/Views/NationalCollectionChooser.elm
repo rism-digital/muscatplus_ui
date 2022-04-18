@@ -108,6 +108,28 @@ viewNationalCollectionChooserMenuOption session =
             else
                 none
 
+        hoverStyles =
+            if session.currentlyHoveredNationalCollectionChooser then
+                Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+
+            else
+                emptyAttribute
+
+        isRestrictedToNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+
+        labelFontColour =
+            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionChooser /= True then
+                colourScheme.white
+
+            else
+                colourScheme.black
+
         sidebarIcon =
             case session.restrictedToNationalCollection of
                 Just countryCode ->
@@ -117,7 +139,7 @@ viewNationalCollectionChooserMenuOption session =
                     in
                     column
                         [ width (px 30)
-                        , centerX
+                        , alignLeft
                         , centerY
                         ]
                         [ el
@@ -133,7 +155,7 @@ viewNationalCollectionChooserMenuOption session =
                             , Font.center
                             , Font.bold
                             , headingMD
-                            , Font.color (colourScheme.white |> convertColorToElementColor)
+                            , Font.color (labelFontColour |> convertColorToElementColor)
                             ]
                             (text countryCode)
                         ]
@@ -141,24 +163,23 @@ viewNationalCollectionChooserMenuOption session =
                 Nothing ->
                     column
                         [ width (px 30)
-                        , centerX
+                        , alignLeft
                         , centerY
                         ]
                         [ el
                             [ width (px 25)
-                            , centerX
+                            , alignLeft
                             , centerY
                             ]
-                            (globeSvg colourScheme.slateGrey)
+                            (globeSvg colourScheme.black)
                         ]
 
         iconBackgroundColor =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    Background.color (colourScheme.turquoise |> convertColorToElementColor)
+            if isRestrictedToNationalCollection then
+                Background.color (colourScheme.turquoise |> convertColorToElementColor)
 
-                Nothing ->
-                    emptyAttribute
+            else
+                emptyAttribute
 
         showLabels =
             case session.expandedSideBar of
@@ -189,20 +210,11 @@ viewNationalCollectionChooserMenuOption session =
                     extractLabelFromLanguageMap session.language localTranslations.globalCollection
 
         labelEl =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    el
-                        [ Font.color (colourScheme.white |> convertColorToElementColor)
-                        , headingLG
-                        ]
-                        (text iconLabel)
-
-                Nothing ->
-                    el
-                        [ Font.color (colourScheme.slateGrey |> convertColorToElementColor)
-                        , headingLG
-                        ]
-                        (text iconLabel)
+            el
+                [ Font.color (labelFontColour |> convertColorToElementColor)
+                , headingLG
+                ]
+                (text iconLabel)
     in
     row
         [ width fill
@@ -214,6 +226,7 @@ viewNationalCollectionChooserMenuOption session =
         , onMouseEnter UserMouseEnteredCountryChooser
         , onMouseLeave UserMouseExitedCountryChooser
         , iconBackgroundColor
+        , hoverStyles
         ]
         [ sidebarIcon
         , viewIf (animatedLabel labelEl) showLabels
@@ -296,7 +309,7 @@ viewNationalCollectionChooser session =
                             , alignLeft
                             , centerY
                             ]
-                            (globeSvg colourScheme.darkGrey)
+                            (globeSvg colourScheme.black)
                         , el
                             [ width fill
                             , headingMD

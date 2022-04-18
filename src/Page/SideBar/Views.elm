@@ -11,9 +11,10 @@ import Element.Font as Font
 import Element.Lazy exposing (lazy3)
 import Html.Attributes as HTA
 import Language exposing (languageOptionsForDisplay, parseLocaleToLanguage)
+import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..))
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
-import Page.UI.Animations exposing (animatedColumn, animatedLabel)
+import Page.UI.Animations exposing (animatedColumn, animatedLabel, animatedRow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
@@ -47,7 +48,7 @@ unlinkedMenuOption :
     -> Element SideBarMsg
 unlinkedMenuOption cfg =
     menuOptionTemplate
-        { icon = cfg.icon colourScheme.slateGrey
+        { icon = cfg.icon colourScheme.black
         , label = cfg.label
         , showLabel = cfg.showLabel
         , isCurrent = False
@@ -67,14 +68,22 @@ menuOption :
 menuOption cfg option currentlyHovered =
     let
         fontColour =
-            if currentlyHovered || cfg.isCurrent then
+            if cfg.isCurrent then
                 colourScheme.white
 
             else
-                colourScheme.slateGrey
+                colourScheme.black
 
         hoverStyles =
-            if currentlyHovered || cfg.isCurrent then
+            if currentlyHovered then
+                [ Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+                ]
+
+            else
+                []
+
+        selectedStyle =
+            if cfg.isCurrent then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                 ]
 
@@ -92,6 +101,7 @@ menuOption cfg option currentlyHovered =
                   , Font.color (fontColour |> convertColorToElementColor)
                   ]
                 , hoverStyles
+                , selectedStyle
                 ]
 
         newCfg =
@@ -121,9 +131,10 @@ menuOptionTemplate cfg additionalAttributes =
             , paddingXY 30 10
             , pointer
             ]
+                ++ additionalAttributes
     in
     row
-        (List.concat [ rowAttributes, additionalAttributes ])
+        rowAttributes
         [ el
             [ width (px 25)
             , alignLeft
@@ -159,15 +170,21 @@ view session =
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
 
+        -- only show the selected option if we're on the front page.
         checkSelected opt =
-            opt == currentlySelectedOption
+            case session.route of
+                FrontPageRoute _ ->
+                    opt == currentlySelectedOption
+
+                _ ->
+                    False
 
         ( sideAnimation, showLabels ) =
             case sideBarAnimation of
                 Expanded ->
                     ( Animation.fromTo
                         { duration = 200
-                        , options = []
+                        , options = [ Animation.easeInOutSine ]
                         }
                         [ P.property "width" "90px" ]
                         [ P.property "width" "250px" ]
@@ -177,7 +194,7 @@ view session =
                 Collapsed ->
                     ( Animation.fromTo
                         { duration = 200
-                        , options = []
+                        , options = [ Animation.easeInOutSine ]
                         }
                         [ P.property "width" "250px" ]
                         [ P.property "width" "90px" ]
