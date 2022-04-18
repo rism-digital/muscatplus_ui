@@ -164,7 +164,7 @@ view session =
 
         ( sideAnimation, showLabels ) =
             case sideBarAnimation of
-                Expanding ->
+                Expanded ->
                     ( Animation.fromTo
                         { duration = 200
                         , options = []
@@ -174,7 +174,7 @@ view session =
                     , True
                     )
 
-                Collapsing ->
+                Collapsed ->
                     ( Animation.fromTo
                         { duration = 200
                         , options = []
@@ -185,12 +185,7 @@ view session =
                     )
 
                 NoAnimation ->
-                    ( Animation.fromTo
-                        { duration = 0
-                        , options = []
-                        }
-                        []
-                        []
+                    ( Animation.empty
                     , False
                     )
 

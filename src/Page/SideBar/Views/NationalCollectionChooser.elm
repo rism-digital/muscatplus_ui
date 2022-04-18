@@ -11,12 +11,14 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.SideBar.Msg exposing (SideBarMsg(..))
-import Page.UI.Animations exposing (animatedLabel)
-import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, sectionSpacing)
+import Page.UI.Animations exposing (animatedLabel, animatedRow)
+import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, minimalDropShadow, sectionSpacing)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session, SideBarAnimationStatus(..))
+import Simple.Animation as Animation
+import Simple.Animation.Property as P
 
 
 nationalCollectionPrefixToFlagMap : Dict String String
@@ -160,10 +162,10 @@ viewNationalCollectionChooserMenuOption session =
 
         showLabels =
             case session.expandedSideBar of
-                Expanding ->
+                Expanded ->
                     True
 
-                Collapsing ->
+                Collapsed ->
                     False
 
                 NoAnimation ->
@@ -223,6 +225,15 @@ sortedByLocalizedCountryName language countryList =
     List.sortBy (\( _, label ) -> extractLabelFromLanguageMap language label) countryList
 
 
+nationalCollectionChooserAnimations =
+    Animation.fromTo
+        { duration = 150
+        , options = [ Animation.delay 150 ]
+        }
+        [ P.opacity 0 ]
+        [ P.opacity 1 ]
+
+
 viewNationalCollectionChooser : Session -> Element SideBarMsg
 viewNationalCollectionChooser session =
     let
@@ -235,13 +246,22 @@ viewNationalCollectionChooser session =
         groupedList =
             LE.greedyGroupsOf 2 sortedList
     in
-    row
+    animatedRow
+        nationalCollectionChooserAnimations
         [ width (px 500)
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , height (shrink |> minimum 600 |> maximum 800)
         , Border.width 1
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , moveLeft 20
+        , Border.shadow
+            { offset = ( 1, 1 )
+            , size = 1
+            , blur = 10
+            , color =
+                colourScheme.darkGrey
+                    |> convertColorToElementColor
+            }
         ]
         [ column
             [ width fill

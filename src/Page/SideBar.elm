@@ -62,7 +62,7 @@ update msg session =
 
         UserMouseEnteredSideBar ->
             ( { session
-                | expandedSideBar = Expanding
+                | expandedSideBar = Expanded
               }
             , Cmd.none
             )
@@ -75,7 +75,7 @@ update msg session =
 
                     else
                         { session
-                            | expandedSideBar = Collapsing
+                            | expandedSideBar = Collapsed
                         }
             in
             ( newSession

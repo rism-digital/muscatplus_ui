@@ -15,7 +15,7 @@ import Url exposing (Url)
 
 sideBarExpandDelay : Int
 sideBarExpandDelay =
-    250
+    100
 
 
 {-|
@@ -31,8 +31,8 @@ sideBarExpandDelay =
 
 -}
 type SideBarAnimationStatus
-    = Expanding
-    | Collapsing
+    = Expanded
+    | Collapsed
     | NoAnimation
 
 

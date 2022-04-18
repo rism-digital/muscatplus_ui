@@ -2,6 +2,7 @@ module Page.UI.Animations exposing
     ( animatedColumn
     , animatedLabel
     , animatedLoader
+    , animatedRow
     , progressBar
     )
 
