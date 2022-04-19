@@ -1,6 +1,7 @@
 module Page.Front.Views exposing (..)
 
-import Element exposing (Element, alignTop, centerX, column, fill, height, maximum, minimum, none, row, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, column, fill, height, maximum, minimum, none, padding, row, width)
+import Element.Background as Background
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
 import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
@@ -8,8 +9,10 @@ import Page.Front.Views.InstitutionSearch exposing (institutionSearchPanelView)
 import Page.Front.Views.PeopleSearch exposing (peopleSearchPanelView)
 import Page.Front.Views.SourceSearch exposing (sourceSearchPanelView)
 import Page.SideBar.Msg exposing (SideBarOption(..))
+import Page.UI.Attributes exposing (emptyAttribute)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Search.SearchComponents exposing (viewSearchButtons)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -45,6 +48,23 @@ view session model =
                 LiturgicalFestivalsOption ->
                     \_ -> none
 
+        backgroundImage =
+            case session.showFrontSearchInterface of
+                SourceSearchOption ->
+                    Background.image "/static/images/sources.jpg"
+
+                PeopleSearchOption ->
+                    Background.image "/static/images/people.jpg"
+
+                InstitutionSearchOption ->
+                    Background.image "/static/images/institutions.jpg"
+
+                IncipitSearchOption ->
+                    Background.image "/static/images/incipits.jpg"
+
+                _ ->
+                    emptyAttribute
+
         -- viewMaybe will be either the searchViewFn, or the `none`
         -- element if the maybeBody parameter is Nothing.
         searchPanelView =
@@ -65,13 +85,15 @@ view session model =
     row
         [ width fill
         , height fill
-        , centerX
+        , padding 20
+        , backgroundImage
         ]
         [ column
             [ width (fill |> minimum 800 |> maximum 1100)
             , height fill
-            , centerX
+            , alignLeft
             , alignTop
+            , Background.color (colourScheme.cream |> convertColorToElementColor)
             ]
             [ searchPanelView
             , searchControlsView
