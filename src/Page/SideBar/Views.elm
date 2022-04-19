@@ -10,7 +10,8 @@ import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Element.Lazy exposing (lazy3)
 import Html.Attributes as HTA
-import Language exposing (Language, languageOptionsForDisplay, parseLocaleToLanguage)
+import Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, parseLocaleToLanguage)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
@@ -187,14 +188,14 @@ view session =
                         , options = [ Animation.easeInOutSine ]
                         }
                         [ P.property "width" "90px" ]
-                        [ P.property "width" "250px" ]
+                        [ P.property "width" "280px" ]
 
                 Collapsed ->
                     Animation.fromTo
                         { duration = 200
                         , options = [ Animation.easeInOutSine ]
                         }
-                        [ P.property "width" "250px" ]
+                        [ P.property "width" "280px" ]
                         [ P.property "width" "90px" ]
 
                 NoAnimation ->
@@ -214,7 +215,7 @@ view session =
         sourcesInterfaceMenuOption =
             menuOption
                 { icon = sourcesSvg
-                , label = text "Sources"
+                , label = text <| extractLabelFromLanguageMap session.language localTranslations.sources
                 , showLabel = showLabels
                 , isCurrent = checkSelected SourceSearchOption
                 }
@@ -225,7 +226,7 @@ view session =
             viewIf
                 (lazy3 menuOption
                     { icon = peopleSvg
-                    , label = text "People"
+                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.people
                     , showLabel = showLabels
                     , isCurrent = checkSelected PeopleSearchOption
                     }
@@ -237,7 +238,7 @@ view session =
         institutionInterfaceMenuOption =
             menuOption
                 { icon = institutionSvg
-                , label = text "Institutions"
+                , label = text <| extractLabelFromLanguageMap session.language localTranslations.institutions
                 , showLabel = showLabels
                 , isCurrent = checkSelected InstitutionSearchOption
                 }
@@ -248,7 +249,7 @@ view session =
             viewIf
                 (lazy3 menuOption
                     { icon = musicNotationSvg
-                    , label = text "Incipits"
+                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.incipits
                     , showLabel = showLabels
                     , isCurrent = checkSelected IncipitSearchOption
                     }
