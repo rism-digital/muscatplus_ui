@@ -74,6 +74,7 @@ sortFacetItemList language sortBy facetItems =
                             i
                     in
                     extractLabelFromLanguageMap language langmap
+                        |> String.toLower
                 )
                 facetItems
 
