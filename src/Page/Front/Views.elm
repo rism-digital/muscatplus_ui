@@ -2,6 +2,7 @@ module Page.Front.Views exposing (..)
 
 import Element exposing (Element, alignLeft, alignTop, centerX, column, fill, height, maximum, minimum, none, padding, row, width)
 import Element.Background as Background
+import Element.Border as Border
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
 import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
@@ -94,6 +95,14 @@ view session model =
             , alignLeft
             , alignTop
             , Background.color (colourScheme.cream |> convertColorToElementColor)
+            , Border.shadow
+                { offset = ( 1, 1 )
+                , size = 1
+                , blur = 10
+                , color =
+                    colourScheme.darkGrey
+                        |> convertColorToElementColor
+                }
             ]
             [ searchPanelView
             , searchControlsView
