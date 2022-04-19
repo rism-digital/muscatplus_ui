@@ -5,10 +5,10 @@ import Debouncer.Messages as Debouncer
 import Language exposing (parseLocaleToLanguage)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
-import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..), sideBarOptionToModeString)
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), sideBarOptionToModeString)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
-import Session exposing (Session, SideBarAnimationStatus(..))
+import Session exposing (Session)
 import Url.Builder
 
 
@@ -69,6 +69,9 @@ update msg session =
 
         UserMouseExitedSideBar ->
             let
+                -- If the user is interacting with the language chooser, then do not set the
+                -- state to collapsed. This is to fix a bug in Firefox where the select dropdown
+                -- causes the sidebar to signal that it has lost mouse focus.
                 newSession =
                     if session.currentlyInteractingWithLanguageChooser then
                         session

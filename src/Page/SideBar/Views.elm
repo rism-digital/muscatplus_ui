@@ -10,16 +10,16 @@ import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Element.Lazy exposing (lazy3)
 import Html.Attributes as HTA
-import Language exposing (languageOptionsForDisplay, parseLocaleToLanguage)
+import Language exposing (Language, languageOptionsForDisplay, parseLocaleToLanguage)
 import Page.Route exposing (Route(..))
-import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..))
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
-import Page.UI.Animations exposing (animatedColumn, animatedLabel, animatedRow)
+import Page.UI.Animations exposing (animatedColumn, animatedLabel)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
-import Session exposing (Session, SideBarAnimationStatus(..))
+import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
 
@@ -123,18 +123,15 @@ menuOptionTemplate :
     -> List (Attribute SideBarMsg)
     -> Element SideBarMsg
 menuOptionTemplate cfg additionalAttributes =
-    let
-        rowAttributes =
-            [ width fill
-            , alignTop
-            , spacing 10
-            , paddingXY 30 10
-            , pointer
-            ]
-                ++ additionalAttributes
-    in
     row
-        rowAttributes
+        ([ width fill
+         , alignTop
+         , spacing 10
+         , paddingXY 30 10
+         , pointer
+         ]
+            ++ additionalAttributes
+        )
         [ el
             [ width (px 25)
             , alignLeft
@@ -179,32 +176,29 @@ view session =
                 _ ->
                     False
 
-        ( sideAnimation, showLabels ) =
+        showLabels =
+            showSideBarLabels session.expandedSideBar
+
+        sideAnimation =
             case sideBarAnimation of
                 Expanded ->
-                    ( Animation.fromTo
+                    Animation.fromTo
                         { duration = 200
                         , options = [ Animation.easeInOutSine ]
                         }
                         [ P.property "width" "90px" ]
                         [ P.property "width" "250px" ]
-                    , True
-                    )
 
                 Collapsed ->
-                    ( Animation.fromTo
+                    Animation.fromTo
                         { duration = 200
                         , options = [ Animation.easeInOutSine ]
                         }
                         [ P.property "width" "250px" ]
                         [ P.property "width" "90px" ]
-                    , False
-                    )
 
                 NoAnimation ->
-                    ( Animation.empty
-                    , False
-                    )
+                    Animation.empty
 
         -- If a national collection is chosen this will return
         -- false, indicating that the menu option should not
