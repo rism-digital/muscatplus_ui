@@ -109,21 +109,21 @@ noteDataQueryStringToList ndata =
 timeSigQueryStringToTimeSignature : List String -> TimeSignature
 timeSigQueryStringToTimeSignature tsiglist =
     List.head tsiglist
-        |> Maybe.andThen (\a -> Just <| timeSigStrToTimeSignature a)
+        |> Maybe.map (\a -> timeSigStrToTimeSignature a)
         |> Maybe.withDefault TC
 
 
 keySigQueryStringToKeySignature : List String -> KeySignature
 keySigQueryStringToKeySignature ksiglist =
     List.head ksiglist
-        |> Maybe.andThen (\a -> Just <| keySigStrToKeySignature a)
+        |> Maybe.map (\a -> keySigStrToKeySignature a)
         |> Maybe.withDefault KS_N
 
 
 queryModeStringToQueryMode : List String -> QueryMode
 queryModeStringToQueryMode qmlist =
     List.head qmlist
-        |> Maybe.andThen (\a -> Just <| queryModeStrToQueryMode a)
+        |> Maybe.map (\a -> queryModeStrToQueryMode a)
         |> Maybe.withDefault IntervalQueryMode
 
 

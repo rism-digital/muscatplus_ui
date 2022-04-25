@@ -10,7 +10,7 @@ import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query exposing (buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
+import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
@@ -29,10 +29,23 @@ type alias Msg =
     FrontMsg
 
 
-init : FrontPageModel FrontMsg
-init =
+type alias FrontConfig =
+    { queryArgs : FrontQueryArgs
+    }
+
+
+init : FrontConfig -> FrontPageModel FrontMsg
+init cfg =
+    let
+        convertedQueryArgs =
+            frontQueryArgsToQueryArgs cfg.queryArgs
+    in
     { response = Loading Nothing
-    , activeSearch = ActiveSearch.empty
+    , activeSearch =
+        ActiveSearch.init
+            { queryArgs = convertedQueryArgs
+            , keyboardQueryArgs = Just Keyboard.defaultKeyboardQuery
+            }
     , probeResponse = NoResponseToShow
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
@@ -84,10 +97,13 @@ searchSubmit session model =
                 |> flip setActiveSearch model
 
         notationQueryParameters =
-            toActiveSearch pageResetModel
-                |> toKeyboard
-                |> toKeyboardQuery
-                |> buildNotationQueryParameters
+            case toKeyboard pageResetModel.activeSearch of
+                Just kq ->
+                    toKeyboardQuery kq
+                        |> buildNotationQueryParameters
+
+                Nothing ->
+                    []
 
         newModel =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
@@ -133,14 +149,15 @@ update session msg model =
     case msg of
         ServerRespondedWithFrontData (Ok ( _, response )) ->
             let
-                keyboardQuery =
-                    toKeyboard model.activeSearch
-                        |> toKeyboardQuery
-
                 notationRenderCmd =
                     case session.showFrontSearchInterface of
                         IncipitSearchOption ->
-                            Cmd.map UserInteractedWithPianoKeyboard (buildNotationRequestQuery keyboardQuery)
+                            case toKeyboard model.activeSearch of
+                                Just kq ->
+                                    Cmd.map UserInteractedWithPianoKeyboard <| buildNotationRequestQuery (toKeyboardQuery kq)
+
+                                Nothing ->
+                                    Cmd.none
 
                         _ ->
                             Cmd.none
@@ -213,7 +230,7 @@ update session msg model =
             in
             setNextQuery adjustedQueryArgs model.activeSearch
                 |> setRangeFacetValues Dict.empty
-                |> setKeyboard Keyboard.initModel
+                |> setKeyboard (Just Keyboard.initModel)
                 |> flip setActiveSearch model
                 |> frontProbeSubmit session
 
@@ -300,38 +317,42 @@ update session msg model =
                 |> frontProbeSubmit session
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
-            let
-                ( keyboardModel, keyboardCmd ) =
-                    toKeyboard model.activeSearch
-                        |> Keyboard.update keyboardMsg
+            case toKeyboard model.activeSearch of
+                Just oldKeyboardModel ->
+                    let
+                        ( keyboardModel, keyboardCmd ) =
+                            Keyboard.update keyboardMsg oldKeyboardModel
 
-                resultMode =
-                    sideBarOptionToResultMode session.showFrontSearchInterface
+                        resultMode =
+                            sideBarOptionToResultMode session.showFrontSearchInterface
 
-                newModel =
-                    setKeyboard keyboardModel model.activeSearch
-                        |> flip setActiveSearch model
+                        newModel =
+                            setKeyboard (Just keyboardModel) model.activeSearch
+                                |> flip setActiveSearch model
 
-                probeCmd =
-                    if keyboardModel.needsProbe then
-                        let
-                            probeUrl =
-                                toNextQuery newModel.activeSearch
-                                    |> setMode resultMode
-                                    |> flip setNextQuery newModel.activeSearch
-                                    |> createProbeUrl session
-                        in
-                        createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+                        probeCmd =
+                            if keyboardModel.needsProbe then
+                                let
+                                    probeUrl =
+                                        toNextQuery newModel.activeSearch
+                                            |> setMode resultMode
+                                            |> flip setNextQuery newModel.activeSearch
+                                            |> createProbeUrl session
+                                in
+                                createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
 
-                    else
-                        Cmd.none
-            in
-            ( newModel
-            , Cmd.batch
-                [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
-                , probeCmd
-                ]
-            )
+                            else
+                                Cmd.none
+                    in
+                    ( newModel
+                    , Cmd.batch
+                        [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
+                        , probeCmd
+                        ]
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         NothingHappened ->
             ( model, Cmd.none )

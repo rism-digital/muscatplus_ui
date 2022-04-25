@@ -1,10 +1,10 @@
 module Page.Front.Views exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, column, fill, height, maximum, minimum, none, padding, row, width)
+import Element exposing (Element, alignLeft, alignTop, column, fill, height, maximum, minimum, none, padding, row, width)
 import Element.Background as Background
 import Element.Border as Border
 import Page.Front.Model exposing (FrontPageModel)
-import Page.Front.Msg as FrontMsg exposing (FrontMsg(..))
+import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
 import Page.Front.Views.InstitutionSearch exposing (institutionSearchPanelView)
 import Page.Front.Views.PeopleSearch exposing (peopleSearchPanelView)

@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -8,7 +8,7 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.UI.Attributes exposing (headingMD, searchColumnVerticalSize)
+import Page.UI.Attributes exposing (headingMD)
 import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 import Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)

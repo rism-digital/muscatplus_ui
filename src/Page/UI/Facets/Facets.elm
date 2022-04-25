@@ -93,16 +93,21 @@ viewFacet cfg msg =
             viewSelectFacet selectFacetConfig
 
         Just (NotationFacetData facet) ->
-            let
-                notationFacetConfig : NotationFacetConfig msg
-                notationFacetConfig =
-                    { language = cfg.language
-                    , keyboardModel = .keyboard cfg.activeSearch
-                    , notationFacet = facet
-                    , userInteractedWithKeyboardMsg = msg.userInteractedWithPianoKeyboard
-                    }
-            in
-            viewKeyboardControl notationFacetConfig
+            case .keyboard cfg.activeSearch of
+                Just keyboardModel ->
+                    let
+                        notationFacetConfig : NotationFacetConfig msg
+                        notationFacetConfig =
+                            { language = cfg.language
+                            , keyboardModel = keyboardModel
+                            , notationFacet = facet
+                            , userInteractedWithKeyboardMsg = msg.userInteractedWithPianoKeyboard
+                            }
+                    in
+                    viewKeyboardControl notationFacetConfig
+
+                Nothing ->
+                    none
 
         Just (QueryFacetData facet) ->
             let

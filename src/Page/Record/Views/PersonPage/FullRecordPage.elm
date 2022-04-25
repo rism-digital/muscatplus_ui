@@ -5,7 +5,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
-import Page.Record.Msg exposing (RecordMsg(..))
+import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)

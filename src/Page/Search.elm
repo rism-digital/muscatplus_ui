@@ -9,23 +9,10 @@ import Flip exposing (flip)
 import Page.Keyboard as Keyboard
     exposing
         ( buildNotationRequestQuery
-        , setNotation
-        , toNotation
         )
-import Page.Keyboard.Model exposing (toKeyboardQuery)
+import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query
-    exposing
-        ( buildQueryParameters
-        , defaultQueryArgs
-        , resetPage
-        , setKeywordQuery
-        , setMode
-        , setNextQuery
-        , setSort
-        , toMode
-        , toNextQuery
-        )
+import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
@@ -49,15 +36,31 @@ type alias Msg =
     SearchMsg
 
 
-init : Url -> Route -> SearchPageModel SearchMsg
-init incomingUrl route =
+type alias SearchConfig =
+    { incomingUrl : Url
+    , route : Route
+    , queryArgs : QueryArgs
+    , keyboardQueryArgs : KeyboardQuery
+    }
+
+
+init : SearchConfig -> SearchPageModel SearchMsg
+init cfg =
     let
         selectedResult =
-            incomingUrl.fragment
-                |> Maybe.andThen (\f -> Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f))
+            case .fragment cfg.incomingUrl of
+                Just frg ->
+                    Just (C.serverUrl ++ "/" ++ convertNodeIdToPath frg)
+
+                Nothing ->
+                    Nothing
     in
     { response = Loading Nothing
-    , activeSearch = ActiveSearch.init route
+    , activeSearch =
+        ActiveSearch.init
+            { queryArgs = cfg.queryArgs
+            , keyboardQueryArgs = Just cfg.keyboardQueryArgs
+            }
     , preview = NoResponseToShow
     , selectedResult = selectedResult
     , showFacetPanel = False
@@ -67,34 +70,26 @@ init incomingUrl route =
     }
 
 
-load : Url -> SearchPageModel SearchMsg -> SearchPageModel SearchMsg
-load url oldModel =
+load : SearchConfig -> SearchPageModel SearchMsg -> SearchPageModel SearchMsg
+load cfg oldModel =
     let
-        oldKeyboard =
-            toKeyboard oldModel.activeSearch
-
-        newActiveSearch =
-            toKeyboard oldModel.activeSearch
-                |> toNotation
-                |> flip setNotation oldKeyboard
-                |> flip setKeyboard oldModel.activeSearch
-
         ( previewResp, selectedResult ) =
-            case url.fragment of
+            case .fragment cfg.incomingUrl of
                 Just f ->
                     ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
 
                 Nothing ->
                     ( NoResponseToShow, Nothing )
     in
-    { response = oldModel.response
-    , activeSearch = newActiveSearch
-    , preview = previewResp
-    , selectedResult = selectedResult
-    , showFacetPanel = oldModel.showFacetPanel
-    , probeResponse = oldModel.probeResponse
-    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
-    , applyFilterPrompt = False
+    { oldModel
+        | activeSearch =
+            ActiveSearch.init
+                { queryArgs = cfg.queryArgs
+                , keyboardQueryArgs = Just cfg.keyboardQueryArgs
+                }
+        , preview = previewResp
+        , selectedResult = selectedResult
+        , applyFilterPrompt = False
     }
 
 
@@ -132,9 +127,13 @@ searchSubmit session model =
                 |> flip setActiveSearch model
 
         notationQueryParameters =
-            toKeyboard pageResetModel.activeSearch
-                |> toKeyboardQuery
-                |> buildNotationQueryParameters
+            case toKeyboard pageResetModel.activeSearch of
+                Just kq ->
+                    toKeyboardQuery kq
+                        |> buildNotationQueryParameters
+
+                Nothing ->
+                    []
 
         nationalCollectionSetModel =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
@@ -206,10 +205,14 @@ update session msg model =
                 notationRenderCmd =
                     case currentMode of
                         IncipitsMode ->
-                            toKeyboard model.activeSearch
-                                |> toKeyboardQuery
-                                |> buildNotationRequestQuery
-                                |> Cmd.map UserInteractedWithPianoKeyboard
+                            case toKeyboard model.activeSearch of
+                                Just kq ->
+                                    toKeyboardQuery kq
+                                        |> buildNotationRequestQuery
+                                        |> Cmd.map UserInteractedWithPianoKeyboard
+
+                                Nothing ->
+                                    Cmd.none
 
                         _ ->
                             Cmd.none
@@ -479,32 +482,36 @@ update session msg model =
             )
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
-            let
-                ( keyboardModel, keyboardCmd ) =
-                    toKeyboard model.activeSearch
-                        |> Keyboard.update keyboardMsg
+            case toKeyboard model.activeSearch of
+                Just kq ->
+                    let
+                        ( keyboardModel, keyboardCmd ) =
+                            Keyboard.update keyboardMsg kq
 
-                newModel =
-                    setKeyboard keyboardModel model.activeSearch
-                        |> flip setActiveSearch model
+                        newModel =
+                            setKeyboard (Just keyboardModel) model.activeSearch
+                                |> flip setActiveSearch model
 
-                probeCmd =
-                    if keyboardModel.needsProbe then
-                        let
-                            probeUrl =
-                                createProbeUrl session newModel.activeSearch
-                        in
-                        createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+                        probeCmd =
+                            if keyboardModel.needsProbe then
+                                let
+                                    probeUrl =
+                                        createProbeUrl session newModel.activeSearch
+                                in
+                                createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
 
-                    else
-                        Cmd.none
-            in
-            ( newModel
-            , Cmd.batch
-                [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
-                , probeCmd
-                ]
-            )
+                            else
+                                Cmd.none
+                    in
+                    ( newModel
+                    , Cmd.batch
+                        [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
+                        , probeCmd
+                        ]
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         UserResetAllFilters ->
             let
@@ -520,7 +527,7 @@ update session msg model =
             in
             setNextQuery adjustedQueryArgs model.activeSearch
                 |> setRangeFacetValues Dict.empty
-                |> setKeyboard Keyboard.initModel
+                |> setKeyboard (Just Keyboard.initModel)
                 |> flip setActiveSearch model
                 |> searchSubmit session
 

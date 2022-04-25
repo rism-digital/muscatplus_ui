@@ -1,11 +1,9 @@
 module Page.RecordTypes.Front exposing (..)
 
 import Dict
-import Json.Decode as Decode exposing (Decoder, float, list, string)
-import Json.Decode.Pipeline exposing (optional, required)
-import Language exposing (LanguageMap)
+import Json.Decode as Decode exposing (Decoder)
+import Json.Decode.Pipeline exposing (optional)
 import Page.RecordTypes.Search exposing (Facets, facetsDecoder)
-import Page.RecordTypes.Shared exposing (LabelNumericValue, labelNumericValueDecoder, languageMapLabelDecoder)
 
 
 type alias FrontBody =

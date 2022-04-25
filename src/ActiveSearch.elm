@@ -5,44 +5,38 @@ import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebounce
 import Dict exposing (Dict)
 import List.Extra as LE
 import Page.Keyboard as Keyboard
+import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
-import Page.Query
+import Page.Query exposing (QueryArgs)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
-import Page.Route exposing (Route(..))
 
 
-init : Route -> ActiveSearch msg
-init initialRoute =
+type alias ActiveSearchConfig =
+    { queryArgs : QueryArgs
+    , keyboardQueryArgs : Maybe KeyboardQuery
+    }
+
+
+init : ActiveSearchConfig -> ActiveSearch msg
+init cfg =
     let
-        ( qargs, kqargs ) =
-            case initialRoute of
-                SearchPageRoute q kq ->
-                    ( q, kq )
+        keyboardQuery =
+            case cfg.keyboardQueryArgs of
+                Just kq ->
+                    Keyboard.initModel
+                        |> setKeyboardQuery kq
+                        |> Just
 
-                PersonSourcePageRoute _ q ->
-                    ( q, Keyboard.defaultKeyboardQuery )
-
-                InstitutionSourcePageRoute _ q ->
-                    ( q, Keyboard.defaultKeyboardQuery )
-
-                _ ->
-                    ( Page.Query.defaultQueryArgs
-                    , Keyboard.defaultKeyboardQuery
-                    )
+                Nothing ->
+                    Nothing
 
         initialSort =
-            qargs.sort
-
-        initialKeyboardModel =
-            Keyboard.initModel
-
-        updatedKeyboardModel =
-            { initialKeyboardModel | query = kqargs }
+            .sort cfg.queryArgs
     in
-    { nextQuery = qargs
+    { nextQuery = cfg.queryArgs
     , expandedFacets = []
-    , keyboard = updatedKeyboardModel
+    , keyboard = keyboardQuery
     , selectedResultSort = initialSort
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
@@ -55,7 +49,7 @@ empty : ActiveSearch msg
 empty =
     { nextQuery = Page.Query.defaultQueryArgs
     , expandedFacets = []
-    , keyboard = Keyboard.initModel
+    , keyboard = Just <| Keyboard.initModel
     , selectedResultSort = Nothing
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
@@ -74,12 +68,12 @@ setActiveSearch newSearch oldRecord =
     { oldRecord | activeSearch = newSearch }
 
 
-toKeyboard : { a | keyboard : Keyboard.Model KeyboardMsg } -> Keyboard.Model KeyboardMsg
+toKeyboard : { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) } -> Maybe (Keyboard.Model KeyboardMsg)
 toKeyboard model =
     model.keyboard
 
 
-setKeyboard : Keyboard.Model KeyboardMsg -> { a | keyboard : Keyboard.Model KeyboardMsg } -> { a | keyboard : Keyboard.Model KeyboardMsg }
+setKeyboard : Maybe (Keyboard.Model KeyboardMsg) -> { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) } -> { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) }
 setKeyboard newKeyboard oldRecord =
     { oldRecord | keyboard = newKeyboard }
 

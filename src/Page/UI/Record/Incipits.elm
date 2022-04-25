@@ -1,18 +1,23 @@
 module Page.UI.Record.Incipits exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, maximum, minimum, paddingXY, row, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background
+import Element.Border as Border
 import Html.Attributes as HTA
 import Language exposing (Language)
 import List.Extra as LE
-import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitFormat(..), RenderedIncipit(..))
+import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingFormat(..), IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (sectionBorderStyles)
+import Page.UI.Attributes exposing (linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
+import Request exposing (serverUrl)
 import SvgParser
+import Url.Builder
 
 
 splitWorkNumFromId : String -> String
@@ -24,7 +29,8 @@ splitWorkNumFromId incipitId =
 
 viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
 viewIncipitsSection language incipSection =
-    sectionTemplate language incipSection (List.map (\incipit -> viewIncipit language incipit) incipSection.items)
+    List.map (\incipit -> viewIncipit language incipit) incipSection.items
+        |> sectionTemplate language incipSection
 
 
 viewIncipit : Language -> IncipitBody -> Element msg
@@ -43,7 +49,16 @@ viewIncipit language incipit =
             , HTA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
             ]
             [ viewMaybe (viewSummaryField language) incipit.summary
-            , viewMaybe viewRenderedIncipits incipit.rendered
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill
+                    , spacing 0
+                    ]
+                    [ viewMaybe viewRenderedIncipits incipit.rendered
+                    , viewMaybe (viewLaunchNewIncipitSearch language) incipit.encodings
+                    ]
+                ]
             ]
         ]
 
@@ -72,10 +87,63 @@ viewRenderedIncipits incipits =
                         viewSVGRenderedIncipit svgdata
 
                     _ ->
-                        Element.none
+                        none
             )
             incipits
         )
+
+
+viewLaunchNewIncipitSearch : Language -> List EncodedIncipit -> Element msg
+viewLaunchNewIncipitSearch language incipits =
+    row
+        [ width fill
+        , paddingXY 10 0
+        ]
+        (List.map
+            (\encoded ->
+                case encoded of
+                    EncodedIncipit label PAEEncoding data ->
+                        viewPAESearchLink language encoded
+
+                    _ ->
+                        none
+            )
+            incipits
+        )
+
+
+viewPAESearchLink : Language -> EncodedIncipit -> Element msg
+viewPAESearchLink language (EncodedIncipit label encodingType data) =
+    let
+        noteQueryParam =
+            Url.Builder.string "n" data.data
+
+        modeQueryParam =
+            Url.Builder.string "mode" "incipits"
+
+        searchUrl =
+            serverUrl [ "search" ] [ noteQueryParam, modeQueryParam ]
+    in
+    link
+        [ centerY
+        , alignLeft
+        , linkColour
+        , Border.width 1
+        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , padding 2
+        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+        ]
+        { url = searchUrl
+        , label =
+            el
+                [ width (px 12)
+                , height (px 12)
+                , centerY
+                , el tooltipStyle (text "New search with this incipit")
+                    |> tooltip above
+                ]
+                (searchSvg colourScheme.white)
+        }
 
 
 {-|

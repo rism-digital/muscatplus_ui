@@ -6,12 +6,13 @@ import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
 import Flip exposing (flip)
-import Page.Query exposing (defaultQueryArgs, setKeywordQuery, setNextQuery, toNextQuery)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Query exposing (QueryArgs, defaultQueryArgs, setKeywordQuery, setNationalCollection, setNextQuery, toNextQuery)
+import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
+import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
-import Page.Route exposing (Route(..))
+import Page.Route exposing (Route)
 import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -28,28 +29,45 @@ type alias Msg =
     RecordMsg
 
 
-init : Url -> Route -> RecordPageModel RecordMsg
-init incomingUrl route =
+type alias RecordConfig =
+    { incomingUrl : Url
+    , route : Route
+    , queryArgs : Maybe QueryArgs
+    , nationalCollection : Maybe CountryCode
+    }
+
+
+init : RecordConfig -> RecordPageModel RecordMsg
+init cfg =
     let
         selectedResult =
-            incomingUrl.fragment
-                |> Maybe.andThen (\f -> Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f))
+            .fragment cfg.incomingUrl
+                |> Maybe.map (\f -> C.serverUrl ++ "/" ++ convertNodeIdToPath f)
 
         tabView =
-            case route of
-                InstitutionSourcePageRoute _ _ ->
-                    RelatedSourcesSearchTab <| Url.toString incomingUrl
+            Url.toString cfg.incomingUrl
+                |> routeToCurrentRecordViewTab cfg.route
 
-                PersonSourcePageRoute _ _ ->
-                    RelatedSourcesSearchTab <| Url.toString incomingUrl
+        activeSearchInit =
+            case cfg.queryArgs of
+                Just qa ->
+                    ActiveSearch.init
+                        { queryArgs = qa
+                        , keyboardQueryArgs = Nothing
+                        }
 
-                _ ->
-                    DefaultRecordViewTab <| Url.toString incomingUrl
+                Nothing ->
+                    ActiveSearch.empty
+
+        activeSearch =
+            toNextQuery activeSearchInit
+                |> setNationalCollection cfg.nationalCollection
+                |> flip setNextQuery activeSearchInit
     in
     { response = Loading Nothing
     , currentTab = tabView
     , searchResults = NoResponseToShow
-    , activeSearch = ActiveSearch.init route
+    , activeSearch = activeSearch
     , preview = NoResponseToShow
     , selectedResult = selectedResult
     , applyFilterPrompt = False
@@ -58,37 +76,42 @@ init incomingUrl route =
     }
 
 
-load : Url -> Route -> RecordPageModel RecordMsg -> RecordPageModel RecordMsg
-load url route oldModel =
+load : RecordConfig -> RecordPageModel RecordMsg -> RecordPageModel RecordMsg
+load cfg oldModel =
     let
         ( previewResp, selectedResult ) =
-            case url.fragment of
+            case .fragment cfg.incomingUrl of
                 Just f ->
                     ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
 
                 Nothing ->
                     ( NoResponseToShow, Nothing )
 
+        activeSearchInit =
+            case cfg.queryArgs of
+                Just q ->
+                    ActiveSearch.init
+                        { queryArgs = q
+                        , keyboardQueryArgs = Nothing
+                        }
+
+                Nothing ->
+                    ActiveSearch.empty
+
+        activeSearch =
+            toNextQuery activeSearchInit
+                |> setNationalCollection cfg.nationalCollection
+                |> flip setNextQuery activeSearchInit
+
         tabView =
-            case route of
-                InstitutionSourcePageRoute _ _ ->
-                    RelatedSourcesSearchTab <| Url.toString url
-
-                PersonSourcePageRoute _ _ ->
-                    RelatedSourcesSearchTab <| Url.toString url
-
-                _ ->
-                    DefaultRecordViewTab <| Url.toString url
+            Url.toString cfg.incomingUrl
+                |> routeToCurrentRecordViewTab cfg.route
     in
-    { response = oldModel.response
-    , activeSearch = oldModel.activeSearch
-    , preview = previewResp
-    , selectedResult = selectedResult
-    , currentTab = tabView
-    , searchResults = oldModel.searchResults
-    , applyFilterPrompt = oldModel.applyFilterPrompt
-    , probeResponse = oldModel.probeResponse
-    , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
+    { oldModel
+        | preview = previewResp
+        , activeSearch = activeSearch
+        , selectedResult = selectedResult
+        , currentTab = tabView
     }
 
 
@@ -246,7 +269,7 @@ update session msg model =
                                     let
                                         searchRequest =
                                             Url.fromString searchUrl
-                                                |> Maybe.andThen (\a -> Just <| recordSearchRequest a)
+                                                |> Maybe.map (\a -> recordSearchRequest a)
                                                 |> Maybe.withDefault Cmd.none
                                     in
                                     Cmd.batch

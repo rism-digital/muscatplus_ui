@@ -8,7 +8,6 @@ import ActiveSearch
         , setQueryFacetValues
         , setRangeFacetValues
         , toExpandedFacets
-        , toKeyboard
         , toQueryFacetValues
         , toRangeFacetValues
         , toggleExpandedFacets
@@ -52,7 +51,7 @@ addNationalCollectionFilter ncFilter model =
         |> flip setActiveSearch model
 
 
-addNationalCollectionQueryParameter : Session -> QueryArgs -> Maybe String
+addNationalCollectionQueryParameter : Session -> QueryArgs -> String
 addNationalCollectionQueryParameter session qargs =
     let
         newQargs =
@@ -71,7 +70,6 @@ addNationalCollectionQueryParameter session qargs =
     buildQueryParameters newQargs
         |> toQuery
         |> String.dropLeft 1
-        |> Just
 
 
 setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
@@ -105,9 +103,13 @@ createProbeUrl session activeSearch =
             sideBarOptionToResultMode session.showFrontSearchInterface
 
         notationQueryParameters =
-            toKeyboard activeSearch
-                |> toKeyboardQuery
-                |> buildNotationQueryParameters
+            case activeSearch.keyboard of
+                Just p ->
+                    toKeyboardQuery p
+                        |> buildNotationQueryParameters
+
+                Nothing ->
+                    []
 
         textQueryParameters =
             setMode resultMode activeSearch.nextQuery

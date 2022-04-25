@@ -6,6 +6,7 @@ import Flags exposing (Flags)
 import Model exposing (Model(..))
 import Msg exposing (Msg)
 import Page.Front as Front
+import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.NotFound as NotFound
 import Page.Record as Record
 import Page.Route as Route exposing (Route(..))
@@ -16,6 +17,7 @@ import Session
 import Subscriptions
 import Update
 import Url exposing (Url)
+import Url.Builder exposing (toQuery)
 import View
 
 
@@ -46,25 +48,30 @@ init flags initialUrl key =
             Session.init flags initialUrl key
     in
     case route of
-        FrontPageRoute _ ->
+        FrontPageRoute qargs ->
             let
                 initialModel =
                     Front.init
-
-                ncAppliedModel =
-                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+                        { queryArgs = qargs }
             in
-            ( FrontPage session ncAppliedModel
+            ( FrontPage session initialModel
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithFrontPage <| Front.frontPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
 
-        SearchPageRoute qargs _ ->
+        SearchPageRoute qargs kqargs ->
             let
+                searchCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = qargs
+                    , keyboardQueryArgs = kqargs
+                    }
+
                 initialModel =
-                    Search.init initialUrl route
+                    Search.init searchCfg
 
                 ncAppliedModel =
                     addNationalCollectionFilter session.restrictedToNationalCollection initialModel
@@ -72,8 +79,16 @@ init flags initialUrl key =
                 newQparams =
                     addNationalCollectionQueryParameter session qargs
 
+                kqArgParams =
+                    buildNotationQueryParameters kqargs
+                        |> toQuery
+                        |> String.dropLeft 1
+
+                fullQueryParams =
+                    newQparams ++ "&" ++ kqArgParams
+
                 searchUrl =
-                    { initialUrl | query = newQparams }
+                    { initialUrl | query = Just fullQueryParams }
             in
             ( SearchPage session ncAppliedModel
             , Cmd.batch
@@ -88,8 +103,15 @@ init flags initialUrl key =
 
         PersonPageRoute _ ->
             let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+
                 initialModel =
-                    Record.init initialUrl route
+                    Record.init recordCfg
 
                 ncAppliedModel =
                     addNationalCollectionFilter session.restrictedToNationalCollection initialModel
@@ -115,8 +137,15 @@ init flags initialUrl key =
 
         PersonSourcePageRoute _ qargs ->
             let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+
                 initialModel =
-                    Record.init initialUrl route
+                    Record.init recordCfg
 
                 ncAppliedModel =
                     addNationalCollectionFilter session.restrictedToNationalCollection initialModel
@@ -131,7 +160,7 @@ init flags initialUrl key =
                     { initialUrl | path = recordPath }
 
                 sourcesUrl =
-                    { initialUrl | query = newQparams }
+                    { initialUrl | query = Just newQparams }
             in
             ( PersonPage session ncAppliedModel
             , Cmd.batch
@@ -144,8 +173,15 @@ init flags initialUrl key =
 
         InstitutionPageRoute _ ->
             let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+
                 initialModel =
-                    Record.init initialUrl route
+                    Record.init recordCfg
 
                 ncAppliedModel =
                     addNationalCollectionFilter session.restrictedToNationalCollection initialModel
@@ -171,8 +207,15 @@ init flags initialUrl key =
 
         InstitutionSourcePageRoute _ qargs ->
             let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+
                 initialModel =
-                    Record.init initialUrl route
+                    Record.init recordCfg
 
                 ncAppliedModel =
                     addNationalCollectionFilter session.restrictedToNationalCollection initialModel
@@ -187,7 +230,7 @@ init flags initialUrl key =
                     { initialUrl | path = recordPath }
 
                 sourcesUrl =
-                    { initialUrl | query = newQparams }
+                    { initialUrl | query = Just newQparams }
             in
             ( InstitutionPage session ncAppliedModel
             , Cmd.batch
@@ -199,7 +242,15 @@ init flags initialUrl key =
             )
 
         SourcePageRoute _ ->
-            ( SourcePage session <| Record.init initialUrl route
+            let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+            in
+            ( SourcePage session <| Record.init recordCfg
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
@@ -207,7 +258,15 @@ init flags initialUrl key =
             )
 
         PlacePageRoute _ ->
-            ( PlacePage session <| Record.init initialUrl route
+            let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+            in
+            ( PlacePage session <| Record.init recordCfg
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest

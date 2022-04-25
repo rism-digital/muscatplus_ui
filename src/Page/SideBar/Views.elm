@@ -10,7 +10,7 @@ import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Element.Lazy exposing (lazy3)
 import Html.Attributes as HTA
-import Language exposing (Language, extractLabelFromLanguageMap, languageOptionsForDisplay, parseLocaleToLanguage)
+import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, parseLocaleToLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)

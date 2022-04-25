@@ -2,7 +2,7 @@ module Page.UI.Facets.SelectFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Input exposing (checkbox, labelRight)
