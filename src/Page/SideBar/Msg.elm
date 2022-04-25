@@ -19,6 +19,8 @@ type SideBarMsg
     | UserMouseExitedSideBarOption SideBarOption
     | UserMouseEnteredCountryChooser
     | UserMouseExitedCountryChooser
+    | UserMouseDownOnLanguageChooser
+    | UserMouseUpOnLanguageChooser
     | UserChoseNationalCollection (Maybe CountryCode)
     | UserChangedLanguageSelect String
 
@@ -29,6 +31,30 @@ type SideBarOption
     | InstitutionSearchOption
     | IncipitSearchOption
     | LiturgicalFestivalsOption
+
+
+sideBarExpandDelay : Int
+sideBarExpandDelay =
+    100
+
+
+type SideBarAnimationStatus
+    = Expanded
+    | Collapsed
+    | NoAnimation
+
+
+showSideBarLabels : SideBarAnimationStatus -> Bool
+showSideBarLabels status =
+    case status of
+        Expanded ->
+            True
+
+        Collapsed ->
+            False
+
+        NoAnimation ->
+            False
 
 
 sideBarOptionToModeString : SideBarOption -> String
@@ -48,6 +74,25 @@ sideBarOptionToModeString option =
 
         LiturgicalFestivalsOption ->
             "festivals"
+
+
+modeStringToSideBarOption : String -> SideBarOption
+modeStringToSideBarOption mode =
+    case mode of
+        "sources" ->
+            SourceSearchOption
+
+        "people" ->
+            PeopleSearchOption
+
+        "institutions" ->
+            InstitutionSearchOption
+
+        "incipits" ->
+            IncipitSearchOption
+
+        _ ->
+            SourceSearchOption
 
 
 resultModeToSideBarOption : ResultMode -> SideBarOption

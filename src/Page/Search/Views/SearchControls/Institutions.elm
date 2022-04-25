@@ -3,14 +3,14 @@ module Page.Search.Views.SearchControls.Institutions exposing (..)
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, width)
 import Language exposing (Language)
-import Page.Facets.Facets exposing (viewFacet, viewFacetSection)
-import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Page.UI.Components exposing (dividerWithText)
+import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection)
+import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 
 
 facetsForInstitutionsModeView : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg

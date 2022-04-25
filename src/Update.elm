@@ -7,12 +7,15 @@ import Flip exposing (flip)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.Front as FrontPage
+import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.NotFound as NotFoundPage
+import Page.Query exposing (buildQueryParameters, toNextQuery)
 import Page.Record as RecordPage
 import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Url exposing (Url)
+import Url.Builder exposing (toQuery)
 
 
 changePage : Url -> Model -> ( Model, Cmd Msg )
@@ -27,8 +30,13 @@ changePage url model =
                 |> setUrl url
     in
     case route of
-        Route.FrontPageRoute _ ->
-            ( FrontPage newSession FrontPage.init
+        Route.FrontPageRoute qargs ->
+            let
+                initialModel =
+                    FrontPage.init
+                        { queryArgs = qargs }
+            in
+            ( FrontPage newSession initialModel
             , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
             )
 
@@ -37,7 +45,7 @@ changePage url model =
             , Cmd.none
             )
 
-        Route.SearchPageRoute _ _ ->
+        Route.SearchPageRoute qargs kqargs ->
             let
                 -- set the old data on the Loading response
                 -- so that the view keeps the old appearance until
@@ -45,39 +53,87 @@ changePage url model =
                 -- coming from another page, or the response doesn't
                 -- already contain server data we instead initialize
                 -- a default search page model.
-                newPageModel =
+                searchCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = qargs
+                    , keyboardQueryArgs = kqargs
+                    }
+
+                newModel =
                     case model of
                         SearchPage _ oldPageModel ->
-                            SearchPage.load url oldPageModel
+                            SearchPage.load searchCfg oldPageModel
 
                         _ ->
-                            SearchPage.init url route
+                            SearchPage.init searchCfg
+
+                newQparams =
+                    toNextQuery newModel.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
+
+                newKeyboardParams =
+                    buildNotationQueryParameters kqargs
+                        |> toQuery
+                        |> String.dropLeft 1
+
+                fullQueryParams =
+                    newQparams ++ "&" ++ newKeyboardParams
+
+                searchUrl =
+                    { url | query = Just fullQueryParams }
             in
-            ( SearchPage newSession newPageModel
+            ( SearchPage newSession newModel
             , Cmd.batch
-                [ SearchPage.searchPageRequest url
-                , SearchPage.requestPreviewIfSelected newPageModel.selectedResult
+                [ SearchPage.searchPageRequest searchUrl
+                , SearchPage.requestPreviewIfSelected newModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithSearchPage
             )
 
         Route.SourcePageRoute _ ->
-            ( SourcePage newSession (RecordPage.init url route)
+            let
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
+                sourceModel =
+                    RecordPage.init recordCfg
+            in
+            ( SourcePage newSession sourceModel
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 
         Route.PersonPageRoute _ ->
             let
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
                 newModel =
                     case model of
                         PersonPage _ oldModel ->
-                            RecordPage.load url route oldModel
+                            RecordPage.load recordCfg oldModel
 
                         _ ->
-                            RecordPage.init url route
+                            RecordPage.init recordCfg
+
+                sourceQuery =
+                    toNextQuery newModel.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
 
                 sourcesUrl =
-                    { url | path = url.path ++ "/sources" }
+                    { url | path = url.path ++ "/sources", query = Just sourceQuery }
             in
             ( PersonPage newSession newModel
             , Cmd.batch
@@ -87,7 +143,7 @@ changePage url model =
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
-        Route.PersonSourcePageRoute _ _ ->
+        Route.PersonSourcePageRoute _ qargs ->
             let
                 recordPath =
                     String.replace "/sources" "" url.path
@@ -95,18 +151,34 @@ changePage url model =
                 recordUrl =
                     { url | path = recordPath }
 
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
                 newModel =
                     case model of
                         PersonPage _ oldModel ->
-                            RecordPage.load url route oldModel
+                            RecordPage.load recordCfg oldModel
 
                         _ ->
-                            RecordPage.init url route
+                            RecordPage.init recordCfg
+
+                newQparams =
+                    toNextQuery newModel.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
+
+                sourceUrl =
+                    { url | query = Just newQparams }
             in
             ( PersonPage newSession newModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest url
+                , RecordPage.recordSearchRequest sourceUrl
                 , RecordPage.requestPreviewIfSelected newModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -114,16 +186,29 @@ changePage url model =
 
         Route.InstitutionPageRoute _ ->
             let
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
                 newModel =
                     case model of
                         InstitutionPage _ oldModel ->
-                            RecordPage.load url route oldModel
+                            RecordPage.load recordCfg oldModel
 
                         _ ->
-                            RecordPage.init url route
+                            RecordPage.init recordCfg
+
+                sourceQuery =
+                    toNextQuery newModel.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
 
                 sourcesUrl =
-                    { url | path = url.path ++ "/sources" }
+                    { url | path = url.path ++ "/sources", query = Just sourceQuery }
             in
             ( InstitutionPage newSession newModel
             , Cmd.batch
@@ -133,7 +218,7 @@ changePage url model =
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
-        Route.InstitutionSourcePageRoute _ _ ->
+        Route.InstitutionSourcePageRoute _ qargs ->
             let
                 recordPath =
                     String.replace "/sources" "" url.path
@@ -141,25 +226,52 @@ changePage url model =
                 recordUrl =
                     { url | path = recordPath }
 
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
                 newModel =
                     case model of
                         InstitutionPage _ oldModel ->
-                            RecordPage.load url route oldModel
+                            RecordPage.load recordCfg oldModel
 
                         _ ->
-                            RecordPage.init url route
+                            RecordPage.init recordCfg
+
+                newQparams =
+                    toNextQuery newModel.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
+
+                sourceUrl =
+                    { url | query = Just newQparams }
             in
             ( InstitutionPage newSession newModel
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest url
+                , RecordPage.recordSearchRequest sourceUrl
                 , RecordPage.requestPreviewIfSelected newModel.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
         Route.PlacePageRoute _ ->
-            ( PlacePage newSession (RecordPage.init url route)
+            let
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
+                placeModel =
+                    RecordPage.init recordCfg
+            in
+            ( PlacePage newSession placeModel
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 

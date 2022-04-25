@@ -3,6 +3,7 @@ module Page.Query exposing
     , QueryArgs
     , buildQueryParameters
     , defaultQueryArgs
+    , frontQueryArgsToQueryArgs
     , frontQueryParamsParser
     , queryParamsParser
     , resetPage
@@ -18,9 +19,7 @@ module Page.Query exposing
     , toFacetSorts
     , toFilters
     , toKeywordQuery
-    ,  toMode
-       --, toNationalCollection
-
+    , toMode
     , toNextQuery
     )
 
@@ -66,6 +65,18 @@ type alias QueryArgs =
 type alias FrontQueryArgs =
     { mode : ResultMode
     , nationalCollection : Maybe String
+    }
+
+
+frontQueryArgsToQueryArgs : FrontQueryArgs -> QueryArgs
+frontQueryArgsToQueryArgs frontQuery =
+    let
+        initialQueryArgs =
+            defaultQueryArgs
+    in
+    { initialQueryArgs
+        | mode = frontQuery.mode
+        , nationalCollection = frontQuery.nationalCollection
     }
 
 

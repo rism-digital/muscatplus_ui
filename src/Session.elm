@@ -1,23 +1,5 @@
 module Session exposing (..)
 
-import Browser.Navigation as Nav
-import Debouncer.Messages as Debouncer exposing (Debouncer)
-import Device exposing (detectDevice)
-import Dict exposing (Dict)
-import Element exposing (Device)
-import Flags exposing (Flags)
-import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
-import Page.RecordTypes.Countries exposing (CountryCode)
-import Page.Route exposing (Route(..), parseUrl)
-import Page.SideBar.Msg exposing (SideBarMsg, SideBarOption(..), resultModeToSideBarOption)
-import Url exposing (Url)
-
-
-sideBarExpandDelay : Int
-sideBarExpandDelay =
-    250
-
-
 {-|
 
     The Session model holds global configuration values.
@@ -30,10 +12,18 @@ sideBarExpandDelay =
     but this doesn't mean that the sidebar "owns" the session.
 
 -}
-type SideBarAnimationStatus
-    = Expanding
-    | Collapsing
-    | NoAnimation
+
+import Browser.Navigation as Nav
+import Debouncer.Messages as Debouncer exposing (Debouncer)
+import Device exposing (detectDevice)
+import Dict exposing (Dict)
+import Element exposing (Device)
+import Flags exposing (Flags)
+import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
+import Page.RecordTypes.Countries exposing (CountryCode)
+import Page.Route exposing (Route(..), parseUrl)
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg, SideBarOption(..), resultModeToSideBarOption, sideBarExpandDelay)
+import Url exposing (Url)
 
 
 type alias Session =
@@ -48,6 +38,7 @@ type alias Session =
     , showFrontSearchInterface : SideBarOption
     , currentlyHoveredOption : Maybe SideBarOption
     , currentlyHoveredNationalCollectionChooser : Bool
+    , currentlyInteractingWithLanguageChooser : Bool
     , restrictedToNationalCollection : Maybe CountryCode
     , allNationalCollections : Dict CountryCode LanguageMap
     }
@@ -105,6 +96,7 @@ init flags url key =
     , showFrontSearchInterface = initialMode
     , currentlyHoveredOption = Nothing
     , currentlyHoveredNationalCollectionChooser = False
+    , currentlyInteractingWithLanguageChooser = False
     , restrictedToNationalCollection = nationalCollectionFilter
     , allNationalCollections = Dict.empty
     }

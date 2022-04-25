@@ -1,4 +1,4 @@
-module Page.Facets.NotationFacet exposing (..)
+module Page.UI.Facets.NotationFacet exposing (..)
 
 import Element exposing (Element, alignLeft, fill, row, width)
 import Language exposing (Language)

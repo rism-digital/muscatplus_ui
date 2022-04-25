@@ -2,6 +2,7 @@ module Page.UI.Animations exposing
     ( animatedColumn
     , animatedLabel
     , animatedLoader
+    , animatedRow
     , progressBar
     )
 
@@ -35,9 +36,17 @@ animatedLabel : Element msg -> Element msg
 animatedLabel labelText =
     animatedEl
         (Animation.fromTo
-            { duration = 300, options = [] }
-            [ P.opacity 0.0 ]
-            [ P.opacity 1.0 ]
+            { duration = 220
+            , options =
+                [ Animation.easeInOutSine
+                ]
+            }
+            [ P.property "width" "90px"
+            , P.opacity 0.0
+            ]
+            [ P.property "width" "150px"
+            , P.opacity 1.0
+            ]
         )
         [ headingMD
         , Font.medium

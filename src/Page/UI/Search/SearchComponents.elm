@@ -10,7 +10,7 @@ import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByL
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingSM, lineSpacing, minimalDropShadow)
+import Page.UI.Attributes exposing (headingSM, lineSpacing)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..))

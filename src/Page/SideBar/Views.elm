@@ -10,15 +10,17 @@ import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Element.Lazy exposing (lazy3)
 import Html.Attributes as HTA
-import Language exposing (languageOptionsForDisplay, parseLocaleToLanguage)
-import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption(..))
+import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, parseLocaleToLanguage)
+import Language.LocalTranslations exposing (localTranslations)
+import Page.Route exposing (Route(..))
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedLabel)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
-import Session exposing (Session, SideBarAnimationStatus(..))
+import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
 
@@ -47,7 +49,7 @@ unlinkedMenuOption :
     -> Element SideBarMsg
 unlinkedMenuOption cfg =
     menuOptionTemplate
-        { icon = cfg.icon colourScheme.slateGrey
+        { icon = cfg.icon colourScheme.black
         , label = cfg.label
         , showLabel = cfg.showLabel
         , isCurrent = False
@@ -67,14 +69,22 @@ menuOption :
 menuOption cfg option currentlyHovered =
     let
         fontColour =
-            if currentlyHovered || cfg.isCurrent then
+            if cfg.isCurrent then
                 colourScheme.white
 
             else
-                colourScheme.slateGrey
+                colourScheme.black
 
         hoverStyles =
-            if currentlyHovered || cfg.isCurrent then
+            if currentlyHovered then
+                [ Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+                ]
+
+            else
+                []
+
+        selectedStyle =
+            if cfg.isCurrent then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                 ]
 
@@ -92,6 +102,7 @@ menuOption cfg option currentlyHovered =
                   , Font.color (fontColour |> convertColorToElementColor)
                   ]
                 , hoverStyles
+                , selectedStyle
                 ]
 
         newCfg =
@@ -113,17 +124,15 @@ menuOptionTemplate :
     -> List (Attribute SideBarMsg)
     -> Element SideBarMsg
 menuOptionTemplate cfg additionalAttributes =
-    let
-        rowAttributes =
-            [ width fill
-            , alignTop
-            , spacing 10
-            , paddingXY 30 10
-            , pointer
-            ]
-    in
     row
-        (List.concat [ rowAttributes, additionalAttributes ])
+        ([ width fill
+         , alignTop
+         , spacing 10
+         , paddingXY 30 10
+         , pointer
+         ]
+            ++ additionalAttributes
+        )
         [ el
             [ width (px 25)
             , alignLeft
@@ -159,40 +168,38 @@ view session =
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
 
+        -- only show the selected option if we're on the front page.
         checkSelected opt =
-            opt == currentlySelectedOption
+            case session.route of
+                FrontPageRoute _ ->
+                    opt == currentlySelectedOption
 
-        ( sideAnimation, showLabels ) =
+                _ ->
+                    False
+
+        showLabels =
+            showSideBarLabels session.expandedSideBar
+
+        sideAnimation =
             case sideBarAnimation of
-                Expanding ->
-                    ( Animation.fromTo
+                Expanded ->
+                    Animation.fromTo
                         { duration = 200
-                        , options = []
+                        , options = [ Animation.easeInOutSine ]
                         }
                         [ P.property "width" "90px" ]
-                        [ P.property "width" "250px" ]
-                    , True
-                    )
+                        [ P.property "width" "280px" ]
 
-                Collapsing ->
-                    ( Animation.fromTo
+                Collapsed ->
+                    Animation.fromTo
                         { duration = 200
-                        , options = []
+                        , options = [ Animation.easeInOutSine ]
                         }
-                        [ P.property "width" "250px" ]
+                        [ P.property "width" "280px" ]
                         [ P.property "width" "90px" ]
-                    , False
-                    )
 
                 NoAnimation ->
-                    ( Animation.fromTo
-                        { duration = 0
-                        , options = []
-                        }
-                        []
-                        []
-                    , False
-                    )
+                    Animation.empty
 
         -- If a national collection is chosen this will return
         -- false, indicating that the menu option should not
@@ -208,7 +215,7 @@ view session =
         sourcesInterfaceMenuOption =
             menuOption
                 { icon = sourcesSvg
-                , label = text "Sources"
+                , label = text <| extractLabelFromLanguageMap session.language localTranslations.sources
                 , showLabel = showLabels
                 , isCurrent = checkSelected SourceSearchOption
                 }
@@ -219,7 +226,7 @@ view session =
             viewIf
                 (lazy3 menuOption
                     { icon = peopleSvg
-                    , label = text "People"
+                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.people
                     , showLabel = showLabels
                     , isCurrent = checkSelected PeopleSearchOption
                     }
@@ -231,7 +238,7 @@ view session =
         institutionInterfaceMenuOption =
             menuOption
                 { icon = institutionSvg
-                , label = text "Institutions"
+                , label = text <| extractLabelFromLanguageMap session.language localTranslations.institutions
                 , showLabel = showLabels
                 , isCurrent = checkSelected InstitutionSearchOption
                 }
@@ -242,7 +249,7 @@ view session =
             viewIf
                 (lazy3 menuOption
                     { icon = musicNotationSvg
-                    , label = text "Incipits"
+                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.incipits
                     , showLabel = showLabels
                     , isCurrent = checkSelected IncipitSearchOption
                     }
@@ -320,9 +327,12 @@ view session =
                     { icon = languagesSvg
                     , label =
                         el
-                            [ width fill ]
+                            [ width fill
+                            ]
                             (dropdownSelect
                                 { selectedMsg = UserChangedLanguageSelect
+                                , mouseDownMsg = Just UserMouseDownOnLanguageChooser
+                                , mouseUpMsg = Just UserMouseUpOnLanguageChooser
                                 , choices = languageOptionsForDisplay
                                 , choiceFn = parseLocaleToLanguage
                                 , currentChoice = session.language

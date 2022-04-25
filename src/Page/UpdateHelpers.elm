@@ -7,9 +7,7 @@ import ActiveSearch
         , setExpandedFacets
         , setQueryFacetValues
         , setRangeFacetValues
-        , toActiveSearch
         , toExpandedFacets
-        , toKeyboard
         , toQueryFacetValues
         , toRangeFacetValues
         , toggleExpandedFacets
@@ -22,20 +20,7 @@ import Http.Detailed
 import List.Extra as LE
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query
-    exposing
-        ( buildQueryParameters
-        , setFacetBehaviours
-        , setFacetSorts
-        , setFilters
-        , setMode
-        , setNationalCollection
-        , setNextQuery
-        , toFacetBehaviours
-        , toFacetSorts
-        , toFilters
-        , toNextQuery
-        )
+import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setMode, setNationalCollection, setNextQuery, toFacetBehaviours, toFacetSorts, toFilters, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -46,6 +31,7 @@ import Page.SideBar.Msg exposing (sideBarOptionToResultMode)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
+import Url.Builder exposing (toQuery)
 import Utlities exposing (choose)
 
 
@@ -59,15 +45,31 @@ addNationalCollectionFilter :
     -> { a | activeSearch : ActiveSearch msg }
     -> { a | activeSearch : ActiveSearch msg }
 addNationalCollectionFilter ncFilter model =
-    let
-        newQuery =
-            toActiveSearch model
-                |> toNextQuery
-                |> setNationalCollection ncFilter
-    in
-    toActiveSearch model
-        |> setNextQuery newQuery
+    toNextQuery model.activeSearch
+        |> setNationalCollection ncFilter
+        |> flip setNextQuery model.activeSearch
         |> flip setActiveSearch model
+
+
+addNationalCollectionQueryParameter : Session -> QueryArgs -> String
+addNationalCollectionQueryParameter session qargs =
+    let
+        newQargs =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    case qargs.nationalCollection of
+                        Nothing ->
+                            { qargs | nationalCollection = session.restrictedToNationalCollection }
+
+                        Just _ ->
+                            qargs
+
+                Nothing ->
+                    qargs
+    in
+    buildQueryParameters newQargs
+        |> toQuery
+        |> String.dropLeft 1
 
 
 setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
@@ -101,9 +103,13 @@ createProbeUrl session activeSearch =
             sideBarOptionToResultMode session.showFrontSearchInterface
 
         notationQueryParameters =
-            toKeyboard activeSearch
-                |> toKeyboardQuery
-                |> buildNotationQueryParameters
+            case activeSearch.keyboard of
+                Just p ->
+                    toKeyboardQuery p
+                        |> buildNotationQueryParameters
+
+                Nothing ->
+                    []
 
         textQueryParameters =
             setMode resultMode activeSearch.nextQuery

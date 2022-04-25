@@ -3,8 +3,6 @@ module Page.Search.Views.SearchControls.People exposing (..)
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
 import Language exposing (Language)
-import Page.Facets.Facets exposing (FacetConfig, viewFacet, viewFacetSection)
-import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
@@ -12,6 +10,8 @@ import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dividerWithText)
+import Page.UI.Facets.Facets exposing (FacetConfig, viewFacet, viewFacetSection)
+import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 
 
 facetsForPeopleModeView : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg

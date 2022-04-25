@@ -10,13 +10,15 @@ import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
-import Page.SideBar.Msg exposing (SideBarMsg(..))
-import Page.UI.Animations exposing (animatedLabel)
+import Page.SideBar.Msg exposing (SideBarMsg(..), showSideBarLabels)
+import Page.UI.Animations exposing (animatedLabel, animatedRow)
 import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, sectionSpacing)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Session exposing (Session, SideBarAnimationStatus(..))
+import Session exposing (Session)
+import Simple.Animation as Animation
+import Simple.Animation.Property as P
 
 
 nationalCollectionPrefixToFlagMap : Dict String String
@@ -106,6 +108,28 @@ viewNationalCollectionChooserMenuOption session =
             else
                 none
 
+        hoverStyles =
+            if session.currentlyHoveredNationalCollectionChooser then
+                Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+
+            else
+                emptyAttribute
+
+        isRestrictedToNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+
+        labelFontColour =
+            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionChooser /= True then
+                colourScheme.white
+
+            else
+                colourScheme.black
+
         sidebarIcon =
             case session.restrictedToNationalCollection of
                 Just countryCode ->
@@ -115,7 +139,7 @@ viewNationalCollectionChooserMenuOption session =
                     in
                     column
                         [ width (px 30)
-                        , centerX
+                        , alignLeft
                         , centerY
                         ]
                         [ el
@@ -131,7 +155,7 @@ viewNationalCollectionChooserMenuOption session =
                             , Font.center
                             , Font.bold
                             , headingMD
-                            , Font.color (colourScheme.white |> convertColorToElementColor)
+                            , Font.color (labelFontColour |> convertColorToElementColor)
                             ]
                             (text countryCode)
                         ]
@@ -139,35 +163,26 @@ viewNationalCollectionChooserMenuOption session =
                 Nothing ->
                     column
                         [ width (px 30)
-                        , centerX
+                        , alignLeft
                         , centerY
                         ]
                         [ el
                             [ width (px 25)
-                            , centerX
+                            , alignLeft
                             , centerY
                             ]
-                            (globeSvg colourScheme.slateGrey)
+                            (globeSvg colourScheme.black)
                         ]
 
         iconBackgroundColor =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    Background.color (colourScheme.turquoise |> convertColorToElementColor)
+            if isRestrictedToNationalCollection then
+                Background.color (colourScheme.turquoise |> convertColorToElementColor)
 
-                Nothing ->
-                    emptyAttribute
+            else
+                emptyAttribute
 
         showLabels =
-            case session.expandedSideBar of
-                Expanding ->
-                    True
-
-                Collapsing ->
-                    False
-
-                NoAnimation ->
-                    False
+            showSideBarLabels session.expandedSideBar
 
         iconLabel =
             case session.restrictedToNationalCollection of
@@ -187,20 +202,11 @@ viewNationalCollectionChooserMenuOption session =
                     extractLabelFromLanguageMap session.language localTranslations.globalCollection
 
         labelEl =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    el
-                        [ Font.color (colourScheme.white |> convertColorToElementColor)
-                        , headingLG
-                        ]
-                        (text iconLabel)
-
-                Nothing ->
-                    el
-                        [ Font.color (colourScheme.slateGrey |> convertColorToElementColor)
-                        , headingLG
-                        ]
-                        (text iconLabel)
+            el
+                [ Font.color (labelFontColour |> convertColorToElementColor)
+                , headingLG
+                ]
+                (text iconLabel)
     in
     row
         [ width fill
@@ -212,6 +218,7 @@ viewNationalCollectionChooserMenuOption session =
         , onMouseEnter UserMouseEnteredCountryChooser
         , onMouseLeave UserMouseExitedCountryChooser
         , iconBackgroundColor
+        , hoverStyles
         ]
         [ sidebarIcon
         , viewIf (animatedLabel labelEl) showLabels
@@ -221,6 +228,15 @@ viewNationalCollectionChooserMenuOption session =
 sortedByLocalizedCountryName : Language -> List ( String, LanguageMap ) -> List ( String, LanguageMap )
 sortedByLocalizedCountryName language countryList =
     List.sortBy (\( _, label ) -> extractLabelFromLanguageMap language label) countryList
+
+
+nationalCollectionChooserAnimations =
+    Animation.fromTo
+        { duration = 150
+        , options = [ Animation.delay 150 ]
+        }
+        [ P.opacity 0 ]
+        [ P.opacity 1 ]
 
 
 viewNationalCollectionChooser : Session -> Element SideBarMsg
@@ -235,13 +251,22 @@ viewNationalCollectionChooser session =
         groupedList =
             LE.greedyGroupsOf 2 sortedList
     in
-    row
+    animatedRow
+        nationalCollectionChooserAnimations
         [ width (px 500)
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , height (shrink |> minimum 600 |> maximum 800)
         , Border.width 1
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , moveLeft 20
+        , Border.shadow
+            { offset = ( 1, 1 )
+            , size = 1
+            , blur = 10
+            , color =
+                colourScheme.darkGrey
+                    |> convertColorToElementColor
+            }
         ]
         [ column
             [ width fill
@@ -276,7 +301,7 @@ viewNationalCollectionChooser session =
                             , alignLeft
                             , centerY
                             ]
-                            (globeSvg colourScheme.darkGrey)
+                            (globeSvg colourScheme.black)
                         , el
                             [ width fill
                             , headingMD

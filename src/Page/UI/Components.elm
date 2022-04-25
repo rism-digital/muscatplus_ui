@@ -213,6 +213,8 @@ dropdownSelectStyles =
 
 type alias DropdownSelectConfig a msg =
     { selectedMsg : String -> msg
+    , mouseDownMsg : Maybe msg
+    , mouseUpMsg : Maybe msg
     , choices : List ( String, String )
     , choiceFn : String -> a
     , currentChoice : a
@@ -238,6 +240,22 @@ dropdownSelect cfg =
 
                 Nothing ->
                     none
+
+        mouseDownMsg =
+            case cfg.mouseDownMsg of
+                Just m ->
+                    HE.onMouseDown m
+
+                Nothing ->
+                    HA.classList []
+
+        mouseUpMsg =
+            case cfg.mouseUpMsg of
+                Just m ->
+                    HE.onMouseUp m
+
+                Nothing ->
+                    HA.classList []
     in
     row
         [ width fill
@@ -255,6 +273,8 @@ dropdownSelect cfg =
                         (List.append
                             [ HE.onInput cfg.selectedMsg
                             , HA.id cfg.selectIdent
+                            , mouseDownMsg
+                            , mouseUpMsg
                             ]
                             dropdownSelectStyles
                         )

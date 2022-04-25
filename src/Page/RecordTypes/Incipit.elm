@@ -23,7 +23,7 @@ type RenderedIncipit
 
 
 type EncodedIncipit
-    = EncodedIncipit EncodingFormat EncodingData
+    = EncodedIncipit LanguageMap EncodingFormat EncodingData
 
 
 type alias EncodingData =
@@ -136,5 +136,6 @@ incipitEncodingDataDecoder =
 encodedIncipitDecoder : Decoder EncodedIncipit
 encodedIncipitDecoder =
     Decode.succeed EncodedIncipit
+        |> required "label" languageMapLabelDecoder
         |> required "format" incipitEncodingDecoder
         |> required "data" incipitEncodingDataDecoder

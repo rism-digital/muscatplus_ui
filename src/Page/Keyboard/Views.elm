@@ -77,6 +77,8 @@ view notationFacet language (Keyboard model config) =
                                 ]
                                 [ dropdownSelect
                                     { selectedMsg = \s -> UserChangedQueryMode <| queryModeStrToQueryMode s
+                                    , mouseUpMsg = Nothing
+                                    , mouseDownMsg = Nothing
                                     , choices = queryModeOptions
                                     , choiceFn = \selected -> queryModeStrToQueryMode selected
                                     , currentChoice = .queryMode model.query

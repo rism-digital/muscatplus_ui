@@ -7,8 +7,6 @@ import Element.Input exposing (button)
 import Html.Attributes as HA
 import Language exposing (Language, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Facets.Facets exposing (viewFacet, viewFacetSection)
-import Page.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
@@ -16,6 +14,8 @@ import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.UI.Attributes exposing (headingSM, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText, h3, renderParagraph)
+import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection)
+import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewRouter)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
@@ -335,15 +335,17 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
         currentMode =
             model.currentTab
 
+        sourceCount searchData =
+            toFloat searchData.totalItems
+                |> formatNumberByLanguage language
+
         sourceLabel =
             case model.searchResults of
                 Response (SearchData searchData) ->
-                    let
-                        sourceCount =
-                            toFloat searchData.totalItems
-                                |> formatNumberByLanguage language
-                    in
-                    "Sources (" ++ sourceCount ++ ")"
+                    "Sources (" ++ sourceCount searchData ++ ")"
+
+                Loading (Just (SearchData oldData)) ->
+                    "Sources (" ++ sourceCount oldData ++ ")"
 
                 _ ->
                     "Sources"
@@ -401,4 +403,24 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
                 , label = text sourceLabel
                 }
             )
+        ]
+
+
+viewRecordTopBarDescriptionOnly : Element msg
+viewRecordTopBarDescriptionOnly =
+    row
+        [ centerX
+        , width fill
+        , height (px 25)
+        , spacing 15
+        ]
+        [ el
+            [ width shrink
+            , height fill
+            , Font.center
+            , alignLeft
+            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+            , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+            ]
+            (text "Description")
         ]

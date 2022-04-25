@@ -1,8 +1,8 @@
-module Page.Facets.SelectFacet exposing (..)
+module Page.UI.Facets.SelectFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Input exposing (checkbox, labelRight)
@@ -74,6 +74,7 @@ sortFacetItemList language sortBy facetItems =
                             i
                     in
                     extractLabelFromLanguageMap language langmap
+                        |> String.toLower
                 )
                 facetItems
 
@@ -220,6 +221,8 @@ viewSelectFacet config =
                 ]
                 (dropdownSelect
                     { selectedMsg = \inp -> config.userChangedFacetBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp
+                    , mouseDownMsg = Nothing
+                    , mouseUpMsg = Nothing
                     , choices = listOfBehavioursForDropdown
                     , choiceFn = \inp -> parseStringToFacetBehaviour inp
                     , currentChoice = currentBehaviourOption
@@ -229,8 +232,11 @@ viewSelectFacet config =
                     }
                 )
 
+        numGroups =
+            ceiling <| toFloat (List.length facetItems) / toFloat config.numberOfColumns
+
         groupedFacetItems =
-            LE.greedyGroupsOf config.numberOfColumns facetItems
+            LE.greedyGroupsOf numGroups facetItems
     in
     row
         [ width fill
@@ -265,12 +271,9 @@ viewSelectFacet config =
                 ]
             , row
                 [ width fill
+                , spacing lineSpacing
                 ]
-                [ column
-                    [ width fill
-                    ]
-                    (List.map (\fRow -> viewSelectFacetItemRow config fRow) groupedFacetItems)
-                ]
+                (List.map (\fColumn -> viewSelectFacetItemColumn config fColumn) groupedFacetItems)
             , row
                 [ width fill
                 , padding 10
@@ -287,10 +290,8 @@ viewSelectFacet config =
                         [ el
                             [ width (px 20)
                             , height (px 10)
-                            , tooltip above <|
-                                el
-                                    tooltipStyle
-                                    (text behaviourText)
+                            , el tooltipStyle (text behaviourText)
+                                |> tooltip above
                             ]
                             behaviourIcon
                         , behaviourDropdown
@@ -298,10 +299,8 @@ viewSelectFacet config =
                             [ width (px 20)
                             , height (px 20)
                             , onClick (config.userChangedSelectFacetSortMsg facetAlias <| toggledSortType chosenSort)
-                            , tooltip above <|
-                                el
-                                    tooltipStyle
-                                    (text chosenSortMessage)
+                            , el tooltipStyle (text chosenSortMessage)
+                                |> tooltip above
                             ]
                             (sortIcon chosenSort)
                         ]
@@ -312,12 +311,12 @@ viewSelectFacet config =
         ]
 
 
-viewSelectFacetItemRow : SelectFacetConfig msg -> List FacetItem -> Element msg
-viewSelectFacetItemRow config facetRow =
-    row
-        [ width fill
-        , spacingXY (lineSpacing * 2) lineSpacing
-        , alignLeft
+viewSelectFacetItemColumn : SelectFacetConfig msg -> List FacetItem -> Element msg
+viewSelectFacetItemColumn config facetRow =
+    column
+        [ width (px 250)
+        , alignTop
+        , spacing 4
         ]
         (List.map (\fitem -> viewSelectFacetItem config fitem) facetRow)
 
@@ -348,38 +347,32 @@ viewSelectFacetItem config fitem =
                 |> Maybe.withDefault []
                 |> List.member value
     in
-    column
-        [ width (px 220)
+    row
+        [ width fill
         , alignLeft
-        , alignTop
         , padding 5
         , mouseOver [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
         ]
-        [ row
-            [ width fill
+        [ checkbox
+            [ Element.htmlAttribute (HA.alt fullLabel)
             , alignLeft
+            , alignTop
+            , width fill
             ]
-            [ checkbox
-                [ Element.htmlAttribute (HA.alt fullLabel)
-                , alignLeft
-                , alignTop
-                , width fill
-                ]
-                { onChange = \_ -> config.userSelectedFacetItemMsg facetAlias value
-                , icon = basicCheckbox
-                , checked = shouldBeChecked
-                , label =
-                    labelRight
-                        [ bodyRegular
-                        , width fill
-                        ]
-                        (paragraph [ width fill ] [ text (SE.softEllipsis 50 fullLabel) ])
-                }
-            , el
-                [ alignRight
-                , bodyRegular
-                , alignTop
-                ]
-                (text <| formatNumberByLanguage config.language count)
+            { onChange = \_ -> config.userSelectedFacetItemMsg facetAlias value
+            , icon = basicCheckbox
+            , checked = shouldBeChecked
+            , label =
+                labelRight
+                    [ bodyRegular
+                    , width fill
+                    ]
+                    (paragraph [ width fill ] [ text (SE.softEllipsis 50 fullLabel) ])
+            }
+        , el
+            [ alignRight
+            , bodyRegular
+            , alignTop
             ]
+            (text <| formatNumberByLanguage config.language count)
         ]

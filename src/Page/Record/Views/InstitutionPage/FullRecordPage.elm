@@ -1,17 +1,18 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
-import Page.Record.Msg exposing (RecordMsg(..))
+import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
@@ -49,16 +50,26 @@ viewFullInstitutionPage session model body =
             [ row
                 [ width fill
                 , alignTop
+                , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+                , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+                , Background.color (colourScheme.cream |> convertColorToElementColor)
                 ]
                 [ column
-                    [ spacing lineSpacing
+                    [ width (px 80) ]
+                    [ el
+                        [ width (px 50)
+                        , height (px 50)
+                        , centerX
+                        , centerY
+                        ]
+                        (institutionSvg colourScheme.slateGrey)
+                    ]
+                , column
+                    [ spacingXY 0 lineSpacing
                     , width fill
                     , height fill
                     , alignTop
-                    , padding 20
-                    , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
-                    , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-                    , Background.color (colourScheme.cream |> convertColorToElementColor)
+                    , paddingXY 5 20
                     ]
                     [ pageHeaderTemplate session.language body
                     , viewRecordTopBarRouter session.language model body

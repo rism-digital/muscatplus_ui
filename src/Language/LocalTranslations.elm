@@ -13,7 +13,11 @@ import Language exposing (Language(..), LanguageValues(..))
 
 
 localTranslations :
-    { search : List LanguageValues
+    { sources : List LanguageValues
+    , people : List LanguageValues
+    , institutions : List LanguageValues
+    , incipits : List LanguageValues
+    , search : List LanguageValues
     , home : List LanguageValues
     , keywordQuery : List LanguageValues
     , searchNumberOfRecords : List LanguageValues
@@ -39,7 +43,43 @@ localTranslations :
     , noResultsWouldBeFound : List LanguageValues
     }
 localTranslations =
-    { search =
+    { sources =
+        [ LanguageValues English [ "Sources" ]
+        , LanguageValues German [ "Quellen" ]
+        , LanguageValues French [ "Sources" ]
+        , LanguageValues Italian [ "Fonti" ]
+        , LanguageValues Spanish [ "Fuentes" ]
+        , LanguageValues Portugese [ "Fontes" ]
+        , LanguageValues Polish [ "Źródła" ]
+        ]
+    , people =
+        [ LanguageValues Spanish [ "Personas" ]
+        , LanguageValues Portugese [ "Pessoas" ]
+        , LanguageValues German [ "Personen" ]
+        , LanguageValues Italian [ "Persone" ]
+        , LanguageValues Polish [ "Osoby" ]
+        , LanguageValues English [ "People" ]
+        , LanguageValues French [ "Personnes" ]
+        ]
+    , institutions =
+        [ LanguageValues Spanish [ "Instituciones" ]
+        , LanguageValues Portugese [ "Instituições" ]
+        , LanguageValues German [ "Körperschaften" ]
+        , LanguageValues Italian [ "Istituzioni" ]
+        , LanguageValues Polish [ "Instytucje" ]
+        , LanguageValues English [ "Institutions" ]
+        , LanguageValues French [ "Institution" ]
+        ]
+    , incipits =
+        [ LanguageValues Spanish [ "Íncipits" ]
+        , LanguageValues Portugese [ "Incipit" ]
+        , LanguageValues German [ "Incipits" ]
+        , LanguageValues Italian [ "Incipit" ]
+        , LanguageValues Polish [ "Incipity" ]
+        , LanguageValues English [ "Incipits" ]
+        , LanguageValues French [ "Incipits" ]
+        ]
+    , search =
         [ LanguageValues English [ "Search" ]
         , LanguageValues German [ "Suche" ]
         , LanguageValues French [ "Chercher" ]

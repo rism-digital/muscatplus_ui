@@ -1,4 +1,4 @@
-module Page.Facets.QueryFacet exposing (..)
+module Page.UI.Facets.QueryFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
@@ -217,10 +217,8 @@ viewQueryFacet config =
                 [ el
                     [ width (px 20)
                     , height (px 10)
-                    , tooltip above <|
-                        el
-                            tooltipStyle
-                            (text behaviourText)
+                    , el tooltipStyle (text behaviourText)
+                        |> tooltip above
                     ]
                     behaviourIcon
                 , el
@@ -229,6 +227,8 @@ viewQueryFacet config =
                     ]
                     (dropdownSelect
                         { selectedMsg = \inp -> config.userChangedBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp
+                        , mouseDownMsg = Nothing
+                        , mouseUpMsg = Nothing
                         , choices = listOfBehavioursForDropdown
                         , choiceFn = \inp -> parseStringToFacetBehaviour inp
                         , currentChoice = currentBehaviourOption

@@ -3,7 +3,8 @@ module View exposing (view)
 import Browser
 import Css
 import Css.Global
-import Element exposing (Element, alignTop, centerX, column, fill, height, inFront, layout, none, px, row, width)
+import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, layout, none, px, row, width)
+import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -148,6 +149,7 @@ loadingIndicator model =
         loadingView =
             row
                 [ width fill
+                , htmlAttribute (HA.style "z-index" "1")
                 ]
                 [ progressBar ]
 
@@ -185,7 +187,11 @@ loadingIndicator model =
             chooseView pageModel.response
 
         PersonPage _ pageModel ->
-            chooseView pageModel.response
+            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
+                loadingView
+
+            else
+                none
 
         InstitutionPage _ pageModel ->
             if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then

@@ -53,6 +53,8 @@ viewRenderControls language notationFacet (Keyboard model config) =
                 ]
                 [ dropdownSelect
                     { selectedMsg = \clefStr -> UserClickedPianoKeyboardChangeClef <| clefStrToClef clefStr
+                    , mouseUpMsg = Nothing
+                    , mouseDownMsg = Nothing
                     , choices = clefObjList
                     , choiceFn = \selected -> clefStrToClef selected
                     , currentChoice = .clef model.query
@@ -76,6 +78,8 @@ viewRenderControls language notationFacet (Keyboard model config) =
                 ]
                 [ dropdownSelect
                     { selectedMsg = \tsigStr -> UserClickedPianoKeyboardChangeTimeSignature <| timeSigStrToTimeSignature tsigStr
+                    , mouseDownMsg = Nothing
+                    , mouseUpMsg = Nothing
                     , choices = tsigList
                     , choiceFn = \selected -> timeSigStrToTimeSignature selected
                     , currentChoice = .timeSignature model.query
@@ -99,6 +103,8 @@ viewRenderControls language notationFacet (Keyboard model config) =
                 ]
                 [ dropdownSelect
                     { selectedMsg = \ksigStr -> UserClickedPianoKeyboardChangeKeySignature <| keySigStrToKeySignature ksigStr
+                    , mouseDownMsg = Nothing
+                    , mouseUpMsg = Nothing
                     , choices = keySigList
                     , choiceFn = \selected -> keySigStrToKeySignature selected
                     , currentChoice = .keySignature model.query

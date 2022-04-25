@@ -1,18 +1,17 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Font as Font
-import Element.Input exposing (button)
-import Language exposing (Language, formatNumberByLanguage)
+import Language exposing (Language)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
-import Page.Record.Msg exposing (RecordMsg(..))
+import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (headingSM, lineSpacing, sectionBorderStyles, sectionSpacing)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (userCircleSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
@@ -20,7 +19,6 @@ import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
@@ -52,16 +50,27 @@ viewFullPersonPage session model body =
             [ row
                 [ width fill
                 , alignTop
+                , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+                , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+                , Background.color (colourScheme.cream |> convertColorToElementColor)
                 ]
                 [ column
-                    [ spacing lineSpacing
+                    [ width (px 80)
+                    ]
+                    [ el
+                        [ width (px 50)
+                        , height (px 50)
+                        , centerX
+                        , centerY
+                        ]
+                        (userCircleSvg colourScheme.slateGrey)
+                    ]
+                , column
+                    [ spacingXY 0 lineSpacing
                     , width fill
                     , height fill
                     , alignTop
-                    , padding 20
-                    , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
-                    , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-                    , Background.color (colourScheme.cream |> convertColorToElementColor)
+                    , paddingXY 5 20
                     ]
                     [ pageHeaderTemplate session.language body
                     , viewRecordTopBarRouter session.language model body

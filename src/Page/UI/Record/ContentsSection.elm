@@ -1,13 +1,21 @@
 module Page.UI.Record.ContentsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, textColumn, width, wrappedRow)
+import Dict
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, padding, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element.Background as Background
+import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.Query exposing (buildQueryParameters, defaultQueryArgs, setFilters)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (searchSvg)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
+import Request exposing (serverUrl)
 
 
 viewMinimalContentsSection : Language -> ContentsSectionBody -> Element msg
@@ -81,8 +89,50 @@ viewSubjectsSection language subjectSection =
 
 viewSubject : Language -> Subject -> Element msg
 viewSubject language subject =
-    link
-        [ linkColour ]
-        { url = subject.id
-        , label = text (extractLabelFromLanguageMap language subject.term)
-        }
+    let
+        facetDict =
+            Dict.fromList [ ( "subjects", [ subject.value ] ) ]
+
+        searchQueryArgs =
+            setFilters facetDict defaultQueryArgs
+                |> buildQueryParameters
+
+        subjectSearchUrl =
+            serverUrl [ "search" ] searchQueryArgs
+    in
+    row
+        [ width fill
+        , spacing 5
+        ]
+        [ el
+            []
+            (text (extractLabelFromLanguageMap language subject.label))
+        , link
+            [ centerY
+            , linkColour
+            , Border.width 1
+            , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+            , padding 2
+            , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+            ]
+            { url = subjectSearchUrl
+            , label =
+                el
+                    [ width (px 12)
+                    , height (px 12)
+                    , centerY
+                    , el tooltipStyle (text "New search with this term")
+                        |> tooltip above
+                    ]
+                    (searchSvg colourScheme.white)
+            }
+        ]
+
+
+
+--
+--link
+--    [ linkColour ]
+--    { url = subject.id
+--    , label =
+--    }

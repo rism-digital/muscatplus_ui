@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, minimum, none, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -42,13 +42,13 @@ view session model =
             , alignTop
             ]
             [ viewTopBar session.language model
-            , viewSearchBody session.language model
+            , viewSearchBody session model
             ]
         ]
 
 
-viewSearchBody : Language -> SearchPageModel SearchMsg -> Element SearchMsg
-viewSearchBody language model =
+viewSearchBody : Session -> SearchPageModel SearchMsg -> Element SearchMsg
+viewSearchBody session model =
     row
         [ width fill
         , height fill
@@ -60,7 +60,7 @@ viewSearchBody language model =
             , height fill
             , alignTop
             ]
-            [ searchResultsViewRouter language model ]
+            [ searchResultsViewRouter session model ]
         ]
 
 
@@ -118,33 +118,33 @@ searchModeSelectorView lang model modeFacet =
         ]
 
 
-searchResultsViewRouter : Language -> SearchPageModel SearchMsg -> Element SearchMsg
-searchResultsViewRouter language model =
+searchResultsViewRouter : Session -> SearchPageModel SearchMsg -> Element SearchMsg
+searchResultsViewRouter session model =
     case model.response of
         Loading (Just (SearchData oldData)) ->
-            viewSearchResultsSection language model oldData True
+            viewSearchResultsSection session model oldData True
 
         Loading _ ->
-            viewSearchResultsLoadingTmpl language
+            viewSearchResultsLoadingTmpl session.language
 
         Response (SearchData body) ->
-            viewSearchResultsSection language model body False
+            viewSearchResultsSection session model body False
 
         Error err ->
-            viewSearchResultsErrorTmpl language err
+            viewSearchResultsErrorTmpl session.language err
 
         NoResponseToShow ->
             -- In case we're just booting the app up, show
             -- the loading message.
-            viewSearchResultsLoadingTmpl language
+            viewSearchResultsLoadingTmpl session.language
 
         _ ->
             -- For any other responses, show the error.
-            viewSearchResultsErrorTmpl language "An unknown error occurred."
+            viewSearchResultsErrorTmpl session.language "An unknown error occurred."
 
 
-viewSearchResultsSection : Language -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
-viewSearchResultsSection language model body isLoading =
+viewSearchResultsSection : Session -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
+viewSearchResultsSection session model body isLoading =
     let
         renderedPreview =
             case model.preview of
@@ -153,16 +153,34 @@ viewSearchResultsSection language model body isLoading =
                     none
 
                 Loading (Just oldData) ->
-                    viewPreviewRouter language SearchMsg.UserClickedClosePreviewWindow oldData
+                    viewPreviewRouter session.language SearchMsg.UserClickedClosePreviewWindow oldData
 
                 Response resp ->
-                    viewPreviewRouter language SearchMsg.UserClickedClosePreviewWindow resp
+                    viewPreviewRouter session.language SearchMsg.UserClickedClosePreviewWindow resp
 
                 Error _ ->
                     none
 
                 NoResponseToShow ->
                     none
+
+        ( resultColumnWidth, controlsColumnWidth ) =
+            let
+                { class, orientation } =
+                    session.device
+            in
+            case ( class, orientation ) of
+                ( Phone, Portrait ) ->
+                    ( width fill, width (px 0) )
+
+                ( Desktop, Landscape ) ->
+                    ( width (fill |> minimum 600), width (px 900) )
+
+                ( BigDesktop, Landscape ) ->
+                    ( width (fill |> minimum 600), width (px 900) )
+
+                _ ->
+                    ( width (fill |> minimum 600), width fill )
     in
     row
         [ width fill
@@ -170,22 +188,22 @@ viewSearchResultsSection language model body isLoading =
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
-            [ width fill
+            [ resultColumnWidth
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, top = 0, left = 0, right = 2 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
-            [ viewSearchResultsListPanel language model body isLoading
-            , viewPagination language body.pagination SearchMsg.UserClickedSearchResultsPagination
+            [ viewSearchResultsListPanel session.language model body isLoading
+            , viewPagination session.language body.pagination SearchMsg.UserClickedSearchResultsPagination
             ]
         , column
-            [ width fill
+            [ controlsColumnWidth
             , height fill
             , alignTop
             , inFront renderedPreview
             ]
-            [ viewSearchControls language model body ]
+            [ viewSearchControls session.language model body ]
         ]
 
 
@@ -330,6 +348,8 @@ viewPaginationSortSelector language activeSearch body =
                         []
                         (dropdownSelect
                             { selectedMsg = \inp -> SearchMsg.UserChangedResultSorting inp
+                            , mouseDownMsg = Nothing
+                            , mouseUpMsg = Nothing
                             , choices = listOfLabelsForResultSort
                             , choiceFn = \inp -> inp
                             , currentChoice = chosenSort
