@@ -5,17 +5,19 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Html.Attributes as HA
-import Language exposing (Language, formatNumberByLanguage)
+import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
+import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingSM, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText, h3, renderParagraph)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewRouter)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
@@ -339,16 +341,24 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
             toFloat searchData.totalItems
                 |> formatNumberByLanguage language
 
+        localizedSources =
+            extractLabelFromLanguageMap language localTranslations.sources
+
         sourceLabel =
             case model.searchResults of
                 Response (SearchData searchData) ->
-                    "Sources (" ++ sourceCount searchData ++ ")"
-
-                Loading (Just (SearchData oldData)) ->
-                    "Sources (" ++ sourceCount oldData ++ ")"
+                    el
+                        []
+                        (text <| localizedSources ++ " (" ++ sourceCount searchData ++ ")")
 
                 _ ->
-                    "Sources"
+                    row
+                        [ spacing 5 ]
+                        [ text localizedSources
+                        , animatedLoader
+                            [ width (px 15), height (px 15) ]
+                            (spinnerSvg colourScheme.slateGrey)
+                        ]
 
         descriptionTabBorder =
             case currentMode of
@@ -384,7 +394,7 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
             (button
                 []
                 { onPress = Just <| UserClickedRecordViewTab (DefaultRecordViewTab recordId)
-                , label = text "Description"
+                , label = text <| extractLabelFromLanguageMap language localTranslations.description
                 }
             )
         , el
@@ -400,7 +410,7 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
             (button
                 []
                 { onPress = Just <| UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl)
-                , label = text sourceLabel
+                , label = sourceLabel
                 }
             )
         ]

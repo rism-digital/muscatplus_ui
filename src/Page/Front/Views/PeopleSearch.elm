@@ -2,6 +2,8 @@ module Page.Front.Views.PeopleSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Language exposing (extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
@@ -55,7 +57,7 @@ peopleSearchPanelView session model frontBody =
                 ]
                 [ paragraph
                     [ headingHero, Font.semiBold ]
-                    [ text "Person authorities" ]
+                    [ text <| extractLabelFromLanguageMap language localTranslations.people ]
                 ]
             , viewFrontKeywordQueryInput
                 { language = language

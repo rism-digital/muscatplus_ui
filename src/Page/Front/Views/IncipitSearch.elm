@@ -2,6 +2,8 @@ module Page.Front.Views.IncipitSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Language exposing (extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
@@ -52,7 +54,7 @@ incipitSearchPanelView session model body =
                 ]
                 [ paragraph
                     [ headingHero, Font.semiBold ]
-                    [ text "Incipit records" ]
+                    [ text <| extractLabelFromLanguageMap language localTranslations.incipits ]
                 ]
             , viewFacet (facetConfig "notation") facetFrontMsgConfig
             , row

@@ -13,7 +13,8 @@ import Language exposing (Language(..), LanguageValues(..))
 
 
 localTranslations :
-    { sources : List LanguageValues
+    { description : List LanguageValues
+    , sources : List LanguageValues
     , people : List LanguageValues
     , institutions : List LanguageValues
     , incipits : List LanguageValues
@@ -28,8 +29,6 @@ localTranslations :
     , last : List LanguageValues
     , page : List LanguageValues
     , recordPreview : List LanguageValues
-    , viewRecord : List LanguageValues
-    , viewSourceRecord : List LanguageValues
     , recordURI : List LanguageValues
     , recordTop : List LanguageValues
     , applyFilters : List LanguageValues
@@ -43,7 +42,16 @@ localTranslations :
     , noResultsWouldBeFound : List LanguageValues
     }
 localTranslations =
-    { sources =
+    { description =
+        [ LanguageValues English [ "Description" ]
+        , LanguageValues German [ "Beschreibung" ]
+        , LanguageValues French [ "Description" ]
+        , LanguageValues Italian [ "Descrizione" ]
+        , LanguageValues Spanish [ "Decripción" ]
+        , LanguageValues Portugese [ "Descrição" ]
+        , LanguageValues Polish [ "Opis" ]
+        ]
+    , sources =
         [ LanguageValues English [ "Sources" ]
         , LanguageValues German [ "Quellen" ]
         , LanguageValues French [ "Sources" ]
@@ -164,14 +172,6 @@ localTranslations =
         , LanguageValues Spanish [ "Vista previa del registro" ]
         , LanguageValues Portugese [ "Visualizar do registro" ]
         , LanguageValues Polish [ "Zapowiedź rekordu" ]
-        ]
-    , viewRecord =
-        -- TODO: Additional translations
-        [ LanguageValues English [ "View full record" ]
-        ]
-    , viewSourceRecord =
-        -- TODO: Additional translations
-        [ LanguageValues English [ "View source record" ]
         ]
     , recordURI =
         [ LanguageValues English [ "Record URI (Permalink)" ] ]
