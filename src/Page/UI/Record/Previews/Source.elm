@@ -36,7 +36,7 @@ viewSourcePreview language body =
                     , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
                     , viewMaybe (viewRelationshipsSection language) body.relationships
                     , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
-                    , viewMaybe (viewSourceItemsSection language) body.items
+                    , viewMaybe (viewSourceItemsSection language) body.sourceItems
                     , viewMaybe (viewExternalResourcesSection language) body.externalResources
                     , viewMaybe (viewExemplarsSection language) body.exemplars
                     ]

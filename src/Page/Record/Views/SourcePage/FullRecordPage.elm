@@ -45,7 +45,7 @@ viewFullSourcePage session body =
                     , viewMaybe (viewMaterialGroupsSection session.language) body.materialGroups
                     , viewMaybe (viewRelationshipsSection session.language) body.relationships
                     , viewMaybe (viewReferencesNotesSection session.language) body.referencesNotes
-                    , viewMaybe (viewSourceItemsSection session.language) body.items
+                    , viewMaybe (viewSourceItemsSection session.language) body.sourceItems
                     , viewMaybe (viewExternalResourcesSection session.language) body.externalResources
                     , viewMaybe (viewExemplarsSection session.language) body.exemplars
                     ]

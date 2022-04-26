@@ -26,7 +26,7 @@ type alias FullSourceBody =
     , incipits : Maybe IncipitsSectionBody
     , referencesNotes : Maybe ReferencesNotesSectionBody
     , exemplars : Maybe ExemplarsSectionBody
-    , items : Maybe SourceItemsSectionBody
+    , sourceItems : Maybe SourceItemsSectionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , recordHistory : RecordHistory
     }
@@ -120,7 +120,7 @@ sourceBodyDecoder =
         |> optional "incipits" (Decode.maybe incipitsSectionBodyDecoder) Nothing
         |> optional "referencesNotes" (Decode.maybe referencesNotesSectionBodyDecoder) Nothing
         |> optional "exemplars" (Decode.maybe exemplarsSectionBodyDecoder) Nothing
-        |> optional "items" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
+        |> optional "sourceItems" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
