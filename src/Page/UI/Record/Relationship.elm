@@ -58,10 +58,18 @@ viewRelationshipBody language body =
                         Nothing ->
                             none
 
+        roleLabel =
+            case body.role of
+                Just role ->
+                    renderLabel language role.label
+
+                Nothing ->
+                    none
+
         qualifierLabel =
-            case body.qualifierLabel of
+            case body.qualifier of
                 Just qual ->
-                    el [] (text (" [" ++ extractLabelFromLanguageMap language qual ++ "]"))
+                    el [] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
 
                 Nothing ->
                     none
@@ -74,7 +82,7 @@ viewRelationshipBody language body =
             ]
             [ column
                 labelFieldColumnAttributes
-                [ renderLabel language body.label ]
+                [ roleLabel ]
             , column
                 valueFieldColumnAttributes
                 [ row
