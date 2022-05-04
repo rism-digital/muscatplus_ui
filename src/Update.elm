@@ -299,7 +299,12 @@ update msg model =
             in
             case urlRequest of
                 Browser.Internal url ->
-                    ( model, Nav.pushUrl session.key (Url.toString url) )
+                    -- if the app is loading the viewer, treat it as an external link.
+                    if url.path == "/viewer.html" then
+                        ( model, Nav.load <| Url.toString url )
+
+                    else
+                        ( model, Nav.pushUrl session.key (Url.toString url) )
 
                 Browser.External href ->
                     ( model, Nav.load href )

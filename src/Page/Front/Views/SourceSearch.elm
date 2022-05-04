@@ -2,6 +2,8 @@ module Page.Front.Views.SourceSearch exposing (..)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
+import Language exposing (extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
@@ -55,7 +57,7 @@ sourceSearchPanelView session model frontBody =
                 ]
                 [ paragraph
                     [ headingHero, Font.semiBold ]
-                    [ text "Source records" ]
+                    [ text <| extractLabelFromLanguageMap language localTranslations.sources ]
                 ]
             , viewFrontKeywordQueryInput
                 { language = language
@@ -105,7 +107,9 @@ sourceSearchPanelView session model frontBody =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ viewFacet (facetConfig "has-digitization") facetFrontMsgConfig ]
+                    [ viewFacet (facetConfig "has-digitization") facetFrontMsgConfig
+                    , viewFacet (facetConfig "has-iiif") facetFrontMsgConfig
+                    ]
                 , column
                     [ width fill
                     , alignTop

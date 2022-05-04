@@ -10,6 +10,7 @@ import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, lin
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
+import Page.UI.Record.ExternalResources exposing (viewExternalResource)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
@@ -115,15 +116,6 @@ viewExternalResourcesSection language linkSection =
                 ]
             ]
         ]
-
-
-viewExternalResource : Language -> ExternalResourceBody -> Element msg
-viewExternalResource language extLink =
-    link
-        [ linkColour ]
-        { url = extLink.url
-        , label = text (extractLabelFromLanguageMap language extLink.label)
-        }
 
 
 viewExemplarRelationships : Language -> RelationshipsSectionBody -> Element msg

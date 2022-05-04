@@ -30,8 +30,6 @@ viewPartOfSection language partOf =
                 [ el
                     [ headingSM ]
                     (text "This record is part of a collection: ")
-
-                -- TODO: Translate!
                 , link
                     [ linkColour
                     , headingSM

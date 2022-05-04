@@ -146,6 +146,9 @@ viewFacetToggleSection language activeSearch body =
         hasDigitizationToggle =
             viewFacet (facetConfig "has-digitization") facetSearchMsgConfig
 
+        hasIiifToggle =
+            viewFacet (facetConfig "has-iiif") facetSearchMsgConfig
+
         isArrangementToggle =
             viewFacet (facetConfig "is-arrangement") facetSearchMsgConfig
 
@@ -157,6 +160,7 @@ viewFacetToggleSection language activeSearch body =
             , sourceContentsToggle
             , compositeVolumesToggle
             , hasDigitizationToggle
+            , hasIiifToggle
             , isArrangementToggle
             , hasIncipitsToggle
             ]
@@ -186,7 +190,9 @@ viewFacetToggleSection language activeSearch body =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ hasDigitizationToggle ]
+                [ hasDigitizationToggle
+                , hasIiifToggle
+                ]
             , column
                 [ width fill
                 , alignTop

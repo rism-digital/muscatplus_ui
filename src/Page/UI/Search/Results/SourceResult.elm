@@ -11,7 +11,7 @@ import Page.RecordTypes.Source exposing (PartOfSectionBody)
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, layerGroupSvg, musicNotationSvg, peopleSvg, sourcesSvg, userCircleSvg)
+import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, iiifLogo, layerGroupSvg, musicNotationSvg, peopleSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
@@ -147,6 +147,17 @@ viewSourceFlags language flags =
                     "Has digitization"
                 )
                 flags.hasDigitization
+
+        iiifFlag =
+            viewIf
+                (makeFlagIcon
+                    { foreground = colourScheme.black
+                    , background = colourScheme.white
+                    }
+                    iiifLogo
+                    "Has IIIF Manifest"
+                )
+                flags.hasIIIFManifest
     in
     row
         [ width fill
@@ -154,4 +165,5 @@ viewSourceFlags language flags =
         ]
         [ incipitFlag
         , hasDigitizationFlag
+        , iiifFlag
         ]

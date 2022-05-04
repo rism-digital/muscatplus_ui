@@ -24,8 +24,8 @@ type alias RelationshipsSectionBody =
 
 type alias RelationshipBody =
     { label : LanguageMap
-    , role : RelationshipRole
-    , qualifier : Maybe RelationshipQualifier
+    , role : Maybe RoleBody
+    , qualifier : Maybe QualifierBody
     , qualifierLabel : Maybe LanguageMap
     , relatedTo : Maybe RelatedToBody
     , name : Maybe LanguageMap
@@ -56,6 +56,13 @@ type RelationshipQualifier
     | UnknownQualifier
 
 
+type alias QualifierBody =
+    { label : LanguageMap
+    , value : String
+    , type_ : RelationshipQualifier
+    }
+
+
 {-|
 
     Maps the expected value in the 'qualifier' section
@@ -81,6 +88,13 @@ qualifierConverter qualString =
         |> Dict.get qualString
         |> Maybe.withDefault UnknownQualifier
         |> Decode.succeed
+
+
+type alias RoleBody =
+    { label : LanguageMap
+    , value : String
+    , type_ : RelationshipRole
+    }
 
 
 type RelationshipRole
@@ -191,10 +205,26 @@ relatedToTypeDecoder =
         |> andThen relatedToConverter
 
 
+roleBodyDecoder : Decoder RoleBody
+roleBodyDecoder =
+    Decode.succeed RoleBody
+        |> required "label" languageMapLabelDecoder
+        |> required "value" string
+        |> optional "type" roleDecoder UnknownRole
+
+
 roleDecoder : Decoder RelationshipRole
 roleDecoder =
     Decode.string
         |> andThen roleConverter
+
+
+qualifierBodyDecoder : Decoder QualifierBody
+qualifierBodyDecoder =
+    Decode.succeed QualifierBody
+        |> required "label" languageMapLabelDecoder
+        |> required "value" string
+        |> optional "type" qualifierDecoder UnknownQualifier
 
 
 qualifierDecoder : Decoder RelationshipQualifier
@@ -239,8 +269,8 @@ relationshipBodyDecoder : Decoder RelationshipBody
 relationshipBodyDecoder =
     Decode.succeed RelationshipBody
         |> required "label" languageMapLabelDecoder
-        |> optional "role" roleDecoder UnknownRole
-        |> optional "qualifier" (Decode.maybe qualifierDecoder) Nothing
+        |> optional "role" (Decode.maybe roleBodyDecoder) Nothing
+        |> optional "qualifier" (Decode.maybe qualifierBodyDecoder) Nothing
         |> optional "qualifierLabel" (Decode.maybe languageMapLabelDecoder) Nothing
         |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
         |> optional "name" (Decode.maybe languageMapLabelDecoder) Nothing

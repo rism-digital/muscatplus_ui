@@ -26,7 +26,7 @@ type alias FullSourceBody =
     , incipits : Maybe IncipitsSectionBody
     , referencesNotes : Maybe ReferencesNotesSectionBody
     , exemplars : Maybe ExemplarsSectionBody
-    , items : Maybe SourceItemsSectionBody
+    , sourceItems : Maybe SourceItemsSectionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , recordHistory : RecordHistory
     }
@@ -50,6 +50,7 @@ type alias MaterialGroupBody =
     , summary : Maybe (List LabelValue)
     , notes : Maybe (List LabelValue)
     , relationships : Maybe RelationshipsSectionBody
+    , externalResources : Maybe ExternalResourcesSectionBody
     }
 
 
@@ -120,7 +121,7 @@ sourceBodyDecoder =
         |> optional "incipits" (Decode.maybe incipitsSectionBodyDecoder) Nothing
         |> optional "referencesNotes" (Decode.maybe referencesNotesSectionBodyDecoder) Nothing
         |> optional "exemplars" (Decode.maybe exemplarsSectionBodyDecoder) Nothing
-        |> optional "items" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
+        |> optional "sourceItems" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
@@ -147,6 +148,7 @@ materialGroupBodyDecoder =
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
+        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
 
 
 incipitsSectionBodyDecoder : Decoder IncipitsSectionBody
