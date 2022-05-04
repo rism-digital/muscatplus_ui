@@ -58,8 +58,8 @@ viewExternalResource language body =
                                 }
                             , text "|"
                             , el
-                                [ width (px 25)
-                                , height (px 26)
+                                [ width (px 20)
+                                , height (px 21)
                                 , alignLeft
                                 ]
                                 iiifLogo
@@ -68,7 +68,7 @@ viewExternalResource language body =
                                 , alignLeft
                                 ]
                                 { url = body.url
-                                , label = text "(Manifest)"
+                                , label = text "Manifest"
                                 }
                             ]
                         ]
