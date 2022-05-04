@@ -121,8 +121,16 @@ viewPAESearchLink language (EncodedIncipit label encodingType data) =
         modeQueryParam =
             Url.Builder.string "mode" "incipits"
 
+        keySigQueryParam =
+            case data.keysig of
+                Just ks ->
+                    [ Url.Builder.string "ik" ks ]
+
+                Nothing ->
+                    []
+
         searchUrl =
-            serverUrl [ "search" ] [ noteQueryParam, modeQueryParam ]
+            serverUrl [ "search" ] ([ noteQueryParam, modeQueryParam ] ++ keySigQueryParam)
     in
     link
         [ centerY
