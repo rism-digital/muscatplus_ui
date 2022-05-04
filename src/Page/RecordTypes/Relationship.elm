@@ -23,10 +23,8 @@ type alias RelationshipsSectionBody =
 
 
 type alias RelationshipBody =
-    { label : LanguageMap
-    , role : Maybe RoleBody
+    { role : Maybe RoleBody
     , qualifier : Maybe QualifierBody
-    , qualifierLabel : Maybe LanguageMap
     , relatedTo : Maybe RelatedToBody
     , name : Maybe LanguageMap
     }
@@ -268,9 +266,7 @@ relationshipsSectionBodyDecoder =
 relationshipBodyDecoder : Decoder RelationshipBody
 relationshipBodyDecoder =
     Decode.succeed RelationshipBody
-        |> required "label" languageMapLabelDecoder
         |> optional "role" (Decode.maybe roleBodyDecoder) Nothing
         |> optional "qualifier" (Decode.maybe qualifierBodyDecoder) Nothing
-        |> optional "qualifierLabel" (Decode.maybe languageMapLabelDecoder) Nothing
         |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
         |> optional "name" (Decode.maybe languageMapLabelDecoder) Nothing
