@@ -7,6 +7,28 @@ import Page.RecordTypes.Relationship exposing (RelationshipBody, relationshipBod
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 
 
+type alias Subject =
+    { id : String
+    , label : LanguageMap
+    , value : String
+    }
+
+
+type alias SubjectsSectionBody =
+    { label : LanguageMap
+    , items : List Subject
+    }
+
+
+type alias ContentsSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , creator : Maybe RelationshipBody
+    , summary : Maybe (List LabelValue)
+    , subjects : Maybe SubjectsSectionBody
+    }
+
+
 type alias SourceRecordDescriptors =
     { sourceType : SourceTypeRecordBody
     , contentTypes : List SourceContentTypeRecordBody
@@ -172,25 +194,3 @@ sourceContentTypeDecoder : Decoder SourceContentType
 sourceContentTypeDecoder =
     Decode.string
         |> andThen (\str -> Decode.succeed (sourceContentTypeFromJsonType str))
-
-
-type alias Subject =
-    { id : String
-    , label : LanguageMap
-    , value : String
-    }
-
-
-type alias SubjectsSectionBody =
-    { label : LanguageMap
-    , items : List Subject
-    }
-
-
-type alias ContentsSectionBody =
-    { sectionToc : String
-    , label : LanguageMap
-    , creator : Maybe RelationshipBody
-    , summary : Maybe (List LabelValue)
-    , subjects : Maybe SubjectsSectionBody
-    }
