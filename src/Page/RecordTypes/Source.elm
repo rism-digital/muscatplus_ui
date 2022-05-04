@@ -50,6 +50,7 @@ type alias MaterialGroupBody =
     , summary : Maybe (List LabelValue)
     , notes : Maybe (List LabelValue)
     , relationships : Maybe RelationshipsSectionBody
+    , externalResources : Maybe ExternalResourcesSectionBody
     }
 
 
@@ -147,6 +148,7 @@ materialGroupBodyDecoder =
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
+        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
 
 
 incipitsSectionBodyDecoder : Decoder IncipitsSectionBody

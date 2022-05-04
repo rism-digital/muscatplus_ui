@@ -1,12 +1,14 @@
 module Page.UI.Record.MaterialGroupsSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, row, spacing, textColumn, width, wrappedRow)
 import Language exposing (Language)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (viewParagraphField, viewSummaryField)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.ExternalResources exposing (viewExternalResource)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
@@ -39,6 +41,7 @@ viewMaterialGroup language mg =
             [ viewMaybe (viewSummaryField language) mg.summary
             , viewMaybe (viewParagraphField language) mg.notes
             , viewMaybe (viewMaterialGroupRelationships language) mg.relationships
+            , viewMaybe (viewExternalResourcesSection language) mg.externalResources
             ]
         ]
 
@@ -57,4 +60,25 @@ viewMaterialGroupRelationships language relSection =
             , spacing lineSpacing
             ]
             (List.map (\t -> viewRelationshipBody language t) relSection.items)
+        ]
+
+
+viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
+viewExternalResourcesSection language linkSection =
+    fieldValueWrapper
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language linkSection.label ]
+            , column
+                valueFieldColumnAttributes
+                [ textColumn
+                    [ spacing lineSpacing ]
+                    (List.map (\l -> viewExternalResource language l) linkSection.items)
+                ]
+            ]
         ]
