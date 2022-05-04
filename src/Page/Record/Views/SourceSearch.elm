@@ -1,5 +1,6 @@
 module Page.Record.Views.SourceSearch exposing (..)
 
+import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, inFront, none, padding, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
@@ -270,6 +271,9 @@ viewFacetsForSourcesMode language model body =
                 RecordMsg.NothingHappened
                 [ viewFacet (facetConfig "date-range") facetRecordMsgConfig
                 ]
+            , viewFacetSection language
+                RecordMsg.NothingHappened
+                [ viewFacetToggleSection language activeSearch body ]
 
             --, viewFacetSection language
             --    [ viewFacetToggleSection language activeSearch body ]
@@ -300,6 +304,87 @@ viewFacetsForSourcesMode language model body =
             --, viewFacet "holding-institution" language activeSearch body
             ]
         ]
+
+
+viewFacetToggleSection : Language -> ActiveSearch RecordMsg -> SearchBody -> Element RecordMsg
+viewFacetToggleSection language activeSearch body =
+    let
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , body = body
+            , selectColumns = 3
+            }
+
+        sourceContentsToggle =
+            viewFacet (facetConfig "hide-source-contents") facetRecordMsgConfig
+
+        sourceCollectionsToggle =
+            viewFacet (facetConfig "hide-source-collections") facetRecordMsgConfig
+
+        compositeVolumesToggle =
+            viewFacet (facetConfig "hide-composite-volumes") facetRecordMsgConfig
+
+        hasDigitizationToggle =
+            viewFacet (facetConfig "has-digitization") facetRecordMsgConfig
+
+        hasIiifToggle =
+            viewFacet (facetConfig "has-iiif") facetRecordMsgConfig
+
+        isArrangementToggle =
+            viewFacet (facetConfig "is-arrangement") facetRecordMsgConfig
+
+        hasIncipitsToggle =
+            viewFacet (facetConfig "has-incipits") facetRecordMsgConfig
+
+        allToggles =
+            [ sourceCollectionsToggle
+            , sourceContentsToggle
+            , compositeVolumesToggle
+            , hasDigitizationToggle
+            , hasIiifToggle
+            , isArrangementToggle
+            , hasIncipitsToggle
+            ]
+
+        allAreEmpty =
+            List.all (\a -> a == none) allToggles
+    in
+    if allAreEmpty then
+        none
+
+    else
+        row
+            [ width fill
+            , alignTop
+            ]
+            [ column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ sourceContentsToggle
+                , sourceCollectionsToggle
+                , compositeVolumesToggle
+                ]
+            , column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ hasDigitizationToggle
+                , hasIiifToggle
+                ]
+            , column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ isArrangementToggle
+                , hasIncipitsToggle
+                ]
+            ]
 
 
 viewSearchControls : Language -> RecordPageModel RecordMsg -> SearchBody -> Element RecordMsg

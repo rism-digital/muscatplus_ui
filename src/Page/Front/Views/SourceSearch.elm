@@ -107,7 +107,9 @@ sourceSearchPanelView session model frontBody =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ viewFacet (facetConfig "has-digitization") facetFrontMsgConfig ]
+                    [ viewFacet (facetConfig "has-digitization") facetFrontMsgConfig
+                    , viewFacet (facetConfig "has-iiif") facetFrontMsgConfig
+                    ]
                 , column
                     [ width fill
                     , alignTop
