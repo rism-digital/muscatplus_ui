@@ -8,6 +8,7 @@ type OutgoingMessage
     = PortSendSaveLanguagePreference String
     | PortSendSetNationalCollectionSelection (Maybe String)
     | PortSendSaveSearchPreference { key : String, value : SearchPreferenceVariant }
+    | PortSendHeaderMetaInfo { description : String }
     | PortSendUnknownMessage
 
 
@@ -49,6 +50,14 @@ convertOutgoingMessageToJsonMsg msg =
                     [ ( "key", Encode.string pref.key )
                     , ( "value", prefValue )
                     ]
+              )
+            ]
+
+        PortSendHeaderMetaInfo metaInfo ->
+            [ ( "msg", Encode.string "set-meta-info" )
+            , ( "value"
+              , Encode.object
+                    [ ( "description", Encode.string metaInfo.description ) ]
               )
             ]
 

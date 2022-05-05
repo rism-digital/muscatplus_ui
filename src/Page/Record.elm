@@ -6,6 +6,7 @@ import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
 import Flip exposing (flip)
+import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Page.Query exposing (QueryArgs, defaultQueryArgs, setKeywordQuery, setNationalCollection, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
@@ -14,6 +15,7 @@ import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -160,6 +162,50 @@ updateDebouncerSuggestConfig =
     }
 
 
+updatePageMetadata : ServerData -> Cmd RecordMsg
+updatePageMetadata incomingData =
+    case incomingData of
+        PersonData personBody ->
+            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap None personBody.label }
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
+
+        InstitutionData instBody ->
+            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap None instBody.label }
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
+
+        SourceData sourceBody ->
+            let
+                title =
+                    extractLabelFromLanguageMap None sourceBody.label
+
+                fullDescription =
+                    case sourceBody.creator of
+                        Just c ->
+                            case c.relatedTo of
+                                Just n ->
+                                    extractLabelFromLanguageMap None n.label ++ ": " ++ title
+
+                                Nothing ->
+                                    case c.name of
+                                        Just nm ->
+                                            extractLabelFromLanguageMap None nm ++ ": " ++ title
+
+                                        Nothing ->
+                                            title
+
+                        Nothing ->
+                            title
+            in
+            PortSendHeaderMetaInfo { description = fullDescription }
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
+
+        _ ->
+            Cmd.none
+
+
 update : Session -> RecordMsg -> RecordPageModel RecordMsg -> ( RecordPageModel RecordMsg, Cmd RecordMsg )
 update session msg model =
     case msg of
@@ -167,7 +213,7 @@ update session msg model =
             ( { model
                 | response = Response response
               }
-            , Cmd.none
+            , updatePageMetadata response
             )
 
         ServerRespondedWithRecordData (Err error) ->

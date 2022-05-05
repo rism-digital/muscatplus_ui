@@ -11,7 +11,7 @@ import Page.RecordTypes.Source exposing (FullSourceBody)
 
 {-|
 
-    The `Loading` parameter takes a "Maybe ServerData" that can keep a
+    The `Loading` parameter takes a "Maybe data" that can keep a
     previous page state around. This allows the browser to keep the page
     rendered while new data is being fetched.
 
