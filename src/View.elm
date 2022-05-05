@@ -3,7 +3,10 @@ module View exposing (view)
 import Browser
 import Css
 import Css.Global
-import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, layout, none, px, row, width)
+import Element exposing (Element, alignRight, alignTop, centerX, column, el, fill, height, htmlAttribute, inFront, layout, none, padding, px, row, text, width)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
 import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
@@ -20,7 +23,7 @@ import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, pageBackground)
-import Page.UI.Style exposing (colours)
+import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 
 
@@ -103,6 +106,23 @@ view model =
                     colours.lightBlue
             in
             [ Css.color (Css.rgb red green blue) ]
+
+        publicBetaNotice =
+            row
+                [ width fill
+                , height (px 30)
+                , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
+                , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+                , Border.color (colourScheme.darkOrange |> convertColorToElementColor)
+                , padding 8
+                ]
+                [ el
+                    [ centerX
+                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                    , Font.semiBold
+                    ]
+                    (text "RISM Online is in Public Beta until July 2022.")
+                ]
     in
     { title = pageTitle
     , body =
@@ -134,7 +154,8 @@ view model =
                     , width fill
                     , height fill
                     ]
-                    [ loadingIndicator model
+                    [ publicBetaNotice
+                    , loadingIndicator model
                     , pageView
                     ]
                 ]
