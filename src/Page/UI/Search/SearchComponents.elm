@@ -127,7 +127,7 @@ viewSearchButtons { language, model, submitMsg, resetMsg } =
         [ alignBottom
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 1 }
+        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
         , width fill
         , height (px 100)
         , paddingXY 20 0
