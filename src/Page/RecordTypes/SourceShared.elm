@@ -23,7 +23,6 @@ type alias SubjectsSectionBody =
 type alias ContentsSectionBody =
     { sectionToc : String
     , label : LanguageMap
-    , creator : Maybe RelationshipBody
     , summary : Maybe (List LabelValue)
     , subjects : Maybe SubjectsSectionBody
     }
@@ -59,7 +58,6 @@ contentsSectionBodyDecoder =
     Decode.succeed ContentsSectionBody
         |> hardcoded "source-record-contents-section"
         |> required "label" languageMapLabelDecoder
-        |> optional "creator" (Decode.maybe relationshipBodyDecoder) Nothing
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "subjects" (Decode.maybe sourceSubjectsBodyDecoder) Nothing
 

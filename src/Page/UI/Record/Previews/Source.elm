@@ -31,7 +31,7 @@ viewSourcePreview language body =
                     , spacing sectionSpacing
                     ]
                     [ viewMaybe (viewPartOfSection language) body.partOf
-                    , viewMaybe (viewContentsSection language) body.contents
+                    , viewMaybe (viewContentsSection language body.creator) body.contents
                     , viewMaybe (viewIncipitsSection language) body.incipits
                     , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
                     , viewMaybe (viewRelationshipsSection language) body.relationships

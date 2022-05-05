@@ -6,6 +6,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Query exposing (buildQueryParameters, defaultQueryArgs, setFilters)
+import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewSummaryField)
@@ -18,28 +19,8 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Request exposing (serverUrl)
 
 
-viewMinimalContentsSection : Language -> ContentsSectionBody -> Element msg
-viewMinimalContentsSection language contents =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , spacing lineSpacing
-            ]
-            [ viewMaybe (viewRelationshipBody language) contents.creator
-            , Maybe.withDefault [] contents.summary
-                |> viewSummaryField language
-            ]
-        ]
-
-
-viewContentsSection : Language -> ContentsSectionBody -> Element msg
-viewContentsSection language contents =
+viewContentsSection : Language -> Maybe RelationshipBody -> ContentsSectionBody -> Element msg
+viewContentsSection language creator contents =
     let
         sectionBody =
             [ row
@@ -55,7 +36,7 @@ viewContentsSection language contents =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ viewMaybe (viewRelationshipBody language) contents.creator
+                    [ viewMaybe (viewRelationshipBody language) creator
                     , Maybe.withDefault [] contents.summary
                         |> viewSummaryField language
                     , viewMaybe (viewSubjectsSection language) contents.subjects

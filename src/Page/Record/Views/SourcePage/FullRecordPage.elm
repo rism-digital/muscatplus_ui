@@ -40,7 +40,7 @@ viewFullSourcePage session body =
                     , padding 20
                     ]
                     [ viewMaybe (viewPartOfSection session.language) body.partOf
-                    , viewMaybe (viewContentsSection session.language) body.contents
+                    , viewMaybe (viewContentsSection session.language body.creator) body.contents
                     , viewMaybe (viewIncipitsSection session.language) body.incipits
                     , viewMaybe (viewMaterialGroupsSection session.language) body.materialGroups
                     , viewMaybe (viewRelationshipsSection session.language) body.relationships

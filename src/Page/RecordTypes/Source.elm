@@ -17,6 +17,7 @@ type alias FullSourceBody =
     { sectionToc : String
     , id : String
     , label : LanguageMap
+    , creator : Maybe RelationshipBody
     , typeLabel : LanguageMap
     , record : SourceRecordDescriptors
     , partOf : Maybe PartOfSectionBody
@@ -112,6 +113,7 @@ sourceBodyDecoder =
         |> hardcoded "source-record-top"
         |> required "id" string
         |> required "label" languageMapLabelDecoder
+        |> optional "creator" (Decode.maybe relationshipBodyDecoder) Nothing
         |> required "typeLabel" languageMapLabelDecoder
         |> required "record" sourceRecordDescriptorsDecoder
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
