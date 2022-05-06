@@ -121,7 +121,7 @@ view model =
                     , Font.color (colourScheme.white |> convertColorToElementColor)
                     , Font.semiBold
                     ]
-                    (text "RISM Online is in Public Beta until July 2022.")
+                    (text "RISM Online is accessible for testing (Beta Version) and will be officially released in July 2022")
                 ]
     in
     { title = pageTitle
