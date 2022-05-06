@@ -70,50 +70,11 @@ viewSubjectsSection language subjectSection =
 
 viewSubject : Language -> Subject -> Element msg
 viewSubject language subject =
-    let
-        facetDict =
-            Dict.fromList [ ( "subjects", [ subject.value ] ) ]
-
-        searchQueryArgs =
-            setFilters facetDict defaultQueryArgs
-                |> buildQueryParameters
-
-        subjectSearchUrl =
-            serverUrl [ "search" ] searchQueryArgs
-    in
     row
         [ width fill
         , spacing 5
         ]
         [ el
-            []
+            [ width fill ]
             (text (extractLabelFromLanguageMap language subject.label))
-        , link
-            [ centerY
-            , linkColour
-            , Border.width 1
-            , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
-            , padding 2
-            , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-            ]
-            { url = subjectSearchUrl
-            , label =
-                el
-                    [ width (px 12)
-                    , height (px 12)
-                    , centerY
-                    , el tooltipStyle (text "New search with this term")
-                        |> tooltip above
-                    ]
-                    (searchSvg colourScheme.white)
-            }
         ]
-
-
-
---
---link
---    [ linkColour ]
---    { url = subject.id
---    , label =
---    }
