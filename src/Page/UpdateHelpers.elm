@@ -20,7 +20,7 @@ import Http.Detailed
 import List.Extra as LE
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setMode, setNationalCollection, setNextQuery, toFacetBehaviours, toFacetSorts, toFilters, toNextQuery)
+import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setMode, setNationalCollection, setNextQuery, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -100,7 +100,8 @@ createProbeUrl : Session -> ActiveSearch msg -> String
 createProbeUrl session activeSearch =
     let
         resultMode =
-            sideBarOptionToResultMode session.showFrontSearchInterface
+            toNextQuery activeSearch
+                |> toMode
 
         notationQueryParameters =
             case activeSearch.keyboard of
