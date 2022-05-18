@@ -1,6 +1,6 @@
 module Page.UI.Record.ReferencesNotesSection exposing (..)
 
-import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignTop, column, el, fill, height, link, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
@@ -91,11 +91,9 @@ viewLiturgicalFestival : Language -> LiturgicalFestivalBody -> Element msg
 viewLiturgicalFestival language festival =
     row
         [ width fill ]
-        [ link
-            [ linkColour ]
-            { url = festival.id
-            , label = text (extractLabelFromLanguageMap language festival.label)
-            }
+        [ el
+            [ width fill ]
+            (text <| extractLabelFromLanguageMap language festival.label)
         ]
 
 
