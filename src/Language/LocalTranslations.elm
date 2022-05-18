@@ -241,8 +241,8 @@ localTranslations =
         , LanguageValues Polish [ "Błąd podczas ładowania wyników" ]
         ]
     , applyFiltersToUpdateResults =
-        [ LanguageValues English [ "Apply filters to update search results" ]
-        , LanguageValues German [ "Wenden Sie Filter an, um die Suchergebnisse zu aktualisieren" ]
+        [ LanguageValues English [ "Apply filters to view search results" ]
+        , LanguageValues German [ "Wenden Sie Filter an, um Suchergebnisse anzuzeigen" ]
         , LanguageValues French [ "Appliquer des filtres pour mettre à jour les résultats de recherche" ]
         , LanguageValues Italian [ "Applica filtri per aggiornare i risultati della ricerca" ]
         , LanguageValues Spanish [ "Aplicar filtros para actualizar los resultados de búsqueda" ]
