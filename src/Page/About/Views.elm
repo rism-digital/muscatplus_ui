@@ -98,15 +98,21 @@ viewLastIndexed timestamp =
                     "12"
 
         day =
-            String.fromInt <| Time.toDay Time.utc timestamp
+            Time.toDay Time.utc timestamp
+                |> String.fromInt
+                |> String.padLeft 2 '0'
 
         year =
             String.fromInt <| Time.toYear Time.utc timestamp
 
         hour =
-            String.fromInt <| Time.toHour Time.utc timestamp
+            Time.toHour Time.utc timestamp
+                |> String.fromInt
+                |> String.padLeft 2 '0'
 
         minute =
-            String.fromInt <| Time.toMinute Time.utc timestamp
+            Time.toMinute Time.utc timestamp
+                |> String.fromInt
+                |> String.padLeft 2 '0'
     in
     text <| "Last indexed: " ++ year ++ "-" ++ month ++ "-" ++ day ++ " " ++ hour ++ ":" ++ minute
