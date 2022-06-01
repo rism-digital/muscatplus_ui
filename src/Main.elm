@@ -5,6 +5,7 @@ import Browser.Navigation as Nav
 import Flags exposing (Flags)
 import Model exposing (Model(..))
 import Msg exposing (Msg)
+import Page.About as About
 import Page.Front as Front
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.NotFound as NotFound
@@ -269,6 +270,14 @@ init flags initialUrl key =
             ( PlacePage session <| Record.init recordCfg
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
+            )
+
+        AboutPageRoute ->
+            ( AboutPage session <| About.init
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithAboutPage <| About.initialCmd initialUrl
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )

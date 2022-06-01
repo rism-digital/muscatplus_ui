@@ -1,5 +1,6 @@
 module Response exposing (..)
 
+import Page.RecordTypes.About exposing (AboutBody)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
@@ -31,3 +32,4 @@ type ServerData
     | SearchData SearchBody
     | IncipitData IncipitBody
     | FrontData FrontBody
+    | AboutData AboutBody

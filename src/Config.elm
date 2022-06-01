@@ -24,3 +24,8 @@ defaultRows =
 muscatLinkBase : String
 muscatLinkBase =
     "https://muscat.rism.info/admin/"
+
+
+uiVersion : String
+uiVersion =
+    "development"

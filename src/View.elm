@@ -13,6 +13,7 @@ import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
+import Page.About.Views
 import Page.Front.Views
 import Page.NotFound.Views
 import Page.Record.Views.InstitutionPage
@@ -55,6 +56,9 @@ view model =
 
                 NotFoundPage session pageModel ->
                     Element.map Msg.UserInteractedWithNotFoundPage (Page.NotFound.Views.view session pageModel)
+
+                AboutPage session pageModel ->
+                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.view session pageModel)
 
         defaultTitle =
             "RISM Online"

@@ -1,5 +1,6 @@
 module Model exposing (..)
 
+import Page.About as About
 import Page.Front as Front
 import Page.NotFound as NotFound
 import Page.Record as Record
@@ -15,6 +16,7 @@ type Model
     | PersonPage Session Record.Model
     | InstitutionPage Session Record.Model
     | PlacePage Session Record.Model
+    | AboutPage Session About.Model
 
 
 toSession : Model -> Session
@@ -41,6 +43,9 @@ toSession model =
         PlacePage session _ ->
             session
 
+        AboutPage session _ ->
+            session
+
 
 updateSession : Session -> Model -> Model
 updateSession newSession model =
@@ -65,3 +70,6 @@ updateSession newSession model =
 
         PlacePage _ pageModel ->
             PlacePage newSession pageModel
+
+        AboutPage _ aboutModel ->
+            AboutPage newSession aboutModel

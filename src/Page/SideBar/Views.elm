@@ -3,7 +3,7 @@ module Page.SideBar.Views exposing (..)
 import Color exposing (Color)
 import Config
 import Debouncer.Messages exposing (provideInput)
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -18,7 +18,7 @@ import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollec
 import Page.UI.Animations exposing (animatedColumn, animatedLabel)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
+import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
@@ -284,7 +284,7 @@ view session =
                 [ link
                     [ width fill
                     ]
-                    { url = Config.serverUrl
+                    { url = Config.serverUrl ++ "?mode=sources"
                     , label =
                         el
                             [ alignTop
@@ -366,4 +366,25 @@ view session =
                 ]
             ]
         , dividingLine
+        , row
+            [ width fill
+            , height shrink
+            , alignLeft
+            , alignBottom
+            , paddingXY 0 20
+            ]
+            [ column
+                [ alignLeft
+                , alignTop
+                , spacing 10
+                ]
+                [ menuOptionTemplate
+                    { icon = link [] { url = Config.serverUrl ++ "/about", label = el [ width (px 25) ] (infoCircleSvg colourScheme.black) }
+                    , label = text "About"
+                    , showLabel = False
+                    , isCurrent = False
+                    }
+                    []
+                ]
+            ]
         ]

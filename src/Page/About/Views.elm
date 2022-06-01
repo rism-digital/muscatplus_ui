@@ -1,0 +1,103 @@
+module Page.About.Views exposing (..)
+
+import Config as C
+import Element exposing (Element, column, fill, height, none, padding, row, text, width)
+import Element.Background as Background
+import Page.About.Model exposing (AboutPageModel)
+import Page.RecordTypes.About exposing (AboutBody)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Response exposing (Response(..), ServerData(..))
+import Session exposing (Session)
+import Time exposing (Month(..), Posix)
+
+
+view : Session -> AboutPageModel -> Element msg
+view session model =
+    let
+        indexedTimestamp =
+            case model.response of
+                Response (AboutData body) ->
+                    viewLastIndexed body.lastIndexed
+
+                _ ->
+                    none
+
+        serverVersion =
+            case model.response of
+                Response (AboutData body) ->
+                    text <| "Server Version: " ++ body.serverVersion
+
+                _ ->
+                    none
+    in
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , padding 20
+            , Background.color (colourScheme.white |> convertColorToElementColor)
+            ]
+            [ text <| "UI Version: " ++ C.uiVersion
+            , indexedTimestamp
+            , serverVersion
+            ]
+        ]
+
+
+viewLastIndexed : Posix -> Element msg
+viewLastIndexed timestamp =
+    let
+        month =
+            case Time.toMonth Time.utc timestamp of
+                Jan ->
+                    "01"
+
+                Feb ->
+                    "02"
+
+                Mar ->
+                    "03"
+
+                Apr ->
+                    "04"
+
+                May ->
+                    "05"
+
+                Jun ->
+                    "06"
+
+                Jul ->
+                    "07"
+
+                Aug ->
+                    "08"
+
+                Sep ->
+                    "09"
+
+                Oct ->
+                    "10"
+
+                Nov ->
+                    "11"
+
+                Dec ->
+                    "12"
+
+        day =
+            String.fromInt <| Time.toDay Time.utc timestamp
+
+        year =
+            String.fromInt <| Time.toYear Time.utc timestamp
+
+        hour =
+            String.fromInt <| Time.toHour Time.utc timestamp
+
+        minute =
+            String.fromInt <| Time.toMinute Time.utc timestamp
+    in
+    text <| "Last indexed: " ++ year ++ "-" ++ month ++ "-" ++ day ++ " " ++ hour ++ ":" ++ minute

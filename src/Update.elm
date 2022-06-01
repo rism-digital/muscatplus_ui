@@ -6,6 +6,7 @@ import Device exposing (setDevice)
 import Flip exposing (flip)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
+import Page.About as AboutPage
 import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.NotFound as NotFoundPage
@@ -275,6 +276,11 @@ changePage url model =
             , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
             )
 
+        Route.AboutPageRoute ->
+            ( AboutPage newSession AboutPage.init
+            , Cmd.map Msg.UserInteractedWithAboutPage (AboutPage.initialCmd url)
+            )
+
         _ ->
             ( NotFoundPage newSession NotFoundPage.init, Cmd.none )
 
@@ -354,6 +360,10 @@ update msg model =
         ( Msg.UserInteractedWithRecordPage recordMsg, PlacePage session pageModel ) ->
             RecordPage.update session recordMsg pageModel
                 |> updateWith (PlacePage session) Msg.UserInteractedWithRecordPage model
+
+        ( Msg.UserInteractedWithAboutPage recordMsg, AboutPage session pageModel ) ->
+            AboutPage.update session recordMsg pageModel
+                |> updateWith (AboutPage session) Msg.UserInteractedWithAboutPage model
 
         ( Msg.UserInteractedWithNotFoundPage notFoundMsg, NotFoundPage session pageModel ) ->
             NotFoundPage.update session notFoundMsg pageModel

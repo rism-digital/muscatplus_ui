@@ -1,4 +1,4 @@
-module Page.Decoders exposing (recordResponseDecoder)
+module Page.Decoders exposing (aboutResponseDecoder, recordResponseDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, string)
 import Page.RecordTypes
@@ -6,6 +6,7 @@ import Page.RecordTypes
         ( RecordType(..)
         , recordTypeFromJsonType
         )
+import Page.RecordTypes.About exposing (aboutBodyDecoder)
 import Page.RecordTypes.Front exposing (frontBodyDecoder)
 import Page.RecordTypes.Incipit exposing (incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)
@@ -55,6 +56,11 @@ placeResponseDecoder =
 frontResponseDecoder : Decoder ServerData
 frontResponseDecoder =
     Decode.map FrontData frontBodyDecoder
+
+
+aboutResponseDecoder : Decoder ServerData
+aboutResponseDecoder =
+    Decode.map AboutData aboutBodyDecoder
 
 
 recordResponseConverter : String -> Decoder ServerData

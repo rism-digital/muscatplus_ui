@@ -2,6 +2,7 @@ module Msg exposing (Msg(..))
 
 import Browser exposing (UrlRequest)
 import Element exposing (Device)
+import Page.About as About
 import Page.Front as Front
 import Page.NotFound as NotFound
 import Page.Record as Record
@@ -67,5 +68,6 @@ type Msg
     | UserInteractedWithSearchPage Search.Msg
     | UserInteractedWithRecordPage Record.Msg
     | UserInteractedWithNotFoundPage NotFound.Msg
+    | UserInteractedWithAboutPage About.Msg
     | UserInteractedWithSideBar SideBar.Msg
     | NothingHappened -- for stubbing out messages and development, a.k.a. 'NoOp'
