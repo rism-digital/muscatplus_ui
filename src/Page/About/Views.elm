@@ -29,6 +29,14 @@ view session model =
 
                 _ ->
                     none
+
+        indexerVersion =
+            case model.response of
+                Response (AboutData body) ->
+                    text <| "Indexer Version: " ++ body.indexerVersion
+
+                _ ->
+                    none
     in
     row
         [ width fill
@@ -41,8 +49,9 @@ view session model =
             , Background.color (colourScheme.white |> convertColorToElementColor)
             ]
             [ text <| "UI Version: " ++ C.uiVersion
-            , indexedTimestamp
             , serverVersion
+            , indexerVersion
+            , indexedTimestamp
             ]
         ]
 
