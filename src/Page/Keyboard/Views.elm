@@ -65,7 +65,9 @@ view notationFacet language (Keyboard model config) =
                             [ viewPianoInput language (Keyboard model config) ]
                         ]
                     , row
-                        [ width fill ]
+                        [ width fill
+                        , spacing lineSpacing
+                        ]
                         [ column
                             [ width <| fillPortion 3 ]
                             [ viewPaeInput language notationFacet (Keyboard model config) ]
