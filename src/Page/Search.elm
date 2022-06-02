@@ -477,6 +477,7 @@ update session msg model =
             in
             ( { model
                 | selectedResult = Just result
+                , preview = Loading Nothing
               }
             , Nav.pushUrl session.key newUrlStr
             )

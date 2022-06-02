@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews exposing (..)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -8,8 +8,9 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.UI.Attributes exposing (headingMD)
-import Page.UI.Images exposing (closeWindowSvg)
+import Page.UI.Animations exposing (animatedLoader)
+import Page.UI.Attributes exposing (headingMD, sectionSpacing)
+import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 import Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Page.UI.Record.Previews.Person exposing (viewPersonPreview)
@@ -18,22 +19,25 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (ServerData(..))
 
 
-viewPreviewRouter : Language -> msg -> ServerData -> Element msg
+viewPreviewRouter : Language -> msg -> Maybe ServerData -> Element msg
 viewPreviewRouter language closeMsg previewData =
     let
         preview =
             case previewData of
-                SourceData body ->
+                Just (SourceData body) ->
                     viewSourcePreview language body
 
-                PersonData body ->
+                Just (PersonData body) ->
                     viewPersonPreview language body
 
-                InstitutionData body ->
+                Just (InstitutionData body) ->
                     viewInstitutionPreview language body
 
-                IncipitData body ->
+                Just (IncipitData body) ->
                     viewIncipitPreview language body
+
+                Nothing ->
+                    viewPreviewLoading language
 
                 _ ->
                     none
@@ -89,4 +93,34 @@ viewRecordPreviewTitleBar language closeMsg =
             , Font.color (colourScheme.white |> convertColorToElementColor)
             ]
             (text <| extractLabelFromLanguageMap language localTranslations.recordPreview)
+        ]
+
+
+viewPreviewLoading : Language -> Element msg
+viewPreviewLoading language =
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        , paddingXY 20 10
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , spacing sectionSpacing
+            ]
+            [ row
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                [ el
+                    [ width (px 25)
+                    , height (px 25)
+                    , centerY
+                    , centerX
+                    ]
+                    (animatedLoader [ width (px 40), height (px 40) ] <| spinnerSvg colourScheme.slateGrey)
+                ]
+            ]
         ]

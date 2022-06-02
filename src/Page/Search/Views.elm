@@ -148,15 +148,11 @@ viewSearchResultsSection session model body isLoading =
     let
         renderedPreview =
             case model.preview of
-                Loading Nothing ->
-                    -- TODO: Make a preview loading view
-                    none
-
-                Loading (Just oldData) ->
+                Loading oldData ->
                     viewPreviewRouter session.language SearchMsg.UserClickedClosePreviewWindow oldData
 
                 Response resp ->
-                    viewPreviewRouter session.language SearchMsg.UserClickedClosePreviewWindow resp
+                    viewPreviewRouter session.language SearchMsg.UserClickedClosePreviewWindow (Just resp)
 
                 Error _ ->
                     none

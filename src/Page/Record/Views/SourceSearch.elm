@@ -80,14 +80,11 @@ viewSearchResultsSection language model body isLoading =
     let
         renderedPreview =
             case model.preview of
-                Loading Nothing ->
-                    none
-
-                Loading (Just oldData) ->
-                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow oldData
+                Loading resp ->
+                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow resp
 
                 Response resp ->
-                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow resp
+                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow (Just resp)
 
                 Error _ ->
                     none
