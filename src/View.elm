@@ -3,7 +3,7 @@ module View exposing (view)
 import Browser
 import Css
 import Css.Global
-import Element exposing (Element, alignRight, alignTop, centerX, column, el, fill, height, htmlAttribute, inFront, layout, none, padding, px, row, text, width)
+import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, inFront, layout, link, none, padding, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -23,9 +23,10 @@ import Page.Record.Views.SourcePage
 import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, pageBackground)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, lineSpacing, linkColour, pageBackground)
 import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
+import Url
 
 
 view : Model -> Browser.Document Msg
@@ -111,6 +112,9 @@ view model =
             in
             [ Css.color (Css.rgb red green blue) ]
 
+        currentUrl =
+            Url.toString pageSession.url
+
         publicBetaNotice =
             row
                 [ width fill
@@ -119,6 +123,7 @@ view model =
                 , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
                 , Border.color (colourScheme.darkOrange |> convertColorToElementColor)
                 , padding 8
+                , spacing lineSpacing
                 ]
                 [ el
                     [ centerX
@@ -126,6 +131,16 @@ view model =
                     , Font.semiBold
                     ]
                     (text "RISM Online is accessible for testing (Beta Version) and will be officially released in July 2022")
+                , el
+                    [ centerX ]
+                    (link
+                        [ Font.underline
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        ]
+                        { url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
+                        , label = text "Send feedback"
+                        }
+                    )
                 ]
     in
     { title = pageTitle

@@ -1,10 +1,11 @@
 module Page.About.Views exposing (..)
 
 import Config as C
-import Element exposing (Element, column, fill, height, none, padding, row, text, width)
+import Element exposing (Element, column, fill, height, none, padding, row, spacing, text, width)
 import Element.Background as Background
 import Page.About.Model exposing (AboutPageModel)
 import Page.RecordTypes.About exposing (AboutBody)
+import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -47,6 +48,7 @@ view session model =
             , height fill
             , padding 20
             , Background.color (colourScheme.white |> convertColorToElementColor)
+            , spacing lineSpacing
             ]
             [ text <| "UI Version: " ++ C.uiVersion
             , serverVersion
