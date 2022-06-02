@@ -6,7 +6,7 @@ module Page.UI.Facets.KeywordQuery exposing (..)
 
 -}
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Input as Input
 import Html.Attributes as HA
@@ -52,7 +52,9 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText } =
                 , spacing lineSpacing
                 ]
                 [ column
-                    [ alignTop ]
+                    [ centerX
+                    , centerY
+                    ]
                     [ facetHelp below keywordInputHelp ]
                 , column
                     [ width fill

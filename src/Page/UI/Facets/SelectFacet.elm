@@ -2,7 +2,7 @@ module Page.UI.Facets.SelectFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, mouseOver, none, padding, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Input exposing (checkbox, labelRight)
@@ -254,12 +254,16 @@ viewSelectFacet config =
                 , spacing lineSpacing
                 ]
                 [ column
-                    [ alignTop ]
+                    [ width shrink
+                    , height shrink
+                    , centerX
+                    , centerY
+                    ]
                     [ facetHelp above selectFacetHelp ]
                 , column
                     [ width fill
                     , alignLeft
-                    , alignTop
+                    , centerY
                     ]
                     [ row
                         [ spacing 10

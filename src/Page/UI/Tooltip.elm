@@ -1,6 +1,6 @@
 module Page.UI.Tooltip exposing (..)
 
-import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
+import Element exposing (Attribute, Element, centerX, centerY, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -28,6 +28,7 @@ facetHelp : (Element msg -> Attribute msg) -> String -> Element msg
 facetHelp position helpText =
     el
         [ width (px 12)
+        , height (px 12)
         , tooltip position (helpBubble helpText)
         ]
         (assistanceSvg colourScheme.slateGrey)

@@ -2,7 +2,7 @@ module Page.UI.Facets.RangeFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignTop, column, fill, none, paragraph, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, paragraph, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Events as Events
 import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)
@@ -84,12 +84,16 @@ viewRangeFacet config =
                 , spacing lineSpacing
                 ]
                 [ column
-                    [ alignTop ]
+                    [ width shrink
+                    , height shrink
+                    , centerX
+                    , centerY
+                    ]
                     [ facetHelp above rangeFacetHelp ]
                 , column
                     [ width fill
                     , alignLeft
-                    , alignTop
+                    , centerY
                     ]
                     [ row
                         [ spacing 10 ]
