@@ -110,7 +110,7 @@ timeSigQueryStringToTimeSignature : List String -> TimeSignature
 timeSigQueryStringToTimeSignature tsiglist =
     List.head tsiglist
         |> Maybe.map (\a -> timeSigStrToTimeSignature a)
-        |> Maybe.withDefault TC
+        |> Maybe.withDefault TNone
 
 
 keySigQueryStringToKeySignature : List String -> KeySignature
