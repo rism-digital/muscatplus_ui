@@ -12,14 +12,14 @@ import Page.Keyboard as Keyboard
         )
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toMode, toNextQuery)
+import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, rangeStringParser, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -342,7 +342,43 @@ update session msg model =
             )
 
         UserFocusedRangeFacet alias ->
-            ( model, Cmd.none )
+            let
+                -- when the user focuses the range facet, we ensure that any query parameters are
+                -- immediately transferred to the place where we keep range facet values so that we
+                -- can edit them.
+                nextQueryFilters =
+                    toNextQuery model.activeSearch
+                        |> toFilters
+
+                maybeRangeValue =
+                    case Dict.get alias nextQueryFilters of
+                        Just (m :: []) ->
+                            rangeStringParser m
+
+                        _ ->
+                            Nothing
+
+                -- if we have an existing value here, prefer that. If not, choose the query value
+                newRangeValues =
+                    Dict.update alias
+                        (\v ->
+                            case v of
+                                Just m ->
+                                    Just m
+
+                                Nothing ->
+                                    maybeRangeValue
+                        )
+                        (.rangeFacetValues model.activeSearch)
+
+                newActiveSearch =
+                    setRangeFacetValues newRangeValues model.activeSearch
+            in
+            ( { model
+                | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
 
         UserLostFocusRangeFacet alias ->
             userLostFocusOnRangeFacet alias model
