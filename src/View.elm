@@ -7,6 +7,7 @@ import Element exposing (Element, alignTop, centerX, column, el, fill, height, h
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Element.Keyed as Keyed
 import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
@@ -221,7 +222,7 @@ loadingIndicator model =
                             loadingView
 
                         _ ->
-                            none
+                            Keyed.el [] ( "progress-bar-none", none )
 
         SourcePage _ pageModel ->
             chooseView pageModel.response
