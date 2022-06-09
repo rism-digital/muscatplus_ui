@@ -251,7 +251,6 @@
              */
             app.ports.sendOutgoingMessageOnPort.subscribe( ({ msg, value }) =>
             {
-                console.log("Message received");
                 switch (msg)
                 {
                     case incomingMessages.SAVE_LANGUAGE_PREFERENCE:
@@ -282,7 +281,6 @@
 
                     case incomingMessages.SET_META_INFO:
                         /* */
-                        console.log("Setting page meta tag values");
                         const { description } = value;
 
                         let descriptionTag = document.createElement("meta");
