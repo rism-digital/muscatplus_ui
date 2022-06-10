@@ -14,6 +14,7 @@ module Page.Query exposing
     , setMode
     , setNationalCollection
     , setNextQuery
+    , setRows
     , setSort
     , toFacetBehaviours
     , toFacetSorts
@@ -125,6 +126,11 @@ setSort newSort oldRecord =
     { oldRecord | sort = newSort }
 
 
+setRows : Int -> { a | rows : Int } -> { a | rows : Int }
+setRows newRows oldRecord =
+    { oldRecord | rows = newRows }
+
+
 setPage : Int -> { a | page : Int } -> { a | page : Int }
 setPage pageNum oldRecord =
     -- ensure the page number is 1 or greater
@@ -217,46 +223,42 @@ buildQueryParameters queryArgs =
                     []
 
         fqParams =
-            List.concatMap
-                (\( alias, filts ) ->
-                    let
-                        createPrefixedField val =
-                            if String.isEmpty val then
-                                Nothing
+            Dict.toList queryArgs.filters
+                |> List.concatMap
+                    (\( alias, filts ) ->
+                        let
+                            createPrefixedField val =
+                                if String.isEmpty val then
+                                    Nothing
 
-                            else
-                                Just (alias ++ ":" ++ val)
+                                else
+                                    Just (alias ++ ":" ++ val)
 
-                        allFilts =
-                            List.filterMap (\s -> createPrefixedField s) filts
-                    in
-                    List.map (Url.Builder.string "fq") allFilts
-                )
-                (Dict.toList queryArgs.filters)
+                            allFilts =
+                                List.filterMap (\s -> createPrefixedField s) filts
+                        in
+                        List.map (Url.Builder.string "fq") allFilts
+                    )
 
         fbParams =
-            List.map
-                (\( alias, facetBehaviour ) ->
-                    Url.Builder.string "fb" <|
-                        alias
-                            ++ ":"
-                            ++ parseFacetBehaviourToString facetBehaviour
-                )
-                (Dict.toList queryArgs.facetBehaviours)
+            Dict.toList queryArgs.facetBehaviours
+                |> List.map
+                    (\( alias, facetBehaviour ) ->
+                        (alias ++ ":" ++ parseFacetBehaviourToString facetBehaviour)
+                            |> Url.Builder.string "fb"
+                    )
 
         fsParams =
-            List.map
-                (\( alias, sort ) ->
-                    Url.Builder.string "fs" <|
-                        alias
-                            ++ ":"
-                            ++ parseFacetSortToString sort
-                )
-                (Dict.toList queryArgs.facetSorts)
+            Dict.toList queryArgs.facetSorts
+                |> List.map
+                    (\( alias, sort ) ->
+                        (alias ++ ":" ++ parseFacetSortToString sort)
+                            |> Url.Builder.string "fs"
+                    )
 
         pageParam =
-            [ Url.Builder.string "page" <|
-                String.fromInt queryArgs.page
+            [ String.fromInt queryArgs.page
+                |> Url.Builder.string "page"
             ]
 
         sortParam =
@@ -266,8 +268,13 @@ buildQueryParameters queryArgs =
 
                 Nothing ->
                     []
+
+        rowsParam =
+            [ String.fromInt queryArgs.rows
+                |> Url.Builder.string "rows"
+            ]
     in
-    List.concat [ qParam, ncParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam ]
+    List.concat [ qParam, ncParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam, rowsParam ]
 
 
 queryParamsParser : Q.Parser QueryArgs
