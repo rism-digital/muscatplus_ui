@@ -25,7 +25,6 @@ type alias ActiveSearch msg =
     , rangeFacetValues : Dict FacetAlias ( String, String )
     , queryFacetValues : Dict FacetAlias String
     , keyboard : Maybe (Keyboard.Model KeyboardMsg)
-    , selectedResultSort : Maybe String
     , activeSuggestion : Maybe ActiveSuggestion
     , activeSuggestionDebouncer : Debouncer msg
     }

@@ -28,6 +28,7 @@ type alias SearchBody =
     , facets : Facets
     , modes : Maybe ModeFacet
     , sorts : List SortData
+    , pageSizes : List String
     }
 
 
@@ -390,6 +391,7 @@ searchBodyDecoder =
         |> optional "facets" facetsDecoder Dict.empty
         |> optional "modes" (Decode.maybe modeFacetDecoder) Nothing
         |> required "sorts" (Decode.list searchSortsDecoder)
+        |> required "pageSizes" (Decode.list string)
 
 
 searchResultDecoder : Decoder SearchResult

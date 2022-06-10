@@ -38,5 +38,7 @@ type RecordMsg
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg RecordMsg)
     | DebouncerSettledToSendQueryFacetSuggestionRequest String
     | UserChoseOptionForQueryFacet FacetAlias String FacetBehaviours
+    | UserChangedResultSorting String
+    | UserChangedResultsPerPage String
     | UserResetAllFilters
     | NothingHappened

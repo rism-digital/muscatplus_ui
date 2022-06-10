@@ -30,14 +30,10 @@ init cfg =
 
                 Nothing ->
                     Nothing
-
-        initialSort =
-            .sort cfg.queryArgs
     in
     { nextQuery = cfg.queryArgs
     , expandedFacets = []
     , keyboard = keyboardQuery
-    , selectedResultSort = initialSort
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , rangeFacetValues = Dict.empty
@@ -50,7 +46,6 @@ empty =
     { nextQuery = Page.Query.defaultQueryArgs
     , expandedFacets = []
     , keyboard = Just <| Keyboard.initModel
-    , selectedResultSort = Nothing
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , rangeFacetValues = Dict.empty

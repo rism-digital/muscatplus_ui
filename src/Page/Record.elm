@@ -7,7 +7,7 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Dict
 import Flip exposing (flip)
 import Language exposing (Language(..), extractLabelFromLanguageMap)
-import Page.Query exposing (QueryArgs, defaultQueryArgs, setKeywordQuery, setNationalCollection, setNextQuery, toNextQuery)
+import Page.Query exposing (QueryArgs, defaultQueryArgs, setKeywordQuery, setNationalCollection, setNextQuery, setRows, setSort, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
@@ -486,6 +486,32 @@ update session msg model =
         UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
             updateQueryFacetFilters alias selectedValue currentBehaviour model
                 |> probeSubmit ServerRespondedWithProbeData session
+
+        UserChangedResultSorting sort ->
+            let
+                sortValue =
+                    Just sort
+
+                newQueryArgs =
+                    toNextQuery model.activeSearch
+                        |> setSort sortValue
+            in
+            setNextQuery newQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
+
+        UserChangedResultsPerPage num ->
+            let
+                rowNum =
+                    Maybe.withDefault C.defaultRows (String.toInt num)
+
+                newQueryArgs =
+                    toNextQuery model.activeSearch
+                        |> setRows rowNum
+            in
+            setNextQuery newQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
 
         UserResetAllFilters ->
             setNextQuery defaultQueryArgs model.activeSearch

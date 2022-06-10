@@ -33,6 +33,7 @@ type SearchMsg
     | UserFocusedRangeFacet FacetAlias
     | UserLostFocusRangeFacet FacetAlias
     | UserChangedResultSorting String
+    | UserChangedResultsPerPage String
     | UserClickedModeItem FacetItem
     | UserClickedSearchResultsPagination String
     | UserTriggeredSearchSubmit

@@ -12,7 +12,7 @@ import Page.Keyboard as Keyboard
         )
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setSort, toFilters, toMode, toNextQuery)
+import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setRows, setSort, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
@@ -405,6 +405,19 @@ update session msg model =
                 newQueryArgs =
                     toNextQuery model.activeSearch
                         |> setSort sortValue
+            in
+            setNextQuery newQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
+
+        UserChangedResultsPerPage num ->
+            let
+                rowNum =
+                    Maybe.withDefault C.defaultRows (String.toInt num)
+
+                newQueryArgs =
+                    toNextQuery model.activeSearch
+                        |> setRows rowNum
             in
             setNextQuery newQueryArgs model.activeSearch
                 |> flip setActiveSearch model

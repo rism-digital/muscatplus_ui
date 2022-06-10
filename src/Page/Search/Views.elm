@@ -2,7 +2,7 @@ module Page.Search.Views exposing (..)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, minimum, none, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (DeviceClass(..), Element, Orientation(..), alignBottom, alignLeft, alignRight, alignTop, centerX, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, minimum, none, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -23,6 +23,7 @@ import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchR
 import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
+import Page.UI.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -190,7 +191,15 @@ viewSearchResultsSection session model body isLoading =
             , Border.widthEach { bottom = 0, top = 0, left = 0, right = 2 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
-            [ viewSearchResultsListPanel session.language model body isLoading
+            [ viewSearchPageSort
+                { language = session.language
+                , activeSearch = model.activeSearch
+                , body = body
+                , changedResultSortingMsg = SearchMsg.UserChangedResultSorting
+                , changedResultRowsPerPageMsg = SearchMsg.UserChangedResultsPerPage
+                }
+                model.response
+            , viewSearchResultsListPanel session.language model body isLoading
             , viewPagination session.language body.pagination SearchMsg.UserClickedSearchResultsPagination
             ]
         , column
@@ -276,85 +285,3 @@ viewSearchResultRouter language selectedResult res =
                 , body = body
                 , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
                 }
-
-
-viewSearchPageSort : Language -> SearchPageModel SearchMsg -> Element SearchMsg
-viewSearchPageSort language model =
-    let
-        activeSearch =
-            model.activeSearch
-    in
-    case model.response of
-        Response (SearchData body) ->
-            viewPaginationSortSelector language activeSearch body
-
-        Loading (Just (SearchData body)) ->
-            viewPaginationSortSelector language activeSearch body
-
-        _ ->
-            none
-
-
-viewPaginationSortSelector : Language -> ActiveSearch SearchMsg -> SearchBody -> Element SearchMsg
-viewPaginationSortSelector language activeSearch body =
-    let
-        pagination =
-            body.pagination
-
-        thisPage =
-            formatNumberByLanguage language (toFloat pagination.thisPage)
-
-        totalPages =
-            formatNumberByLanguage language (toFloat pagination.totalPages)
-
-        pageLabel =
-            extractLabelFromLanguageMap language localTranslations.page
-
-        pageInfo =
-            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
-
-        sorting =
-            body.sorts
-
-        listOfLabelsForResultSort =
-            List.map
-                (\d -> ( d.alias, extractLabelFromLanguageMap language d.label ))
-                sorting
-
-        chosenSort =
-            Maybe.withDefault "relevance" activeSearch.selectedResultSort
-    in
-    row
-        [ width fill ]
-        [ column
-            [ width (fillPortion 2) ]
-            [ text pageInfo ]
-        , column
-            [ width (fillPortion 3) ]
-            [ row
-                [ width fill
-                , spacing 10
-                ]
-                [ column
-                    [ width shrink ]
-                    [ text "Sort by" ]
-                , column
-                    [ width fill ]
-                    [ el
-                        []
-                        (dropdownSelect
-                            { selectedMsg = \inp -> SearchMsg.UserChangedResultSorting inp
-                            , mouseDownMsg = Nothing
-                            , mouseUpMsg = Nothing
-                            , choices = listOfLabelsForResultSort
-                            , choiceFn = \inp -> inp
-                            , currentChoice = chosenSort
-                            , selectIdent = "pagination-sort-select" -- TODO: Check that this is unique!
-                            , label = Nothing
-                            , language = language
-                            }
-                        )
-                    ]
-                ]
-            ]
-        ]

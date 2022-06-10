@@ -24,6 +24,7 @@ import Page.UI.Record.Previews exposing (viewPreviewRouter)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.UI.Search.SearchComponents exposing (viewSearchButtons)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
+import Page.UI.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 
@@ -103,7 +104,15 @@ viewSearchResultsSection language model body isLoading =
             , Border.widthEach { bottom = 0, top = 0, left = 0, right = 2 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
-            [ viewSearchResultsListPanel language model body isLoading
+            [ viewSearchPageSort
+                { language = language
+                , activeSearch = model.activeSearch
+                , body = body
+                , changedResultSortingMsg = RecordMsg.UserChangedResultSorting
+                , changedResultRowsPerPageMsg = RecordMsg.UserChangedResultsPerPage
+                }
+                model.searchResults
+            , viewSearchResultsListPanel language model body isLoading
             , viewPagination language body.pagination RecordMsg.UserClickedSearchResultsPagination
             ]
         , column
@@ -500,6 +509,7 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
 
 viewRecordTopBarDescriptionOnly : Element msg
 viewRecordTopBarDescriptionOnly =
+    -- TODO: Translate label
     row
         [ centerX
         , width fill
