@@ -50,6 +50,7 @@ summaryFieldTemplate summaryCfg fieldValue =
             el
                 [ width <| px 20
                 , height <| px 20
+                , padding 2
                 , centerY
                 , el tooltipStyle (text fLabel)
                     |> tooltip above
@@ -83,6 +84,7 @@ summaryFieldTemplate summaryCfg fieldValue =
                 )
                 (fValueLength > 3)
 
+        -- TODO: Translate label!
         expandedList =
             viewIf
                 (el
