@@ -1,14 +1,17 @@
 module Page.UI.Facets.RangeFacet exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, paragraph, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, padding, paragraph, px, row, shrink, spacing, spacingXY, text, width)
+import Element.Background as Background
 import Element.Events as Events
+import Element.Font as Font
 import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (h5)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp)
 import Page.UpdateHelpers exposing (selectAppropriateRangeFacetValues)
 
@@ -55,7 +58,13 @@ validateInput boxIndicator value =
         Just eMsg ->
             row
                 []
-                [ paragraph [] [ text eMsg ] ]
+                [ paragraph
+                    [ Background.color (colourScheme.red |> convertColorToElementColor)
+                    , padding 4
+                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                    ]
+                    [ text eMsg ]
+                ]
 
 
 viewRangeFacet : RangeFacetConfig msg -> Element msg
