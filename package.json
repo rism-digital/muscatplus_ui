@@ -15,7 +15,7 @@
   },
   "scripts": {
     "develop": "elm-live src/Main.elm -u --port 8002 --dir=./dist -- --output=dist/static/app.js --debug",
-    "develop:build": "chokidar 'src/**/*.elm' -c 'elm make src/Main.elm --debug --output=dist/static/app.js'",
+    "develop:build": "chokidar 'src/**/*.elm' -c 'clear && elm make src/Main.elm --debug --output=dist/static/app.js'",
     "production:build": "elm-optimize-level-2 src/Main.elm --output=dist/static/app.js",
     "production:deploy": "./optimize.sh src/Main.elm dist/static/app.js dist/static/app.js"
   }
