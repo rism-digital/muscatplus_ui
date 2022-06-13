@@ -6,10 +6,7 @@ import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
 import Flip exposing (flip)
-import Page.Keyboard as Keyboard
-    exposing
-        ( buildNotationRequestQuery
-        )
+import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, setRows, setSort, toFilters, toMode, toNextQuery)
@@ -19,12 +16,12 @@ import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder,
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, rangeStringParser, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, rangeStringParser, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
-import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
+import Utlities exposing (convertNodeIdToPath)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
@@ -483,53 +480,10 @@ update session msg model =
             update session debounceMsg newModel
 
         UserClickedClosePreviewWindow ->
-            let
-                currentUrl =
-                    session.url
-
-                newUrl =
-                    { currentUrl | fragment = Nothing }
-
-                newUrlStr =
-                    Url.toString newUrl
-            in
-            ( { model
-                | preview = NoResponseToShow
-                , selectedResult = Nothing
-              }
-            , Nav.pushUrl session.key newUrlStr
-            )
+            userClickedClosePreviewWindow session model
 
         UserClickedSearchResultForPreview result ->
-            let
-                resultUrl =
-                    Url.fromString result
-
-                resPath =
-                    case resultUrl of
-                        Just p ->
-                            String.dropLeft 1 p.path
-                                |> convertPathToNodeId
-                                |> Just
-
-                        Nothing ->
-                            Nothing
-
-                currentUrl =
-                    session.url
-
-                newUrl =
-                    { currentUrl | fragment = resPath }
-
-                newUrlStr =
-                    Url.toString newUrl
-            in
-            ( { model
-                | selectedResult = Just result
-                , preview = Loading Nothing
-              }
-            , Nav.pushUrl session.key newUrlStr
-            )
+            userClickedResultForPreview result session model
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
             case toKeyboard model.activeSearch of

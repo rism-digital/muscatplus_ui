@@ -14,7 +14,7 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -350,53 +350,10 @@ update session msg model =
             )
 
         UserClickedSearchResultForPreview result ->
-            let
-                resultUrl =
-                    Url.fromString result
-
-                resPath =
-                    case resultUrl of
-                        Just p ->
-                            String.dropLeft 1 p.path
-                                |> convertPathToNodeId
-                                |> Just
-
-                        Nothing ->
-                            Nothing
-
-                currentUrl =
-                    session.url
-
-                newUrl =
-                    { currentUrl | fragment = resPath }
-
-                newUrlStr =
-                    Url.toString newUrl
-            in
-            ( { model
-                | selectedResult = Just result
-                , preview = Loading Nothing
-              }
-            , Nav.pushUrl session.key newUrlStr
-            )
+            userClickedResultForPreview result session model
 
         UserClickedClosePreviewWindow ->
-            let
-                currentUrl =
-                    session.url
-
-                newUrl =
-                    { currentUrl | fragment = Nothing }
-
-                newUrlStr =
-                    Url.toString newUrl
-            in
-            ( { model
-                | preview = NoResponseToShow
-                , selectedResult = Nothing
-              }
-            , Nav.pushUrl session.key newUrlStr
-            )
+            userClickedClosePreviewWindow session model
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model

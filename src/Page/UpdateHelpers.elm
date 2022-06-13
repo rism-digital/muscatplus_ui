@@ -13,6 +13,7 @@ import ActiveSearch
         , toggleExpandedFacets
         )
 import ActiveSearch.Model exposing (ActiveSearch)
+import Browser.Navigation as Nav
 import Dict exposing (Dict)
 import Flip exposing (flip)
 import Http
@@ -30,10 +31,12 @@ import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (sideBarOptionToResultMode)
 import Parser as P exposing ((|.), (|=), Parser)
 import Request exposing (serverUrl)
-import Response exposing (Response(..))
+import Response exposing (Response(..), ServerData)
 import Session exposing (Session)
+import Url
 import Url.Builder exposing (toQuery)
-import Utlities exposing (choose)
+import Utlities exposing (choose, convertPathToNodeId)
+import Viewport exposing (resetViewportOf)
 
 
 createRangeString : String -> String -> String
@@ -483,3 +486,63 @@ userChangedSelectFacetSort alias facetSort model =
         |> setFacetSorts newFacetSorts
         |> flip setNextQuery model.activeSearch
         |> flip setActiveSearch model
+
+
+userClickedResultForPreview :
+    String
+    -> Session
+    -> { a | selectedResult : Maybe String, preview : Response ServerData }
+    -> ( { a | selectedResult : Maybe String, preview : Response ServerData }, Cmd msg )
+userClickedResultForPreview result session model =
+    let
+        resultUrl =
+            Url.fromString result
+
+        resPath =
+            case resultUrl of
+                Just p ->
+                    String.dropLeft 1 p.path
+                        |> convertPathToNodeId
+                        |> Just
+
+                Nothing ->
+                    Nothing
+
+        currentUrl =
+            session.url
+
+        newUrl =
+            { currentUrl | fragment = resPath }
+
+        newUrlStr =
+            Url.toString newUrl
+    in
+    ( { model
+        | selectedResult = Just result
+        , preview = Loading Nothing
+      }
+    , Nav.pushUrl session.key newUrlStr
+    )
+
+
+userClickedClosePreviewWindow :
+    Session
+    -> { a | selectedResult : Maybe String, preview : Response ServerData }
+    -> ( { a | selectedResult : Maybe String, preview : Response ServerData }, Cmd msg )
+userClickedClosePreviewWindow session model =
+    let
+        currentUrl =
+            session.url
+
+        newUrl =
+            { currentUrl | fragment = Nothing }
+
+        newUrlStr =
+            Url.toString newUrl
+    in
+    ( { model
+        | preview = NoResponseToShow
+        , selectedResult = Nothing
+      }
+    , Nav.pushUrl session.key newUrlStr
+    )
