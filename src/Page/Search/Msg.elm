@@ -42,4 +42,6 @@ type SearchMsg
     | UserClickedSearchResultForPreview String
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserResetAllFilters
+    | ClientCompletedViewportReset
+    | ClientCompletedViewportJump
     | NothingHappened

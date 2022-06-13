@@ -228,7 +228,7 @@ update session msg model =
                 jumpCmd =
                     case .fragment session.url of
                         Just frag ->
-                            jumpToIdIfNotVisible NothingHappened "search-results-list" frag
+                            jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list" frag
 
                         Nothing ->
                             Cmd.none
@@ -345,7 +345,7 @@ update session msg model =
               }
             , Cmd.batch
                 [ Nav.pushUrl session.key pageUrl
-                , resetViewportOf NothingHappened "search-results-list"
+                , resetViewportOf ClientCompletedViewportReset "search-results-list"
                 ]
             )
 
@@ -475,6 +475,12 @@ update session msg model =
                 |> setRangeFacetValues Dict.empty
                 |> flip setActiveSearch model
                 |> searchSubmit session
+
+        ClientCompletedViewportJump ->
+            ( model, Cmd.none )
+
+        ClientCompletedViewportReset ->
+            ( model, Cmd.none )
 
         NothingHappened ->
             ( model, Cmd.none )

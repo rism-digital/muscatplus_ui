@@ -41,4 +41,6 @@ type RecordMsg
     | UserChangedResultSorting String
     | UserChangedResultsPerPage String
     | UserResetAllFilters
+    | ClientCompletedViewportJump
+    | ClientCompletedViewportReset
     | NothingHappened
