@@ -3,6 +3,7 @@ module Page.Front.Views exposing (..)
 import Element exposing (Element, alignLeft, alignTop, column, fill, height, maximum, minimum, none, padding, row, width)
 import Element.Background as Background
 import Element.Border as Border
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
@@ -77,7 +78,9 @@ view session model =
                     viewSearchButtons
                         { language = session.language
                         , model = model
+                        , isFrontPage = True
                         , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , submitLabel = localTranslations.showResults
                         , resetMsg = FrontMsg.UserResetAllFilters
                         }
                 )
@@ -104,7 +107,7 @@ view session model =
                         |> convertColorToElementColor
                 }
             ]
-            [ searchPanelView
-            , searchControlsView
+            [ searchControlsView
+            , searchPanelView
             ]
         ]

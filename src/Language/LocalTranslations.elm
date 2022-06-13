@@ -31,7 +31,9 @@ localTranslations :
     , recordPreview : List LanguageValues
     , recordURI : List LanguageValues
     , recordTop : List LanguageValues
-    , applyFilters : List LanguageValues
+    , updateResults : List LanguageValues
+    , showResults : List LanguageValues
+    , showAllRecords : List LanguageValues
     , resetAll : List LanguageValues
     , globalCollection : List LanguageValues
     , noResultsHeader : List LanguageValues
@@ -177,8 +179,8 @@ localTranslations =
         [ LanguageValues English [ "Record URI (Permalink)" ] ]
     , recordTop =
         [ LanguageValues English [ "Record top" ] ]
-    , applyFilters =
-        [ LanguageValues English [ "Apply filters" ]
+    , updateResults =
+        [ LanguageValues English [ "Update search results" ]
         , LanguageValues German [ "Filter anwenden" ]
         , LanguageValues French [ "Appliquer des filtres" ]
         , LanguageValues Italian [ "Applicare filtri" ]
@@ -186,6 +188,17 @@ localTranslations =
         , LanguageValues Portugese [ "Aplicar filtros" ]
         , LanguageValues Polish [ "Zastosuj filtry" ]
         ]
+    , showResults =
+        [ LanguageValues English [ "Show search results" ]
+        , LanguageValues German [ "Filter anwenden" ]
+        , LanguageValues French [ "Appliquer des filtres" ]
+        , LanguageValues Italian [ "Applicare filtri" ]
+        , LanguageValues Spanish [ "Aplicar filtros" ]
+        , LanguageValues Portugese [ "Aplicar filtros" ]
+        , LanguageValues Polish [ "Zastosuj filtry" ]
+        ]
+    , showAllRecords =
+        [ LanguageValues English [ "Show all records" ] ]
     , resetAll =
         [ LanguageValues English [ "Reset all" ]
         , LanguageValues German [ "Alles zurücksetzen" ]
@@ -241,7 +254,7 @@ localTranslations =
         , LanguageValues Polish [ "Błąd podczas ładowania wyników" ]
         ]
     , applyFiltersToUpdateResults =
-        [ LanguageValues English [ "Apply filters to view search results" ]
+        [ LanguageValues English [ "Update needed" ]
         , LanguageValues German [ "Wenden Sie Filter an, um Suchergebnisse anzuzeigen" ]
         , LanguageValues French [ "Appliquer des filtres pour mettre à jour les résultats de recherche" ]
         , LanguageValues Italian [ "Applica filtri per aggiornare i risultati della ricerca" ]

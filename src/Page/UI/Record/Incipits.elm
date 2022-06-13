@@ -3,6 +3,7 @@ module Page.UI.Record.Incipits exposing (..)
 import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Font as Font
 import Html.Attributes as HTA
 import Language exposing (Language)
 import List.Extra as LE

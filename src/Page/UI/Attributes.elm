@@ -101,11 +101,11 @@ emptyAttribute =
 minimalDropShadow : Attribute msg
 minimalDropShadow =
     Border.shadow
-        { offset = ( 2, 0 )
-        , size = 1
-        , blur = 2
+        { offset = ( 0, 0 )
+        , size = 0
+        , blur = 3
         , color =
-            colourScheme.darkGrey
+            colourScheme.midGrey
                 |> convertColorToElementColor
         }
 

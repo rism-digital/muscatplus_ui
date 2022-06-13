@@ -1,16 +1,16 @@
 module Page.UI.Search.SearchComponents exposing (..)
 
-import Element exposing (Element, alignBottom, centerY, column, el, fill, height, htmlAttribute, minimum, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, minimum, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingSM, lineSpacing)
+import Page.UI.Attributes exposing (headingMD, headingSM, lineSpacing, minimalDropShadow)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..))
@@ -45,11 +45,19 @@ viewProbeResponseNumbers language probeResponse =
                         |> formatNumberByLanguage language
 
                 textMsg =
-                    extractLabelFromLanguageMap language localTranslations.resultsWithFilters
+                    if formattedNumber == "0" then
+                        extractLabelFromLanguageMap language localTranslations.noResultsWouldBeFound
+
+                    else
+                        extractLabelFromLanguageMap language localTranslations.resultsWithFilters
+                            ++ ": "
+                            ++ formattedNumber
             in
             el
-                []
-                (text <| textMsg ++ ": " ++ formattedNumber)
+                [ Font.medium
+                , headingMD
+                ]
+                (text <| textMsg)
 
         Loading _ ->
             el
@@ -60,40 +68,37 @@ viewProbeResponseNumbers language probeResponse =
 
         Error errMsg ->
             el
-                []
+                [ Font.medium ]
                 (text <| extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults ++ ": " ++ errMsg)
 
         NoResponseToShow ->
-            el
-                []
-                (text "")
+            none
 
 
 viewUpdateMessage : Language -> Bool -> Bool -> Element msg
 viewUpdateMessage language applyFilterPrompt actionableProbResponse =
-    let
-        elMsg =
-            if applyFilterPrompt && actionableProbResponse then
-                text <| extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults
+    if applyFilterPrompt && actionableProbResponse then
+        el
+            [ width shrink
+            , padding 5
+            , Border.width 1
+            , Border.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
+            , headingSM
+            , Font.bold
+            , Font.color (colourScheme.white |> convertColorToElementColor)
+            ]
+            (text <| extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
 
-            else if applyFilterPrompt && not actionableProbResponse then
-                text <| extractLabelFromLanguageMap language localTranslations.noResultsWouldBeFound
-
-            else
-                none
-    in
-    el
-        [ width fill
-        , height (px 30)
-        , headingSM
-        , Font.bold
-        ]
-        elMsg
+    else
+        none
 
 
 type alias SearchButtonConfig a msg =
     { language : Language
     , model : { a | probeResponse : Response ProbeData, applyFilterPrompt : Bool }
+    , isFrontPage : Bool
+    , submitLabel : LanguageMap
     , submitMsg : msg
     , resetMsg : msg
     }
@@ -102,36 +107,47 @@ type alias SearchButtonConfig a msg =
 viewSearchButtons :
     SearchButtonConfig model msg
     -> Element msg
-viewSearchButtons { language, model, submitMsg, resetMsg } =
+viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetMsg } =
     let
         actionableProbeResponse =
             hasActionableProbeResponse model.probeResponse
 
-        disableSubmitButton =
-            not <| actionableProbeResponse
-
         ( submitButtonColours, submitButtonMsg, submitPointerStyle ) =
-            if disableSubmitButton then
+            if model.applyFilterPrompt && actionableProbeResponse then
+                ( colourScheme.lightBlue |> convertColorToElementColor
+                , Just submitMsg
+                , pointer
+                )
+
+            else if isFrontPage then
+                ( colourScheme.lightBlue |> convertColorToElementColor
+                , Just submitMsg
+                , pointer
+                )
+
+            else
                 ( colourScheme.midGrey |> convertColorToElementColor
                 , Nothing
                 , htmlAttribute (HA.style "cursor" "not-allowed")
                 )
 
+        submitButtonLabel =
+            if isFrontPage then
+                extractLabelFromLanguageMap language localTranslations.showAllRecords
+
             else
-                ( colourScheme.darkBlue |> convertColorToElementColor
-                , Just submitMsg
-                , pointer
-                )
+                extractLabelFromLanguageMap language submitLabel
     in
     row
-        [ alignBottom
-        , Background.color (colourScheme.white |> convertColorToElementColor)
+        [ alignTop
+        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
         , width fill
-        , height (px 100)
-        , paddingXY 20 0
+        , height (px 50)
+        , paddingXY 10 0
         , centerY
+        , minimalDropShadow
         ]
         [ column
             [ width fill
@@ -150,7 +166,7 @@ viewSearchButtons { language, model, submitMsg, resetMsg } =
                         [ Border.color submitButtonColours
                         , Background.color submitButtonColours
                         , paddingXY 10 10
-                        , height (px 60)
+                        , height (px 40)
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
@@ -158,7 +174,7 @@ viewSearchButtons { language, model, submitMsg, resetMsg } =
                         , submitPointerStyle
                         ]
                         { onPress = submitButtonMsg
-                        , label = text (extractLabelFromLanguageMap language localTranslations.applyFilters)
+                        , label = text submitButtonLabel
                         }
                     ]
                 , column
@@ -167,7 +183,7 @@ viewSearchButtons { language, model, submitMsg, resetMsg } =
                         [ Border.color (colourScheme.turquoise |> convertColorToElementColor)
                         , Background.color (colourScheme.turquoise |> convertColorToElementColor)
                         , paddingXY 10 10
-                        , height (px 60)
+                        , height (px 40)
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
@@ -179,8 +195,13 @@ viewSearchButtons { language, model, submitMsg, resetMsg } =
                     ]
                 , column
                     [ width fill ]
-                    [ viewUpdateMessage language model.applyFilterPrompt actionableProbeResponse
-                    , viewProbeResponseNumbers language model.probeResponse
+                    [ row
+                        [ width fill
+                        , spacing 5
+                        ]
+                        [ viewProbeResponseNumbers language model.probeResponse
+                        , viewUpdateMessage language model.applyFilterPrompt actionableProbeResponse
+                        ]
                     ]
                 ]
             ]

@@ -8,6 +8,7 @@ import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
+import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -35,6 +36,7 @@ viewPagination language pagination clickMsg =
         , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , minimalDropShadow
         ]
         [ column
             [ alignLeft

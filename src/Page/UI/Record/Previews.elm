@@ -50,7 +50,7 @@ viewPreviewRouter language closeMsg previewData =
         , alignRight
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
-        , Border.width 4
+        , Border.width 3
         ]
         [ column
             [ width fill
@@ -69,10 +69,10 @@ viewRecordPreviewTitleBar : Language -> msg -> Element msg
 viewRecordPreviewTitleBar language closeMsg =
     row
         [ width fill
-        , height (px 30)
+        , height (px 46)
         , spacing 10
-        , paddingXY 10 20
-        , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+        , paddingXY 10 0
+        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
         , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
         , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
         ]

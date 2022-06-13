@@ -1,11 +1,13 @@
 module Page.UI.SortAndRows exposing (..)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignLeft, alignRight, column, el, fill, height, none, paddingXY, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Search exposing (SearchBody)
+import Page.UI.Attributes exposing (lineSpacing, minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
@@ -58,28 +60,39 @@ viewRowSelectAndSortSelector cfg =
                 |> String.fromInt
     in
     row
-        [ width fill
-        , height (px 50)
-        , paddingXY 10 0
+        [ alignTop
         , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+        , width fill
+        , height (px 50)
+        , paddingXY 10 0
+        , centerY
+        , htmlAttribute (HA.style "z-index" "1")
+        , minimalDropShadow
         ]
         [ column
-            [ width fill ]
+            [ width fill
+            , height fill
+            , centerY
+            ]
             [ row
                 [ width fill
-                , spacing 10
+                , height fill
+                , spacing lineSpacing
+                , centerY
                 ]
                 [ column
-                    [ width fill ]
+                    [ width shrink ]
                     [ row
                         [ width fill
+                        , height fill
                         , alignLeft
                         , spacing 5
                         ]
                         [ el
                             [ alignLeft ]
+                            -- TODO: Translate
                             (text "Sort by")
                         , el
                             [ alignLeft ]
@@ -106,6 +119,7 @@ viewRowSelectAndSortSelector cfg =
                         ]
                         [ el
                             [ alignRight ]
+                            -- TODO: Translate
                             (text "Rows per page")
                         , el
                             [ alignRight ]

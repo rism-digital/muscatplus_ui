@@ -405,13 +405,15 @@ viewSearchControls language model body =
             , height fill
             , alignTop
             ]
-            [ viewFacetsForSourcesMode language model body
-            , viewSearchButtons
+            [ viewSearchButtons
                 { language = language
                 , model = model
+                , isFrontPage = False
+                , submitLabel = localTranslations.updateResults
                 , submitMsg = RecordMsg.UserTriggeredSearchSubmit
                 , resetMsg = RecordMsg.UserResetAllFilters
                 }
+            , viewFacetsForSourcesMode language model body
             ]
         ]
 

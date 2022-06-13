@@ -3,6 +3,7 @@ module Page.Search.Views.SearchControls exposing (..)
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, none, row, width)
 import Language exposing (Language)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody)
@@ -50,12 +51,14 @@ viewSearchControls language model body =
             , height fill
             , alignTop
             ]
-            [ facetLayout
-            , viewSearchButtons
+            [ viewSearchButtons
                 { language = language
                 , model = model
+                , isFrontPage = False
+                , submitLabel = localTranslations.updateResults
                 , submitMsg = SearchMsg.UserTriggeredSearchSubmit
                 , resetMsg = SearchMsg.UserResetAllFilters
                 }
+            , facetLayout
             ]
         ]
