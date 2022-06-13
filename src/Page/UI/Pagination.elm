@@ -31,8 +31,8 @@ viewPagination language pagination clickMsg =
     row
         [ width fill
         , alignBottom
-        , height (px 100)
-        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , height (px 50)
+        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
         ]

@@ -61,7 +61,7 @@ viewRowSelectAndSortSelector cfg =
         [ width fill
         , height (px 50)
         , paddingXY 10 0
-        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
         ]
