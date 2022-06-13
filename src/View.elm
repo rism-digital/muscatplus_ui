@@ -208,7 +208,7 @@ loadingIndicator model =
                     loadingView
 
                 _ ->
-                    none
+                    Keyed.el [] ( "progress-bar-none", none )
     in
     case model of
         SearchPage _ pageModel ->
@@ -232,14 +232,14 @@ loadingIndicator model =
                 loadingView
 
             else
-                none
+                Keyed.el [] ( "progress-bar-none", none )
 
         InstitutionPage _ pageModel ->
             if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
                 loadingView
 
             else
-                none
+                Keyed.el [] ( "progress-bar-none", none )
 
         FrontPage _ pageModel ->
             chooseView pageModel.response
