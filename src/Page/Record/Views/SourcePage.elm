@@ -13,9 +13,6 @@ import Session exposing (Session)
 view : Session -> RecordPageModel RecordMsg -> Element RecordMsg
 view session model =
     let
-        _ =
-            Debug.toString "Viewing source page"
-
         pageView =
             case model.response of
                 Response (SourceData body) ->
