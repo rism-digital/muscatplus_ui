@@ -130,8 +130,26 @@ viewPAESearchLink language (EncodedIncipit label encodingType data) =
                 Nothing ->
                     []
 
+        clefQueryParam =
+            case data.clef of
+                Just cl ->
+                    [ Url.Builder.string "ic" cl ]
+
+                Nothing ->
+                    []
+
+        timeSigQueryParam =
+            case data.timesig of
+                Just ts ->
+                    [ Url.Builder.string "it" ts ]
+
+                Nothing ->
+                    []
+
         searchUrl =
-            serverUrl [ "search" ] ([ noteQueryParam, modeQueryParam ] ++ keySigQueryParam)
+            serverUrl
+                [ "search" ]
+                ([ noteQueryParam, modeQueryParam ] ++ keySigQueryParam ++ clefQueryParam ++ timeSigQueryParam)
     in
     link
         [ centerY
