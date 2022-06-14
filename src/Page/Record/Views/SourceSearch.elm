@@ -435,7 +435,7 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId, tabLabel } 
             toFloat searchData.totalItems
                 |> formatNumberByLanguage language
 
-        localizedSources =
+        localizedTabLabel =
             extractLabelFromLanguageMap language tabLabel
 
         sourceLabel =
@@ -443,12 +443,12 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId, tabLabel } 
                 Response (SearchData searchData) ->
                     el
                         []
-                        (text <| localizedSources ++ " (" ++ sourceCount searchData ++ ")")
+                        (text <| localizedTabLabel ++ " (" ++ sourceCount searchData ++ ")")
 
                 Loading _ ->
                     row
                         [ spacing 5 ]
-                        [ text localizedSources
+                        [ text localizedTabLabel
                         , animatedLoader
                             [ width (px 15), height (px 15) ]
                             (spinnerSvg colourScheme.slateGrey)
