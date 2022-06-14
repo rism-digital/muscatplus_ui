@@ -129,6 +129,9 @@ viewMuscatLinks session =
         SourcePageRoute id ->
             linkTmpl <| C.muscatLinkBase ++ "sources/" ++ String.fromInt id
 
+        SourceContentsPageRoute id _ ->
+            linkTmpl <| C.muscatLinkBase ++ "sources/" ++ String.fromInt id
+
         PersonPageRoute id ->
             linkTmpl <| C.muscatLinkBase ++ "people/" ++ String.fromInt id
 

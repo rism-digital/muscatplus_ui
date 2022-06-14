@@ -6,7 +6,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
@@ -423,9 +423,10 @@ viewRecordSourceSearchTabBar :
     , model : RecordPageModel RecordMsg
     , searchUrl : String
     , recordId : String
+    , tabLabel : LanguageMap
     }
     -> Element RecordMsg
-viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
+viewRecordSourceSearchTabBar { language, model, searchUrl, recordId, tabLabel } =
     let
         currentMode =
             model.currentTab
@@ -435,7 +436,7 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
                 |> formatNumberByLanguage language
 
         localizedSources =
-            extractLabelFromLanguageMap language localTranslations.sources
+            extractLabelFromLanguageMap language tabLabel
 
         sourceLabel =
             case model.searchResults of
@@ -444,7 +445,7 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
                         []
                         (text <| localizedSources ++ " (" ++ sourceCount searchData ++ ")")
 
-                _ ->
+                Loading _ ->
                     row
                         [ spacing 5 ]
                         [ text localizedSources
@@ -452,6 +453,9 @@ viewRecordSourceSearchTabBar { language, model, searchUrl, recordId } =
                             [ width (px 15), height (px 15) ]
                             (spinnerSvg colourScheme.slateGrey)
                         ]
+
+                _ ->
+                    none
 
         descriptionTabBorder =
             case currentMode of

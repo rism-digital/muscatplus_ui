@@ -250,10 +250,64 @@ init flags initialUrl key =
                     , queryArgs = Nothing
                     , nationalCollection = session.restrictedToNationalCollection
                     }
+
+                initialModel =
+                    Record.init recordCfg
+
+                ncAppliedModel =
+                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+
+                ncQueryParam =
+                    case session.restrictedToNationalCollection of
+                        Just c ->
+                            Just ("nc=" ++ c)
+
+                        Nothing ->
+                            Nothing
+
+                sourcesUrl =
+                    { initialUrl | path = initialUrl.path ++ "/contents", query = ncQueryParam }
             in
-            ( SourcePage session <| Record.init recordCfg
+            ( SourcePage session ncAppliedModel
             , Cmd.batch
                 [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
+                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                ]
+            )
+
+        SourceContentsPageRoute _ qargs ->
+            let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+
+                initialModel =
+                    Record.init recordCfg
+
+                ncAppliedModel =
+                    addNationalCollectionFilter session.restrictedToNationalCollection initialModel
+
+                recordPath =
+                    String.replace "/sources" "" initialUrl.path
+
+                newQparams =
+                    addNationalCollectionQueryParameter session qargs
+
+                recordUrl =
+                    { initialUrl | path = recordPath }
+
+                sourcesUrl =
+                    { initialUrl | query = Just newQparams }
+            in
+            ( SourcePage session ncAppliedModel
+            , Cmd.batch
+                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest recordUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
+                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.requestPreviewIfSelected initialModel.selectedResult
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )

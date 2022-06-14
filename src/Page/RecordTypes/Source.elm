@@ -1,6 +1,6 @@
 module Page.RecordTypes.Source exposing (..)
 
-import Json.Decode as Decode exposing (Decoder, list, string)
+import Json.Decode as Decode exposing (Decoder, int, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
@@ -103,6 +103,8 @@ type alias ExemplarBody =
 type alias SourceItemsSectionBody =
     { sectionToc : String
     , label : LanguageMap
+    , url : String
+    , totalItems : Int
     , items : List BasicSourceBody
     }
 
@@ -210,4 +212,6 @@ sourceItemsSectionBodyDecoder =
     Decode.succeed SourceItemsSectionBody
         |> hardcoded "source-record-items-section"
         |> required "label" languageMapLabelDecoder
+        |> required "url" string
+        |> required "totalItems" int
         |> required "items" (list basicSourceBodyDecoder)

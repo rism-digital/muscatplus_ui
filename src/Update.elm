@@ -103,11 +103,70 @@ changePage url model =
                     , nationalCollection = newSession.restrictedToNationalCollection
                     }
 
-                sourceModel =
-                    RecordPage.init recordCfg
+                newModel =
+                    case model of
+                        SourcePage _ oldModel ->
+                            RecordPage.load recordCfg oldModel
+
+                        _ ->
+                            RecordPage.init recordCfg
+
+                sourceQuery =
+                    toNextQuery newModel.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
+
+                sourcesUrl =
+                    { url | path = url.path ++ "/contents", query = Just sourceQuery }
             in
-            ( SourcePage newSession sourceModel
-            , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
+            ( SourcePage newSession newModel
+            , Cmd.batch
+                [ RecordPage.recordPageRequest url
+                , RecordPage.recordSearchRequest sourcesUrl
+                ]
+                |> Cmd.map Msg.UserInteractedWithRecordPage
+            )
+
+        Route.SourceContentsPageRoute _ qargs ->
+            let
+                recordPath =
+                    String.replace "/contents" "" url.path
+
+                recordUrl =
+                    { url | path = recordPath }
+
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
+                newModel =
+                    case model of
+                        SourcePage _ oldModel ->
+                            RecordPage.load recordCfg oldModel
+
+                        _ ->
+                            RecordPage.init recordCfg
+
+                newQparams =
+                    toNextQuery newModel.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
+
+                sourceUrl =
+                    { url | query = Just newQparams }
+            in
+            ( SourcePage newSession newModel
+            , Cmd.batch
+                [ RecordPage.recordPageRequest recordUrl
+                , RecordPage.recordSearchRequest sourceUrl
+                , RecordPage.requestPreviewIfSelected newModel.selectedResult
+                ]
+                |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
         Route.PersonPageRoute _ ->

@@ -128,6 +128,9 @@ createProbeUrl session activeSearch =
                 PersonSourcePageRoute id _ ->
                     serverUrl [ "people", String.fromInt id, "probe" ]
 
+                SourceContentsPageRoute id _ ->
+                    serverUrl [ "sources", String.fromInt id, "probe" ]
+
                 _ ->
                     serverUrl [ "probe" ]
     in

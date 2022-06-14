@@ -4,6 +4,7 @@ import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, 
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
@@ -95,6 +96,7 @@ viewRecordTopBarRouter language model body =
                     , searchUrl = sourceBlock.url
                     , model = model
                     , recordId = body.id
+                    , tabLabel = localTranslations.sources
                     }
 
         Nothing ->

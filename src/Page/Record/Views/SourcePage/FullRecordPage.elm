@@ -1,11 +1,14 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (..)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background
 import Element.Border as Border
+import Language exposing (Language)
+import Language.LocalTranslations exposing (localTranslations)
+import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
-import Page.Record.Views.SourceSearch exposing (viewRecordTopBarDescriptionOnly)
+import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewRecordTopBarDescriptionOnly, viewSourceSearchTab)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -23,33 +26,20 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
 
 
-viewFullSourcePage : Session -> FullSourceBody -> Element RecordMsg
-viewFullSourcePage session body =
+viewFullSourcePage :
+    Session
+    -> RecordPageModel RecordMsg
+    -> FullSourceBody
+    -> Element RecordMsg
+viewFullSourcePage session model body =
     let
         pageBodyView =
-            row
-                [ width fill
-                , height fill
-                , alignTop
-                , scrollbarY
-                ]
-                [ column
-                    [ width fill
-                    , spacing sectionSpacing
-                    , alignTop
-                    , padding 20
-                    ]
-                    [ viewMaybe (viewPartOfSection session.language) body.partOf
-                    , viewMaybe (viewContentsSection session.language body.creator) body.contents
-                    , viewMaybe (viewIncipitsSection session.language) body.incipits
-                    , viewMaybe (viewMaterialGroupsSection session.language) body.materialGroups
-                    , viewMaybe (viewRelationshipsSection session.language) body.relationships
-                    , viewMaybe (viewReferencesNotesSection session.language) body.referencesNotes
-                    , viewMaybe (viewSourceItemsSection session.language) body.sourceItems
-                    , viewMaybe (viewExternalResourcesSection session.language) body.externalResources
-                    , viewMaybe (viewExemplarsSection session.language) body.exemplars
-                    ]
-                ]
+            case model.currentTab of
+                DefaultRecordViewTab _ ->
+                    viewDescriptionTab session.language body
+
+                RelatedSourcesSearchTab _ ->
+                    viewSourceSearchTab session.language model
     in
     row
         [ width fill
@@ -86,10 +76,57 @@ viewFullSourcePage session body =
                     , paddingXY 5 20
                     ]
                     [ pageHeaderTemplate session.language body
-                    , viewRecordTopBarDescriptionOnly
+                    , viewRecordTopBarRouter session.language model body
                     ]
                 ]
             , pageBodyView
             , pageFooterTemplate session session.language body
+            ]
+        ]
+
+
+viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> FullSourceBody -> Element RecordMsg
+viewRecordTopBarRouter language model body =
+    case body.sourceItems of
+        Just sourceBlock ->
+            if sourceBlock.totalItems == 0 then
+                none
+
+            else
+                viewRecordSourceSearchTabBar
+                    { language = language
+                    , searchUrl = sourceBlock.url
+                    , model = model
+                    , recordId = body.id
+                    , tabLabel = localTranslations.sourceContents
+                    }
+
+        Nothing ->
+            none
+
+
+viewDescriptionTab : Language -> FullSourceBody -> Element msg
+viewDescriptionTab language body =
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        , scrollbarY
+        ]
+        [ column
+            [ width fill
+            , spacing sectionSpacing
+            , alignTop
+            , padding 20
+            ]
+            [ viewMaybe (viewPartOfSection language) body.partOf
+            , viewMaybe (viewContentsSection language body.creator) body.contents
+            , viewMaybe (viewIncipitsSection language) body.incipits
+            , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
+            , viewMaybe (viewRelationshipsSection language) body.relationships
+            , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
+            , viewMaybe (viewSourceItemsSection language) body.sourceItems
+            , viewMaybe (viewExternalResourcesSection language) body.externalResources
+            , viewMaybe (viewExemplarsSection language) body.exemplars
             ]
         ]

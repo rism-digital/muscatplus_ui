@@ -34,5 +34,8 @@ routeToCurrentRecordViewTab route =
         PersonSourcePageRoute _ _ ->
             RelatedSourcesSearchTab
 
+        SourceContentsPageRoute _ _ ->
+            RelatedSourcesSearchTab
+
         _ ->
             DefaultRecordViewTab

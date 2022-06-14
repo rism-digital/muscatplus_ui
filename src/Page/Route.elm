@@ -11,6 +11,7 @@ type Route
     = FrontPageRoute FrontQueryArgs
     | SearchPageRoute QueryArgs KeyboardQuery
     | SourcePageRoute Int
+    | SourceContentsPageRoute Int QueryArgs
     | PersonPageRoute Int
     | PersonSourcePageRoute Int QueryArgs
     | InstitutionPageRoute Int
@@ -38,6 +39,7 @@ routeParser =
         [ P.map FrontPageRoute (P.top <?> frontQueryParamsParser)
         , P.map SearchPageRoute (s "search" <?> queryParamsParser <?> notationParamParser)
         , P.map SourcePageRoute (s "sources" </> P.int)
+        , P.map SourceContentsPageRoute (s "sources" </> P.int </> s "contents" <?> queryParamsParser)
         , P.map PersonPageRoute (s "people" </> P.int)
         , P.map PersonSourcePageRoute (s "people" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map InstitutionPageRoute (s "institutions" </> P.int)
