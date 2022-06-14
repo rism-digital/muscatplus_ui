@@ -9,39 +9,40 @@ module Language.LocalTranslations exposing (..)
 
 -}
 
-import Language exposing (Language(..), LanguageValues(..))
+import Language exposing (Language(..), LanguageMap, LanguageValues(..))
 
 
 localTranslations :
-    { description : List LanguageValues
-    , sources : List LanguageValues
-    , people : List LanguageValues
-    , institutions : List LanguageValues
-    , incipits : List LanguageValues
-    , search : List LanguageValues
-    , home : List LanguageValues
-    , keywordQuery : List LanguageValues
-    , searchNumberOfRecords : List LanguageValues
-    , queryEnter : List LanguageValues
-    , next : List LanguageValues
-    , previous : List LanguageValues
-    , first : List LanguageValues
-    , last : List LanguageValues
-    , page : List LanguageValues
-    , recordPreview : List LanguageValues
-    , recordURI : List LanguageValues
-    , recordTop : List LanguageValues
-    , updateResults : List LanguageValues
-    , showResults : List LanguageValues
-    , showAllRecords : List LanguageValues
-    , resetAll : List LanguageValues
-    , globalCollection : List LanguageValues
-    , noResultsHeader : List LanguageValues
-    , noResultsBody : List LanguageValues
-    , resultsWithFilters : List LanguageValues
-    , errorLoadingProbeResults : List LanguageValues
-    , applyFiltersToUpdateResults : List LanguageValues
-    , noResultsWouldBeFound : List LanguageValues
+    { description : LanguageMap
+    , sources : LanguageMap
+    , sourceContents : LanguageMap
+    , people : LanguageMap
+    , institutions : LanguageMap
+    , incipits : LanguageMap
+    , search : LanguageMap
+    , home : LanguageMap
+    , keywordQuery : LanguageMap
+    , searchNumberOfRecords : LanguageMap
+    , queryEnter : LanguageMap
+    , next : LanguageMap
+    , previous : LanguageMap
+    , first : LanguageMap
+    , last : LanguageMap
+    , page : LanguageMap
+    , recordPreview : LanguageMap
+    , recordURI : LanguageMap
+    , recordTop : LanguageMap
+    , updateResults : LanguageMap
+    , showResults : LanguageMap
+    , showAllRecords : LanguageMap
+    , resetAll : LanguageMap
+    , globalCollection : LanguageMap
+    , noResultsHeader : LanguageMap
+    , noResultsBody : LanguageMap
+    , resultsWithFilters : LanguageMap
+    , errorLoadingProbeResults : LanguageMap
+    , applyFiltersToUpdateResults : LanguageMap
+    , noResultsWouldBeFound : LanguageMap
     }
 localTranslations =
     { description =
@@ -62,6 +63,8 @@ localTranslations =
         , LanguageValues Portugese [ "Fontes" ]
         , LanguageValues Polish [ "Źródła" ]
         ]
+    , sourceContents =
+        [ LanguageValues English [ "Source contents" ] ]
     , people =
         [ LanguageValues Spanish [ "Personas" ]
         , LanguageValues Portugese [ "Pessoas" ]
