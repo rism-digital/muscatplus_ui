@@ -8,7 +8,7 @@ import Language exposing (Language)
 import Page.RecordTypes.Search exposing (IncipitResultBody, IncipitResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (musicNotationSvg, peopleSvg, quoteRightSvg, textIconSvg)
+import Page.UI.Images exposing (musicListSvg, peopleSvg, textIconSvg)
 import Page.UI.Record.Incipits exposing (viewRenderedIncipits)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 
@@ -56,7 +56,7 @@ viewIncipitSummary language iconColour summary =
                     summary
                 , viewSearchResultSummaryField
                     { language = language
-                    , icon = quoteRightSvg iconColour
+                    , icon = musicListSvg iconColour
                     , includeLabelInValue = False
                     , fieldName = "voiceInstrument"
                     , displayStyles = []
