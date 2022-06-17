@@ -59,7 +59,7 @@ type alias SearchResultsSectionConfig a msg =
 viewSearchResultsSection : SearchResultsSectionConfig a msg -> Bool -> SearchBody -> Element msg
 viewSearchResultsSection cfg resultsLoading body =
     let
-        ( resultColumnWidth, controlsColumnWidth ) =
+        ( resultColumnWidth, controlsPanelWidth ) =
             let
                 { class, orientation } =
                     .device cfg.session
@@ -124,7 +124,7 @@ viewSearchResultsSection cfg resultsLoading body =
             , viewPagination language body.pagination cfg.userClickedResultsPaginationMsg
             ]
         , column
-            [ controlsColumnWidth
+            [ controlsPanelWidth
             , height fill
             , alignTop
             , inFront renderedPreview
