@@ -33,11 +33,11 @@ changePage url model =
     case route of
         Route.FrontPageRoute qargs ->
             let
-                initialModel =
+                initialPageBody =
                     FrontPage.init
                         { queryArgs = qargs }
             in
-            ( FrontPage newSession initialModel
+            ( FrontPage newSession initialPageBody
             , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
             )
 
@@ -57,16 +57,16 @@ changePage url model =
                         |> toQuery
                         |> String.dropLeft 1
 
-                newModel =
+                newPageBody =
                     case model of
-                        SearchPage _ oldPageModel ->
-                            SearchPage.load searchCfg oldPageModel
+                        SearchPage _ oldPageBody ->
+                            SearchPage.load searchCfg oldPageBody
 
                         _ ->
                             SearchPage.init searchCfg
 
                 newQparams =
-                    toNextQuery newModel.activeSearch
+                    toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
@@ -81,20 +81,20 @@ changePage url model =
                 searchUrl =
                     { url | query = Just fullQueryParams }
             in
-            ( SearchPage newSession newModel
+            ( SearchPage newSession newPageBody
             , Cmd.batch
                 [ SearchPage.searchPageRequest searchUrl
-                , SearchPage.requestPreviewIfSelected newModel.selectedResult
+                , SearchPage.requestPreviewIfSelected newPageBody.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithSearchPage
             )
 
         Route.SourcePageRoute _ ->
             let
-                newModel =
+                newPageBody =
                     case model of
-                        SourcePage _ oldModel ->
-                            RecordPage.load recordCfg oldModel
+                        SourcePage _ oldPageBody ->
+                            RecordPage.load recordCfg oldPageBody
 
                         _ ->
                             RecordPage.init recordCfg
@@ -107,7 +107,7 @@ changePage url model =
                     }
 
                 sourceQuery =
-                    toNextQuery newModel.activeSearch
+                    toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
@@ -115,7 +115,7 @@ changePage url model =
                 sourcesUrl =
                     { url | path = url.path ++ "/contents", query = Just sourceQuery }
             in
-            ( SourcePage newSession newModel
+            ( SourcePage newSession newPageBody
             , Cmd.batch
                 [ RecordPage.recordPageRequest url
                 , RecordPage.recordSearchRequest sourcesUrl
@@ -125,16 +125,16 @@ changePage url model =
 
         Route.SourceContentsPageRoute _ qargs ->
             let
-                newModel =
+                newPageBody =
                     case model of
-                        SourcePage _ oldModel ->
-                            RecordPage.load recordCfg oldModel
+                        SourcePage _ oldPageBody ->
+                            RecordPage.load recordCfg oldPageBody
 
                         _ ->
                             RecordPage.init recordCfg
 
                 newQparams =
-                    toNextQuery newModel.activeSearch
+                    toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
@@ -155,21 +155,21 @@ changePage url model =
                 sourceUrl =
                     { url | query = Just newQparams }
             in
-            ( SourcePage newSession newModel
+            ( SourcePage newSession newPageBody
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
                 , RecordPage.recordSearchRequest sourceUrl
-                , RecordPage.requestPreviewIfSelected newModel.selectedResult
+                , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
         Route.PersonPageRoute _ ->
             let
-                newModel =
+                newPageBody =
                     case model of
-                        PersonPage _ oldModel ->
-                            RecordPage.load recordCfg oldModel
+                        PersonPage _ oldPageBody ->
+                            RecordPage.load recordCfg oldPageBody
 
                         _ ->
                             RecordPage.init recordCfg
@@ -182,7 +182,7 @@ changePage url model =
                     }
 
                 sourceQuery =
-                    toNextQuery newModel.activeSearch
+                    toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
@@ -190,7 +190,7 @@ changePage url model =
                 sourcesUrl =
                     { url | path = url.path ++ "/sources", query = Just sourceQuery }
             in
-            ( PersonPage newSession newModel
+            ( PersonPage newSession newPageBody
             , Cmd.batch
                 [ RecordPage.recordPageRequest url
                 , RecordPage.recordSearchRequest sourcesUrl
@@ -200,16 +200,16 @@ changePage url model =
 
         Route.PersonSourcePageRoute _ qargs ->
             let
-                newModel =
+                newPageBody =
                     case model of
-                        PersonPage _ oldModel ->
-                            RecordPage.load recordCfg oldModel
+                        PersonPage _ pageBody ->
+                            RecordPage.load recordCfg pageBody
 
                         _ ->
                             RecordPage.init recordCfg
 
                 newQparams =
-                    toNextQuery newModel.activeSearch
+                    toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
@@ -230,21 +230,21 @@ changePage url model =
                 sourceUrl =
                     { url | query = Just newQparams }
             in
-            ( PersonPage newSession newModel
+            ( PersonPage newSession newPageBody
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
                 , RecordPage.recordSearchRequest sourceUrl
-                , RecordPage.requestPreviewIfSelected newModel.selectedResult
+                , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
         Route.InstitutionPageRoute _ ->
             let
-                newModel =
+                newPageBody =
                     case model of
-                        InstitutionPage _ oldModel ->
-                            RecordPage.load recordCfg oldModel
+                        InstitutionPage _ oldPageBody ->
+                            RecordPage.load recordCfg oldPageBody
 
                         _ ->
                             RecordPage.init recordCfg
@@ -257,7 +257,7 @@ changePage url model =
                     }
 
                 sourceQuery =
-                    toNextQuery newModel.activeSearch
+                    toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
@@ -265,7 +265,7 @@ changePage url model =
                 sourcesUrl =
                     { url | path = url.path ++ "/sources", query = Just sourceQuery }
             in
-            ( InstitutionPage newSession newModel
+            ( InstitutionPage newSession newPageBody
             , Cmd.batch
                 [ RecordPage.recordPageRequest url
                 , RecordPage.recordSearchRequest sourcesUrl
@@ -275,16 +275,16 @@ changePage url model =
 
         Route.InstitutionSourcePageRoute _ qargs ->
             let
-                newModel =
+                newPageBody =
                     case model of
-                        InstitutionPage _ oldModel ->
-                            RecordPage.load recordCfg oldModel
+                        InstitutionPage _ oldPageBody ->
+                            RecordPage.load recordCfg oldPageBody
 
                         _ ->
                             RecordPage.init recordCfg
 
                 newQparams =
-                    toNextQuery newModel.activeSearch
+                    toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
@@ -305,11 +305,11 @@ changePage url model =
                 sourceUrl =
                     { url | query = Just newQparams }
             in
-            ( InstitutionPage newSession newModel
+            ( InstitutionPage newSession newPageBody
             , Cmd.batch
                 [ RecordPage.recordPageRequest recordUrl
                 , RecordPage.recordSearchRequest sourceUrl
-                , RecordPage.requestPreviewIfSelected newModel.selectedResult
+                , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
