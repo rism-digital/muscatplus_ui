@@ -1,4 +1,4 @@
-module Page.Record.Views.PlacePage.FullRecordPage exposing (..)
+module Page.Record.Views.PlacePage.FullRecordPage exposing (viewFullPlacePage)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, paddingXY, px, row, spacingXY, width)
 import Element.Background as Background
@@ -33,7 +33,7 @@ viewFullPlacePage session model body =
             [ row
                 [ width fill
                 , alignTop
-                , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
                 , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
                 , Background.color (colourScheme.cream |> convertColorToElementColor)
                 ]

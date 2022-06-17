@@ -1,4 +1,4 @@
-module Device exposing (..)
+module Device exposing (detectDevice, setDevice)
 
 import Element exposing (Device, classifyDevice)
 

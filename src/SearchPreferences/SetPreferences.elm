@@ -1,4 +1,4 @@
-module SearchPreferences.SetPreferences exposing (..)
+module SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 
 
 type SearchPreferenceVariant

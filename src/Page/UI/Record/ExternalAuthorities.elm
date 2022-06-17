@@ -1,4 +1,4 @@
-module Page.UI.Record.ExternalAuthorities exposing (..)
+module Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection, viewExternalAuthority)
 
 import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
@@ -49,6 +49,6 @@ viewExternalAuthority : Language -> ExternalAuthorityBody -> Element msg
 viewExternalAuthority language authority =
     link
         [ linkColour ]
-        { url = authority.url
-        , label = text (extractLabelFromLanguageMap language authority.label)
+        { label = text (extractLabelFromLanguageMap language authority.label)
+        , url = authority.url
         }

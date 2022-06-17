@@ -1,27 +1,12 @@
-module Page.UI.Tooltip exposing (..)
+module Page.UI.Tooltip exposing (facetHelp, helpBubble, tooltip, tooltipStyle)
 
-import Element exposing (Attribute, Element, centerX, centerY, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
+import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes
 import Page.UI.Images exposing (assistanceSvg)
 import Page.UI.Style exposing (colourScheme)
-
-
-tooltipStyle : List (Attribute msg)
-tooltipStyle =
-    [ Background.color (rgb 0 0 0)
-    , Font.color (rgb 1 1 1)
-    , width (shrink |> minimum 120)
-    , padding 12
-    , spacing 5
-
-    --, Border.rounded 5
-    , Font.size 14
-    , Border.shadow
-        { offset = ( 0, 3 ), blur = 6, size = 0, color = rgba 0 0 0 0.32 }
-    ]
 
 
 facetHelp : (Element msg -> Attribute msg) -> String -> Element msg
@@ -54,3 +39,18 @@ tooltip position tooltip_ =
                     tooltip_
             ]
             none
+
+
+tooltipStyle : List (Attribute msg)
+tooltipStyle =
+    [ Background.color (rgb 0 0 0)
+    , Font.color (rgb 1 1 1)
+    , width (shrink |> minimum 120)
+    , padding 12
+    , spacing 5
+
+    --, Border.rounded 5
+    , Font.size 14
+    , Border.shadow
+        { blur = 6, color = rgba 0 0 0 0.32, offset = ( 0, 3 ), size = 0 }
+    ]

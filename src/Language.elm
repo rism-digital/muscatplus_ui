@@ -38,35 +38,136 @@ type Language
     | None
 
 
-type LanguageValues
-    = LanguageValues Language (List String)
-
-
 type alias LanguageMap =
     List LanguageValues
 
 
-setLanguage : Language -> { a | language : Language } -> { a | language : Language }
-setLanguage newValue oldRecord =
-    { oldRecord | language = newValue }
+{-|
+
+    For languagemap replacements the first value is the field name,
+    and the second is the value to replace it with.
+
+-}
+type LanguageMapReplacementVariable
+    = LanguageMapReplacementVariable String String
+
+
+type LanguageValues
+    = LanguageValues Language (List String)
+
+
+dateFormatter : Zone -> Posix -> String
+dateFormatter =
+    DateFormat.format
+        [ DateFormat.monthNameFull
+        , DateFormat.text " "
+        , DateFormat.dayOfMonthSuffix
+        , DateFormat.text ", "
+        , DateFormat.yearNumber
+        ]
+
+
+extractLabelFromLanguageMap : Language -> LanguageMap -> String
+extractLabelFromLanguageMap lang langMap =
+    {-
+       Returns a single string from a language map. Multiple values for a single language are
+       concatenated together with a semicolon.
+    -}
+    String.join "; " (extractTextFromLanguageMap lang langMap)
+
+
+extractTextFromLanguageMap : Language -> LanguageMap -> List String
+extractTextFromLanguageMap lang langMap =
+    {-
+       if there is a language value that matches one in the language map, return the string value of the concatenated list.
+       if there is no language value that matches the language map, but there is a "None" language, return the string value of the concatenated list
+       if there is no language value matching the language map, and there is no None language in the map, return the string value of the concatenated list for English.
+
+       Return a list of the strings, which can either be concatenated together or marked up in paragraphs.
+    -}
+    let
+        firstChoice =
+            langMap
+                |> List.filter (\(LanguageValues l _) -> l == lang)
+                |> List.head
+    in
+    case firstChoice of
+        Just (LanguageValues _ t) ->
+            t
+
+        Nothing ->
+            let
+                fallback =
+                    langMap
+                        |> List.filter (\(LanguageValues l _) -> l == None)
+                        |> List.head
+            in
+            case fallback of
+                Just (LanguageValues _ t) ->
+                    t
+
+                Nothing ->
+                    let
+                        modifiedEnglish =
+                            langMap
+                                |> List.filter (\(LanguageValues l _) -> l == English)
+                                |> List.head
+                    in
+                    case modifiedEnglish of
+                        Just (LanguageValues _ lv) ->
+                            List.map (\t -> t ++ " <Untranslated>") lv
+
+                        Nothing ->
+                            [ "[No language value found]" ]
 
 
 {-|
 
-    A simple list of the language options supported by the site.
+    Formats a number according to a particular regional locale.
+    Returns a string corresponding to the formatted number.
 
 -}
-languageOptions : List ( String, String, Language )
-languageOptions =
-    [ ( "en", "English", English )
-    , ( "de", "Deutsch", German )
-    , ( "fr", "Français", French )
-    , ( "it", "Italiano", Italian )
-    , ( "es", "Español", Spanish )
-    , ( "pt", "Português", Portugese )
-    , ( "pl", "Polskie", Polish )
-    , ( "none", "None", None )
-    ]
+formatNumberByLanguage : Language -> Float -> String
+formatNumberByLanguage lang num =
+    case lang of
+        English ->
+            format englishLocale num
+
+        French ->
+            format frenchLocale num
+
+        German ->
+            format germanLocale num
+
+        Italian ->
+            format italianLocale num
+
+        Portugese ->
+            format portugeseLocale num
+
+        Spanish ->
+            format spanishLocale num
+
+        Polish ->
+            format polishLocale num
+
+        None ->
+            format englishLocale num
+
+
+{-|
+
+    A custom decoder that takes a JSON-LD Language Map and produces a list of
+    LanguageValues Language (List String), representing each of the translations
+    available for this particular field.
+
+-}
+languageMapDecoder : List ( String, List String ) -> Decoder LanguageMap
+languageMapDecoder json =
+    List.foldl
+        (\map maps -> Decode.map2 (::) (languageValuesDecoder map) maps)
+        (Decode.succeed [])
+        json
 
 
 {-|
@@ -99,87 +200,12 @@ parseLocaleToLanguage locale =
         |> Maybe.withDefault English
 
 
-{-|
-
-    Takes a language type and returns the string representation,
-    e.g., "en", "de", etc.
-
--}
-parseLanguageToLocale : Language -> String
-parseLanguageToLocale lang =
-    -- it's unlikely that a language will get passed in that doesn't exist,
-    -- but this will use English as the default language if that ever happens
-    -- creates a new list with just the locale and language type, then filters
-    List.map (\( l, _, s ) -> ( l, s )) languageOptions
-        |> List.filter (\( _, sym ) -> sym == lang)
-        |> List.head
-        |> Maybe.withDefault ( "en", English )
-        |> Tuple.first
-
-
-extractLabelFromLanguageMap : Language -> LanguageMap -> String
-extractLabelFromLanguageMap lang langMap =
-    {-
-       Returns a single string from a language map. Multiple values for a single language are
-       concatenated together with a semicolon.
-    -}
-    String.join "; " (extractTextFromLanguageMap lang langMap)
-
-
-extractTextFromLanguageMap : Language -> LanguageMap -> List String
-extractTextFromLanguageMap lang langMap =
-    {-
-       if there is a language value that matches one in the language map, return the string value of the concatenated list.
-       if there is no language value that matches the language map, but there is a "None" language, return the string value of the concatenated list
-       if there is no language value matching the language map, and there is no None language in the map, return the string value of the concatenated list for English.
-
-       Return a list of the strings, which can either be concatenated together or marked up in paragraphs.
-    -}
-    let
-        firstChoice =
-            langMap
-                |> List.filter (\(LanguageValues l _) -> l == lang)
-                |> List.head
-
-        fallback =
-            langMap
-                |> List.filter (\(LanguageValues l _) -> l == None)
-                |> List.head
-
-        modifiedEnglish =
-            langMap
-                |> List.filter (\(LanguageValues l _) -> l == English)
-                |> List.head
-
-        lastResort =
-            [ "[No language value found]" ]
-    in
-    case firstChoice of
-        Just (LanguageValues _ t) ->
-            t
-
-        Nothing ->
-            case fallback of
-                Just (LanguageValues _ t) ->
-                    t
-
-                Nothing ->
-                    case modifiedEnglish of
-                        Just (LanguageValues _ lv) ->
-                            List.map (\t -> t ++ " <Untranslated>") lv
-
-                        Nothing ->
-                            lastResort
-
-
-{-|
-
-    For languagemap replacements the first value is the field name,
-    and the second is the value to replace it with.
-
--}
-type LanguageMapReplacementVariable
-    = LanguageMapReplacementVariable String String
+englishLocale : Locale
+englishLocale =
+    { base
+        | decimals = Max 2
+        , thousandSeparator = ","
+    }
 
 
 extractLabelFromLanguageMapWithVariables : Language -> List LanguageMapReplacementVariable -> LanguageMap -> String
@@ -213,49 +239,6 @@ extractTextFromLanguageMapWithVariables lang replacements langMap =
     newLangValues
 
 
-languageDecoder : String -> Decoder Language
-languageDecoder locale =
-    Decode.succeed <| parseLocaleToLanguage locale
-
-
-languageValuesDecoder : ( String, List String ) -> Decoder LanguageValues
-languageValuesDecoder ( locale, translations ) =
-    languageDecoder locale
-        |> Decode.map (\lang -> LanguageValues lang translations)
-
-
-{-|
-
-    A custom decoder that takes a JSON-LD Language Map and produces a list of
-    LanguageValues Language (List String), representing each of the translations
-    available for this particular field.
-
--}
-languageMapDecoder : List ( String, List String ) -> Decoder LanguageMap
-languageMapDecoder json =
-    List.foldl
-        (\map maps -> Decode.map2 (::) (languageValuesDecoder map) maps)
-        (Decode.succeed [])
-        json
-
-
-englishLocale : Locale
-englishLocale =
-    { base
-        | decimals = Max 2
-        , thousandSeparator = ","
-    }
-
-
-germanLocale : Locale
-germanLocale =
-    { base
-        | decimals = Max 2
-        , thousandSeparator = "."
-        , decimalSeparator = ","
-    }
-
-
 frenchLocale : Locale
 frenchLocale =
     { base
@@ -265,29 +248,11 @@ frenchLocale =
     }
 
 
-polishLocale : Locale
-polishLocale =
+germanLocale : Locale
+germanLocale =
     { base
-        | decimals = Max 3
-        , thousandSeparator = "\u{202F}"
-        , decimalSeparator = ","
-    }
-
-
-spanishLocale : Locale
-spanishLocale =
-    { base
-        | decimals = Max 3
+        | decimals = Max 2
         , thousandSeparator = "."
-        , decimalSeparator = ","
-    }
-
-
-portugeseLocale : Locale
-portugeseLocale =
-    { base
-        | decimals = Max 3
-        , thousandSeparator = "\u{202F}"
         , decimalSeparator = ","
     }
 
@@ -301,38 +266,74 @@ italianLocale =
     }
 
 
+languageDecoder : String -> Decoder Language
+languageDecoder locale =
+    Decode.succeed <| parseLocaleToLanguage locale
+
+
 {-|
 
-    Formats a number according to a particular regional locale.
-    Returns a string corresponding to the formatted number.
+    A simple list of the language options supported by the site.
 
 -}
-formatNumberByLanguage : Language -> Float -> String
-formatNumberByLanguage lang num =
-    case lang of
-        English ->
-            format englishLocale num
+languageOptions : List ( String, String, Language )
+languageOptions =
+    [ ( "en", "English", English )
+    , ( "de", "Deutsch", German )
+    , ( "fr", "Français", French )
+    , ( "it", "Italiano", Italian )
+    , ( "es", "Español", Spanish )
+    , ( "pt", "Português", Portugese )
+    , ( "pl", "Polskie", Polish )
+    , ( "none", "None", None )
+    ]
 
-        German ->
-            format germanLocale num
 
-        French ->
-            format frenchLocale num
+languageValuesDecoder : ( String, List String ) -> Decoder LanguageValues
+languageValuesDecoder ( locale, translations ) =
+    languageDecoder locale
+        |> Decode.map (\lang -> LanguageValues lang translations)
 
-        Italian ->
-            format italianLocale num
 
-        Spanish ->
-            format spanishLocale num
+{-|
 
-        Portugese ->
-            format portugeseLocale num
+    Takes a language type and returns the string representation,
+    e.g., "en", "de", etc.
 
-        Polish ->
-            format polishLocale num
+-}
+parseLanguageToLocale : Language -> String
+parseLanguageToLocale lang =
+    -- it's unlikely that a language will get passed in that doesn't exist,
+    -- but this will use English as the default language if that ever happens
+    -- creates a new list with just the locale and language type, then filters
+    List.map (\( l, _, s ) -> ( l, s )) languageOptions
+        |> List.filter (\( _, sym ) -> sym == lang)
+        |> List.head
+        |> Maybe.withDefault ( "en", English )
+        |> Tuple.first
 
-        None ->
-            format englishLocale num
+
+polishLocale : Locale
+polishLocale =
+    { base
+        | decimals = Max 3
+        , thousandSeparator = "\u{202F}"
+        , decimalSeparator = ","
+    }
+
+
+portugeseLocale : Locale
+portugeseLocale =
+    { base
+        | decimals = Max 3
+        , thousandSeparator = "\u{202F}"
+        , decimalSeparator = ","
+    }
+
+
+setLanguage : Language -> { a | language : Language } -> { a | language : Language }
+setLanguage newValue oldRecord =
+    { oldRecord | language = newValue }
 
 
 
@@ -340,12 +341,10 @@ formatNumberByLanguage lang num =
 -- TODO: Change this to work with languages
 
 
-dateFormatter : Zone -> Posix -> String
-dateFormatter =
-    DateFormat.format
-        [ DateFormat.monthNameFull
-        , DateFormat.text " "
-        , DateFormat.dayOfMonthSuffix
-        , DateFormat.text ", "
-        , DateFormat.yearNumber
-        ]
+spanishLocale : Locale
+spanishLocale =
+    { base
+        | decimals = Max 3
+        , thousandSeparator = "."
+        , decimalSeparator = ","
+    }

@@ -1,4 +1,4 @@
-module Page.UI.SortAndRows exposing (..)
+module Page.UI.SortAndRows exposing (SortAndRowsConfig, viewRowSelectAndSortSelector, viewSearchPageSort)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, px, row, shrink, spacing, text, width)
@@ -22,27 +22,15 @@ type alias SortAndRowsConfig msg =
     }
 
 
-viewSearchPageSort : SortAndRowsConfig msg -> Response ServerData -> Element msg
-viewSearchPageSort cfg response =
-    case response of
-        Response (SearchData body) ->
-            viewRowSelectAndSortSelector cfg
-
-        Loading (Just (SearchData body)) ->
-            viewRowSelectAndSortSelector cfg
-
-        _ ->
-            none
-
-
 viewRowSelectAndSortSelector : SortAndRowsConfig msg -> Element msg
 viewRowSelectAndSortSelector cfg =
     let
-        sorting =
-            .sorts cfg.body
+        chosenRows =
+            nextQuery.rows
+                |> String.fromInt
 
-        nextQuery =
-            .nextQuery cfg.activeSearch
+        chosenSort =
+            Maybe.withDefault "relevance" nextQuery.sort
 
         listOfLabelsForResultSort =
             List.map
@@ -52,18 +40,17 @@ viewRowSelectAndSortSelector cfg =
         listOfPageSizes =
             List.map (\d -> ( d, d )) (.pageSizes cfg.body)
 
-        chosenSort =
-            Maybe.withDefault "relevance" nextQuery.sort
+        nextQuery =
+            .nextQuery cfg.activeSearch
 
-        chosenRows =
-            nextQuery.rows
-                |> String.fromInt
+        sorting =
+            .sorts cfg.body
     in
     row
         [ alignTop
         , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , width fill
         , height (px 50)
         , paddingXY 10 0
@@ -140,3 +127,16 @@ viewRowSelectAndSortSelector cfg =
                 ]
             ]
         ]
+
+
+viewSearchPageSort : SortAndRowsConfig msg -> Response ServerData -> Element msg
+viewSearchPageSort cfg response =
+    case response of
+        Loading (Just (SearchData _)) ->
+            viewRowSelectAndSortSelector cfg
+
+        Response (SearchData _) ->
+            viewRowSelectAndSortSelector cfg
+
+        _ ->
+            none

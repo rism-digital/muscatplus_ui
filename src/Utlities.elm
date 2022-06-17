@@ -1,4 +1,4 @@
-module Utlities exposing (..)
+module Utlities exposing (choose, convertNodeIdToPath, convertPathToNodeId, filterMap, fromListDedupe, insertDedupe, namedValue, regex, toLinkedHtml)
 
 import Dict exposing (Dict)
 import Element exposing (Element)
@@ -16,31 +16,14 @@ choose predicate isTrue isFalse =
         isFalse
 
 
-insertDedupe : (v -> v -> v) -> comparable -> v -> Dict comparable v -> Dict comparable v
-insertDedupe combine key value dict =
-    let
-        with mbValue =
-            case mbValue of
-                Just oldValue ->
-                    Just <| combine oldValue value
-
-                Nothing ->
-                    Just value
-    in
-    Dict.update key with dict
+convertNodeIdToPath : String -> String
+convertNodeIdToPath nodeId =
+    String.replace "-" "/" nodeId
 
 
-{-|
-
-    Creates a dictionary from a list, de-duplicating any keys
-
--}
-fromListDedupe : (a -> a -> a) -> List ( comparable, a ) -> Dict comparable a
-fromListDedupe combine xs =
-    List.foldl
-        (\( key, value ) acc -> insertDedupe combine key value acc)
-        Dict.empty
-        xs
+convertPathToNodeId : String -> String
+convertPathToNodeId recordPath =
+    String.replace "/" "-" recordPath
 
 
 {-|
@@ -63,29 +46,31 @@ filterMap f dict =
         dict
 
 
-{-| Utility functions to work with html.
+{-|
 
-@docs mapHrefRecursive
-@docs postBodyToVirtualDom
-
-From <https://gist.github.com/panthershark/d6e4fee5b5d07ee500683cd989ae69a8>
-Uses hecrj/html-parser
-parsed an html string, transforms hrefs in links, and converts to vdom which can be used in views.
+    Creates a dictionary from a list, de-duplicating any keys
 
 -}
-toLinkedHtml : String -> Result String (List (Element msg))
-toLinkedHtml htmlString =
-    case Html.Parser.run htmlString of
-        Ok nodes ->
-            let
-                elementList =
-                    toVirtualDom nodes
-                        |> List.map Element.html
-            in
-            Ok elementList
+fromListDedupe : (a -> a -> a) -> List ( comparable, a ) -> Dict comparable a
+fromListDedupe combine xs =
+    List.foldl
+        (\( key, value ) acc -> insertDedupe combine key value acc)
+        Dict.empty
+        xs
 
-        Err _ ->
-            Err "Invalid Html"
+
+insertDedupe : (v -> v -> v) -> comparable -> v -> Dict comparable v -> Dict comparable v
+insertDedupe combine key value dict =
+    let
+        with mbValue =
+            case mbValue of
+                Just oldValue ->
+                    Just <| combine oldValue value
+
+                Nothing ->
+                    Just value
+    in
+    Dict.update key with dict
 
 
 {-| Interpolate a named placeholder
@@ -114,11 +99,26 @@ regex =
         >> Maybe.withDefault Regex.never
 
 
-convertPathToNodeId : String -> String
-convertPathToNodeId recordPath =
-    String.replace "/" "-" recordPath
+{-| Utility functions to work with html.
 
+@docs mapHrefRecursive
+@docs postBodyToVirtualDom
 
-convertNodeIdToPath : String -> String
-convertNodeIdToPath nodeId =
-    String.replace "-" "/" nodeId
+From <https://gist.github.com/panthershark/d6e4fee5b5d07ee500683cd989ae69a8>
+Uses hecrj/html-parser
+parsed an html string, transforms hrefs in links, and converts to vdom which can be used in views.
+
+-}
+toLinkedHtml : String -> Result String (List (Element msg))
+toLinkedHtml htmlString =
+    case Html.Parser.run htmlString of
+        Ok nodes ->
+            let
+                elementList =
+                    toVirtualDom nodes
+                        |> List.map Element.html
+            in
+            Ok elementList
+
+        Err _ ->
+            Err "Invalid Html"

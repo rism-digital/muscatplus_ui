@@ -1,4 +1,4 @@
-module Page.Front.Views exposing (..)
+module Page.Front.Views exposing (view)
 
 import Element exposing (Element, alignLeft, alignTop, column, fill, height, maximum, minimum, none, padding, row, width)
 import Element.Background as Background
@@ -22,34 +22,6 @@ import Session exposing (Session)
 view : Session -> FrontPageModel FrontMsg -> Element FrontMsg
 view session model =
     let
-        maybeBody =
-            case model.response of
-                Response (FrontData body) ->
-                    Just body
-
-                _ ->
-                    Nothing
-
-        -- returns a partially-applied function that can be used in the viewMaybe
-        -- for the body argument
-        searchViewFn =
-            case session.showFrontSearchInterface of
-                SourceSearchOption ->
-                    sourceSearchPanelView session model
-
-                PeopleSearchOption ->
-                    peopleSearchPanelView session model
-
-                InstitutionSearchOption ->
-                    institutionSearchPanelView session model
-
-                IncipitSearchOption ->
-                    incipitSearchPanelView session model
-
-                -- Show a blank page if this is ever the choice; it shouldn't be!
-                LiturgicalFestivalsOption ->
-                    \_ -> none
-
         backgroundImage =
             case session.showFrontSearchInterface of
                 SourceSearchOption ->
@@ -67,10 +39,15 @@ view session model =
                 _ ->
                     emptyAttribute
 
-        -- viewMaybe will be either the searchViewFn, or the `none`
-        -- element if the maybeBody parameter is Nothing.
-        searchPanelView =
-            viewMaybe searchViewFn maybeBody
+        -- returns a partially-applied function that can be used in the viewMaybe
+        -- for the body argument
+        maybeBody =
+            case model.response of
+                Response (FrontData body) ->
+                    Just body
+
+                _ ->
+                    Nothing
 
         searchControlsView =
             viewMaybe
@@ -79,12 +56,35 @@ view session model =
                         { language = session.language
                         , model = model
                         , isFrontPage = True
-                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
                         , submitLabel = localTranslations.showResults
+                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
                         , resetMsg = FrontMsg.UserResetAllFilters
                         }
                 )
                 maybeBody
+
+        -- viewMaybe will be either the searchViewFn, or the `none`
+        -- element if the maybeBody parameter is Nothing.
+        searchPanelView =
+            viewMaybe searchViewFn maybeBody
+
+        searchViewFn =
+            case session.showFrontSearchInterface of
+                SourceSearchOption ->
+                    sourceSearchPanelView session model
+
+                PeopleSearchOption ->
+                    peopleSearchPanelView session model
+
+                InstitutionSearchOption ->
+                    institutionSearchPanelView session model
+
+                IncipitSearchOption ->
+                    incipitSearchPanelView session model
+
+                -- Show a blank page if this is ever the choice; it shouldn't be!
+                LiturgicalFestivalsOption ->
+                    \_ -> none
     in
     row
         [ width fill
@@ -99,12 +99,12 @@ view session model =
             , alignTop
             , Background.color (colourScheme.cream |> convertColorToElementColor)
             , Border.shadow
-                { offset = ( 1, 1 )
-                , size = 1
-                , blur = 10
+                { blur = 10
                 , color =
                     colourScheme.darkGrey
                         |> convertColorToElementColor
+                , offset = ( 1, 1 )
+                , size = 1
                 }
             ]
             [ searchControlsView

@@ -1,4 +1,4 @@
-module Session exposing (..)
+module Session exposing (Session, init)
 
 {-|
 
@@ -47,14 +47,8 @@ type alias Session =
 init : Flags -> Url -> Nav.Key -> Session
 init flags url key =
     let
-        language =
-            parseLocaleToLanguage flags.locale
-
         initialDevice =
             detectDevice flags.windowWidth flags.windowHeight
-
-        route =
-            parseUrl url
 
         initialMode =
             case route of
@@ -64,6 +58,24 @@ init flags url key =
                 _ ->
                     SourceSearchOption
 
+        language =
+            parseLocaleToLanguage flags.locale
+
+        nationalCollectionFilter =
+            if nationalCollectionFromUrl /= Nothing then
+                nationalCollectionFromUrl
+
+            else
+                let
+                    nationalCollectionFromLocalStorage =
+                        flags.nationalCollection
+                in
+                if nationalCollectionFromLocalStorage /= Nothing then
+                    nationalCollectionFromLocalStorage
+
+                else
+                    Nothing
+
         nationalCollectionFromUrl =
             case route of
                 FrontPageRoute qargs ->
@@ -72,18 +84,8 @@ init flags url key =
                 _ ->
                     Nothing
 
-        nationalCollectionFromLocalStorage =
-            flags.nationalCollection
-
-        nationalCollectionFilter =
-            if nationalCollectionFromUrl /= Nothing then
-                nationalCollectionFromUrl
-
-            else if nationalCollectionFromLocalStorage /= Nothing then
-                nationalCollectionFromLocalStorage
-
-            else
-                Nothing
+        route =
+            parseUrl url
     in
     { key = key
     , language = language

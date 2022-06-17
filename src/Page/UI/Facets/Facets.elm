@@ -1,4 +1,4 @@
-module Page.UI.Facets.Facets exposing (..)
+module Page.UI.Facets.Facets exposing (FacetConfig, FacetMsgConfig, viewFacet, viewFacetSection)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
@@ -18,6 +18,15 @@ import Page.UI.Images exposing (chevronDownSvg)
 import Page.UI.Style exposing (colourScheme)
 
 
+type alias FacetConfig a msg =
+    { alias : FacetAlias
+    , language : Language
+    , activeSearch : ActiveSearch msg
+    , selectColumns : Int
+    , body : { a | facets : Facets }
+    }
+
+
 type alias FacetMsgConfig msg =
     { userClickedToggleMsg : FacetAlias -> msg
     , userLostFocusRangeMsg : FacetAlias -> msg
@@ -32,15 +41,6 @@ type alias FacetMsgConfig msg =
     , userEnteredTextQueryMsg : FacetAlias -> String -> String -> msg
     , userChangedBehaviourQueryMsg : FacetAlias -> FacetBehaviours -> msg
     , userChoseOptionQueryMsg : FacetAlias -> String -> FacetBehaviours -> msg
-    }
-
-
-type alias FacetConfig a msg =
-    { alias : FacetAlias
-    , language : Language
-    , activeSearch : ActiveSearch msg
-    , selectColumns : Int
-    , body : { a | facets : Facets }
     }
 
 
@@ -67,11 +67,11 @@ viewFacet cfg msg =
                 rangeFacetConfig : RangeFacetConfig msg
                 rangeFacetConfig =
                     { language = cfg.language
-                    , activeSearch = cfg.activeSearch
                     , rangeFacet = facet
-                    , userEnteredTextMsg = msg.userEnteredTextRangeMsg
-                    , userFocusedMsg = msg.userFocusedRangeMsg
+                    , activeSearch = cfg.activeSearch
                     , userLostFocusMsg = msg.userLostFocusRangeMsg
+                    , userFocusedMsg = msg.userFocusedRangeMsg
+                    , userEnteredTextMsg = msg.userEnteredTextRangeMsg
                     }
             in
             viewRangeFacet rangeFacetConfig
@@ -81,8 +81,8 @@ viewFacet cfg msg =
                 selectFacetConfig : SelectFacetConfig msg
                 selectFacetConfig =
                     { language = cfg.language
-                    , activeSearch = cfg.activeSearch
                     , selectFacet = facet
+                    , activeSearch = cfg.activeSearch
                     , numberOfColumns = cfg.selectColumns
                     , userClickedFacetExpandMsg = msg.userClickedFacetExpandSelectMsg
                     , userChangedFacetBehaviourMsg = msg.userChangedFacetBehaviourSelectMsg
@@ -114,8 +114,8 @@ viewFacet cfg msg =
                 queryFacetConfig : QueryFacetConfig msg
                 queryFacetConfig =
                     { language = cfg.language
-                    , queryFacet = facet
                     , activeSearch = cfg.activeSearch
+                    , queryFacet = facet
                     , userRemovedMsg = msg.userRemovedQueryMsg
                     , userEnteredTextMsg = msg.userEnteredTextQueryMsg
                     , userChangedBehaviourMsg = msg.userChangedBehaviourQueryMsg
@@ -143,11 +143,10 @@ viewFacetSection language clickMsg facets =
 
     else
         row
-            ([ width fill
-             , height fill
-             , alignTop
-             ]
-                ++ facetBorderBottom
+            (width fill
+                :: height fill
+                :: alignTop
+                :: facetBorderBottom
             )
             [ column
                 [ spacing lineSpacing

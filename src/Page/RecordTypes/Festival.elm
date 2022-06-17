@@ -1,4 +1,4 @@
-module Page.RecordTypes.Festival exposing (..)
+module Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (optional, required)

@@ -43,6 +43,19 @@ import Url.Parser.Query as Q
 import Utlities exposing (fromListDedupe)
 
 
+{-|
+
+    A subset of the query args that are supported for the front page
+    request. This is primarily to allow for a link to the initial page mode
+    and national collections.
+
+-}
+type alias FrontQueryArgs =
+    { mode : ResultMode
+    , nationalCollection : Maybe String
+    }
+
+
 type alias QueryArgs =
     { keywordQuery : Maybe String
     , filters : Dict FacetAlias (List String)
@@ -58,124 +71,87 @@ type alias QueryArgs =
 
 {-|
 
-    A subset of the query args that are supported for the front page
-    request. This is primarily to allow for a link to the initial page mode
-    and national collections.
+    Converts our application's QueryArgs to a set of QueryParameters
+    suitable for Elm's internal URL handling.
 
 -}
-type alias FrontQueryArgs =
-    { mode : ResultMode
-    , nationalCollection : Maybe String
-    }
-
-
-frontQueryArgsToQueryArgs : FrontQueryArgs -> QueryArgs
-frontQueryArgsToQueryArgs frontQuery =
+buildQueryParameters : QueryArgs -> List QueryParameter
+buildQueryParameters queryArgs =
     let
-        initialQueryArgs =
-            defaultQueryArgs
+        fbParams =
+            Dict.toList queryArgs.facetBehaviours
+                |> List.map
+                    (\( alias, facetBehaviour ) ->
+                        (alias ++ ":" ++ parseFacetBehaviourToString facetBehaviour)
+                            |> Url.Builder.string "fb"
+                    )
+
+        fqParams =
+            Dict.toList queryArgs.filters
+                |> List.concatMap
+                    (\( alias, filts ) ->
+                        let
+                            allFilts =
+                                List.filterMap (\s -> createPrefixedField s) filts
+
+                            createPrefixedField val =
+                                if String.isEmpty val then
+                                    Nothing
+
+                                else
+                                    Just (alias ++ ":" ++ val)
+                        in
+                        List.map (Url.Builder.string "fq") allFilts
+                    )
+
+        fsParams =
+            Dict.toList queryArgs.facetSorts
+                |> List.map
+                    (\( alias, sort ) ->
+                        (alias ++ ":" ++ parseFacetSortToString sort)
+                            |> Url.Builder.string "fs"
+                    )
+
+        modeParam =
+            [ Url.Builder.string "mode" <|
+                parseResultModeToString queryArgs.mode
+            ]
+
+        ncParam =
+            case queryArgs.nationalCollection of
+                Just countryPrefix ->
+                    [ Url.Builder.string "nc" countryPrefix ]
+
+                Nothing ->
+                    []
+
+        pageParam =
+            [ String.fromInt queryArgs.page
+                |> Url.Builder.string "page"
+            ]
+
+        qParam =
+            case queryArgs.keywordQuery of
+                Just q ->
+                    [ Url.Builder.string "q" q ]
+
+                Nothing ->
+                    []
+
+        rowsParam =
+            [ String.fromInt queryArgs.rows
+                |> Url.Builder.string "rows"
+            ]
+
+        sortParam =
+            case queryArgs.sort of
+                Just s ->
+                    [ Url.Builder.string "sort" s ]
+
+                Nothing ->
+                    []
     in
-    { initialQueryArgs
-        | mode = frontQuery.mode
-        , nationalCollection = frontQuery.nationalCollection
-    }
-
-
-toNextQuery : { a | nextQuery : QueryArgs } -> QueryArgs
-toNextQuery activeSearch =
-    activeSearch.nextQuery
-
-
-setNextQuery : QueryArgs -> { a | nextQuery : QueryArgs } -> { a | nextQuery : QueryArgs }
-setNextQuery newQuery oldRecord =
-    { oldRecord | nextQuery = newQuery }
-
-
-toMode : { a | mode : ResultMode } -> ResultMode
-toMode queryArgs =
-    queryArgs.mode
-
-
-toFilters : { a | filters : Dict FacetAlias (List String) } -> Dict FacetAlias (List String)
-toFilters queryArgs =
-    queryArgs.filters
-
-
-setFilters : Dict FacetAlias (List String) -> { a | filters : Dict FacetAlias (List String) } -> { a | filters : Dict FacetAlias (List String) }
-setFilters newFilters oldRecord =
-    { oldRecord | filters = newFilters }
-
-
-setMode : ResultMode -> { a | mode : ResultMode } -> { a | mode : ResultMode }
-setMode newMode oldRecord =
-    { oldRecord | mode = newMode }
-
-
-toKeywordQuery : { a | keywordQuery : Maybe String } -> Maybe String
-toKeywordQuery qargs =
-    qargs.keywordQuery
-
-
-setKeywordQuery : Maybe String -> { a | keywordQuery : Maybe String } -> { a | keywordQuery : Maybe String }
-setKeywordQuery newQuery oldRecord =
-    { oldRecord | keywordQuery = newQuery }
-
-
-setSort : Maybe String -> { a | sort : Maybe String } -> { a | sort : Maybe String }
-setSort newSort oldRecord =
-    { oldRecord | sort = newSort }
-
-
-setRows : Int -> { a | rows : Int } -> { a | rows : Int }
-setRows newRows oldRecord =
-    { oldRecord | rows = newRows }
-
-
-setPage : Int -> { a | page : Int } -> { a | page : Int }
-setPage pageNum oldRecord =
-    -- ensure the page number is 1 or greater
-    if pageNum < 1 then
-        { oldRecord | page = 1 }
-
-    else
-        { oldRecord | page = pageNum }
-
-
-toNationalCollection : { a | nationalCollection : Maybe String } -> Maybe String
-toNationalCollection qargs =
-    qargs.nationalCollection
-
-
-setNationalCollection : Maybe String -> { a | nationalCollection : Maybe String } -> { a | nationalCollection : Maybe String }
-setNationalCollection newValue oldRecord =
-    { oldRecord | nationalCollection = newValue }
-
-
-toFacetBehaviours : { a | facetBehaviours : Dict FacetAlias FacetBehaviours } -> Dict FacetAlias FacetBehaviours
-toFacetBehaviours query =
-    query.facetBehaviours
-
-
-setFacetBehaviours : Dict FacetAlias FacetBehaviours -> { a | facetBehaviours : Dict FacetAlias FacetBehaviours } -> { a | facetBehaviours : Dict FacetAlias FacetBehaviours }
-setFacetBehaviours newBehaviours oldRecord =
-    { oldRecord | facetBehaviours = newBehaviours }
-
-
-toFacetSorts : { a | facetSorts : Dict FacetAlias FacetSorts } -> Dict FacetAlias FacetSorts
-toFacetSorts query =
-    query.facetSorts
-
-
-setFacetSorts : Dict FacetAlias FacetSorts -> { a | facetSorts : Dict FacetAlias FacetSorts } -> { a | facetSorts : Dict FacetAlias FacetSorts }
-setFacetSorts newValues oldRecord =
-    { oldRecord | facetSorts = newValues }
-
-
-{-| Resets the page number to the first page.
--}
-resetPage : { a | page : Int } -> { a | page : Int }
-resetPage oldRecord =
-    setPage 1 oldRecord
+    List.concat [ qParam, ncParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam, rowsParam ]
 
 
 defaultQueryArgs : QueryArgs
@@ -192,89 +168,22 @@ defaultQueryArgs =
     }
 
 
-{-|
-
-    Converts our application's QueryArgs to a set of QueryParameters
-    suitable for Elm's internal URL handling.
-
--}
-buildQueryParameters : QueryArgs -> List QueryParameter
-buildQueryParameters queryArgs =
+frontQueryArgsToQueryArgs : FrontQueryArgs -> QueryArgs
+frontQueryArgsToQueryArgs frontQuery =
     let
-        qParam =
-            case queryArgs.keywordQuery of
-                Just q ->
-                    [ Url.Builder.string "q" q ]
-
-                Nothing ->
-                    []
-
-        modeParam =
-            [ Url.Builder.string "mode" <|
-                parseResultModeToString queryArgs.mode
-            ]
-
-        ncParam =
-            case queryArgs.nationalCollection of
-                Just countryPrefix ->
-                    [ Url.Builder.string "nc" countryPrefix ]
-
-                Nothing ->
-                    []
-
-        fqParams =
-            Dict.toList queryArgs.filters
-                |> List.concatMap
-                    (\( alias, filts ) ->
-                        let
-                            createPrefixedField val =
-                                if String.isEmpty val then
-                                    Nothing
-
-                                else
-                                    Just (alias ++ ":" ++ val)
-
-                            allFilts =
-                                List.filterMap (\s -> createPrefixedField s) filts
-                        in
-                        List.map (Url.Builder.string "fq") allFilts
-                    )
-
-        fbParams =
-            Dict.toList queryArgs.facetBehaviours
-                |> List.map
-                    (\( alias, facetBehaviour ) ->
-                        (alias ++ ":" ++ parseFacetBehaviourToString facetBehaviour)
-                            |> Url.Builder.string "fb"
-                    )
-
-        fsParams =
-            Dict.toList queryArgs.facetSorts
-                |> List.map
-                    (\( alias, sort ) ->
-                        (alias ++ ":" ++ parseFacetSortToString sort)
-                            |> Url.Builder.string "fs"
-                    )
-
-        pageParam =
-            [ String.fromInt queryArgs.page
-                |> Url.Builder.string "page"
-            ]
-
-        sortParam =
-            case queryArgs.sort of
-                Just s ->
-                    [ Url.Builder.string "sort" s ]
-
-                Nothing ->
-                    []
-
-        rowsParam =
-            [ String.fromInt queryArgs.rows
-                |> Url.Builder.string "rows"
-            ]
+        initialQueryArgs =
+            defaultQueryArgs
     in
-    List.concat [ qParam, ncParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam, rowsParam ]
+    { initialQueryArgs
+        | mode = frontQuery.mode
+        , nationalCollection = frontQuery.nationalCollection
+    }
+
+
+frontQueryParamsParser : Q.Parser FrontQueryArgs
+frontQueryParamsParser =
+    Q.map FrontQueryArgs modeParamParser
+        |> apply (Q.string "nc")
 
 
 queryParamsParser : Q.Parser QueryArgs
@@ -292,20 +201,86 @@ queryParamsParser =
         |> apply fsParamParser
 
 
-frontQueryParamsParser : Q.Parser FrontQueryArgs
-frontQueryParamsParser =
-    Q.map FrontQueryArgs modeParamParser
-        |> apply (Q.string "nc")
+{-| Resets the page number to the first page.
+-}
+resetPage : { a | page : Int } -> { a | page : Int }
+resetPage oldRecord =
+    setPage 1 oldRecord
 
 
-fqParamParser : Q.Parser (Dict FacetAlias (List String))
-fqParamParser =
-    Q.custom "fq" (\a -> filterQueryStringToFilter a)
+setFacetBehaviours : Dict FacetAlias FacetBehaviours -> { a | facetBehaviours : Dict FacetAlias FacetBehaviours } -> { a | facetBehaviours : Dict FacetAlias FacetBehaviours }
+setFacetBehaviours newBehaviours oldRecord =
+    { oldRecord | facetBehaviours = newBehaviours }
 
 
-fbParamParser : Q.Parser (Dict FacetAlias FacetBehaviours)
-fbParamParser =
-    Q.custom "fb" (\a -> facetBehaviourQueryStringToBehaviour a)
+setFacetSorts : Dict FacetAlias FacetSorts -> { a | facetSorts : Dict FacetAlias FacetSorts } -> { a | facetSorts : Dict FacetAlias FacetSorts }
+setFacetSorts newValues oldRecord =
+    { oldRecord | facetSorts = newValues }
+
+
+setFilters : Dict FacetAlias (List String) -> { a | filters : Dict FacetAlias (List String) } -> { a | filters : Dict FacetAlias (List String) }
+setFilters newFilters oldRecord =
+    { oldRecord | filters = newFilters }
+
+
+setKeywordQuery : Maybe String -> { a | keywordQuery : Maybe String } -> { a | keywordQuery : Maybe String }
+setKeywordQuery newQuery oldRecord =
+    { oldRecord | keywordQuery = newQuery }
+
+
+setMode : ResultMode -> { a | mode : ResultMode } -> { a | mode : ResultMode }
+setMode newMode oldRecord =
+    { oldRecord | mode = newMode }
+
+
+setNationalCollection : Maybe String -> { a | nationalCollection : Maybe String } -> { a | nationalCollection : Maybe String }
+setNationalCollection newValue oldRecord =
+    { oldRecord | nationalCollection = newValue }
+
+
+setNextQuery : QueryArgs -> { a | nextQuery : QueryArgs } -> { a | nextQuery : QueryArgs }
+setNextQuery newQuery oldRecord =
+    { oldRecord | nextQuery = newQuery }
+
+
+setRows : Int -> { a | rows : Int } -> { a | rows : Int }
+setRows newRows oldRecord =
+    { oldRecord | rows = newRows }
+
+
+setSort : Maybe String -> { a | sort : Maybe String } -> { a | sort : Maybe String }
+setSort newSort oldRecord =
+    { oldRecord | sort = newSort }
+
+
+toFacetBehaviours : { a | facetBehaviours : Dict FacetAlias FacetBehaviours } -> Dict FacetAlias FacetBehaviours
+toFacetBehaviours query =
+    query.facetBehaviours
+
+
+toFacetSorts : { a | facetSorts : Dict FacetAlias FacetSorts } -> Dict FacetAlias FacetSorts
+toFacetSorts query =
+    query.facetSorts
+
+
+toFilters : { a | filters : Dict FacetAlias (List String) } -> Dict FacetAlias (List String)
+toFilters queryArgs =
+    queryArgs.filters
+
+
+toKeywordQuery : { a | keywordQuery : Maybe String } -> Maybe String
+toKeywordQuery qargs =
+    qargs.keywordQuery
+
+
+toMode : { a | mode : ResultMode } -> ResultMode
+toMode queryArgs =
+    queryArgs.mode
+
+
+toNextQuery : { a | nextQuery : QueryArgs } -> QueryArgs
+toNextQuery activeSearch =
+    activeSearch.nextQuery
 
 
 facetBehaviourQueryStringToBehaviour : List String -> Dict FacetAlias FacetBehaviours
@@ -320,11 +295,6 @@ facetBehaviourQueryStringToBehaviour fbList =
             )
 
 
-fsParamParser : Q.Parser (Dict String FacetSorts)
-fsParamParser =
-    Q.custom "fs" (\a -> facetSortQueryStringToFacetSort a)
-
-
 facetSortQueryStringToFacetSort : List String -> Dict String FacetSorts
 facetSortQueryStringToFacetSort fsList =
     List.filterMap stringSplitToList fsList
@@ -337,9 +307,9 @@ facetSortQueryStringToFacetSort fsList =
             )
 
 
-modeParamParser : Q.Parser ResultMode
-modeParamParser =
-    Q.custom "mode" (\a -> modeQueryStringToResultMode a)
+fbParamParser : Q.Parser (Dict FacetAlias FacetBehaviours)
+fbParamParser =
+    Q.custom "fb" (\a -> facetBehaviourQueryStringToBehaviour a)
 
 
 filterQueryStringToFilter : List String -> Dict FacetAlias (List String)
@@ -350,14 +320,19 @@ filterQueryStringToFilter fqList =
         |> fromListDedupe (\a b -> List.append a b)
 
 
-stringSplitToList : String -> Maybe ( String, List String )
-stringSplitToList str =
-    case String.split ":" str of
-        alias :: values ->
-            Just ( alias, values )
+fqParamParser : Q.Parser (Dict FacetAlias (List String))
+fqParamParser =
+    Q.custom "fq" (\a -> filterQueryStringToFilter a)
 
-        _ ->
-            Nothing
+
+fsParamParser : Q.Parser (Dict String FacetSorts)
+fsParamParser =
+    Q.custom "fs" (\a -> facetSortQueryStringToFacetSort a)
+
+
+modeParamParser : Q.Parser ResultMode
+modeParamParser =
+    Q.custom "mode" (\a -> modeQueryStringToResultMode a)
 
 
 modeQueryStringToResultMode : List String -> ResultMode
@@ -391,3 +366,28 @@ rowsParamParser =
 
                 _ ->
                     C.defaultRows
+
+
+setPage : Int -> { a | page : Int } -> { a | page : Int }
+setPage pageNum oldRecord =
+    -- ensure the page number is 1 or greater
+    if pageNum < 1 then
+        { oldRecord | page = 1 }
+
+    else
+        { oldRecord | page = pageNum }
+
+
+stringSplitToList : String -> Maybe ( String, List String )
+stringSplitToList str =
+    case String.split ":" str of
+        alias :: values ->
+            Just ( alias, values )
+
+        _ ->
+            Nothing
+
+
+toNationalCollection : { a | nationalCollection : Maybe String } -> Maybe String
+toNationalCollection qargs =
+    qargs.nationalCollection

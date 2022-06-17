@@ -1,4 +1,4 @@
-module Page.UI.Record.MaterialGroupsSection exposing (..)
+module Page.UI.Record.MaterialGroupsSection exposing (viewExternalResourcesSection, viewMaterialGroup, viewMaterialGroupRelationships, viewMaterialGroupsSection)
 
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, textColumn, width, wrappedRow)
 import Language exposing (Language)
@@ -13,13 +13,25 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
-viewMaterialGroupsSection : Language -> MaterialGroupsSectionBody -> Element msg
-viewMaterialGroupsSection language mgSection =
-    let
-        sectionBody =
-            List.map (\l -> viewMaterialGroup language l) mgSection.items
-    in
-    sectionTemplate language mgSection sectionBody
+viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
+viewExternalResourcesSection language linkSection =
+    fieldValueWrapper
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language linkSection.label ]
+            , column
+                valueFieldColumnAttributes
+                [ textColumn
+                    [ spacing lineSpacing ]
+                    (List.map (\l -> viewExternalResource language l) linkSection.items)
+                ]
+            ]
+        ]
 
 
 viewMaterialGroup : Language -> MaterialGroupBody -> Element msg
@@ -63,22 +75,10 @@ viewMaterialGroupRelationships language relSection =
         ]
 
 
-viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
-viewExternalResourcesSection language linkSection =
-    fieldValueWrapper
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language linkSection.label ]
-            , column
-                valueFieldColumnAttributes
-                [ textColumn
-                    [ spacing lineSpacing ]
-                    (List.map (\l -> viewExternalResource language l) linkSection.items)
-                ]
-            ]
-        ]
+viewMaterialGroupsSection : Language -> MaterialGroupsSectionBody -> Element msg
+viewMaterialGroupsSection language mgSection =
+    let
+        sectionBody =
+            List.map (\l -> viewMaterialGroup language l) mgSection.items
+    in
+    sectionTemplate language mgSection sectionBody

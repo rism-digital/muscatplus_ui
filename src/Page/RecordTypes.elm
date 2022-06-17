@@ -1,4 +1,4 @@
-module Page.RecordTypes exposing (..)
+module Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType, recordTypeOptions)
 
 
 type RecordType
@@ -12,6 +12,14 @@ type RecordType
     | Unknown
 
 
+recordTypeFromJsonType : String -> RecordType
+recordTypeFromJsonType jsonType =
+    List.filter (\( str, _ ) -> str == jsonType) recordTypeOptions
+        |> List.head
+        |> Maybe.withDefault ( "", Unknown )
+        |> Tuple.second
+
+
 recordTypeOptions : List ( String, RecordType )
 recordTypeOptions =
     [ ( "rism:Source", Source )
@@ -22,11 +30,3 @@ recordTypeOptions =
     , ( "Collection", CollectionSearchResult )
     , ( "rism:Front", Front )
     ]
-
-
-recordTypeFromJsonType : String -> RecordType
-recordTypeFromJsonType jsonType =
-    List.filter (\( str, _ ) -> str == jsonType) recordTypeOptions
-        |> List.head
-        |> Maybe.withDefault ( "", Unknown )
-        |> Tuple.second

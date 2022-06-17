@@ -1,4 +1,8 @@
-module Page.Record.Views.InstitutionPage.LocationSection exposing (..)
+module Page.Record.Views.InstitutionPage.LocationSection exposing
+    ( viewEmailAddress
+    , viewLocationAddressSection
+    , viewWebsiteAddress
+    )
 
 import Element exposing (Element, alignTop, column, fill, height, link, paddingXY, row, spacing, text, width, wrappedRow)
 import Language exposing (Language)
@@ -7,6 +11,29 @@ import Page.RecordTypes.Shared exposing (LabelStringValue)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+
+
+viewEmailAddress : Language -> LabelStringValue -> Element msg
+viewEmailAddress language emailAddress =
+    fieldValueWrapper
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language emailAddress.label ]
+            , column
+                valueFieldColumnAttributes
+                [ link
+                    [ linkColour ]
+                    { label = text emailAddress.value
+                    , url = "mailto:" ++ emailAddress.value
+                    }
+                ]
+            ]
+        ]
 
 
 viewLocationAddressSection : Language -> LocationAddressSectionBody -> Element msg
@@ -26,11 +53,10 @@ viewLocationAddressSection language body =
                 [ width fill ]
                 [ h2 language body.label ]
             , row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
                 )
                 [ column
                     [ width fill
@@ -62,31 +88,8 @@ viewWebsiteAddress language websiteAddress =
                 valueFieldColumnAttributes
                 [ link
                     [ linkColour ]
-                    { url = websiteAddress.value
-                    , label = text websiteAddress.value
-                    }
-                ]
-            ]
-        ]
-
-
-viewEmailAddress : Language -> LabelStringValue -> Element msg
-viewEmailAddress language emailAddress =
-    fieldValueWrapper
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language emailAddress.label ]
-            , column
-                valueFieldColumnAttributes
-                [ link
-                    [ linkColour ]
-                    { url = "mailto:" ++ emailAddress.value
-                    , label = text emailAddress.value
+                    { label = text websiteAddress.value
+                    , url = websiteAddress.value
                     }
                 ]
             ]

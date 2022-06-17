@@ -1,4 +1,4 @@
-module Page.UI.Facets.NotationFacet exposing (..)
+module Page.UI.Facets.NotationFacet exposing (NotationFacetConfig, viewKeyboardControl)
 
 import Element exposing (Element, alignLeft, fill, row, width)
 import Language exposing (Language)

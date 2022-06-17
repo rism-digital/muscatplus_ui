@@ -1,25 +1,27 @@
-module Page.RecordTypes.Incipit exposing (..)
+module Page.RecordTypes.Incipit exposing
+    ( EncodedIncipit(..)
+    , EncodingData
+    , EncodingFormat(..)
+    , IncipitBody
+    , IncipitFormat(..)
+    , IncipitParentSourceBody
+    , IncipitValidationBody
+    , RenderedIncipit(..)
+    , encodedIncipitDecoder
+    , incipitBodyDecoder
+    , incipitEncodingDataDecoder
+    , incipitEncodingDecoder
+    , incipitFormatDecoder
+    , incipitParentSourceBodyDecoder
+    , incipitValidationBodyDecoder
+    , renderedIncipitDecoder
+    )
 
 import Json.Decode as Decode exposing (Decoder, bool, list, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
-
-
-type IncipitFormat
-    = RenderedSVG
-    | RenderedMIDI
-    | UnknownFormat
-
-
-type EncodingFormat
-    = PAEEncoding
-    | MEIEncoding
-
-
-type RenderedIncipit
-    = RenderedIncipit IncipitFormat String
 
 
 type EncodedIncipit
@@ -35,10 +37,9 @@ type alias EncodingData =
     }
 
 
-type alias IncipitValidationBody =
-    { isValid : Bool
-    , messages : Maybe (List LanguageMap)
-    }
+type EncodingFormat
+    = PAEEncoding
+    | MEIEncoding
 
 
 type alias IncipitBody =
@@ -51,10 +52,34 @@ type alias IncipitBody =
     }
 
 
+type IncipitFormat
+    = RenderedSVG
+    | RenderedMIDI
+    | UnknownFormat
+
+
 type alias IncipitParentSourceBody =
     { label : LanguageMap
     , source : BasicSourceBody
     }
+
+
+type alias IncipitValidationBody =
+    { isValid : Bool
+    , messages : Maybe (List LanguageMap)
+    }
+
+
+type RenderedIncipit
+    = RenderedIncipit IncipitFormat String
+
+
+encodedIncipitDecoder : Decoder EncodedIncipit
+encodedIncipitDecoder =
+    Decode.succeed EncodedIncipit
+        |> required "label" languageMapLabelDecoder
+        |> required "format" incipitEncodingDecoder
+        |> required "data" incipitEncodingDataDecoder
 
 
 incipitBodyDecoder : Decoder IncipitBody
@@ -68,47 +93,19 @@ incipitBodyDecoder =
         |> optional "encodings" (Decode.maybe (list encodedIncipitDecoder)) Nothing
 
 
-incipitParentSourceBodyDecoder : Decoder IncipitParentSourceBody
-incipitParentSourceBodyDecoder =
-    Decode.succeed IncipitParentSourceBody
-        |> required "label" languageMapLabelDecoder
-        |> required "source" basicSourceBodyDecoder
-
-
-incipitFormatDecoder : Decoder IncipitFormat
-incipitFormatDecoder =
-    Decode.string
-        |> Decode.andThen
-            (\mimetype ->
-                case mimetype of
-                    "audio/midi" ->
-                        Decode.succeed RenderedMIDI
-
-                    "image/svg+xml" ->
-                        Decode.succeed RenderedSVG
-
-                    _ ->
-                        Decode.succeed UnknownFormat
-            )
-
-
-renderedIncipitDecoder : Decoder RenderedIncipit
-renderedIncipitDecoder =
-    Decode.succeed RenderedIncipit
-        |> required "format" incipitFormatDecoder
+incipitEncodingDataDecoder : Decoder EncodingData
+incipitEncodingDataDecoder =
+    Decode.succeed EncodingData
+        |> optional "clef" (Decode.maybe string) Nothing
+        |> optional "keysig" (Decode.maybe string) Nothing
+        |> optional "timesig" (Decode.maybe string) Nothing
+        |> optional "key" (Decode.maybe string) Nothing
         |> required "data" string
-
-
-incipitValidationBodyDecoder : Decoder IncipitValidationBody
-incipitValidationBodyDecoder =
-    Decode.succeed IncipitValidationBody
-        |> required "valid" bool
-        |> optional "messages" (Decode.maybe (Decode.list languageMapLabelDecoder)) Nothing
 
 
 incipitEncodingDecoder : Decoder EncodingFormat
 incipitEncodingDecoder =
-    Decode.string
+    string
         |> Decode.andThen
             (\mimetype ->
                 case mimetype of
@@ -123,19 +120,39 @@ incipitEncodingDecoder =
             )
 
 
-incipitEncodingDataDecoder : Decoder EncodingData
-incipitEncodingDataDecoder =
-    Decode.succeed EncodingData
-        |> optional "clef" (Decode.maybe string) Nothing
-        |> optional "keysig" (Decode.maybe string) Nothing
-        |> optional "timesig" (Decode.maybe string) Nothing
-        |> optional "key" (Decode.maybe string) Nothing
-        |> required "data" string
+incipitFormatDecoder : Decoder IncipitFormat
+incipitFormatDecoder =
+    string
+        |> Decode.andThen
+            (\mimetype ->
+                case mimetype of
+                    "audio/midi" ->
+                        Decode.succeed RenderedMIDI
+
+                    "image/svg+xml" ->
+                        Decode.succeed RenderedSVG
+
+                    _ ->
+                        Decode.succeed UnknownFormat
+            )
 
 
-encodedIncipitDecoder : Decoder EncodedIncipit
-encodedIncipitDecoder =
-    Decode.succeed EncodedIncipit
+incipitParentSourceBodyDecoder : Decoder IncipitParentSourceBody
+incipitParentSourceBodyDecoder =
+    Decode.succeed IncipitParentSourceBody
         |> required "label" languageMapLabelDecoder
-        |> required "format" incipitEncodingDecoder
-        |> required "data" incipitEncodingDataDecoder
+        |> required "source" basicSourceBodyDecoder
+
+
+incipitValidationBodyDecoder : Decoder IncipitValidationBody
+incipitValidationBodyDecoder =
+    Decode.succeed IncipitValidationBody
+        |> required "valid" bool
+        |> optional "messages" (Decode.maybe (list languageMapLabelDecoder)) Nothing
+
+
+renderedIncipitDecoder : Decoder RenderedIncipit
+renderedIncipitDecoder =
+    Decode.succeed RenderedIncipit
+        |> required "format" incipitFormatDecoder
+        |> required "data" string

@@ -1,4 +1,4 @@
-module Page.NotFound.Msg exposing (..)
+module Page.NotFound.Msg exposing (NotFoundMsg(..))
 
 import Http
 import Http.Detailed

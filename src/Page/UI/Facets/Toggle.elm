@@ -1,11 +1,11 @@
-module Page.UI.Facets.Toggle exposing (render, setLabel, view)
+module Page.UI.Facets.Toggle exposing (Toggle, render, setLabel, view)
 
 {-
    Taken from https://github.com/bluedogtraining/bdt-elm/blob/master/src/Toggle/Css.elm
    and https://github.com/bluedogtraining/bdt-elm/blob/master/src/Toggle.elm
 -}
 
-import Css exposing (..)
+import Css exposing (Color, absolute, after, alignItems, backgroundColor, before, block, border3, borderBox, borderRadius, bottom, boxShadow4, boxSizing, center, cursor, display, height, hex, inlineBlock, inlineFlex, left, marginLeft, notAllowed, pointer, position, property, px, relative, rem, rgb, rgba, right, solid, top, width)
 import Css.Transitions as Transitions exposing (transition)
 import Element exposing (Element)
 import Html.Styled exposing (..)
@@ -15,57 +15,6 @@ import Html.Styled.Events exposing (onClick)
 
 type Toggle msg
     = Toggle (Config msg)
-
-
-type alias Config msg =
-    { isError : Bool
-    , isDisabled : Bool
-    , label : String
-    , isToggled : Bool
-    , toggleMsg : msg
-    }
-
-
-initialConfig : Bool -> msg -> Config msg
-initialConfig toggled toggleMsg =
-    { isError = False
-    , isDisabled = False
-    , label = ""
-    , isToggled = toggled
-    , toggleMsg = toggleMsg
-    }
-
-
-
--- VIEW / SETTERS --
-
-
-{-| Init a toggle
--}
-view : Bool -> msg -> Toggle msg
-view toggled msg =
-    Toggle (initialConfig toggled msg)
-
-
-{-| Display as loading, removing the click Msg
--}
-setIsError : Bool -> Toggle msg -> Toggle msg
-setIsError isError_ (Toggle config) =
-    Toggle { config | isError = isError_ }
-
-
-{-| Display as disabled, removing the click Msg
--}
-setIsDisabled : Bool -> Toggle msg -> Toggle msg
-setIsDisabled isDisabled_ (Toggle config) =
-    Toggle { config | isDisabled = isDisabled_ }
-
-
-{-| Set the text
--}
-setLabel : String -> Toggle msg -> Toggle msg
-setLabel label_ (Toggle config) =
-    Toggle { config | label = label_ }
 
 
 {-| Render the toggle
@@ -91,6 +40,72 @@ render (Toggle config) =
         |> Element.html
 
 
+{-| Set the text
+-}
+setLabel : String -> Toggle msg -> Toggle msg
+setLabel label_ (Toggle config) =
+    Toggle { config | label = label_ }
+
+
+
+-- VIEW / SETTERS --
+
+
+{-| Init a toggle
+-}
+view : Bool -> msg -> Toggle msg
+view toggled msg =
+    Toggle (initialConfig toggled msg)
+
+
+type alias Config msg =
+    { isError : Bool
+    , isDisabled : Bool
+    , label : String
+    , isToggled : Bool
+    , toggleMsg : msg
+    }
+
+
+initialConfig : Bool -> msg -> Config msg
+initialConfig toggled toggleMsg =
+    { isError = False
+    , isDisabled = False
+    , label = ""
+    , isToggled = toggled
+    , toggleMsg = toggleMsg
+    }
+
+
+label : Attribute msg
+label =
+    css
+        [ marginLeft <| px 5
+        ]
+
+
+labelContainer : Attribute msg
+labelContainer =
+    css
+        [ display inlineFlex
+        , alignItems center
+        ]
+
+
+{-| Display as disabled, removing the click Msg
+-}
+setIsDisabled : Bool -> Toggle msg -> Toggle msg
+setIsDisabled isDisabled_ (Toggle config) =
+    Toggle { config | isDisabled = isDisabled_ }
+
+
+{-| Display as loading, removing the click Msg
+-}
+setIsError : Bool -> Toggle msg -> Toggle msg
+setIsError isError_ (Toggle config) =
+    Toggle { config | isError = isError_ }
+
+
 toggle : Bool -> Bool -> Bool -> Attribute msg
 toggle toggle_ isDisabled isError =
     css
@@ -102,12 +117,12 @@ toggle toggle_ isDisabled isError =
 
             else
                 pointer
-        , width <| Css.rem 2
-        , height <| Css.rem 1
+        , width <| rem 2
+        , height <| rem 1
         , boxSizing borderBox
         , backgroundColor <| toggleColor toggle_ isDisabled isError
         , border3 (px 1) solid (toggleColor toggle_ isDisabled isError)
-        , borderRadius <| Css.rem 1.2
+        , borderRadius <| rem 1.2
         , transition
             [ Transitions.backgroundColor 400
             , Transitions.borderColor 400
@@ -127,7 +142,7 @@ toggle toggle_ isDisabled isError =
                  else
                     hex "f1f1f1"
                 )
-            , borderRadius <| Css.rem 1
+            , borderRadius <| rem 1
             ]
         , after
             [ display block
@@ -136,24 +151,24 @@ toggle toggle_ isDisabled isError =
             , left <| px 1
             , bottom <| px 1
             , property "content" "''"
-            , width <| Css.rem 0.8
+            , width <| rem 0.8
             , backgroundColor <|
                 if isDisabled then
                     hex "eee"
 
                 else
                     hex "fff"
-            , borderRadius <| Css.rem 1
+            , borderRadius <| rem 1
             , boxShadow4 (px 0) (px 2) (px 5) (rgba 0 0 0 0.3)
             , transition
                 [ Transitions.margin 300
                 ]
             , marginLeft
                 (if toggle_ then
-                    Css.rem 0.9
+                    rem 0.9
 
                  else
-                    Css.rem 0.1
+                    rem 0.1
                 )
             ]
         ]
@@ -168,23 +183,8 @@ toggleColor toggle_ isDisabled isError =
         ( False, False, False ) ->
             hex "ddd"
 
-        ( _, False, True ) ->
-            rgb 163 81 81
-
         ( _, True, _ ) ->
             hex "efefef"
 
-
-labelContainer : Attribute msg
-labelContainer =
-    css
-        [ display inlineFlex
-        , alignItems center
-        ]
-
-
-label : Attribute msg
-label =
-    css
-        [ marginLeft <| px 5
-        ]
+        ( _, False, True ) ->
+            rgb 163 81 81

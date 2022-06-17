@@ -1,4 +1,4 @@
-module Page.RecordTypes.Place exposing (..)
+module Page.RecordTypes.Place exposing (PlaceBody, placeBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, string)
 import Json.Decode.Pipeline exposing (hardcoded, required)

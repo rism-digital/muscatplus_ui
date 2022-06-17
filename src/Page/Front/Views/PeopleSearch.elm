@@ -1,4 +1,4 @@
-module Page.Front.Views.PeopleSearch exposing (..)
+module Page.Front.Views.PeopleSearch exposing (peopleSearchPanelView)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
@@ -19,9 +19,6 @@ import Session exposing (Session)
 peopleSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 peopleSearchPanelView session model frontBody =
     let
-        language =
-            session.language
-
         activeSearch =
             model.activeSearch
 
@@ -29,9 +26,12 @@ peopleSearchPanelView session model frontBody =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , body = frontBody
             , selectColumns = 4
+            , body = frontBody
             }
+
+        language =
+            session.language
 
         qText =
             toNextQuery model.activeSearch

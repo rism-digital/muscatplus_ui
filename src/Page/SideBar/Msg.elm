@@ -1,4 +1,4 @@
-module Page.SideBar.Msg exposing (..)
+module Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), modeStringToSideBarOption, resultModeToSideBarOption, showSideBarLabels, sideBarExpandDelay, sideBarOptionToModeString, sideBarOptionToResultMode)
 
 import Debouncer.Messages as Debouncer
 import Dict exposing (Dict)
@@ -7,6 +7,12 @@ import Http.Detailed
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
+
+
+type SideBarAnimationStatus
+    = Expanded
+    | Collapsed
+    | NoAnimation
 
 
 type SideBarMsg
@@ -33,63 +39,20 @@ type SideBarOption
     | LiturgicalFestivalsOption
 
 
-sideBarExpandDelay : Int
-sideBarExpandDelay =
-    100
-
-
-type SideBarAnimationStatus
-    = Expanded
-    | Collapsed
-    | NoAnimation
-
-
-showSideBarLabels : SideBarAnimationStatus -> Bool
-showSideBarLabels status =
-    case status of
-        Expanded ->
-            True
-
-        Collapsed ->
-            False
-
-        NoAnimation ->
-            False
-
-
-sideBarOptionToModeString : SideBarOption -> String
-sideBarOptionToModeString option =
-    case option of
-        SourceSearchOption ->
-            "sources"
-
-        PeopleSearchOption ->
-            "people"
-
-        InstitutionSearchOption ->
-            "institutions"
-
-        IncipitSearchOption ->
-            "incipits"
-
-        LiturgicalFestivalsOption ->
-            "festivals"
-
-
 modeStringToSideBarOption : String -> SideBarOption
 modeStringToSideBarOption mode =
     case mode of
-        "sources" ->
-            SourceSearchOption
-
-        "people" ->
-            PeopleSearchOption
+        "incipits" ->
+            IncipitSearchOption
 
         "institutions" ->
             InstitutionSearchOption
 
-        "incipits" ->
-            IncipitSearchOption
+        "people" ->
+            PeopleSearchOption
+
+        "sources" ->
+            SourceSearchOption
 
         _ ->
             SourceSearchOption
@@ -112,6 +75,43 @@ resultModeToSideBarOption mode =
 
         LiturgicalFestivalsMode ->
             LiturgicalFestivalsOption
+
+
+showSideBarLabels : SideBarAnimationStatus -> Bool
+showSideBarLabels status =
+    case status of
+        Expanded ->
+            True
+
+        Collapsed ->
+            False
+
+        NoAnimation ->
+            False
+
+
+sideBarExpandDelay : Int
+sideBarExpandDelay =
+    100
+
+
+sideBarOptionToModeString : SideBarOption -> String
+sideBarOptionToModeString option =
+    case option of
+        SourceSearchOption ->
+            "sources"
+
+        PeopleSearchOption ->
+            "people"
+
+        InstitutionSearchOption ->
+            "institutions"
+
+        IncipitSearchOption ->
+            "incipits"
+
+        LiturgicalFestivalsOption ->
+            "festivals"
 
 
 sideBarOptionToResultMode : SideBarOption -> ResultMode

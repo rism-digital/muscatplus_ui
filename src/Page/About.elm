@@ -1,21 +1,21 @@
-module Page.About exposing (..)
+module Page.About exposing (Model, Msg, init, initialCmd, update)
 
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.Decoders exposing (aboutResponseDecoder)
 import Page.Request exposing (createErrorMessage)
 import Request exposing (createRequest)
-import Response exposing (Response(..), ServerData)
+import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
 
 
-type alias Msg =
-    AboutMsg
-
-
 type alias Model =
     AboutPageModel
+
+
+type alias Msg =
+    AboutMsg
 
 
 init : Model

@@ -1,4 +1,4 @@
-module Page.About.Model exposing (..)
+module Page.About.Model exposing (AboutPageModel)
 
 import Response exposing (Response, ServerData)
 

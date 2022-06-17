@@ -1,4 +1,4 @@
-module Page.RecordTypes.Front exposing (..)
+module Page.RecordTypes.Front exposing (FrontBody, frontBodyDecoder)
 
 import Dict
 import Json.Decode as Decode exposing (Decoder)

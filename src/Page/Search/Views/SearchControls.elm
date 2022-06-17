@@ -1,4 +1,4 @@
-module Page.Search.Views.SearchControls exposing (..)
+module Page.Search.Views.SearchControls exposing (viewSearchControls)
 
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, none, row, width)
@@ -26,9 +26,6 @@ viewSearchControls language model body =
 
         facetLayout =
             case currentMode of
-                IncipitsMode ->
-                    viewFacetsForIncipitsMode language model body
-
                 SourcesMode ->
                     viewFacetsForSourcesMode language model body
 
@@ -37,6 +34,9 @@ viewSearchControls language model body =
 
                 InstitutionsMode ->
                     facetsForInstitutionsModeView language model body
+
+                IncipitsMode ->
+                    viewFacetsForIncipitsMode language model body
 
                 LiturgicalFestivalsMode ->
                     none

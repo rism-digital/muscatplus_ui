@@ -1,4 +1,4 @@
-module Page.Search.Views.SearchControls.Incipits exposing (..)
+module Page.Search.Views.SearchControls.Incipits exposing (viewFacetsForIncipitsMode)
 
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignLeft, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
@@ -19,18 +19,18 @@ viewFacetsForIncipitsMode language model body =
         activeSearch =
             toActiveSearch model
 
-        qText =
-            toNextQuery activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , body = body
             , selectColumns = 3
+            , body = body
             }
+
+        qText =
+            toNextQuery activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
     in
     row
         [ padding 10

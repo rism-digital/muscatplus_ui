@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews.Source exposing (..)
+module Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 
 import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, scrollbarY, spacing, width)
 import Language exposing (Language)

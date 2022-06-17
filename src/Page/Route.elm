@@ -16,9 +16,7 @@ type Route
     | PersonSourcePageRoute Int QueryArgs
     | InstitutionPageRoute Int
     | InstitutionSourcePageRoute Int QueryArgs
-    | PlacePageRoute Int
-    | FestivalPageRoute Int
-    | SubjectPageRoute Int
+      --| PlacePageRoute Int
     | AboutPageRoute
     | NotFoundPageRoute
 
@@ -33,6 +31,16 @@ parseUrl url =
             NotFoundPageRoute
 
 
+setRoute : Route -> { a | route : Route } -> { a | route : Route }
+setRoute newRoute oldRecord =
+    { oldRecord | route = newRoute }
+
+
+setUrl : Url -> { a | url : Url } -> { a | url : Url }
+setUrl newUrl oldRecord =
+    { oldRecord | url = newUrl }
+
+
 routeParser : P.Parser (Route -> a) a
 routeParser =
     P.oneOf
@@ -44,18 +52,7 @@ routeParser =
         , P.map PersonSourcePageRoute (s "people" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map InstitutionPageRoute (s "institutions" </> P.int)
         , P.map InstitutionSourcePageRoute (s "institutions" </> P.int </> s "sources" <?> queryParamsParser)
-        , P.map PlacePageRoute (s "places" </> P.int)
-        , P.map FestivalPageRoute (s "festivals" </> P.int)
-        , P.map SubjectPageRoute (s "subjects" </> P.int)
         , P.map AboutPageRoute (s "about")
+
+        --, P.map PlacePageRoute (s "places" </> P.int)
         ]
-
-
-setRoute : Route -> { a | route : Route } -> { a | route : Route }
-setRoute newRoute oldRecord =
-    { oldRecord | route = newRoute }
-
-
-setUrl : Url -> { a | url : Url } -> { a | url : Url }
-setUrl newUrl oldRecord =
-    { oldRecord | url = newUrl }

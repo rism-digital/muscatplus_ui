@@ -6,7 +6,7 @@ module Page.UI.Animations exposing
     , progressBar
     )
 
-import Element exposing (Element, fill, htmlAttribute, none)
+import Element exposing (Element)
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
@@ -17,19 +17,9 @@ import Simple.Animation.Animated as Animated
 import Simple.Animation.Property as P
 
 
-animatedLoader : List (Element.Attribute msg) -> Element msg -> Element msg
-animatedLoader attrs loaderImage =
-    animatedEl
-        (Animation.fromTo
-            { duration = 500
-            , options =
-                [ Animation.loop ]
-            }
-            [ P.rotate -360 ]
-            []
-        )
-        attrs
-        loaderImage
+animatedColumn : Animation -> List (Element.Attribute msg) -> List (Element msg) -> Element msg
+animatedColumn =
+    animatedUi Element.column
 
 
 animatedLabel : Element msg -> Element msg
@@ -50,10 +40,57 @@ animatedLabel labelText =
         )
         [ headingMD
         , Font.medium
-        , Element.width fill
+        , Element.width Element.fill
         , Element.alignLeft
         ]
         labelText
+
+
+animatedLoader : List (Element.Attribute msg) -> Element msg -> Element msg
+animatedLoader attrs loaderImage =
+    animatedEl
+        (Animation.fromTo
+            { duration = 500
+            , options =
+                [ Animation.loop ]
+            }
+            [ P.rotate -360 ]
+            []
+        )
+        attrs
+        loaderImage
+
+
+animatedRow : Animation -> List (Element.Attribute msg) -> List (Element msg) -> Element msg
+animatedRow =
+    animatedUi Element.row
+
+
+progressBar : Element msg
+progressBar =
+    animatedEl progressBarAnimation
+        [ Element.height (Element.px 10)
+        , Element.width (Element.px 0)
+        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , Element.htmlAttribute (HA.style "position" "fixed")
+        , Element.htmlAttribute (HA.style "top" "0")
+        , Element.htmlAttribute (HA.style "left" "0")
+        , Element.htmlAttribute (HA.style "right" "0")
+        ]
+        Element.none
+
+
+animatedEl : Animation -> List (Element.Attribute msg) -> Element msg -> Element msg
+animatedEl =
+    animatedUi Element.el
+
+
+animatedUi =
+    Animated.ui
+        { behindContent = Element.behindContent
+        , html = Element.html
+        , htmlAttribute = Element.htmlAttribute
+        }
 
 
 progressBarAnimation : Animation
@@ -64,40 +101,3 @@ progressBarAnimation =
         }
         [ P.property "width" "0" ]
         [ P.property "width" "80%" ]
-
-
-progressBar : Element msg
-progressBar =
-    animatedEl progressBarAnimation
-        [ Element.height (Element.px 10)
-        , Element.width (Element.px 0)
-        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-        , htmlAttribute (HA.style "position" "fixed")
-        , htmlAttribute (HA.style "top" "0")
-        , htmlAttribute (HA.style "left" "0")
-        , htmlAttribute (HA.style "right" "0")
-        ]
-        none
-
-
-animatedEl : Animation -> List (Element.Attribute msg) -> Element msg -> Element msg
-animatedEl =
-    animatedUi Element.el
-
-
-animatedRow : Animation -> List (Element.Attribute msg) -> List (Element msg) -> Element msg
-animatedRow =
-    animatedUi Element.row
-
-
-animatedColumn : Animation -> List (Element.Attribute msg) -> List (Element msg) -> Element msg
-animatedColumn =
-    animatedUi Element.column
-
-
-animatedUi =
-    Animated.ui
-        { behindContent = Element.behindContent
-        , htmlAttribute = Element.htmlAttribute
-        , html = Element.html
-        }

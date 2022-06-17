@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews.Incipit exposing (..)
+module Page.UI.Record.Previews.Incipit exposing (viewEncodingsBlock, viewIncipitPreview, viewPaeData, viewPaeRow)
 
 import Element exposing (Element, alignTop, column, el, fill, height, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
@@ -10,16 +10,33 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Incipits exposing (viewIncipit)
 
 
+viewEncodingsBlock : Language -> List EncodedIncipit -> Element msg
+viewEncodingsBlock language encodedIncipits =
+    row
+        [ width fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , alignTop
+            ]
+            (List.map
+                (\encoding ->
+                    case encoding of
+                        EncodedIncipit label PAEEncoding paeData ->
+                            viewPaeData language label paeData
+
+                        _ ->
+                            none
+                )
+                encodedIncipits
+            )
+        ]
+
+
 viewIncipitPreview : Language -> IncipitBody -> Element msg
 viewIncipitPreview language body =
     let
-        sourceUrl =
-            .source body.partOf
-                |> .id
-
-        labelLanguageMap =
-            .label body.partOf
-
         incipitLink =
             row
                 [ width fill ]
@@ -28,10 +45,17 @@ viewIncipitPreview language body =
                     (text (extractLabelFromLanguageMap language labelLanguageMap ++ ": "))
                 , link
                     [ linkColour ]
-                    { url = sourceUrl
-                    , label = text sourceUrl
+                    { label = text sourceUrl
+                    , url = sourceUrl
                     }
                 ]
+
+        labelLanguageMap =
+            .label body.partOf
+
+        sourceUrl =
+            .source body.partOf
+                |> .id
     in
     row
         [ width fill
@@ -79,47 +103,23 @@ viewIncipitPreview language body =
         ]
 
 
-viewEncodingsBlock : Language -> List EncodedIncipit -> Element msg
-viewEncodingsBlock language encodedIncipits =
-    row
-        [ width fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            (List.map
-                (\encoding ->
-                    case encoding of
-                        EncodedIncipit label PAEEncoding paeData ->
-                            viewPaeData language label paeData
-
-                        _ ->
-                            none
-                )
-                encodedIncipits
-            )
-        ]
-
-
 viewPaeData : Language -> LanguageMap -> EncodingData -> Element msg
 viewPaeData language label pae =
     let
         clefRow =
             viewMaybe (viewPaeRow "@clef") pae.clef
 
+        dataRow =
+            viewPaeRow "@data" pae.data
+
+        keyModeRow =
+            viewMaybe (viewPaeRow "@key") pae.key
+
         keysigRow =
             viewMaybe (viewPaeRow "@keysig") pae.keysig
 
         timesigRow =
             viewMaybe (viewPaeRow "@timesig") pae.timesig
-
-        keyModeRow =
-            viewMaybe (viewPaeRow "@key") pae.key
-
-        dataRow =
-            viewPaeRow "@data" pae.data
     in
     row
         [ width fill
@@ -136,11 +136,10 @@ viewPaeData language label pae =
                 ]
                 [ h3 language label ]
             , row
-                ([ width (px 600)
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
+                (width (px 600)
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
                 )
                 [ column
                     [ width fill

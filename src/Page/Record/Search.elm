@@ -1,4 +1,4 @@
-module Page.Record.Search exposing (..)
+module Page.Record.Search exposing (searchSubmit)
 
 import ActiveSearch exposing (setActiveSearch)
 import Browser.Navigation as Nav
@@ -15,20 +15,15 @@ import Session exposing (Session)
 searchSubmit : Session -> RecordPageModel RecordMsg -> ( RecordPageModel RecordMsg, Cmd RecordMsg )
 searchSubmit session model =
     let
-        resetPageInQueryArgs =
-            toNextQuery model.activeSearch
-                |> resetPage
-
-        pageResetModel =
-            setNextQuery resetPageInQueryArgs model.activeSearch
-                |> flip setActiveSearch model
-
         nationalCollectionSetModel =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
 
-        textQueryParameters =
-            toNextQuery nationalCollectionSetModel.activeSearch
-                |> buildQueryParameters
+        newModel =
+            { nationalCollectionSetModel
+                | response = Loading oldData
+                , searchResults = Loading oldSearchData
+                , preview = NoResponseToShow
+            }
 
         oldData =
             case model.response of
@@ -46,15 +41,20 @@ searchSubmit session model =
                 _ ->
                     Nothing
 
-        newModel =
-            { nationalCollectionSetModel
-                | preview = NoResponseToShow
-                , response = Loading oldData
-                , searchResults = Loading oldSearchData
-            }
+        pageResetModel =
+            setNextQuery resetPageInQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+
+        resetPageInQueryArgs =
+            toNextQuery model.activeSearch
+                |> resetPage
 
         searchUrl =
             serverUrl [ .path session.url ] textQueryParameters
+
+        textQueryParameters =
+            toNextQuery nationalCollectionSetModel.activeSearch
+                |> buildQueryParameters
     in
     ( newModel
     , Nav.pushUrl session.key searchUrl

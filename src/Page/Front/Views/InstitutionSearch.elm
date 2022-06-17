@@ -1,4 +1,4 @@
-module Page.Front.Views.InstitutionSearch exposing (..)
+module Page.Front.Views.InstitutionSearch exposing (institutionSearchPanelView)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
@@ -18,24 +18,24 @@ import Session exposing (Session)
 institutionSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 institutionSearchPanelView session model frontBody =
     let
-        language =
-            session.language
-
         activeSearch =
             model.activeSearch
-
-        qText =
-            toNextQuery model.activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
 
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , body = frontBody
             , selectColumns = 4
+            , body = frontBody
             }
+
+        language =
+            session.language
+
+        qText =
+            toNextQuery model.activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
     in
     row
         [ padding 10

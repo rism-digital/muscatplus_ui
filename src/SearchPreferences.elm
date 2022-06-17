@@ -1,4 +1,4 @@
-module SearchPreferences exposing (..)
+module SearchPreferences exposing (SearchPreferences, defaultPreferences, encodeSearchPreferences, saveSearchPreference, searchPreferencesDecoder)
 
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (required)
@@ -18,12 +18,6 @@ defaultPreferences =
     }
 
 
-searchPreferencesDecoder : Decoder SearchPreferences
-searchPreferencesDecoder =
-    Decode.succeed SearchPreferences
-        |> required "collapsedFacetSections" (list string)
-
-
 encodeSearchPreferences : SearchPreferences -> Encode.Value
 encodeSearchPreferences prefs =
     Encode.object
@@ -35,3 +29,9 @@ saveSearchPreference : { key : String, value : SearchPreferenceVariant } -> Cmd 
 saveSearchPreference pref =
     encodeMessageForPortSend (PortSendSaveSearchPreference pref)
         |> sendOutgoingMessageOnPort
+
+
+searchPreferencesDecoder : Decoder SearchPreferences
+searchPreferencesDecoder =
+    Decode.succeed SearchPreferences
+        |> required "collapsedFacetSections" (list string)

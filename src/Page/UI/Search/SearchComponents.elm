@@ -1,6 +1,6 @@
-module Page.UI.Search.SearchComponents exposing (..)
+module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, viewProbeResponseNumbers, viewSearchButtons, viewUpdateMessage)
 
-import Element exposing (Element, alignBottom, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, minimum, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -16,16 +16,26 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..))
 
 
+type alias SearchButtonConfig a msg =
+    { language : Language
+    , model : { a | probeResponse : Response ProbeData, applyFilterPrompt : Bool }
+    , isFrontPage : Bool
+    , submitLabel : LanguageMap
+    , submitMsg : msg
+    , resetMsg : msg
+    }
+
+
 hasActionableProbeResponse : Response ProbeData -> Bool
 hasActionableProbeResponse probeResponse =
     case probeResponse of
-        Response d ->
-            d.totalItems > 0
+        Loading _ ->
+            True
 
         -- We set this to true if the probe data is loading so that we do not falsely
         -- state that no results were available.
-        Loading _ ->
-            True
+        Response d ->
+            d.totalItems > 0
 
         -- If it hasn't been asked, then we don't know, so we assume it's actionable.
         NoResponseToShow ->
@@ -38,6 +48,13 @@ hasActionableProbeResponse probeResponse =
 viewProbeResponseNumbers : Language -> Response ProbeData -> Element msg
 viewProbeResponseNumbers language probeResponse =
     case probeResponse of
+        Loading _ ->
+            el
+                [ width (px 25)
+                , height (px 25)
+                ]
+                (animatedLoader [ width (px 25), height (px 25) ] <| spinnerSvg colourScheme.slateGrey)
+
         Response data ->
             let
                 formattedNumber =
@@ -59,13 +76,6 @@ viewProbeResponseNumbers language probeResponse =
                 ]
                 (text <| textMsg)
 
-        Loading _ ->
-            el
-                [ width (px 25)
-                , height (px 25)
-                ]
-                (animatedLoader [ width (px 25), height (px 25) ] <| spinnerSvg colourScheme.slateGrey)
-
         Error errMsg ->
             el
                 [ Font.medium ]
@@ -73,35 +83,6 @@ viewProbeResponseNumbers language probeResponse =
 
         NoResponseToShow ->
             none
-
-
-viewUpdateMessage : Language -> Bool -> Bool -> Element msg
-viewUpdateMessage language applyFilterPrompt actionableProbResponse =
-    if applyFilterPrompt && actionableProbResponse then
-        el
-            [ width shrink
-            , padding 5
-            , Border.width 1
-            , Border.color (colourScheme.white |> convertColorToElementColor)
-            , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
-            , headingSM
-            , Font.bold
-            , Font.color (colourScheme.white |> convertColorToElementColor)
-            ]
-            (text <| extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
-
-    else
-        none
-
-
-type alias SearchButtonConfig a msg =
-    { language : Language
-    , model : { a | probeResponse : Response ProbeData, applyFilterPrompt : Bool }
-    , isFrontPage : Bool
-    , submitLabel : LanguageMap
-    , submitMsg : msg
-    , resetMsg : msg
-    }
 
 
 viewSearchButtons :
@@ -142,7 +123,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         [ alignTop
         , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , width fill
         , height (px 50)
         , paddingXY 10 0
@@ -173,8 +154,8 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                         , headingSM
                         , submitPointerStyle
                         ]
-                        { onPress = submitButtonMsg
-                        , label = text submitButtonLabel
+                        { label = text submitButtonLabel
+                        , onPress = submitButtonMsg
                         }
                     ]
                 , column
@@ -189,8 +170,8 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , headingSM
                         ]
-                        { onPress = Just resetMsg
-                        , label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
+                        { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
+                        , onPress = Just resetMsg
                         }
                     ]
                 , column
@@ -206,3 +187,22 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 ]
             ]
         ]
+
+
+viewUpdateMessage : Language -> Bool -> Bool -> Element msg
+viewUpdateMessage language applyFilterPrompt actionableProbResponse =
+    if applyFilterPrompt && actionableProbResponse then
+        el
+            [ width shrink
+            , padding 5
+            , Border.width 1
+            , Border.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
+            , headingSM
+            , Font.bold
+            , Font.color (colourScheme.white |> convertColorToElementColor)
+            ]
+            (text <| extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
+
+    else
+        none

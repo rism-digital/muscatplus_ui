@@ -1,4 +1,4 @@
-module Page.About.Msg exposing (..)
+module Page.About.Msg exposing (AboutMsg(..))
 
 import Http
 import Http.Detailed

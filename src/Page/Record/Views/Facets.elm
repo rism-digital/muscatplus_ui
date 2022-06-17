@@ -1,4 +1,4 @@
-module Page.Record.Views.Facets exposing (..)
+module Page.Record.Views.Facets exposing (facetRecordMsgConfig)
 
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.UI.Facets.Facets exposing (FacetMsgConfig)

@@ -1,4 +1,4 @@
-module Page.UI.Record.PartOfSection exposing (..)
+module Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 
 import Element exposing (Element, column, el, fill, height, link, paddingXY, row, shrink, spacing, text, width)
 import Element.Border as Border
@@ -16,7 +16,7 @@ viewPartOfSection language partOf =
     in
     row
         [ width shrink
-        , Border.widthEach { top = 10, left = 1, right = 1, bottom = 1 }
+        , Border.widthEach { bottom = 1, left = 1, right = 1, top = 10 }
         , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
         , paddingXY 10 20
         ]
@@ -34,8 +34,8 @@ viewPartOfSection language partOf =
                     [ linkColour
                     , headingSM
                     ]
-                    { url = source.id
-                    , label = text (extractLabelFromLanguageMap language source.label)
+                    { label = text (extractLabelFromLanguageMap language source.label)
+                    , url = source.id
                     }
                 ]
             ]

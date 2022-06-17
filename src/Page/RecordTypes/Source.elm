@@ -1,4 +1,27 @@
-module Page.RecordTypes.Source exposing (..)
+module Page.RecordTypes.Source exposing
+    ( ExemplarBody
+    , ExemplarsSectionBody
+    , FullSourceBody
+    , IncipitsSectionBody
+    , LiturgicalFestivalsSectionBody
+    , MaterialGroupBody
+    , MaterialGroupsSectionBody
+    , PartOfSectionBody
+    , PerformanceLocationsSectionBody
+    , ReferencesNotesSectionBody
+    , SourceItemsSectionBody
+    , exemplarsBodyDecoder
+    , exemplarsSectionBodyDecoder
+    , incipitsSectionBodyDecoder
+    , liturgicalFestivalsSectionBodyDecoder
+    , materialGroupBodyDecoder
+    , materialGroupsSectionBodyDecoder
+    , partOfSectionBodyDecoder
+    , performanceLocationsSectionBodyDecoder
+    , referencesNotesSectionBodyDecoder
+    , sourceBodyDecoder
+    , sourceItemsSectionBodyDecoder
+    )
 
 import Json.Decode as Decode exposing (Decoder, int, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
@@ -11,6 +34,23 @@ import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSe
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
+
+
+type alias ExemplarBody =
+    { label : LanguageMap
+    , summary : Maybe (List LabelValue)
+    , heldBy : BasicInstitutionBody
+    , externalResources : Maybe ExternalResourcesSectionBody
+    , notes : Maybe (List LabelValue)
+    , relationships : Maybe RelationshipsSectionBody
+    }
+
+
+type alias ExemplarsSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , items : List ExemplarBody
+    }
 
 
 type alias FullSourceBody =
@@ -33,16 +73,16 @@ type alias FullSourceBody =
     }
 
 
-type alias PartOfSectionBody =
-    { label : LanguageMap
-    , source : BasicSourceBody
+type alias IncipitsSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , items : List IncipitBody
     }
 
 
-type alias MaterialGroupsSectionBody =
-    { sectionToc : String
-    , label : LanguageMap
-    , items : List MaterialGroupBody
+type alias LiturgicalFestivalsSectionBody =
+    { label : LanguageMap
+    , items : List LiturgicalFestivalBody
     }
 
 
@@ -55,10 +95,22 @@ type alias MaterialGroupBody =
     }
 
 
-type alias IncipitsSectionBody =
+type alias MaterialGroupsSectionBody =
     { sectionToc : String
     , label : LanguageMap
-    , items : List IncipitBody
+    , items : List MaterialGroupBody
+    }
+
+
+type alias PartOfSectionBody =
+    { label : LanguageMap
+    , source : BasicSourceBody
+    }
+
+
+type alias PerformanceLocationsSectionBody =
+    { label : LanguageMap
+    , items : List RelationshipBody
     }
 
 
@@ -71,35 +123,6 @@ type alias ReferencesNotesSectionBody =
     }
 
 
-type alias PerformanceLocationsSectionBody =
-    { label : LanguageMap
-    , items : List RelationshipBody
-    }
-
-
-type alias LiturgicalFestivalsSectionBody =
-    { label : LanguageMap
-    , items : List LiturgicalFestivalBody
-    }
-
-
-type alias ExemplarsSectionBody =
-    { sectionToc : String
-    , label : LanguageMap
-    , items : List ExemplarBody
-    }
-
-
-type alias ExemplarBody =
-    { label : LanguageMap
-    , summary : Maybe (List LabelValue)
-    , heldBy : BasicInstitutionBody
-    , externalResources : Maybe ExternalResourcesSectionBody
-    , notes : Maybe (List LabelValue)
-    , relationships : Maybe RelationshipsSectionBody
-    }
-
-
 type alias SourceItemsSectionBody =
     { sectionToc : String
     , label : LanguageMap
@@ -107,6 +130,83 @@ type alias SourceItemsSectionBody =
     , totalItems : Int
     , items : List BasicSourceBody
     }
+
+
+exemplarsBodyDecoder : Decoder ExemplarBody
+exemplarsBodyDecoder =
+    Decode.succeed ExemplarBody
+        --|> required "id" string
+        |> required "label" languageMapLabelDecoder
+        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> required "heldBy" basicInstitutionBodyDecoder
+        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
+        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
+
+
+exemplarsSectionBodyDecoder : Decoder ExemplarsSectionBody
+exemplarsSectionBodyDecoder =
+    Decode.succeed ExemplarsSectionBody
+        |> hardcoded "source-record-exemplars-section"
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list exemplarsBodyDecoder)
+
+
+incipitsSectionBodyDecoder : Decoder IncipitsSectionBody
+incipitsSectionBodyDecoder =
+    Decode.succeed IncipitsSectionBody
+        |> hardcoded "source-record-incipits-section"
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list incipitBodyDecoder)
+
+
+liturgicalFestivalsSectionBodyDecoder : Decoder LiturgicalFestivalsSectionBody
+liturgicalFestivalsSectionBodyDecoder =
+    Decode.succeed LiturgicalFestivalsSectionBody
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list liturgicalFestivalBodyDecoder)
+
+
+materialGroupBodyDecoder : Decoder MaterialGroupBody
+materialGroupBodyDecoder =
+    Decode.succeed MaterialGroupBody
+        |> required "label" languageMapLabelDecoder
+        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
+        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
+
+
+materialGroupsSectionBodyDecoder : Decoder MaterialGroupsSectionBody
+materialGroupsSectionBodyDecoder =
+    Decode.succeed MaterialGroupsSectionBody
+        |> hardcoded "source-record-material-groups-section"
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list materialGroupBodyDecoder)
+
+
+partOfSectionBodyDecoder : Decoder PartOfSectionBody
+partOfSectionBodyDecoder =
+    Decode.succeed PartOfSectionBody
+        |> required "label" languageMapLabelDecoder
+        |> required "source" basicSourceBodyDecoder
+
+
+performanceLocationsSectionBodyDecoder : Decoder PerformanceLocationsSectionBody
+performanceLocationsSectionBodyDecoder =
+    Decode.succeed PerformanceLocationsSectionBody
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list relationshipBodyDecoder)
+
+
+referencesNotesSectionBodyDecoder : Decoder ReferencesNotesSectionBody
+referencesNotesSectionBodyDecoder =
+    Decode.succeed ReferencesNotesSectionBody
+        |> hardcoded "source-record-references-notes-section"
+        |> required "label" languageMapLabelDecoder
+        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "performanceLocations" (Decode.maybe performanceLocationsSectionBodyDecoder) Nothing
+        |> optional "liturgicalFestivals" (Decode.maybe liturgicalFestivalsSectionBodyDecoder) Nothing
 
 
 sourceBodyDecoder : Decoder FullSourceBody
@@ -128,83 +228,6 @@ sourceBodyDecoder =
         |> optional "sourceItems" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
-
-
-partOfSectionBodyDecoder : Decoder PartOfSectionBody
-partOfSectionBodyDecoder =
-    Decode.succeed PartOfSectionBody
-        |> required "label" languageMapLabelDecoder
-        |> required "source" basicSourceBodyDecoder
-
-
-materialGroupsSectionBodyDecoder : Decoder MaterialGroupsSectionBody
-materialGroupsSectionBodyDecoder =
-    Decode.succeed MaterialGroupsSectionBody
-        |> hardcoded "source-record-material-groups-section"
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list materialGroupBodyDecoder)
-
-
-materialGroupBodyDecoder : Decoder MaterialGroupBody
-materialGroupBodyDecoder =
-    Decode.succeed MaterialGroupBody
-        |> required "label" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
-        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
-
-
-incipitsSectionBodyDecoder : Decoder IncipitsSectionBody
-incipitsSectionBodyDecoder =
-    Decode.succeed IncipitsSectionBody
-        |> hardcoded "source-record-incipits-section"
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list incipitBodyDecoder)
-
-
-referencesNotesSectionBodyDecoder : Decoder ReferencesNotesSectionBody
-referencesNotesSectionBodyDecoder =
-    Decode.succeed ReferencesNotesSectionBody
-        |> hardcoded "source-record-references-notes-section"
-        |> required "label" languageMapLabelDecoder
-        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "performanceLocations" (Decode.maybe performanceLocationsSectionBodyDecoder) Nothing
-        |> optional "liturgicalFestivals" (Decode.maybe liturgicalFestivalsSectionBodyDecoder) Nothing
-
-
-performanceLocationsSectionBodyDecoder : Decoder PerformanceLocationsSectionBody
-performanceLocationsSectionBodyDecoder =
-    Decode.succeed PerformanceLocationsSectionBody
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list relationshipBodyDecoder)
-
-
-liturgicalFestivalsSectionBodyDecoder : Decoder LiturgicalFestivalsSectionBody
-liturgicalFestivalsSectionBodyDecoder =
-    Decode.succeed LiturgicalFestivalsSectionBody
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list liturgicalFestivalBodyDecoder)
-
-
-exemplarsSectionBodyDecoder : Decoder ExemplarsSectionBody
-exemplarsSectionBodyDecoder =
-    Decode.succeed ExemplarsSectionBody
-        |> hardcoded "source-record-exemplars-section"
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list exemplarsBodyDecoder)
-
-
-exemplarsBodyDecoder : Decoder ExemplarBody
-exemplarsBodyDecoder =
-    Decode.succeed ExemplarBody
-        --|> required "id" string
-        |> required "label" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> required "heldBy" basicInstitutionBodyDecoder
-        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
-        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
 
 
 sourceItemsSectionBodyDecoder : Decoder SourceItemsSectionBody

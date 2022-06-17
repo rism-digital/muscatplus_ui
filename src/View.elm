@@ -24,7 +24,7 @@ import Page.Record.Views.SourcePage
 import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, lineSpacing, linkColour, pageBackground)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, lineSpacing, pageBackground)
 import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Url
@@ -33,38 +33,23 @@ import Url
 view : Model -> Browser.Document Msg
 view model =
     let
-        pageSession =
-            toSession model
-
-        pageView =
-            case model of
-                FrontPage session pageModel ->
-                    Element.map Msg.UserInteractedWithFrontPage (Page.Front.Views.view session pageModel)
-
-                SearchPage session pageModel ->
-                    Element.map Msg.UserInteractedWithSearchPage (Page.Search.Views.view session pageModel)
-
-                SourcePage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.SourcePage.view session pageModel)
-
-                PersonPage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PersonPage.view session pageModel)
-
-                InstitutionPage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.InstitutionPage.view session pageModel)
-
-                PlacePage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PlacePage.view session pageModel)
-
-                NotFoundPage session pageModel ->
-                    Element.map Msg.UserInteractedWithNotFoundPage (Page.NotFound.Views.view session pageModel)
-
-                AboutPage session pageModel ->
-                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.view session pageModel)
+        currentUrl =
+            Url.toString pageSession.url
 
         defaultTitle =
             "RISM Online"
 
+        globalLinkColor =
+            let
+                { red, green, blue } =
+                    colours.lightBlue
+            in
+            [ Css.color (Css.rgb red green blue) ]
+
+        pageSession =
+            toSession model
+
+        -- set the colour for links (a tags) globally.
         pageTitle =
             case model of
                 SearchPage session _ ->
@@ -105,23 +90,38 @@ view model =
                 _ ->
                     defaultTitle
 
-        -- set the colour for links (a tags) globally.
-        globalLinkColor =
-            let
-                { red, green, blue } =
-                    colours.lightBlue
-            in
-            [ Css.color (Css.rgb red green blue) ]
+        pageView =
+            case model of
+                NotFoundPage session pageModel ->
+                    Element.map Msg.UserInteractedWithNotFoundPage (Page.NotFound.Views.view session pageModel)
 
-        currentUrl =
-            Url.toString pageSession.url
+                SearchPage session pageModel ->
+                    Element.map Msg.UserInteractedWithSearchPage (Page.Search.Views.view session pageModel)
+
+                FrontPage session pageModel ->
+                    Element.map Msg.UserInteractedWithFrontPage (Page.Front.Views.view session pageModel)
+
+                SourcePage session pageModel ->
+                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.SourcePage.view session pageModel)
+
+                PersonPage session pageModel ->
+                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PersonPage.view session pageModel)
+
+                InstitutionPage session pageModel ->
+                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.InstitutionPage.view session pageModel)
+
+                AboutPage session pageModel ->
+                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.view session pageModel)
+
+                PlacePage session pageModel ->
+                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PlacePage.view session pageModel)
 
         publicBetaNotice =
             row
                 [ width fill
                 , height (px 30)
                 , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
-                , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color (colourScheme.darkOrange |> convertColorToElementColor)
                 , padding 8
                 , spacing lineSpacing
@@ -138,8 +138,8 @@ view model =
                         [ Font.underline
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         ]
-                        { url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
-                        , label = text "Send feedback"
+                        { label = text "Send feedback"
+                        , url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
                         }
                     )
                 ]
@@ -187,12 +187,13 @@ view model =
 loadingIndicator : Model -> Element Msg
 loadingIndicator model =
     let
-        loadingView =
-            row
-                [ width fill
-                , htmlAttribute (HA.style "z-index" "1")
-                ]
-                [ progressBar ]
+        chooseView resp =
+            case resp of
+                Loading _ ->
+                    loadingView
+
+                _ ->
+                    Keyed.el [] ( "progress-bar-none", none )
 
         isLoading resp =
             case resp of
@@ -202,13 +203,12 @@ loadingIndicator model =
                 _ ->
                     False
 
-        chooseView resp =
-            case resp of
-                Loading _ ->
-                    loadingView
-
-                _ ->
-                    Keyed.el [] ( "progress-bar-none", none )
+        loadingView =
+            row
+                [ width fill
+                , htmlAttribute (HA.style "z-index" "1")
+                ]
+                [ progressBar ]
     in
     case model of
         SearchPage _ pageModel ->
@@ -223,6 +223,9 @@ loadingIndicator model =
 
                         _ ->
                             Keyed.el [] ( "progress-bar-none", none )
+
+        FrontPage _ pageModel ->
+            chooseView pageModel.response
 
         SourcePage _ pageModel ->
             chooseView pageModel.response
@@ -240,9 +243,6 @@ loadingIndicator model =
 
             else
                 Keyed.el [] ( "progress-bar-none", none )
-
-        FrontPage _ pageModel ->
-            chooseView pageModel.response
 
         _ ->
             none

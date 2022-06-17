@@ -1,4 +1,4 @@
-module Page.Search.Views.SearchControls.Sources exposing (..)
+module Page.Search.Views.SearchControls.Sources exposing (viewFacetToggleSection, viewFacetsForSourcesMode)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
@@ -15,24 +15,105 @@ import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 
 
+viewFacetToggleSection : Language -> ActiveSearch SearchMsg -> SearchBody -> Element SearchMsg
+viewFacetToggleSection language activeSearch body =
+    let
+        allAreEmpty =
+            List.all (\a -> a == none) allToggles
+
+        allToggles =
+            [ sourceCollectionsToggle
+            , sourceContentsToggle
+            , compositeVolumesToggle
+            , hasDigitizationToggle
+            , hasIiifToggle
+            , isArrangementToggle
+            , hasIncipitsToggle
+            ]
+
+        compositeVolumesToggle =
+            viewFacet (facetConfig "hide-composite-volumes") facetSearchMsgConfig
+
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , selectColumns = 3
+            , body = body
+            }
+
+        hasDigitizationToggle =
+            viewFacet (facetConfig "has-digitization") facetSearchMsgConfig
+
+        hasIiifToggle =
+            viewFacet (facetConfig "has-iiif") facetSearchMsgConfig
+
+        hasIncipitsToggle =
+            viewFacet (facetConfig "has-incipits") facetSearchMsgConfig
+
+        isArrangementToggle =
+            viewFacet (facetConfig "is-arrangement") facetSearchMsgConfig
+
+        sourceCollectionsToggle =
+            viewFacet (facetConfig "hide-source-collections") facetSearchMsgConfig
+
+        sourceContentsToggle =
+            viewFacet (facetConfig "hide-source-contents") facetSearchMsgConfig
+    in
+    if allAreEmpty then
+        none
+
+    else
+        row
+            [ width fill
+            , alignTop
+            ]
+            [ column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ sourceContentsToggle
+                , sourceCollectionsToggle
+                , compositeVolumesToggle
+                ]
+            , column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ hasDigitizationToggle
+                , hasIiifToggle
+                ]
+            , column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ isArrangementToggle
+                , hasIncipitsToggle
+                ]
+            ]
+
+
 viewFacetsForSourcesMode : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
 viewFacetsForSourcesMode language model body =
     let
         activeSearch =
             toActiveSearch model
 
-        qText =
-            toNextQuery activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , body = body
             , selectColumns = 3
+            , body = body
             }
+
+        qText =
+            toNextQuery activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
     in
     row
         [ padding 10
@@ -121,84 +202,3 @@ viewFacetsForSourcesMode language model body =
             --, viewFacet "holding-institution" language activeSearch body
             ]
         ]
-
-
-viewFacetToggleSection : Language -> ActiveSearch SearchMsg -> SearchBody -> Element SearchMsg
-viewFacetToggleSection language activeSearch body =
-    let
-        facetConfig alias =
-            { alias = alias
-            , language = language
-            , activeSearch = activeSearch
-            , body = body
-            , selectColumns = 3
-            }
-
-        sourceContentsToggle =
-            viewFacet (facetConfig "hide-source-contents") facetSearchMsgConfig
-
-        sourceCollectionsToggle =
-            viewFacet (facetConfig "hide-source-collections") facetSearchMsgConfig
-
-        compositeVolumesToggle =
-            viewFacet (facetConfig "hide-composite-volumes") facetSearchMsgConfig
-
-        hasDigitizationToggle =
-            viewFacet (facetConfig "has-digitization") facetSearchMsgConfig
-
-        hasIiifToggle =
-            viewFacet (facetConfig "has-iiif") facetSearchMsgConfig
-
-        isArrangementToggle =
-            viewFacet (facetConfig "is-arrangement") facetSearchMsgConfig
-
-        hasIncipitsToggle =
-            viewFacet (facetConfig "has-incipits") facetSearchMsgConfig
-
-        allToggles =
-            [ sourceCollectionsToggle
-            , sourceContentsToggle
-            , compositeVolumesToggle
-            , hasDigitizationToggle
-            , hasIiifToggle
-            , isArrangementToggle
-            , hasIncipitsToggle
-            ]
-
-        allAreEmpty =
-            List.all (\a -> a == none) allToggles
-    in
-    if allAreEmpty then
-        none
-
-    else
-        row
-            [ width fill
-            , alignTop
-            ]
-            [ column
-                [ width fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                [ sourceContentsToggle
-                , sourceCollectionsToggle
-                , compositeVolumesToggle
-                ]
-            , column
-                [ width fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                [ hasDigitizationToggle
-                , hasIiifToggle
-                ]
-            , column
-                [ width fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                [ isArrangementToggle
-                , hasIncipitsToggle
-                ]
-            ]

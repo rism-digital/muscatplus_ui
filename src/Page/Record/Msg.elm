@@ -1,4 +1,4 @@
-module Page.Record.Msg exposing (..)
+module Page.Record.Msg exposing (RecordMsg(..))
 
 import Debouncer.Basic as Debouncer
 import Http

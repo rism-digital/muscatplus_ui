@@ -1,4 +1,4 @@
-module Page.RecordTypes.About exposing (..)
+module Page.RecordTypes.About exposing (AboutBody, aboutBodyDecoder)
 
 import Iso8601
 import Json.Decode as Decode exposing (Decoder, string)

@@ -1,4 +1,17 @@
-module Page.Record.Views.SourceSearch exposing (..)
+module Page.Record.Views.SourceSearch exposing
+    ( searchResultsViewRouter
+    , viewFacetToggleSection
+    , viewFacetsForSourcesMode
+    , viewRecordSourceSearchTabBar
+    , viewRecordTopBarDescriptionOnly
+    , viewSearchControls
+    , viewSearchResultRouter
+    , viewSearchResultsList
+    , viewSearchResultsListPanel
+    , viewSearchResultsNotFound
+    , viewSearchResultsSection
+    , viewSourceSearchTab
+    )
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, inFront, none, padding, pointer, px, row, scrollbarY, shrink, spacing, text, width)
@@ -29,26 +42,6 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 
 
-viewSourceSearchTab :
-    Language
-    -> RecordPageModel RecordMsg
-    -> Element RecordMsg
-viewSourceSearchTab language model =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        , clipY
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ searchResultsViewRouter language model ]
-        ]
-
-
 searchResultsViewRouter :
     Language
     -> RecordPageModel RecordMsg
@@ -64,141 +57,97 @@ searchResultsViewRouter language model =
         Response (SearchData body) ->
             viewSearchResultsSection language model body False
 
+        Error err ->
+            viewSearchResultsErrorTmpl language err
+
         NoResponseToShow ->
             -- In case we're just booting the app up, show
             -- the loading message.
             viewSearchResultsLoadingTmpl language
 
-        Error err ->
-            viewSearchResultsErrorTmpl language err
-
         _ ->
             viewSearchResultsErrorTmpl language "An unknown error occurred."
 
 
-viewSearchResultsSection : Language -> RecordPageModel RecordMsg -> SearchBody -> Bool -> Element RecordMsg
-viewSearchResultsSection language model body isLoading =
+viewFacetToggleSection : Language -> ActiveSearch RecordMsg -> SearchBody -> Element RecordMsg
+viewFacetToggleSection language activeSearch body =
     let
-        renderedPreview =
-            case model.preview of
-                Loading resp ->
-                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow resp
+        allAreEmpty =
+            List.all (\a -> a == none) allToggles
 
-                Response resp ->
-                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow (Just resp)
+        allToggles =
+            [ sourceCollectionsToggle
+            , sourceContentsToggle
+            , compositeVolumesToggle
+            , hasDigitizationToggle
+            , hasIiifToggle
+            , isArrangementToggle
+            , hasIncipitsToggle
+            ]
 
-                Error _ ->
-                    none
+        compositeVolumesToggle =
+            viewFacet (facetConfig "hide-composite-volumes") facetRecordMsgConfig
 
-                NoResponseToShow ->
-                    none
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = activeSearch
+            , selectColumns = 3
+            , body = body
+            }
+
+        hasDigitizationToggle =
+            viewFacet (facetConfig "has-digitization") facetRecordMsgConfig
+
+        hasIiifToggle =
+            viewFacet (facetConfig "has-iiif") facetRecordMsgConfig
+
+        hasIncipitsToggle =
+            viewFacet (facetConfig "has-incipits") facetRecordMsgConfig
+
+        isArrangementToggle =
+            viewFacet (facetConfig "is-arrangement") facetRecordMsgConfig
+
+        sourceCollectionsToggle =
+            viewFacet (facetConfig "hide-source-collections") facetRecordMsgConfig
+
+        sourceContentsToggle =
+            viewFacet (facetConfig "hide-source-contents") facetRecordMsgConfig
     in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , Border.widthEach { bottom = 0, top = 0, left = 0, right = 2 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-            ]
-            [ viewSearchPageSort
-                { language = language
-                , activeSearch = model.activeSearch
-                , body = body
-                , changedResultSortingMsg = RecordMsg.UserChangedResultSorting
-                , changedResultRowsPerPageMsg = RecordMsg.UserChangedResultsPerPage
-                }
-                model.searchResults
-            , viewSearchResultsListPanel language model body isLoading
-            , viewPagination language body.pagination RecordMsg.UserClickedSearchResultsPagination
-            ]
-        , column
-            [ width fill
-            , height fill
-            , alignTop
-            , inFront renderedPreview
-            ]
-            [ viewSearchControls language model body ]
-        ]
-
-
-viewSearchResultsListPanel : Language -> RecordPageModel RecordMsg -> SearchBody -> Bool -> Element RecordMsg
-viewSearchResultsListPanel language model body isLoading =
-    if body.totalItems == 0 then
-        viewSearchResultsNotFound language
+    if allAreEmpty then
+        none
 
     else
         row
             [ width fill
-            , height fill
             , alignTop
-            , scrollbarY
-            , htmlAttribute (HA.id "search-results-list")
             ]
             [ column
                 [ width fill
-                , height shrink
                 , alignTop
-                , inFront <| viewResultsListLoadingScreenTmpl isLoading
+                , spacing lineSpacing
                 ]
-                [ viewSearchResultsList language model body ]
+                [ sourceContentsToggle
+                , sourceCollectionsToggle
+                , compositeVolumesToggle
+                ]
+            , column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ hasDigitizationToggle
+                , hasIiifToggle
+                ]
+            , column
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ isArrangementToggle
+                , hasIncipitsToggle
+                ]
             ]
-
-
-viewSearchResultsNotFound : Language -> Element RecordMsg
-viewSearchResultsNotFound language =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            , padding 20
-            , spacing lineSpacing
-            ]
-            [ row
-                [ width fill ]
-                [ h3 language localTranslations.noResultsHeader ]
-            , row
-                [ width fill ]
-                [ renderParagraph language localTranslations.noResultsBody ]
-            ]
-        ]
-
-
-viewSearchResultsList : Language -> RecordPageModel RecordMsg -> SearchBody -> Element RecordMsg
-viewSearchResultsList language model body =
-    row
-        [ width fill
-        , height shrink
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            (List.map (\result -> viewSearchResultRouter language model.selectedResult result) body.items)
-        ]
-
-
-viewSearchResultRouter : Language -> Maybe String -> SearchResult -> Element RecordMsg
-viewSearchResultRouter language selectedResult res =
-    case res of
-        SourceResult body ->
-            viewSourceSearchResult
-                { language = language
-                , selectedResult = selectedResult
-                , body = body
-                , clickForPreviewMsg = RecordMsg.UserClickedSearchResultForPreview
-                }
-
-        _ ->
-            none
 
 
 viewFacetsForSourcesMode : Language -> RecordPageModel RecordMsg -> SearchBody -> Element RecordMsg
@@ -207,18 +156,18 @@ viewFacetsForSourcesMode language model body =
         activeSearch =
             model.activeSearch
 
-        qText =
-            toNextQuery activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , body = body
             , selectColumns = 3
+            , body = body
             }
+
+        qText =
+            toNextQuery activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
     in
     row
         [ padding 10
@@ -312,85 +261,120 @@ viewFacetsForSourcesMode language model body =
         ]
 
 
-viewFacetToggleSection : Language -> ActiveSearch RecordMsg -> SearchBody -> Element RecordMsg
-viewFacetToggleSection language activeSearch body =
+viewRecordSourceSearchTabBar :
+    { language : Language
+    , model : RecordPageModel RecordMsg
+    , recordId : String
+    , searchUrl : String
+    , tabLabel : LanguageMap
+    }
+    -> Element RecordMsg
+viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } =
     let
-        facetConfig alias =
-            { alias = alias
-            , language = language
-            , activeSearch = activeSearch
-            , body = body
-            , selectColumns = 3
-            }
+        currentMode =
+            model.currentTab
 
-        sourceContentsToggle =
-            viewFacet (facetConfig "hide-source-contents") facetRecordMsgConfig
+        descriptionTabBorder =
+            case currentMode of
+                DefaultRecordViewTab _ ->
+                    colourScheme.lightBlue |> convertColorToElementColor
 
-        sourceCollectionsToggle =
-            viewFacet (facetConfig "hide-source-collections") facetRecordMsgConfig
+                _ ->
+                    colourScheme.cream |> convertColorToElementColor
 
-        compositeVolumesToggle =
-            viewFacet (facetConfig "hide-composite-volumes") facetRecordMsgConfig
+        localizedTabLabel =
+            extractLabelFromLanguageMap language tabLabel
 
-        hasDigitizationToggle =
-            viewFacet (facetConfig "has-digitization") facetRecordMsgConfig
+        searchTabBorder =
+            case currentMode of
+                RelatedSourcesSearchTab _ ->
+                    colourScheme.lightBlue |> convertColorToElementColor
 
-        hasIiifToggle =
-            viewFacet (facetConfig "has-iiif") facetRecordMsgConfig
+                _ ->
+                    colourScheme.cream |> convertColorToElementColor
 
-        isArrangementToggle =
-            viewFacet (facetConfig "is-arrangement") facetRecordMsgConfig
+        sourceCount searchData =
+            toFloat searchData.totalItems
+                |> formatNumberByLanguage language
 
-        hasIncipitsToggle =
-            viewFacet (facetConfig "has-incipits") facetRecordMsgConfig
+        sourceLabel =
+            case model.searchResults of
+                Loading _ ->
+                    row
+                        [ spacing 5 ]
+                        [ text localizedTabLabel
+                        , animatedLoader
+                            [ width (px 15), height (px 15) ]
+                            (spinnerSvg colourScheme.slateGrey)
+                        ]
 
-        allToggles =
-            [ sourceCollectionsToggle
-            , sourceContentsToggle
-            , compositeVolumesToggle
-            , hasDigitizationToggle
-            , hasIiifToggle
-            , isArrangementToggle
-            , hasIncipitsToggle
-            ]
+                Response (SearchData searchData) ->
+                    el
+                        []
+                        (text <| localizedTabLabel ++ " (" ++ sourceCount searchData ++ ")")
 
-        allAreEmpty =
-            List.all (\a -> a == none) allToggles
+                _ ->
+                    none
     in
-    if allAreEmpty then
-        none
+    row
+        [ centerX
+        , width fill
+        , height (px 25)
+        , spacing 15
+        ]
+        [ el
+            [ width shrink
+            , height fill
+            , Font.center
+            , alignLeft
+            , pointer
+            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.color descriptionTabBorder
+            ]
+            (button
+                []
+                { label = text <| extractLabelFromLanguageMap language localTranslations.description
+                , onPress = Just <| UserClickedRecordViewTab (DefaultRecordViewTab recordId)
+                }
+            )
+        , el
+            [ width shrink
+            , height fill
+            , alignLeft
+            , centerY
+            , pointer
+            , headingSM
+            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.color searchTabBorder
+            ]
+            (button
+                []
+                { label = sourceLabel
+                , onPress = Just <| UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl)
+                }
+            )
+        ]
 
-    else
-        row
-            [ width fill
-            , alignTop
+
+viewRecordTopBarDescriptionOnly : Element msg
+viewRecordTopBarDescriptionOnly =
+    -- TODO: Translate label
+    row
+        [ centerX
+        , width fill
+        , height (px 25)
+        , spacing 15
+        ]
+        [ el
+            [ width shrink
+            , height fill
+            , Font.center
+            , alignLeft
+            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
             ]
-            [ column
-                [ width fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                [ sourceContentsToggle
-                , sourceCollectionsToggle
-                , compositeVolumesToggle
-                ]
-            , column
-                [ width fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                [ hasDigitizationToggle
-                , hasIiifToggle
-                ]
-            , column
-                [ width fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                [ isArrangementToggle
-                , hasIncipitsToggle
-                ]
-            ]
+            (text "Description")
+        ]
 
 
 viewSearchControls : Language -> RecordPageModel RecordMsg -> SearchBody -> Element RecordMsg
@@ -418,117 +402,146 @@ viewSearchControls language model body =
         ]
 
 
-viewRecordSourceSearchTabBar :
-    { language : Language
-    , model : RecordPageModel RecordMsg
-    , searchUrl : String
-    , recordId : String
-    , tabLabel : LanguageMap
-    }
-    -> Element RecordMsg
-viewRecordSourceSearchTabBar { language, model, searchUrl, recordId, tabLabel } =
+viewSearchResultRouter : Language -> Maybe String -> SearchResult -> Element RecordMsg
+viewSearchResultRouter language selectedResult res =
+    case res of
+        SourceResult body ->
+            viewSourceSearchResult
+                { language = language
+                , selectedResult = selectedResult
+                , body = body
+                , clickForPreviewMsg = RecordMsg.UserClickedSearchResultForPreview
+                }
+
+        _ ->
+            none
+
+
+viewSearchResultsList : Language -> RecordPageModel RecordMsg -> SearchBody -> Element RecordMsg
+viewSearchResultsList language model body =
+    row
+        [ width fill
+        , height shrink
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , alignTop
+            ]
+            (List.map (\result -> viewSearchResultRouter language model.selectedResult result) body.items)
+        ]
+
+
+viewSearchResultsListPanel : Language -> RecordPageModel RecordMsg -> SearchBody -> Bool -> Element RecordMsg
+viewSearchResultsListPanel language model body isLoading =
+    if body.totalItems == 0 then
+        viewSearchResultsNotFound language
+
+    else
+        row
+            [ width fill
+            , height fill
+            , alignTop
+            , scrollbarY
+            , htmlAttribute (HA.id "search-results-list")
+            ]
+            [ column
+                [ width fill
+                , height shrink
+                , alignTop
+                , inFront <| viewResultsListLoadingScreenTmpl isLoading
+                ]
+                [ viewSearchResultsList language model body ]
+            ]
+
+
+viewSearchResultsNotFound : Language -> Element RecordMsg
+viewSearchResultsNotFound language =
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , alignTop
+            , padding 20
+            , spacing lineSpacing
+            ]
+            [ row
+                [ width fill ]
+                [ h3 language localTranslations.noResultsHeader ]
+            , row
+                [ width fill ]
+                [ renderParagraph language localTranslations.noResultsBody ]
+            ]
+        ]
+
+
+viewSearchResultsSection : Language -> RecordPageModel RecordMsg -> SearchBody -> Bool -> Element RecordMsg
+viewSearchResultsSection language model body isLoading =
     let
-        currentMode =
-            model.currentTab
+        renderedPreview =
+            case model.preview of
+                Loading resp ->
+                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow resp
 
-        sourceCount searchData =
-            toFloat searchData.totalItems
-                |> formatNumberByLanguage language
+                Response resp ->
+                    viewPreviewRouter language RecordMsg.UserClickedClosePreviewWindow (Just resp)
 
-        localizedTabLabel =
-            extractLabelFromLanguageMap language tabLabel
-
-        sourceLabel =
-            case model.searchResults of
-                Response (SearchData searchData) ->
-                    el
-                        []
-                        (text <| localizedTabLabel ++ " (" ++ sourceCount searchData ++ ")")
-
-                Loading _ ->
-                    row
-                        [ spacing 5 ]
-                        [ text localizedTabLabel
-                        , animatedLoader
-                            [ width (px 15), height (px 15) ]
-                            (spinnerSvg colourScheme.slateGrey)
-                        ]
-
-                _ ->
+                Error _ ->
                     none
 
-        descriptionTabBorder =
-            case currentMode of
-                DefaultRecordViewTab _ ->
-                    colourScheme.lightBlue |> convertColorToElementColor
-
-                _ ->
-                    colourScheme.cream |> convertColorToElementColor
-
-        searchTabBorder =
-            case currentMode of
-                RelatedSourcesSearchTab _ ->
-                    colourScheme.lightBlue |> convertColorToElementColor
-
-                _ ->
-                    colourScheme.cream |> convertColorToElementColor
+                NoResponseToShow ->
+                    none
     in
     row
-        [ centerX
-        , width fill
-        , height (px 25)
-        , spacing 15
+        [ width fill
+        , height fill
         ]
-        [ el
-            [ width shrink
+        [ column
+            [ width fill
             , height fill
-            , Font.center
-            , alignLeft
-            , pointer
-            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
-            , Border.color descriptionTabBorder
+            , alignTop
+            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
-            (button
-                []
-                { onPress = Just <| UserClickedRecordViewTab (DefaultRecordViewTab recordId)
-                , label = text <| extractLabelFromLanguageMap language localTranslations.description
+            [ viewSearchPageSort
+                { language = language
+                , activeSearch = model.activeSearch
+                , body = body
+                , changedResultSortingMsg = RecordMsg.UserChangedResultSorting
+                , changedResultRowsPerPageMsg = RecordMsg.UserChangedResultsPerPage
                 }
-            )
-        , el
-            [ width shrink
+                model.searchResults
+            , viewSearchResultsListPanel language model body isLoading
+            , viewPagination language body.pagination RecordMsg.UserClickedSearchResultsPagination
+            ]
+        , column
+            [ width fill
             , height fill
-            , alignLeft
-            , centerY
-            , pointer
-            , headingSM
-            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
-            , Border.color searchTabBorder
+            , alignTop
+            , inFront renderedPreview
             ]
-            (button
-                []
-                { onPress = Just <| UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl)
-                , label = sourceLabel
-                }
-            )
+            [ viewSearchControls language model body ]
         ]
 
 
-viewRecordTopBarDescriptionOnly : Element msg
-viewRecordTopBarDescriptionOnly =
-    -- TODO: Translate label
+viewSourceSearchTab :
+    Language
+    -> RecordPageModel RecordMsg
+    -> Element RecordMsg
+viewSourceSearchTab language model =
     row
-        [ centerX
-        , width fill
-        , height (px 25)
-        , spacing 15
+        [ width fill
+        , height fill
+        , alignTop
+        , clipY
         ]
-        [ el
-            [ width shrink
+        [ column
+            [ width fill
             , height fill
-            , Font.center
-            , alignLeft
-            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
-            , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+            , alignTop
             ]
-            (text "Description")
+            [ searchResultsViewRouter language model ]
         ]

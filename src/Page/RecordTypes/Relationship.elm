@@ -1,4 +1,26 @@
-module Page.RecordTypes.Relationship exposing (..)
+module Page.RecordTypes.Relationship exposing
+    ( QualifierBody
+    , RelatedTo(..)
+    , RelatedToBody
+    , RelationshipBody
+    , RelationshipQualifier(..)
+    , RelationshipRole(..)
+    , RelationshipsSectionBody
+    , RoleBody
+    , qualifierBodyDecoder
+    , qualifierConverter
+    , qualifierDecoder
+    , qualifierMap
+    , relatedToBodyDecoder
+    , relatedToConverter
+    , relatedToTypeDecoder
+    , relationshipBodyDecoder
+    , relationshipsSectionBodyDecoder
+    , roleBodyDecoder
+    , roleConverter
+    , roleDecoder
+    , roleMap
+    )
 
 import Dict
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
@@ -15,10 +37,24 @@ import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 -}
 
 
-type alias RelationshipsSectionBody =
-    { sectionToc : String
+type alias QualifierBody =
+    { label : LanguageMap
+    , value : String
+    , type_ : RelationshipQualifier
+    }
+
+
+type RelatedTo
+    = PersonRelationship
+    | InstitutionRelationship
+    | PlaceRelationship
+    | UnknownRelationship
+
+
+type alias RelatedToBody =
+    { id : String
     , label : LanguageMap
-    , items : List RelationshipBody
+    , type_ : RelatedTo
     }
 
 
@@ -30,20 +66,6 @@ type alias RelationshipBody =
     }
 
 
-type alias RelatedToBody =
-    { id : String
-    , label : LanguageMap
-    , type_ : RelatedTo
-    }
-
-
-type RelatedTo
-    = PersonRelationship
-    | InstitutionRelationship
-    | PlaceRelationship
-    | UnknownRelationship
-
-
 type RelationshipQualifier
     = AscertainedQualifier
     | VerifiedQualifier
@@ -52,47 +74,6 @@ type RelationshipQualifier
     | DoubtfulQualifier
     | MisattributedQualifier
     | UnknownQualifier
-
-
-type alias QualifierBody =
-    { label : LanguageMap
-    , value : String
-    , type_ : RelationshipQualifier
-    }
-
-
-{-|
-
-    Maps the expected value in the 'qualifier' section
-    to a type-defined value.
-
--}
-qualifierMap : List ( String, RelationshipQualifier )
-qualifierMap =
-    [ ( "rism:Ascertained", AscertainedQualifier )
-    , ( "rism:Verified", VerifiedQualifier )
-    , ( "rism:Conjectural", ConjecturalQualifier )
-    , ( "rism:Alleged", AllegedQualifier )
-    , ( "rism:Doubtful", DoubtfulQualifier )
-    , ( "rism:Misattributed", MisattributedQualifier )
-    ]
-
-
-qualifierConverter : String -> Decoder RelationshipQualifier
-qualifierConverter qualString =
-    -- if we can't find the value in the dictionary,
-    -- then assume it's unknown.
-    Dict.fromList qualifierMap
-        |> Dict.get qualString
-        |> Maybe.withDefault UnknownQualifier
-        |> Decode.succeed
-
-
-type alias RoleBody =
-    { label : LanguageMap
-    , value : String
-    , type_ : RelationshipRole
-    }
 
 
 type RelationshipRole
@@ -136,6 +117,130 @@ type RelationshipRole
     | RelatedToRole
     | SisterOfRole
     | UnknownRole
+
+
+type alias RelationshipsSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , items : List RelationshipBody
+    }
+
+
+type alias RoleBody =
+    { label : LanguageMap
+    , value : String
+    , type_ : RelationshipRole
+    }
+
+
+qualifierBodyDecoder : Decoder QualifierBody
+qualifierBodyDecoder =
+    Decode.succeed QualifierBody
+        |> required "label" languageMapLabelDecoder
+        |> required "value" string
+        |> optional "type" qualifierDecoder UnknownQualifier
+
+
+qualifierConverter : String -> Decoder RelationshipQualifier
+qualifierConverter qualString =
+    -- if we can't find the value in the dictionary,
+    -- then assume it's unknown.
+    Dict.fromList qualifierMap
+        |> Dict.get qualString
+        |> Maybe.withDefault UnknownQualifier
+        |> Decode.succeed
+
+
+qualifierDecoder : Decoder RelationshipQualifier
+qualifierDecoder =
+    string
+        |> andThen qualifierConverter
+
+
+{-|
+
+    Maps the expected value in the 'qualifier' section
+    to a type-defined value.
+
+-}
+qualifierMap : List ( String, RelationshipQualifier )
+qualifierMap =
+    [ ( "rism:Ascertained", AscertainedQualifier )
+    , ( "rism:Verified", VerifiedQualifier )
+    , ( "rism:Conjectural", ConjecturalQualifier )
+    , ( "rism:Alleged", AllegedQualifier )
+    , ( "rism:Doubtful", DoubtfulQualifier )
+    , ( "rism:Misattributed", MisattributedQualifier )
+    ]
+
+
+relatedToBodyDecoder : Decoder RelatedToBody
+relatedToBodyDecoder =
+    Decode.succeed RelatedToBody
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
+        |> required "type" relatedToTypeDecoder
+
+
+relatedToConverter : String -> Decoder RelatedTo
+relatedToConverter typeString =
+    case typeString of
+        "rism:Institution" ->
+            Decode.succeed InstitutionRelationship
+
+        "rism:Person" ->
+            Decode.succeed PersonRelationship
+
+        "rism:Place" ->
+            Decode.succeed PlaceRelationship
+
+        _ ->
+            Decode.succeed UnknownRelationship
+
+
+relatedToTypeDecoder : Decoder RelatedTo
+relatedToTypeDecoder =
+    string
+        |> andThen relatedToConverter
+
+
+relationshipBodyDecoder : Decoder RelationshipBody
+relationshipBodyDecoder =
+    Decode.succeed RelationshipBody
+        |> optional "role" (Decode.maybe roleBodyDecoder) Nothing
+        |> optional "qualifier" (Decode.maybe qualifierBodyDecoder) Nothing
+        |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
+        |> optional "name" (Decode.maybe languageMapLabelDecoder) Nothing
+
+
+relationshipsSectionBodyDecoder : Decoder RelationshipsSectionBody
+relationshipsSectionBodyDecoder =
+    Decode.succeed RelationshipsSectionBody
+        |> hardcoded "record-relationships-section"
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list relationshipBodyDecoder)
+
+
+roleBodyDecoder : Decoder RoleBody
+roleBodyDecoder =
+    Decode.succeed RoleBody
+        |> required "label" languageMapLabelDecoder
+        |> required "value" string
+        |> optional "type" roleDecoder UnknownRole
+
+
+roleConverter : String -> Decoder RelationshipRole
+roleConverter roleString =
+    Dict.fromList roleMap
+        |> Dict.get roleString
+        |> Maybe.withDefault UnknownRole
+        |> Decode.succeed
+
+
+roleDecoder : Decoder RelationshipRole
+roleDecoder =
+    string
+        |> andThen roleConverter
 
 
 {-|
@@ -187,86 +292,3 @@ roleMap =
     , ( "rism:related_to", RelatedToRole )
     , ( "rism:sister_of", SisterOfRole )
     ]
-
-
-roleConverter : String -> Decoder RelationshipRole
-roleConverter roleString =
-    Dict.fromList roleMap
-        |> Dict.get roleString
-        |> Maybe.withDefault UnknownRole
-        |> Decode.succeed
-
-
-relatedToTypeDecoder : Decoder RelatedTo
-relatedToTypeDecoder =
-    Decode.string
-        |> andThen relatedToConverter
-
-
-roleBodyDecoder : Decoder RoleBody
-roleBodyDecoder =
-    Decode.succeed RoleBody
-        |> required "label" languageMapLabelDecoder
-        |> required "value" string
-        |> optional "type" roleDecoder UnknownRole
-
-
-roleDecoder : Decoder RelationshipRole
-roleDecoder =
-    Decode.string
-        |> andThen roleConverter
-
-
-qualifierBodyDecoder : Decoder QualifierBody
-qualifierBodyDecoder =
-    Decode.succeed QualifierBody
-        |> required "label" languageMapLabelDecoder
-        |> required "value" string
-        |> optional "type" qualifierDecoder UnknownQualifier
-
-
-qualifierDecoder : Decoder RelationshipQualifier
-qualifierDecoder =
-    Decode.string
-        |> andThen qualifierConverter
-
-
-relatedToBodyDecoder : Decoder RelatedToBody
-relatedToBodyDecoder =
-    Decode.succeed RelatedToBody
-        |> required "id" string
-        |> required "label" languageMapLabelDecoder
-        |> required "type" relatedToTypeDecoder
-
-
-relatedToConverter : String -> Decoder RelatedTo
-relatedToConverter typeString =
-    case typeString of
-        "rism:Person" ->
-            Decode.succeed PersonRelationship
-
-        "rism:Institution" ->
-            Decode.succeed InstitutionRelationship
-
-        "rism:Place" ->
-            Decode.succeed PlaceRelationship
-
-        _ ->
-            Decode.succeed UnknownRelationship
-
-
-relationshipsSectionBodyDecoder : Decoder RelationshipsSectionBody
-relationshipsSectionBodyDecoder =
-    Decode.succeed RelationshipsSectionBody
-        |> hardcoded "record-relationships-section"
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list relationshipBodyDecoder)
-
-
-relationshipBodyDecoder : Decoder RelationshipBody
-relationshipBodyDecoder =
-    Decode.succeed RelationshipBody
-        |> optional "role" (Decode.maybe roleBodyDecoder) Nothing
-        |> optional "qualifier" (Decode.maybe qualifierBodyDecoder) Nothing
-        |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
-        |> optional "name" (Decode.maybe languageMapLabelDecoder) Nothing

@@ -1,4 +1,9 @@
-module Page.UI.Search.Results.SourceResult exposing (..)
+module Page.UI.Search.Results.SourceResult exposing
+    ( viewSourceFlags
+    , viewSourcePartOf
+    , viewSourceSearchResult
+    , viewSourceSummary
+    )
 
 import Color exposing (Color)
 import Dict exposing (Dict)
@@ -16,28 +21,51 @@ import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, re
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
-viewSourceSearchResult :
-    SearchResultConfig SourceResultBody msg
-    -> Element msg
-viewSourceSearchResult { language, body, selectedResult, clickForPreviewMsg } =
+viewSourceFlags : Language -> SourceResultFlags -> Element msg
+viewSourceFlags language flags =
     let
-        resultColours =
-            resultIsSelected selectedResult body.id
+        -- TODO: Translate the labels!
+        hasDigitizationFlag =
+            viewIf
+                (makeFlagIcon
+                    { background = colourScheme.turquoise
+                    , foreground = colourScheme.white
+                    }
+                    (digitizedImagesSvg colourScheme.white)
+                    "Has digitization"
+                )
+                flags.hasDigitization
 
-        resultBody =
-            [ viewMaybe (viewSourceSummary language resultColours.iconColour) body.summary
-            , viewMaybe (viewSourcePartOf language resultColours.fontLinkColour) body.partOf
-            , viewMaybe (viewSourceFlags language) body.flags
-            ]
+        iiifFlag =
+            viewIf
+                (makeFlagIcon
+                    { background = colourScheme.white
+                    , foreground = colourScheme.black
+                    }
+                    iiifLogo
+                    "Has IIIF Manifest"
+                )
+                flags.hasIIIFManifest
+
+        incipitFlag =
+            viewIf
+                (makeFlagIcon
+                    { background = colourScheme.red
+                    , foreground = colourScheme.white
+                    }
+                    (musicNotationSvg colourScheme.white)
+                    "Has incipits"
+                )
+                flags.hasIncipits
     in
-    resultTemplate
-        { id = body.id
-        , language = language
-        , resultTitle = body.label
-        , colours = resultColours
-        , resultBody = resultBody
-        , clickMsg = clickForPreviewMsg
-        }
+    row
+        [ width fill
+        , spacing 10
+        ]
+        [ incipitFlag
+        , hasDigitizationFlag
+        , iiifFlag
+        ]
 
 
 viewSourcePartOf : Language -> Color -> PartOfSectionBody -> Element msg
@@ -54,12 +82,36 @@ viewSourcePartOf language fontLinkColour partOfBody =
                 [ text "Part of " -- TODO: Translate!
                 , link
                     [ Font.color (fontLinkColour |> convertColorToElementColor) ]
-                    { url = .id partOfBody.source
-                    , label = text (extractLabelFromLanguageMap language <| .label partOfBody.source)
+                    { label = text (extractLabelFromLanguageMap language <| .label partOfBody.source)
+                    , url = .id partOfBody.source
                     }
                 ]
             ]
         ]
+
+
+viewSourceSearchResult :
+    SearchResultConfig SourceResultBody msg
+    -> Element msg
+viewSourceSearchResult { language, selectedResult, body, clickForPreviewMsg } =
+    let
+        resultBody =
+            [ viewMaybe (viewSourceSummary language resultColours.iconColour) body.summary
+            , viewMaybe (viewSourcePartOf language resultColours.fontLinkColour) body.partOf
+            , viewMaybe (viewSourceFlags language) body.flags
+            ]
+
+        resultColours =
+            resultIsSelected selectedResult body.id
+    in
+    resultTemplate
+        { id = body.id
+        , language = language
+        , resultTitle = body.label
+        , colours = resultColours
+        , resultBody = resultBody
+        , clickMsg = clickForPreviewMsg
+        }
 
 
 viewSourceSummary : Language -> Color -> Dict String LabelValue -> Element msg
@@ -119,51 +171,4 @@ viewSourceSummary language iconColour summary =
                     summary
                 ]
             ]
-        ]
-
-
-viewSourceFlags : Language -> SourceResultFlags -> Element msg
-viewSourceFlags language flags =
-    let
-        -- TODO: Translate the labels!
-        incipitFlag =
-            viewIf
-                (makeFlagIcon
-                    { foreground = colourScheme.white
-                    , background = colourScheme.red
-                    }
-                    (musicNotationSvg colourScheme.white)
-                    "Has incipits"
-                )
-                flags.hasIncipits
-
-        hasDigitizationFlag =
-            viewIf
-                (makeFlagIcon
-                    { foreground = colourScheme.white
-                    , background = colourScheme.turquoise
-                    }
-                    (digitizedImagesSvg colourScheme.white)
-                    "Has digitization"
-                )
-                flags.hasDigitization
-
-        iiifFlag =
-            viewIf
-                (makeFlagIcon
-                    { foreground = colourScheme.black
-                    , background = colourScheme.white
-                    }
-                    iiifLogo
-                    "Has IIIF Manifest"
-                )
-                flags.hasIIIFManifest
-    in
-    row
-        [ width fill
-        , spacing 10
-        ]
-        [ incipitFlag
-        , hasDigitizationFlag
-        , iiifFlag
         ]

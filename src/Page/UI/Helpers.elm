@@ -1,6 +1,15 @@
-module Page.UI.Helpers exposing (..)
+module Page.UI.Helpers exposing (viewIf, viewMaybe)
 
 import Element exposing (Element, none)
+
+
+viewIf : Element msg -> Bool -> Element msg
+viewIf viewFunc condition =
+    if condition then
+        viewFunc
+
+    else
+        none
 
 
 {-|
@@ -18,12 +27,3 @@ viewMaybe : (a -> Element msg) -> Maybe a -> Element msg
 viewMaybe viewFunc maybeBody =
     Maybe.map viewFunc maybeBody
         |> Maybe.withDefault none
-
-
-viewIf : Element msg -> Bool -> Element msg
-viewIf viewFunc condition =
-    if condition then
-        viewFunc
-
-    else
-        none

@@ -1,4 +1,4 @@
-module Page.Search.Views.SearchControls.People exposing (..)
+module Page.Search.Views.SearchControls.People exposing (facetsForPeopleModeView)
 
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
@@ -20,19 +20,19 @@ facetsForPeopleModeView language model body =
         activeSearch =
             toActiveSearch model
 
-        qText =
-            toNextQuery activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         facetConfig : String -> FacetConfig SearchBody SearchMsg
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , body = body
             , selectColumns = 3
+            , body = body
             }
+
+        qText =
+            toNextQuery activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
     in
     row
         [ padding 10

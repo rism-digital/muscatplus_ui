@@ -1,4 +1,4 @@
-module Page.UI.Record.NameVariantsSection exposing (..)
+module Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
@@ -13,11 +13,10 @@ viewNameVariantsSection language variantsSection =
     let
         sectionBody =
             [ row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
                 )
                 [ column
                     [ width fill

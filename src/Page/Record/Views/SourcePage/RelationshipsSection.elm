@@ -1,4 +1,4 @@
-module Page.Record.Views.SourcePage.RelationshipsSection exposing (..)
+module Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
 
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
@@ -13,11 +13,10 @@ viewRelationshipsSection language relSection =
     let
         sectionBody =
             [ row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
                 )
                 [ column
                     [ width fill

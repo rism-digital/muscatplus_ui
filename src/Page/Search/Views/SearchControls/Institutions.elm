@@ -1,4 +1,4 @@
-module Page.Search.Views.SearchControls.Institutions exposing (..)
+module Page.Search.Views.SearchControls.Institutions exposing (facetsForInstitutionsModeView)
 
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, width)
@@ -19,18 +19,18 @@ facetsForInstitutionsModeView language model body =
         activeSearch =
             toActiveSearch model
 
-        qText =
-            toNextQuery activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , body = body
             , selectColumns = 3
+            , body = body
             }
+
+        qText =
+            toNextQuery activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
     in
     row
         [ width fill

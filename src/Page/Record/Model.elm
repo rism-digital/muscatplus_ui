@@ -1,4 +1,4 @@
-module Page.Record.Model exposing (..)
+module Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
@@ -28,13 +28,13 @@ type alias RecordPageModel msg =
 routeToCurrentRecordViewTab : Route -> (String -> CurrentRecordViewTab)
 routeToCurrentRecordViewTab route =
     case route of
-        InstitutionSourcePageRoute _ _ ->
+        SourceContentsPageRoute _ _ ->
             RelatedSourcesSearchTab
 
         PersonSourcePageRoute _ _ ->
             RelatedSourcesSearchTab
 
-        SourceContentsPageRoute _ _ ->
+        InstitutionSourcePageRoute _ _ ->
             RelatedSourcesSearchTab
 
         _ ->

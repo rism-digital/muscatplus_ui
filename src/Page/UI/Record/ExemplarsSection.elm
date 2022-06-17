@@ -1,8 +1,8 @@
-module Page.UI.Record.ExemplarsSection exposing (..)
+module Page.UI.Record.ExemplarsSection exposing (viewExemplar, viewExemplarRelationships, viewExemplarsSection, viewExternalResourcesSection, viewHeldBy)
 
 import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourcesSectionBody)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
@@ -15,12 +15,6 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
-
-
-viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
-viewExemplarsSection language exemplarSection =
-    List.map (\l -> viewExemplar language l) exemplarSection.items
-        |> sectionTemplate language exemplarSection
 
 
 viewExemplar : Language -> ExemplarBody -> Element msg
@@ -46,12 +40,11 @@ viewExemplar language exemplar =
                 ]
     in
     row
-        ([ width fill
-         , height fill
-         , alignTop
-         , spacing lineSpacing
-         ]
-            ++ sectionBorderStyles
+        (width fill
+            :: height fill
+            :: alignTop
+            :: spacing lineSpacing
+            :: sectionBorderStyles
         )
         [ column
             [ width fill
@@ -64,6 +57,50 @@ viewExemplar language exemplar =
             , viewMaybe (viewParagraphField language) exemplar.notes
             , viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
             , viewMaybe (viewExemplarRelationships language) exemplar.relationships
+            ]
+        ]
+
+
+viewExemplarRelationships : Language -> RelationshipsSectionBody -> Element msg
+viewExemplarRelationships language body =
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing lineSpacing
+            ]
+            (List.map (\l -> viewRelationshipBody language l) body.items)
+        ]
+
+
+viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
+viewExemplarsSection language exemplarSection =
+    List.map (\l -> viewExemplar language l) exemplarSection.items
+        |> sectionTemplate language exemplarSection
+
+
+viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
+viewExternalResourcesSection language linkSection =
+    fieldValueWrapper
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language linkSection.label ]
+            , column
+                valueFieldColumnAttributes
+                [ textColumn
+                    [ spacing lineSpacing ]
+                    (List.map (\l -> viewExternalResource language l) linkSection.items)
+                ]
             ]
         ]
 
@@ -90,46 +127,8 @@ viewHeldBy language body =
             , link
                 [ linkColour
                 ]
-                { url = body.id
-                , label = text (extractLabelFromLanguageMap language body.label)
+                { label = text (extractLabelFromLanguageMap language body.label)
+                , url = body.id
                 }
             ]
         )
-
-
-viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
-viewExternalResourcesSection language linkSection =
-    fieldValueWrapper
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language linkSection.label ]
-            , column
-                valueFieldColumnAttributes
-                [ textColumn
-                    [ spacing lineSpacing ]
-                    (List.map (\l -> viewExternalResource language l) linkSection.items)
-                ]
-            ]
-        ]
-
-
-viewExemplarRelationships : Language -> RelationshipsSectionBody -> Element msg
-viewExemplarRelationships language body =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , spacing lineSpacing
-            ]
-            (List.map (\l -> viewRelationshipBody language l) body.items)
-        ]

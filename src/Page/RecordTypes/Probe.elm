@@ -1,4 +1,4 @@
-module Page.RecordTypes.Probe exposing (..)
+module Page.RecordTypes.Probe exposing (ProbeData, probeResponseDecoder)
 
 import Json.Decode as Decode exposing (Decoder, int)
 import Json.Decode.Pipeline exposing (optional, required)

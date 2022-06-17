@@ -1,4 +1,4 @@
-module Page.Front.Views.SourceSearch exposing (..)
+module Page.Front.Views.SourceSearch exposing (sourceSearchPanelView)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
@@ -22,21 +22,21 @@ sourceSearchPanelView session model frontBody =
         activeSearch =
             model.activeSearch
 
-        qText =
-            toNextQuery activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
-        language =
-            session.language
-
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = model.activeSearch
-            , body = frontBody
             , selectColumns = 4
+            , body = frontBody
             }
+
+        language =
+            session.language
+
+        qText =
+            toNextQuery activeSearch
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
     in
     row
         [ padding 10

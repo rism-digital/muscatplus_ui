@@ -1,4 +1,4 @@
-module Model exposing (..)
+module Model exposing (Model(..), toSession, updateSession)
 
 import Page.About as About
 import Page.Front as Front
@@ -15,8 +15,8 @@ type Model
     | SourcePage Session Record.Model
     | PersonPage Session Record.Model
     | InstitutionPage Session Record.Model
-    | PlacePage Session Record.Model
     | AboutPage Session About.Model
+    | PlacePage Session Record.Model
 
 
 toSession : Model -> Session
@@ -40,10 +40,10 @@ toSession model =
         InstitutionPage session _ ->
             session
 
-        PlacePage session _ ->
+        AboutPage session _ ->
             session
 
-        AboutPage session _ ->
+        PlacePage session _ ->
             session
 
 
@@ -68,8 +68,8 @@ updateSession newSession model =
         InstitutionPage _ pageModel ->
             InstitutionPage newSession pageModel
 
-        PlacePage _ pageModel ->
-            PlacePage newSession pageModel
-
         AboutPage _ aboutModel ->
             AboutPage newSession aboutModel
+
+        PlacePage _ pageModel ->
+            PlacePage newSession pageModel

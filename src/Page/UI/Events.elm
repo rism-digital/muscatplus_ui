@@ -1,4 +1,4 @@
-module Page.UI.Events exposing (..)
+module Page.UI.Events exposing (onEnter)
 
 import Element
 import Html.Events

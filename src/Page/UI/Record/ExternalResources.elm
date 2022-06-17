@@ -1,4 +1,4 @@
-module Page.UI.Record.ExternalResources exposing (..)
+module Page.UI.Record.ExternalResources exposing (viewExternalResource, viewExternalResourcesSection)
 
 import Config as C
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, px, row, spacing, text, width, wrappedRow)
@@ -8,30 +8,6 @@ import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles
 import Page.UI.Components exposing (renderParagraph)
 import Page.UI.Images exposing (iiifLogo)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
-
-
-viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
-viewExternalResourcesSection language extSection =
-    let
-        sectionBody =
-            [ row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
-                )
-                [ column
-                    [ spacing sectionSpacing
-                    , width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    (List.map (\l -> viewExternalResource language l) extSection.items)
-                ]
-            ]
-    in
-    sectionTemplate language extSection sectionBody
 
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg
@@ -53,8 +29,8 @@ viewExternalResource language body =
                                 [ linkColour
                                 , alignLeft
                                 ]
-                                { url = C.serverUrl ++ "/viewer.html#?manifest=" ++ body.url
-                                , label = text "View Images"
+                                { label = text "View Images"
+                                , url = C.serverUrl ++ "/viewer.html#?manifest=" ++ body.url
                                 }
                             , text "|"
                             , el
@@ -67,8 +43,8 @@ viewExternalResource language body =
                                 [ linkColour
                                 , alignLeft
                                 ]
-                                { url = body.url
-                                , label = text "Manifest"
+                                { label = text "Manifest"
+                                , url = body.url
                                 }
                             ]
                         ]
@@ -77,8 +53,8 @@ viewExternalResource language body =
                 _ ->
                     [ link
                         [ linkColour ]
-                        { url = body.url
-                        , label = text body.url
+                        { label = text body.url
+                        , url = body.url
                         }
                     ]
     in
@@ -99,3 +75,26 @@ viewExternalResource language body =
                 externalResourceLink
             ]
         ]
+
+
+viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
+viewExternalResourcesSection language extSection =
+    let
+        sectionBody =
+            [ row
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
+                )
+                [ column
+                    [ spacing sectionSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    (List.map (\l -> viewExternalResource language l) extSection.items)
+                ]
+            ]
+    in
+    sectionTemplate language extSection sectionBody

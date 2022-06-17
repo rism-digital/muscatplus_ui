@@ -1,4 +1,4 @@
-module Response exposing (..)
+module Response exposing (Response(..), ServerData(..))
 
 import Page.RecordTypes.About exposing (AboutBody)
 import Page.RecordTypes.Front exposing (FrontBody)

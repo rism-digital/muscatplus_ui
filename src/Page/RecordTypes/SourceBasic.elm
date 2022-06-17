@@ -1,4 +1,4 @@
-module Page.RecordTypes.SourceBasic exposing (..)
+module Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (optional, required)

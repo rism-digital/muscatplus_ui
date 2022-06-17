@@ -1,4 +1,4 @@
-module Page.Keyboard.Views.FormInput exposing (..)
+module Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
 
 import Element exposing (Element, alignTop, column, el, fill, height, px, row, shrink, spacing, text, width)
 import Element.Input as Input
@@ -25,10 +25,10 @@ viewPaeInput language notationFacet (Keyboard model config) =
                     [ width fill ]
                     (Input.text
                         [ width fill ]
-                        { onChange = UserInteractedWithPAEText
-                        , text = Maybe.withDefault "" (.noteData model.query)
+                        { label = Input.labelLeft [] (text "PAE Input")
+                        , onChange = UserInteractedWithPAEText
                         , placeholder = Nothing
-                        , label = Input.labelLeft [] (text "PAE Input")
+                        , text = Maybe.withDefault "" (.noteData model.query)
                         }
                     )
                 ]
@@ -53,38 +53,13 @@ viewRenderControls language notationFacet (Keyboard model config) =
                 ]
                 [ dropdownSelect
                     { selectedMsg = \clefStr -> UserClickedPianoKeyboardChangeClef <| clefStrToClef clefStr
-                    , mouseUpMsg = Nothing
                     , mouseDownMsg = Nothing
+                    , mouseUpMsg = Nothing
                     , choices = clefObjList
                     , choiceFn = \selected -> clefStrToClef selected
                     , currentChoice = .clef model.query
                     , selectIdent = "keyboard-clef-select"
                     , label = Just clefLabel
-                    , language = language
-                    }
-                ]
-
-        tsigLabel =
-            .label (.timesig notationFacet.notationOptions)
-
-        tsigList =
-            .options (.timesig notationFacet.notationOptions)
-                |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
-
-        timeSigSelect =
-            column
-                [ width shrink
-                , bodySM
-                ]
-                [ dropdownSelect
-                    { selectedMsg = \tsigStr -> UserClickedPianoKeyboardChangeTimeSignature <| timeSigStrToTimeSignature tsigStr
-                    , mouseDownMsg = Nothing
-                    , mouseUpMsg = Nothing
-                    , choices = tsigList
-                    , choiceFn = \selected -> timeSigStrToTimeSignature selected
-                    , currentChoice = .timeSignature model.query
-                    , selectIdent = "keyboard-time-sig-select"
-                    , label = Just tsigLabel
                     , language = language
                     }
                 ]
@@ -113,6 +88,31 @@ viewRenderControls language notationFacet (Keyboard model config) =
                     , language = language
                     }
                 ]
+
+        timeSigSelect =
+            column
+                [ width shrink
+                , bodySM
+                ]
+                [ dropdownSelect
+                    { selectedMsg = \tsigStr -> UserClickedPianoKeyboardChangeTimeSignature <| timeSigStrToTimeSignature tsigStr
+                    , mouseDownMsg = Nothing
+                    , mouseUpMsg = Nothing
+                    , choices = tsigList
+                    , choiceFn = \selected -> timeSigStrToTimeSignature selected
+                    , currentChoice = .timeSignature model.query
+                    , selectIdent = "keyboard-time-sig-select"
+                    , label = Just tsigLabel
+                    , language = language
+                    }
+                ]
+
+        tsigLabel =
+            .label (.timesig notationFacet.notationOptions)
+
+        tsigList =
+            .options (.timesig notationFacet.notationOptions)
+                |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
     in
     row
         [ width fill

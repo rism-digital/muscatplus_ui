@@ -1,4 +1,4 @@
-module Page.UI.Record.SourceItemsSection exposing (..)
+module Page.UI.Record.SourceItemsSection exposing (viewSourceItem, viewSourceItemsSection)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, link, px, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
@@ -9,12 +9,6 @@ import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
-
-
-viewSourceItemsSection : Language -> SourceItemsSectionBody -> Element msg
-viewSourceItemsSection language siSection =
-    List.map (\sourceBody -> viewSourceItem language sourceBody) siSection.items
-        |> sectionTemplate language siSection
 
 
 viewSourceItem : Language -> BasicSourceBody -> Element msg
@@ -41,11 +35,17 @@ viewSourceItem language source =
                     [ linkColour
                     , headingMD
                     ]
-                    { url = source.id
-                    , label = text (extractLabelFromLanguageMap language source.label)
+                    { label = text (extractLabelFromLanguageMap language source.label)
+                    , url = source.id
                     }
                 ]
             , Maybe.withDefault [] source.summary
                 |> viewSummaryField language
             ]
         ]
+
+
+viewSourceItemsSection : Language -> SourceItemsSectionBody -> Element msg
+viewSourceItemsSection language siSection =
+    List.map (\sourceBody -> viewSourceItem language sourceBody) siSection.items
+        |> sectionTemplate language siSection

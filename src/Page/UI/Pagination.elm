@@ -1,4 +1,4 @@
-module Page.UI.Pagination exposing (..)
+module Page.UI.Pagination exposing (paginationLink, viewPagination)
 
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, pointer, px, row, shrink, text, width)
 import Element.Background as Background
@@ -14,20 +14,32 @@ import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, che
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
+paginationLink : Element a -> (String -> a) -> String -> Element a
+paginationLink icon clickFn url =
+    el
+        [ padding 5
+        , height (px 40)
+        , width (px 40)
+        , onClick <| clickFn url
+        , pointer
+        ]
+        icon
+
+
 viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
 viewPagination language pagination clickMsg =
     let
+        pageInfo =
+            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
+
+        pageLabel =
+            extractLabelFromLanguageMap language localTranslations.page
+
         thisPage =
             formatNumberByLanguage language (toFloat pagination.thisPage)
 
         totalPages =
             formatNumberByLanguage language (toFloat pagination.totalPages)
-
-        pageLabel =
-            extractLabelFromLanguageMap language localTranslations.page
-
-        pageInfo =
-            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
     in
     row
         [ width fill
@@ -35,7 +47,7 @@ viewPagination language pagination clickMsg =
         , height (px 50)
         , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , minimalDropShadow
         ]
         [ column
@@ -78,15 +90,3 @@ viewPagination language pagination clickMsg =
                 ]
             ]
         ]
-
-
-paginationLink : Element a -> (String -> a) -> String -> Element a
-paginationLink icon clickFn url =
-    el
-        [ padding 5
-        , height (px 40)
-        , width (px 40)
-        , onClick <| clickFn url
-        , pointer
-        ]
-        icon

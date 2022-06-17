@@ -1,115 +1,34 @@
-module Page.Keyboard.Model exposing (..)
+module Page.Keyboard.Model exposing
+    ( Clef(..)
+    , Key(..)
+    , KeyNoteConfig
+    , KeyNoteName(..)
+    , KeySignature(..)
+    , Keyboard(..)
+    , KeyboardConfig
+    , KeyboardModel
+    , KeyboardQuery
+    , Octave
+    , Octaves
+    , QueryMode(..)
+    , TimeSignature(..)
+    , clefStringMap
+    , keySignatureMap
+    , noteMap
+    , octaveConfig
+    , queryModeMap
+    , setClef
+    , setKeySignature
+    , setKeyboardQuery
+    , setNoteData
+    , setQueryMode
+    , setTimeSignature
+    , supportedOctaves
+    , timeSignatureMap
+    , toKeyboardQuery
+    )
 
 import Debouncer.Messages exposing (Debouncer)
-
-
-type Keyboard msg
-    = Keyboard (KeyboardModel msg) KeyboardConfig
-
-
-type alias KeyboardModel msg =
-    { query : KeyboardQuery
-    , notation : Maybe String -- the rendered SVG
-    , needsProbe : Bool
-    , inputIsValid : Bool
-    , paeInputSearchDebouncer : Debouncer msg
-    }
-
-
-type alias KeyNoteConfig =
-    { keyType : Key
-    }
-
-
-octaveConfig : List KeyNoteConfig
-octaveConfig =
-    [ { keyType = WhiteKey KC KCn
-      }
-    , { keyType = BlackKey KCs KDf
-      }
-    , { keyType = WhiteKey KD KDn
-      }
-    , { keyType = BlackKey KDs KEf
-      }
-    , { keyType = WhiteKey KE KEn
-      }
-    , { keyType = WhiteKey KF KFn
-      }
-    , { keyType = BlackKey KFs KGf
-      }
-    , { keyType = WhiteKey KG KGn
-      }
-    , { keyType = BlackKey KGs KAf
-      }
-    , { keyType = WhiteKey KA KAn
-      }
-    , { keyType = BlackKey KAs KBf
-      }
-    , { keyType = WhiteKey KB KBn
-      }
-    ]
-
-
-toKeyboardQuery : { a | query : KeyboardQuery } -> KeyboardQuery
-toKeyboardQuery model =
-    model.query
-
-
-setKeyboardQuery : KeyboardQuery -> { a | query : KeyboardQuery } -> { a | query : KeyboardQuery }
-setKeyboardQuery newQuery oldModel =
-    { oldModel | query = newQuery }
-
-
-type alias KeyboardQuery =
-    { clef : Clef
-    , timeSignature : TimeSignature
-    , keySignature : KeySignature
-    , noteData : Maybe String
-    , queryMode : QueryMode
-    }
-
-
-setNoteData : Maybe String -> { a | noteData : Maybe String } -> { a | noteData : Maybe String }
-setNoteData newData oldModel =
-    { oldModel | noteData = newData }
-
-
-setClef : Clef -> { a | clef : Clef } -> { a | clef : Clef }
-setClef newClef oldModel =
-    { oldModel | clef = newClef }
-
-
-setTimeSignature : TimeSignature -> { a | timeSignature : TimeSignature } -> { a | timeSignature : TimeSignature }
-setTimeSignature newSig oldModel =
-    { oldModel | timeSignature = newSig }
-
-
-setKeySignature : KeySignature -> { a | keySignature : KeySignature } -> { a | keySignature : KeySignature }
-setKeySignature newSig oldModel =
-    { oldModel | keySignature = newSig }
-
-
-setQueryMode : QueryMode -> { a | queryMode : QueryMode } -> { a | queryMode : QueryMode }
-setQueryMode newMode oldModel =
-    { oldModel | queryMode = newMode }
-
-
-type Key
-    = WhiteKey KeyNoteName KeyNoteName
-    | BlackKey KeyNoteName KeyNoteName
-
-
-type alias KeyboardConfig =
-    { numOctaves : Int
-    }
-
-
-type alias Octave =
-    Int
-
-
-type alias Octaves =
-    List ( Int, String )
 
 
 {-|
@@ -137,43 +56,14 @@ type Clef
     | G3M
 
 
-
---type alias TimeSignature =
---    String
-
-
-type TimeSignature
-    = TNone
-    | T4_4
-    | T3_4
-    | TC
-    | TCutC
-    | T6_8
-    | TO
-    | TODot
+type Key
+    = WhiteKey KeyNoteName KeyNoteName
+    | BlackKey KeyNoteName KeyNoteName
 
 
-
---type alias KeySignature =
---    String
-
-
-type KeySignature
-    = KS_N
-    | KS_xF
-    | KS_xFC
-    | KS_xFCG
-    | KS_xFCGD
-    | KS_xFCGDA
-    | KS_xFCGDAE
-    | KS_xFCGDAEB
-    | KS_bBEADGCF
-    | KS_bBEADGC
-    | KS_bBEADG
-    | KS_bBEAD
-    | KS_bBEA
-    | KS_bBE
-    | KS_bB
+type alias KeyNoteConfig =
+    { keyType : Key
+    }
 
 
 type KeyNoteName
@@ -203,21 +93,73 @@ type KeyNoteName
     | KBn
 
 
+type KeySignature
+    = KS_N
+    | KS_xF
+    | KS_xFC
+    | KS_xFCG
+    | KS_xFCGD
+    | KS_xFCGDA
+    | KS_xFCGDAE
+    | KS_xFCGDAEB
+    | KS_bBEADGCF
+    | KS_bBEADGC
+    | KS_bBEADG
+    | KS_bBEAD
+    | KS_bBEA
+    | KS_bBE
+    | KS_bB
+
+
+type Keyboard msg
+    = Keyboard (KeyboardModel msg) KeyboardConfig
+
+
+type alias KeyboardConfig =
+    { numOctaves : Int
+    }
+
+
+type alias KeyboardModel msg =
+    { query : KeyboardQuery
+    , notation : Maybe String -- the rendered SVG
+    , needsProbe : Bool
+    , inputIsValid : Bool
+    , paeInputSearchDebouncer : Debouncer msg
+    }
+
+
+type alias KeyboardQuery =
+    { clef : Clef
+    , timeSignature : TimeSignature
+    , keySignature : KeySignature
+    , noteData : Maybe String
+    , queryMode : QueryMode
+    }
+
+
+type alias Octave =
+    Int
+
+
+type alias Octaves =
+    List ( Int, String )
+
+
 type QueryMode
     = IntervalQueryMode
     | ExactPitchQueryMode
 
 
-supportedOctaves : Octaves
-supportedOctaves =
-    [ ( 1, ",,," )
-    , ( 2, ",," )
-    , ( 3, "," )
-    , ( 4, "'" )
-    , ( 5, "''" )
-    , ( 6, "'''" )
-    , ( 7, "''''" )
-    ]
+type TimeSignature
+    = TNone
+    | T4_4
+    | T3_4
+    | TC
+    | TCutC
+    | T6_8
+    | TO
+    | TODot
 
 
 clefStringMap : List ( String, Clef )
@@ -239,6 +181,26 @@ clefStringMap =
     , ( "F+4", F4M )
     , ( "G+2", G2M )
     , ( "G+3", G3M )
+    ]
+
+
+keySignatureMap : List ( String, KeySignature )
+keySignatureMap =
+    [ ( "n", KS_N )
+    , ( "xF", KS_xF )
+    , ( "xFC", KS_xFC )
+    , ( "xFCG", KS_xFCG )
+    , ( "xFCGD", KS_xFCGD )
+    , ( "xFCGDA", KS_xFCGDA )
+    , ( "xFCGDAE", KS_xFCGDAE )
+    , ( "xFCGDAEB", KS_xFCGDAEB )
+    , ( "bBEADGCF", KS_bBEADGCF )
+    , ( "bBEADGC", KS_bBEADGC )
+    , ( "bBEADG", KS_bBEADG )
+    , ( "bBEAD", KS_bBEAD )
+    , ( "bBEA", KS_bBEA )
+    , ( "bBE", KS_bBE )
+    , ( "bB", KS_bB )
     ]
 
 
@@ -271,6 +233,40 @@ noteMap =
     ]
 
 
+octaveConfig : List KeyNoteConfig
+octaveConfig =
+    [ { keyType = WhiteKey KC KCn
+      }
+    , { keyType = BlackKey KCs KDf
+      }
+    , { keyType = WhiteKey KD KDn
+      }
+    , { keyType = BlackKey KDs KEf
+      }
+    , { keyType = WhiteKey KE KEn
+      }
+    , { keyType = WhiteKey KF KFn
+      }
+    , { keyType = BlackKey KFs KGf
+      }
+    , { keyType = WhiteKey KG KGn
+      }
+    , { keyType = BlackKey KGs KAf
+      }
+    , { keyType = WhiteKey KA KAn
+      }
+    , { keyType = BlackKey KAs KBf
+      }
+    , { keyType = WhiteKey KB KBn
+      }
+    ]
+
+
+
+--type alias TimeSignature =
+--    String
+
+
 queryModeMap : List ( String, QueryMode )
 queryModeMap =
     [ ( "interval", IntervalQueryMode )
@@ -278,23 +274,50 @@ queryModeMap =
     ]
 
 
-keySignatureMap : List ( String, KeySignature )
-keySignatureMap =
-    [ ( "n", KS_N )
-    , ( "xF", KS_xF )
-    , ( "xFC", KS_xFC )
-    , ( "xFCG", KS_xFCG )
-    , ( "xFCGD", KS_xFCGD )
-    , ( "xFCGDA", KS_xFCGDA )
-    , ( "xFCGDAE", KS_xFCGDAE )
-    , ( "xFCGDAEB", KS_xFCGDAEB )
-    , ( "bBEADGCF", KS_bBEADGCF )
-    , ( "bBEADGC", KS_bBEADGC )
-    , ( "bBEADG", KS_bBEADG )
-    , ( "bBEAD", KS_bBEAD )
-    , ( "bBEA", KS_bBEA )
-    , ( "bBE", KS_bBE )
-    , ( "bB", KS_bB )
+
+--type alias KeySignature =
+--    String
+
+
+setClef : Clef -> { a | clef : Clef } -> { a | clef : Clef }
+setClef newClef oldModel =
+    { oldModel | clef = newClef }
+
+
+setKeySignature : KeySignature -> { a | keySignature : KeySignature } -> { a | keySignature : KeySignature }
+setKeySignature newSig oldModel =
+    { oldModel | keySignature = newSig }
+
+
+setKeyboardQuery : KeyboardQuery -> { a | query : KeyboardQuery } -> { a | query : KeyboardQuery }
+setKeyboardQuery newQuery oldModel =
+    { oldModel | query = newQuery }
+
+
+setNoteData : Maybe String -> { a | noteData : Maybe String } -> { a | noteData : Maybe String }
+setNoteData newData oldModel =
+    { oldModel | noteData = newData }
+
+
+setQueryMode : QueryMode -> { a | queryMode : QueryMode } -> { a | queryMode : QueryMode }
+setQueryMode newMode oldModel =
+    { oldModel | queryMode = newMode }
+
+
+setTimeSignature : TimeSignature -> { a | timeSignature : TimeSignature } -> { a | timeSignature : TimeSignature }
+setTimeSignature newSig oldModel =
+    { oldModel | timeSignature = newSig }
+
+
+supportedOctaves : Octaves
+supportedOctaves =
+    [ ( 1, ",,," )
+    , ( 2, ",," )
+    , ( 3, "," )
+    , ( 4, "'" )
+    , ( 5, "''" )
+    , ( 6, "'''" )
+    , ( 7, "''''" )
     ]
 
 
@@ -309,3 +332,8 @@ timeSignatureMap =
     , ( "o", TO )
     , ( "o.", TODot )
     ]
+
+
+toKeyboardQuery : { a | query : KeyboardQuery } -> KeyboardQuery
+toKeyboardQuery model =
+    model.query

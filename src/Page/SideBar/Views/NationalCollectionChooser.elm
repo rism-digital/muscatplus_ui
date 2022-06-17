@@ -1,4 +1,4 @@
-module Page.SideBar.Views.NationalCollectionChooser exposing (..)
+module Page.SideBar.Views.NationalCollectionChooser exposing (imageForCountryCode, nationalCollectionChooserAnimations, nationalCollectionPrefixToFlagMap, sortedByLocalizedCountryName, viewNationalCollectionChooser, viewNationalCollectionChooserMenuOption, viewNationalCollectionColumn, viewNationalCollectionRow)
 
 import Config
 import Dict exposing (Dict)
@@ -19,6 +19,32 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
+
+
+imageForCountryCode : String -> Element msg
+imageForCountryCode countryCode =
+    let
+        countryFlagImageName =
+            Dict.get countryCode nationalCollectionPrefixToFlagMap
+                |> Maybe.withDefault "xx.svg"
+
+        countryFlagPath =
+            Config.flagsPath ++ countryFlagImageName
+    in
+    image
+        [ width (px 25) ]
+        { description = countryCode
+        , src = countryFlagPath
+        }
+
+
+nationalCollectionChooserAnimations =
+    Animation.fromTo
+        { duration = 150
+        , options = [ Animation.delay 150 ]
+        }
+        [ P.opacity 0 ]
+        [ P.opacity 1 ]
 
 
 nationalCollectionPrefixToFlagMap : Dict String String
@@ -81,162 +107,9 @@ nationalCollectionPrefixToFlagMap =
         ]
 
 
-imageForCountryCode : String -> Element msg
-imageForCountryCode countryCode =
-    let
-        countryFlagImageName =
-            Dict.get countryCode nationalCollectionPrefixToFlagMap
-                |> Maybe.withDefault "xx.svg"
-
-        countryFlagPath =
-            Config.flagsPath ++ countryFlagImageName
-    in
-    image
-        [ width (px 25) ]
-        { src = countryFlagPath
-        , description = countryCode
-        }
-
-
-viewNationalCollectionChooserMenuOption : Session -> Element SideBarMsg
-viewNationalCollectionChooserMenuOption session =
-    let
-        viewChooser =
-            if session.currentlyHoveredNationalCollectionChooser then
-                viewNationalCollectionChooser session
-
-            else
-                none
-
-        hoverStyles =
-            if session.currentlyHoveredNationalCollectionChooser then
-                Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-
-            else
-                emptyAttribute
-
-        isRestrictedToNationalCollection =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
-
-        labelFontColour =
-            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionChooser /= True then
-                colourScheme.white
-
-            else
-                colourScheme.black
-
-        sidebarIcon =
-            case session.restrictedToNationalCollection of
-                Just countryCode ->
-                    let
-                        countryFlagImage =
-                            imageForCountryCode countryCode
-                    in
-                    column
-                        [ width (px 30)
-                        , alignLeft
-                        , centerY
-                        ]
-                        [ el
-                            [ width (px 25)
-                            , centerX
-                            , centerY
-                            ]
-                            countryFlagImage
-                        , el
-                            [ width (px 40)
-                            , centerX
-                            , centerY
-                            , Font.center
-                            , Font.bold
-                            , headingMD
-                            , Font.color (labelFontColour |> convertColorToElementColor)
-                            ]
-                            (text countryCode)
-                        ]
-
-                Nothing ->
-                    column
-                        [ width (px 30)
-                        , alignLeft
-                        , centerY
-                        ]
-                        [ el
-                            [ width (px 25)
-                            , alignLeft
-                            , centerY
-                            ]
-                            (globeSvg colourScheme.black)
-                        ]
-
-        iconBackgroundColor =
-            if isRestrictedToNationalCollection then
-                Background.color (colourScheme.turquoise |> convertColorToElementColor)
-
-            else
-                emptyAttribute
-
-        showLabels =
-            showSideBarLabels session.expandedSideBar
-
-        iconLabel =
-            case session.restrictedToNationalCollection of
-                Just countryCode ->
-                    let
-                        lmap =
-                            Dict.get countryCode session.allNationalCollections
-                    in
-                    case lmap of
-                        Just m ->
-                            extractLabelFromLanguageMap session.language m
-
-                        Nothing ->
-                            extractLabelFromLanguageMap session.language localTranslations.globalCollection
-
-                Nothing ->
-                    extractLabelFromLanguageMap session.language localTranslations.globalCollection
-
-        labelEl =
-            el
-                [ Font.color (labelFontColour |> convertColorToElementColor)
-                , headingLG
-                ]
-                (text iconLabel)
-    in
-    row
-        [ width fill
-        , alignTop
-        , spacing 10
-        , paddingXY 30 10
-        , pointer
-        , onRight viewChooser
-        , onMouseEnter UserMouseEnteredCountryChooser
-        , onMouseLeave UserMouseExitedCountryChooser
-        , iconBackgroundColor
-        , hoverStyles
-        ]
-        [ sidebarIcon
-        , viewIf (animatedLabel labelEl) showLabels
-        ]
-
-
 sortedByLocalizedCountryName : Language -> List ( String, LanguageMap ) -> List ( String, LanguageMap )
 sortedByLocalizedCountryName language countryList =
     List.sortBy (\( _, label ) -> extractLabelFromLanguageMap language label) countryList
-
-
-nationalCollectionChooserAnimations =
-    Animation.fromTo
-        { duration = 150
-        , options = [ Animation.delay 150 ]
-        }
-        [ P.opacity 0 ]
-        [ P.opacity 1 ]
 
 
 viewNationalCollectionChooser : Session -> Element SideBarMsg
@@ -245,11 +118,11 @@ viewNationalCollectionChooser session =
         countryList =
             Dict.toList session.allNationalCollections
 
-        sortedList =
-            sortedByLocalizedCountryName session.language countryList
-
         groupedList =
             LE.greedyGroupsOf 2 sortedList
+
+        sortedList =
+            sortedByLocalizedCountryName session.language countryList
     in
     animatedRow
         nationalCollectionChooserAnimations
@@ -260,12 +133,12 @@ viewNationalCollectionChooser session =
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , moveLeft 20
         , Border.shadow
-            { offset = ( 1, 1 )
-            , size = 1
-            , blur = 10
+            { blur = 10
             , color =
                 colourScheme.darkGrey
                     |> convertColorToElementColor
+            , offset = ( 1, 1 )
+            , size = 1
             }
         ]
         [ column
@@ -333,12 +206,131 @@ viewNationalCollectionChooser session =
         ]
 
 
-viewNationalCollectionRow : Language -> List ( String, LanguageMap ) -> Element SideBarMsg
-viewNationalCollectionRow language collectionRow =
+viewNationalCollectionChooserMenuOption : Session -> Element SideBarMsg
+viewNationalCollectionChooserMenuOption session =
+    let
+        hoverStyles =
+            if session.currentlyHoveredNationalCollectionChooser then
+                Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+
+            else
+                emptyAttribute
+
+        iconBackgroundColor =
+            if isRestrictedToNationalCollection then
+                Background.color (colourScheme.turquoise |> convertColorToElementColor)
+
+            else
+                emptyAttribute
+
+        iconLabel =
+            case session.restrictedToNationalCollection of
+                Just countryCode ->
+                    let
+                        lmap =
+                            Dict.get countryCode session.allNationalCollections
+                    in
+                    case lmap of
+                        Just m ->
+                            extractLabelFromLanguageMap session.language m
+
+                        Nothing ->
+                            extractLabelFromLanguageMap session.language localTranslations.globalCollection
+
+                Nothing ->
+                    extractLabelFromLanguageMap session.language localTranslations.globalCollection
+
+        isRestrictedToNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+
+        labelEl =
+            el
+                [ Font.color (labelFontColour |> convertColorToElementColor)
+                , headingLG
+                ]
+                (text iconLabel)
+
+        labelFontColour =
+            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionChooser /= True then
+                colourScheme.white
+
+            else
+                colourScheme.black
+
+        showLabels =
+            showSideBarLabels session.expandedSideBar
+
+        sidebarIcon =
+            case session.restrictedToNationalCollection of
+                Just countryCode ->
+                    let
+                        countryFlagImage =
+                            imageForCountryCode countryCode
+                    in
+                    column
+                        [ width (px 30)
+                        , alignLeft
+                        , centerY
+                        ]
+                        [ el
+                            [ width (px 25)
+                            , centerX
+                            , centerY
+                            ]
+                            countryFlagImage
+                        , el
+                            [ width (px 40)
+                            , centerX
+                            , centerY
+                            , Font.center
+                            , Font.bold
+                            , headingMD
+                            , Font.color (labelFontColour |> convertColorToElementColor)
+                            ]
+                            (text countryCode)
+                        ]
+
+                Nothing ->
+                    column
+                        [ width (px 30)
+                        , alignLeft
+                        , centerY
+                        ]
+                        [ el
+                            [ width (px 25)
+                            , alignLeft
+                            , centerY
+                            ]
+                            (globeSvg colourScheme.black)
+                        ]
+
+        viewChooser =
+            if session.currentlyHoveredNationalCollectionChooser then
+                viewNationalCollectionChooser session
+
+            else
+                none
+    in
     row
         [ width fill
+        , alignTop
+        , spacing 10
+        , paddingXY 30 10
+        , pointer
+        , onRight viewChooser
+        , onMouseEnter UserMouseEnteredCountryChooser
+        , onMouseLeave UserMouseExitedCountryChooser
+        , iconBackgroundColor
+        , hoverStyles
         ]
-        (List.map (\r -> viewNationalCollectionColumn language r) collectionRow)
+        [ sidebarIcon
+        , viewIf (animatedLabel labelEl) showLabels
+        ]
 
 
 viewNationalCollectionColumn : Language -> ( String, LanguageMap ) -> Element SideBarMsg
@@ -365,3 +357,11 @@ viewNationalCollectionColumn language ( abbr, label ) =
                 ]
             ]
         ]
+
+
+viewNationalCollectionRow : Language -> List ( String, LanguageMap ) -> Element SideBarMsg
+viewNationalCollectionRow language collectionRow =
+    row
+        [ width fill
+        ]
+        (List.map (\r -> viewNationalCollectionColumn language r) collectionRow)

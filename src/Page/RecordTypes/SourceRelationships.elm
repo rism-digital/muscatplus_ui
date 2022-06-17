@@ -1,4 +1,4 @@
-module Page.RecordTypes.SourceRelationships exposing (..)
+module Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody, sourceRelationshipsSectionBodyDecoder)
 
 {-
    Handles the relationship of sources to

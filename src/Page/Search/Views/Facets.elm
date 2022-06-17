@@ -1,4 +1,4 @@
-module Page.Search.Views.Facets exposing (..)
+module Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItem, viewModeItems)
 
 import Element exposing (Element, alignLeft, centerX, centerY, el, fill, height, paddingXY, px, row, spacing, text, width)
 import Element.Border as Border
@@ -32,6 +32,88 @@ facetSearchMsgConfig =
     }
 
 
+viewModeItem : ResultMode -> Language -> FacetItem -> Element SearchMsg
+viewModeItem selectedMode language fitem =
+    let
+        -- uses opaque type destructuring to unpack the values of the facet item.
+        baseRowStyle =
+            [ alignLeft
+            , Font.center
+            , height fill
+            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            ]
+
+        (FacetItem value label count) =
+            fitem
+
+        fullLabel =
+            extractLabelFromLanguageMap language label
+
+        icon =
+            case value of
+                "festivals" ->
+                    iconTmpl <| liturgicalFestivalSvg colourScheme.slateGrey
+
+                "incipits" ->
+                    iconTmpl <| musicNotationSvg colourScheme.slateGrey
+
+                "institutions" ->
+                    iconTmpl <| institutionSvg colourScheme.slateGrey
+
+                "people" ->
+                    iconTmpl <| peopleSvg colourScheme.slateGrey
+
+                "sources" ->
+                    iconTmpl <| sourcesSvg colourScheme.slateGrey
+
+                _ ->
+                    iconTmpl <| unknownSvg colourScheme.slateGrey
+
+        iconTmpl svg =
+            el
+                [ width (px 20)
+                , height fill
+                , centerX
+                , centerY
+                ]
+                svg
+
+        itemCount =
+            formatNumberByLanguage language count
+
+        rowMode =
+            parseStringToResultMode value
+
+        rowStyle =
+            if selectedMode == rowMode then
+                Border.color (colourScheme.lightBlue |> convertColorToElementColor) :: baseRowStyle
+
+            else
+                Border.color (colourScheme.cream |> convertColorToElementColor) :: baseRowStyle
+    in
+    row
+        rowStyle
+        [ el
+            [ paddingXY 5 0 ]
+            icon
+        , el
+            []
+            (button
+                [ alignLeft
+                , spacing 10
+                ]
+                { label =
+                    el
+                        [ headingSM
+                        , alignLeft
+                        ]
+                        (text <| fullLabel ++ " (" ++ itemCount ++ ")")
+                , onPress = Just <| UserClickedModeItem fitem
+                }
+            )
+        ]
+
+
 viewModeItems : ResultMode -> Language -> ModeFacet -> Element SearchMsg
 viewModeItems selectedMode language typeFacet =
     let
@@ -53,85 +135,3 @@ viewModeItems selectedMode language typeFacet =
         , centerY
         ]
         (rowLabel :: List.map (\t -> viewModeItem selectedMode language t) typeFacet.items)
-
-
-viewModeItem : ResultMode -> Language -> FacetItem -> Element SearchMsg
-viewModeItem selectedMode language fitem =
-    let
-        -- uses opaque type destructuring to unpack the values of the facet item.
-        (FacetItem value label count) =
-            fitem
-
-        fullLabel =
-            extractLabelFromLanguageMap language label
-
-        iconTmpl svg =
-            el
-                [ width (px 20)
-                , height fill
-                , centerX
-                , centerY
-                ]
-                svg
-
-        icon =
-            case value of
-                "sources" ->
-                    iconTmpl <| sourcesSvg colourScheme.slateGrey
-
-                "people" ->
-                    iconTmpl <| peopleSvg colourScheme.slateGrey
-
-                "institutions" ->
-                    iconTmpl <| institutionSvg colourScheme.slateGrey
-
-                "incipits" ->
-                    iconTmpl <| musicNotationSvg colourScheme.slateGrey
-
-                "festivals" ->
-                    iconTmpl <| liturgicalFestivalSvg colourScheme.slateGrey
-
-                _ ->
-                    iconTmpl <| unknownSvg colourScheme.slateGrey
-
-        rowMode =
-            parseStringToResultMode value
-
-        baseRowStyle =
-            [ alignLeft
-            , Font.center
-            , height fill
-            , Border.widthEach { top = 0, left = 0, bottom = 2, right = 0 }
-            ]
-
-        rowStyle =
-            if selectedMode == rowMode then
-                Border.color (colourScheme.lightBlue |> convertColorToElementColor) :: baseRowStyle
-
-            else
-                Border.color (colourScheme.cream |> convertColorToElementColor) :: baseRowStyle
-
-        itemCount =
-            formatNumberByLanguage language count
-    in
-    row
-        rowStyle
-        [ el
-            [ paddingXY 5 0 ]
-            icon
-        , el
-            []
-            (button
-                [ alignLeft
-                , spacing 10
-                ]
-                { onPress = Just <| UserClickedModeItem fitem
-                , label =
-                    el
-                        [ headingSM
-                        , alignLeft
-                        ]
-                        (text <| fullLabel ++ " (" ++ itemCount ++ ")")
-                }
-            )
-        ]

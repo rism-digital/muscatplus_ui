@@ -12,6 +12,19 @@ import Ports.Incoming exposing (IncomingMessage(..), decodeIncomingMessage, rece
 
 {-|
 
+    Listens for incoming messages
+
+-}
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ onResize <| \width height -> Msg.UserResizedWindow (detectDevice width height)
+        , receiveIncomingMessageFromPort <| messageReceiverHelper model
+        ]
+
+
+{-|
+
     When a user sets their national collection, it makes sense to refresh
     their search results, if they are on the search page. This helper listens
     for an incoming message from the JS Port, and then if the current page
@@ -40,7 +53,7 @@ messageReceiverHelper model val =
     case Decode.decodeValue decodeIncomingMessage val of
         Ok v ->
             case v of
-                PortReceiveTriggerSearch _ ->
+                PortReceiveTriggerSearch ->
                     handleIncomingSearchTrigger model
 
                 PortReceivedUnknownMessage ->
@@ -48,16 +61,3 @@ messageReceiverHelper model val =
 
         Err e ->
             Msg.ClientReceivedABadPortMessage <| Decode.errorToString e
-
-
-{-|
-
-    Listens for incoming messages
-
--}
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ onResize <| \width height -> Msg.UserResizedWindow (detectDevice width height)
-        , receiveIncomingMessageFromPort <| messageReceiverHelper model
-        ]

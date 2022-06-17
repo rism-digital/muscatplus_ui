@@ -1,4 +1,4 @@
-module Page.UI.Facets.KeywordQuery exposing (..)
+module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, keywordInputHelp, searchKeywordInput, viewFrontKeywordQueryInput)
 
 {-|
 
@@ -18,18 +18,18 @@ import Page.UI.Events exposing (onEnter)
 import Page.UI.Tooltip exposing (facetHelp)
 
 
-keywordInputHelp =
-    """
-    Use this to find any words, anywhere in a record.
-    """
-
-
 type alias KeywordInputConfig msg =
     { language : Language
     , submitMsg : msg
     , changeMsg : String -> msg
     , queryText : String
     }
+
+
+keywordInputHelp =
+    """
+    Use this to find any words, anywhere in a record.
+    """
 
 
 searchKeywordInput :
@@ -76,10 +76,10 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText } =
                     , headingSM
                     , paddingXY 10 12
                     ]
-                    { onChange = \inp -> changeMsg inp
+                    { label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
+                    , onChange = \inp -> changeMsg inp
                     , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
                     , text = queryText
-                    , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                     }
                 ]
             ]
@@ -116,10 +116,10 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
                         , headingLG
                         , paddingXY 10 20
                         ]
-                        { onChange = \inp -> changeMsg inp
+                        { label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
+                        , onChange = \inp -> changeMsg inp
                         , placeholder = Just (Input.placeholder [ height fill ] <| el [ centerY ] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
                         , text = queryText
-                        , label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                         }
                     ]
                 ]

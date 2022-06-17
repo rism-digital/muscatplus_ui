@@ -1,4 +1,4 @@
-module Page.UI.Record.Relationship exposing (..)
+module Page.UI.Record.Relationship exposing (viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
 
 import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, px, row, shrink, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
@@ -9,90 +9,6 @@ import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
-
-
-viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
-viewRelationshipsSection language relSection =
-    let
-        sectionBody =
-            [ row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    (List.map (\t -> viewRelationshipBody language t) relSection.items)
-                ]
-            ]
-    in
-    sectionTemplate language relSection sectionBody
-
-
-viewRelationshipBody : Language -> RelationshipBody -> Element msg
-viewRelationshipBody language body =
-    let
-        relatedToView =
-            -- if there is a related-to relationship, display that.
-            -- if all we have is a name, display that.
-            -- if neither, don't show anything because we can't!
-            case body.relatedTo of
-                Just rel ->
-                    if rel.type_ == PlaceRelationship then
-                        el [] (text (extractLabelFromLanguageMap language rel.label))
-
-                    else
-                        viewRelatedToBody language rel
-
-                Nothing ->
-                    case body.name of
-                        Just nm ->
-                            el [] (text (extractLabelFromLanguageMap language nm))
-
-                        Nothing ->
-                            none
-
-        roleLabel =
-            case body.role of
-                Just role ->
-                    renderLabel language role.label
-
-                Nothing ->
-                    none
-
-        qualifierLabel =
-            case body.qualifier of
-                Just qual ->
-                    el [] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
-
-                Nothing ->
-                    none
-    in
-    fieldValueWrapper <|
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ roleLabel ]
-            , column
-                valueFieldColumnAttributes
-                [ row
-                    [ width fill ]
-                    [ relatedToView
-                    , qualifierLabel
-                    ]
-                ]
-            ]
-        ]
 
 
 viewRelatedToBody : Language -> RelatedToBody -> Element msg
@@ -139,8 +55,91 @@ viewRelatedToBody language body =
                 relIcon
             , link
                 [ linkColour ]
-                { url = body.id
-                , label = text (extractLabelFromLanguageMap language body.label)
+                { label = text (extractLabelFromLanguageMap language body.label)
+                , url = body.id
                 }
             ]
         )
+
+
+viewRelationshipBody : Language -> RelationshipBody -> Element msg
+viewRelationshipBody language body =
+    let
+        qualifierLabel =
+            case body.qualifier of
+                Just qual ->
+                    el [] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
+
+                Nothing ->
+                    none
+
+        relatedToView =
+            -- if there is a related-to relationship, display that.
+            -- if all we have is a name, display that.
+            -- if neither, don't show anything because we can't!
+            case body.relatedTo of
+                Just rel ->
+                    if rel.type_ == PlaceRelationship then
+                        el [] (text (extractLabelFromLanguageMap language rel.label))
+
+                    else
+                        viewRelatedToBody language rel
+
+                Nothing ->
+                    case body.name of
+                        Just nm ->
+                            el [] (text (extractLabelFromLanguageMap language nm))
+
+                        Nothing ->
+                            none
+
+        roleLabel =
+            case body.role of
+                Just role ->
+                    renderLabel language role.label
+
+                Nothing ->
+                    none
+    in
+    fieldValueWrapper <|
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ roleLabel ]
+            , column
+                valueFieldColumnAttributes
+                [ row
+                    [ width fill ]
+                    [ relatedToView
+                    , qualifierLabel
+                    ]
+                ]
+            ]
+        ]
+
+
+viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
+viewRelationshipsSection language relSection =
+    let
+        sectionBody =
+            [ row
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
+                )
+                [ column
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    ]
+                    (List.map (\t -> viewRelationshipBody language t) relSection.items)
+                ]
+            ]
+    in
+    sectionTemplate language relSection sectionBody

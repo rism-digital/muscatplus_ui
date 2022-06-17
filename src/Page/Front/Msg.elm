@@ -1,4 +1,4 @@
-module Page.Front.Msg exposing (..)
+module Page.Front.Msg exposing (FrontMsg(..))
 
 import Debouncer.Messages as Debouncer
 import Http

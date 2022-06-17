@@ -1,4 +1,4 @@
-module Page.UI.Record.ReferencesNotesSection exposing (..)
+module Page.UI.Record.ReferencesNotesSection exposing (viewLiturgicalFestival, viewLiturgicalFestivalsSection, viewLocation, viewNotesSection, viewPerformanceLocation, viewPerformanceLocationsSection, viewReferencesNotesSection)
 
 import Element exposing (Element, alignTop, column, el, fill, height, link, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
@@ -10,6 +10,80 @@ import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, lin
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+
+
+viewLiturgicalFestival : Language -> LiturgicalFestivalBody -> Element msg
+viewLiturgicalFestival language festival =
+    row
+        [ width fill ]
+        [ el
+            [ width fill ]
+            (text <| extractLabelFromLanguageMap language festival.label)
+        ]
+
+
+viewLiturgicalFestivalsSection : Language -> LiturgicalFestivalsSectionBody -> Element msg
+viewLiturgicalFestivalsSection language body =
+    fieldValueWrapper <|
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language body.label ]
+            , column
+                valueFieldColumnAttributes
+                (List.map (\l -> viewLiturgicalFestival language l) body.items)
+            ]
+        ]
+
+
+viewLocation : Language -> RelatedToBody -> Element msg
+viewLocation language body =
+    row
+        [ width fill ]
+        [ link
+            [ linkColour ]
+            { label = text (extractLabelFromLanguageMap language body.label)
+            , url = body.id
+            }
+        ]
+
+
+viewNotesSection : Language -> List LabelValue -> Element msg
+viewNotesSection language notes =
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ viewParagraphField language notes
+        ]
+
+
+viewPerformanceLocation : Language -> RelationshipBody -> Element msg
+viewPerformanceLocation language location =
+    viewMaybe (viewLocation language) location.relatedTo
+
+
+viewPerformanceLocationsSection : Language -> PerformanceLocationsSectionBody -> Element msg
+viewPerformanceLocationsSection language body =
+    fieldValueWrapper <|
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language body.label ]
+            , column
+                valueFieldColumnAttributes
+                (List.map (\l -> viewPerformanceLocation language l) body.items)
+            ]
+        ]
 
 
 viewReferencesNotesSection : Language -> ReferencesNotesSectionBody -> Element msg
@@ -38,77 +112,3 @@ viewReferencesNotesSection language refNotesSection =
             ]
     in
     sectionTemplate language refNotesSection sectionBody
-
-
-viewNotesSection : Language -> List LabelValue -> Element msg
-viewNotesSection language notes =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ viewParagraphField language notes
-        ]
-
-
-viewPerformanceLocationsSection : Language -> PerformanceLocationsSectionBody -> Element msg
-viewPerformanceLocationsSection language body =
-    fieldValueWrapper <|
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language body.label ]
-            , column
-                valueFieldColumnAttributes
-                (List.map (\l -> viewPerformanceLocation language l) body.items)
-            ]
-        ]
-
-
-viewLiturgicalFestivalsSection : Language -> LiturgicalFestivalsSectionBody -> Element msg
-viewLiturgicalFestivalsSection language body =
-    fieldValueWrapper <|
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language body.label ]
-            , column
-                valueFieldColumnAttributes
-                (List.map (\l -> viewLiturgicalFestival language l) body.items)
-            ]
-        ]
-
-
-viewLiturgicalFestival : Language -> LiturgicalFestivalBody -> Element msg
-viewLiturgicalFestival language festival =
-    row
-        [ width fill ]
-        [ el
-            [ width fill ]
-            (text <| extractLabelFromLanguageMap language festival.label)
-        ]
-
-
-viewPerformanceLocation : Language -> RelationshipBody -> Element msg
-viewPerformanceLocation language location =
-    viewMaybe (viewLocation language) location.relatedTo
-
-
-viewLocation : Language -> RelatedToBody -> Element msg
-viewLocation language body =
-    row
-        [ width fill ]
-        [ link
-            [ linkColour ]
-            { url = body.id
-            , label = text (extractLabelFromLanguageMap language body.label)
-            }
-        ]

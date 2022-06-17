@@ -1,4 +1,10 @@
-module Page.Request exposing (..)
+module Page.Request exposing
+    ( createCountryCodeRequestWithDecoder
+    , createErrorMessage
+    , createProbeRequestWithDecoder
+    , createRequestWithDecoder
+    , createSuggestRequestWithDecoder
+    )
 
 import Dict exposing (Dict)
 import Http
@@ -17,29 +23,11 @@ createCountryCodeRequestWithDecoder msg =
     createRequest msg countryCodeDecoder "/countries/list/"
 
 
-createProbeRequestWithDecoder : (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ) -> msg) -> String -> Cmd msg
-createProbeRequestWithDecoder msg url =
-    createRequest msg probeResponseDecoder url
-
-
-createSuggestRequestWithDecoder : (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ) -> msg) -> String -> Cmd msg
-createSuggestRequestWithDecoder msg url =
-    createRequest msg suggestionResponseDecoder url
-
-
-createRequestWithDecoder : (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ) -> msg) -> String -> Cmd msg
-createRequestWithDecoder msg url =
-    createRequest msg recordResponseDecoder url
-
-
 createErrorMessage : Http.Detailed.Error String -> String
 createErrorMessage error =
     case error of
         Http.Detailed.BadUrl url ->
             "A Bad URL was supplied: " ++ url
-
-        Http.Detailed.BadBody _ _ message ->
-            "Unexpected response: " ++ message
 
         Http.Detailed.BadStatus metadata message ->
             case metadata.statusCode of
@@ -47,7 +35,25 @@ createErrorMessage error =
                     metadata.statusText
 
                 _ ->
-                    "The server sent an error status: " ++ String.fromInt metadata.statusCode
+                    "The server sent an error status: " ++ String.fromInt metadata.statusCode ++ ". The message was: " ++ message
+
+        Http.Detailed.BadBody _ _ message ->
+            "Unexpected response: " ++ message
 
         _ ->
             "A problem happened with the request"
+
+
+createProbeRequestWithDecoder : (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ) -> msg) -> String -> Cmd msg
+createProbeRequestWithDecoder msg url =
+    createRequest msg probeResponseDecoder url
+
+
+createRequestWithDecoder : (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ) -> msg) -> String -> Cmd msg
+createRequestWithDecoder msg url =
+    createRequest msg recordResponseDecoder url
+
+
+createSuggestRequestWithDecoder : (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ) -> msg) -> String -> Cmd msg
+createSuggestRequestWithDecoder msg url =
+    createRequest msg suggestionResponseDecoder url

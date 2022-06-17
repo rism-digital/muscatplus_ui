@@ -1,4 +1,4 @@
-module ActiveSearch.Model exposing (..)
+module ActiveSearch.Model exposing (ActiveSearch)
 
 import Debouncer.Messages exposing (Debouncer)
 import Dict exposing (Dict)

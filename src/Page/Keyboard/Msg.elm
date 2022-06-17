@@ -1,4 +1,4 @@
-module Page.Keyboard.Msg exposing (..)
+module Page.Keyboard.Msg exposing (KeyboardMsg(..))
 
 import Debouncer.Messages as Debouncer
 import Http

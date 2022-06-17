@@ -1,4 +1,4 @@
-module Page.Keyboard.Views.PianoInput exposing (..)
+module Page.Keyboard.Views.PianoInput exposing (blackKey, blackKeyHalfWidth, blackKeyHeightScale, blackKeyWidth, offsetPadding, renderKey, viewPianoInput, whiteKey, whiteKeyWidthScale)
 
 import Element exposing (Attribute, Element, alignLeft, alignTop, el, fill, height, html, htmlAttribute, moveLeft, px, row, width)
 import Html.Attributes as HA
@@ -9,166 +9,6 @@ import Page.Keyboard.PAE exposing (keyNoteNameToNoteString)
 import Svg exposing (svg)
 import Svg.Attributes as SA
 import Svg.Events as SE
-
-
-viewPianoInput : Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
-viewPianoInput language (Keyboard model config) =
-    let
-        numOctaves =
-            config.numOctaves
-
-        -- calculate the size of the div for the keyboard
-        -- subtract 1 to account for the border overlap
-        -- multiply by 7 for each white key
-        octaveWidth =
-            ((toFloat blackKeyWidth - 1) * whiteKeyWidthScale) * 7
-
-        keyboardWidth =
-            (octaveWidth * toFloat numOctaves)
-                |> ceiling
-    in
-    row
-        [ width (px keyboardWidth)
-        , height fill
-        ]
-        (List.repeat numOctaves octaveConfig
-            |> List.concat
-            |> List.indexedMap (renderKey UserClickedPianoKeyboardKey)
-        )
-
-
-whiteKey : Attribute msg -> Maybe String -> msg -> msg -> Element msg
-whiteKey offset keyLabel upper lower =
-    let
-        whiteKeyWidth =
-            toFloat blackKeyWidth * whiteKeyWidthScale
-
-        keyNoteLabel =
-            case keyLabel of
-                Just label ->
-                    Svg.text_
-                        [ SA.style "fill: rgb(51, 51, 51); font-family: Inter, sans-serif; font-size: 40px; font-weight: 600; white-space: pre;"
-                        , SA.x "30.268"
-                        , SA.y "385.448"
-                        , SE.onClick upper
-                        , SA.cursor "pointer"
-                        ]
-                        [ Svg.text label ]
-
-                Nothing ->
-                    Svg.text ""
-
-        -- The original key shape was 100 x 500, so when scaling we just multiply the
-        -- width by 5 to maintain the same ratio.
-        keyShape =
-            html
-                (svg
-                    [ SA.width (String.fromFloat whiteKeyWidth)
-                    , SA.height (String.fromFloat (whiteKeyWidth * 5))
-                    , SA.viewBox "0 0 100 500"
-                    , SA.version "1.1"
-                    ]
-                    [ Svg.path
-                        [ SA.style "fill:rgba(255, 255, 255, 1); stroke: rgb(0, 0, 0); paint-order: fill; stroke-width: 4px;"
-                        , SA.d "M 2.437 0.518 H 97.83 V 490.442 A 8 8 0 0 1 89.83 498.442 H 10.437 A 8 8 0 0 1 2.437 490.442 V 0.518 Z"
-                        , SE.onClick upper
-                        , SA.cursor "pointer"
-                        ]
-                        []
-                    , keyNoteLabel
-
-                    -- -- <rect x="5.974" y="410.048" width="42.107" height="83.357" style="fill: rgb(255, 255, 255);"/>
-                    , Svg.rect
-                        [ SA.x "5.974"
-                        , SA.y "410.048"
-                        , SA.width "42.107"
-                        , SA.height "83.357"
-                        , SA.style "fill: rgb(255,255,255)"
-                        , SE.onClick lower
-                        , SA.cursor "pointer"
-                        ]
-                        []
-                    , Svg.path
-                        [ SA.d "M 18.1 469.669 C 17.802 469.471 17.603 468.973 17.603 468.575 L 17.603 419.323 L 20.29 419.323 L 20.29 436.735 L 32.826 433.253 L 33.224 433.253 C 34.02 433.253 34.617 433.751 34.617 434.546 L 34.617 483.798 L 31.831 483.798 L 31.831 466.386 L 19.294 469.868 C 19.195 469.868 18.996 469.968 18.896 469.968 C 18.598 469.968 18.3 469.868 18.1 469.669 Z M 31.831 441.81 L 20.29 444.994 L 20.29 461.411 L 31.831 458.127 L 31.831 441.81 Z"
-                        , SA.style "fill: rgb(0, 0, 0);"
-                        , SE.onClick lower
-                        , SA.cursor "pointer"
-                        ]
-                        []
-                    , Svg.line
-                        [ SA.style "stroke-width:3px; stroke:rgb(120, 120, 120)"
-                        , SA.x1 "50"
-                        , SA.y1 "410.054"
-                        , SA.x2 "50"
-                        , SA.y2 "495.728"
-                        ]
-                        []
-                    , Svg.line
-                        [ SA.style "stroke-width:3px; stroke:rgb(120, 120, 120)"
-                        , SA.x1 "51.491"
-                        , SA.y1 "408.599"
-                        , SA.x2 "4.865"
-                        , SA.y2 "408.599"
-                        ]
-                        []
-                    ]
-                )
-    in
-    el
-        [ alignTop
-        , alignLeft
-        , htmlAttribute (HA.style "z-index" "0")
-        , offset
-        ]
-        keyShape
-
-
-{-|
-
-    All measurements in the keyboard are based on the width of the black keys.
-    Adjust this number if you want to increase or decrease the size of the
-    keyboard.
-
--}
-blackKeyWidth : Int
-blackKeyWidth =
-    20
-
-
-blackKeyHalfWidth : Int
-blackKeyHalfWidth =
-    ceiling (toFloat blackKeyWidth / 2) + 1
-
-
-offsetPadding : Int
-offsetPadding =
-    -(blackKeyHalfWidth - 3)
-
-
-{-|
-
-    The width relationship of the white key to the black key. This
-    was created with an original size of 100 for white keys, making
-    black keys 61. Since we are defining all scaling based on the
-    full width of the black key, we use this factor to compute the
-    corresponding width of the white keys.
-
--}
-whiteKeyWidthScale : Float
-whiteKeyWidthScale =
-    1.6393442623
-
-
-{-|
-
-    The scaling factor by which the width of a black key
-    is related to height. The original measurements were (w x h)
-    61 x 309.
-
--}
-blackKeyHeightScale : Float
-blackKeyHeightScale =
-    5.0655737705
 
 
 blackKey : Attribute msg -> msg -> msg -> Element msg
@@ -244,6 +84,40 @@ blackKey offset upper lower =
         keyShape
 
 
+blackKeyHalfWidth : Int
+blackKeyHalfWidth =
+    ceiling (toFloat blackKeyWidth / 2) + 1
+
+
+{-|
+
+    The scaling factor by which the width of a black key
+    is related to height. The original measurements were (w x h)
+    61 x 309.
+
+-}
+blackKeyHeightScale : Float
+blackKeyHeightScale =
+    5.0655737705
+
+
+{-|
+
+    All measurements in the keyboard are based on the width of the black keys.
+    Adjust this number if you want to increase or decrease the size of the
+    keyboard.
+
+-}
+blackKeyWidth : Int
+blackKeyWidth =
+    20
+
+
+offsetPadding : Int
+offsetPadding =
+    -(blackKeyHalfWidth - 3)
+
+
 renderKey : (KeyNoteName -> Int -> msg) -> Int -> KeyNoteConfig -> Element msg
 renderKey keyMsg idx keyConfig =
     let
@@ -295,3 +169,129 @@ renderKey keyMsg idx keyConfig =
 
         BlackKey upperKey lowerKey ->
             blackKey moveOffset (keyMsg upperKey octave) (keyMsg lowerKey octave)
+
+
+viewPianoInput : Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
+viewPianoInput language (Keyboard model config) =
+    let
+        keyboardWidth =
+            (octaveWidth * toFloat numOctaves)
+                |> ceiling
+
+        -- calculate the size of the div for the keyboard
+        -- subtract 1 to account for the border overlap
+        -- multiply by 7 for each white key
+        numOctaves =
+            config.numOctaves
+
+        octaveWidth =
+            ((toFloat blackKeyWidth - 1) * whiteKeyWidthScale) * 7
+    in
+    row
+        [ width (px keyboardWidth)
+        , height fill
+        ]
+        (List.repeat numOctaves octaveConfig
+            |> List.concat
+            |> List.indexedMap (renderKey UserClickedPianoKeyboardKey)
+        )
+
+
+whiteKey : Attribute msg -> Maybe String -> msg -> msg -> Element msg
+whiteKey offset keyLabel upper lower =
+    let
+        keyNoteLabel =
+            case keyLabel of
+                Just label ->
+                    Svg.text_
+                        [ SA.style "fill: rgb(51, 51, 51); font-family: Inter, sans-serif; font-size: 40px; font-weight: 600; white-space: pre;"
+                        , SA.x "30.268"
+                        , SA.y "385.448"
+                        , SE.onClick upper
+                        , SA.cursor "pointer"
+                        ]
+                        [ Svg.text label ]
+
+                Nothing ->
+                    Svg.text ""
+
+        keyShape =
+            html
+                (svg
+                    [ SA.width (String.fromFloat whiteKeyWidth)
+                    , SA.height (String.fromFloat (whiteKeyWidth * 5))
+                    , SA.viewBox "0 0 100 500"
+                    , SA.version "1.1"
+                    ]
+                    [ Svg.path
+                        [ SA.style "fill:rgba(255, 255, 255, 1); stroke: rgb(0, 0, 0); paint-order: fill; stroke-width: 4px;"
+                        , SA.d "M 2.437 0.518 H 97.83 V 490.442 A 8 8 0 0 1 89.83 498.442 H 10.437 A 8 8 0 0 1 2.437 490.442 V 0.518 Z"
+                        , SE.onClick upper
+                        , SA.cursor "pointer"
+                        ]
+                        []
+                    , keyNoteLabel
+
+                    -- -- <rect x="5.974" y="410.048" width="42.107" height="83.357" style="fill: rgb(255, 255, 255);"/>
+                    , Svg.rect
+                        [ SA.x "5.974"
+                        , SA.y "410.048"
+                        , SA.width "42.107"
+                        , SA.height "83.357"
+                        , SA.style "fill: rgb(255,255,255)"
+                        , SE.onClick lower
+                        , SA.cursor "pointer"
+                        ]
+                        []
+                    , Svg.path
+                        [ SA.d "M 18.1 469.669 C 17.802 469.471 17.603 468.973 17.603 468.575 L 17.603 419.323 L 20.29 419.323 L 20.29 436.735 L 32.826 433.253 L 33.224 433.253 C 34.02 433.253 34.617 433.751 34.617 434.546 L 34.617 483.798 L 31.831 483.798 L 31.831 466.386 L 19.294 469.868 C 19.195 469.868 18.996 469.968 18.896 469.968 C 18.598 469.968 18.3 469.868 18.1 469.669 Z M 31.831 441.81 L 20.29 444.994 L 20.29 461.411 L 31.831 458.127 L 31.831 441.81 Z"
+                        , SA.style "fill: rgb(0, 0, 0);"
+                        , SE.onClick lower
+                        , SA.cursor "pointer"
+                        ]
+                        []
+                    , Svg.line
+                        [ SA.style "stroke-width:3px; stroke:rgb(120, 120, 120)"
+                        , SA.x1 "50"
+                        , SA.y1 "410.054"
+                        , SA.x2 "50"
+                        , SA.y2 "495.728"
+                        ]
+                        []
+                    , Svg.line
+                        [ SA.style "stroke-width:3px; stroke:rgb(120, 120, 120)"
+                        , SA.x1 "51.491"
+                        , SA.y1 "408.599"
+                        , SA.x2 "4.865"
+                        , SA.y2 "408.599"
+                        ]
+                        []
+                    ]
+                )
+
+        -- The original key shape was 100 x 500, so when scaling we just multiply the
+        -- width by 5 to maintain the same ratio.
+        whiteKeyWidth =
+            toFloat blackKeyWidth * whiteKeyWidthScale
+    in
+    el
+        [ alignTop
+        , alignLeft
+        , htmlAttribute (HA.style "z-index" "0")
+        , offset
+        ]
+        keyShape
+
+
+{-|
+
+    The width relationship of the white key to the black key. This
+    was created with an original size of 100 for white keys, making
+    black keys 61. Since we are defining all scaling based on the
+    full width of the black key, we use this factor to compute the
+    corresponding width of the white keys.
+
+-}
+whiteKeyWidthScale : Float
+whiteKeyWidthScale =
+    1.6393442623

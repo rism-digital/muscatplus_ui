@@ -17,25 +17,25 @@ import Page.RecordTypes.Source exposing (sourceBodyDecoder)
 import Response exposing (ServerData(..))
 
 
+aboutResponseDecoder : Decoder ServerData
+aboutResponseDecoder =
+    Decode.map AboutData aboutBodyDecoder
+
+
 recordResponseDecoder : Decoder ServerData
 recordResponseDecoder =
     Decode.field "type" string
         |> andThen recordResponseConverter
 
 
-sourceResponseDecoder : Decoder ServerData
-sourceResponseDecoder =
-    Decode.map SourceData sourceBodyDecoder
+frontResponseDecoder : Decoder ServerData
+frontResponseDecoder =
+    Decode.map FrontData frontBodyDecoder
 
 
 incipitResponseDecoder : Decoder ServerData
 incipitResponseDecoder =
     Decode.map IncipitData incipitBodyDecoder
-
-
-searchResponseDecoder : Decoder ServerData
-searchResponseDecoder =
-    Decode.map SearchData searchBodyDecoder
 
 
 institutionResponseDecoder : Decoder ServerData
@@ -51,16 +51,6 @@ personResponseDecoder =
 placeResponseDecoder : Decoder ServerData
 placeResponseDecoder =
     Decode.map PlaceData placeBodyDecoder
-
-
-frontResponseDecoder : Decoder ServerData
-frontResponseDecoder =
-    Decode.map FrontData frontBodyDecoder
-
-
-aboutResponseDecoder : Decoder ServerData
-aboutResponseDecoder =
-    Decode.map AboutData aboutBodyDecoder
 
 
 recordResponseConverter : String -> Decoder ServerData
@@ -91,3 +81,13 @@ recordResponseConverter typevalue =
         --       once we have a clear idea of what they are.
         Unknown ->
             sourceResponseDecoder
+
+
+searchResponseDecoder : Decoder ServerData
+searchResponseDecoder =
+    Decode.map SearchData searchBodyDecoder
+
+
+sourceResponseDecoder : Decoder ServerData
+sourceResponseDecoder =
+    Decode.map SourceData sourceBodyDecoder

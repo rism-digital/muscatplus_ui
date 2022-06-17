@@ -1,4 +1,4 @@
-module Page.UI.Record.Incipits exposing (..)
+module Page.UI.Record.Incipits exposing (splitWorkNumFromId, viewIncipit, viewIncipitsSection, viewLaunchNewIncipitSearch, viewPAESearchLink, viewRenderedIncipits, viewSVGRenderedIncipit)
 
 import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background
@@ -28,20 +28,13 @@ splitWorkNumFromId incipitId =
         |> Maybe.withDefault "1.1.1"
 
 
-viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
-viewIncipitsSection language incipSection =
-    List.map (\incipit -> viewIncipit language incipit) incipSection.items
-        |> sectionTemplate language incipSection
-
-
 viewIncipit : Language -> IncipitBody -> Element msg
 viewIncipit language incipit =
     row
-        ([ width fill
-         , height fill
-         , alignTop
-         ]
-            ++ sectionBorderStyles
+        (width fill
+            :: height fill
+            :: alignTop
+            :: sectionBorderStyles
         )
         [ column
             [ width fill
@@ -62,6 +55,91 @@ viewIncipit language incipit =
                 ]
             ]
         ]
+
+
+viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
+viewIncipitsSection language incipSection =
+    List.map (\incipit -> viewIncipit language incipit) incipSection.items
+        |> sectionTemplate language incipSection
+
+
+viewLaunchNewIncipitSearch : Language -> List EncodedIncipit -> Element msg
+viewLaunchNewIncipitSearch language incipits =
+    row
+        [ width fill
+        , paddingXY 10 0
+        ]
+        (List.map
+            (\encoded ->
+                case encoded of
+                    EncodedIncipit label PAEEncoding data ->
+                        viewPAESearchLink language encoded
+
+                    _ ->
+                        none
+            )
+            incipits
+        )
+
+
+viewPAESearchLink : Language -> EncodedIncipit -> Element msg
+viewPAESearchLink language (EncodedIncipit label encodingType data) =
+    let
+        clefQueryParam =
+            case data.clef of
+                Just cl ->
+                    [ Url.Builder.string "ic" cl ]
+
+                Nothing ->
+                    []
+
+        keySigQueryParam =
+            case data.keysig of
+                Just ks ->
+                    [ Url.Builder.string "ik" ks ]
+
+                Nothing ->
+                    []
+
+        modeQueryParam =
+            Url.Builder.string "mode" "incipits"
+
+        noteQueryParam =
+            Url.Builder.string "n" data.data
+
+        searchUrl =
+            serverUrl
+                [ "search" ]
+                (noteQueryParam :: modeQueryParam :: keySigQueryParam ++ clefQueryParam ++ timeSigQueryParam)
+
+        timeSigQueryParam =
+            case data.timesig of
+                Just ts ->
+                    [ Url.Builder.string "it" ts ]
+
+                Nothing ->
+                    []
+    in
+    link
+        [ centerY
+        , alignLeft
+        , linkColour
+        , Border.width 1
+        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , padding 2
+        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+        ]
+        { label =
+            el
+                [ width (px 12)
+                , height (px 12)
+                , centerY
+                , el tooltipStyle (text "New search with this incipit")
+                    |> tooltip above
+                ]
+                (searchSvg colourScheme.white)
+        , url = searchUrl
+        }
 
 
 {-|
@@ -92,85 +170,6 @@ viewRenderedIncipits incipits =
             )
             incipits
         )
-
-
-viewLaunchNewIncipitSearch : Language -> List EncodedIncipit -> Element msg
-viewLaunchNewIncipitSearch language incipits =
-    row
-        [ width fill
-        , paddingXY 10 0
-        ]
-        (List.map
-            (\encoded ->
-                case encoded of
-                    EncodedIncipit label PAEEncoding data ->
-                        viewPAESearchLink language encoded
-
-                    _ ->
-                        none
-            )
-            incipits
-        )
-
-
-viewPAESearchLink : Language -> EncodedIncipit -> Element msg
-viewPAESearchLink language (EncodedIncipit label encodingType data) =
-    let
-        noteQueryParam =
-            Url.Builder.string "n" data.data
-
-        modeQueryParam =
-            Url.Builder.string "mode" "incipits"
-
-        keySigQueryParam =
-            case data.keysig of
-                Just ks ->
-                    [ Url.Builder.string "ik" ks ]
-
-                Nothing ->
-                    []
-
-        clefQueryParam =
-            case data.clef of
-                Just cl ->
-                    [ Url.Builder.string "ic" cl ]
-
-                Nothing ->
-                    []
-
-        timeSigQueryParam =
-            case data.timesig of
-                Just ts ->
-                    [ Url.Builder.string "it" ts ]
-
-                Nothing ->
-                    []
-
-        searchUrl =
-            serverUrl
-                [ "search" ]
-                ([ noteQueryParam, modeQueryParam ] ++ keySigQueryParam ++ clefQueryParam ++ timeSigQueryParam)
-    in
-    link
-        [ centerY
-        , alignLeft
-        , linkColour
-        , Border.width 1
-        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
-        , padding 2
-        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-        ]
-        { url = searchUrl
-        , label =
-            el
-                [ width (px 12)
-                , height (px 12)
-                , centerY
-                , el tooltipStyle (text "New search with this incipit")
-                    |> tooltip above
-                ]
-                (searchSvg colourScheme.white)
-        }
 
 
 {-|

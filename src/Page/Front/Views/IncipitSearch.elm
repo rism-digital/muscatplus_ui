@@ -1,4 +1,4 @@
-module Page.Front.Views.IncipitSearch exposing (..)
+module Page.Front.Views.IncipitSearch exposing (incipitSearchPanelView)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, paragraph, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
@@ -19,6 +19,14 @@ import Session exposing (Session)
 incipitSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 incipitSearchPanelView session model body =
     let
+        facetConfig alias =
+            { alias = alias
+            , language = language
+            , activeSearch = model.activeSearch
+            , selectColumns = 4
+            , body = body
+            }
+
         language =
             session.language
 
@@ -26,14 +34,6 @@ incipitSearchPanelView session model body =
             toNextQuery model.activeSearch
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
-
-        facetConfig alias =
-            { alias = alias
-            , language = language
-            , activeSearch = model.activeSearch
-            , body = body
-            , selectColumns = 4
-            }
     in
     row
         [ padding 10

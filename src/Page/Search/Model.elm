@@ -1,4 +1,4 @@
-module Page.Search.Model exposing (..)
+module Page.Search.Model exposing (SearchPageModel)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)

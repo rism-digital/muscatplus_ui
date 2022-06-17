@@ -1,4 +1,4 @@
-module Page.Record.Views.PersonPage.FullRecordPage exposing (..)
+module Page.Record.Views.PersonPage.FullRecordPage exposing (viewDescriptionTab, viewFullPersonPage, viewRecordTopBarRouter)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background
@@ -21,6 +21,46 @@ import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTempl
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
+
+
+viewDescriptionTab : Language -> PersonBody -> Element msg
+viewDescriptionTab language body =
+    let
+        summaryBody labels =
+            row
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
+                )
+                [ column
+                    [ spacing lineSpacing
+                    , width fill
+                    , height fill
+                    ]
+                    [ viewSummaryField language labels ]
+                ]
+    in
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        , scrollbarY
+        ]
+        [ column
+            [ width fill
+            , spacing sectionSpacing
+            , alignTop
+            , padding 20
+            ]
+            [ viewMaybe summaryBody body.summary
+            , viewMaybe (viewNameVariantsSection language) body.nameVariants
+            , viewMaybe (viewRelationshipsSection language) body.relationships
+            , viewMaybe (viewNotesSection language) body.notes
+            , viewMaybe (viewExternalResourcesSection language) body.externalResources
+            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
+            ]
+        ]
 
 
 viewFullPersonPage :
@@ -51,7 +91,7 @@ viewFullPersonPage session model body =
             [ row
                 [ width fill
                 , alignTop
-                , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
                 , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
                 , Background.color (colourScheme.cream |> convertColorToElementColor)
                 ]
@@ -93,52 +133,11 @@ viewRecordTopBarRouter language model body =
             else
                 viewRecordSourceSearchTabBar
                     { language = language
-                    , searchUrl = sourceBlock.url
                     , model = model
                     , recordId = body.id
+                    , searchUrl = sourceBlock.url
                     , tabLabel = localTranslations.sources
                     }
 
         Nothing ->
             none
-
-
-viewDescriptionTab : Language -> PersonBody -> Element msg
-viewDescriptionTab language body =
-    let
-        summaryBody labels =
-            row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
-                )
-                [ column
-                    [ spacing lineSpacing
-                    , width fill
-                    , height fill
-                    ]
-                    [ viewSummaryField language labels ]
-                ]
-    in
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        , scrollbarY
-        ]
-        [ column
-            [ width fill
-            , spacing sectionSpacing
-            , alignTop
-            , padding 20
-            ]
-            [ viewMaybe summaryBody body.summary
-            , viewMaybe (viewNameVariantsSection language) body.nameVariants
-            , viewMaybe (viewRelationshipsSection language) body.relationships
-            , viewMaybe (viewNotesSection language) body.notes
-            , viewMaybe (viewExternalResourcesSection language) body.externalResources
-            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-            ]
-        ]

@@ -1,7 +1,10 @@
-port module Ports.Outgoing exposing (..)
+port module Ports.Outgoing exposing (OutgoingMessage(..), convertOutgoingMessageToJsonMsg, encodeMessageForPortSend, sendOutgoingMessageOnPort)
 
 import Json.Encode as Encode
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
+
+
+port sendOutgoingMessageOnPort : Encode.Value -> Cmd msg
 
 
 type OutgoingMessage
@@ -71,6 +74,3 @@ encodeMessageForPortSend : OutgoingMessage -> Encode.Value
 encodeMessageForPortSend msg =
     convertOutgoingMessageToJsonMsg msg
         |> Encode.object
-
-
-port sendOutgoingMessageOnPort : Encode.Value -> Cmd msg

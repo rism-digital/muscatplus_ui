@@ -1,4 +1,9 @@
-module Page.RecordTypes.ExternalAuthorities exposing (..)
+module Page.RecordTypes.ExternalAuthorities exposing
+    ( ExternalAuthoritiesSectionBody
+    , ExternalAuthorityBody
+    , externalAuthoritiesSectionBodyDecoder
+    , externalAuthorityBodyDecoder
+    )
 
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, required)

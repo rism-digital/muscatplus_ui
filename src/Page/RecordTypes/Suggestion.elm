@@ -1,4 +1,4 @@
-module Page.RecordTypes.Suggestion exposing (..)
+module Page.RecordTypes.Suggestion exposing (ActiveSuggestion(..), suggestionResponseDecoder, toAlias, toSuggestionList)
 
 import Json.Decode as Decode exposing (Decoder, string)
 import Json.Decode.Pipeline exposing (required)

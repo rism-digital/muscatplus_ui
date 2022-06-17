@@ -1,4 +1,4 @@
-module Page.RecordTypes.Notes exposing (..)
+module Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, list)
 import Json.Decode.Pipeline exposing (hardcoded, required)

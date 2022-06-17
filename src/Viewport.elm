@@ -1,4 +1,4 @@
-module Viewport exposing (..)
+module Viewport exposing (jumpToId, jumpToIdIfNotVisible, resetViewport, resetViewportOf)
 
 import Browser.Dom as Dom
 import Task
@@ -32,11 +32,11 @@ jumpToIdIfNotVisible sendMsg parentId id =
                 let
                     -- only consider the element to be in the viewport if the whole
                     -- element is visible
-                    yPos =
-                        info.element.y + info.element.height
-
                     viewportBottom =
                         info.viewport.y + info.viewport.height
+
+                    yPos =
+                        info.element.y + info.element.height
                 in
                 if yPos > viewportBottom then
                     Dom.setViewportOf parentId 0 (info.element.y - info.element.height)

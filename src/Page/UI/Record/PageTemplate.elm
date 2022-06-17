@@ -1,4 +1,4 @@
-module Page.UI.Record.PageTemplate exposing (..)
+module Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate, viewMuscatLinks)
 
 import Config as C
 import Element
@@ -33,6 +33,45 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
 
 
+pageFooterTemplate : Session -> Language -> { a | recordHistory : RecordHistory, id : String } -> Element msg
+pageFooterTemplate session language footer =
+    let
+        muscatLinks =
+            if session.showMuscatLinks then
+                row
+                    [ width fill
+                    , alignLeft
+                    ]
+                    [ viewMuscatLinks session ]
+
+            else
+                none
+    in
+    row
+        [ width fill
+        , padding 20
+        , alignBottom
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
+        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+        , Background.color (colourScheme.cream |> convertColorToElementColor)
+        ]
+        [ column
+            [ width fill
+            , spacing lineSpacing
+            ]
+            [ pageUriTemplate language footer
+            , muscatLinks
+            ]
+        , column
+            [ width fill
+            , alignRight
+            , spacing lineSpacing
+            ]
+            [ viewRecordHistory language footer.recordHistory
+            ]
+        ]
+
+
 pageHeaderTemplate : Language -> { a | sectionToc : String, label : LanguageMap } -> Element msg
 pageHeaderTemplate language header =
     row
@@ -54,48 +93,9 @@ pageUriTemplate language body =
             (text (extractLabelFromLanguageMap language localTranslations.recordURI ++ ": "))
         , link
             [ linkColour ]
-            { url = body.id
-            , label = el [ headingSM ] (text body.id)
+            { label = el [ headingSM ] (text body.id)
+            , url = body.id
             }
-        ]
-
-
-pageFooterTemplate : Session -> Language -> { a | recordHistory : RecordHistory, id : String } -> Element msg
-pageFooterTemplate session language footer =
-    let
-        muscatLinks =
-            if session.showMuscatLinks then
-                row
-                    [ width fill
-                    , alignLeft
-                    ]
-                    [ viewMuscatLinks session ]
-
-            else
-                none
-    in
-    row
-        [ width fill
-        , padding 20
-        , alignBottom
-        , Border.widthEach { top = 2, bottom = 0, left = 0, right = 0 }
-        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-        , Background.color (colourScheme.cream |> convertColorToElementColor)
-        ]
-        [ column
-            [ width fill
-            , spacing lineSpacing
-            ]
-            [ pageUriTemplate language footer
-            , muscatLinks
-            ]
-        , column
-            [ width fill
-            , alignRight
-            , spacing lineSpacing
-            ]
-            [ viewRecordHistory language footer.recordHistory
-            ]
         ]
 
 
@@ -113,14 +113,14 @@ viewMuscatLinks session =
                     [ text "Muscat: "
                     , link
                         [ linkColour ]
-                        { url = muscatUrl
-                        , label = text "View"
+                        { label = text "View"
+                        , url = muscatUrl
                         }
                     , text " | "
                     , link
                         [ linkColour ]
-                        { url = muscatUrl ++ "/edit"
-                        , label = text "Edit"
+                        { label = text "Edit"
+                        , url = muscatUrl ++ "/edit"
                         }
                     ]
                 ]

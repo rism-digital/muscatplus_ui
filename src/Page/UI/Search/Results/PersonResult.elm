@@ -1,4 +1,4 @@
-module Page.UI.Search.Results.PersonResult exposing (..)
+module Page.UI.Search.Results.PersonResult exposing (viewPersonFlags, viewPersonSearchResult, viewPersonSummary)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
@@ -13,16 +13,46 @@ import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, re
 import Page.UI.Style exposing (colourScheme)
 
 
+viewPersonFlags : Language -> PersonResultFlags -> Element msg
+viewPersonFlags language flags =
+    let
+        numSources =
+            if flags.numberOfSources > 0 then
+                let
+                    labelText =
+                        if flags.numberOfSources == 1 then
+                            "1 Source"
+
+                        else
+                            formatNumberByLanguage language (toFloat flags.numberOfSources) ++ " Sources"
+                in
+                makeFlagIcon
+                    { background = colourScheme.darkOrange
+                    , foreground = colourScheme.white
+                    }
+                    (sourcesSvg colourScheme.white)
+                    labelText
+
+            else
+                none
+    in
+    row
+        [ width fill
+        , spacing 10
+        ]
+        [ numSources ]
+
+
 viewPersonSearchResult :
     SearchResultConfig PersonResultBody msg
     -> Element msg
 viewPersonSearchResult { language, selectedResult, body, clickForPreviewMsg } =
     let
-        resultColours =
-            resultIsSelected selectedResult body.id
-
         resultBody =
             [ viewMaybe (viewPersonSummary language resultColours.iconColour) body.summary ]
+
+        resultColours =
+            resultIsSelected selectedResult body.id
     in
     resultTemplate
         { id = body.id
@@ -53,33 +83,3 @@ viewPersonSummary language iconColour summary =
                 ]
             ]
         ]
-
-
-viewPersonFlags : Language -> PersonResultFlags -> Element msg
-viewPersonFlags language flags =
-    let
-        numSources =
-            if flags.numberOfSources > 0 then
-                let
-                    labelText =
-                        if flags.numberOfSources == 1 then
-                            "1 Source"
-
-                        else
-                            formatNumberByLanguage language (toFloat flags.numberOfSources) ++ " Sources"
-                in
-                makeFlagIcon
-                    { foreground = colourScheme.white
-                    , background = colourScheme.darkOrange
-                    }
-                    (sourcesSvg colourScheme.white)
-                    labelText
-
-            else
-                none
-    in
-    row
-        [ width fill
-        , spacing 10
-        ]
-        [ numSources ]

@@ -1,22 +1,14 @@
-module Page.UI.Record.ContentsSection exposing (..)
+module Page.UI.Record.ContentsSection exposing (viewContentsSection, viewSubject, viewSubjectsSection)
 
-import Dict
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, padding, px, row, spacing, text, textColumn, width, wrappedRow)
-import Element.Background as Background
-import Element.Border as Border
+import Element exposing (Element, alignTop, column, el, fill, height, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.Query exposing (buildQueryParameters, defaultQueryArgs, setFilters)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (searchSvg)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
-import Request exposing (serverUrl)
 
 
 viewContentsSection : Language -> Maybe RelationshipBody -> ContentsSectionBody -> Element msg
@@ -24,11 +16,10 @@ viewContentsSection language creator contents =
     let
         sectionBody =
             [ row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
                 )
                 [ column
                     [ width fill
@@ -45,6 +36,18 @@ viewContentsSection language creator contents =
             ]
     in
     sectionTemplate language contents sectionBody
+
+
+viewSubject : Language -> Subject -> Element msg
+viewSubject language subject =
+    row
+        [ width fill
+        , spacing 5
+        ]
+        [ el
+            [ width fill ]
+            (text (extractLabelFromLanguageMap language subject.label))
+        ]
 
 
 viewSubjectsSection : Language -> SubjectsSectionBody -> Element msg
@@ -65,16 +68,4 @@ viewSubjectsSection language subjectSection =
                     (List.map (\l -> viewSubject language l) subjectSection.items)
                 ]
             ]
-        ]
-
-
-viewSubject : Language -> Subject -> Element msg
-viewSubject language subject =
-    row
-        [ width fill
-        , spacing 5
-        ]
-        [ el
-            [ width fill ]
-            (text (extractLabelFromLanguageMap language subject.label))
         ]

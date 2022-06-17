@@ -1,4 +1,4 @@
-module Page.UI.Search.Results.IncipitResult exposing (..)
+module Page.UI.Search.Results.IncipitResult exposing (viewIncipitFlags, viewIncipitSearchResult, viewIncipitSummary)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
@@ -13,18 +13,23 @@ import Page.UI.Record.Incipits exposing (viewRenderedIncipits)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 
 
+viewIncipitFlags : Language -> IncipitResultFlags -> Element msg
+viewIncipitFlags language flags =
+    none
+
+
 viewIncipitSearchResult :
     SearchResultConfig IncipitResultBody msg
     -> Element msg
 viewIncipitSearchResult { language, selectedResult, body, clickForPreviewMsg } =
     let
-        resultColours =
-            resultIsSelected selectedResult body.id
-
         resultBody =
             [ viewMaybe (viewIncipitSummary language resultColours.iconColour) body.summary
             , viewMaybe viewRenderedIncipits body.renderedIncipits
             ]
+
+        resultColours =
+            resultIsSelected selectedResult body.id
     in
     resultTemplate
         { id = body.id
@@ -76,8 +81,3 @@ viewIncipitSummary language iconColour summary =
                 ]
             ]
         ]
-
-
-viewIncipitFlags : Language -> IncipitResultFlags -> Element msg
-viewIncipitFlags language flags =
-    none

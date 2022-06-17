@@ -1,4 +1,9 @@
-module Page.RecordTypes.ResultMode exposing (..)
+module Page.RecordTypes.ResultMode exposing
+    ( ResultMode(..)
+    , parseResultModeToString
+    , parseStringToResultMode
+    , resultModeOptions
+    )
 
 
 type ResultMode
@@ -7,6 +12,14 @@ type ResultMode
     | InstitutionsMode
     | IncipitsMode
     | LiturgicalFestivalsMode
+
+
+parseResultModeToString : ResultMode -> String
+parseResultModeToString mode =
+    List.filter (\( _, m ) -> m == mode) resultModeOptions
+        |> List.head
+        |> Maybe.withDefault ( "sources", SourcesMode )
+        |> Tuple.first
 
 
 {-|
@@ -21,14 +34,6 @@ parseStringToResultMode string =
         |> List.head
         |> Maybe.withDefault ( "sources", SourcesMode )
         |> Tuple.second
-
-
-parseResultModeToString : ResultMode -> String
-parseResultModeToString mode =
-    List.filter (\( _, m ) -> m == mode) resultModeOptions
-        |> List.head
-        |> Maybe.withDefault ( "sources", SourcesMode )
-        |> Tuple.first
 
 
 resultModeOptions : List ( String, ResultMode )

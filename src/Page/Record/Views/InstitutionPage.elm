@@ -1,4 +1,4 @@
-module Page.Record.Views.InstitutionPage exposing (..)
+module Page.Record.Views.InstitutionPage exposing (view)
 
 import Element exposing (Element, alignTop, clipY, column, fill, height, none, row, width)
 import Element.Background as Background
@@ -15,11 +15,11 @@ view session model =
     let
         pageView =
             case model.response of
-                Response (InstitutionData body) ->
-                    viewFullInstitutionPage session model body
-
                 Loading (Just (InstitutionData oldData)) ->
                     viewFullInstitutionPage session model oldData
+
+                Response (InstitutionData body) ->
+                    viewFullInstitutionPage session model body
 
                 _ ->
                     none

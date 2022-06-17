@@ -24,20 +24,10 @@ type alias FacetAlias =
     String
 
 
-type alias LabelValue =
+type alias LabelBooleanValue =
     { label : LanguageMap
-    , value : LanguageMap
+    , value : Bool
     }
-
-
-toLabel : { a | label : LanguageMap } -> LanguageMap
-toLabel labelValue =
-    labelValue.label
-
-
-toValue : { a | value : LanguageMap } -> LanguageMap
-toValue labelValue =
-    labelValue.value
 
 
 type alias LabelNumericValue =
@@ -46,20 +36,15 @@ type alias LabelNumericValue =
     }
 
 
-toNumericValue : { a | value : Float } -> Float
-toNumericValue labelValue =
-    labelValue.value
-
-
-type alias LabelBooleanValue =
-    { label : LanguageMap
-    , value : Bool
-    }
-
-
 type alias LabelStringValue =
     { label : LanguageMap
     , value : String
+    }
+
+
+type alias LabelValue =
+    { label : LanguageMap
+    , value : LanguageMap
     }
 
 
@@ -71,25 +56,11 @@ type alias RecordHistory =
     }
 
 
-labelValueDecoder : Decoder LabelValue
-labelValueDecoder =
-    Decode.succeed LabelValue
-        |> required "label" languageMapLabelDecoder
-        |> required "value" languageMapLabelDecoder
-
-
 labelNumericValueDecoder : Decoder LabelNumericValue
 labelNumericValueDecoder =
     Decode.succeed LabelNumericValue
         |> required "label" languageMapLabelDecoder
         |> required "value" float
-
-
-labelBooleanValueDecoder : Decoder LabelBooleanValue
-labelBooleanValueDecoder =
-    Decode.succeed LabelBooleanValue
-        |> required "label" languageMapLabelDecoder
-        |> required "value" bool
 
 
 labelStringValueDecoder : Decoder LabelStringValue
@@ -99,16 +70,17 @@ labelStringValueDecoder =
         |> required "value" string
 
 
+labelValueDecoder : Decoder LabelValue
+labelValueDecoder =
+    Decode.succeed LabelValue
+        |> required "label" languageMapLabelDecoder
+        |> required "value" languageMapLabelDecoder
+
+
 languageMapLabelDecoder : Decoder LanguageMap
 languageMapLabelDecoder =
     Decode.keyValuePairs (list string)
         |> andThen languageMapDecoder
-
-
-typeDecoder : Decoder RecordType
-typeDecoder =
-    Decode.string
-        |> andThen (\str -> Decode.succeed (recordTypeFromJsonType str))
 
 
 recordHistoryDecoder : Decoder RecordHistory
@@ -118,3 +90,31 @@ recordHistoryDecoder =
         |> required "created" datetime
         |> required "updatedLabel" languageMapLabelDecoder
         |> required "updated" datetime
+
+
+labelBooleanValueDecoder : Decoder LabelBooleanValue
+labelBooleanValueDecoder =
+    Decode.succeed LabelBooleanValue
+        |> required "label" languageMapLabelDecoder
+        |> required "value" bool
+
+
+toLabel : { a | label : LanguageMap } -> LanguageMap
+toLabel labelValue =
+    labelValue.label
+
+
+toNumericValue : { a | value : Float } -> Float
+toNumericValue labelValue =
+    labelValue.value
+
+
+toValue : { a | value : LanguageMap } -> LanguageMap
+toValue labelValue =
+    labelValue.value
+
+
+typeDecoder : Decoder RecordType
+typeDecoder =
+    string
+        |> andThen (\str -> Decode.succeed (recordTypeFromJsonType str))

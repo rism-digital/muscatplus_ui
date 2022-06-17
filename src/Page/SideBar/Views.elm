@@ -1,4 +1,4 @@
-module Page.SideBar.Views exposing (..)
+module Page.SideBar.Views exposing (dividingLine, isCurrentlyHovered, menuOption, menuOptionTemplate, unlinkedMenuOption, view)
 
 import Color exposing (Color)
 import Config
@@ -34,40 +34,45 @@ dividingLine =
         ]
         [ column
             [ width fill
-            , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+            , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
             []
         ]
 
 
-unlinkedMenuOption :
-    { icon : Color -> Element SideBarMsg
-    , label : Element SideBarMsg
-    , showLabel : Bool
-    }
-    -> Element SideBarMsg
-unlinkedMenuOption cfg =
-    menuOptionTemplate
-        { icon = cfg.icon colourScheme.black
-        , label = cfg.label
-        , showLabel = cfg.showLabel
-        , isCurrent = False
-        }
-        []
+isCurrentlyHovered : Maybe SideBarOption -> SideBarOption -> Bool
+isCurrentlyHovered hoveredOption thisOption =
+    case hoveredOption of
+        Just opt ->
+            opt == thisOption
+
+        Nothing ->
+            False
 
 
 menuOption :
     { icon : Color -> Element SideBarMsg
+    , isCurrent : Bool
     , label : Element SideBarMsg
     , showLabel : Bool
-    , isCurrent : Bool
     }
     -> SideBarOption
     -> Bool
     -> Element SideBarMsg
 menuOption cfg option currentlyHovered =
     let
+        additionalOptions =
+            List.concat
+                [ [ onClick (UserClickedSideBarOptionForFrontPage option)
+                  , onMouseEnter (UserMouseEnteredSideBarOption option)
+                  , onMouseLeave (UserMouseExitedSideBarOption option)
+                  , Font.color (fontColour |> convertColorToElementColor)
+                  ]
+                , hoverStyles
+                , selectedStyle
+                ]
+
         fontColour =
             if cfg.isCurrent then
                 colourScheme.white
@@ -83,6 +88,16 @@ menuOption cfg option currentlyHovered =
             else
                 []
 
+        icon =
+            cfg.icon fontColour
+
+        newCfg =
+            { icon = icon
+            , isCurrent = cfg.isCurrent
+            , label = cfg.label
+            , showLabel = cfg.showLabel
+            }
+
         selectedStyle =
             if cfg.isCurrent then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
@@ -90,48 +105,26 @@ menuOption cfg option currentlyHovered =
 
             else
                 []
-
-        icon =
-            cfg.icon fontColour
-
-        additionalOptions =
-            List.concat
-                [ [ onClick (UserClickedSideBarOptionForFrontPage option)
-                  , onMouseEnter (UserMouseEnteredSideBarOption option)
-                  , onMouseLeave (UserMouseExitedSideBarOption option)
-                  , Font.color (fontColour |> convertColorToElementColor)
-                  ]
-                , hoverStyles
-                , selectedStyle
-                ]
-
-        newCfg =
-            { icon = icon
-            , label = cfg.label
-            , showLabel = cfg.showLabel
-            , isCurrent = cfg.isCurrent
-            }
     in
     menuOptionTemplate newCfg additionalOptions
 
 
 menuOptionTemplate :
     { icon : Element SideBarMsg
+    , isCurrent : Bool
     , label : Element SideBarMsg
     , showLabel : Bool
-    , isCurrent : Bool
     }
     -> List (Attribute SideBarMsg)
     -> Element SideBarMsg
 menuOptionTemplate cfg additionalAttributes =
     row
-        ([ width fill
-         , alignTop
-         , spacing 10
-         , paddingXY 30 10
-         , pointer
-         ]
-            ++ additionalAttributes
+        (width fill
+            :: alignTop
+            :: spacing 10
+            :: paddingXY 30 10
+            :: pointer
+            :: additionalAttributes
         )
         [ el
             [ width (px 25)
@@ -143,32 +136,28 @@ menuOptionTemplate cfg additionalAttributes =
         ]
 
 
-isCurrentlyHovered : Maybe SideBarOption -> SideBarOption -> Bool
-isCurrentlyHovered hoveredOption thisOption =
-    case hoveredOption of
-        Just opt ->
-            opt == thisOption
-
-        Nothing ->
-            False
+unlinkedMenuOption :
+    { icon : Color -> Element SideBarMsg
+    , label : Element SideBarMsg
+    , showLabel : Bool
+    }
+    -> Element SideBarMsg
+unlinkedMenuOption cfg =
+    menuOptionTemplate
+        { icon = cfg.icon colourScheme.black
+        , isCurrent = False
+        , label = cfg.label
+        , showLabel = cfg.showLabel
+        }
+        []
 
 
 view : Session -> Element SideBarMsg
 view session =
     let
-        sideBarAnimation =
-            session.expandedSideBar
-
-        currentlyHoveredOption =
-            session.currentlyHoveredOption
-
-        currentlySelectedOption =
-            session.showFrontSearchInterface
-
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
 
-        -- only show the selected option if we're on the front page.
         checkSelected opt =
             case session.route of
                 FrontPageRoute _ ->
@@ -177,8 +166,62 @@ view session =
                 _ ->
                     False
 
+        currentlyHoveredOption =
+            session.currentlyHoveredOption
+
+        currentlySelectedOption =
+            session.showFrontSearchInterface
+
+        -- only show the selected option if we're on the front page.
+        incipitsInterfaceMenuOption =
+            viewIf
+                (lazy3 menuOption
+                    { icon = musicNotationSvg
+                    , isCurrent = checkSelected IncipitSearchOption
+                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.incipits
+                    , showLabel = showLabels
+                    }
+                    IncipitSearchOption
+                    (checkHover IncipitSearchOption)
+                )
+                showWhenChoosingNationalCollection
+
+        institutionInterfaceMenuOption =
+            menuOption
+                { icon = institutionSvg
+                , isCurrent = checkSelected InstitutionSearchOption
+                , label = text <| extractLabelFromLanguageMap session.language localTranslations.institutions
+                , showLabel = showLabels
+                }
+                InstitutionSearchOption
+                (checkHover InstitutionSearchOption)
+
+        peopleInterfaceMenuOption =
+            viewIf
+                (lazy3 menuOption
+                    { icon = peopleSvg
+                    , isCurrent = checkSelected PeopleSearchOption
+                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.people
+                    , showLabel = showLabels
+                    }
+                    PeopleSearchOption
+                    (checkHover PeopleSearchOption)
+                )
+                showWhenChoosingNationalCollection
+
+        -- If a national collection is chosen this will return
+        -- false, indicating that the menu option should not
+        -- be shown when a national collection is selected.
         showLabels =
             showSideBarLabels session.expandedSideBar
+
+        showWhenChoosingNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    False
+
+                Nothing ->
+                    True
 
         sideAnimation =
             case sideBarAnimation of
@@ -201,62 +244,18 @@ view session =
                 NoAnimation ->
                     Animation.empty
 
-        -- If a national collection is chosen this will return
-        -- false, indicating that the menu option should not
-        -- be shown when a national collection is selected.
-        showWhenChoosingNationalCollection =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    False
-
-                Nothing ->
-                    True
+        sideBarAnimation =
+            session.expandedSideBar
 
         sourcesInterfaceMenuOption =
             menuOption
                 { icon = sourcesSvg
+                , isCurrent = checkSelected SourceSearchOption
                 , label = text <| extractLabelFromLanguageMap session.language localTranslations.sources
                 , showLabel = showLabels
-                , isCurrent = checkSelected SourceSearchOption
                 }
                 SourceSearchOption
                 (checkHover SourceSearchOption)
-
-        peopleInterfaceMenuOption =
-            viewIf
-                (lazy3 menuOption
-                    { icon = peopleSvg
-                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.people
-                    , showLabel = showLabels
-                    , isCurrent = checkSelected PeopleSearchOption
-                    }
-                    PeopleSearchOption
-                    (checkHover PeopleSearchOption)
-                )
-                showWhenChoosingNationalCollection
-
-        institutionInterfaceMenuOption =
-            menuOption
-                { icon = institutionSvg
-                , label = text <| extractLabelFromLanguageMap session.language localTranslations.institutions
-                , showLabel = showLabels
-                , isCurrent = checkSelected InstitutionSearchOption
-                }
-                InstitutionSearchOption
-                (checkHover InstitutionSearchOption)
-
-        incipitsInterfaceMenuOption =
-            viewIf
-                (lazy3 menuOption
-                    { icon = musicNotationSvg
-                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.incipits
-                    , showLabel = showLabels
-                    , isCurrent = checkSelected IncipitSearchOption
-                    }
-                    IncipitSearchOption
-                    (checkHover IncipitSearchOption)
-                )
-                showWhenChoosingNationalCollection
     in
     animatedColumn
         sideAnimation
@@ -266,7 +265,7 @@ view session =
         , alignLeft
         , htmlAttribute <| HTA.style "z-index" "20"
         , Background.color (colourScheme.white |> convertColorToElementColor)
-        , Border.widthEach { left = 0, right = 2, top = 0, bottom = 0 }
+        , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
@@ -284,13 +283,13 @@ view session =
                 [ link
                     [ width fill
                     ]
-                    { url = Config.serverUrl ++ "?mode=sources"
-                    , label =
+                    { label =
                         el
                             [ alignTop
                             , width fill
                             ]
                             (rismLogo colourScheme.lightBlue headerHeight)
+                    , url = Config.serverUrl ++ "?mode=sources"
                     }
                 ]
             ]
@@ -379,10 +378,10 @@ view session =
                 , spacing 10
                 ]
                 [ menuOptionTemplate
-                    { icon = link [] { url = Config.serverUrl ++ "/about", label = el [ width (px 25) ] (infoCircleSvg colourScheme.black) }
+                    { icon = link [] { label = el [ width (px 25) ] (infoCircleSvg colourScheme.black), url = Config.serverUrl ++ "/about" }
+                    , isCurrent = False
                     , label = text "About"
                     , showLabel = False
-                    , isCurrent = False
                     }
                     []
                 ]

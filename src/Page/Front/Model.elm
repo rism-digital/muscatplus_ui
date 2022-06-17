@@ -1,4 +1,4 @@
-module Page.Front.Model exposing (..)
+module Page.Front.Model exposing (FrontPageModel)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)

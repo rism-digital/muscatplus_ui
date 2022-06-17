@@ -1,4 +1,4 @@
-module Page.UI.Search.Results exposing (..)
+module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultIsSelected, resultTemplate, summaryFieldTemplate, viewSearchResultSummaryField)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
@@ -20,6 +20,24 @@ import Url
 import Utlities exposing (convertPathToNodeId)
 
 
+type alias ResultColours =
+    { backgroundColour : Color
+    , fontLinkColour : Color
+    , textColour : Color
+    , iconColour : Color
+    }
+
+
+type alias ResultConfig msg =
+    { id : String
+    , language : Language
+    , resultTitle : LanguageMap
+    , colours : ResultColours
+    , resultBody : List (Element msg)
+    , clickMsg : String -> msg
+    }
+
+
 type alias SearchResultConfig body msg =
     { language : Language
     , selectedResult : Maybe String
@@ -34,96 +52,6 @@ type alias SearchResultSummaryConfig msg =
     , includeLabelInValue : Bool
     , fieldName : String
     , displayStyles : List (Attribute msg)
-    }
-
-
-summaryFieldTemplate : SearchResultSummaryConfig msg -> LabelValue -> Element msg
-summaryFieldTemplate summaryCfg fieldValue =
-    let
-        fLabel =
-            extractLabelFromLanguageMap summaryCfg.language fieldValue.label
-
-        fVal =
-            extractTextFromLanguageMap summaryCfg.language fieldValue.value
-
-        iconElement =
-            el
-                [ width <| px 20
-                , height <| px 20
-                , padding 2
-                , centerY
-                , el tooltipStyle (text fLabel)
-                    |> tooltip above
-                ]
-                summaryCfg.icon
-
-        fValueLength =
-            List.length fVal
-
-        fValueAsString =
-            if fValueLength > 3 then
-                List.take 3 fVal
-                    |> String.join "; "
-                    |> flip String.append " … "
-
-            else
-                String.join "; " fVal
-
-        templatedVal =
-            if summaryCfg.includeLabelInValue then
-                fValueAsString ++ " " ++ fLabel
-
-            else
-                fValueAsString
-
-        allEntries =
-            viewIf
-                (column
-                    tooltipStyle
-                    (List.map (\t -> el [] (text t)) fVal)
-                )
-                (fValueLength > 3)
-
-        -- TODO: Translate label!
-        expandedList =
-            viewIf
-                (el
-                    [ tooltip onLeft allEntries
-                    , padding 4
-                    , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-                    , Font.color (colourScheme.black |> convertColorToElementColor)
-                    , centerY
-                    ]
-                    (text "See all")
-                )
-                (fValueLength > 3)
-    in
-    el
-        [ spacing 5
-        , alignTop
-        ]
-        (row
-            [ spacing 5 ]
-            [ iconElement
-            , el
-                [ centerY ]
-                (el summaryCfg.displayStyles (text templatedVal))
-            , expandedList
-            ]
-        )
-
-
-viewSearchResultSummaryField : SearchResultSummaryConfig msg -> Dict String LabelValue -> Element msg
-viewSearchResultSummaryField summaryCfg summaryField =
-    Dict.get summaryCfg.fieldName summaryField
-        |> viewMaybe (summaryFieldTemplate summaryCfg)
-
-
-type alias ResultColours =
-    { backgroundColour : Color
-    , fontLinkColour : Color
-    , textColour : Color
-    , iconColour : Color
     }
 
 
@@ -153,16 +81,6 @@ resultIsSelected selectedResult thisId =
         }
 
 
-type alias ResultConfig msg =
-    { id : String
-    , language : Language
-    , resultTitle : LanguageMap
-    , colours : ResultColours
-    , resultBody : List (Element msg)
-    , clickMsg : String -> msg
-    }
-
-
 resultTemplate :
     ResultConfig msg
     -> Element msg
@@ -187,7 +105,7 @@ resultTemplate cfg =
         , Font.color (.textColour cfg.colours |> convertColorToElementColor)
         , onClick (cfg.clickMsg cfg.id)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , Border.dotted
         , pointer
         , paddingXY 20 20
@@ -225,3 +143,85 @@ resultTemplate cfg =
                 ]
             ]
         ]
+
+
+summaryFieldTemplate : SearchResultSummaryConfig msg -> LabelValue -> Element msg
+summaryFieldTemplate summaryCfg fieldValue =
+    let
+        allEntries =
+            viewIf
+                (column
+                    tooltipStyle
+                    (List.map (\t -> el [] (text t)) fVal)
+                )
+                (fValueLength > 3)
+
+        expandedList =
+            viewIf
+                (el
+                    [ tooltip onLeft allEntries
+                    , padding 4
+                    , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+                    , Font.color (colourScheme.black |> convertColorToElementColor)
+                    , centerY
+                    ]
+                    (text "See all")
+                )
+                (fValueLength > 3)
+
+        fLabel =
+            extractLabelFromLanguageMap summaryCfg.language fieldValue.label
+
+        fVal =
+            extractTextFromLanguageMap summaryCfg.language fieldValue.value
+
+        fValueAsString =
+            if fValueLength > 3 then
+                List.take 3 fVal
+                    |> String.join "; "
+                    |> flip String.append " … "
+
+            else
+                String.join "; " fVal
+
+        fValueLength =
+            List.length fVal
+
+        iconElement =
+            el
+                [ width <| px 20
+                , height <| px 20
+                , padding 2
+                , centerY
+                , el tooltipStyle (text fLabel)
+                    |> tooltip above
+                ]
+                summaryCfg.icon
+
+        -- TODO: Translate label!
+        templatedVal =
+            if summaryCfg.includeLabelInValue then
+                fValueAsString ++ " " ++ fLabel
+
+            else
+                fValueAsString
+    in
+    el
+        [ spacing 5
+        , alignTop
+        ]
+        (row
+            [ spacing 5 ]
+            [ iconElement
+            , el
+                [ centerY ]
+                (el summaryCfg.displayStyles (text templatedVal))
+            , expandedList
+            ]
+        )
+
+
+viewSearchResultSummaryField : SearchResultSummaryConfig msg -> Dict String LabelValue -> Element msg
+viewSearchResultSummaryField summaryCfg summaryField =
+    Dict.get summaryCfg.fieldName summaryField
+        |> viewMaybe (summaryFieldTemplate summaryCfg)

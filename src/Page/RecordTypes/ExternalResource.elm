@@ -1,9 +1,24 @@
-module Page.RecordTypes.ExternalResource exposing (..)
+module Page.RecordTypes.ExternalResource exposing
+    ( ExternalResourceBody
+    , ExternalResourceType(..)
+    , ExternalResourcesSectionBody
+    , externalResourceBodyDecoder
+    , externalResourceTypeConverter
+    , externalResourceTypeDecoder
+    , externalResourcesSectionBodyDecoder
+    )
 
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
+
+
+type alias ExternalResourceBody =
+    { url : String
+    , label : LanguageMap
+    , type_ : ExternalResourceType
+    }
 
 
 type ExternalResourceType
@@ -20,21 +35,6 @@ type alias ExternalResourcesSectionBody =
     }
 
 
-type alias ExternalResourceBody =
-    { url : String
-    , label : LanguageMap
-    , type_ : ExternalResourceType
-    }
-
-
-externalResourcesSectionBodyDecoder : Decoder ExternalResourcesSectionBody
-externalResourcesSectionBodyDecoder =
-    Decode.succeed ExternalResourcesSectionBody
-        |> hardcoded "record-external-resources-section"
-        |> required "label" languageMapLabelDecoder
-        |> required "items" (list externalResourceBodyDecoder)
-
-
 externalResourceBodyDecoder : Decoder ExternalResourceBody
 externalResourceBodyDecoder =
     Decode.succeed ExternalResourceBody
@@ -43,23 +43,31 @@ externalResourceBodyDecoder =
         |> required "resourceType" externalResourceTypeDecoder
 
 
-externalResourceTypeDecoder : Decoder ExternalResourceType
-externalResourceTypeDecoder =
-    Decode.string
-        |> andThen externalResourceTypeConverter
-
-
 externalResourceTypeConverter : String -> Decoder ExternalResourceType
 externalResourceTypeConverter typeString =
     case typeString of
-        "rism:IIIFManifestLink" ->
-            Decode.succeed IIIFManifestResourceType
-
         "rism:DigitizationLink" ->
             Decode.succeed DigitizationResourceType
+
+        "rism:IIIFManifestLink" ->
+            Decode.succeed IIIFManifestResourceType
 
         "rism:OtherLink" ->
             Decode.succeed OtherResourceType
 
         _ ->
             Decode.succeed UnknownResourceType
+
+
+externalResourceTypeDecoder : Decoder ExternalResourceType
+externalResourceTypeDecoder =
+    string
+        |> andThen externalResourceTypeConverter
+
+
+externalResourcesSectionBodyDecoder : Decoder ExternalResourcesSectionBody
+externalResourcesSectionBodyDecoder =
+    Decode.succeed ExternalResourcesSectionBody
+        |> hardcoded "record-external-resources-section"
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list externalResourceBodyDecoder)

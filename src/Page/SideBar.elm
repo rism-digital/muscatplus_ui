@@ -1,4 +1,4 @@
-module Page.SideBar exposing (..)
+module Page.SideBar exposing (Msg, buildFrontPageUrl, countryListRequest, update, updateDebouncer)
 
 import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer
@@ -16,19 +16,6 @@ type alias Msg =
     SideBarMsg
 
 
-countryListRequest : Cmd SideBarMsg
-countryListRequest =
-    createCountryCodeRequestWithDecoder ServerRespondedWithCountryCodeList
-
-
-updateDebouncer : Debouncer.UpdateConfig SideBarMsg Session
-updateDebouncer =
-    { mapMsg = ClientDebouncedSideBarMessages
-    , getDebouncer = .sideBarExpansionDebouncer
-    , setDebouncer = \debouncer s -> { s | sideBarExpansionDebouncer = debouncer }
-    }
-
-
 buildFrontPageUrl : SideBarOption -> Maybe CountryCode -> String
 buildFrontPageUrl sidebarOption countryCode =
     let
@@ -42,6 +29,11 @@ buildFrontPageUrl sidebarOption countryCode =
                 |> List.map (\c -> Url.Builder.string "nc" c)
     in
     serverUrl [ "/" ] <| modeParameter :: ncParameter
+
+
+countryListRequest : Cmd SideBarMsg
+countryListRequest =
+    createCountryCodeRequestWithDecoder ServerRespondedWithCountryCodeList
 
 
 update : SideBarMsg -> Session -> ( Session, Cmd SideBarMsg )
@@ -85,6 +77,17 @@ update msg session =
             , Cmd.none
             )
 
+        UserClickedSideBarOptionForFrontPage sidebarOption ->
+            let
+                requestUrl =
+                    buildFrontPageUrl sidebarOption session.restrictedToNationalCollection
+            in
+            ( { session
+                | showFrontSearchInterface = sidebarOption
+              }
+            , Nav.pushUrl session.key requestUrl
+            )
+
         UserMouseEnteredSideBarOption button ->
             ( { session
                 | currentlyHoveredOption = Just button
@@ -97,17 +100,6 @@ update msg session =
                 | currentlyHoveredOption = Nothing
               }
             , Cmd.none
-            )
-
-        UserClickedSideBarOptionForFrontPage sidebarOption ->
-            let
-                requestUrl =
-                    buildFrontPageUrl sidebarOption session.restrictedToNationalCollection
-            in
-            ( { session
-                | showFrontSearchInterface = sidebarOption
-              }
-            , Nav.pushUrl session.key requestUrl
             )
 
         UserMouseEnteredCountryChooser ->
@@ -147,11 +139,11 @@ update msg session =
                     buildFrontPageUrl session.showFrontSearchInterface countryCode
             in
             ( { session
-                | restrictedToNationalCollection = countryCode
+                | showFrontSearchInterface = SourceSearchOption
+                , restrictedToNationalCollection = countryCode
 
                 -- reset the user interface to the source search option to avoid getting stuck on the
                 -- people or incipits interface when a national collection is chosen.
-                , showFrontSearchInterface = SourceSearchOption
               }
             , Cmd.batch
                 [ encodeMessageForPortSend outMsg
@@ -168,3 +160,11 @@ update msg session =
                 |> encodeMessageForPortSend
                 |> sendOutgoingMessageOnPort
             )
+
+
+updateDebouncer : Debouncer.UpdateConfig SideBarMsg Session
+updateDebouncer =
+    { mapMsg = ClientDebouncedSideBarMessages
+    , getDebouncer = .sideBarExpansionDebouncer
+    , setDebouncer = \debouncer s -> { s | sideBarExpansionDebouncer = debouncer }
+    }

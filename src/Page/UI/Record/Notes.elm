@@ -1,4 +1,4 @@
-module Page.UI.Record.Notes exposing (..)
+module Page.UI.Record.Notes exposing (viewNotesSection)
 
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
@@ -13,11 +13,10 @@ viewNotesSection language notesSection =
     let
         sectionBody =
             [ row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
                 )
                 [ column
                     [ spacing lineSpacing

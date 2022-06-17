@@ -1,4 +1,4 @@
-module Page.UI.Search.Results.InstitutionResult exposing (..)
+module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionFlags, viewInstitutionSearchResult, viewInstitutionSummary)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
@@ -13,16 +13,47 @@ import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, re
 import Page.UI.Style exposing (colourScheme)
 
 
+viewInstitutionFlags : Language -> InstitutionResultFlags -> Element msg
+viewInstitutionFlags language flags =
+    let
+        numSources =
+            if flags.numberOfSources > 0 then
+                let
+                    labelText =
+                        if flags.numberOfSources == 1 then
+                            "1 Source"
+
+                        else
+                            formatNumberByLanguage language (toFloat flags.numberOfSources) ++ " Sources"
+                in
+                makeFlagIcon
+                    { background = colourScheme.darkOrange
+                    , foreground = colourScheme.white
+                    }
+                    (sourcesSvg colourScheme.white)
+                    labelText
+
+            else
+                none
+    in
+    row
+        [ width fill
+        , spacing 10
+        ]
+        [ numSources
+        ]
+
+
 viewInstitutionSearchResult :
     SearchResultConfig InstitutionResultBody msg
     -> Element msg
-viewInstitutionSearchResult { language, body, selectedResult, clickForPreviewMsg } =
+viewInstitutionSearchResult { language, selectedResult, body, clickForPreviewMsg } =
     let
-        resultColours =
-            resultIsSelected selectedResult body.id
-
         resultBody =
             [ viewMaybe (viewInstitutionSummary language resultColours.iconColour) body.summary ]
+
+        resultColours =
+            resultIsSelected selectedResult body.id
     in
     resultTemplate
         { id = body.id
@@ -52,35 +83,4 @@ viewInstitutionSummary language iconColour summary =
                     summary
                 ]
             ]
-        ]
-
-
-viewInstitutionFlags : Language -> InstitutionResultFlags -> Element msg
-viewInstitutionFlags language flags =
-    let
-        numSources =
-            if flags.numberOfSources > 0 then
-                let
-                    labelText =
-                        if flags.numberOfSources == 1 then
-                            "1 Source"
-
-                        else
-                            formatNumberByLanguage language (toFloat flags.numberOfSources) ++ " Sources"
-                in
-                makeFlagIcon
-                    { foreground = colourScheme.white
-                    , background = colourScheme.darkOrange
-                    }
-                    (sourcesSvg colourScheme.white)
-                    labelText
-
-            else
-                none
-    in
-    row
-        [ width fill
-        , spacing 10
-        ]
-        [ numSources
         ]

@@ -1,10 +1,9 @@
-module Page.About.Views exposing (..)
+module Page.About.Views exposing (view, viewLastIndexed)
 
 import Config as C
 import Element exposing (Element, column, fill, height, none, padding, row, spacing, text, width)
 import Element.Background as Background
 import Page.About.Model exposing (AboutPageModel)
-import Page.RecordTypes.About exposing (AboutBody)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
@@ -23,18 +22,18 @@ view session model =
                 _ ->
                     none
 
-        serverVersion =
-            case model.response of
-                Response (AboutData body) ->
-                    text <| "Server Version: " ++ body.serverVersion
-
-                _ ->
-                    none
-
         indexerVersion =
             case model.response of
                 Response (AboutData body) ->
                     text <| "Indexer Version: " ++ body.indexerVersion
+
+                _ ->
+                    none
+
+        serverVersion =
+            case model.response of
+                Response (AboutData body) ->
+                    text <| "Server Version: " ++ body.serverVersion
 
                 _ ->
                     none
@@ -61,6 +60,21 @@ view session model =
 viewLastIndexed : Posix -> Element msg
 viewLastIndexed timestamp =
     let
+        day =
+            Time.toDay Time.utc timestamp
+                |> String.fromInt
+                |> String.padLeft 2 '0'
+
+        hour =
+            Time.toHour Time.utc timestamp
+                |> String.fromInt
+                |> String.padLeft 2 '0'
+
+        minute =
+            Time.toMinute Time.utc timestamp
+                |> String.fromInt
+                |> String.padLeft 2 '0'
+
         month =
             case Time.toMonth Time.utc timestamp of
                 Jan ->
@@ -99,22 +113,7 @@ viewLastIndexed timestamp =
                 Dec ->
                     "12"
 
-        day =
-            Time.toDay Time.utc timestamp
-                |> String.fromInt
-                |> String.padLeft 2 '0'
-
         year =
             String.fromInt <| Time.toYear Time.utc timestamp
-
-        hour =
-            Time.toHour Time.utc timestamp
-                |> String.fromInt
-                |> String.padLeft 2 '0'
-
-        minute =
-            Time.toMinute Time.utc timestamp
-                |> String.fromInt
-                |> String.padLeft 2 '0'
     in
     text <| "Last indexed: " ++ year ++ "-" ++ month ++ "-" ++ day ++ " " ++ hour ++ ":" ++ minute

@@ -1,4 +1,4 @@
-module Page.UI.Record.SectionTemplate exposing (..)
+module Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, row, spacing, width)
 import Html.Attributes as HTA
@@ -16,7 +16,7 @@ import Page.UI.Components exposing (h2)
 -}
 sectionTemplate :
     Language
-    -> { a | sectionToc : String, label : LanguageMap }
+    -> { a | label : LanguageMap, sectionToc : String }
     -> List (Element msg)
     -> Element msg
 sectionTemplate language header sectionBody =

@@ -1,4 +1,4 @@
-module Page.Record.Views.PersonPage exposing (..)
+module Page.Record.Views.PersonPage exposing (view)
 
 import Element exposing (Element, alignTop, clipY, column, fill, height, none, row, width)
 import Element.Background as Background

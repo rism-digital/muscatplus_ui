@@ -1,4 +1,4 @@
-module Update exposing (..)
+module Update exposing (changePage, update, updateWith)
 
 import Browser
 import Browser.Navigation as Nav
@@ -22,13 +22,13 @@ import Url.Builder exposing (toQuery)
 changePage : Url -> Model -> ( Model, Cmd Msg )
 changePage url model =
     let
-        route =
-            parseUrl url
-
         newSession =
             toSession model
                 |> setRoute route
                 |> setUrl url
+
+        route =
+            parseUrl url
     in
     case route of
         Route.FrontPageRoute qargs ->
@@ -41,11 +41,6 @@ changePage url model =
             , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
             )
 
-        Route.NotFoundPageRoute ->
-            ( NotFoundPage newSession NotFoundPage.init
-            , Cmd.none
-            )
-
         Route.SearchPageRoute qargs kqargs ->
             let
                 -- set the old data on the Loading response
@@ -54,12 +49,13 @@ changePage url model =
                 -- coming from another page, or the response doesn't
                 -- already contain server data we instead initialize
                 -- a default search page model.
-                searchCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = qargs
-                    , keyboardQueryArgs = kqargs
-                    }
+                fullQueryParams =
+                    newQparams ++ "&" ++ newKeyboardParams
+
+                newKeyboardParams =
+                    buildNotationQueryParameters kqargs
+                        |> toQuery
+                        |> String.dropLeft 1
 
                 newModel =
                     case model of
@@ -75,13 +71,12 @@ changePage url model =
                         |> toQuery
                         |> String.dropLeft 1
 
-                newKeyboardParams =
-                    buildNotationQueryParameters kqargs
-                        |> toQuery
-                        |> String.dropLeft 1
-
-                fullQueryParams =
-                    newQparams ++ "&" ++ newKeyboardParams
+                searchCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = qargs
+                    , keyboardQueryArgs = kqargs
+                    }
 
                 searchUrl =
                     { url | query = Just fullQueryParams }
@@ -96,13 +91,6 @@ changePage url model =
 
         Route.SourcePageRoute _ ->
             let
-                recordCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = newSession.restrictedToNationalCollection
-                    }
-
                 newModel =
                     case model of
                         SourcePage _ oldModel ->
@@ -110,6 +98,13 @@ changePage url model =
 
                         _ ->
                             RecordPage.init recordCfg
+
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
 
                 sourceQuery =
                     toNextQuery newModel.activeSearch
@@ -130,19 +125,6 @@ changePage url model =
 
         Route.SourceContentsPageRoute _ qargs ->
             let
-                recordPath =
-                    String.replace "/contents" "" url.path
-
-                recordUrl =
-                    { url | path = recordPath }
-
-                recordCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = Just qargs
-                    , nationalCollection = newSession.restrictedToNationalCollection
-                    }
-
                 newModel =
                     case model of
                         SourcePage _ oldModel ->
@@ -156,6 +138,19 @@ changePage url model =
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
+
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
+                recordPath =
+                    String.replace "/contents" "" url.path
+
+                recordUrl =
+                    { url | path = recordPath }
 
                 sourceUrl =
                     { url | query = Just newQparams }
@@ -171,13 +166,6 @@ changePage url model =
 
         Route.PersonPageRoute _ ->
             let
-                recordCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = newSession.restrictedToNationalCollection
-                    }
-
                 newModel =
                     case model of
                         PersonPage _ oldModel ->
@@ -185,6 +173,13 @@ changePage url model =
 
                         _ ->
                             RecordPage.init recordCfg
+
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
 
                 sourceQuery =
                     toNextQuery newModel.activeSearch
@@ -205,19 +200,6 @@ changePage url model =
 
         Route.PersonSourcePageRoute _ qargs ->
             let
-                recordPath =
-                    String.replace "/sources" "" url.path
-
-                recordUrl =
-                    { url | path = recordPath }
-
-                recordCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = Just qargs
-                    , nationalCollection = newSession.restrictedToNationalCollection
-                    }
-
                 newModel =
                     case model of
                         PersonPage _ oldModel ->
@@ -231,6 +213,19 @@ changePage url model =
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
+
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
+                recordPath =
+                    String.replace "/sources" "" url.path
+
+                recordUrl =
+                    { url | path = recordPath }
 
                 sourceUrl =
                     { url | query = Just newQparams }
@@ -246,13 +241,6 @@ changePage url model =
 
         Route.InstitutionPageRoute _ ->
             let
-                recordCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = newSession.restrictedToNationalCollection
-                    }
-
                 newModel =
                     case model of
                         InstitutionPage _ oldModel ->
@@ -260,6 +248,13 @@ changePage url model =
 
                         _ ->
                             RecordPage.init recordCfg
+
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
 
                 sourceQuery =
                     toNextQuery newModel.activeSearch
@@ -280,19 +275,6 @@ changePage url model =
 
         Route.InstitutionSourcePageRoute _ qargs ->
             let
-                recordPath =
-                    String.replace "/sources" "" url.path
-
-                recordUrl =
-                    { url | path = recordPath }
-
-                recordCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = Just qargs
-                    , nationalCollection = newSession.restrictedToNationalCollection
-                    }
-
                 newModel =
                     case model of
                         InstitutionPage _ oldModel ->
@@ -307,6 +289,19 @@ changePage url model =
                         |> toQuery
                         |> String.dropLeft 1
 
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Just qargs
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
+                recordPath =
+                    String.replace "/sources" "" url.path
+
+                recordUrl =
+                    { url | path = recordPath }
+
                 sourceUrl =
                     { url | query = Just newQparams }
             in
@@ -319,36 +314,32 @@ changePage url model =
                 |> Cmd.map Msg.UserInteractedWithRecordPage
             )
 
-        Route.PlacePageRoute _ ->
-            let
-                recordCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = newSession.restrictedToNationalCollection
-                    }
-
-                placeModel =
-                    RecordPage.init recordCfg
-            in
-            ( PlacePage newSession placeModel
-            , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
-            )
-
         Route.AboutPageRoute ->
             ( AboutPage newSession AboutPage.init
             , Cmd.map Msg.UserInteractedWithAboutPage (AboutPage.initialCmd url)
             )
 
-        _ ->
-            ( NotFoundPage newSession NotFoundPage.init, Cmd.none )
+        {-
+           Route.PlacePageRoute _ ->
+               let
+                   recordCfg =
+                       { incomingUrl = url
+                       , route = route
+                       , queryArgs = Nothing
+                       , nationalCollection = newSession.restrictedToNationalCollection
+                       }
 
-
-updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
-updateWith toModel toMsg _ ( subModel, subCmd ) =
-    ( toModel subModel
-    , Cmd.map toMsg subCmd
-    )
+                   placeModel =
+                       RecordPage.init recordCfg
+               in
+               ( PlacePage newSession placeModel
+               , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
+               )
+        -}
+        Route.NotFoundPageRoute ->
+            ( NotFoundPage newSession NotFoundPage.init
+            , Cmd.none
+            )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -356,6 +347,9 @@ update msg model =
     case ( msg, model ) of
         ( Msg.ClientChangedUrl url, _ ) ->
             changePage url model
+
+        ( Msg.ClientReceivedABadPortMessage _, _ ) ->
+            ( model, Cmd.none )
 
         ( Msg.UserRequestedUrlChange urlRequest, _ ) ->
             let
@@ -383,19 +377,6 @@ update msg model =
             in
             ( newModel, Cmd.none )
 
-        ( Msg.UserInteractedWithSideBar sideBarMsg, _ ) ->
-            let
-                ( newSession, sidebarCmd ) =
-                    toSession model
-                        |> SideBar.update sideBarMsg
-
-                newModel =
-                    updateSession newSession model
-            in
-            ( newModel
-            , Cmd.map Msg.UserInteractedWithSideBar sidebarCmd
-            )
-
         ( Msg.UserInteractedWithFrontPage frontMsg, FrontPage session pageModel ) ->
             FrontPage.update session frontMsg pageModel
                 |> updateWith (FrontPage session) Msg.UserInteractedWithFrontPage model
@@ -420,19 +401,36 @@ update msg model =
             RecordPage.update session recordMsg pageModel
                 |> updateWith (PlacePage session) Msg.UserInteractedWithRecordPage model
 
-        ( Msg.UserInteractedWithAboutPage recordMsg, AboutPage session pageModel ) ->
-            AboutPage.update session recordMsg pageModel
-                |> updateWith (AboutPage session) Msg.UserInteractedWithAboutPage model
-
         ( Msg.UserInteractedWithNotFoundPage notFoundMsg, NotFoundPage session pageModel ) ->
             NotFoundPage.update session notFoundMsg pageModel
                 |> updateWith (NotFoundPage session) Msg.UserInteractedWithNotFoundPage model
 
-        ( Msg.NothingHappened, _ ) ->
-            ( model, Cmd.none )
+        ( Msg.UserInteractedWithAboutPage recordMsg, AboutPage session pageModel ) ->
+            AboutPage.update session recordMsg pageModel
+                |> updateWith (AboutPage session) Msg.UserInteractedWithAboutPage model
 
-        ( Msg.ClientReceivedABadPortMessage _, _ ) ->
+        ( Msg.UserInteractedWithSideBar sideBarMsg, _ ) ->
+            let
+                newModel =
+                    updateSession newSession model
+
+                ( newSession, sidebarCmd ) =
+                    toSession model
+                        |> SideBar.update sideBarMsg
+            in
+            ( newModel
+            , Cmd.map Msg.UserInteractedWithSideBar sidebarCmd
+            )
+
+        ( Msg.NothingHappened, _ ) ->
             ( model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
+
+
+updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
+updateWith toModel toMsg _ ( subModel, subCmd ) =
+    ( toModel subModel
+    , Cmd.map toMsg subCmd
+    )

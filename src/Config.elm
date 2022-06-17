@@ -1,9 +1,9 @@
-module Config exposing (..)
+module Config exposing (defaultRows, flagsPath, minimumQueryLength, muscatLinkBase, serverUrl, uiVersion)
 
 
-serverUrl : String
-serverUrl =
-    "http://dev.rism.offline"
+defaultRows : Int
+defaultRows =
+    20
 
 
 flagsPath : String
@@ -16,14 +16,14 @@ minimumQueryLength =
     3
 
 
-defaultRows : Int
-defaultRows =
-    20
-
-
 muscatLinkBase : String
 muscatLinkBase =
     "https://muscat.rism.info/admin/"
+
+
+serverUrl : String
+serverUrl =
+    "http://dev.rism.offline"
 
 
 uiVersion : String

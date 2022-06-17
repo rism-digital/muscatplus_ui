@@ -1,4 +1,16 @@
-module Page.Front exposing (..)
+module Page.Front exposing
+    ( FrontConfig
+    , Model
+    , Msg
+    , frontPageRequest
+    , frontProbeSubmit
+    , init
+    , searchSubmit
+    , setProbeResponse
+    , update
+    , updateDebouncerProbeConfig
+    , updateDebouncerSuggestConfig
+    )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
 import Browser.Navigation as Nav
@@ -14,11 +26,16 @@ import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryAr
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
+
+
+type alias FrontConfig =
+    { queryArgs : FrontQueryArgs
+    }
 
 
 type alias Model =
@@ -29,9 +46,25 @@ type alias Msg =
     FrontMsg
 
 
-type alias FrontConfig =
-    { queryArgs : FrontQueryArgs
-    }
+frontPageRequest : Url -> Cmd FrontMsg
+frontPageRequest initialUrl =
+    createRequestWithDecoder ServerRespondedWithFrontData (Url.toString initialUrl)
+
+
+frontProbeSubmit : Session -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
+frontProbeSubmit session model =
+    let
+        newModel =
+            toNextQuery model.activeSearch
+                |> setMode resultMode
+                |> flip setNextQuery model.activeSearch
+                |> flip setActiveSearch model
+                |> setProbeResponse (Loading Nothing)
+
+        resultMode =
+            sideBarOptionToResultMode session.showFrontSearchInterface
+    in
+    probeSubmit ServerRespondedWithProbeData session newModel
 
 
 init : FrontConfig -> FrontPageModel FrontMsg
@@ -52,50 +85,17 @@ init cfg =
     }
 
 
-setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
-setProbeResponse newResponse oldModel =
-    { oldModel | probeResponse = newResponse }
-
-
-frontPageRequest : Url -> Cmd FrontMsg
-frontPageRequest initialUrl =
-    createRequestWithDecoder ServerRespondedWithFrontData (Url.toString initialUrl)
-
-
-frontProbeSubmit : Session -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
-frontProbeSubmit session model =
-    let
-        resultMode =
-            sideBarOptionToResultMode session.showFrontSearchInterface
-
-        newModel =
-            toNextQuery model.activeSearch
-                |> setMode resultMode
-                |> flip setNextQuery model.activeSearch
-                |> flip setActiveSearch model
-                |> setProbeResponse (Loading Nothing)
-    in
-    probeSubmit ServerRespondedWithProbeData session newModel
-
-
 searchSubmit : Session -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
 searchSubmit session model =
     let
         activeSearch =
             toActiveSearch model
 
-        resetPageInQueryArgs =
-            activeSearch
-                |> toNextQuery
-                |> resetPage
+        newModel =
+            addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
 
         -- when submitting a new search, reset the page
         -- to the first page.
-        pageResetModel =
-            activeSearch
-                |> setNextQuery resetPageInQueryArgs
-                |> flip setActiveSearch model
-
         notationQueryParameters =
             case toKeyboard pageResetModel.activeSearch of
                 Just kq ->
@@ -105,43 +105,35 @@ searchSubmit session model =
                 Nothing ->
                     []
 
-        newModel =
-            addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
+        pageResetModel =
+            activeSearch
+                |> setNextQuery resetPageInQueryArgs
+                |> flip setActiveSearch model
+
+        resetPageInQueryArgs =
+            activeSearch
+                |> toNextQuery
+                |> resetPage
 
         resultMode =
             sideBarOptionToResultMode session.showFrontSearchInterface
+
+        searchUrl =
+            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
 
         textQueryParameters =
             toNextQuery newModel.activeSearch
                 |> setMode resultMode
                 |> buildQueryParameters
-
-        searchUrl =
-            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
     in
     ( newModel
     , Nav.pushUrl session.key searchUrl
     )
 
 
-updateDebouncerProbeConfig : Debouncer.UpdateConfig FrontMsg (FrontPageModel FrontMsg)
-updateDebouncerProbeConfig =
-    { mapMsg = DebouncerCapturedProbeRequest
-    , getDebouncer = .probeDebouncer
-    , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
-    }
-
-
-updateDebouncerSuggestConfig : Debouncer.UpdateConfig FrontMsg (FrontPageModel FrontMsg)
-updateDebouncerSuggestConfig =
-    { mapMsg = DebouncerCapturedQueryFacetSuggestionRequest
-    , getDebouncer = \model -> .activeSuggestionDebouncer model.activeSearch
-    , setDebouncer =
-        \debouncer model ->
-            model.activeSearch
-                |> setActiveSuggestionDebouncer debouncer
-                |> flip setActiveSearch model
-    }
+setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
+setProbeResponse newResponse oldModel =
+    { oldModel | probeResponse = newResponse }
 
 
 update : Session -> FrontMsg -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
@@ -175,25 +167,6 @@ update session msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithSuggestionData (Ok ( _, response )) ->
-            let
-                newModel =
-                    setActiveSuggestion (Just response) model.activeSearch
-                        |> flip setActiveSearch model
-            in
-            ( newModel
-            , Cmd.none
-            )
-
-        DebouncerCapturedProbeRequest frontMsg ->
-            Debouncer.update (update session) updateDebouncerProbeConfig frontMsg model
-
-        DebouncerSettledToSendProbeRequest ->
-            probeSubmit ServerRespondedWithProbeData session model
-
-        ServerRespondedWithSuggestionData (Err err) ->
-            ( model, Cmd.none )
-
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             ( { model
                 | probeResponse = Response response
@@ -209,9 +182,24 @@ update session msg model =
             , Cmd.none
             )
 
-        UserChangedFacetBehaviour alias facetBehaviour ->
-            userChangedFacetBehaviour alias facetBehaviour model
-                |> probeSubmit ServerRespondedWithProbeData session
+        ServerRespondedWithSuggestionData (Ok ( _, response )) ->
+            let
+                newModel =
+                    setActiveSuggestion (Just response) model.activeSearch
+                        |> flip setActiveSearch model
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        ServerRespondedWithSuggestionData (Err err) ->
+            ( model, Cmd.none )
+
+        DebouncerCapturedProbeRequest frontMsg ->
+            Debouncer.update (update session) updateDebouncerProbeConfig frontMsg model
+
+        DebouncerSettledToSendProbeRequest ->
+            probeSubmit ServerRespondedWithProbeData session model
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model
@@ -221,12 +209,12 @@ update session msg model =
                 -- we don't reset *all* parameters; we keep the
                 -- currently selected result mode so that the user
                 -- doesn't get bounced back to the 'sources' tab.
+                adjustedQueryArgs =
+                    { defaultQueryArgs | mode = currentMode }
+
                 currentMode =
                     toNextQuery model.activeSearch
                         |> toMode
-
-                adjustedQueryArgs =
-                    { defaultQueryArgs | mode = currentMode }
             in
             setNextQuery adjustedQueryArgs model.activeSearch
                 |> setRangeFacetValues Dict.empty
@@ -236,30 +224,34 @@ update session msg model =
 
         UserEnteredTextInKeywordQueryBox queryText ->
             let
+                debounceMsg =
+                    provideInput DebouncerSettledToSendProbeRequest
+                        |> DebouncerCapturedProbeRequest
+
+                newModel =
+                    setNextQuery newQueryArgs model.activeSearch
+                        |> flip setActiveSearch model
+
+                newQueryArgs =
+                    toNextQuery model.activeSearch
+                        |> setKeywordQuery newText
+
                 newText =
                     if String.isEmpty queryText then
                         Nothing
 
                     else
                         Just queryText
-
-                newQueryArgs =
-                    toNextQuery model.activeSearch
-                        |> setKeywordQuery newText
-
-                newModel =
-                    setNextQuery newQueryArgs model.activeSearch
-                        |> flip setActiveSearch model
-
-                debounceMsg =
-                    provideInput DebouncerSettledToSendProbeRequest
-                        |> DebouncerCapturedProbeRequest
             in
             update session debounceMsg newModel
 
         UserClickedToggleFacet facetAlias ->
             userClickedToggleFacet facetAlias model
                 |> frontProbeSubmit session
+
+        UserChangedFacetBehaviour alias facetBehaviour ->
+            userChangedFacetBehaviour alias facetBehaviour model
+                |> probeSubmit ServerRespondedWithProbeData session
 
         UserRemovedItemFromQueryFacet alias query ->
             userRemovedItemFromQueryFacet alias query model
@@ -296,7 +288,7 @@ update session msg model =
             )
 
         UserFocusedRangeFacet alias ->
-            ( model, Cmd.none )
+            userFocusedRangeFacet alias model
 
         UserLostFocusRangeFacet alias ->
             userLostFocusOnRangeFacet alias model
@@ -323,9 +315,6 @@ update session msg model =
                         ( keyboardModel, keyboardCmd ) =
                             Keyboard.update keyboardMsg oldKeyboardModel
 
-                        resultMode =
-                            sideBarOptionToResultMode session.showFrontSearchInterface
-
                         newModel =
                             setKeyboard (Just keyboardModel) model.activeSearch
                                 |> flip setActiveSearch model
@@ -343,6 +332,9 @@ update session msg model =
 
                             else
                                 Cmd.none
+
+                        resultMode =
+                            sideBarOptionToResultMode session.showFrontSearchInterface
                     in
                     ( newModel
                     , Cmd.batch
@@ -356,3 +348,23 @@ update session msg model =
 
         NothingHappened ->
             ( model, Cmd.none )
+
+
+updateDebouncerProbeConfig : Debouncer.UpdateConfig FrontMsg (FrontPageModel FrontMsg)
+updateDebouncerProbeConfig =
+    { mapMsg = DebouncerCapturedProbeRequest
+    , getDebouncer = .probeDebouncer
+    , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
+    }
+
+
+updateDebouncerSuggestConfig : Debouncer.UpdateConfig FrontMsg (FrontPageModel FrontMsg)
+updateDebouncerSuggestConfig =
+    { mapMsg = DebouncerCapturedQueryFacetSuggestionRequest
+    , getDebouncer = \model -> .activeSuggestionDebouncer model.activeSearch
+    , setDebouncer =
+        \debouncer model ->
+            model.activeSearch
+                |> setActiveSuggestionDebouncer debouncer
+                |> flip setActiveSearch model
+    }

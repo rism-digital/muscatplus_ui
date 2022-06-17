@@ -1,4 +1,4 @@
-module Page.UI.Facets.QueryFacet exposing (..)
+module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, queryFacetHelp, viewQueryFacet, viewSuggestionDropdown, viewSuggestionItem)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
@@ -22,13 +22,6 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp, tooltip, tooltipStyle)
 
 
-queryFacetHelp =
-    """
-    Type your term in the text box, and hit enter. Multiple terms and wildcards are supported.
-    Use the controls at the bottom to select between "AND" or "OR" behaviours when combining terms.
-    """
-
-
 type alias QueryFacetConfig msg =
     { language : Language
     , activeSearch : ActiveSearch msg
@@ -40,14 +33,27 @@ type alias QueryFacetConfig msg =
     }
 
 
+queryFacetHelp =
+    """
+    Type your term in the text box, and hit enter. Multiple terms and wildcards are supported.
+    Use the controls at the bottom to select between "AND" or "OR" behaviours when combining terms.
+    """
+
+
 viewQueryFacet : QueryFacetConfig msg -> Element msg
 viewQueryFacet config =
     let
-        facetAlias =
-            .alias config.queryFacet
+        activeSuggestion =
+            case .activeSuggestion config.activeSearch of
+                Just suggestions ->
+                    if toAlias suggestions == facetAlias then
+                        viewSuggestionDropdown config currentBehaviourOption suggestions
 
-        facetLabel =
-            .label config.queryFacet
+                    else
+                        none
+
+                Nothing ->
+                    none
 
         activeValues : List String
         activeValues =
@@ -56,34 +62,19 @@ viewQueryFacet config =
                 |> Dict.get facetAlias
                 |> Maybe.withDefault []
 
-        textValue =
-            .queryFacetValues config.activeSearch
-                |> Dict.get facetAlias
-                |> Maybe.withDefault ""
+        ( behaviourIcon, behaviourText ) =
+            case currentBehaviourOption of
+                FacetBehaviourIntersection ->
+                    ( intersectionSvg colourScheme.slateGrey, "Options are combined with an AND operator" )
 
-        facetBehaviours =
-            toBehaviours config.queryFacet
-                |> toBehaviourItems
+                FacetBehaviourUnion ->
+                    ( unionSvg colourScheme.slateGrey, "Options are combined with an OR operator" )
 
-        serverBehaviourOption =
-            toBehaviours config.queryFacet
-                |> toCurrentBehaviour
-
-        -- if an override hasn't been set in the facetBehaviours
-        -- then choose the behaviour that came from the server.
         currentBehaviourOption =
             toNextQuery config.activeSearch
                 |> toFacetBehaviours
                 |> Dict.get facetAlias
                 |> Maybe.withDefault serverBehaviourOption
-
-        joinWordEl =
-            case currentBehaviourOption of
-                FacetBehaviourIntersection ->
-                    el [] (text "<and>")
-
-                FacetBehaviourUnion ->
-                    el [] (text "<or>")
 
         enteredOptions =
             List.map
@@ -116,6 +107,18 @@ viewQueryFacet config =
             <|
                 List.reverse activeValues
 
+        facetAlias =
+            .alias config.queryFacet
+
+        -- if an override hasn't been set in the facetBehaviours
+        -- then choose the behaviour that came from the server.
+        facetBehaviours =
+            toBehaviours config.queryFacet
+                |> toBehaviourItems
+
+        facetLabel =
+            .label config.queryFacet
+
         -- TODO: Translate
         interspersedOptions =
             case enteredOptions of
@@ -123,33 +126,31 @@ viewQueryFacet config =
                     [ none ]
 
                 _ ->
+                    let
+                        joinWordEl =
+                            case currentBehaviourOption of
+                                FacetBehaviourIntersection ->
+                                    el [] (text "<and>")
+
+                                FacetBehaviourUnion ->
+                                    el [] (text "<or>")
+                    in
                     List.intersperse joinWordEl enteredOptions
 
         listOfBehavioursForDropdown =
             List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )) facetBehaviours
 
-        ( behaviourIcon, behaviourText ) =
-            case currentBehaviourOption of
-                FacetBehaviourUnion ->
-                    ( unionSvg colourScheme.slateGrey, "Options are combined with an OR operator" )
-
-                FacetBehaviourIntersection ->
-                    ( intersectionSvg colourScheme.slateGrey, "Options are combined with an AND operator" )
+        serverBehaviourOption =
+            toBehaviours config.queryFacet
+                |> toCurrentBehaviour
 
         suggestionUrl =
             .suggestions config.queryFacet
 
-        activeSuggestion =
-            case .activeSuggestion config.activeSearch of
-                Just suggestions ->
-                    if toAlias suggestions == facetAlias then
-                        viewSuggestionDropdown config currentBehaviourOption suggestions
-
-                    else
-                        none
-
-                Nothing ->
-                    none
+        textValue =
+            .queryFacetValues config.activeSearch
+                |> Dict.get facetAlias
+                |> Maybe.withDefault ""
     in
     row
         [ width fill
@@ -195,9 +196,9 @@ viewQueryFacet config =
                     , below activeSuggestion
                     ]
                     { label = Input.labelHidden (extractLabelFromLanguageMap config.language facetLabel)
+                    , onChange = \input -> config.userEnteredTextMsg facetAlias input suggestionUrl
                     , placeholder = Just <| Input.placeholder [] (text "Add terms to your query")
                     , text = textValue
-                    , onChange = \input -> config.userEnteredTextMsg facetAlias input suggestionUrl
                     }
                 ]
             , wrappedRow

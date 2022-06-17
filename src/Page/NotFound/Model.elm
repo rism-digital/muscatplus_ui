@@ -1,4 +1,4 @@
-module Page.NotFound.Model exposing (..)
+module Page.NotFound.Model exposing (NotFoundPageModel)
 
 import Response exposing (Response, ServerData)
 

@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews.Person exposing (..)
+module Page.UI.Record.Previews.Person exposing (viewPersonPreview)
 
 import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, scrollbarY, spacing, width)
 import Language exposing (Language)
@@ -18,11 +18,10 @@ viewPersonPreview language body =
     let
         summaryBody labels =
             row
-                ([ width fill
-                 , height fill
-                 , alignTop
-                 ]
-                    ++ sectionBorderStyles
+                (width fill
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
                 )
                 [ column
                     [ width fill

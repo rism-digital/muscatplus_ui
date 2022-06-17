@@ -1,4 +1,18 @@
-module Page.Record exposing (..)
+module Page.Record exposing
+    ( Model
+    , Msg
+    , RecordConfig
+    , init
+    , load
+    , recordPagePreviewRequest
+    , recordPageRequest
+    , recordSearchRequest
+    , requestPreviewIfSelected
+    , update
+    , updateDebouncerProbeConfig
+    , updateDebouncerSuggestConfig
+    , updatePageMetadata
+    )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setRangeFacetValues)
 import Browser.Navigation as Nav
@@ -14,12 +28,12 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
-import Utlities exposing (convertNodeIdToPath, convertPathToNodeId)
+import Utlities exposing (convertNodeIdToPath)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
@@ -42,13 +56,10 @@ type alias RecordConfig =
 init : RecordConfig -> RecordPageModel RecordMsg
 init cfg =
     let
-        selectedResult =
-            .fragment cfg.incomingUrl
-                |> Maybe.map (\f -> C.serverUrl ++ "/" ++ convertNodeIdToPath f)
-
-        tabView =
-            Url.toString cfg.incomingUrl
-                |> routeToCurrentRecordViewTab cfg.route
+        activeSearch =
+            toNextQuery activeSearchInit
+                |> setNationalCollection cfg.nationalCollection
+                |> flip setNextQuery activeSearchInit
 
         activeSearchInit =
             case cfg.queryArgs of
@@ -61,33 +72,33 @@ init cfg =
                 Nothing ->
                     ActiveSearch.empty
 
-        activeSearch =
-            toNextQuery activeSearchInit
-                |> setNationalCollection cfg.nationalCollection
-                |> flip setNextQuery activeSearchInit
+        selectedResult =
+            .fragment cfg.incomingUrl
+                |> Maybe.map (\f -> C.serverUrl ++ "/" ++ convertNodeIdToPath f)
+
+        tabView =
+            Url.toString cfg.incomingUrl
+                |> routeToCurrentRecordViewTab cfg.route
     in
     { response = Loading Nothing
     , currentTab = tabView
     , searchResults = NoResponseToShow
-    , activeSearch = activeSearch
     , preview = NoResponseToShow
     , selectedResult = selectedResult
-    , applyFilterPrompt = False
-    , probeResponse = NoResponseToShow
+    , activeSearch = activeSearch
+    , probeResponse = Loading Nothing
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
+    , applyFilterPrompt = False
     }
 
 
 load : RecordConfig -> RecordPageModel RecordMsg -> RecordPageModel RecordMsg
 load cfg oldModel =
     let
-        ( previewResp, selectedResult ) =
-            case .fragment cfg.incomingUrl of
-                Just f ->
-                    ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
-
-                Nothing ->
-                    ( NoResponseToShow, Nothing )
+        activeSearch =
+            toNextQuery activeSearchInit
+                |> setNationalCollection cfg.nationalCollection
+                |> flip setNextQuery activeSearchInit
 
         activeSearchInit =
             case cfg.queryArgs of
@@ -100,21 +111,29 @@ load cfg oldModel =
                 Nothing ->
                     ActiveSearch.empty
 
-        activeSearch =
-            toNextQuery activeSearchInit
-                |> setNationalCollection cfg.nationalCollection
-                |> flip setNextQuery activeSearchInit
+        ( previewResp, selectedResult ) =
+            case .fragment cfg.incomingUrl of
+                Just f ->
+                    ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
+
+                Nothing ->
+                    ( NoResponseToShow, Nothing )
 
         tabView =
             Url.toString cfg.incomingUrl
                 |> routeToCurrentRecordViewTab cfg.route
     in
     { oldModel
-        | preview = previewResp
-        , activeSearch = activeSearch
+        | currentTab = tabView
+        , preview = previewResp
         , selectedResult = selectedResult
-        , currentTab = tabView
+        , activeSearch = activeSearch
     }
+
+
+recordPagePreviewRequest : String -> Cmd RecordMsg
+recordPagePreviewRequest previewUrl =
+    createRequestWithDecoder ServerRespondedWithRecordPreview previewUrl
 
 
 recordPageRequest : Url -> Cmd RecordMsg
@@ -137,92 +156,9 @@ requestPreviewIfSelected selected =
             Cmd.none
 
 
-recordPagePreviewRequest : String -> Cmd RecordMsg
-recordPagePreviewRequest previewUrl =
-    createRequestWithDecoder ServerRespondedWithRecordPreview previewUrl
-
-
-updateDebouncerProbeConfig : Debouncer.UpdateConfig RecordMsg (RecordPageModel RecordMsg)
-updateDebouncerProbeConfig =
-    { mapMsg = DebouncerCapturedProbeRequest
-    , getDebouncer = .probeDebouncer
-    , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
-    }
-
-
-updateDebouncerSuggestConfig : Debouncer.UpdateConfig RecordMsg (RecordPageModel RecordMsg)
-updateDebouncerSuggestConfig =
-    { mapMsg = DebouncerCapturedQueryFacetSuggestionRequest
-    , getDebouncer = \model -> .activeSuggestionDebouncer model.activeSearch
-    , setDebouncer =
-        \debouncer model ->
-            model.activeSearch
-                |> setActiveSuggestionDebouncer debouncer
-                |> flip setActiveSearch model
-    }
-
-
-updatePageMetadata : ServerData -> Cmd RecordMsg
-updatePageMetadata incomingData =
-    case incomingData of
-        PersonData personBody ->
-            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap None personBody.label }
-                |> encodeMessageForPortSend
-                |> sendOutgoingMessageOnPort
-
-        InstitutionData instBody ->
-            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap None instBody.label }
-                |> encodeMessageForPortSend
-                |> sendOutgoingMessageOnPort
-
-        SourceData sourceBody ->
-            let
-                title =
-                    extractLabelFromLanguageMap None sourceBody.label
-
-                fullDescription =
-                    case sourceBody.creator of
-                        Just c ->
-                            case c.relatedTo of
-                                Just n ->
-                                    extractLabelFromLanguageMap None n.label ++ ": " ++ title
-
-                                Nothing ->
-                                    case c.name of
-                                        Just nm ->
-                                            extractLabelFromLanguageMap None nm ++ ": " ++ title
-
-                                        Nothing ->
-                                            title
-
-                        Nothing ->
-                            title
-            in
-            PortSendHeaderMetaInfo { description = fullDescription }
-                |> encodeMessageForPortSend
-                |> sendOutgoingMessageOnPort
-
-        _ ->
-            Cmd.none
-
-
 update : Session -> RecordMsg -> RecordPageModel RecordMsg -> ( RecordPageModel RecordMsg, Cmd RecordMsg )
 update session msg model =
     case msg of
-        ServerRespondedWithRecordData (Ok ( _, response )) ->
-            ( { model
-                | response = Response response
-              }
-            , updatePageMetadata response
-            )
-
-        ServerRespondedWithRecordData (Err error) ->
-            ( { model
-                | response = Error (createErrorMessage error)
-              }
-            , Cmd.none
-            )
-
         ServerRespondedWithPageSearch (Ok ( _, response )) ->
             let
                 jumpCmd =
@@ -256,6 +192,31 @@ update session msg model =
             , Cmd.none
             )
 
+        ServerRespondedWithProbeData (Ok ( _, response )) ->
+            ( { model
+                | probeResponse = Response response
+                , applyFilterPrompt = True
+              }
+            , Cmd.none
+            )
+
+        ServerRespondedWithProbeData (Err _) ->
+            ( model, Cmd.none )
+
+        ServerRespondedWithRecordData (Ok ( _, response )) ->
+            ( { model
+                | response = Response response
+              }
+            , updatePageMetadata response
+            )
+
+        ServerRespondedWithRecordData (Err error) ->
+            ( { model
+                | response = Error (createErrorMessage error)
+              }
+            , Cmd.none
+            )
+
         ServerRespondedWithRecordPreview (Ok ( _, response )) ->
             ( { model
                 | preview = Response response
@@ -270,23 +231,6 @@ update session msg model =
             , Cmd.none
             )
 
-        DebouncerCapturedProbeRequest recordMsg ->
-            Debouncer.update (update session) updateDebouncerProbeConfig recordMsg model
-
-        DebouncerSettledToSendProbeRequest ->
-            probeSubmit ServerRespondedWithProbeData session model
-
-        ServerRespondedWithProbeData (Ok ( _, response )) ->
-            ( { model
-                | probeResponse = Response response
-                , applyFilterPrompt = True
-              }
-            , Cmd.none
-            )
-
-        ServerRespondedWithProbeData (Err error) ->
-            ( model, Cmd.none )
-
         ServerRespondedWithSuggestionData (Ok ( _, response )) ->
             let
                 newModel =
@@ -297,6 +241,12 @@ update session msg model =
 
         ServerRespondedWithSuggestionData (Err error) ->
             ( model, Cmd.none )
+
+        DebouncerCapturedProbeRequest recordMsg ->
+            Debouncer.update (update session) updateDebouncerProbeConfig recordMsg model
+
+        DebouncerSettledToSendProbeRequest ->
+            probeSubmit ServerRespondedWithProbeData session model
 
         UserClickedRecordViewTab recordTab ->
             let
@@ -340,8 +290,8 @@ update session msg model =
                             Nothing
             in
             ( { model
-                | preview = NoResponseToShow
-                , searchResults = Loading oldData
+                | searchResults = Loading oldData
+                , preview = NoResponseToShow
               }
             , Cmd.batch
                 [ Nav.pushUrl session.key pageUrl
@@ -360,26 +310,12 @@ update session msg model =
 
         UserEnteredTextInKeywordQueryBox queryText ->
             let
-                newText =
-                    if String.isEmpty queryText then
-                        Nothing
-
-                    else
-                        Just queryText
-
-                newQueryArgs =
-                    toNextQuery model.activeSearch
-                        |> setKeywordQuery newText
-
-                newModel =
-                    setNextQuery newQueryArgs model.activeSearch
-                        |> flip setActiveSearch model
-
                 debounceMsg =
                     provideInput DebouncerSettledToSendProbeRequest
                         |> DebouncerCapturedProbeRequest
             in
-            update session debounceMsg newModel
+            userEnteredTextInKeywordQueryBox queryText model
+                |> update session debounceMsg
 
         UserClickedToggleFacet alias ->
             userClickedToggleFacet alias model
@@ -390,7 +326,7 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserFocusedRangeFacet alias ->
-            ( model, Cmd.none )
+            userFocusedRangeFacet alias model
 
         UserEnteredTextInRangeFacet alias inputBox value ->
             ( userEnteredTextInRangeFacet alias inputBox value model
@@ -426,11 +362,9 @@ update session msg model =
                         |> DebouncerSettledToSendQueryFacetSuggestionRequest
                         |> provideInput
                         |> DebouncerCapturedQueryFacetSuggestionRequest
-
-                newModel =
-                    userEnteredTextInQueryFacet alias query model
             in
-            update session debounceMsg newModel
+            userEnteredTextInQueryFacet alias query model
+                |> update session debounceMsg
 
         DebouncerCapturedQueryFacetSuggestionRequest suggestMsg ->
             Debouncer.update (update session) updateDebouncerSuggestConfig suggestMsg model
@@ -445,29 +379,11 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserChangedResultSorting sort ->
-            let
-                sortValue =
-                    Just sort
-
-                newQueryArgs =
-                    toNextQuery model.activeSearch
-                        |> setSort sortValue
-            in
-            setNextQuery newQueryArgs model.activeSearch
-                |> flip setActiveSearch model
+            userChangedResultSorting sort model
                 |> searchSubmit session
 
         UserChangedResultsPerPage num ->
-            let
-                rowNum =
-                    Maybe.withDefault C.defaultRows (String.toInt num)
-
-                newQueryArgs =
-                    toNextQuery model.activeSearch
-                        |> setRows rowNum
-            in
-            setNextQuery newQueryArgs model.activeSearch
-                |> flip setActiveSearch model
+            userChangedResultsPerPage num model
                 |> searchSubmit session
 
         UserResetAllFilters ->
@@ -484,3 +400,67 @@ update session msg model =
 
         NothingHappened ->
             ( model, Cmd.none )
+
+
+updateDebouncerProbeConfig : Debouncer.UpdateConfig RecordMsg (RecordPageModel RecordMsg)
+updateDebouncerProbeConfig =
+    { mapMsg = DebouncerCapturedProbeRequest
+    , getDebouncer = .probeDebouncer
+    , setDebouncer = \debouncer model -> { model | probeDebouncer = debouncer }
+    }
+
+
+updateDebouncerSuggestConfig : Debouncer.UpdateConfig RecordMsg (RecordPageModel RecordMsg)
+updateDebouncerSuggestConfig =
+    { mapMsg = DebouncerCapturedQueryFacetSuggestionRequest
+    , getDebouncer = \model -> .activeSuggestionDebouncer model.activeSearch
+    , setDebouncer =
+        \debouncer model ->
+            model.activeSearch
+                |> setActiveSuggestionDebouncer debouncer
+                |> flip setActiveSearch model
+    }
+
+
+updatePageMetadata : ServerData -> Cmd RecordMsg
+updatePageMetadata incomingData =
+    case incomingData of
+        SourceData sourceBody ->
+            let
+                fullDescription =
+                    case sourceBody.creator of
+                        Just c ->
+                            case c.relatedTo of
+                                Just n ->
+                                    extractLabelFromLanguageMap None n.label ++ ": " ++ title
+
+                                Nothing ->
+                                    case c.name of
+                                        Just nm ->
+                                            extractLabelFromLanguageMap None nm ++ ": " ++ title
+
+                                        Nothing ->
+                                            title
+
+                        Nothing ->
+                            title
+
+                title =
+                    extractLabelFromLanguageMap None sourceBody.label
+            in
+            PortSendHeaderMetaInfo { description = fullDescription }
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
+
+        PersonData personBody ->
+            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap None personBody.label }
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
+
+        InstitutionData instBody ->
+            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap None instBody.label }
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
+
+        _ ->
+            Cmd.none

@@ -1,4 +1,4 @@
-module Page.UI.Facets.RangeFacet exposing (..)
+module Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, rangeFacetHelp, validateInput, viewRangeFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, padding, paragraph, px, row, shrink, spacing, spacingXY, text, width)
@@ -16,13 +16,6 @@ import Page.UI.Tooltip exposing (facetHelp)
 import Page.UpdateHelpers exposing (selectAppropriateRangeFacetValues)
 
 
-rangeFacetHelp =
-    """
-    Filter using four digit year values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would
-    find all records from 1650 onwards.
-    """
-
-
 type alias RangeFacetConfig msg =
     { language : Language
     , rangeFacet : RangeFacet
@@ -31,6 +24,13 @@ type alias RangeFacetConfig msg =
     , userFocusedMsg : FacetAlias -> msg
     , userEnteredTextMsg : FacetAlias -> RangeFacetValue -> String -> msg
     }
+
+
+rangeFacetHelp =
+    """
+    Filter using four digit year values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would
+    find all records from 1650 onwards.
+    """
 
 
 validateInput : String -> String -> Element msg
@@ -52,9 +52,6 @@ validateInput boxIndicator value =
                 Nothing
     in
     case errorMessage of
-        Nothing ->
-            none
-
         Just eMsg ->
             row
                 []
@@ -65,6 +62,9 @@ validateInput boxIndicator value =
                     ]
                     [ text eMsg ]
                 ]
+
+        Nothing ->
+            none
 
 
 viewRangeFacet : RangeFacetConfig msg -> Element msg
@@ -127,10 +127,10 @@ viewRangeFacet config =
                         , Events.onLoseFocus (config.userLostFocusMsg facetAlias)
                         , Events.onFocus (config.userFocusedMsg facetAlias)
                         ]
-                        { onChange = \c -> config.userEnteredTextMsg facetAlias LowerRangeValue c
-                        , text = lowerValue
+                        { label = labelHidden ""
+                        , onChange = \c -> config.userEnteredTextMsg facetAlias LowerRangeValue c
                         , placeholder = Nothing
-                        , label = labelHidden ""
+                        , text = lowerValue
                         }
                     ]
                 , column
@@ -143,10 +143,10 @@ viewRangeFacet config =
                         , Events.onLoseFocus (config.userLostFocusMsg facetAlias)
                         , Events.onFocus (config.userFocusedMsg facetAlias)
                         ]
-                        { onChange = \c -> config.userEnteredTextMsg facetAlias UpperRangeValue c
-                        , text = upperValue
+                        { label = labelHidden ""
+                        , onChange = \c -> config.userEnteredTextMsg facetAlias UpperRangeValue c
                         , placeholder = Nothing
-                        , label = labelHidden ""
+                        , text = upperValue
                         }
                     ]
                 , column

@@ -1,4 +1,18 @@
-module Page.Keyboard exposing (..)
+module Page.Keyboard exposing
+    ( Model
+    , buildNotationRequestQuery
+    , buildNotationValidationQuery
+    , buildUpdateQuery
+    , defaultKeyboardQuery
+    , init
+    , initModel
+    , setNotation
+    , setQuery
+    , toNotation
+    , update
+    , updateDebouncerPAESearchConfig
+    , view
+    )
 
 import Config
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
@@ -20,81 +34,6 @@ type alias Model msg =
     KeyboardModel msg
 
 
-init : Int -> ( Keyboard KeyboardMsg, Cmd KeyboardMsg )
-init numOctaves =
-    let
-        -- needs a config and a model instance
-        model =
-            initModel
-
-        config =
-            { numOctaves = numOctaves }
-    in
-    ( Keyboard model config, Cmd.none )
-
-
-defaultKeyboardQuery : KeyboardQuery
-defaultKeyboardQuery =
-    { clef = G2
-    , timeSignature = TNone
-    , keySignature = KS_N
-    , noteData = Nothing
-    , queryMode = IntervalQueryMode
-    }
-
-
-initModel : Model msg
-initModel =
-    { query = defaultKeyboardQuery
-    , notation = Nothing
-    , needsProbe = False
-    , inputIsValid = True
-    , paeInputSearchDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
-    }
-
-
-toNotation : { a | notation : Maybe String } -> Maybe String
-toNotation model =
-    model.notation
-
-
-setNotation : Maybe String -> { a | notation : Maybe String } -> { a | notation : Maybe String }
-setNotation newNotation oldRecord =
-    { oldRecord | notation = newNotation }
-
-
-setQuery : KeyboardQuery -> { a | query : KeyboardQuery } -> { a | query : KeyboardQuery }
-setQuery newQuery oldModel =
-    { oldModel | query = newQuery }
-
-
-buildUpdateQuery : Maybe String -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
-buildUpdateQuery newNoteData model =
-    let
-        newQuery =
-            setNoteData newNoteData model.query
-
-        url =
-            buildNotationQueryParameters newQuery
-                |> serverUrl [ "incipits/render" ]
-
-        debounceMsg =
-            provideInput DebouncerSettledToSendPAEText
-                |> DebouncerCapturedPAEText
-
-        newModel =
-            { model
-                | query = newQuery
-            }
-    in
-    ( newModel
-    , Cmd.batch
-        [ createSvgRequest ServerRespondedWithRenderedNotation url
-        , update debounceMsg newModel |> Tuple.second
-        ]
-    )
-
-
 buildNotationRequestQuery : KeyboardQuery -> Cmd KeyboardMsg
 buildNotationRequestQuery keyboardQuery =
     buildNotationQueryParameters keyboardQuery
@@ -109,12 +48,79 @@ buildNotationValidationQuery keyboardQuery =
         |> createRequest ServerRespondedWithNotationValidation incipitValidationBodyDecoder
 
 
-updateDebouncerPAESearchConfig : Debouncer.UpdateConfig KeyboardMsg (KeyboardModel KeyboardMsg)
-updateDebouncerPAESearchConfig =
-    { mapMsg = DebouncerCapturedPAEText
-    , getDebouncer = .paeInputSearchDebouncer
-    , setDebouncer = \debouncer model -> { model | paeInputSearchDebouncer = debouncer }
+buildUpdateQuery : Maybe String -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
+buildUpdateQuery newNoteData model =
+    let
+        debounceMsg =
+            provideInput DebouncerSettledToSendPAEText
+                |> DebouncerCapturedPAEText
+
+        newModel =
+            { model
+                | query = newQuery
+            }
+
+        newQuery =
+            setNoteData newNoteData model.query
+
+        url =
+            buildNotationQueryParameters newQuery
+                |> serverUrl [ "incipits/render" ]
+    in
+    ( newModel
+    , Cmd.batch
+        [ createSvgRequest ServerRespondedWithRenderedNotation url
+        , update debounceMsg newModel |> Tuple.second
+        ]
+    )
+
+
+defaultKeyboardQuery : KeyboardQuery
+defaultKeyboardQuery =
+    { clef = G2
+    , timeSignature = TNone
+    , keySignature = KS_N
+    , noteData = Nothing
+    , queryMode = IntervalQueryMode
     }
+
+
+init : Int -> ( Keyboard KeyboardMsg, Cmd KeyboardMsg )
+init numOctaves =
+    let
+        -- needs a config and a model instance
+        config =
+            { numOctaves = numOctaves }
+
+        model =
+            initModel
+    in
+    ( Keyboard model config, Cmd.none )
+
+
+initModel : Model msg
+initModel =
+    { query = defaultKeyboardQuery
+    , notation = Nothing
+    , needsProbe = False
+    , inputIsValid = True
+    , paeInputSearchDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
+    }
+
+
+setNotation : Maybe String -> { a | notation : Maybe String } -> { a | notation : Maybe String }
+setNotation newNotation oldRecord =
+    { oldRecord | notation = newNotation }
+
+
+setQuery : KeyboardQuery -> { a | query : KeyboardQuery } -> { a | query : KeyboardQuery }
+setQuery newQuery oldModel =
+    { oldModel | query = newQuery }
+
+
+toNotation : { a | notation : Maybe String } -> Maybe String
+toNotation model =
+    model.notation
 
 
 update : KeyboardMsg -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
@@ -143,8 +149,11 @@ update msg model =
 
         UserClickedPianoKeyboardKey noteName octave ->
             let
-                query =
-                    model.query
+                needsProbing =
+                    choose (String.length noteData > Config.minimumQueryLength) True False
+
+                newModel =
+                    { model | needsProbe = needsProbing }
 
                 note =
                     createPAENote noteName octave
@@ -157,13 +166,21 @@ update msg model =
                         Nothing ->
                             note
 
-                needsProbing =
-                    choose (String.length noteData > Config.minimumQueryLength) True False
-
-                newModel =
-                    { model | needsProbe = needsProbing }
+                query =
+                    model.query
             in
             buildUpdateQuery (Just noteData) newModel
+
+        UserClickedPianoKeyboardChangeClef clef ->
+            let
+                newModel =
+                    toKeyboardQuery model
+                        |> setClef clef
+                        |> flip setKeyboardQuery model
+            in
+            ( newModel
+            , buildNotationRequestQuery newModel.query
+            )
 
         UserInteractedWithPAEText text ->
             let
@@ -196,28 +213,6 @@ update msg model =
         DebouncerSettledToSendPAEText ->
             ( { model | needsProbe = True }, Cmd.none )
 
-        UserClickedPianoKeyboardChangeClef clef ->
-            let
-                newModel =
-                    toKeyboardQuery model
-                        |> setClef clef
-                        |> flip setKeyboardQuery model
-            in
-            ( newModel
-            , buildNotationRequestQuery newModel.query
-            )
-
-        UserChangedQueryMode qMode ->
-            let
-                newModel =
-                    toKeyboardQuery model
-                        |> setQueryMode qMode
-                        |> flip setKeyboardQuery model
-            in
-            ( { newModel | needsProbe = True }
-            , Cmd.none
-            )
-
         UserClickedPianoKeyboardChangeTimeSignature tsig ->
             let
                 newModel =
@@ -240,8 +235,27 @@ update msg model =
             , buildNotationRequestQuery newModel.query
             )
 
+        UserChangedQueryMode qMode ->
+            let
+                newModel =
+                    toKeyboardQuery model
+                        |> setQueryMode qMode
+                        |> flip setKeyboardQuery model
+            in
+            ( { newModel | needsProbe = True }
+            , Cmd.none
+            )
+
         NothingHappenedWithTheKeyboard ->
             ( model, Cmd.none )
+
+
+updateDebouncerPAESearchConfig : Debouncer.UpdateConfig KeyboardMsg (KeyboardModel KeyboardMsg)
+updateDebouncerPAESearchConfig =
+    { mapMsg = DebouncerCapturedPAEText
+    , getDebouncer = .paeInputSearchDebouncer
+    , setDebouncer = \debouncer model -> { model | paeInputSearchDebouncer = debouncer }
+    }
 
 
 {-|
