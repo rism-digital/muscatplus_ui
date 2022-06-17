@@ -1,4 +1,4 @@
-module Request exposing (apply, createRequest, createRequestWithAcceptAndExpect, createSvgRequest, serverUrl)
+module Request exposing (apply, createRequest, createSvgRequest, serverUrl)
 
 import Config as C
 import Http exposing (Expect)

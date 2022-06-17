@@ -1,4 +1,4 @@
-module Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType, recordTypeOptions)
+module Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType)
 
 
 type RecordType

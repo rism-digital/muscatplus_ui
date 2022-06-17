@@ -10,21 +10,7 @@ module Page.RecordTypes.SourceShared exposing
     , Subject
     , SubjectsSectionBody
     , contentsSectionBodyDecoder
-    , sourceContentTypeDecoder
-    , sourceContentTypeFromJsonType
-    , sourceContentTypeOptions
-    , sourceContentTypeRecordBodyDecoder
     , sourceRecordDescriptorsDecoder
-    , sourceRecordTypeDecoder
-    , sourceRecordTypeFromJsonType
-    , sourceRecordTypeOptions
-    , sourceRecordTypeRecordBodyDecoder
-    , sourceSubjectDecoder
-    , sourceSubjectsBodyDecoder
-    , sourceTypeDecoder
-    , sourceTypeFromJsonType
-    , sourceTypeOptions
-    , sourceTypeRecordBodyDecoder
     )
 
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)

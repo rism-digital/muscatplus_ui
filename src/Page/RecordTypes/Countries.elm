@@ -1,4 +1,4 @@
-module Page.RecordTypes.Countries exposing (CountryCode, countryCodeDecoder, countryLabelValueToDict)
+module Page.RecordTypes.Countries exposing (CountryCode, countryCodeDecoder)
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)

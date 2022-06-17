@@ -1,4 +1,4 @@
-module Page.UI.Record.Relationship exposing (viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
+module Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 
 import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, px, row, shrink, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)

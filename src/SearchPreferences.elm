@@ -1,4 +1,4 @@
-module SearchPreferences exposing (SearchPreferences, defaultPreferences, encodeSearchPreferences, saveSearchPreference, searchPreferencesDecoder)
+module SearchPreferences exposing (SearchPreferences)
 
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (required)

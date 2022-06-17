@@ -1,4 +1,4 @@
-module Page.UI.Search.Controls.PeopleControls exposing (..)
+module Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
 import Page.Query exposing (toKeywordQuery, toNextQuery)

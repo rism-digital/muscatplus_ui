@@ -1,4 +1,4 @@
-module Page.SideBar exposing (Msg, buildFrontPageUrl, countryListRequest, update, updateDebouncer)
+module Page.SideBar exposing (Msg, countryListRequest, update)
 
 import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer

@@ -1,15 +1,10 @@
 module Page.RecordTypes.Institution exposing
     ( BasicInstitutionBody
     , CoordinatesSection
-    , EmailAddressBody
     , InstitutionBody
     , LocationAddressSectionBody
-    , MailingAddressBody
-    , WebsiteAddressBody
     , basicInstitutionBodyDecoder
-    , coordinatesSectionDecoder
     , institutionBodyDecoder
-    , locationAddressSectionBodyDecoder
     )
 
 import Json.Decode as Decode exposing (Decoder, list, string)

@@ -2,7 +2,6 @@ module Page.RecordTypes.ResultMode exposing
     ( ResultMode(..)
     , parseResultModeToString
     , parseStringToResultMode
-    , resultModeOptions
     )
 
 

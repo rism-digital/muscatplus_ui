@@ -1,4 +1,4 @@
-module Page.UI.Record.ContentsSection exposing (viewContentsSection, viewSubject, viewSubjectsSection)
+module Page.UI.Record.ContentsSection exposing (viewContentsSection)
 
 import Element exposing (Element, alignTop, column, el, fill, height, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)

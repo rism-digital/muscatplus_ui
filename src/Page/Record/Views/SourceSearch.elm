@@ -1,6 +1,5 @@
 module Page.Record.Views.SourceSearch exposing
-    ( searchResultsViewRouter
-    , viewRecordSourceSearchTabBar
+    ( viewRecordSourceSearchTabBar
     , viewRecordTopBarDescriptionOnly
     , viewSourceSearchTab
     )

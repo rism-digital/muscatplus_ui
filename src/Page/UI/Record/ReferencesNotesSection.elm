@@ -1,4 +1,4 @@
-module Page.UI.Record.ReferencesNotesSection exposing (viewLiturgicalFestival, viewLiturgicalFestivalsSection, viewLocation, viewNotesSection, viewPerformanceLocation, viewPerformanceLocationsSection, viewReferencesNotesSection)
+module Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 
 import Element exposing (Element, alignTop, column, el, fill, height, link, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)

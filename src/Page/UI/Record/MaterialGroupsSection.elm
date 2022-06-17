@@ -1,4 +1,4 @@
-module Page.UI.Record.MaterialGroupsSection exposing (viewExternalResourcesSection, viewMaterialGroup, viewMaterialGroupRelationships, viewMaterialGroupsSection)
+module Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, textColumn, width, wrappedRow)
 import Language exposing (Language)

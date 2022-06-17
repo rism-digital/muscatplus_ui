@@ -4,14 +4,10 @@ module Page.Record exposing
     , RecordConfig
     , init
     , load
-    , recordPagePreviewRequest
     , recordPageRequest
     , recordSearchRequest
     , requestPreviewIfSelected
     , update
-    , updateDebouncerProbeConfig
-    , updateDebouncerSuggestConfig
-    , updatePageMetadata
     )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setRangeFacetValues)
@@ -239,7 +235,7 @@ update session msg model =
             in
             ( newModel, Cmd.none )
 
-        ServerRespondedWithSuggestionData (Err error) ->
+        ServerRespondedWithSuggestionData (Err _) ->
             ( model, Cmd.none )
 
         DebouncerCapturedProbeRequest recordMsg ->

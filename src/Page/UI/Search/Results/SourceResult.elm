@@ -1,9 +1,4 @@
-module Page.UI.Search.Results.SourceResult exposing
-    ( viewSourceFlags
-    , viewSourcePartOf
-    , viewSourceSearchResult
-    , viewSourceSummary
-    )
+module Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 
 import Color exposing (Color)
 import Dict exposing (Dict)

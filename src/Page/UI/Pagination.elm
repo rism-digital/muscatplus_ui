@@ -1,4 +1,4 @@
-module Page.UI.Pagination exposing (paginationLink, viewPagination)
+module Page.UI.Pagination exposing (viewPagination)
 
 import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, pointer, px, row, shrink, text, width)
 import Element.Background as Background

@@ -1,4 +1,4 @@
-module Page.UI.Record.SourceItemsSection exposing (viewSourceItem, viewSourceItemsSection)
+module Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, link, px, row, spacing, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)

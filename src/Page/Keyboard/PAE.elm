@@ -2,15 +2,12 @@ module Page.Keyboard.PAE exposing
     ( clefQueryStringToClef
     , clefStrToClef
     , clefSymToClefQueryString
-    , comparableToSymHelper
     , createPAENote
     , keyNoteNameToNoteString
     , keySigStrToKeySignature
     , keySignatureSymToQueryStr
-    , octaveShift
     , queryModeStrToQueryMode
     , queryModeToQueryModeStr
-    , symToStringHelper
     , timeSigStrToTimeSignature
     , timeSignatureSymToQueryStr
     )

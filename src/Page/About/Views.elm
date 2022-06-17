@@ -1,4 +1,4 @@
-module Page.About.Views exposing (view, viewLastIndexed)
+module Page.About.Views exposing (view)
 
 import Config as C
 import Element exposing (Element, column, fill, height, none, padding, row, spacing, text, width)

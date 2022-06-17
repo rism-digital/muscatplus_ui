@@ -1,4 +1,4 @@
-module Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, selectFacetHelp, sortFacetItemList, sortIcon, toggledSortType, viewSelectFacet, viewSelectFacetItem, viewSelectFacetItemColumn)
+module Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
@@ -32,6 +32,7 @@ type alias SelectFacetConfig msg =
     }
 
 
+selectFacetHelp : String
 selectFacetHelp =
     """
     Select from the list of values. You can order the values alphabetically or numerically (the count of the number of
@@ -134,7 +135,7 @@ viewSelectFacet config =
                     userSetSort
 
                 Nothing ->
-                    serverDefaultSort
+                    .defaultSort config.selectFacet
 
         chosenSortMessage =
             case chosenSort of
@@ -190,9 +191,6 @@ viewSelectFacet config =
 
         query =
             toNextQuery activeSearch
-
-        serverDefaultSort =
-            .defaultSort config.selectFacet
 
         showLink =
             if List.length sortedItems > 12 then

@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews.Incipit exposing (viewEncodingsBlock, viewIncipitPreview, viewPaeData, viewPaeRow)
+module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 
 import Element exposing (Element, alignTop, column, el, fill, height, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Font as Font

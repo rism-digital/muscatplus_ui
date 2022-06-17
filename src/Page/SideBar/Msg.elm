@@ -1,4 +1,4 @@
-module Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), modeStringToSideBarOption, resultModeToSideBarOption, showSideBarLabels, sideBarExpandDelay, sideBarOptionToModeString, sideBarOptionToResultMode)
+module Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), resultModeToSideBarOption, showSideBarLabels, sideBarExpandDelay, sideBarOptionToModeString, sideBarOptionToResultMode)
 
 import Debouncer.Messages as Debouncer
 import Dict exposing (Dict)

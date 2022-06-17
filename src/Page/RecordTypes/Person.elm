@@ -1,7 +1,6 @@
 module Page.RecordTypes.Person exposing
     ( NameVariantsSectionBody
     , PersonBody
-    , nameVariantsSectionBodyDecoder
     , personBodyDecoder
     )
 

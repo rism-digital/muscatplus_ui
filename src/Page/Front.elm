@@ -3,13 +3,8 @@ module Page.Front exposing
     , Model
     , Msg
     , frontPageRequest
-    , frontProbeSubmit
     , init
-    , searchSubmit
-    , setProbeResponse
     , update
-    , updateDebouncerProbeConfig
-    , updateDebouncerSuggestConfig
     )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
@@ -192,7 +187,7 @@ update session msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithSuggestionData (Err err) ->
+        ServerRespondedWithSuggestionData (Err _) ->
             ( model, Cmd.none )
 
         DebouncerCapturedProbeRequest frontMsg ->
@@ -322,6 +317,9 @@ update session msg model =
                         probeCmd =
                             if keyboardModel.needsProbe then
                                 let
+                                    resultMode =
+                                        sideBarOptionToResultMode session.showFrontSearchInterface
+
                                     probeUrl =
                                         toNextQuery newModel.activeSearch
                                             |> setMode resultMode
@@ -332,9 +330,6 @@ update session msg model =
 
                             else
                                 Cmd.none
-
-                        resultMode =
-                            sideBarOptionToResultMode session.showFrontSearchInterface
                     in
                     ( newModel
                     , Cmd.batch

@@ -1,11 +1,4 @@
-module Page.Search.Views exposing
-    ( searchModeSelectorRouter
-    , searchModeSelectorView
-    , searchResultsViewRouter
-    , view
-    , viewSearchBody
-    , viewTopBar
-    )
+module Page.Search.Views exposing (view)
 
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, clipY, column, fill, height, none, px, row, width)

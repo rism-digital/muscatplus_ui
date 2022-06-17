@@ -1,4 +1,4 @@
-module Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, rangeFacetHelp, validateInput, viewRangeFacet)
+module Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, padding, paragraph, px, row, shrink, spacing, spacingXY, text, width)
@@ -26,6 +26,7 @@ type alias RangeFacetConfig msg =
     }
 
 
+rangeFacetHelp : String
 rangeFacetHelp =
     """
     Filter using four digit year values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would

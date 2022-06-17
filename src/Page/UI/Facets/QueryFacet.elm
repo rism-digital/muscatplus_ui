@@ -1,4 +1,4 @@
-module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, queryFacetHelp, viewQueryFacet, viewSuggestionDropdown, viewSuggestionItem)
+module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
@@ -33,6 +33,7 @@ type alias QueryFacetConfig msg =
     }
 
 
+queryFacetHelp : String
 queryFacetHelp =
     """
     Type your term in the text box, and hit enter. Multiple terms and wildcards are supported.

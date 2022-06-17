@@ -1,16 +1,9 @@
 module Page.Keyboard exposing
     ( Model
     , buildNotationRequestQuery
-    , buildNotationValidationQuery
-    , buildUpdateQuery
     , defaultKeyboardQuery
-    , init
     , initModel
-    , setNotation
-    , setQuery
-    , toNotation
     , update
-    , updateDebouncerPAESearchConfig
     , view
     )
 

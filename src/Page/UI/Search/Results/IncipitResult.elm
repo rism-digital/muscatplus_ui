@@ -1,4 +1,4 @@
-module Page.UI.Search.Results.IncipitResult exposing (viewIncipitFlags, viewIncipitSearchResult, viewIncipitSummary)
+module Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 
 import Color exposing (Color)
 import Dict exposing (Dict)

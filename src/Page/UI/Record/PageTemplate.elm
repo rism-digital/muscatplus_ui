@@ -1,4 +1,4 @@
-module Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate, viewMuscatLinks)
+module Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
 
 import Config as C
 import Element

@@ -1,4 +1,4 @@
-module Viewport exposing (jumpToId, jumpToIdIfNotVisible, resetViewport, resetViewportOf)
+module Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 import Browser.Dom as Dom
 import Task

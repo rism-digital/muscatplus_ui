@@ -1,4 +1,4 @@
-module Page.Keyboard.Views.PianoInput exposing (blackKey, blackKeyHalfWidth, blackKeyHeightScale, blackKeyWidth, offsetPadding, renderKey, viewPianoInput, whiteKey, whiteKeyWidthScale)
+module Page.Keyboard.Views.PianoInput exposing (viewPianoInput)
 
 import Element exposing (Attribute, Element, alignLeft, alignTop, el, fill, height, html, htmlAttribute, moveLeft, px, row, width)
 import Html.Attributes as HA

@@ -1,18 +1,12 @@
 module Page.UI.Attributes exposing
-    ( baseSize
-    , bodyFont
-    , bodyFontAlternateGlyphs
+    ( bodyFont
     , bodyFontColour
     , bodyRegular
     , bodySM
     , bodyXS
-    , bodyXXS
-    , desktopResponsiveWidth
     , emptyAttribute
     , facetBorderBottom
     , fontBaseSize
-    , footerBackground
-    , headerBottomBorder
     , headingHero
     , headingLG
     , headingMD
@@ -25,8 +19,6 @@ module Page.UI.Attributes exposing
     , linkColour
     , minimalDropShadow
     , pageBackground
-    , ratioCalc
-    , searchColumnVerticalSize
     , sectionBorderStyles
     , sectionSpacing
     , valueFieldColumnAttributes

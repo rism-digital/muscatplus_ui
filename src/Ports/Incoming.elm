@@ -1,4 +1,4 @@
-port module Ports.Incoming exposing (IncomingMessage(..), convertMsgStringToIncomingMessage, decodeIncomingMessage, receiveIncomingMessageFromPort)
+port module Ports.Incoming exposing (IncomingMessage(..), decodeIncomingMessage, receiveIncomingMessageFromPort)
 
 import Json.Decode as Decode exposing (Decoder, string)
 
@@ -15,7 +15,7 @@ convertMsgStringToIncomingMessage : String -> Decoder IncomingMessage
 convertMsgStringToIncomingMessage msgString =
     case msgString of
         "trigger-search" ->
-            Decode.map (\r -> PortReceiveTriggerSearch) Decode.value
+            Decode.map (\_ -> PortReceiveTriggerSearch) Decode.value
 
         _ ->
             Decode.succeed PortReceivedUnknownMessage

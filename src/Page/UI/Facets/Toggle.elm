@@ -8,7 +8,7 @@ module Page.UI.Facets.Toggle exposing (Toggle, render, setLabel, view)
 import Css exposing (Color, absolute, after, alignItems, backgroundColor, before, block, border3, borderBox, borderRadius, bottom, boxShadow4, boxSizing, center, cursor, display, height, hex, inlineBlock, inlineFlex, left, marginLeft, notAllowed, pointer, position, property, px, relative, rem, rgb, rgba, right, solid, top, width)
 import Css.Transitions as Transitions exposing (transition)
 import Element exposing (Element)
-import Html.Styled exposing (..)
+import Html.Styled as HS
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 
@@ -23,20 +23,20 @@ render : Toggle msg -> Element msg
 render (Toggle config) =
     let
         control =
-            div
+            HS.div
                 [ labelContainer ]
-                [ div
+                [ HS.div
                     [ toggle config.isToggled config.isDisabled config.isError
                     , onClick config.toggleMsg
                     ]
                     []
-                , span
+                , HS.span
                     [ label ]
-                    [ text config.label ]
+                    [ HS.text config.label ]
                 ]
     in
     control
-        |> toUnstyled
+        |> HS.toUnstyled
         |> Element.html
 
 
@@ -77,14 +77,14 @@ initialConfig toggled toggleMsg =
     }
 
 
-label : Attribute msg
+label : HS.Attribute msg
 label =
     css
         [ marginLeft <| px 5
         ]
 
 
-labelContainer : Attribute msg
+labelContainer : HS.Attribute msg
 labelContainer =
     css
         [ display inlineFlex
@@ -106,7 +106,7 @@ setIsError isError_ (Toggle config) =
     Toggle { config | isError = isError_ }
 
 
-toggle : Bool -> Bool -> Bool -> Attribute msg
+toggle : Bool -> Bool -> Bool -> HS.Attribute msg
 toggle toggle_ isDisabled isError =
     css
         [ position relative

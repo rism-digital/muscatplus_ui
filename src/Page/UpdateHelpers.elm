@@ -2,14 +2,11 @@ module Page.UpdateHelpers exposing
     ( addNationalCollectionFilter
     , addNationalCollectionQueryParameter
     , createProbeUrl
-    , createRangeString
     , probeSubmit
     , rangeStringParser
     , selectAppropriateRangeFacetValues
-    , setProbeResponse
     , textQuerySuggestionSubmit
     , updateQueryFacetFilters
-    , updateRangeFacetValues
     , userChangedFacetBehaviour
     , userChangedResultSorting
     , userChangedResultsPerPage
@@ -526,12 +523,8 @@ userEnteredTextInQueryFacet alias query model =
                 |> Dict.insert alias query
     in
     if String.length query == 0 then
-        let
-            clearSuggestionModel =
-                setActiveSuggestion Nothing newModel.activeSearch
-                    |> flip setActiveSearch newModel
-        in
-        clearSuggestionModel
+        setActiveSuggestion Nothing newModel.activeSearch
+            |> flip setActiveSearch newModel
 
     else
         newModel

@@ -1,4 +1,4 @@
-module Page.UI.Record.ExemplarsSection exposing (viewExemplar, viewExemplarRelationships, viewExemplarsSection, viewExternalResourcesSection, viewHeldBy)
+module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
 import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)

@@ -7,19 +7,8 @@ module Page.RecordTypes.Relationship exposing
     , RelationshipRole(..)
     , RelationshipsSectionBody
     , RoleBody
-    , qualifierBodyDecoder
-    , qualifierConverter
-    , qualifierDecoder
-    , qualifierMap
-    , relatedToBodyDecoder
-    , relatedToConverter
-    , relatedToTypeDecoder
     , relationshipBodyDecoder
     , relationshipsSectionBodyDecoder
-    , roleBodyDecoder
-    , roleConverter
-    , roleDecoder
-    , roleMap
     )
 
 import Dict

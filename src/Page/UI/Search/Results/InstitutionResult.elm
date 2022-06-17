@@ -1,4 +1,4 @@
-module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionFlags, viewInstitutionSearchResult, viewInstitutionSummary)
+module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 
 import Color exposing (Color)
 import Dict exposing (Dict)

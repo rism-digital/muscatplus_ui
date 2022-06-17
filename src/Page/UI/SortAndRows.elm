@@ -1,4 +1,4 @@
-module Page.UI.SortAndRows exposing (SortAndRowsConfig, viewRowSelectAndSortSelector, viewSearchPageSort)
+module Page.UI.SortAndRows exposing (SortAndRowsConfig, viewSearchPageSort)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, px, row, shrink, spacing, text, width)

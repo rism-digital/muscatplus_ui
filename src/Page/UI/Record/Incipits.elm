@@ -1,4 +1,4 @@
-module Page.UI.Record.Incipits exposing (splitWorkNumFromId, viewIncipit, viewIncipitsSection, viewLaunchNewIncipitSearch, viewPAESearchLink, viewRenderedIncipits, viewSVGRenderedIncipit)
+module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewRenderedIncipits, viewSVGRenderedIncipit)
 
 import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background

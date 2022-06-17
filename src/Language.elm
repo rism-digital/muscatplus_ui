@@ -4,18 +4,12 @@ module Language exposing
     , LanguageMapReplacementVariable(..)
     , LanguageValues(..)
     , dateFormatter
-    ,  extractLabelFromLanguageMap
-       --, extractLabelFromLanguageMapWithVariables
-
-    ,  extractTextFromLanguageMap
-       --, extractTextFromLanguageMapWithVariables
-
+    , extractLabelFromLanguageMap
+    , extractTextFromLanguageMap
     , formatNumberByLanguage
     , languageMapDecoder
     , languageOptionsForDisplay
-    ,  parseLocaleToLanguage
-       --, setLanguage
-
+    , parseLocaleToLanguage
     )
 
 import DateFormat
@@ -216,27 +210,20 @@ extractLabelFromLanguageMapWithVariables lang replacements langMap =
 
 extractTextFromLanguageMapWithVariables : Language -> List LanguageMapReplacementVariable -> LanguageMap -> List String
 extractTextFromLanguageMapWithVariables lang replacements langMap =
-    let
-        langValues =
-            extractTextFromLanguageMap lang langMap
-
-        newLangValues =
-            List.map
-                (\inputString ->
-                    List.foldl
-                        (\replacementPattern currString ->
-                            let
-                                (LanguageMapReplacementVariable var val) =
-                                    replacementPattern
-                            in
-                            namedValue var val currString
-                        )
-                        inputString
-                        replacements
+    List.map
+        (\inputString ->
+            List.foldl
+                (\replacementPattern currString ->
+                    let
+                        (LanguageMapReplacementVariable var val) =
+                            replacementPattern
+                    in
+                    namedValue var val currString
                 )
-                langValues
-    in
-    newLangValues
+                inputString
+                replacements
+        )
+        (extractTextFromLanguageMap lang langMap)
 
 
 frenchLocale : Locale

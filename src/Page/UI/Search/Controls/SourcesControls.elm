@@ -1,4 +1,4 @@
-module Page.UI.Search.Controls.SourcesControls exposing (..)
+module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)

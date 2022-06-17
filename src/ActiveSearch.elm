@@ -1,4 +1,4 @@
-module ActiveSearch exposing (ActiveSearchConfig, empty, init, setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setExpandedFacets, setKeyboard, setQueryFacetValues, setRangeFacetValues, toActiveSearch, toActiveSuggestion, toExpandedFacets, toKeyboard, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacets)
+module ActiveSearch exposing (ActiveSearchConfig, empty, init, setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setExpandedFacets, setKeyboard, setQueryFacetValues, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacets)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebouncer)

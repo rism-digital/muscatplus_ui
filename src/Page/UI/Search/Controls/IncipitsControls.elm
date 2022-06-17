@@ -1,4 +1,4 @@
-module Page.UI.Search.Controls.IncipitsControls exposing (..)
+module Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
 
 import Element exposing (Element, alignLeft, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
 import Page.Query exposing (toKeywordQuery, toNextQuery)

@@ -7,12 +7,7 @@ module Page.RecordTypes.Incipit exposing
     , IncipitParentSourceBody
     , IncipitValidationBody
     , RenderedIncipit(..)
-    , encodedIncipitDecoder
     , incipitBodyDecoder
-    , incipitEncodingDataDecoder
-    , incipitEncodingDecoder
-    , incipitFormatDecoder
-    , incipitParentSourceBodyDecoder
     , incipitValidationBodyDecoder
     , renderedIncipitDecoder
     )

@@ -3,26 +3,15 @@ module Page.UI.Components exposing
     , basicCheckbox
     , dividerWithText
     , dropdownSelect
-    , dropdownSelectOption
-    , dropdownSelectParentStyles
-    , dropdownSelectStyles
     , fieldValueWrapper
     , h1
     , h2
     , h3
-    , h4
     , h5
-    , h6
     , makeFlagIcon
-    , renderConcatenatedValue
     , renderLabel
-    , renderLanguageHelper
     , renderParagraph
-    , renderValue
-    , styledList
-    , styledParagraphs
     , viewBlankBottomBar
-    , viewLabelValueField
     , viewParagraphField
     , viewSummaryField
     )

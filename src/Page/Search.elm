@@ -2,16 +2,11 @@ module Page.Search exposing
     ( Model
     , Msg
     , SearchConfig
-    , convertFacetToResultMode
     , init
     , load
     , requestPreviewIfSelected
-    , searchPagePreviewRequest
     , searchPageRequest
-    , searchSubmit
     , update
-    , updateDebouncerProbeConfig
-    , updateDebouncerSuggestConfig
     )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toKeyboard)

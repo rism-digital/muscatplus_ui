@@ -1,4 +1,4 @@
-module Page.SideBar.Views.NationalCollectionChooser exposing (imageForCountryCode, nationalCollectionChooserAnimations, nationalCollectionPrefixToFlagMap, sortedByLocalizedCountryName, viewNationalCollectionChooser, viewNationalCollectionChooserMenuOption, viewNationalCollectionColumn, viewNationalCollectionRow)
+module Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 
 import Config
 import Dict exposing (Dict)

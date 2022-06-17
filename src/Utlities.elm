@@ -1,4 +1,11 @@
-module Utlities exposing (choose, convertNodeIdToPath, convertPathToNodeId, filterMap, fromListDedupe, insertDedupe, namedValue, regex, toLinkedHtml)
+module Utlities exposing
+    ( choose
+    , convertNodeIdToPath
+    , convertPathToNodeId
+    , fromListDedupe
+    , namedValue
+    , toLinkedHtml
+    )
 
 import Dict exposing (Dict)
 import Element exposing (Element)
@@ -24,26 +31,6 @@ convertNodeIdToPath nodeId =
 convertPathToNodeId : String -> String
 convertPathToNodeId recordPath =
     String.replace "/" "-" recordPath
-
-
-{-|
-
-    A generic filterMap function that operates on Dictionaries.
-
--}
-filterMap : (comparable -> a -> Maybe b) -> Dict comparable a -> Dict comparable b
-filterMap f dict =
-    Dict.foldl
-        (\k v acc ->
-            case f k v of
-                Just newVal ->
-                    Dict.insert k newVal acc
-
-                Nothing ->
-                    acc
-        )
-        Dict.empty
-        dict
 
 
 {-|

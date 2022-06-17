@@ -1,4 +1,4 @@
-module Page.Record.Views.PersonPage.FullRecordPage exposing (viewDescriptionTab, viewFullPersonPage, viewRecordTopBarRouter)
+module Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background

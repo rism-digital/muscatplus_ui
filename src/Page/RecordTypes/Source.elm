@@ -10,17 +10,8 @@ module Page.RecordTypes.Source exposing
     , PerformanceLocationsSectionBody
     , ReferencesNotesSectionBody
     , SourceItemsSectionBody
-    , exemplarsBodyDecoder
-    , exemplarsSectionBodyDecoder
-    , incipitsSectionBodyDecoder
-    , liturgicalFestivalsSectionBodyDecoder
-    , materialGroupBodyDecoder
-    , materialGroupsSectionBodyDecoder
     , partOfSectionBodyDecoder
-    , performanceLocationsSectionBodyDecoder
-    , referencesNotesSectionBodyDecoder
     , sourceBodyDecoder
-    , sourceItemsSectionBodyDecoder
     )
 
 import Json.Decode as Decode exposing (Decoder, int, list, string)

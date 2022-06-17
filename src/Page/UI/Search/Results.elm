@@ -1,4 +1,4 @@
-module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultIsSelected, resultTemplate, summaryFieldTemplate, viewSearchResultSummaryField)
+module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 
 import Color exposing (Color)
 import Dict exposing (Dict)

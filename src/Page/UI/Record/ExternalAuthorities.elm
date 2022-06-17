@@ -1,4 +1,4 @@
-module Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection, viewExternalAuthority)
+module Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 
 import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)

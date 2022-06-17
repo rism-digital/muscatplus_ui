@@ -29,53 +29,16 @@ module Page.RecordTypes.Search exposing
     , SourceResultBody
     , SourceResultFlags
     , ToggleFacet
-    , facetBehaviourOptions
-    , facetBehaviourOptionsDecoder
-    , facetBehavioursDecoder
-    , facetDataToFacetType
-    , facetItemDecoder
-    , facetNotationOptionsDecoder
-    , facetOptionsLabelValueDecoder
-    , facetResponseConverter
-    , facetResponseDecoder
-    , facetSortDecoder
-    , facetSortOptions
-    , facetTypeFromJsonType
     , facetsDecoder
-    , incipitResultBodyDecoder
-    , incipitResultFlagsDecoder
-    , institutionResultBodyDecoder
-    , institutionResultFlagsDecoder
     , modeFacetDecoder
-    , notationFacetDecoder
-    , notationQueryOptionsDecoder
     , parseFacetBehaviourToString
     , parseFacetSortToString
     , parseStringToFacetBehaviour
     , parseStringToFacetSort
-    , personResultBodyDecoder
-    , personResultFlagsDecoder
-    , queryFacetDecoder
-    , rangeFacetDecoder
-    , rangeFacetMinMaxDecoder
     , searchBodyDecoder
-    , searchPaginationDecoder
-    , searchResultDecoder
-    , searchResultTypeDecoder
-    , searchSortsDecoder
-    , selectFacetDecoder
-    , setFacets
-    , setSelectFacetItems
-    , sourceResultBodyDecoder
-    , sourceResultFlagsDecoder
     , toBehaviourItems
     , toBehaviours
     , toCurrentBehaviour
-    , toCurrentSort
-    , toFacets
-    , toSelectFacetItems
-    , toggleFacetDecoder
-    , toggleFacetSorts
     )
 
 import Dict exposing (Dict)

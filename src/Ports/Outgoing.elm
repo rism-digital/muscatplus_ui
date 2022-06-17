@@ -1,4 +1,4 @@
-port module Ports.Outgoing exposing (OutgoingMessage(..), convertOutgoingMessageToJsonMsg, encodeMessageForPortSend, sendOutgoingMessageOnPort)
+port module Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 
 import Json.Encode as Encode
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))

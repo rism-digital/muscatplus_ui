@@ -1,4 +1,4 @@
-module Page.UI.Search.SearchView exposing (..)
+module Page.UI.Search.SearchView exposing (SearchControlsConfig, SearchResultRouterConfig, SearchResultsListPanelConfig, SearchResultsSectionConfig, viewSearchResultsSection)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)

@@ -1,8 +1,4 @@
-module Page.Record.Views.InstitutionPage.LocationSection exposing
-    ( viewEmailAddress
-    , viewLocationAddressSection
-    , viewWebsiteAddress
-    )
+module Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 
 import Element exposing (Element, alignTop, column, fill, height, link, paddingXY, row, spacing, text, width, wrappedRow)
 import Language exposing (Language)

@@ -1,4 +1,4 @@
-module Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItem, viewModeItems)
+module Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)
 
 import Element exposing (Element, alignLeft, centerX, centerY, el, fill, height, paddingXY, px, row, spacing, text, width)
 import Element.Border as Border

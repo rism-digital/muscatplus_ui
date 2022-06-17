@@ -1,4 +1,4 @@
-module Page.UI.Tooltip exposing (facetHelp, helpBubble, tooltip, tooltipStyle)
+module Page.UI.Tooltip exposing (facetHelp, tooltip, tooltipStyle)
 
 import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
 import Element.Background as Background

@@ -1,4 +1,4 @@
-module Page.UI.Search.Results.PersonResult exposing (viewPersonFlags, viewPersonSearchResult, viewPersonSummary)
+module Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 
 import Color exposing (Color)
 import Dict exposing (Dict)

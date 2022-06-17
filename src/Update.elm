@@ -1,4 +1,4 @@
-module Update exposing (changePage, update, updateWith)
+module Update exposing (update)
 
 import Browser
 import Browser.Navigation as Nav
@@ -352,10 +352,6 @@ update msg model =
             ( model, Cmd.none )
 
         ( Msg.UserRequestedUrlChange urlRequest, _ ) ->
-            let
-                session =
-                    toSession model
-            in
             case urlRequest of
                 Browser.Internal url ->
                     -- if the app is loading the viewer, treat it as an external link.
@@ -363,6 +359,10 @@ update msg model =
                         ( model, Nav.load <| Url.toString url )
 
                     else
+                        let
+                            session =
+                                toSession model
+                        in
                         ( model, Nav.pushUrl session.key (Url.toString url) )
 
                 Browser.External href ->

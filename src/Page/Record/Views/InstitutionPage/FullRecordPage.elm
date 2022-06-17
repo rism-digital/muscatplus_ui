@@ -1,8 +1,4 @@
-module Page.Record.Views.InstitutionPage.FullRecordPage exposing
-    ( viewDescriptionTab
-    , viewFullInstitutionPage
-    , viewRecordTopBarRouter
-    )
+module Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background

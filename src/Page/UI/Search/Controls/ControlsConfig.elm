@@ -1,4 +1,4 @@
-module Page.UI.Search.Controls.ControlsConfig exposing (..)
+module Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Language exposing (Language)

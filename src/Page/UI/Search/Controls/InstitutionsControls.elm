@@ -1,4 +1,4 @@
-module Page.UI.Search.Controls.InstitutionsControls exposing (..)
+module Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 
 import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, width)
 import Page.Query exposing (toKeywordQuery, toNextQuery)

@@ -1,4 +1,4 @@
-module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, keywordInputHelp, searchKeywordInput, viewFrontKeywordQueryInput)
+module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, searchKeywordInput, viewFrontKeywordQueryInput)
 
 {-|
 
@@ -26,6 +26,7 @@ type alias KeywordInputConfig msg =
     }
 
 
+keywordInputHelp : String
 keywordInputHelp =
     """
     Use this to find any words, anywhere in a record.

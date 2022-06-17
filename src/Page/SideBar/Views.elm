@@ -1,4 +1,4 @@
-module Page.SideBar.Views exposing (dividingLine, isCurrentlyHovered, menuOption, menuOptionTemplate, unlinkedMenuOption, view)
+module Page.SideBar.Views exposing (view)
 
 import Color exposing (Color)
 import Config

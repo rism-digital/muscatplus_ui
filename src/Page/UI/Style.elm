@@ -3,14 +3,9 @@ module Page.UI.Style exposing
     , colourScheme
     , colours
     , convertColorToElementColor
-    , convertRGBAToColor
-    , desktopMaxWidth
-    , desktopMinWidth
     , footerHeight
     , headerHeight
     , minMaxFillDesktop
-    , phoneMaxWidth
-    , scaleFrom255
     , searchHeaderHeight
     )
 
