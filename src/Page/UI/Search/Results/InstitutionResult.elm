@@ -45,9 +45,10 @@ viewInstitutionFlags language flags =
 
 
 viewInstitutionSearchResult :
-    SearchResultConfig InstitutionResultBody msg
+    SearchResultConfig msg
+    -> InstitutionResultBody
     -> Element msg
-viewInstitutionSearchResult { language, selectedResult, body, clickForPreviewMsg } =
+viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg } body =
     let
         resultBody =
             [ viewMaybe (viewInstitutionSummary language resultColours.iconColour) body.summary ]

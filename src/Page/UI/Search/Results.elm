@@ -38,10 +38,9 @@ type alias ResultConfig msg =
     }
 
 
-type alias SearchResultConfig body msg =
+type alias SearchResultConfig msg =
     { language : Language
     , selectedResult : Maybe String
-    , body : body
     , clickForPreviewMsg : String -> msg
     }
 

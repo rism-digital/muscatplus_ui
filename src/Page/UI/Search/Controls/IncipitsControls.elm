@@ -1,24 +1,16 @@
-module Page.Search.Views.SearchControls.Incipits exposing (viewFacetsForIncipitsMode)
+module Page.UI.Search.Controls.IncipitsControls exposing (..)
 
-import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignLeft, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
-import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.RecordTypes.Search exposing (SearchBody)
-import Page.Search.Model exposing (SearchPageModel)
-import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
-viewFacetsForIncipitsMode : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
-viewFacetsForIncipitsMode language model body =
+viewFacetsForIncipitsMode : ControlsConfig msg -> Element msg
+viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig } =
     let
-        activeSearch =
-            toActiveSearch model
-
         facetConfig alias =
             { alias = alias
             , language = language
@@ -51,11 +43,11 @@ viewFacetsForIncipitsMode language model body =
                     , alignLeft
                     , width fill
                     ]
-                    [ viewFacet (facetConfig "notation") facetSearchMsgConfig
+                    [ viewFacet (facetConfig "notation") facetMsgConfig
                     ]
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
+                sectionToggleMsg
                 [ row
                     [ width fill
                     , height fill
@@ -67,15 +59,15 @@ viewFacetsForIncipitsMode language model body =
                         ]
                         [ searchKeywordInput
                             { language = language
-                            , submitMsg = SearchMsg.UserTriggeredSearchSubmit
-                            , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                            , submitMsg = userTriggeredSearchSubmitMsg
+                            , changeMsg = userEnteredTextInKeywordQueryBoxMsg
                             , queryText = qText
                             }
                         ]
                     ]
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
+                sectionToggleMsg
                 [ row
                     [ width fill
                     , alignTop
@@ -85,23 +77,23 @@ viewFacetsForIncipitsMode language model body =
                         [ width fill
                         , alignTop
                         ]
-                        [ viewFacet (facetConfig "composer") facetSearchMsgConfig
+                        [ viewFacet (facetConfig "composer") facetMsgConfig
                         ]
                     ]
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
+                sectionToggleMsg
                 [ row
                     [ width fill
                     , alignTop
                     ]
                     [ column
                         [ width fill ]
-                        [ viewFacet (facetConfig "date-range") facetSearchMsgConfig ]
+                        [ viewFacet (facetConfig "date-range") facetMsgConfig ]
                     ]
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
+                sectionToggleMsg
                 [ row
                     [ width fill
                     , alignTop
@@ -111,44 +103,44 @@ viewFacetsForIncipitsMode language model body =
                         , alignTop
                         , spacing lineSpacing
                         ]
-                        [ viewFacet (facetConfig "is-mensural") facetSearchMsgConfig
-                        , viewFacet (facetConfig "has-notation") facetSearchMsgConfig
+                        [ viewFacet (facetConfig "is-mensural") facetMsgConfig
+                        , viewFacet (facetConfig "has-notation") facetMsgConfig
                         ]
                     ]
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
+                sectionToggleMsg
                 [ row
                     [ width fill
                     , alignTop
                     ]
                     [ column
                         [ width fill ]
-                        [ viewFacet (facetConfig "clef") facetSearchMsgConfig
+                        [ viewFacet (facetConfig "clef") facetMsgConfig
                         ]
                     ]
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
+                sectionToggleMsg
                 [ row
                     [ width fill
                     , alignTop
                     ]
                     [ column
                         [ width fill ]
-                        [ viewFacet (facetConfig "key-signature") facetSearchMsgConfig
+                        [ viewFacet (facetConfig "key-signature") facetMsgConfig
                         ]
                     ]
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
+                sectionToggleMsg
                 [ row
                     [ width fill
                     , alignTop
                     ]
                     [ column
                         [ width fill ]
-                        [ viewFacet (facetConfig "time-signature") facetSearchMsgConfig
+                        [ viewFacet (facetConfig "time-signature") facetMsgConfig
                         ]
                     ]
                 ]

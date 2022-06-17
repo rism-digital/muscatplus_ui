@@ -21,6 +21,7 @@ module Page.UI.Components exposing
     , renderValue
     , styledList
     , styledParagraphs
+    , viewBlankBottomBar
     , viewLabelValueField
     , viewParagraphField
     , viewSummaryField
@@ -28,7 +29,7 @@ module Page.UI.Components exposing
 
 import Color exposing (Color)
 import Css
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paddingXY, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -40,8 +41,8 @@ import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, valueFieldColumnAttributes)
-import Page.UI.Style exposing (colours, convertColorToElementColor)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, valueFieldColumnAttributes)
+import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Utlities exposing (toLinkedHtml)
 
 
@@ -462,3 +463,20 @@ viewParagraphField language field =
 viewSummaryField : Language -> List LabelValue -> Element msg
 viewSummaryField language field =
     viewLabelValueField renderConcatenatedValue language field
+
+
+viewBlankBottomBar : Element msg
+viewBlankBottomBar =
+    row
+        [ alignTop
+        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
+        , width fill
+        , height (px 50)
+        , paddingXY 10 0
+        , centerY
+        , htmlAttribute (HA.style "z-index" "1")
+        , minimalDropShadow
+        ]
+        []

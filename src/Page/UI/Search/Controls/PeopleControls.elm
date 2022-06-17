@@ -1,26 +1,17 @@
-module Page.Search.Views.SearchControls.People exposing (facetsForPeopleModeView)
+module Page.UI.Search.Controls.PeopleControls exposing (..)
 
-import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
-import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.RecordTypes.Search exposing (SearchBody)
-import Page.Search.Model exposing (SearchPageModel)
-import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dividerWithText)
 import Page.UI.Facets.Facets exposing (FacetConfig, viewFacet, viewFacetSection)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
-facetsForPeopleModeView : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
-facetsForPeopleModeView language model body =
+viewFacetsForPeopleMode : ControlsConfig msg -> Element msg
+viewFacetsForPeopleMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig } =
     let
-        activeSearch =
-            toActiveSearch model
-
-        facetConfig : String -> FacetConfig SearchBody SearchMsg
         facetConfig alias =
             { alias = alias
             , language = language
@@ -57,8 +48,8 @@ facetsForPeopleModeView language model body =
                     ]
                     [ searchKeywordInput
                         { language = language
-                        , submitMsg = SearchMsg.UserTriggeredSearchSubmit
-                        , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                        , submitMsg = userTriggeredSearchSubmitMsg
+                        , changeMsg = userEnteredTextInKeywordQueryBoxMsg
                         , queryText = qText
                         }
                     ]
@@ -69,19 +60,19 @@ facetsForPeopleModeView language model body =
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "roles") facetSearchMsgConfig ]
+                sectionToggleMsg
+                [ viewFacet (facetConfig "roles") facetMsgConfig ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "date-range") facetSearchMsgConfig ]
+                sectionToggleMsg
+                [ viewFacet (facetConfig "date-range") facetMsgConfig ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "associated-place") facetSearchMsgConfig ]
+                sectionToggleMsg
+                [ viewFacet (facetConfig "associated-place") facetMsgConfig ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "gender") facetSearchMsgConfig ]
+                sectionToggleMsg
+                [ viewFacet (facetConfig "gender") facetMsgConfig ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "profession") facetSearchMsgConfig ]
+                sectionToggleMsg
+                [ viewFacet (facetConfig "profession") facetMsgConfig ]
             ]
         ]

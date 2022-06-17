@@ -76,7 +76,7 @@ viewFullPersonPage session model body =
                     viewDescriptionTab session.language body
 
                 RelatedSourcesSearchTab _ ->
-                    viewSourceSearchTab session.language model
+                    viewSourceSearchTab session model
     in
     row
         [ width fill

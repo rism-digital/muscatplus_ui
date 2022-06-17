@@ -91,9 +91,10 @@ viewSourcePartOf language fontLinkColour partOfBody =
 
 
 viewSourceSearchResult :
-    SearchResultConfig SourceResultBody msg
+    SearchResultConfig msg
+    -> SourceResultBody
     -> Element msg
-viewSourceSearchResult { language, selectedResult, body, clickForPreviewMsg } =
+viewSourceSearchResult { language, selectedResult, clickForPreviewMsg } body =
     let
         resultBody =
             [ viewMaybe (viewSourceSummary language resultColours.iconColour) body.summary

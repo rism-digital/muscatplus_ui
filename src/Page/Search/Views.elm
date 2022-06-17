@@ -1,26 +1,24 @@
-module Page.Search.Views exposing (searchModeSelectorRouter, searchModeSelectorView, searchResultsViewRouter, view, viewSearchBody, viewSearchResultRouter, viewSearchResultsList, viewSearchResultsListPanel, viewSearchResultsSection, viewTopBar)
+module Page.Search.Views exposing
+    ( searchModeSelectorRouter
+    , searchModeSelectorView
+    , searchResultsViewRouter
+    , view
+    , viewSearchBody
+    , viewTopBar
+    )
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, minimum, none, px, row, scrollbarY, width)
-import Element.Background as Background
+import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, clipY, column, fill, height, none, px, row, width)
 import Element.Border as Border
-import Html.Attributes as HA
 import Language exposing (Language)
 import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Search exposing (ModeFacet, SearchBody, SearchResult(..))
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.Search.Views.Facets exposing (viewModeItems)
-import Page.Search.Views.SearchControls exposing (viewSearchControls)
+import Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Pagination exposing (viewPagination)
-import Page.UI.Record.Previews exposing (viewPreviewError, viewPreviewRouter)
-import Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
-import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
-import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
-import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
-import Page.UI.SortAndRows exposing (viewSearchPageSort)
+import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
+import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -64,15 +62,32 @@ searchModeSelectorView lang model modeFacet =
 
 searchResultsViewRouter : Session -> SearchPageModel SearchMsg -> Element SearchMsg
 searchResultsViewRouter session model =
+    let
+        resultsConfig : SearchResultsSectionConfig (SearchPageModel SearchMsg) SearchMsg
+        resultsConfig =
+            { session = session
+            , model = model
+            , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
+            , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+            , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
+            , userChangedResultsPerPageMsg = SearchMsg.UserChangedResultsPerPage
+            , userClickedResultsPaginationMsg = SearchMsg.UserClickedSearchResultsPagination
+            , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
+            , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+            , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
+            , facetMsgConfig = facetSearchMsgConfig
+            , sectionToggleMsg = SearchMsg.UserClickedFacetPanelToggle
+            }
+    in
     case model.response of
         Loading (Just (SearchData oldData)) ->
-            viewSearchResultsSection session model oldData True
+            viewSearchResultsSection resultsConfig True oldData
 
         Loading _ ->
             viewSearchResultsLoadingTmpl session.language
 
         Response (SearchData body) ->
-            viewSearchResultsSection session model body False
+            viewSearchResultsSection resultsConfig False body
 
         Error err ->
             viewSearchResultsErrorTmpl session.language err
@@ -120,149 +135,6 @@ viewSearchBody session model =
             , alignTop
             ]
             [ searchResultsViewRouter session model ]
-        ]
-
-
-viewSearchResultRouter : Language -> Maybe String -> SearchResult -> Element SearchMsg
-viewSearchResultRouter language selectedResult res =
-    case res of
-        SourceResult body ->
-            viewSourceSearchResult
-                { language = language
-                , selectedResult = selectedResult
-                , body = body
-                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
-                }
-
-        PersonResult body ->
-            viewPersonSearchResult
-                { language = language
-                , selectedResult = selectedResult
-                , body = body
-                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
-                }
-
-        InstitutionResult body ->
-            viewInstitutionSearchResult
-                { language = language
-                , selectedResult = selectedResult
-                , body = body
-                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
-                }
-
-        IncipitResult body ->
-            viewIncipitSearchResult
-                { language = language
-                , selectedResult = selectedResult
-                , body = body
-                , clickForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
-                }
-
-
-viewSearchResultsList : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
-viewSearchResultsList language model body =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            (List.map (\result -> viewSearchResultRouter language model.selectedResult result) body.items)
-        ]
-
-
-viewSearchResultsListPanel : Language -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
-viewSearchResultsListPanel language model body isLoading =
-    if body.totalItems == 0 then
-        viewSearchResultsNotFoundTmpl language
-
-    else
-        row
-            [ width fill
-            , height fill
-            , alignTop
-            , scrollbarY
-            , htmlAttribute (HA.id "search-results-list")
-            ]
-            [ column
-                [ width fill
-                , height fill
-                , alignTop
-                , inFront <| viewResultsListLoadingScreenTmpl isLoading
-                ]
-                [ viewSearchResultsList language model body
-                ]
-            ]
-
-
-viewSearchResultsSection : Session -> SearchPageModel SearchMsg -> SearchBody -> Bool -> Element SearchMsg
-viewSearchResultsSection session model body isLoading =
-    let
-        ( resultColumnWidth, controlsColumnWidth ) =
-            let
-                { class, orientation } =
-                    session.device
-            in
-            case ( class, orientation ) of
-                ( Phone, Portrait ) ->
-                    ( width fill, width (px 0) )
-
-                ( Desktop, Landscape ) ->
-                    ( width (fill |> minimum 600), width (px 900) )
-
-                ( BigDesktop, Landscape ) ->
-                    ( width (fill |> minimum 600), width (px 900) )
-
-                _ ->
-                    ( width (fill |> minimum 600), width fill )
-
-        renderedPreview =
-            case model.preview of
-                Loading oldData ->
-                    viewPreviewRouter session.language SearchMsg.UserClickedClosePreviewWindow oldData
-
-                Response resp ->
-                    viewPreviewRouter session.language SearchMsg.UserClickedClosePreviewWindow (Just resp)
-
-                Error errMsg ->
-                    viewPreviewError session.language SearchMsg.UserClickedClosePreviewWindow errMsg
-
-                NoResponseToShow ->
-                    none
-    in
-    row
-        [ width fill
-        , height fill
-        , Background.color (colourScheme.white |> convertColorToElementColor)
-        ]
-        [ column
-            [ resultColumnWidth
-            , height fill
-            , alignTop
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-            ]
-            [ viewSearchPageSort
-                { language = session.language
-                , activeSearch = model.activeSearch
-                , body = body
-                , changedResultSortingMsg = SearchMsg.UserChangedResultSorting
-                , changedResultRowsPerPageMsg = SearchMsg.UserChangedResultsPerPage
-                }
-                model.response
-            , viewSearchResultsListPanel session.language model body isLoading
-            , viewPagination session.language body.pagination SearchMsg.UserClickedSearchResultsPagination
-            ]
-        , column
-            [ controlsColumnWidth
-            , height fill
-            , alignTop
-            , inFront renderedPreview
-            ]
-            [ viewSearchControls session.language model body ]
         ]
 
 

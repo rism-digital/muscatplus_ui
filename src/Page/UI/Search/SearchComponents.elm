@@ -18,7 +18,11 @@ import Response exposing (Response(..))
 
 type alias SearchButtonConfig a msg =
     { language : Language
-    , model : { a | probeResponse : Response ProbeData, applyFilterPrompt : Bool }
+    , model :
+        { a
+            | probeResponse : Response ProbeData
+            , applyFilterPrompt : Bool
+        }
     , isFrontPage : Bool
     , submitLabel : LanguageMap
     , submitMsg : msg

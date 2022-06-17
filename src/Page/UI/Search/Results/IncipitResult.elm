@@ -19,9 +19,10 @@ viewIncipitFlags language flags =
 
 
 viewIncipitSearchResult :
-    SearchResultConfig IncipitResultBody msg
+    SearchResultConfig msg
+    -> IncipitResultBody
     -> Element msg
-viewIncipitSearchResult { language, selectedResult, body, clickForPreviewMsg } =
+viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg } body =
     let
         resultBody =
             [ viewMaybe (viewIncipitSummary language resultColours.iconColour) body.summary

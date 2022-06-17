@@ -44,9 +44,10 @@ viewPersonFlags language flags =
 
 
 viewPersonSearchResult :
-    SearchResultConfig PersonResultBody msg
+    SearchResultConfig msg
+    -> PersonResultBody
     -> Element msg
-viewPersonSearchResult { language, selectedResult, body, clickForPreviewMsg } =
+viewPersonSearchResult { language, selectedResult, clickForPreviewMsg } body =
     let
         resultBody =
             [ viewMaybe (viewPersonSummary language resultColours.iconColour) body.summary ]

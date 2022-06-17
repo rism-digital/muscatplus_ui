@@ -1,22 +1,19 @@
-module Page.Search.Views.SearchControls.Sources exposing (viewFacetToggleSection, viewFacetsForSourcesMode)
+module Page.UI.Search.Controls.SourcesControls exposing (..)
 
-import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignTop, column, fill, height, none, padding, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Search exposing (SearchBody)
-import Page.Search.Model exposing (SearchPageModel)
-import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (dividerWithText)
-import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection)
+import Page.UI.Facets.Facets exposing (FacetMsgConfig, viewFacet, viewFacetSection)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
-viewFacetToggleSection : Language -> ActiveSearch SearchMsg -> SearchBody -> Element SearchMsg
-viewFacetToggleSection language activeSearch body =
+viewFacetToggleSection : Language -> ActiveSearch msg -> SearchBody -> FacetMsgConfig msg -> Element msg
+viewFacetToggleSection language activeSearch body facetSearchMsgConfig =
     let
         allAreEmpty =
             List.all (\a -> a == none) allToggles
@@ -96,12 +93,9 @@ viewFacetToggleSection language activeSearch body =
             ]
 
 
-viewFacetsForSourcesMode : Language -> SearchPageModel SearchMsg -> SearchBody -> Element SearchMsg
-viewFacetsForSourcesMode language model body =
+viewFacetsForSourcesMode : ControlsConfig msg -> Element msg
+viewFacetsForSourcesMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig } =
     let
-        activeSearch =
-            toActiveSearch model
-
         facetConfig alias =
             { alias = alias
             , language = language
@@ -138,8 +132,8 @@ viewFacetsForSourcesMode language model body =
                     ]
                     [ searchKeywordInput
                         { language = language
-                        , submitMsg = SearchMsg.UserTriggeredSearchSubmit
-                        , changeMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                        , submitMsg = userTriggeredSearchSubmitMsg
+                        , changeMsg = userEnteredTextInKeywordQueryBoxMsg
                         , queryText = qText
                         }
                     ]
@@ -150,7 +144,7 @@ viewFacetsForSourcesMode language model body =
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
+                sectionToggleMsg
                 [ row
                     [ width fill
                     , alignTop
@@ -160,44 +154,44 @@ viewFacetsForSourcesMode language model body =
                         [ width fill
                         , alignTop
                         ]
-                        [ viewFacet (facetConfig "composer") facetSearchMsgConfig ]
+                        [ viewFacet (facetConfig "composer") facetMsgConfig ]
                     , column
                         [ width fill
                         , alignTop
                         ]
-                        [ viewFacet (facetConfig "people") facetSearchMsgConfig ]
+                        [ viewFacet (facetConfig "people") facetMsgConfig ]
                     ]
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "date-range") facetSearchMsgConfig
+                sectionToggleMsg
+                [ viewFacet (facetConfig "date-range") facetMsgConfig
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacetToggleSection language activeSearch body ]
+                sectionToggleMsg
+                [ viewFacetToggleSection language activeSearch body facetMsgConfig ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "source-type") facetSearchMsgConfig
-                , viewFacet (facetConfig "content-types") facetSearchMsgConfig
-                , viewFacet (facetConfig "material-group-types") facetSearchMsgConfig
+                sectionToggleMsg
+                [ viewFacet (facetConfig "source-type") facetMsgConfig
+                , viewFacet (facetConfig "content-types") facetMsgConfig
+                , viewFacet (facetConfig "material-group-types") facetMsgConfig
                 ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "text-language") facetSearchMsgConfig
-                , viewFacet (facetConfig "format-extent") facetSearchMsgConfig
+                sectionToggleMsg
+                [ viewFacet (facetConfig "text-language") facetMsgConfig
+                , viewFacet (facetConfig "format-extent") facetMsgConfig
                 ]
 
             --, viewFacet "date-range" language activeSearch body
             --, viewFacet "num-holdings" language activeSearch body
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "subjects") facetSearchMsgConfig ]
+                sectionToggleMsg
+                [ viewFacet (facetConfig "subjects") facetMsgConfig ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "scoring") facetSearchMsgConfig ]
+                sectionToggleMsg
+                [ viewFacet (facetConfig "scoring") facetMsgConfig ]
             , viewFacetSection language
-                SearchMsg.NothingHappened
-                [ viewFacet (facetConfig "sigla") facetSearchMsgConfig ]
+                sectionToggleMsg
+                [ viewFacet (facetConfig "sigla") facetMsgConfig ]
 
             --, viewFacet "holding-institution" language activeSearch body
             ]
