@@ -200,8 +200,18 @@ update session msg model =
             ( model, Cmd.none )
 
         ServerRespondedWithRecordData (Ok ( _, response )) ->
+            let
+                resultsStatus =
+                    case model.searchResults of
+                        NoResponseToShow ->
+                            Loading Nothing
+
+                        _ ->
+                            model.searchResults
+            in
             ( { model
                 | response = Response response
+                , searchResults = resultsStatus
               }
             , updatePageMetadata response
             )
