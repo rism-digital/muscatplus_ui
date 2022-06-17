@@ -57,7 +57,8 @@ init flags initialUrl key =
             in
             ( FrontPage session initialModel
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithFrontPage <| Front.frontPageRequest initialUrl
+                [ Front.frontPageRequest initialUrl
+                    |> Cmd.map Msg.UserInteractedWithFrontPage
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
@@ -130,8 +131,11 @@ init flags initialUrl key =
             in
             ( SourcePage session ncAppliedModel
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
+                [ Cmd.batch
+                    [ Record.recordPageRequest initialUrl
+                    , Record.recordSearchRequest sourcesUrl
+                    ]
+                    |> Cmd.map Msg.UserInteractedWithRecordPage
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
@@ -165,9 +169,12 @@ init flags initialUrl key =
             in
             ( SourcePage session ncAppliedModel
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest recordUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.requestPreviewIfSelected initialModel.selectedResult
+                [ Cmd.batch
+                    [ Record.recordPageRequest recordUrl
+                    , Record.recordSearchRequest sourcesUrl
+                    , Record.requestPreviewIfSelected initialModel.selectedResult
+                    ]
+                    |> Cmd.map Msg.UserInteractedWithRecordPage
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
@@ -200,8 +207,11 @@ init flags initialUrl key =
             in
             ( PersonPage session ncAppliedModel
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
+                [ Cmd.batch
+                    [ Record.recordPageRequest initialUrl
+                    , Record.recordSearchRequest sourcesUrl
+                    ]
+                    |> Cmd.map Msg.UserInteractedWithRecordPage
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
@@ -235,9 +245,12 @@ init flags initialUrl key =
             in
             ( PersonPage session ncAppliedModel
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest recordUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.requestPreviewIfSelected initialModel.selectedResult
+                [ Cmd.batch
+                    [ Record.recordPageRequest recordUrl
+                    , Record.recordSearchRequest sourcesUrl
+                    , Record.requestPreviewIfSelected initialModel.selectedResult
+                    ]
+                    |> Cmd.map Msg.UserInteractedWithRecordPage
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
@@ -270,8 +283,11 @@ init flags initialUrl key =
             in
             ( InstitutionPage session ncAppliedModel
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
+                [ Cmd.batch
+                    [ Record.recordPageRequest initialUrl
+                    , Record.recordSearchRequest sourcesUrl
+                    ]
+                    |> Cmd.map Msg.UserInteractedWithRecordPage
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
@@ -305,9 +321,12 @@ init flags initialUrl key =
             in
             ( InstitutionPage session ncAppliedModel
             , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest recordUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordSearchRequest sourcesUrl
-                , Cmd.map Msg.UserInteractedWithRecordPage <| Record.requestPreviewIfSelected initialModel.selectedResult
+                [ Cmd.batch
+                    [ Record.recordPageRequest recordUrl
+                    , Record.recordSearchRequest sourcesUrl
+                    , Record.requestPreviewIfSelected initialModel.selectedResult
+                    ]
+                    |> Cmd.map Msg.UserInteractedWithRecordPage
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
             )
