@@ -22,6 +22,12 @@ import Url.Builder exposing (toQuery)
 changePage : Url -> Model -> ( Model, Cmd Msg )
 changePage url model =
     let
+        oldSession =
+            toSession model
+
+        previousUrl =
+            oldSession.url
+
         newSession =
             toSession model
                 |> setRoute route
@@ -91,20 +97,24 @@ changePage url model =
 
         Route.SourcePageRoute _ ->
             let
-                newPageBody =
-                    case model of
-                        SourcePage _ oldPageBody ->
-                            RecordPage.load recordCfg oldPageBody
-
-                        _ ->
-                            RecordPage.init recordCfg
-
                 recordCfg =
                     { incomingUrl = url
                     , route = route
                     , queryArgs = Nothing
                     , nationalCollection = newSession.restrictedToNationalCollection
                     }
+
+                ( newPageBody, isSameSourcePage ) =
+                    case model of
+                        SourcePage _ oldPageBody ->
+                            if url.path == previousUrl.path || url.path == String.replace "/sources" "" previousUrl.path then
+                                ( RecordPage.load recordCfg oldPageBody, True )
+
+                            else
+                                ( RecordPage.init recordCfg, False )
+
+                        _ ->
+                            ( RecordPage.init recordCfg, False )
 
                 sourceQuery =
                     toNextQuery newPageBody.activeSearch
@@ -114,31 +124,24 @@ changePage url model =
 
                 sourcesUrl =
                     { url | path = url.path ++ "/contents", query = Just sourceQuery }
+
+                refreshCmds =
+                    if isSameSourcePage then
+                        Cmd.none
+
+                    else
+                        Cmd.batch
+                            [ RecordPage.recordPageRequest url
+                            , RecordPage.recordSearchRequest sourcesUrl
+                            ]
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
             in
             ( SourcePage newSession newPageBody
-            , Cmd.batch
-                [ RecordPage.recordPageRequest url
-                , RecordPage.recordSearchRequest sourcesUrl
-                ]
-                |> Cmd.map Msg.UserInteractedWithRecordPage
+            , refreshCmds
             )
 
         Route.SourceContentsPageRoute _ qargs ->
             let
-                newPageBody =
-                    case model of
-                        SourcePage _ oldPageBody ->
-                            RecordPage.load recordCfg oldPageBody
-
-                        _ ->
-                            RecordPage.init recordCfg
-
-                newQparams =
-                    toNextQuery newPageBody.activeSearch
-                        |> buildQueryParameters
-                        |> toQuery
-                        |> String.dropLeft 1
-
                 recordCfg =
                     { incomingUrl = url
                     , route = route
@@ -149,19 +152,45 @@ changePage url model =
                 recordPath =
                     String.replace "/contents" "" url.path
 
+                ( newPageBody, isSameSourcePage ) =
+                    case model of
+                        SourcePage _ oldPageBody ->
+                            if url.path == previousUrl.path || previousUrl.path == recordPath then
+                                ( RecordPage.load recordCfg oldPageBody, True )
+
+                            else
+                                ( RecordPage.init recordCfg, False )
+
+                        _ ->
+                            ( RecordPage.init recordCfg, False )
+
+                newQparams =
+                    toNextQuery newPageBody.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
+
                 recordUrl =
                     { url | path = recordPath }
 
                 sourceUrl =
                     { url | query = Just newQparams }
+
+                refreshCmds =
+                    if isSameSourcePage then
+                        RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
+
+                    else
+                        Cmd.batch
+                            [ RecordPage.recordPageRequest recordUrl
+                            , RecordPage.recordSearchRequest sourceUrl
+                            , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            ]
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
             in
             ( SourcePage newSession newPageBody
-            , Cmd.batch
-                [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest sourceUrl
-                , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
-                ]
-                |> Cmd.map Msg.UserInteractedWithRecordPage
+            , refreshCmds
             )
 
         Route.PersonPageRoute _ ->
@@ -173,13 +202,17 @@ changePage url model =
                     , nationalCollection = newSession.restrictedToNationalCollection
                     }
 
-                newPageBody =
+                ( newPageBody, isSamePersonPage ) =
                     case model of
                         PersonPage _ oldPageBody ->
-                            RecordPage.load recordCfg oldPageBody
+                            if url.path == previousUrl.path || url.path == String.replace "/sources" "" previousUrl.path then
+                                ( RecordPage.load recordCfg oldPageBody, True )
+
+                            else
+                                ( RecordPage.init recordCfg, False )
 
                         _ ->
-                            RecordPage.init recordCfg
+                            ( RecordPage.init recordCfg, False )
 
                 sourceQuery =
                     toNextQuery newPageBody.activeSearch
@@ -189,31 +222,24 @@ changePage url model =
 
                 sourcesUrl =
                     { url | path = url.path ++ "/sources", query = Just sourceQuery }
+
+                refreshCmds =
+                    if isSamePersonPage then
+                        Cmd.none
+
+                    else
+                        Cmd.batch
+                            [ RecordPage.recordPageRequest url
+                            , RecordPage.recordSearchRequest sourcesUrl
+                            ]
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
             in
             ( PersonPage newSession newPageBody
-            , Cmd.batch
-                [ RecordPage.recordPageRequest url
-                , RecordPage.recordSearchRequest sourcesUrl
-                ]
-                |> Cmd.map Msg.UserInteractedWithRecordPage
+            , refreshCmds
             )
 
         Route.PersonSourcePageRoute _ qargs ->
             let
-                newPageBody =
-                    case model of
-                        PersonPage _ pageBody ->
-                            RecordPage.load recordCfg pageBody
-
-                        _ ->
-                            RecordPage.init recordCfg
-
-                newQparams =
-                    toNextQuery newPageBody.activeSearch
-                        |> buildQueryParameters
-                        |> toQuery
-                        |> String.dropLeft 1
-
                 recordCfg =
                     { incomingUrl = url
                     , route = route
@@ -224,31 +250,49 @@ changePage url model =
                 recordPath =
                     String.replace "/sources" "" url.path
 
+                ( newPageBody, isSamePersonPage ) =
+                    case model of
+                        PersonPage _ oldPageBody ->
+                            if url.path == previousUrl.path || previousUrl.path == recordPath then
+                                ( RecordPage.load recordCfg oldPageBody, True )
+
+                            else
+                                ( RecordPage.init recordCfg, False )
+
+                        _ ->
+                            ( RecordPage.init recordCfg, False )
+
+                newQparams =
+                    toNextQuery newPageBody.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
+
                 recordUrl =
                     { url | path = recordPath }
 
                 sourceUrl =
                     { url | query = Just newQparams }
+
+                refreshCmds =
+                    if isSamePersonPage then
+                        RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
+
+                    else
+                        Cmd.batch
+                            [ RecordPage.recordPageRequest recordUrl
+                            , RecordPage.recordSearchRequest sourceUrl
+                            , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            ]
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
             in
             ( PersonPage newSession newPageBody
-            , Cmd.batch
-                [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest sourceUrl
-                , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
-                ]
-                |> Cmd.map Msg.UserInteractedWithRecordPage
+            , refreshCmds
             )
 
         Route.InstitutionPageRoute _ ->
             let
-                newPageBody =
-                    case model of
-                        InstitutionPage _ oldPageBody ->
-                            RecordPage.load recordCfg oldPageBody
-
-                        _ ->
-                            RecordPage.init recordCfg
-
                 recordCfg =
                     { incomingUrl = url
                     , route = route
@@ -256,6 +300,18 @@ changePage url model =
                     , nationalCollection = newSession.restrictedToNationalCollection
                     }
 
+                ( newPageBody, isSameInstitutionPage ) =
+                    case model of
+                        InstitutionPage _ oldPageBody ->
+                            if url.path == previousUrl.path || url.path == String.replace "/sources" "" previousUrl.path then
+                                ( RecordPage.load recordCfg oldPageBody, True )
+
+                            else
+                                ( RecordPage.init recordCfg, False )
+
+                        _ ->
+                            ( RecordPage.init recordCfg, False )
+
                 sourceQuery =
                     toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
@@ -264,31 +320,24 @@ changePage url model =
 
                 sourcesUrl =
                     { url | path = url.path ++ "/sources", query = Just sourceQuery }
+
+                refreshCmds =
+                    if isSameInstitutionPage then
+                        Cmd.none
+
+                    else
+                        Cmd.batch
+                            [ RecordPage.recordPageRequest url
+                            , RecordPage.recordSearchRequest sourcesUrl
+                            ]
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
             in
             ( InstitutionPage newSession newPageBody
-            , Cmd.batch
-                [ RecordPage.recordPageRequest url
-                , RecordPage.recordSearchRequest sourcesUrl
-                ]
-                |> Cmd.map Msg.UserInteractedWithRecordPage
+            , refreshCmds
             )
 
         Route.InstitutionSourcePageRoute _ qargs ->
             let
-                newPageBody =
-                    case model of
-                        InstitutionPage _ oldPageBody ->
-                            RecordPage.load recordCfg oldPageBody
-
-                        _ ->
-                            RecordPage.init recordCfg
-
-                newQparams =
-                    toNextQuery newPageBody.activeSearch
-                        |> buildQueryParameters
-                        |> toQuery
-                        |> String.dropLeft 1
-
                 recordCfg =
                     { incomingUrl = url
                     , route = route
@@ -299,19 +348,45 @@ changePage url model =
                 recordPath =
                     String.replace "/sources" "" url.path
 
+                ( newPageBody, isSameInstitutionPage ) =
+                    case model of
+                        InstitutionPage _ oldPageBody ->
+                            if url.path == previousUrl.path || previousUrl.path == recordPath then
+                                ( RecordPage.load recordCfg oldPageBody, True )
+
+                            else
+                                ( RecordPage.init recordCfg, False )
+
+                        _ ->
+                            ( RecordPage.init recordCfg, False )
+
+                newQparams =
+                    toNextQuery newPageBody.activeSearch
+                        |> buildQueryParameters
+                        |> toQuery
+                        |> String.dropLeft 1
+
                 recordUrl =
                     { url | path = recordPath }
 
                 sourceUrl =
                     { url | query = Just newQparams }
+
+                refreshCmds =
+                    if isSameInstitutionPage then
+                        RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
+
+                    else
+                        Cmd.batch
+                            [ RecordPage.recordPageRequest recordUrl
+                            , RecordPage.recordSearchRequest sourceUrl
+                            , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            ]
+                            |> Cmd.map Msg.UserInteractedWithRecordPage
             in
             ( InstitutionPage newSession newPageBody
-            , Cmd.batch
-                [ RecordPage.recordPageRequest recordUrl
-                , RecordPage.recordSearchRequest sourceUrl
-                , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
-                ]
-                |> Cmd.map Msg.UserInteractedWithRecordPage
+            , refreshCmds
             )
 
         Route.AboutPageRoute ->
