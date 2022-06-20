@@ -107,7 +107,7 @@ changePage url model =
                 ( newPageBody, isSameSourcePage ) =
                     case model of
                         SourcePage _ oldPageBody ->
-                            if url.path == previousUrl.path || url.path == String.replace "/sources" "" previousUrl.path then
+                            if url.path == previousUrl.path || url.path == String.replace "/contents" "" previousUrl.path then
                                 ( RecordPage.load recordCfg oldPageBody, True )
 
                             else
