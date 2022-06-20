@@ -122,8 +122,18 @@ changePage url model =
                         |> toQuery
                         |> String.dropLeft 1
 
+                sourceContentsPath =
+                    if String.endsWith "/" url.path then
+                        url.path ++ "contents"
+
+                    else
+                        url.path ++ "/contents"
+
                 sourcesUrl =
-                    { url | path = url.path ++ "/contents", query = Just sourceQuery }
+                    { url
+                        | path = sourceContentsPath
+                        , query = Just sourceQuery
+                    }
 
                 refreshCmds =
                     if isSameSourcePage then

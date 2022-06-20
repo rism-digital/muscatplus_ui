@@ -122,8 +122,15 @@ init flags initialUrl key =
                     , nationalCollection = session.restrictedToNationalCollection
                     }
 
+                sourceContentsPath =
+                    if String.endsWith "/" initialUrl.path then
+                        initialUrl.path ++ "contents"
+
+                    else
+                        initialUrl.path ++ "/contents"
+
                 sourcesUrl =
-                    { initialUrl | path = initialUrl.path ++ "/contents", query = ncQueryParam }
+                    { initialUrl | path = sourceContentsPath, query = ncQueryParam }
             in
             ( SourcePage session initialBody
             , Cmd.batch
@@ -153,7 +160,7 @@ init flags initialUrl key =
                     }
 
                 recordPath =
-                    String.replace "/sources" "" initialUrl.path
+                    String.replace "/contents" "" initialUrl.path
 
                 recordUrl =
                     { initialUrl | path = recordPath }
