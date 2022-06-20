@@ -17,6 +17,7 @@ type alias RecordPageModel msg =
     , currentTab : CurrentRecordViewTab
     , searchResults : Response ServerData
     , preview : Response ServerData
+    , sourceItemsExpanded : Bool
     , selectedResult : Maybe String
     , activeSearch : ActiveSearch msg
     , probeResponse : Response ProbeData

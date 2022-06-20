@@ -80,6 +80,7 @@ init cfg =
     , currentTab = tabView
     , searchResults = NoResponseToShow
     , preview = NoResponseToShow
+    , sourceItemsExpanded = False
     , selectedResult = selectedResult
     , activeSearch = activeSearch
     , probeResponse = Loading Nothing
@@ -242,6 +243,7 @@ update session msg model =
         ServerRespondedWithRecordPreview (Ok ( _, response )) ->
             ( { model
                 | preview = Response response
+                , sourceItemsExpanded = False
               }
             , Cmd.none
             )
@@ -249,6 +251,7 @@ update session msg model =
         ServerRespondedWithRecordPreview (Err error) ->
             ( { model
                 | preview = Error (createErrorMessage error)
+                , sourceItemsExpanded = False
               }
             , Cmd.none
             )
@@ -299,6 +302,13 @@ update session msg model =
                 | currentTab = recordTab
               }
             , cmd
+            )
+
+        UserClickedExpandSourceItemsSectionInPreview ->
+            ( { model
+                | sourceItemsExpanded = not model.sourceItemsExpanded
+              }
+            , Cmd.none
             )
 
         UserClickedSearchResultsPagination pageUrl ->

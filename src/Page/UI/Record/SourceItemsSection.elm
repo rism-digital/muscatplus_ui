@@ -1,13 +1,14 @@
 module Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, link, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, pointer, px, row, shrink, spacing, text, width)
+import Element.Events as Events
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
-import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (viewSummaryField)
+import Page.UI.Attributes exposing (emptyAttribute, headingMD, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
+import Page.UI.Components exposing (h2, viewSummaryField)
 import Page.UI.Images exposing (sourcesSvg)
-import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -45,7 +46,66 @@ viewSourceItem language source =
         ]
 
 
-viewSourceItemsSection : Language -> SourceItemsSectionBody -> Element msg
-viewSourceItemsSection language siSection =
-    List.map (\sourceBody -> viewSourceItem language sourceBody) siSection.items
-        |> sectionTemplate language siSection
+viewSourceItemsSection : Language -> Bool -> msg -> SourceItemsSectionBody -> Element msg
+viewSourceItemsSection language expanded expandMsg siSection =
+    let
+        -- don't emit an anchor ID if the TOC value is an empty string
+        tocId =
+            if String.isEmpty siSection.sectionToc then
+                emptyAttribute
+
+            else
+                htmlAttribute (HA.id siSection.sectionToc)
+
+        sectionBody =
+            if expanded then
+                List.map (\sourceBody -> viewSourceItem language sourceBody) siSection.items
+
+            else
+                []
+
+        -- TODO: Translate
+        linkLabel =
+            if expanded then
+                text "Collapse"
+
+            else
+                text ("Show " ++ String.fromInt (List.length siSection.items) ++ " items")
+    in
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            [ spacing lineSpacing
+            , width fill
+            , height fill
+            ]
+            [ row
+                [ width shrink
+                , alignLeft
+                , alignBottom
+                , spacing 5
+                , tocId
+                ]
+                [ h2 language siSection.label
+                , el
+                    [ linkColour
+                    , pointer
+                    , Events.onClick expandMsg
+                    ]
+                    linkLabel
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ spacing sectionSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    sectionBody
+                ]
+            ]
+        ]

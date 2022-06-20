@@ -38,6 +38,7 @@ type alias SearchResultsSectionConfig a msg =
     , model :
         { a
             | preview : Response ServerData
+            , sourceItemsExpanded : Bool
             , activeSearch : ActiveSearch msg
             , response : Response ServerData
             , selectedResult : Maybe String
@@ -45,6 +46,7 @@ type alias SearchResultsSectionConfig a msg =
             , applyFilterPrompt : Bool
         }
     , userClosedPreviewWindowMsg : msg
+    , userClickedSourceItemsExpandMsg : msg
     , userClickedResultForPreviewMsg : String -> msg
     , userChangedResultSortingMsg : String -> msg
     , userChangedResultsPerPageMsg : String -> msg
@@ -63,10 +65,21 @@ viewSearchResultsSection cfg resultsLoading body =
         renderedPreview =
             case .preview cfg.model of
                 Loading oldData ->
-                    viewPreviewRouter (.language cfg.session) cfg.userClosedPreviewWindowMsg oldData
+                    viewPreviewRouter
+                        (.language cfg.session)
+                        { closeMsg = cfg.userClosedPreviewWindowMsg
+                        , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
+                        , sourceItemsExpanded = .sourceItemsExpanded cfg.model
+                        }
+                        oldData
 
                 Response resp ->
-                    viewPreviewRouter (.language cfg.session) cfg.userClosedPreviewWindowMsg (Just resp)
+                    viewPreviewRouter (.language cfg.session)
+                        { closeMsg = cfg.userClosedPreviewWindowMsg
+                        , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
+                        , sourceItemsExpanded = .sourceItemsExpanded cfg.model
+                        }
+                        (Just resp)
 
                 Error errMsg ->
                     viewPreviewError (.language cfg.session) cfg.userClosedPreviewWindowMsg errMsg

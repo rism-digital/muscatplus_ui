@@ -61,6 +61,7 @@ searchResultsViewRouter session model =
             { session = session
             , model = model
             , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
+            , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
             , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
             , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
             , userChangedResultsPerPageMsg = SearchMsg.UserChangedResultsPerPage

@@ -78,13 +78,20 @@ viewPreviewLoading language =
         ]
 
 
-viewPreviewRouter : Language -> msg -> Maybe ServerData -> Element msg
-viewPreviewRouter language closeMsg previewData =
+type alias PreviewConfig msg =
+    { closeMsg : msg
+    , sourceItemExpandMsg : msg
+    , sourceItemsExpanded : Bool
+    }
+
+
+viewPreviewRouter : Language -> PreviewConfig msg -> Maybe ServerData -> Element msg
+viewPreviewRouter language cfg previewData =
     let
         preview =
             case previewData of
                 Just (SourceData body) ->
-                    viewSourcePreview language body
+                    viewSourcePreview language cfg.sourceItemsExpanded cfg.sourceItemExpandMsg body
 
                 Just (PersonData body) ->
                     viewPersonPreview language body
@@ -119,7 +126,7 @@ viewPreviewRouter language closeMsg previewData =
             , Background.color (colourScheme.white |> convertColorToElementColor)
             , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
-            [ viewRecordPreviewTitleBar language closeMsg
+            [ viewRecordPreviewTitleBar language cfg.closeMsg
             , preview
             ]
         ]

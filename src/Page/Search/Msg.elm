@@ -39,6 +39,7 @@ type SearchMsg
     | UserTriggeredSearchSubmit
     | UserEnteredTextInKeywordQueryBox String
     | UserClickedClosePreviewWindow
+    | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedSearchResultForPreview String
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserResetAllFilters

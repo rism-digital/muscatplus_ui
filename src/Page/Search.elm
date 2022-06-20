@@ -77,6 +77,7 @@ init cfg =
             , keyboardQueryArgs = Just cfg.keyboardQueryArgs
             }
     , preview = NoResponseToShow
+    , sourceItemsExpanded = False
     , selectedResult = selectedResult
     , showFacetPanel = False
     , probeResponse = NoResponseToShow
@@ -251,6 +252,7 @@ update session msg model =
         ServerRespondedWithSearchPreview (Ok ( _, response )) ->
             ( { model
                 | preview = Response response
+                , sourceItemsExpanded = False
               }
             , Cmd.none
             )
@@ -258,6 +260,7 @@ update session msg model =
         ServerRespondedWithSearchPreview (Err error) ->
             ( { model
                 | preview = Error (createErrorMessage error)
+                , sourceItemsExpanded = False
               }
             , Cmd.none
             )
@@ -396,6 +399,13 @@ update session msg model =
 
         UserClickedClosePreviewWindow ->
             userClickedClosePreviewWindow session model
+
+        UserClickedExpandSourceItemsSectionInPreview ->
+            ( { model
+                | sourceItemsExpanded = not model.sourceItemsExpanded
+              }
+            , Cmd.none
+            )
 
         UserClickedSearchResultForPreview result ->
             userClickedResultForPreview result session model

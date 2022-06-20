@@ -15,6 +15,7 @@ type alias SearchPageModel msg =
     { response : Response ServerData
     , activeSearch : ActiveSearch msg
     , preview : Response ServerData
+    , sourceItemsExpanded : Bool
     , selectedResult : Maybe String
     , showFacetPanel : Bool
     , probeResponse : Response ProbeData

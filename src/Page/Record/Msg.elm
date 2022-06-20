@@ -20,6 +20,7 @@ type RecordMsg
     | DebouncerCapturedProbeRequest (Debouncer.Msg RecordMsg)
     | DebouncerSettledToSendProbeRequest
     | UserClickedRecordViewTab CurrentRecordViewTab
+    | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
     | UserClickedClosePreviewWindow

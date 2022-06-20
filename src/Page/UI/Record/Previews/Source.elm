@@ -17,8 +17,8 @@ import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 
 
-viewSourcePreview : Language -> FullSourceBody -> Element msg
-viewSourcePreview language body =
+viewSourcePreview : Language -> Bool -> msg -> FullSourceBody -> Element msg
+viewSourcePreview language itemsExpanded expandMsg body =
     let
         pageBodyView =
             row
@@ -36,7 +36,7 @@ viewSourcePreview language body =
                     , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
                     , viewMaybe (viewRelationshipsSection language) body.relationships
                     , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
-                    , viewMaybe (viewSourceItemsSection language) body.sourceItems
+                    , viewMaybe (viewSourceItemsSection language itemsExpanded expandMsg) body.sourceItems
                     , viewMaybe (viewExternalResourcesSection language) body.externalResources
                     , viewMaybe (viewExemplarsSection language) body.exemplars
                     ]
