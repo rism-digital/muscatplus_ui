@@ -54,7 +54,7 @@ incipitSearchPanelView session model body =
                 ]
                 [ paragraph
                     [ headingHero, Font.semiBold ]
-                    [ text <| extractLabelFromLanguageMap language localTranslations.incipits ]
+                    [ text (extractLabelFromLanguageMap language localTranslations.incipits) ]
                 ]
             , viewFacet (facetConfig "notation") facetFrontMsgConfig
             , row

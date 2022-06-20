@@ -1,7 +1,7 @@
 module Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, row, spacing, width)
-import Html.Attributes as HTA
+import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (h2)
@@ -27,7 +27,7 @@ sectionTemplate language header sectionBody =
                 emptyAttribute
 
             else
-                htmlAttribute (HTA.id header.sectionToc)
+                htmlAttribute (HA.id header.sectionToc)
     in
     row
         [ width fill

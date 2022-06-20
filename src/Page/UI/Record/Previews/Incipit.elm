@@ -166,6 +166,6 @@ viewPaeRow key value =
         [ el
             [ Font.semiBold
             ]
-            (text <| key ++ ":")
+            (text (key ++ ":"))
         , text value
         ]

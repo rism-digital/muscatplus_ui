@@ -18,13 +18,13 @@ viewLiturgicalFestival language festival =
         [ width fill ]
         [ el
             [ width fill ]
-            (text <| extractLabelFromLanguageMap language festival.label)
+            (extractLabelFromLanguageMap language festival.label |> text)
         ]
 
 
 viewLiturgicalFestivalsSection : Language -> LiturgicalFestivalsSectionBody -> Element msg
 viewLiturgicalFestivalsSection language body =
-    fieldValueWrapper <|
+    fieldValueWrapper
         [ wrappedRow
             [ width fill
             , height fill
@@ -46,7 +46,7 @@ viewLocation language body =
         [ width fill ]
         [ link
             [ linkColour ]
-            { label = text (extractLabelFromLanguageMap language body.label)
+            { label = extractLabelFromLanguageMap language body.label |> text
             , url = body.id
             }
         ]
@@ -70,7 +70,7 @@ viewPerformanceLocation language location =
 
 viewPerformanceLocationsSection : Language -> PerformanceLocationsSectionBody -> Element msg
 viewPerformanceLocationsSection language body =
-    fieldValueWrapper <|
+    fieldValueWrapper
         [ wrappedRow
             [ width fill
             , height fill

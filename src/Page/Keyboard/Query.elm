@@ -105,7 +105,7 @@ noteDataParamParser =
                 Nothing
 
             else
-                Just <| noteDataQueryStringToList a
+                Just (noteDataQueryStringToList a)
         )
 
 

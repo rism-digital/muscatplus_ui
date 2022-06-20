@@ -72,7 +72,7 @@ viewPreviewLoading language =
                     , centerY
                     , centerX
                     ]
-                    (animatedLoader [ width (px 40), height (px 40) ] <| spinnerSvg colourScheme.slateGrey)
+                    (animatedLoader [ width (px 40), height (px 40) ] (spinnerSvg colourScheme.slateGrey))
                 ]
             ]
         ]
@@ -151,5 +151,5 @@ viewRecordPreviewTitleBar language closeMsg =
             , Font.semiBold
             , Font.color (colourScheme.white |> convertColorToElementColor)
             ]
-            (text <| extractLabelFromLanguageMap language localTranslations.recordPreview)
+            (text (extractLabelFromLanguageMap language localTranslations.recordPreview))
         ]

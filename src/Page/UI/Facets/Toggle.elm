@@ -80,7 +80,7 @@ initialConfig toggled toggleMsg =
 label : HS.Attribute msg
 label =
     css
-        [ marginLeft <| px 5
+        [ marginLeft (px 5)
         ]
 
 
@@ -111,18 +111,19 @@ toggle toggle_ isDisabled isError =
     css
         [ position relative
         , display inlineBlock
-        , cursor <|
-            if isDisabled then
+        , cursor
+            (if isDisabled then
                 notAllowed
 
-            else
+             else
                 pointer
-        , width <| rem 2
-        , height <| rem 1
+            )
+        , width (rem 2)
+        , height (rem 1)
         , boxSizing borderBox
-        , backgroundColor <| toggleColor toggle_ isDisabled isError
+        , backgroundColor (toggleColor toggle_ isDisabled isError)
         , border3 (px 1) solid (toggleColor toggle_ isDisabled isError)
-        , borderRadius <| rem 1.2
+        , borderRadius (rem 1.2)
         , transition
             [ Transitions.backgroundColor 400
             , Transitions.borderColor 400
@@ -130,10 +131,10 @@ toggle toggle_ isDisabled isError =
         , before
             [ display block
             , position absolute
-            , top <| px 1
-            , right <| px 1
-            , left <| px 1
-            , bottom <| px 1
+            , top (px 1)
+            , right (px 1)
+            , left (px 1)
+            , bottom (px 1)
             , property "content" ""
             , backgroundColor
                 (if toggle_ then
@@ -142,23 +143,24 @@ toggle toggle_ isDisabled isError =
                  else
                     hex "f1f1f1"
                 )
-            , borderRadius <| rem 1
+            , borderRadius (rem 1)
             ]
         , after
             [ display block
             , position absolute
-            , top <| px 1
-            , left <| px 1
-            , bottom <| px 1
+            , top (px 1)
+            , left (px 1)
+            , bottom (px 1)
             , property "content" "''"
-            , width <| rem 0.8
-            , backgroundColor <|
-                if isDisabled then
+            , width (rem 0.8)
+            , backgroundColor
+                (if isDisabled then
                     hex "eee"
 
-                else
+                 else
                     hex "fff"
-            , borderRadius <| rem 1
+                )
+            , borderRadius (rem 1)
             , boxShadow4 (px 0) (px 2) (px 5) (rgba 0 0 0 0.3)
             , transition
                 [ Transitions.margin 300

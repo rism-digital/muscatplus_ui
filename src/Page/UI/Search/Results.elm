@@ -8,7 +8,7 @@ import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Flip exposing (flip)
-import Html.Attributes as HTA
+import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
@@ -90,7 +90,7 @@ resultTemplate cfg =
                 Just u ->
                     String.dropLeft 1 u.path
                         |> convertPathToNodeId
-                        |> HTA.id
+                        |> HA.id
                         |> htmlAttribute
 
                 Nothing ->
@@ -188,8 +188,8 @@ summaryFieldTemplate summaryCfg fieldValue =
 
         iconElement =
             el
-                [ width <| px 20
-                , height <| px 20
+                [ width (px 20)
+                , height (px 20)
                 , padding 2
                 , centerY
                 , el tooltipStyle (text fLabel)

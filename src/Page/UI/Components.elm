@@ -64,12 +64,13 @@ basicCheckbox checked =
         , Font.size 9
         , Font.center
         , Border.rounded 3
-        , Border.color <|
-            if checked then
+        , Border.color
+            (if checked then
                 rgb (59 / 255) (153 / 255) (252 / 255)
 
-            else
+             else
                 rgb (211 / 255) (211 / 255) (211 / 255)
+            )
         , Border.shadow
             { blur = 1
             , color =
@@ -81,18 +82,20 @@ basicCheckbox checked =
             , offset = ( 0, 0 )
             , size = 1
             }
-        , Background.color <|
-            if checked then
+        , Background.color
+            (if checked then
                 rgb (59 / 255) (153 / 255) (252 / 255)
 
-            else
+             else
                 rgb 1 1 1
-        , Border.width <|
-            if checked then
+            )
+        , Border.width
+            (if checked then
                 0
 
-            else
+             else
                 1
+            )
         , inFront
             (el
                 [ Border.color (rgb 1 1 1)
@@ -121,12 +124,12 @@ dividerWithText dividerText =
     let
         beforeAndAfterStyles =
             [ Css.property "content" "\"\""
-            , Css.flexGrow <| Css.num 1
-            , Css.height <| Css.px 1
-            , Css.lineHeight <| Css.px 0
-            , Css.fontSize <| Css.px 0
+            , Css.flexGrow (Css.num 1)
+            , Css.height (Css.px 1)
+            , Css.lineHeight (Css.px 0)
+            , Css.fontSize (Css.px 0)
             , Css.margin2 (Css.px 0) (Css.px 8)
-            , Css.backgroundColor <| Css.rgba red green blue 0.32
+            , Css.backgroundColor (Css.rgba red green blue 0.32)
             ]
 
         { red, green, blue } =
@@ -138,9 +141,9 @@ dividerWithText dividerText =
                     [ Css.before beforeAndAfterStyles
                     , Css.after beforeAndAfterStyles
                     , Css.displayFlex
-                    , Css.flexBasis <| Css.pct 100
+                    , Css.flexBasis (Css.pct 100)
                     , Css.alignItems Css.center
-                    , Css.color <| Css.rgba red green blue 1
+                    , Css.color (Css.rgba red green blue 1)
                     , Css.margin2 (Css.px 8) (Css.px 0)
                     , Css.textTransform Css.uppercase
                     ]
@@ -163,7 +166,7 @@ dropdownSelect cfg =
                         [ width fill
                         , alignRight
                         ]
-                        [ text <| extractLabelFromLanguageMap cfg.language s ]
+                        [ text (extractLabelFromLanguageMap cfg.language s) ]
 
                 Nothing ->
                     none
@@ -193,9 +196,8 @@ dropdownSelect cfg =
             [ width fill
             , alignLeft
             ]
-            [ html <|
-                HT.div
-                    dropdownSelectParentStyles
+            [ html
+                (HT.div dropdownSelectParentStyles
                     [ HT.select
                         (List.append
                             [ HE.onInput cfg.selectedMsg
@@ -207,6 +209,7 @@ dropdownSelect cfg =
                         )
                         (List.map (\( val, name ) -> dropdownSelectOption val name cfg.choiceFn cfg.currentChoice) cfg.choices)
                     ]
+                )
             ]
         ]
 
@@ -425,23 +428,22 @@ viewLabelValueField :
     -> List LabelValue
     -> Element msg
 viewLabelValueField fmt language field =
-    fieldValueWrapper <|
-        List.map
+    fieldValueWrapper
+        (List.map
             (\f ->
                 wrappedRow
                     [ width fill
                     , height fill
                     , alignTop
                     ]
-                    [ column
-                        labelFieldColumnAttributes
+                    [ column labelFieldColumnAttributes
                         [ renderLabel language f.label ]
-                    , column
-                        valueFieldColumnAttributes
+                    , column valueFieldColumnAttributes
                         [ fmt language f.value ]
                     ]
             )
             field
+        )
 
 
 viewParagraphField : Language -> List LabelValue -> Element msg

@@ -4,7 +4,7 @@ import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, in
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Html.Attributes
+import Html.Attributes as HA
 import Page.UI.Images exposing (assistanceSvg)
 import Page.UI.Style exposing (colourScheme)
 
@@ -23,22 +23,24 @@ helpBubble : String -> Element msg
 helpBubble str =
     el
         tooltipStyle
-        (paragraph [ width <| px 350 ] [ text str ])
+        (paragraph [ width (px 350) ] [ text str ])
 
 
 tooltip : (Element msg -> Attribute msg) -> Element Never -> Attribute msg
 tooltip position tooltip_ =
-    inFront <|
-        el
+    inFront
+        (el
             [ width fill
             , height fill
             , transparent True
             , mouseOver [ transparent False ]
-            , (position << Element.map never) <|
-                el [ htmlAttribute (Html.Attributes.style "pointerEvents" "none") ]
+            , (position << Element.map never)
+                (el [ htmlAttribute (HA.style "pointerEvents" "none") ]
                     tooltip_
+                )
             ]
             none
+        )
 
 
 tooltipStyle : List (Attribute msg)

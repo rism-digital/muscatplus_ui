@@ -106,7 +106,7 @@ locationAddressSectionBodyDecoder : Decoder LocationAddressSectionBody
 locationAddressSectionBodyDecoder =
     Decode.succeed LocationAddressSectionBody
         |> required "label" languageMapLabelDecoder
-        |> optional "mailingAddress" (Decode.maybe <| list labelValueDecoder) Nothing
+        |> optional "mailingAddress" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "coordinates" (Decode.maybe coordinatesSectionDecoder) Nothing
         |> optional "website" (Decode.maybe labelStringValueDecoder) Nothing
         |> optional "email" (Decode.maybe labelStringValueDecoder) Nothing

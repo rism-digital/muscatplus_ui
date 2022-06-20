@@ -89,7 +89,7 @@ init cfg =
 
 
 load : RecordConfig -> RecordPageModel RecordMsg -> RecordPageModel RecordMsg
-load cfg oldModel =
+load cfg oldBody =
     let
         activeSearch =
             toNextQuery activeSearchInit
@@ -110,7 +110,7 @@ load cfg oldModel =
         ( previewResp, selectedResult ) =
             case .fragment cfg.incomingUrl of
                 Just f ->
-                    ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
+                    ( oldBody.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
 
                 Nothing ->
                     ( NoResponseToShow, Nothing )
@@ -119,7 +119,7 @@ load cfg oldModel =
             Url.toString cfg.incomingUrl
                 |> routeToCurrentRecordViewTab cfg.route
     in
-    { oldModel
+    { oldBody
         | currentTab = tabView
         , preview = previewResp
         , selectedResult = selectedResult
@@ -165,17 +165,33 @@ update session msg model =
                         Nothing ->
                             Cmd.none
 
-                totalItems =
+                probeState =
                     case response of
                         SearchData body ->
-                            Response { totalItems = body.totalItems, modes = body.modes }
+                            if body.totalItems == 0 then
+                                NoResponseToShow
+
+                            else
+                                Response { totalItems = body.totalItems, modes = body.modes }
+
+                        _ ->
+                            NoResponseToShow
+
+                searchResults =
+                    case response of
+                        SearchData body ->
+                            if body.totalItems == 0 then
+                                NoResponseToShow
+
+                            else
+                                Response response
 
                         _ ->
                             NoResponseToShow
             in
             ( { model
-                | searchResults = Response response
-                , probeResponse = totalItems
+                | searchResults = searchResults
+                , probeResponse = probeState
                 , applyFilterPrompt = False
               }
             , jumpCmd

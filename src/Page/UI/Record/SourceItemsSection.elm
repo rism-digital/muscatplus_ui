@@ -26,8 +26,8 @@ viewSourceItem language source =
                 , spacing 5
                 ]
                 [ el
-                    [ width <| px 20
-                    , height <| px 20
+                    [ width (px 20)
+                    , height (px 20)
                     , centerY
                     ]
                     (sourcesSvg colourScheme.slateGrey)

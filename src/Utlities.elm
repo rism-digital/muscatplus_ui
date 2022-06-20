@@ -52,7 +52,7 @@ insertDedupe combine key value dict =
         with mbValue =
             case mbValue of
                 Just oldValue ->
-                    Just <| combine oldValue value
+                    Just (combine oldValue value)
 
                 Nothing ->
                     Just value
@@ -75,7 +75,7 @@ namedValue : String -> String -> String -> String
 namedValue name val =
     let
         placeholder =
-            regex <| "{{\\s*" ++ name ++ "\\s*}}"
+            regex ("{{\\s*" ++ name ++ "\\s*}}")
     in
     Regex.replace placeholder (\_ -> val)
 

@@ -106,7 +106,7 @@ viewSelectFacet config =
                 , width (px 50)
                 ]
                 (dropdownSelect
-                    { selectedMsg = \inp -> config.userChangedFacetBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp
+                    { selectedMsg = \inp -> config.userChangedFacetBehaviourMsg facetAlias (parseStringToFacetBehaviour inp)
                     , mouseDownMsg = Nothing
                     , mouseUpMsg = Nothing
                     , choices = listOfBehavioursForDropdown
@@ -187,7 +187,7 @@ viewSelectFacet config =
                 behaviourOptions.items
 
         numGroups =
-            ceiling <| toFloat (List.length facetItems) / toFloat config.numberOfColumns
+            ceiling (toFloat (List.length facetItems) / toFloat config.numberOfColumns)
 
         query =
             toNextQuery activeSearch
@@ -301,7 +301,7 @@ viewSelectFacet config =
                         , el
                             [ width (px 20)
                             , height (px 20)
-                            , onClick (config.userChangedSelectFacetSortMsg facetAlias <| toggledSortType chosenSort)
+                            , onClick (config.userChangedSelectFacetSortMsg facetAlias (toggledSortType chosenSort))
                             , el tooltipStyle (text chosenSortMessage)
                                 |> tooltip above
                             ]
@@ -367,7 +367,7 @@ viewSelectFacetItem config fitem =
             , bodyRegular
             , alignTop
             ]
-            (text <| formatNumberByLanguage config.language count)
+            (text (formatNumberByLanguage config.language count))
         ]
 
 

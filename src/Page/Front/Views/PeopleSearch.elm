@@ -57,7 +57,7 @@ peopleSearchPanelView session model frontBody =
                 ]
                 [ paragraph
                     [ headingHero, Font.semiBold ]
-                    [ text <| extractLabelFromLanguageMap language localTranslations.people ]
+                    [ text (extractLabelFromLanguageMap language localTranslations.people) ]
                 ]
             , viewFrontKeywordQueryInput
                 { language = language

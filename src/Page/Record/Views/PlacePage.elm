@@ -31,7 +31,7 @@ view session model =
             , height fill
             , alignTop
             , clipY
-            , Background.color <| convertColorToElementColor colourScheme.white
+            , Background.color (convertColorToElementColor colourScheme.white)
             ]
             [ pageView ]
         ]

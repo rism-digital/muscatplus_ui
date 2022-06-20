@@ -21,7 +21,7 @@ import Element
         )
 import Element.Background as Background
 import Element.Border as Border
-import Html.Attributes as HTA
+import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
@@ -76,7 +76,7 @@ pageHeaderTemplate : Language -> { a | sectionToc : String, label : LanguageMap 
 pageHeaderTemplate language header =
     row
         [ width fill
-        , htmlAttribute (HTA.id header.sectionToc)
+        , htmlAttribute (HA.id header.sectionToc)
         ]
         [ h1 language header.label ]
 
@@ -127,22 +127,22 @@ viewMuscatLinks session =
     in
     case session.route of
         SourcePageRoute id ->
-            linkTmpl <| C.muscatLinkBase ++ "sources/" ++ String.fromInt id
+            linkTmpl (C.muscatLinkBase ++ "sources/" ++ String.fromInt id)
 
         SourceContentsPageRoute id _ ->
-            linkTmpl <| C.muscatLinkBase ++ "sources/" ++ String.fromInt id
+            linkTmpl (C.muscatLinkBase ++ "sources/" ++ String.fromInt id)
 
         PersonPageRoute id ->
-            linkTmpl <| C.muscatLinkBase ++ "people/" ++ String.fromInt id
+            linkTmpl (C.muscatLinkBase ++ "people/" ++ String.fromInt id)
 
         PersonSourcePageRoute id _ ->
-            linkTmpl <| C.muscatLinkBase ++ "people/" ++ String.fromInt id
+            linkTmpl (C.muscatLinkBase ++ "people/" ++ String.fromInt id)
 
         InstitutionPageRoute id ->
-            linkTmpl <| C.muscatLinkBase ++ "institutions/" ++ String.fromInt id
+            linkTmpl (C.muscatLinkBase ++ "institutions/" ++ String.fromInt id)
 
         InstitutionSourcePageRoute id _ ->
-            linkTmpl <| C.muscatLinkBase ++ "institutions/" ++ String.fromInt id
+            linkTmpl (C.muscatLinkBase ++ "institutions/" ++ String.fromInt id)
 
         _ ->
             none

@@ -255,7 +255,7 @@ italianLocale =
 
 languageDecoder : String -> Decoder Language
 languageDecoder locale =
-    Decode.succeed <| parseLocaleToLanguage locale
+    Decode.succeed (parseLocaleToLanguage locale)
 
 
 {-|

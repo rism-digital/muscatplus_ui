@@ -179,7 +179,7 @@ viewNationalCollectionChooser session =
                             [ width fill
                             , headingMD
                             ]
-                            (text <| extractLabelFromLanguageMap session.language localTranslations.globalCollection)
+                            (text (extractLabelFromLanguageMap session.language localTranslations.globalCollection))
                         ]
                     ]
                 ]

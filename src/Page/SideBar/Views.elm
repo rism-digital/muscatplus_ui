@@ -9,7 +9,7 @@ import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Element.Lazy exposing (lazy3)
-import Html.Attributes as HTA
+import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, parseLocaleToLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Route exposing (Route(..))
@@ -178,7 +178,7 @@ view session =
                 (lazy3 menuOption
                     { icon = musicNotationSvg
                     , isCurrent = checkSelected IncipitSearchOption
-                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.incipits
+                    , label = text (extractLabelFromLanguageMap session.language localTranslations.incipits)
                     , showLabel = showLabels
                     }
                     IncipitSearchOption
@@ -190,7 +190,7 @@ view session =
             menuOption
                 { icon = institutionSvg
                 , isCurrent = checkSelected InstitutionSearchOption
-                , label = text <| extractLabelFromLanguageMap session.language localTranslations.institutions
+                , label = text (extractLabelFromLanguageMap session.language localTranslations.institutions)
                 , showLabel = showLabels
                 }
                 InstitutionSearchOption
@@ -201,7 +201,7 @@ view session =
                 (lazy3 menuOption
                     { icon = peopleSvg
                     , isCurrent = checkSelected PeopleSearchOption
-                    , label = text <| extractLabelFromLanguageMap session.language localTranslations.people
+                    , label = text (extractLabelFromLanguageMap session.language localTranslations.people)
                     , showLabel = showLabels
                     }
                     PeopleSearchOption
@@ -251,7 +251,7 @@ view session =
             menuOption
                 { icon = sourcesSvg
                 , isCurrent = checkSelected SourceSearchOption
-                , label = text <| extractLabelFromLanguageMap session.language localTranslations.sources
+                , label = text (extractLabelFromLanguageMap session.language localTranslations.sources)
                 , showLabel = showLabels
                 }
                 SourceSearchOption
@@ -263,7 +263,7 @@ view session =
         , height fill
         , alignTop
         , alignLeft
-        , htmlAttribute <| HTA.style "z-index" "20"
+        , htmlAttribute (HA.style "z-index" "20")
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)

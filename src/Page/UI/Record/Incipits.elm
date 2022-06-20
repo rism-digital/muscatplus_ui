@@ -4,7 +4,7 @@ import Element exposing (Element, above, alignLeft, alignTop, centerY, column, e
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Html.Attributes as HTA
+import Html.Attributes as HA
 import Language exposing (Language)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingFormat(..), IncipitBody, IncipitFormat(..), RenderedIncipit(..))
@@ -40,7 +40,7 @@ viewIncipit language incipit =
             [ width fill
             , height fill
             , alignTop
-            , HTA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
+            , HA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
             ]
             [ viewMaybe (viewSummaryField language) incipit.summary
             , row
@@ -156,7 +156,7 @@ viewRenderedIncipits incipits =
     row
         [ width (fill |> minimum 500 |> maximum 1000)
         , paddingXY 10 0
-        , htmlAttribute (HTA.class "search-results-rendered-incipit")
+        , htmlAttribute (HA.class "search-results-rendered-incipit")
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         (List.map

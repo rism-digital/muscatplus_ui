@@ -69,23 +69,23 @@ view notationFacet language (Keyboard model config) =
                         , spacing lineSpacing
                         ]
                         [ column
-                            [ width <| fillPortion 3 ]
+                            [ width (fillPortion 3) ]
                             [ viewPaeInput language notationFacet (Keyboard model config) ]
                         , column
-                            [ width <| fillPortion 1 ]
+                            [ width (fillPortion 1) ]
                             [ row
                                 [ width fill
                                 , width (px 200)
                                 ]
                                 [ dropdownSelect
-                                    { selectedMsg = \s -> UserChangedQueryMode <| queryModeStrToQueryMode s
+                                    { selectedMsg = \s -> UserChangedQueryMode (queryModeStrToQueryMode s)
                                     , mouseDownMsg = Nothing
                                     , mouseUpMsg = Nothing
                                     , choices = queryModeOptions
                                     , choiceFn = \selected -> queryModeStrToQueryMode selected
                                     , currentChoice = .queryMode model.query
                                     , selectIdent = "keyboard-query-mode-select"
-                                    , label = Just <| .label notationFacet.queryModes
+                                    , label = Just (.label notationFacet.queryModes)
                                     , language = language
                                     }
                                 ]

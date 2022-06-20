@@ -89,13 +89,10 @@ viewQueryFacet config =
                         , bodySM
                         , Border.width 1
                         ]
-                        (row
-                            [ spacing 5 ]
-                            [ column
-                                []
+                        (row [ spacing 5 ]
+                            [ column []
                                 [ text t ]
-                            , column
-                                []
+                            , column []
                                 [ el
                                     [ width (px 20)
                                     , onClick (config.userRemovedMsg facetAlias t)
@@ -105,8 +102,7 @@ viewQueryFacet config =
                             ]
                         )
                 )
-            <|
-                List.reverse activeValues
+                (List.reverse activeValues)
 
         facetAlias =
             .alias config.queryFacet
@@ -198,7 +194,7 @@ viewQueryFacet config =
                     ]
                     { label = Input.labelHidden (extractLabelFromLanguageMap config.language facetLabel)
                     , onChange = \input -> config.userEnteredTextMsg facetAlias input suggestionUrl
-                    , placeholder = Just <| Input.placeholder [] (text "Add terms to your query")
+                    , placeholder = Just (Input.placeholder [] (text "Add terms to your query"))
                     , text = textValue
                     }
                 ]
@@ -232,7 +228,7 @@ viewQueryFacet config =
                     , width (px 50)
                     ]
                     (dropdownSelect
-                        { selectedMsg = \inp -> config.userChangedBehaviourMsg facetAlias <| parseStringToFacetBehaviour inp
+                        { selectedMsg = \inp -> config.userChangedBehaviourMsg facetAlias (parseStringToFacetBehaviour inp)
                         , mouseDownMsg = Nothing
                         , mouseUpMsg = Nothing
                         , choices = listOfBehavioursForDropdown

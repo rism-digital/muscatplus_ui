@@ -16,10 +16,15 @@ import NoDebug.Log
 import NoDebug.TodoOrToString
 import NoExposingEverything
 import NoImportingEverything
+import NoInconsistentAliases
+import NoLeftPizza
 import NoMissingTypeAnnotation
 import NoMissingTypeAnnotationInLetIn
 import NoMissingTypeExpose
+import NoModuleOnExposedNames
 import NoPrematureLetComputation
+import NoRedundantConcat
+import NoRedundantCons
 import NoSimpleLetBody
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
@@ -54,4 +59,15 @@ config =
     , NoUnused.Patterns.rule
     , NoUnused.Variables.rule
     , Simplify.rule Simplify.defaults
+    , NoRedundantConcat.rule
+    , NoRedundantCons.rule
+    , NoLeftPizza.rule NoLeftPizza.Any
+    , NoInconsistentAliases.config
+        [ ( "Html.Attributes", "HA" )
+        , ( "Json.Decode", "Decode" )
+        , ( "Json.Encode", "Encode" )
+        ]
+        |> NoInconsistentAliases.noMissingAliases
+        |> NoInconsistentAliases.rule
+    , NoModuleOnExposedNames.rule
     ]

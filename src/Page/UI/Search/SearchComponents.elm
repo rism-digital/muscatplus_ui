@@ -57,7 +57,7 @@ viewProbeResponseNumbers language probeResponse =
                 [ width (px 25)
                 , height (px 25)
                 ]
-                (animatedLoader [ width (px 25), height (px 25) ] <| spinnerSvg colourScheme.slateGrey)
+                (animatedLoader [ width (px 25), height (px 25) ] (spinnerSvg colourScheme.slateGrey))
 
         Response data ->
             let
@@ -78,12 +78,16 @@ viewProbeResponseNumbers language probeResponse =
                 [ Font.medium
                 , headingMD
                 ]
-                (text <| textMsg)
+                (text textMsg)
 
         Error errMsg ->
             el
                 [ Font.medium ]
-                (text <| extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults ++ ": " ++ errMsg)
+                (extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults
+                    ++ ": "
+                    ++ errMsg
+                    |> text
+                )
 
         NoResponseToShow ->
             none
@@ -206,7 +210,7 @@ viewUpdateMessage language applyFilterPrompt actionableProbResponse =
             , Font.bold
             , Font.color (colourScheme.white |> convertColorToElementColor)
             ]
-            (text <| extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
+            (text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults))
 
     else
         none

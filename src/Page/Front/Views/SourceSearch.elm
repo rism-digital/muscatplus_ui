@@ -57,7 +57,7 @@ sourceSearchPanelView session model frontBody =
                 ]
                 [ paragraph
                     [ headingHero, Font.semiBold ]
-                    [ text <| extractLabelFromLanguageMap language localTranslations.sources ]
+                    [ text (extractLabelFromLanguageMap language localTranslations.sources) ]
                 ]
             , viewFrontKeywordQueryInput
                 { language = language

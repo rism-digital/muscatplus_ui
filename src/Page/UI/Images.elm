@@ -230,13 +230,8 @@ globeSvg color =
 
 iiifLogo : Element msg
 iiifLogo =
-    html <|
-        svg
-            [ viewBox "0 0 493.365 441.333"
-
-            --, width "493.365"
-            --, height "441.333"
-            ]
+    html
+        (svg [ viewBox "0 0 493.365 441.333" ]
             [ Svg.path
                 [ id "path14"
                 , style "fill:#2873ab;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -287,6 +282,7 @@ iiifLogo =
                 ]
                 []
             ]
+        )
 
 
 infoCircle : SvgDetails
@@ -634,13 +630,10 @@ sourcesSvg color =
 
 spinnerSvg : Color -> Element msg
 spinnerSvg color =
-    html <|
-        svg
-            [ viewBox "0 0 512 512" ]
-            [ defs
-                []
-                [ Svg.style
-                    []
+    html
+        (svg [ viewBox "0 0 512 512" ]
+            [ defs []
+                [ Svg.style []
                     [ Svg.text ".fa-secondary{opacity:.4}" ]
                 ]
             , Svg.path
@@ -656,6 +649,7 @@ spinnerSvg color =
                 ]
                 []
             ]
+        )
 
 
 textIcon : SvgDetails

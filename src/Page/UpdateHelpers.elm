@@ -180,7 +180,7 @@ rangeStringParser rString =
         oneOfParser =
             P.oneOf
                 [ P.map String.fromFloat P.float
-                , P.map identity <| P.getChompedString (P.chompIf isStar)
+                , P.map identity (P.getChompedString (P.chompIf isStar))
                 ]
 
         qParser =

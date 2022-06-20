@@ -18,8 +18,8 @@ import Ports.Incoming exposing (IncomingMessage(..), decodeIncomingMessage, rece
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ onResize <| \width height -> Msg.UserResizedWindow (detectDevice width height)
-        , receiveIncomingMessageFromPort <| messageReceiverHelper model
+        [ onResize (\width height -> Msg.UserResizedWindow (detectDevice width height))
+        , receiveIncomingMessageFromPort (messageReceiverHelper model)
         ]
 
 
@@ -60,4 +60,4 @@ messageReceiverHelper model val =
                     Msg.NothingHappened
 
         Err e ->
-            Msg.ClientReceivedABadPortMessage <| Decode.errorToString e
+            Msg.ClientReceivedABadPortMessage (Decode.errorToString e)

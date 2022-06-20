@@ -141,7 +141,7 @@ update session msg model =
                         IncipitSearchOption ->
                             case toKeyboard model.activeSearch of
                                 Just kq ->
-                                    Cmd.map UserInteractedWithPianoKeyboard <| buildNotationRequestQuery (toKeyboardQuery kq)
+                                    Cmd.map UserInteractedWithPianoKeyboard (buildNotationRequestQuery (toKeyboardQuery kq))
 
                                 Nothing ->
                                     Cmd.none

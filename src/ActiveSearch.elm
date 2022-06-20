@@ -24,7 +24,7 @@ empty =
     , expandedFacets = []
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
-    , keyboard = Just <| Keyboard.initModel
+    , keyboard = Just Keyboard.initModel
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     }
@@ -93,11 +93,6 @@ toActiveSearch model =
     model.activeSearch
 
 
-toActiveSuggestion : { a | activeSuggestion : Maybe ActiveSuggestion } -> Maybe ActiveSuggestion
-toActiveSuggestion model =
-    model.activeSuggestion
-
-
 toExpandedFacets : { a | expandedFacets : List String } -> List String
 toExpandedFacets model =
     model.expandedFacets
@@ -125,3 +120,8 @@ toggleExpandedFacets newFacet oldFacets =
 
     else
         newFacet :: oldFacets
+
+
+toActiveSuggestion : { a | activeSuggestion : Maybe ActiveSuggestion } -> Maybe ActiveSuggestion
+toActiveSuggestion model =
+    model.activeSuggestion

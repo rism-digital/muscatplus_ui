@@ -43,7 +43,7 @@ validateInput boxIndicator value =
         -- TODO: Translate!
         errorMessage : Maybe String
         errorMessage =
-            if String.trim checkValue /= "*" && String.trim checkValue /= "" && not (String.all Char.isDigit <| String.trim checkValue) then
+            if String.trim checkValue /= "*" && String.trim checkValue /= "" && not (String.all Char.isDigit (String.trim checkValue)) then
                 Just (boxIndicator ++ ": Please enter only numbers or a '*'")
 
             else if String.length checkValue > 4 then

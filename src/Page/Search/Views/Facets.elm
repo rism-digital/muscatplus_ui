@@ -52,22 +52,22 @@ viewModeItem selectedMode language fitem =
         icon =
             case value of
                 "festivals" ->
-                    iconTmpl <| liturgicalFestivalSvg colourScheme.slateGrey
+                    iconTmpl (liturgicalFestivalSvg colourScheme.slateGrey)
 
                 "incipits" ->
-                    iconTmpl <| musicNotationSvg colourScheme.slateGrey
+                    iconTmpl (musicNotationSvg colourScheme.slateGrey)
 
                 "institutions" ->
-                    iconTmpl <| institutionSvg colourScheme.slateGrey
+                    iconTmpl (institutionSvg colourScheme.slateGrey)
 
                 "people" ->
-                    iconTmpl <| peopleSvg colourScheme.slateGrey
+                    iconTmpl (peopleSvg colourScheme.slateGrey)
 
                 "sources" ->
-                    iconTmpl <| sourcesSvg colourScheme.slateGrey
+                    iconTmpl (sourcesSvg colourScheme.slateGrey)
 
                 _ ->
-                    iconTmpl <| unknownSvg colourScheme.slateGrey
+                    iconTmpl (unknownSvg colourScheme.slateGrey)
 
         iconTmpl svg =
             el
@@ -107,8 +107,8 @@ viewModeItem selectedMode language fitem =
                         [ headingSM
                         , alignLeft
                         ]
-                        (text <| fullLabel ++ " (" ++ itemCount ++ ")")
-                , onPress = Just <| UserClickedModeItem fitem
+                        (text (fullLabel ++ " (" ++ itemCount ++ ")"))
+                , onPress = Just (UserClickedModeItem fitem)
                 }
             )
         ]

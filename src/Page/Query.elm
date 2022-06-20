@@ -113,8 +113,7 @@ buildQueryParameters queryArgs =
                     )
 
         modeParam =
-            [ Url.Builder.string "mode" <|
-                parseResultModeToString queryArgs.mode
+            [ Url.Builder.string "mode" (parseResultModeToString queryArgs.mode)
             ]
 
         ncParam =
@@ -345,27 +344,29 @@ modeQueryStringToResultMode modeList =
 pageParamParser : Q.Parser Int
 pageParamParser =
     -- returns 1 if the page parameter cannot be parsed to an int.
-    Q.custom "page" <|
-        \stringList ->
+    Q.custom "page"
+        (\stringList ->
             case stringList of
                 [ str ] ->
                     Maybe.withDefault 1 (String.toInt str)
 
                 _ ->
                     1
+        )
 
 
 rowsParamParser : Q.Parser Int
 rowsParamParser =
     -- returns the default rows if the rows parameter cannot be parsed to an int.
-    Q.custom "rows" <|
-        \stringList ->
+    Q.custom "rows"
+        (\stringList ->
             case stringList of
                 [ str ] ->
                     Maybe.withDefault 1 (String.toInt str)
 
                 _ ->
                     C.defaultRows
+        )
 
 
 setPage : Int -> { a | page : Int } -> { a | page : Int }

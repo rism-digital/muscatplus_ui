@@ -47,8 +47,8 @@ viewRelatedToBody language body =
             , spacing 5
             ]
             [ el
-                [ width <| px 16
-                , height <| px 16
+                [ width (px 16)
+                , height (px 16)
                 , centerY
                 , relationshipTooltip |> tooltip above
                 ]
@@ -101,7 +101,7 @@ viewRelationshipBody language body =
                 Nothing ->
                     none
     in
-    fieldValueWrapper <|
+    fieldValueWrapper
         [ wrappedRow
             [ width fill
             , height fill

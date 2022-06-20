@@ -106,7 +106,7 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
                 , spacing lineSpacing
                 ]
                 [ column
-                    [ width <| fillPortion 6 ]
+                    [ width (fillPortion 6) ]
                     [ Input.text
                         [ width fill
                         , height (px 60)
@@ -119,7 +119,7 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
                         ]
                         { label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                         , onChange = \inp -> changeMsg inp
-                        , placeholder = Just (Input.placeholder [ height fill ] <| el [ centerY ] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
+                        , placeholder = Just (Input.placeholder [ height fill ] (el [ centerY ] (text (extractLabelFromLanguageMap language localTranslations.queryEnter))))
                         , text = queryText
                         }
                     ]

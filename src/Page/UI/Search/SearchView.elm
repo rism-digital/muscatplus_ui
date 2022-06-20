@@ -243,7 +243,7 @@ viewSearchResultsListPanel cfg =
                 [ width fill
                 , height fill
                 , alignTop
-                , inFront <| viewResultsListLoadingScreenTmpl cfg.resultsLoading
+                , inFront (viewResultsListLoadingScreenTmpl cfg.resultsLoading)
                 ]
                 [ viewSearchResultsList cfg.language (.selectedResult cfg.model) cfg.body cfg.clickForPreviewMsg
                 ]

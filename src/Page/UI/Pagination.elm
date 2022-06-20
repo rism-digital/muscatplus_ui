@@ -20,7 +20,7 @@ paginationLink icon clickFn url =
         [ padding 5
         , height (px 40)
         , width (px 40)
-        , onClick <| clickFn url
+        , onClick (clickFn url)
         , pointer
         ]
         icon

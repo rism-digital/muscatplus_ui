@@ -165,8 +165,8 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
             ]
             (button
                 []
-                { label = text <| extractLabelFromLanguageMap language localTranslations.description
-                , onPress = Just <| UserClickedRecordViewTab (DefaultRecordViewTab recordId)
+                { label = text (extractLabelFromLanguageMap language localTranslations.description)
+                , onPress = Just (UserClickedRecordViewTab (DefaultRecordViewTab recordId))
                 }
             )
         , el
@@ -182,7 +182,7 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
             (button
                 []
                 { label = sourceLabel
-                , onPress = Just <| UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl)
+                , onPress = Just (UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl))
                 }
             )
         ]

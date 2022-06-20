@@ -28,7 +28,7 @@ buildFrontPageUrl sidebarOption countryCode =
             List.filterMap identity [ countryCode ]
                 |> List.map (\c -> Url.Builder.string "nc" c)
     in
-    serverUrl [ "/" ] <| modeParameter :: ncParameter
+    serverUrl [ "/" ] (modeParameter :: ncParameter)
 
 
 countryListRequest : Cmd SideBarMsg

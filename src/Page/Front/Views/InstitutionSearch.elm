@@ -56,7 +56,7 @@ institutionSearchPanelView session model frontBody =
                 ]
                 [ paragraph
                     [ headingHero, Font.semiBold ]
-                    [ text <| extractLabelFromLanguageMap language localTranslations.institutions ]
+                    [ text (extractLabelFromLanguageMap language localTranslations.institutions) ]
                 ]
             , viewFrontKeywordQueryInput
                 { language = language

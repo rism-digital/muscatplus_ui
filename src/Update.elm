@@ -166,6 +166,13 @@ changePage url model =
 
         Route.PersonPageRoute _ ->
             let
+                recordCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = newSession.restrictedToNationalCollection
+                    }
+
                 newPageBody =
                     case model of
                         PersonPage _ oldPageBody ->
@@ -173,13 +180,6 @@ changePage url model =
 
                         _ ->
                             RecordPage.init recordCfg
-
-                recordCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = newSession.restrictedToNationalCollection
-                    }
 
                 sourceQuery =
                     toNextQuery newPageBody.activeSearch
@@ -356,7 +356,7 @@ update msg model =
                 Browser.Internal url ->
                     -- if the app is loading the viewer, treat it as an external link.
                     if url.path == "/viewer.html" then
-                        ( model, Nav.load <| Url.toString url )
+                        ( model, Nav.load (Url.toString url) )
 
                     else
                         let

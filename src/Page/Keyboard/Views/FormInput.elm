@@ -52,7 +52,7 @@ viewRenderControls language notationFacet (Keyboard model config) =
                 , bodySM
                 ]
                 [ dropdownSelect
-                    { selectedMsg = \clefStr -> UserClickedPianoKeyboardChangeClef <| clefStrToClef clefStr
+                    { selectedMsg = \clefStr -> UserClickedPianoKeyboardChangeClef (clefStrToClef clefStr)
                     , mouseDownMsg = Nothing
                     , mouseUpMsg = Nothing
                     , choices = clefObjList
@@ -77,7 +77,7 @@ viewRenderControls language notationFacet (Keyboard model config) =
                 , bodySM
                 ]
                 [ dropdownSelect
-                    { selectedMsg = \ksigStr -> UserClickedPianoKeyboardChangeKeySignature <| keySigStrToKeySignature ksigStr
+                    { selectedMsg = \ksigStr -> UserClickedPianoKeyboardChangeKeySignature (keySigStrToKeySignature ksigStr)
                     , mouseDownMsg = Nothing
                     , mouseUpMsg = Nothing
                     , choices = keySigList
@@ -95,7 +95,7 @@ viewRenderControls language notationFacet (Keyboard model config) =
                 , bodySM
                 ]
                 [ dropdownSelect
-                    { selectedMsg = \tsigStr -> UserClickedPianoKeyboardChangeTimeSignature <| timeSigStrToTimeSignature tsigStr
+                    { selectedMsg = \tsigStr -> UserClickedPianoKeyboardChangeTimeSignature (timeSigStrToTimeSignature tsigStr)
                     , mouseDownMsg = Nothing
                     , mouseUpMsg = Nothing
                     , choices = tsigList

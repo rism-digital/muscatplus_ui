@@ -25,7 +25,7 @@ view session model =
         indexerVersion =
             case model.response of
                 Response (AboutData body) ->
-                    text <| "Indexer Version: " ++ body.indexerVersion
+                    text ("Indexer Version: " ++ body.indexerVersion)
 
                 _ ->
                     none
@@ -33,7 +33,7 @@ view session model =
         serverVersion =
             case model.response of
                 Response (AboutData body) ->
-                    text <| "Server Version: " ++ body.serverVersion
+                    text ("Server Version: " ++ body.serverVersion)
 
                 _ ->
                     none
@@ -49,7 +49,7 @@ view session model =
             , Background.color (colourScheme.white |> convertColorToElementColor)
             , spacing lineSpacing
             ]
-            [ text <| "UI Version: " ++ C.uiVersion
+            [ text ("UI Version: " ++ C.uiVersion)
             , serverVersion
             , indexerVersion
             , indexedTimestamp
@@ -114,6 +114,6 @@ viewLastIndexed timestamp =
                     "12"
 
         year =
-            String.fromInt <| Time.toYear Time.utc timestamp
+            String.fromInt (Time.toYear Time.utc timestamp)
     in
-    text <| "Last indexed: " ++ year ++ "-" ++ month ++ "-" ++ day ++ " " ++ hour ++ ":" ++ minute
+    text ("Last indexed: " ++ year ++ "-" ++ month ++ "-" ++ day ++ " " ++ hour ++ ":" ++ minute)

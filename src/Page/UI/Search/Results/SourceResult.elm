@@ -77,7 +77,7 @@ viewSourcePartOf language fontLinkColour partOfBody =
                 [ text "Part of " -- TODO: Translate!
                 , link
                     [ Font.color (fontLinkColour |> convertColorToElementColor) ]
-                    { label = text (extractLabelFromLanguageMap language <| .label partOfBody.source)
+                    { label = text (extractLabelFromLanguageMap language (.label partOfBody.source))
                     , url = .id partOfBody.source
                     }
                 ]
