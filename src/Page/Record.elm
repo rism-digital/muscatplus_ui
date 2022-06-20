@@ -91,11 +91,6 @@ init cfg =
 load : RecordConfig -> RecordPageModel RecordMsg -> RecordPageModel RecordMsg
 load cfg oldBody =
     let
-        activeSearch =
-            toNextQuery activeSearchInit
-                |> setNationalCollection cfg.nationalCollection
-                |> flip setNextQuery activeSearchInit
-
         activeSearchInit =
             case cfg.queryArgs of
                 Just q ->
@@ -106,6 +101,11 @@ load cfg oldBody =
 
                 Nothing ->
                     ActiveSearch.empty
+
+        activeSearch =
+            toNextQuery activeSearchInit
+                |> setNationalCollection cfg.nationalCollection
+                |> flip setNextQuery activeSearchInit
 
         ( previewResp, selectedResult ) =
             case .fragment cfg.incomingUrl of
