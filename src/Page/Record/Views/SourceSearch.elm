@@ -160,7 +160,7 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
             , Font.center
             , alignLeft
             , pointer
-            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.widthEach { bottom = 3, left = 0, right = 0, top = 0 }
             , Border.color descriptionTabBorder
             ]
             (button
@@ -176,7 +176,7 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
             , centerY
             , pointer
             , headingSM
-            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.widthEach { bottom = 3, left = 0, right = 0, top = 0 }
             , Border.color searchTabBorder
             ]
             (button

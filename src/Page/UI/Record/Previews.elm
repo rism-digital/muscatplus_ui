@@ -110,6 +110,7 @@ viewPreviewRouter language closeMsg previewData =
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
         , Border.width 3
+        , htmlAttribute (HA.style "z-index" "10")
         ]
         [ column
             [ width fill
