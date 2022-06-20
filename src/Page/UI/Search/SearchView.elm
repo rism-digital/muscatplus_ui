@@ -2,7 +2,7 @@ module Page.UI.Search.SearchView exposing (SearchControlsConfig, SearchResultRou
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, htmlAttribute, inFront, minimum, none, px, row, scrollbarY, width)
+import Element exposing (Attribute, Device, DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, minimum, none, px, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -12,6 +12,7 @@ import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
+import Page.UI.Attributes exposing (controlsColumnWidth, responsiveCheckboxColumns, resultColumnWidth)
 import Page.UI.Components exposing (viewBlankBottomBar)
 import Page.UI.Facets.Facets exposing (FacetMsgConfig)
 import Page.UI.Pagination exposing (viewPagination)
@@ -59,24 +60,6 @@ type alias SearchResultsSectionConfig a msg =
 viewSearchResultsSection : SearchResultsSectionConfig a msg -> Bool -> SearchBody -> Element msg
 viewSearchResultsSection cfg resultsLoading body =
     let
-        ( resultColumnWidth, controlsPanelWidth ) =
-            let
-                { class, orientation } =
-                    .device cfg.session
-            in
-            case ( class, orientation ) of
-                ( Phone, Portrait ) ->
-                    ( width (px 900), width (px 0) )
-
-                ( Desktop, Landscape ) ->
-                    ( width (px 900 |> minimum 900), width fill )
-
-                ( BigDesktop, Landscape ) ->
-                    ( width (px 1200 |> minimum 1100), width fill )
-
-                _ ->
-                    ( width (px 900 |> minimum 900), width fill )
-
         renderedPreview =
             case .preview cfg.model of
                 Loading oldData ->
@@ -100,7 +83,7 @@ viewSearchResultsSection cfg resultsLoading body =
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]
         [ column
-            [ resultColumnWidth
+            [ resultColumnWidth (.device cfg.session)
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
@@ -124,7 +107,7 @@ viewSearchResultsSection cfg resultsLoading body =
             , viewPagination language body.pagination cfg.userClickedResultsPaginationMsg
             ]
         , column
-            [ controlsPanelWidth
+            [ controlsColumnWidth (.device cfg.session)
             , height fill
             , alignTop
             , inFront renderedPreview
@@ -141,6 +124,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 { language = language
                 , model = cfg.model
                 , body = body
+                , checkboxColumns = responsiveCheckboxColumns (.device cfg.session)
                 , facetMsgConfig = cfg.facetMsgConfig
                 , sectionToggleMsg = cfg.sectionToggleMsg
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
@@ -155,6 +139,7 @@ type alias SearchControlsConfig a msg =
     { language : Language
     , model : { a | activeSearch : ActiveSearch msg }
     , body : SearchBody
+    , checkboxColumns : Int
     , facetMsgConfig : FacetMsgConfig msg
     , sectionToggleMsg : msg
     , userTriggeredSearchSubmitMsg : msg
@@ -174,6 +159,7 @@ viewSearchControls cfg =
             { language = cfg.language
             , activeSearch = .activeSearch cfg.model
             , body = cfg.body
+            , numberOfSelectColumns = cfg.checkboxColumns
             , sectionToggleMsg = cfg.sectionToggleMsg
             , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
             , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
@@ -201,9 +187,10 @@ viewSearchControls cfg =
         [ width fill
         , height fill
         , alignTop
+        , scrollbarY
         ]
         [ column
-            [ width (px 900)
+            [ width (fill |> maximum 1100)
             , centerX
             , height fill
             , alignTop

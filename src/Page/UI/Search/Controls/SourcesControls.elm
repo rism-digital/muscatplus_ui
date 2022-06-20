@@ -94,13 +94,13 @@ viewFacetToggleSection language activeSearch body facetSearchMsgConfig =
 
 
 viewFacetsForSourcesMode : ControlsConfig msg -> Element msg
-viewFacetsForSourcesMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig } =
+viewFacetsForSourcesMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
     let
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , selectColumns = 3
+            , selectColumns = numberOfSelectColumns
             , body = body
             }
 
@@ -111,7 +111,6 @@ viewFacetsForSourcesMode { language, activeSearch, body, sectionToggleMsg, userT
     in
     row
         [ padding 10
-        , scrollbarY
         , width fill
         , alignTop
         , height fill

@@ -9,13 +9,13 @@ import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
 viewFacetsForInstitutionsMode : ControlsConfig msg -> Element msg
-viewFacetsForInstitutionsMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig } =
+viewFacetsForInstitutionsMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
     let
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , selectColumns = 3
+            , selectColumns = numberOfSelectColumns
             , body = body
             }
 
@@ -29,7 +29,6 @@ viewFacetsForInstitutionsMode { language, activeSearch, body, sectionToggleMsg, 
         , height fill
         , alignTop
         , padding 10
-        , scrollbarY
         ]
         [ column
             [ width fill

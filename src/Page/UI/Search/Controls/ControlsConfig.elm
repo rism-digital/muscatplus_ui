@@ -10,6 +10,7 @@ type alias ControlsConfig msg =
     { language : Language
     , activeSearch : ActiveSearch msg
     , body : SearchBody
+    , numberOfSelectColumns : Int
     , sectionToggleMsg : msg
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg

@@ -10,13 +10,13 @@ import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
 viewFacetsForPeopleMode : ControlsConfig msg -> Element msg
-viewFacetsForPeopleMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig } =
+viewFacetsForPeopleMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
     let
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , selectColumns = 3
+            , selectColumns = numberOfSelectColumns
             , body = body
             }
 
@@ -27,7 +27,6 @@ viewFacetsForPeopleMode { language, activeSearch, body, sectionToggleMsg, userTr
     in
     row
         [ padding 10
-        , scrollbarY
         , width fill
         , alignTop
         , height fill

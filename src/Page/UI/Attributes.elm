@@ -4,6 +4,7 @@ module Page.UI.Attributes exposing
     , bodyRegular
     , bodySM
     , bodyXS
+    , controlsColumnWidth
     , emptyAttribute
     , facetBorderBottom
     , fontBaseSize
@@ -19,13 +20,15 @@ module Page.UI.Attributes exposing
     , linkColour
     , minimalDropShadow
     , pageBackground
+    , responsiveCheckboxColumns
+    , resultColumnWidth
     , sectionBorderStyles
     , sectionSpacing
     , valueFieldColumnAttributes
     )
 
 import Color exposing (toCssString)
-import Element exposing (Attr, Attribute, alignTop, fillPortion, htmlAttribute, paddingXY, width)
+import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, minimum, paddingXY, px, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -227,3 +230,52 @@ valueFieldColumnAttributes =
     [ width (fillPortion 3)
     , alignTop
     ]
+
+
+resultColumnWidth : Device -> Attribute msg
+resultColumnWidth { class, orientation } =
+    case ( class, orientation ) of
+        ( Phone, Portrait ) ->
+            width (px 900)
+
+        ( Desktop, Landscape ) ->
+            width (px 900 |> minimum 900)
+
+        ( BigDesktop, Landscape ) ->
+            width (px 900 |> minimum 900)
+
+        _ ->
+            -- TODO: Figure out what else goes here.
+            width (px 900 |> minimum 900)
+
+
+controlsColumnWidth : Device -> Attribute msg
+controlsColumnWidth { class, orientation } =
+    case ( class, orientation ) of
+        ( Phone, Portrait ) ->
+            width (px 0)
+
+        ( Desktop, Landscape ) ->
+            width fill
+
+        ( BigDesktop, Landscape ) ->
+            width fill
+
+        _ ->
+            width fill
+
+
+responsiveCheckboxColumns : Device -> Int
+responsiveCheckboxColumns { class, orientation } =
+    case ( class, orientation ) of
+        ( Phone, Portrait ) ->
+            3
+
+        ( Desktop, Landscape ) ->
+            3
+
+        ( BigDesktop, Landscape ) ->
+            4
+
+        _ ->
+            3

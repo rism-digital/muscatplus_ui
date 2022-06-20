@@ -9,13 +9,13 @@ import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
 viewFacetsForIncipitsMode : ControlsConfig msg -> Element msg
-viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig } =
+viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
     let
         facetConfig alias =
             { alias = alias
             , language = language
             , activeSearch = activeSearch
-            , selectColumns = 3
+            , selectColumns = numberOfSelectColumns
             , body = body
             }
 
@@ -26,7 +26,6 @@ viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, user
     in
     row
         [ padding 10
-        , scrollbarY
         , width fill
         , alignTop
         , height fill
