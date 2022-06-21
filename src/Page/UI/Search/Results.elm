@@ -9,7 +9,7 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Flip exposing (flip)
 import Html.Attributes as HA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, formatNumberByLanguage)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h3)
@@ -174,17 +174,30 @@ summaryFieldTemplate summaryCfg fieldValue =
         fVal =
             extractTextFromLanguageMap summaryCfg.language fieldValue.value
 
+        fValueLength =
+            List.length fValueFormatted
+
+        fValueFormatted =
+            List.map
+                (\f ->
+                    case String.toInt f of
+                        Just num ->
+                            toFloat num
+                                |> formatNumberByLanguage summaryCfg.language
+
+                        Nothing ->
+                            f
+                )
+                fVal
+
         fValueAsString =
             if fValueLength > 3 then
-                List.take 3 fVal
+                List.take 3 fValueFormatted
                     |> String.join "; "
                     |> flip String.append " … "
 
             else
-                String.join "; " fVal
-
-        fValueLength =
-            List.length fVal
+                String.join "; " fValueFormatted
 
         iconElement =
             el
