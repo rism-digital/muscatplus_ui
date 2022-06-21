@@ -40,7 +40,7 @@ viewModeItem selectedMode language fitem =
             [ alignLeft
             , Font.center
             , height fill
-            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.widthEach { bottom = 3, left = 0, right = 0, top = 0 }
             ]
 
         (FacetItem value label count) =
