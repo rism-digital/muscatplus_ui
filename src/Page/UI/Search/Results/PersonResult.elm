@@ -72,8 +72,18 @@ viewPersonSummary language iconColour summary =
         [ column
             [ spacing 5 ]
             [ row
-                [ width fill ]
+                [ width fill
+                , spacing 20
+                ]
                 [ viewSearchResultSummaryField
+                    { language = language
+                    , icon = sourcesSvg iconColour
+                    , includeLabelInValue = True
+                    , fieldName = "numSources"
+                    , displayStyles = []
+                    }
+                    summary
+                , viewSearchResultSummaryField
                     { language = language
                     , icon = briefcaseSvg iconColour
                     , includeLabelInValue = False

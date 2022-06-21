@@ -73,12 +73,22 @@ viewInstitutionSummary language iconColour summary =
         [ column
             [ spacing 5 ]
             [ row
-                [ width fill ]
+                [ width fill
+                , spacing 20
+                ]
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = mapMarkerSvg iconColour
                     , includeLabelInValue = False
                     , fieldName = "countryName"
+                    , displayStyles = []
+                    }
+                    summary
+                , viewSearchResultSummaryField
+                    { language = language
+                    , icon = sourcesSvg iconColour
+                    , includeLabelInValue = True
+                    , fieldName = "totalHoldings"
                     , displayStyles = []
                     }
                     summary
