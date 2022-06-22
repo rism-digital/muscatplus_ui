@@ -286,7 +286,10 @@ changePage url model =
 
                 refreshCmds =
                     if isSamePersonPage then
-                        RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                        Cmd.batch
+                            [ RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            , RecordPage.recordSearchRequest sourceUrl
+                            ]
                             |> Cmd.map Msg.UserInteractedWithRecordPage
 
                     else
@@ -384,7 +387,10 @@ changePage url model =
 
                 refreshCmds =
                     if isSameInstitutionPage then
-                        RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                        Cmd.batch
+                            [ RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            , RecordPage.recordSearchRequest sourceUrl
+                            ]
                             |> Cmd.map Msg.UserInteractedWithRecordPage
 
                     else
