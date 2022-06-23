@@ -61,28 +61,32 @@ init flags url key =
         language =
             parseLocaleToLanguage flags.locale
 
-        nationalCollectionFilter =
-            if nationalCollectionFromUrl /= Nothing then
-                nationalCollectionFromUrl
-
-            else
-                let
-                    nationalCollectionFromLocalStorage =
-                        flags.nationalCollection
-                in
-                if nationalCollectionFromLocalStorage /= Nothing then
-                    nationalCollectionFromLocalStorage
-
-                else
-                    Nothing
-
         nationalCollectionFromUrl =
             case route of
                 FrontPageRoute qargs ->
                     qargs.nationalCollection
 
+                SearchPageRoute qargs _ ->
+                    qargs.nationalCollection
+
+                SourceContentsPageRoute _ qargs ->
+                    qargs.nationalCollection
+
+                InstitutionSourcePageRoute _ qargs ->
+                    qargs.nationalCollection
+
+                -- nb: the person source page route is not included
+                -- since the person pages are hidden when performing
+                -- a national collection search.
                 _ ->
                     Nothing
+
+        nationalCollectionFilter =
+            if nationalCollectionFromUrl /= Nothing then
+                nationalCollectionFromUrl
+
+            else
+                flags.nationalCollection
 
         route =
             parseUrl url
