@@ -16,6 +16,7 @@ import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedLabel)
+import Page.UI.Attributes exposing (emptyAttribute, headingXXL, minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
@@ -62,17 +63,6 @@ menuOption :
     -> Element SideBarMsg
 menuOption cfg option currentlyHovered =
     let
-        additionalOptions =
-            List.concat
-                [ [ onClick (UserClickedSideBarOptionForFrontPage option)
-                  , onMouseEnter (UserMouseEnteredSideBarOption option)
-                  , onMouseLeave (UserMouseExitedSideBarOption option)
-                  , Font.color (fontColour |> convertColorToElementColor)
-                  ]
-                , hoverStyles
-                , selectedStyle
-                ]
-
         fontColour =
             if cfg.isCurrent then
                 colourScheme.white
@@ -91,13 +81,6 @@ menuOption cfg option currentlyHovered =
         icon =
             cfg.icon fontColour
 
-        newCfg =
-            { icon = icon
-            , isCurrent = cfg.isCurrent
-            , label = cfg.label
-            , showLabel = cfg.showLabel
-            }
-
         selectedStyle =
             if cfg.isCurrent then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
@@ -105,6 +88,24 @@ menuOption cfg option currentlyHovered =
 
             else
                 []
+
+        newCfg =
+            { icon = icon
+            , isCurrent = cfg.isCurrent
+            , label = cfg.label
+            , showLabel = cfg.showLabel
+            }
+
+        additionalOptions =
+            List.concat
+                [ [ onClick (UserClickedSideBarOptionForFrontPage option)
+                  , onMouseEnter (UserMouseEnteredSideBarOption option)
+                  , onMouseLeave (UserMouseExitedSideBarOption option)
+                  , Font.color (fontColour |> convertColorToElementColor)
+                  ]
+                , hoverStyles
+                , selectedStyle
+                ]
     in
     menuOptionTemplate newCfg additionalOptions
 
@@ -256,6 +257,14 @@ view session =
                 }
                 SourceSearchOption
                 (checkHover SourceSearchOption)
+
+        sideBarShadow =
+            case sideBarAnimation of
+                Expanded ->
+                    minimalDropShadow
+
+                _ ->
+                    emptyAttribute
     in
     animatedColumn
         sideAnimation
@@ -269,9 +278,10 @@ view session =
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
+        , sideBarShadow
         ]
         [ row
-            [ width (px 60)
+            [ width fill
             , height (px 80)
             , paddingXY 15 10
             ]
@@ -280,17 +290,33 @@ view session =
                 , alignLeft
                 , width fill
                 ]
-                [ link
-                    [ width fill
+                [ row
+                    [ width shrink
+                    , spacing 10
                     ]
-                    { label =
-                        el
-                            [ alignTop
-                            , width fill
+                    [ link
+                        [ width fill
+                        ]
+                        { label =
+                            el
+                                [ alignTop
+                                , width fill
+                                ]
+                                (rismLogo colourScheme.lightBlue headerHeight)
+                        , url = Config.serverUrl ++ "?mode=sources"
+                        }
+                    , viewIf
+                        (column
+                            [ headingXXL
+                            , Font.medium
+                            , Font.family [ Font.typeface "Cinzel Decorative" ]
+                            , Font.color (colourScheme.darkGrey |> convertColorToElementColor)
                             ]
-                            (rismLogo colourScheme.lightBlue headerHeight)
-                    , url = Config.serverUrl ++ "?mode=sources"
-                    }
+                            [ el [] (text "Online")
+                            ]
+                        )
+                        showLabels
+                    ]
                 ]
             ]
         , row
