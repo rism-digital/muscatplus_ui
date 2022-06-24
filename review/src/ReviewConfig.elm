@@ -11,7 +11,6 @@ when inside the directory containing this file.
 
 -}
 
-import Docs.ReviewAtDocs
 import NoDebug.Log
 import NoDebug.TodoOrToString
 import NoExposingEverything
@@ -26,6 +25,7 @@ import NoPrematureLetComputation
 import NoRedundantConcat
 import NoRedundantCons
 import NoSimpleLetBody
+import NoUnsortedLetDeclarations
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
@@ -70,4 +70,10 @@ config =
         |> NoInconsistentAliases.noMissingAliases
         |> NoInconsistentAliases.rule
     , NoModuleOnExposedNames.rule
+    , NoUnsortedLetDeclarations.rule
+        (NoUnsortedLetDeclarations.sortLetDeclarations
+            |> NoUnsortedLetDeclarations.usedInExpressionLast
+            |> NoUnsortedLetDeclarations.glueHelpersBefore
+         --|> NoUnsortedLetDeclarations.alphabetically
+        )
     ]
