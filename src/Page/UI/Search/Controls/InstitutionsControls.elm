@@ -1,28 +1,40 @@
 module Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 
-import Element exposing (Element, alignTop, column, fill, height, padding, row, scrollbarY, width)
+import Element exposing (Element, alignTop, column, fill, height, none, padding, paddingEach, row, scrollbarY, width)
+import Language.LocalTranslations exposing (facetPanelTitles)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.UI.Components exposing (dividerWithText)
-import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection)
+import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection, viewFacetsControlPanel)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
+institutionFacetPanels =
+    { locationPanel =
+        { alias = "institution-location-panel"
+        , label = facetPanelTitles.location
+        }
+    }
+
+
 viewFacetsForInstitutionsMode : ControlsConfig msg -> Element msg
-viewFacetsForInstitutionsMode { language, activeSearch, body, panelToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
+viewFacetsForInstitutionsMode cfg =
     let
         facetConfig alias =
             { alias = alias
-            , language = language
-            , activeSearch = activeSearch
-            , selectColumns = numberOfSelectColumns
-            , body = body
+            , language = cfg.language
+            , activeSearch = cfg.activeSearch
+            , selectColumns = cfg.numberOfSelectColumns
+            , body = cfg.body
             }
 
         qText =
-            toNextQuery activeSearch
+            toNextQuery cfg.activeSearch
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
+
+        city =
+            viewFacet (facetConfig "city") cfg.facetMsgConfig
     in
     row
         [ width fill
@@ -35,33 +47,26 @@ viewFacetsForInstitutionsMode { language, activeSearch, body, panelToggleMsg, us
             , alignTop
             ]
             [ row
-                [ width fill
-                , height fill
-                , alignTop
-                ]
-                [ column
-                    [ width fill
-                    , alignTop
-                    ]
-                    [ searchKeywordInput
-                        { language = language
-                        , submitMsg = userTriggeredSearchSubmitMsg
-                        , changeMsg = userEnteredTextInKeywordQueryBoxMsg
-                        , queryText = qText
-                        }
-                    ]
+                [ width fill ]
+                [ searchKeywordInput
+                    { language = cfg.language
+                    , submitMsg = cfg.userTriggeredSearchSubmitMsg
+                    , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
+                    , queryText = qText
+                    }
                 ]
             , row
-                [ width fill ]
+                [ width fill
+                , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }
+                ]
                 -- TODO: Translate
                 [ dividerWithText "Additional filters"
                 ]
-            , viewFacetSection language
-                panelToggleMsg
-                [ viewFacet (facetConfig "has-siglum") facetMsgConfig ]
-            , viewFacetSection language
-                panelToggleMsg
-                [ viewFacet (facetConfig "city") facetMsgConfig
+            , viewFacetsControlPanel
+                (.alias institutionFacetPanels.locationPanel)
+                (.label institutionFacetPanels.locationPanel)
+                cfg
+                [ city
                 ]
             ]
         ]

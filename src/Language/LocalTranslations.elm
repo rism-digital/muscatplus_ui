@@ -286,6 +286,7 @@ facetPanelTitles :
     , publicationProduction : LanguageMap
     , biographicalDetails : LanguageMap
     , roleAndProfession : LanguageMap
+    , location : LanguageMap
     }
 facetPanelTitles =
     { results =
@@ -304,4 +305,6 @@ facetPanelTitles =
         [ LanguageValues English [ "Biographical details" ] ]
     , roleAndProfession =
         [ LanguageValues English [ "Role and Profession" ] ]
+    , location =
+        [ LanguageValues English [ "Location" ] ]
     }
