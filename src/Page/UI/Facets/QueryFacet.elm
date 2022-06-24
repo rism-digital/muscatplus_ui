@@ -2,7 +2,7 @@ module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, padding, paddingEach, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -14,8 +14,8 @@ import Page.Query exposing (toFacetBehaviours, toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), QueryFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviourItems, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias, LabelValue)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion, toAlias, toSuggestionList)
-import Page.UI.Attributes exposing (bodySM, headingSM, lineSpacing)
-import Page.UI.Components exposing (dropdownSelect, h5)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingSM, lineSpacing)
+import Page.UI.Components exposing (dropdownSelect, h4, h5)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -30,6 +30,7 @@ type alias QueryFacetConfig msg =
     , userEnteredTextMsg : FacetAlias -> String -> String -> msg
     , userChangedBehaviourMsg : FacetAlias -> FacetBehaviours -> msg
     , userChoseOptionMsg : FacetAlias -> String -> FacetBehaviours -> msg
+    , nothingHappenedMsg : msg
     }
 
 
@@ -56,12 +57,15 @@ viewQueryFacet config =
                 Nothing ->
                     none
 
-        activeValues : List String
-        activeValues =
+        serverBehaviourOption =
+            toBehaviours config.queryFacet
+                |> toCurrentBehaviour
+
+        currentBehaviourOption =
             toNextQuery config.activeSearch
-                |> toFilters
+                |> toFacetBehaviours
                 |> Dict.get facetAlias
-                |> Maybe.withDefault []
+                |> Maybe.withDefault serverBehaviourOption
 
         ( behaviourIcon, behaviourText ) =
             case currentBehaviourOption of
@@ -71,23 +75,32 @@ viewQueryFacet config =
                 FacetBehaviourUnion ->
                     ( unionSvg colourScheme.slateGrey, "Options are combined with an OR operator" )
 
-        currentBehaviourOption =
-            toNextQuery config.activeSearch
-                |> toFacetBehaviours
-                |> Dict.get facetAlias
-                |> Maybe.withDefault serverBehaviourOption
+        facetAlias =
+            .alias config.queryFacet
 
+        facetLabel =
+            .label config.queryFacet
+
+        activeValues : List String
+        activeValues =
+            toNextQuery config.activeSearch
+                |> toFilters
+                |> Dict.get facetAlias
+                |> Maybe.withDefault []
+
+        -- if an override hasn't been set in the facetBehaviours
+        -- then choose the behaviour that came from the server.
         enteredOptions =
             List.map
                 (\t ->
                     el
                         [ padding 5
-                        , Border.color (colourScheme.lightOrange |> convertColorToElementColor)
-                        , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
+
+                        --, Border.color (colourScheme.lightOrange |> convertColorToElementColor)
+                        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , Font.medium
-                        , bodySM
-                        , Border.width 1
+                        , bodyRegular
                         ]
                         (row [ spacing 5 ]
                             [ column []
@@ -104,19 +117,6 @@ viewQueryFacet config =
                 )
                 (List.reverse activeValues)
 
-        facetAlias =
-            .alias config.queryFacet
-
-        -- if an override hasn't been set in the facetBehaviours
-        -- then choose the behaviour that came from the server.
-        facetBehaviours =
-            toBehaviours config.queryFacet
-                |> toBehaviourItems
-
-        facetLabel =
-            .label config.queryFacet
-
-        -- TODO: Translate
         interspersedOptions =
             case enteredOptions of
                 [] ->
@@ -127,19 +127,32 @@ viewQueryFacet config =
                         joinWordEl =
                             case currentBehaviourOption of
                                 FacetBehaviourIntersection ->
-                                    el [] (text "<and>")
+                                    el
+                                        [ Background.color (colourScheme.darkOrange |> convertColorToElementColor)
+                                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                                        , padding 5
+                                        , Font.medium
+                                        ]
+                                        (text "and")
 
                                 FacetBehaviourUnion ->
-                                    el [] (text "<or>")
+                                    el
+                                        [ Background.color (colourScheme.darkOrange |> convertColorToElementColor)
+                                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                                        , padding 5
+                                        , Font.medium
+                                        ]
+                                        (text "or")
                     in
                     List.intersperse joinWordEl enteredOptions
 
+        -- TODO: Translate
+        facetBehaviours =
+            toBehaviours config.queryFacet
+                |> toBehaviourItems
+
         listOfBehavioursForDropdown =
             List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )) facetBehaviours
-
-        serverBehaviourOption =
-            toBehaviours config.queryFacet
-                |> toCurrentBehaviour
 
         suggestionUrl =
             .suggestions config.queryFacet
@@ -148,16 +161,46 @@ viewQueryFacet config =
             .queryFacetValues config.activeSearch
                 |> Dict.get facetAlias
                 |> Maybe.withDefault ""
+
+        onEnterMsg =
+            if String.isEmpty textValue then
+                config.nothingHappenedMsg
+
+            else
+                config.userChoseOptionMsg facetAlias textValue currentBehaviourOption
+
+        queryTermsDisplay =
+            if List.isEmpty enteredOptions then
+                none
+
+            else
+                wrappedRow
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    (List.append
+                        [ el
+                            [ Font.medium
+                            , padding 5
+                            ]
+                            (text "Query terms:")
+                        ]
+                        interspersedOptions
+                    )
     in
     row
         [ width fill
         , alignTop
         , alignLeft
+        , paddingEach { top = 0, bottom = 14, left = 0, right = 0 }
         ]
         [ column
             [ width fill
             , alignTop
             , spacing lineSpacing
+            , paddingEach { top = 0, bottom = 0, left = 14, right = 0 }
+            , Border.widthEach { top = 0, bottom = 0, left = 2, right = 0 }
+            , Border.color (colourScheme.midGrey |> convertColorToElementColor)
             ]
             [ row
                 [ width fill
@@ -178,7 +221,7 @@ viewQueryFacet config =
                     ]
                     [ row
                         [ spacing 10 ]
-                        [ h5 config.language facetLabel ]
+                        [ h4 config.language facetLabel ]
                     ]
                 ]
             , row
@@ -187,7 +230,7 @@ viewQueryFacet config =
                     [ width (px 400)
                     , Border.rounded 0
                     , htmlAttribute (HA.autocomplete False)
-                    , onEnter (config.userChoseOptionMsg facetAlias textValue currentBehaviourOption)
+                    , onEnter onEnterMsg
                     , headingSM
                     , paddingXY 10 12
                     , below activeSuggestion
@@ -198,23 +241,11 @@ viewQueryFacet config =
                     , text = textValue
                     }
                 ]
-            , wrappedRow
-                [ width fill
-                , spacing lineSpacing
-                ]
-                (List.append
-                    [ el
-                        [ Font.medium
-                        , padding 5
-                        ]
-                        (text "Query:")
-                    ]
-                    interspersedOptions
-                )
+            , queryTermsDisplay
             , row
                 [ alignLeft
                 , spacing 10
-                , bodySM
+                , bodyRegular
                 ]
                 [ el
                     [ width (px 20)

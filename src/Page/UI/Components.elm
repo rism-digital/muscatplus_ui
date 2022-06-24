@@ -7,7 +7,9 @@ module Page.UI.Components exposing
     , h1
     , h2
     , h3
+    , h4
     , h5
+    , h6
     , makeFlagIcon
     , renderLabel
     , renderParagraph
@@ -122,6 +124,9 @@ basicCheckbox checked =
 dividerWithText : String -> Element msg
 dividerWithText dividerText =
     let
+        { red, green, blue } =
+            colours.slateGrey
+
         beforeAndAfterStyles =
             [ Css.property "content" "\"\""
             , Css.flexGrow (Css.num 1)
@@ -131,9 +136,6 @@ dividerWithText dividerText =
             , Css.margin2 (Css.px 0) (Css.px 8)
             , Css.backgroundColor (Css.rgba red green blue 0.32)
             ]
-
-        { red, green, blue } =
-            colours.slateGrey
 
         finalEl =
             HS.div
@@ -146,6 +148,7 @@ dividerWithText dividerText =
                     , Css.color (Css.rgba red green blue 1)
                     , Css.margin2 (Css.px 8) (Css.px 0)
                     , Css.textTransform Css.uppercase
+                    , Css.fontWeight (Css.int 500)
                     ]
                 ]
                 [ HS.text dividerText ]
@@ -222,16 +225,16 @@ dropdownSelectOption :
     -> Html msg
 dropdownSelectOption val name choiceFn currentChoice =
     let
-        attrib =
-            [ HA.value val
-            , HA.selected isSelected
-            ]
+        valToChoice =
+            choiceFn val
 
         isSelected =
             valToChoice == currentChoice
 
-        valToChoice =
-            choiceFn val
+        attrib =
+            [ HA.value val
+            , HA.selected isSelected
+            ]
     in
     HT.option
         attrib

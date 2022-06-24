@@ -1,4 +1,4 @@
-module ActiveSearch exposing (ActiveSearchConfig, empty, init, setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setExpandedFacets, setKeyboard, setQueryFacetValues, setRangeFacetValues, toActiveSearch, toExpandedFacets, toKeyboard, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacets)
+module ActiveSearch exposing (ActiveSearchConfig, empty, init, load, setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setExpandedFacetPanels, setExpandedFacets, setKeyboard, setQueryFacetValues, setRangeFacetValues, toActiveSearch, toExpandedFacetPanels, toExpandedFacets, toKeyboard, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacetPanel, toggleExpandedFacets)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebouncer)
@@ -10,6 +10,7 @@ import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
+import Set exposing (Set)
 
 
 type alias ActiveSearchConfig =
@@ -21,7 +22,8 @@ type alias ActiveSearchConfig =
 empty : ActiveSearch msg
 empty =
     { nextQuery = Page.Query.defaultQueryArgs
-    , expandedFacets = []
+    , expandedFacets = Set.empty
+    , expandedFacetPanels = Set.empty
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
     , keyboard = Just Keyboard.initModel
@@ -44,12 +46,22 @@ init cfg =
                     Nothing
     in
     { nextQuery = cfg.queryArgs
-    , expandedFacets = []
+    , expandedFacets = Set.empty
+    , expandedFacetPanels = Set.empty
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
     , keyboard = keyboardQuery
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
+    }
+
+
+load : ActiveSearch msg -> ActiveSearch msg
+load oldActiveSearch =
+    { oldActiveSearch
+        | rangeFacetValues = Dict.empty
+        , queryFacetValues = Dict.empty
+        , activeSuggestion = Nothing
     }
 
 
@@ -68,9 +80,14 @@ setActiveSuggestionDebouncer newValue oldRecord =
     { oldRecord | activeSuggestionDebouncer = newValue }
 
 
-setExpandedFacets : List String -> { a | expandedFacets : List String } -> { a | expandedFacets : List String }
+setExpandedFacets : Set String -> { a | expandedFacets : Set String } -> { a | expandedFacets : Set String }
 setExpandedFacets newFacets oldRecord =
     { oldRecord | expandedFacets = newFacets }
+
+
+setExpandedFacetPanels : Set String -> { a | expandedFacetPanels : Set String } -> { a | expandedFacetPanels : Set String }
+setExpandedFacetPanels newPanels oldRecord =
+    { oldRecord | expandedFacetPanels = newPanels }
 
 
 setKeyboard : Maybe (Keyboard.Model KeyboardMsg) -> { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) } -> { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) }
@@ -93,9 +110,14 @@ toActiveSearch model =
     model.activeSearch
 
 
-toExpandedFacets : { a | expandedFacets : List String } -> List String
+toExpandedFacets : { a | expandedFacets : Set String } -> Set String
 toExpandedFacets model =
     model.expandedFacets
+
+
+toExpandedFacetPanels : { a | expandedFacetPanels : Set String } -> Set String
+toExpandedFacetPanels model =
+    model.expandedFacetPanels
 
 
 toKeyboard : { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) } -> Maybe (Keyboard.Model KeyboardMsg)
@@ -113,13 +135,22 @@ toRangeFacetValues model =
     model.rangeFacetValues
 
 
-toggleExpandedFacets : String -> List String -> List String
+toggleExpandedFacets : String -> Set String -> Set String
 toggleExpandedFacets newFacet oldFacets =
-    if List.member newFacet oldFacets then
-        LE.remove newFacet oldFacets
+    if Set.member newFacet oldFacets then
+        Set.remove newFacet oldFacets
 
     else
-        newFacet :: oldFacets
+        Set.insert newFacet oldFacets
+
+
+toggleExpandedFacetPanel : String -> Set String -> Set String
+toggleExpandedFacetPanel alias panels =
+    if Set.member alias panels then
+        Set.remove alias panels
+
+    else
+        Set.insert alias panels
 
 
 toActiveSuggestion : { a | activeSuggestion : Maybe ActiveSuggestion } -> Maybe ActiveSuggestion

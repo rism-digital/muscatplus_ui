@@ -44,6 +44,9 @@ buildNotationValidationQuery keyboardQuery =
 buildUpdateQuery : Maybe String -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
 buildUpdateQuery newNoteData model =
     let
+        newQuery =
+            setNoteData newNoteData model.query
+
         debounceMsg =
             provideInput DebouncerSettledToSendPAEText
                 |> DebouncerCapturedPAEText
@@ -52,9 +55,6 @@ buildUpdateQuery newNoteData model =
             { model
                 | query = newQuery
             }
-
-        newQuery =
-            setNoteData newNoteData model.query
 
         url =
             buildNotationQueryParameters newQuery
@@ -151,6 +151,9 @@ update msg model =
                 note =
                     createPAENote noteName octave
 
+                query =
+                    model.query
+
                 noteData =
                     case query.noteData of
                         Just n ->
@@ -158,9 +161,6 @@ update msg model =
 
                         Nothing ->
                             note
-
-                query =
-                    model.query
             in
             buildUpdateQuery (Just noteData) newModel
 

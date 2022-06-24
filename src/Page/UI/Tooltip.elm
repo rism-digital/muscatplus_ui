@@ -12,8 +12,8 @@ import Page.UI.Style exposing (colourScheme)
 facetHelp : (Element msg -> Attribute msg) -> String -> Element msg
 facetHelp position helpText =
     el
-        [ width (px 12)
-        , height (px 12)
+        [ width (px 16)
+        , height (px 16)
         , tooltip position (helpBubble helpText)
         ]
         (assistanceSvg colourScheme.slateGrey)

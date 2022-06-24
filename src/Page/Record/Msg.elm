@@ -19,6 +19,7 @@ type RecordMsg
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
     | DebouncerCapturedProbeRequest (Debouncer.Msg RecordMsg)
     | DebouncerSettledToSendProbeRequest
+    | UserClickedFacetPanelToggle String
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedSearchResultsPagination String

@@ -8,13 +8,15 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, searchKeywordIn
 
 import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, px, row, spacing, text, width)
 import Element.Border as Border
+import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (h5)
+import Page.UI.Attributes exposing (headingLG, headingMD, headingSM, headingXL, headingXXL, lineSpacing, sectionSpacing)
+import Page.UI.Components exposing (h4, h5)
 import Page.UI.Events exposing (onEnter)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp)
 
 
@@ -64,7 +66,7 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText } =
                     ]
                     [ row
                         [ spacing 10 ]
-                        [ h5 language localTranslations.keywordQuery ]
+                        [ h4 language localTranslations.keywordQuery ]
                     ]
                 ]
             , row
@@ -74,12 +76,18 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText } =
                     , htmlAttribute (HA.autocomplete False)
                     , Border.rounded 0
                     , onEnter submitMsg
-                    , headingSM
+                    , headingXXL
+                    , Font.medium
                     , paddingXY 10 12
                     ]
                     { label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                     , onChange = \inp -> changeMsg inp
-                    , placeholder = Just (Input.placeholder [] (text (extractLabelFromLanguageMap language localTranslations.queryEnter)))
+                    , placeholder =
+                        Just
+                            (Input.placeholder
+                                []
+                                (text (extractLabelFromLanguageMap language localTranslations.queryEnter))
+                            )
                     , text = queryText
                     }
                 ]
@@ -109,12 +117,12 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
                     [ width (fillPortion 6) ]
                     [ Input.text
                         [ width fill
-                        , height (px 60)
                         , centerY
                         , htmlAttribute (HA.autocomplete False)
                         , Border.rounded 0
                         , onEnter submitMsg
-                        , headingLG
+                        , headingXXL
+                        , Font.medium
                         , paddingXY 10 20
                         ]
                         { label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)

@@ -182,9 +182,9 @@ linkColour =
 minimalDropShadow : Attribute msg
 minimalDropShadow =
     Border.shadow
-        { blur = 3
+        { blur = 4
         , color =
-            colourScheme.midGrey
+            colourScheme.darkGrey
                 |> convertColorToElementColor
         , offset = ( 0, 0 )
         , size = 0

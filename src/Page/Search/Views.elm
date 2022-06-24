@@ -70,7 +70,7 @@ searchResultsViewRouter session model =
             , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
             , facetMsgConfig = facetSearchMsgConfig
-            , sectionToggleMsg = SearchMsg.UserClickedFacetPanelToggle
+            , panelToggleMsg = SearchMsg.UserClickedFacetPanelToggle
             }
     in
     case model.response of

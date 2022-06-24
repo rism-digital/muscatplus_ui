@@ -21,12 +21,12 @@ type alias ToggleFacetConfig msg =
 viewToggleFacet : ToggleFacetConfig msg -> Element msg
 viewToggleFacet config =
     let
+        facetAlias =
+            .alias config.toggleFacet
+
         activeFilters =
             toNextQuery config.activeSearch
                 |> toFilters
-
-        facetAlias =
-            .alias config.toggleFacet
 
         isActive =
             Dict.member facetAlias activeFilters

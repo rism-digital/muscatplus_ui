@@ -11,7 +11,7 @@ type alias ControlsConfig msg =
     , activeSearch : ActiveSearch msg
     , body : SearchBody
     , numberOfSelectColumns : Int
-    , sectionToggleMsg : msg
+    , panelToggleMsg : String -> msg
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     , facetMsgConfig : FacetMsgConfig msg

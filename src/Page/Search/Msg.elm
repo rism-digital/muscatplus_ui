@@ -23,7 +23,7 @@ type SearchMsg
     | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String
     | UserClickedToggleFacet FacetAlias
-    | UserClickedFacetPanelToggle
+    | UserClickedFacetPanelToggle String
     | UserEnteredTextInQueryFacet FacetAlias String String
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg SearchMsg)
     | DebouncerSettledToSendQueryFacetSuggestionRequest String

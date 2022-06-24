@@ -13,6 +13,9 @@ import Url.Parser.Query as Q
 buildNotationQueryParameters : KeyboardQuery -> List QueryParameter
 buildNotationQueryParameters notationInput =
     let
+        clefString =
+            clefSymToClefQueryString notationInput.clef
+
         clef =
             if String.isEmpty clefString || (notationInput.clef == G2) then
                 []
@@ -21,8 +24,8 @@ buildNotationQueryParameters notationInput =
                 Url.Builder.string "ic" clefString
                     |> List.singleton
 
-        clefString =
-            clefSymToClefQueryString notationInput.clef
+        ksigStr =
+            keySignatureSymToQueryStr notationInput.keySignature
 
         keySignature =
             if String.isEmpty ksigStr || ksigStr == "n" then
@@ -31,9 +34,6 @@ buildNotationQueryParameters notationInput =
             else
                 Url.Builder.string "ik" ksigStr
                     |> List.singleton
-
-        ksigStr =
-            keySignatureSymToQueryStr notationInput.keySignature
 
         notes =
             case notationInput.noteData of
@@ -53,6 +53,9 @@ buildNotationQueryParameters notationInput =
                     |> Url.Builder.string "im"
                     |> List.singleton
 
+        tsigStr =
+            timeSignatureSymToQueryStr notationInput.timeSignature
+
         timeSignature =
             if String.isEmpty tsigStr || tsigStr == "-" then
                 []
@@ -60,9 +63,6 @@ buildNotationQueryParameters notationInput =
             else
                 Url.Builder.string "it" tsigStr
                     |> List.singleton
-
-        tsigStr =
-            timeSignatureSymToQueryStr notationInput.timeSignature
     in
     List.concat [ notes, clef, timeSignature, keySignature, queryMode ]
 

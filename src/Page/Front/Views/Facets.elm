@@ -19,4 +19,5 @@ facetFrontMsgConfig =
     , userEnteredTextQueryMsg = FrontMsg.UserEnteredTextInQueryFacet
     , userChangedBehaviourQueryMsg = FrontMsg.UserChangedFacetBehaviour
     , userChoseOptionQueryMsg = FrontMsg.UserChoseOptionFromQueryFacetSuggest
+    , nothingHappenedMsg = FrontMsg.NothingHappened
     }

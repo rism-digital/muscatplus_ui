@@ -118,11 +118,11 @@ viewNationalCollectionChooser session =
         countryList =
             Dict.toList session.allNationalCollections
 
-        groupedList =
-            LE.greedyGroupsOf 2 sortedList
-
         sortedList =
             sortedByLocalizedCountryName session.language countryList
+
+        groupedList =
+            LE.greedyGroupsOf 2 sortedList
     in
     animatedRow
         nationalCollectionChooserAnimations
@@ -209,6 +209,21 @@ viewNationalCollectionChooser session =
 viewNationalCollectionChooserMenuOption : Session -> Element SideBarMsg
 viewNationalCollectionChooserMenuOption session =
     let
+        isRestrictedToNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+
+        labelFontColour =
+            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionChooser /= True then
+                colourScheme.white
+
+            else
+                colourScheme.black
+
         hoverStyles =
             if session.currentlyHoveredNationalCollectionChooser then
                 Background.color (colourScheme.lightGrey |> convertColorToElementColor)
@@ -240,27 +255,12 @@ viewNationalCollectionChooserMenuOption session =
                 Nothing ->
                     extractLabelFromLanguageMap session.language localTranslations.globalCollection
 
-        isRestrictedToNationalCollection =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
-
         labelEl =
             el
                 [ Font.color (labelFontColour |> convertColorToElementColor)
                 , headingLG
                 ]
                 (text iconLabel)
-
-        labelFontColour =
-            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionChooser /= True then
-                colourScheme.white
-
-            else
-                colourScheme.black
 
         showLabels =
             showSideBarLabels session.expandedSideBar

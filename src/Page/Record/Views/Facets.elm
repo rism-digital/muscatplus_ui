@@ -19,4 +19,5 @@ facetRecordMsgConfig =
     , userEnteredTextQueryMsg = RecordMsg.UserEnteredTextInQueryFacet
     , userChangedBehaviourQueryMsg = RecordMsg.UserChangedFacetBehaviour
     , userChoseOptionQueryMsg = RecordMsg.UserChoseOptionForQueryFacet
+    , nothingHappenedMsg = RecordMsg.NothingHappened
     }

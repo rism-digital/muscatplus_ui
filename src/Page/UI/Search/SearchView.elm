@@ -54,7 +54,7 @@ type alias SearchResultsSectionConfig a msg =
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     , userResetAllFiltersMsg : msg
-    , sectionToggleMsg : msg
+    , panelToggleMsg : String -> msg
     , facetMsgConfig : FacetMsgConfig msg
     }
 
@@ -139,7 +139,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 , body = body
                 , checkboxColumns = responsiveCheckboxColumns (.device cfg.session)
                 , facetMsgConfig = cfg.facetMsgConfig
-                , sectionToggleMsg = cfg.sectionToggleMsg
+                , panelToggleMsg = cfg.panelToggleMsg
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
                 , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                 }
@@ -154,7 +154,7 @@ type alias SearchControlsConfig a msg =
     , body : SearchBody
     , checkboxColumns : Int
     , facetMsgConfig : FacetMsgConfig msg
-    , sectionToggleMsg : msg
+    , panelToggleMsg : String -> msg
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     }
@@ -173,7 +173,7 @@ viewSearchControls cfg =
             , activeSearch = .activeSearch cfg.model
             , body = cfg.body
             , numberOfSelectColumns = cfg.checkboxColumns
-            , sectionToggleMsg = cfg.sectionToggleMsg
+            , panelToggleMsg = cfg.panelToggleMsg
             , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
             , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
             , facetMsgConfig = cfg.facetMsgConfig

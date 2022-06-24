@@ -15,15 +15,16 @@ import Session exposing (Session)
 searchSubmit : Session -> RecordPageModel RecordMsg -> ( RecordPageModel RecordMsg, Cmd RecordMsg )
 searchSubmit session model =
     let
+        resetPageInQueryArgs =
+            toNextQuery model.activeSearch
+                |> resetPage
+
+        pageResetModel =
+            setNextQuery resetPageInQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+
         nationalCollectionSetModel =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
-
-        newModel =
-            { nationalCollectionSetModel
-                | response = Loading oldData
-                , searchResults = Loading oldSearchData
-                , preview = NoResponseToShow
-            }
 
         oldData =
             case model.response of
@@ -41,20 +42,19 @@ searchSubmit session model =
                 _ ->
                     Nothing
 
-        pageResetModel =
-            setNextQuery resetPageInQueryArgs model.activeSearch
-                |> flip setActiveSearch model
-
-        resetPageInQueryArgs =
-            toNextQuery model.activeSearch
-                |> resetPage
-
-        searchUrl =
-            serverUrl [ .path session.url ] textQueryParameters
+        newModel =
+            { nationalCollectionSetModel
+                | response = Loading oldData
+                , searchResults = Loading oldSearchData
+                , preview = NoResponseToShow
+            }
 
         textQueryParameters =
             toNextQuery nationalCollectionSetModel.activeSearch
                 |> buildQueryParameters
+
+        searchUrl =
+            serverUrl [ .path session.url ] textQueryParameters
     in
     ( newModel
     , Nav.pushUrl session.key searchUrl

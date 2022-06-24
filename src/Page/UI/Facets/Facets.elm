@@ -41,6 +41,7 @@ type alias FacetMsgConfig msg =
     , userEnteredTextQueryMsg : FacetAlias -> String -> String -> msg
     , userChangedBehaviourQueryMsg : FacetAlias -> FacetBehaviours -> msg
     , userChoseOptionQueryMsg : FacetAlias -> String -> FacetBehaviours -> msg
+    , nothingHappenedMsg : msg
     }
 
 
@@ -120,6 +121,7 @@ viewFacet cfg msg =
                     , userEnteredTextMsg = msg.userEnteredTextQueryMsg
                     , userChangedBehaviourMsg = msg.userChangedBehaviourQueryMsg
                     , userChoseOptionMsg = msg.userChoseOptionQueryMsg
+                    , nothingHappenedMsg = msg.nothingHappenedMsg
                     }
             in
             viewQueryFacet queryFacetConfig
@@ -130,7 +132,7 @@ viewFacet cfg msg =
 
 viewFacetSection :
     Language
-    -> msg
+    -> (String -> msg)
     -> List (Element msg)
     -> Element msg
 viewFacetSection language clickMsg facets =
@@ -167,7 +169,7 @@ viewFacetSection language clickMsg facets =
                             [ alignLeft
                             , width (px 10)
                             , pointer
-                            , onClick clickMsg -- TODO: Implement collapsing behaviour!
+                            , onClick (clickMsg "") -- TODO: Implement collapsing behaviour!
                             ]
                             (chevronDownSvg colourScheme.lightBlue)
                         ]

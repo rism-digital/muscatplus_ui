@@ -29,9 +29,6 @@ paginationLink icon clickFn url =
 viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
 viewPagination language pagination clickMsg =
     let
-        pageInfo =
-            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
-
         pageLabel =
             extractLabelFromLanguageMap language localTranslations.page
 
@@ -40,6 +37,9 @@ viewPagination language pagination clickMsg =
 
         totalPages =
             formatNumberByLanguage language (toFloat pagination.totalPages)
+
+        pageInfo =
+            pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
     in
     row
         [ width fill

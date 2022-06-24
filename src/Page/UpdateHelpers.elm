@@ -12,6 +12,7 @@ module Page.UpdateHelpers exposing
     , userChangedResultsPerPage
     , userChangedSelectFacetSort
     , userClickedClosePreviewWindow
+    , userClickedFacetPanelToggle
     , userClickedResultForPreview
     , userClickedSelectFacetExpand
     , userClickedSelectFacetItem
@@ -24,18 +25,7 @@ module Page.UpdateHelpers exposing
     , userRemovedItemFromQueryFacet
     )
 
-import ActiveSearch
-    exposing
-        ( setActiveSearch
-        , setActiveSuggestion
-        , setExpandedFacets
-        , setQueryFacetValues
-        , setRangeFacetValues
-        , toExpandedFacets
-        , toQueryFacetValues
-        , toRangeFacetValues
-        , toggleExpandedFacets
-        )
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacetPanels, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toExpandedFacetPanels, toExpandedFacets, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacetPanel, toggleExpandedFacets)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Browser.Navigation as Nav
 import Config as C
@@ -246,14 +236,14 @@ updateQueryFacetFilters :
     -> { a | activeSearch : ActiveSearch msg }
 updateQueryFacetFilters alias text currentBehaviour model =
     let
-        activeFilters =
-            toNextQuery model.activeSearch
-                |> toFilters
-
         newActiveBehaviours =
             toNextQuery model.activeSearch
                 |> toFacetBehaviours
                 |> Dict.insert alias currentBehaviour
+
+        activeFilters =
+            toNextQuery model.activeSearch
+                |> toFilters
 
         newActiveFilters =
             Dict.update alias
@@ -328,12 +318,12 @@ userChangedFacetBehaviour alias facetBehaviour oldModel =
 userChangedResultSorting : String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userChangedResultSorting sortParam model =
     let
+        sortValue =
+            Just sortParam
+
         newQueryArgs =
             toNextQuery model.activeSearch
                 |> setSort sortValue
-
-        sortValue =
-            Just sortParam
     in
     setNextQuery newQueryArgs model.activeSearch
         |> flip setActiveSearch model
@@ -342,12 +332,12 @@ userChangedResultSorting sortParam model =
 userChangedResultsPerPage : String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userChangedResultsPerPage numResults model =
     let
+        rowNum =
+            Maybe.withDefault C.defaultRows (String.toInt numResults)
+
         newQueryArgs =
             toNextQuery model.activeSearch
                 |> setRows rowNum
-
-        rowNum =
-            Maybe.withDefault C.defaultRows (String.toInt numResults)
     in
     setNextQuery newQueryArgs model.activeSearch
         |> flip setActiveSearch model
@@ -400,11 +390,8 @@ userClickedResultForPreview result session model =
         currentUrl =
             session.url
 
-        newUrl =
-            { currentUrl | fragment = resPath }
-
-        newUrlStr =
-            Url.toString newUrl
+        resultUrl =
+            Url.fromString result
 
         resPath =
             case resultUrl of
@@ -416,8 +403,11 @@ userClickedResultForPreview result session model =
                 Nothing ->
                     Nothing
 
-        resultUrl =
-            Url.fromString result
+        newUrl =
+            { currentUrl | fragment = resPath }
+
+        newUrlStr =
+            Url.toString newUrl
     in
     ( { model
         | preview = Loading Nothing
@@ -435,6 +425,17 @@ userClickedSelectFacetExpand alias model =
                 |> toggleExpandedFacets alias
     in
     setExpandedFacets newExpandedFacets model.activeSearch
+        |> flip setActiveSearch model
+
+
+userClickedFacetPanelToggle : String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
+userClickedFacetPanelToggle alias model =
+    let
+        newPanelSection =
+            toExpandedFacetPanels model.activeSearch
+                |> toggleExpandedFacetPanel alias
+    in
+    setExpandedFacetPanels newPanelSection model.activeSearch
         |> flip setActiveSearch model
 
 
@@ -470,6 +471,10 @@ userClickedSelectFacetItem alias facetValue model =
 userClickedToggleFacet : FacetAlias -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userClickedToggleFacet alias model =
     let
+        oldFilters =
+            toNextQuery model.activeSearch
+                |> toFilters
+
         newFilters =
             if Dict.member alias oldFilters then
                 Dict.remove alias oldFilters
@@ -480,10 +485,6 @@ userClickedToggleFacet alias model =
         newQueryArgs =
             toNextQuery model.activeSearch
                 |> setFilters newFilters
-
-        oldFilters =
-            toNextQuery model.activeSearch
-                |> toFilters
     in
     setNextQuery newQueryArgs model.activeSearch
         |> flip setActiveSearch model
@@ -492,16 +493,16 @@ userClickedToggleFacet alias model =
 userEnteredTextInKeywordQueryBox : String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userEnteredTextInKeywordQueryBox queryText model =
     let
-        newQueryArgs =
-            toNextQuery model.activeSearch
-                |> setKeywordQuery newText
-
         newText =
             if String.isEmpty queryText then
                 Nothing
 
             else
                 Just queryText
+
+        newQueryArgs =
+            toNextQuery model.activeSearch
+                |> setKeywordQuery newText
     in
     setNextQuery newQueryArgs model.activeSearch
         |> flip setActiveSearch model
@@ -514,13 +515,13 @@ userEnteredTextInQueryFacet :
     -> { a | activeSearch : ActiveSearch msg }
 userEnteredTextInQueryFacet alias query model =
     let
-        newModel =
-            setQueryFacetValues newQueryFacetValue model.activeSearch
-                |> flip setActiveSearch model
-
         newQueryFacetValue =
             .queryFacetValues model.activeSearch
                 |> Dict.insert alias query
+
+        newModel =
+            setQueryFacetValues newQueryFacetValue model.activeSearch
+                |> flip setActiveSearch model
     in
     if String.length query == 0 then
         setActiveSuggestion Nothing newModel.activeSearch
@@ -555,6 +556,10 @@ userFocusedRangeFacet alias model =
         -- when the user focuses the range facet, we ensure that any query parameters are
         -- immediately transferred to the place where we keep range facet values so that we
         -- can edit them.
+        nextQueryFilters =
+            toNextQuery model.activeSearch
+                |> toFilters
+
         maybeRangeValue =
             case Dict.get alias nextQueryFilters of
                 Just (m :: []) ->
@@ -562,9 +567,6 @@ userFocusedRangeFacet alias model =
 
                 _ ->
                     Nothing
-
-        newActiveSearch =
-            setRangeFacetValues newRangeValues model.activeSearch
 
         -- if we have an existing value here, prefer that. If not, choose the query value
         newRangeValues =
@@ -579,9 +581,8 @@ userFocusedRangeFacet alias model =
                 )
                 (.rangeFacetValues model.activeSearch)
 
-        nextQueryFilters =
-            toNextQuery model.activeSearch
-                |> toFilters
+        newActiveSearch =
+            setRangeFacetValues newRangeValues model.activeSearch
     in
     ( { model
         | activeSearch = newActiveSearch
@@ -600,6 +601,19 @@ userLostFocusOnRangeFacet alias model =
             Dict.get alias rangeFacetValues
                 |> Maybe.withDefault ( "*", "*" )
 
+        newLowerValue =
+            choose (lowerValue == "") "*" lowerValue
+
+        newUpperValue =
+            choose (upperValue == "") "*" upperValue
+
+        rangeFacetValues =
+            toRangeFacetValues model.activeSearch
+
+        oldFilters =
+            toNextQuery model.activeSearch
+                |> toFilters
+
         newActiveFilters =
             if newLowerValue == "*" && newUpperValue == "*" then
                 Dict.remove alias oldFilters
@@ -607,23 +621,10 @@ userLostFocusOnRangeFacet alias model =
             else
                 Dict.insert alias (List.singleton (createRangeString newLowerValue newUpperValue)) oldFilters
 
-        newLowerValue =
-            choose (lowerValue == "") "*" lowerValue
-
+        -- ensure the range facet also displays the correct value
         newRangeFacetValues =
             rangeFacetValues
                 |> Dict.insert alias ( newLowerValue, newUpperValue )
-
-        newUpperValue =
-            choose (upperValue == "") "*" upperValue
-
-        oldFilters =
-            toNextQuery model.activeSearch
-                |> toFilters
-
-        -- ensure the range facet also displays the correct value
-        rangeFacetValues =
-            toRangeFacetValues model.activeSearch
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters

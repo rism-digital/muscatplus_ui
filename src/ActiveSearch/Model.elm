@@ -7,6 +7,7 @@ import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
+import Set exposing (Set)
 
 
 {-|
@@ -21,7 +22,8 @@ import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 -}
 type alias ActiveSearch msg =
     { nextQuery : QueryArgs
-    , expandedFacets : List String
+    , expandedFacets : Set String
+    , expandedFacetPanels : Set String
     , rangeFacetValues : Dict FacetAlias ( String, String )
     , queryFacetValues : Dict FacetAlias String
     , keyboard : Maybe (Keyboard.Model KeyboardMsg)

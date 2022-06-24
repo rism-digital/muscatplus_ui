@@ -174,18 +174,18 @@ renderKey keyMsg idx keyConfig =
 viewPianoInput : Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
 viewPianoInput language (Keyboard model config) =
     let
-        keyboardWidth =
-            (octaveWidth * toFloat numOctaves)
-                |> ceiling
+        octaveWidth =
+            ((toFloat blackKeyWidth - 1) * whiteKeyWidthScale) * 7
 
         -- calculate the size of the div for the keyboard
         -- subtract 1 to account for the border overlap
         -- multiply by 7 for each white key
+        keyboardWidth =
+            (octaveWidth * toFloat numOctaves)
+                |> ceiling
+
         numOctaves =
             config.numOctaves
-
-        octaveWidth =
-            ((toFloat blackKeyWidth - 1) * whiteKeyWidthScale) * 7
     in
     row
         [ width (px keyboardWidth)
@@ -215,6 +215,11 @@ whiteKey offset keyLabel upper lower =
                 Nothing ->
                     Svg.text ""
 
+        whiteKeyWidth =
+            toFloat blackKeyWidth * whiteKeyWidthScale
+
+        -- The original key shape was 100 x 500, so when scaling we just multiply the
+        -- width by 5 to maintain the same ratio.
         keyShape =
             html
                 (svg
@@ -268,11 +273,6 @@ whiteKey offset keyLabel upper lower =
                         []
                     ]
                 )
-
-        -- The original key shape was 100 x 500, so when scaling we just multiply the
-        -- width by 5 to maintain the same ratio.
-        whiteKeyWidth =
-            toFloat blackKeyWidth * whiteKeyWidthScale
     in
     el
         [ alignTop

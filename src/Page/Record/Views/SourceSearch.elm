@@ -64,7 +64,7 @@ searchResultsViewRouter session model =
             , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
             , facetMsgConfig = facetRecordMsgConfig
-            , sectionToggleMsg = RecordMsg.NothingHappened
+            , panelToggleMsg = \_ -> RecordMsg.NothingHappened
             }
     in
     case model.searchResults of
@@ -110,9 +110,6 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
                 _ ->
                     colourScheme.cream |> convertColorToElementColor
 
-        localizedTabLabel =
-            extractLabelFromLanguageMap language tabLabel
-
         searchTabBorder =
             case currentMode of
                 RelatedSourcesSearchTab _ ->
@@ -120,6 +117,9 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
 
                 _ ->
                     colourScheme.cream |> convertColorToElementColor
+
+        localizedTabLabel =
+            extractLabelFromLanguageMap language tabLabel
 
         sourceCount searchData =
             toFloat searchData.totalItems

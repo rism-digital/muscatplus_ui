@@ -147,27 +147,6 @@ resultTemplate cfg =
 summaryFieldTemplate : SearchResultSummaryConfig msg -> LabelValue -> Element msg
 summaryFieldTemplate summaryCfg fieldValue =
     let
-        allEntries =
-            viewIf
-                (column
-                    tooltipStyle
-                    (List.map (\t -> el [] (text t)) fVal)
-                )
-                (fValueLength > 3)
-
-        expandedList =
-            viewIf
-                (el
-                    [ tooltip onLeft allEntries
-                    , padding 4
-                    , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-                    , Font.color (colourScheme.black |> convertColorToElementColor)
-                    , centerY
-                    ]
-                    (text "See all")
-                )
-                (fValueLength > 3)
-
         fLabel =
             extractLabelFromLanguageMap summaryCfg.language fieldValue.label
 
@@ -190,14 +169,26 @@ summaryFieldTemplate summaryCfg fieldValue =
                 )
                 fVal
 
-        fValueAsString =
-            if fValueLength > 3 then
-                List.take 3 fValueFormatted
-                    |> String.join "; "
-                    |> flip String.append " … "
+        allEntries =
+            viewIf
+                (column
+                    tooltipStyle
+                    (List.map (\t -> el [] (text t)) fVal)
+                )
+                (fValueLength > 3)
 
-            else
-                String.join "; " fValueFormatted
+        expandedList =
+            viewIf
+                (el
+                    [ tooltip onLeft allEntries
+                    , padding 4
+                    , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+                    , Font.color (colourScheme.black |> convertColorToElementColor)
+                    , centerY
+                    ]
+                    (text "See all")
+                )
+                (fValueLength > 3)
 
         iconElement =
             el
@@ -209,6 +200,15 @@ summaryFieldTemplate summaryCfg fieldValue =
                     |> tooltip above
                 ]
                 summaryCfg.icon
+
+        fValueAsString =
+            if fValueLength > 3 then
+                List.take 3 fValueFormatted
+                    |> String.join "; "
+                    |> flip String.append " … "
+
+            else
+                String.join "; " fValueFormatted
 
         -- TODO: Translate label!
         templatedVal =

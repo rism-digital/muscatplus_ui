@@ -36,8 +36,33 @@ view model =
         currentUrl =
             Url.toString pageSession.url
 
-        defaultTitle =
-            "RISM Online"
+        publicBetaNotice =
+            row
+                [ width fill
+                , height (px 30)
+                , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+                , Border.color (colourScheme.darkOrange |> convertColorToElementColor)
+                , padding 8
+                , spacing lineSpacing
+                ]
+                [ el
+                    [ centerX
+                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                    , Font.semiBold
+                    ]
+                    (text "RISM Online is accessible for testing (Beta Version) and will be officially released in July 2022")
+                , el
+                    [ centerX ]
+                    (link
+                        [ Font.underline
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        ]
+                        { label = text "Send feedback"
+                        , url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
+                        }
+                    )
+                ]
 
         globalLinkColor =
             let
@@ -50,6 +75,9 @@ view model =
             toSession model
 
         -- set the colour for links (a tags) globally.
+        defaultTitle =
+            "RISM Online"
+
         pageTitle =
             case model of
                 SearchPage session _ ->
@@ -115,34 +143,6 @@ view model =
 
                 PlacePage session pageModel ->
                     Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PlacePage.view session pageModel)
-
-        publicBetaNotice =
-            row
-                [ width fill
-                , height (px 30)
-                , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                , Border.color (colourScheme.darkOrange |> convertColorToElementColor)
-                , padding 8
-                , spacing lineSpacing
-                ]
-                [ el
-                    [ centerX
-                    , Font.color (colourScheme.white |> convertColorToElementColor)
-                    , Font.semiBold
-                    ]
-                    (text "RISM Online is accessible for testing (Beta Version) and will be officially released in July 2022")
-                , el
-                    [ centerX ]
-                    (link
-                        [ Font.underline
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
-                        ]
-                        { label = text "Send feedback"
-                        , url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
-                        }
-                    )
-                ]
     in
     { title = pageTitle
     , body =
@@ -174,8 +174,8 @@ view model =
                     , width fill
                     , height fill
                     ]
-                    [ publicBetaNotice
-                    , loadingIndicator model
+                    [ --publicBetaNotice
+                      loadingIndicator model
                     , pageView
                     ]
                 ]

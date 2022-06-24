@@ -72,9 +72,6 @@ init flags initialUrl key =
                     , keyboardQueryArgs = kqargs
                     }
 
-                fullQueryParams =
-                    newQparams ++ "&" ++ kqArgParams
-
                 initialBody =
                     Search.init searchCfg
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
@@ -86,6 +83,9 @@ init flags initialUrl key =
 
                 newQparams =
                     addNationalCollectionQueryParameter session qargs
+
+                fullQueryParams =
+                    newQparams ++ "&" ++ kqArgParams
 
                 searchUrl =
                     { initialUrl | query = Just fullQueryParams }
@@ -103,6 +103,13 @@ init flags initialUrl key =
 
         SourcePageRoute _ ->
             let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+
                 initialBody =
                     Record.init recordCfg
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
@@ -114,13 +121,6 @@ init flags initialUrl key =
 
                         Nothing ->
                             Nothing
-
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = session.restrictedToNationalCollection
-                    }
 
                 sourceContentsPath =
                     if String.endsWith "/" initialUrl.path then
@@ -145,13 +145,6 @@ init flags initialUrl key =
 
         SourceContentsPageRoute _ qargs ->
             let
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                newQparams =
-                    addNationalCollectionQueryParameter session qargs
-
                 recordCfg =
                     { incomingUrl = initialUrl
                     , route = route
@@ -159,11 +152,18 @@ init flags initialUrl key =
                     , nationalCollection = session.restrictedToNationalCollection
                     }
 
+                initialBody =
+                    Record.init recordCfg
+                        |> addNationalCollectionFilter session.restrictedToNationalCollection
+
                 recordPath =
                     String.replace "/contents" "" initialUrl.path
 
                 recordUrl =
                     { initialUrl | path = recordPath }
+
+                newQparams =
+                    addNationalCollectionQueryParameter session qargs
 
                 sourcesUrl =
                     { initialUrl | query = Just newQparams }
@@ -182,6 +182,13 @@ init flags initialUrl key =
 
         PersonPageRoute _ ->
             let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+
                 initialBody =
                     Record.init recordCfg
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
@@ -193,13 +200,6 @@ init flags initialUrl key =
 
                         Nothing ->
                             Nothing
-
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = session.restrictedToNationalCollection
-                    }
 
                 sourcesUrl =
                     { initialUrl | path = initialUrl.path ++ "/sources", query = ncQueryParam }
@@ -217,13 +217,6 @@ init flags initialUrl key =
 
         PersonSourcePageRoute _ qargs ->
             let
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                newQparams =
-                    addNationalCollectionQueryParameter session qargs
-
                 recordCfg =
                     { incomingUrl = initialUrl
                     , route = route
@@ -231,11 +224,18 @@ init flags initialUrl key =
                     , nationalCollection = session.restrictedToNationalCollection
                     }
 
+                initialBody =
+                    Record.init recordCfg
+                        |> addNationalCollectionFilter session.restrictedToNationalCollection
+
                 recordPath =
                     String.replace "/sources" "" initialUrl.path
 
                 recordUrl =
                     { initialUrl | path = recordPath }
+
+                newQparams =
+                    addNationalCollectionQueryParameter session qargs
 
                 sourcesUrl =
                     { initialUrl | query = Just newQparams }
@@ -254,6 +254,13 @@ init flags initialUrl key =
 
         InstitutionPageRoute _ ->
             let
+                recordCfg =
+                    { incomingUrl = initialUrl
+                    , route = route
+                    , queryArgs = Nothing
+                    , nationalCollection = session.restrictedToNationalCollection
+                    }
+
                 initialBody =
                     Record.init recordCfg
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
@@ -265,13 +272,6 @@ init flags initialUrl key =
 
                         Nothing ->
                             Nothing
-
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = session.restrictedToNationalCollection
-                    }
 
                 sourcesUrl =
                     { initialUrl | path = initialUrl.path ++ "/sources", query = ncQueryParam }
@@ -289,13 +289,6 @@ init flags initialUrl key =
 
         InstitutionSourcePageRoute _ qargs ->
             let
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                newQparams =
-                    addNationalCollectionQueryParameter session qargs
-
                 recordCfg =
                     { incomingUrl = initialUrl
                     , route = route
@@ -303,11 +296,18 @@ init flags initialUrl key =
                     , nationalCollection = session.restrictedToNationalCollection
                     }
 
+                initialBody =
+                    Record.init recordCfg
+                        |> addNationalCollectionFilter session.restrictedToNationalCollection
+
                 recordPath =
                     String.replace "/sources" "" initialUrl.path
 
                 recordUrl =
                     { initialUrl | path = recordPath }
+
+                newQparams =
+                    addNationalCollectionQueryParameter session qargs
 
                 sourcesUrl =
                     { initialUrl | query = Just newQparams }

@@ -1,5 +1,6 @@
 module Page.UI.Animations exposing
     ( animatedColumn
+    , animatedEl
     , animatedLabel
     , animatedLoader
     , animatedRow

@@ -49,15 +49,15 @@ frontPageRequest initialUrl =
 frontProbeSubmit : Session -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
 frontProbeSubmit session model =
     let
+        resultMode =
+            sideBarOptionToResultMode session.showFrontSearchInterface
+
         newModel =
             toNextQuery model.activeSearch
                 |> setMode resultMode
                 |> flip setNextQuery model.activeSearch
                 |> flip setActiveSearch model
                 |> setProbeResponse (Loading Nothing)
-
-        resultMode =
-            sideBarOptionToResultMode session.showFrontSearchInterface
     in
     probeSubmit ServerRespondedWithProbeData session newModel
 
@@ -86,11 +86,21 @@ searchSubmit session model =
         activeSearch =
             toActiveSearch model
 
-        newModel =
-            addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
+        resetPageInQueryArgs =
+            activeSearch
+                |> toNextQuery
+                |> resetPage
 
         -- when submitting a new search, reset the page
         -- to the first page.
+        pageResetModel =
+            activeSearch
+                |> setNextQuery resetPageInQueryArgs
+                |> flip setActiveSearch model
+
+        newModel =
+            addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
+
         notationQueryParameters =
             case toKeyboard pageResetModel.activeSearch of
                 Just kq ->
@@ -100,26 +110,16 @@ searchSubmit session model =
                 Nothing ->
                     []
 
-        pageResetModel =
-            activeSearch
-                |> setNextQuery resetPageInQueryArgs
-                |> flip setActiveSearch model
-
-        resetPageInQueryArgs =
-            activeSearch
-                |> toNextQuery
-                |> resetPage
-
         resultMode =
             sideBarOptionToResultMode session.showFrontSearchInterface
-
-        searchUrl =
-            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
 
         textQueryParameters =
             toNextQuery newModel.activeSearch
                 |> setMode resultMode
                 |> buildQueryParameters
+
+        searchUrl =
+            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
     in
     ( newModel
     , Nav.pushUrl session.key searchUrl
@@ -204,12 +204,12 @@ update session msg model =
                 -- we don't reset *all* parameters; we keep the
                 -- currently selected result mode so that the user
                 -- doesn't get bounced back to the 'sources' tab.
-                adjustedQueryArgs =
-                    { defaultQueryArgs | mode = currentMode }
-
                 currentMode =
                     toNextQuery model.activeSearch
                         |> toMode
+
+                adjustedQueryArgs =
+                    { defaultQueryArgs | mode = currentMode }
             in
             setNextQuery adjustedQueryArgs model.activeSearch
                 |> setRangeFacetValues Dict.empty
@@ -223,20 +223,20 @@ update session msg model =
                     provideInput DebouncerSettledToSendProbeRequest
                         |> DebouncerCapturedProbeRequest
 
-                newModel =
-                    setNextQuery newQueryArgs model.activeSearch
-                        |> flip setActiveSearch model
-
-                newQueryArgs =
-                    toNextQuery model.activeSearch
-                        |> setKeywordQuery newText
-
                 newText =
                     if String.isEmpty queryText then
                         Nothing
 
                     else
                         Just queryText
+
+                newQueryArgs =
+                    toNextQuery model.activeSearch
+                        |> setKeywordQuery newText
+
+                newModel =
+                    setNextQuery newQueryArgs model.activeSearch
+                        |> flip setActiveSearch model
             in
             update session debounceMsg newModel
 

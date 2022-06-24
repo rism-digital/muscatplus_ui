@@ -25,7 +25,7 @@ import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder,
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -99,10 +99,11 @@ load cfg oldModel =
     in
     { oldModel
         | activeSearch =
-            ActiveSearch.init
-                { queryArgs = cfg.queryArgs
-                , keyboardQueryArgs = Just cfg.keyboardQueryArgs
-                }
+            ActiveSearch.load oldModel.activeSearch
+
+        --{ queryArgs = cfg.queryArgs
+        --, keyboardQueryArgs = Just cfg.keyboardQueryArgs
+        --}
         , preview = previewResp
         , selectedResult = selectedResult
         , applyFilterPrompt = False
@@ -137,6 +138,22 @@ searchSubmit session model =
 
         -- when submitting a new search, reset the page
         -- to the first page.
+        resetPageInQueryArgs =
+            toNextQuery model.activeSearch
+                |> resetPage
+
+        pageResetModel =
+            setNextQuery resetPageInQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+
+        oldData =
+            case model.response of
+                Response d ->
+                    Just d
+
+                _ ->
+                    Nothing
+
         newModel =
             { nationalCollectionSetModel
                 | response = Loading oldData
@@ -152,28 +169,12 @@ searchSubmit session model =
                 Nothing ->
                     []
 
-        oldData =
-            case model.response of
-                Response d ->
-                    Just d
-
-                _ ->
-                    Nothing
-
-        pageResetModel =
-            setNextQuery resetPageInQueryArgs model.activeSearch
-                |> flip setActiveSearch model
-
-        resetPageInQueryArgs =
-            toNextQuery model.activeSearch
-                |> resetPage
-
-        searchUrl =
-            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
-
         textQueryParameters =
             toNextQuery nationalCollectionSetModel.activeSearch
                 |> buildQueryParameters
+
+        searchUrl =
+            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
     in
     ( newModel
     , Nav.pushUrl session.key searchUrl
@@ -185,10 +186,6 @@ update session msg model =
     case msg of
         ServerRespondedWithSearchData (Ok ( _, response )) ->
             let
-                currentMode =
-                    toNextQuery model.activeSearch
-                        |> toMode
-
                 jumpCmd =
                     case .fragment session.url of
                         Just frag ->
@@ -196,6 +193,10 @@ update session msg model =
 
                         Nothing ->
                             Cmd.none
+
+                currentMode =
+                    toNextQuery model.activeSearch
+                        |> toMode
 
                 notationRenderCmd =
                     case currentMode of
@@ -302,8 +303,10 @@ update session msg model =
             userClickedToggleFacet alias model
                 |> probeSubmit ServerRespondedWithProbeData session
 
-        UserClickedFacetPanelToggle ->
-            ( model, Cmd.none )
+        UserClickedFacetPanelToggle panelAlias ->
+            ( userClickedFacetPanelToggle panelAlias model
+            , Cmd.none
+            )
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
             let
@@ -447,12 +450,12 @@ update session msg model =
                 -- we don't reset *all* parameters; we keep the
                 -- currently selected result mode so that the user
                 -- doesn't get bounced back to the 'sources' tab.
-                adjustedQueryArgs =
-                    { defaultQueryArgs | mode = currentMode }
-
                 currentMode =
                     toNextQuery model.activeSearch
                         |> toMode
+
+                adjustedQueryArgs =
+                    { defaultQueryArgs | mode = currentMode }
             in
             setNextQuery adjustedQueryArgs model.activeSearch
                 |> setRangeFacetValues Dict.empty

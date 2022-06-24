@@ -9,7 +9,7 @@ import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
 viewFacetsForInstitutionsMode : ControlsConfig msg -> Element msg
-viewFacetsForInstitutionsMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
+viewFacetsForInstitutionsMode { language, activeSearch, body, panelToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
     let
         facetConfig alias =
             { alias = alias
@@ -57,10 +57,10 @@ viewFacetsForInstitutionsMode { language, activeSearch, body, sectionToggleMsg, 
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ viewFacet (facetConfig "has-siglum") facetMsgConfig ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ viewFacet (facetConfig "city") facetMsgConfig
                 ]
             ]

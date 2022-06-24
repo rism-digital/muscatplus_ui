@@ -25,12 +25,18 @@ type alias SortAndRowsConfig msg =
 viewRowSelectAndSortSelector : SortAndRowsConfig msg -> Element msg
 viewRowSelectAndSortSelector cfg =
     let
+        nextQuery =
+            .nextQuery cfg.activeSearch
+
         chosenRows =
             nextQuery.rows
                 |> String.fromInt
 
         chosenSort =
             Maybe.withDefault "relevance" nextQuery.sort
+
+        sorting =
+            .sorts cfg.body
 
         listOfLabelsForResultSort =
             List.map
@@ -39,12 +45,6 @@ viewRowSelectAndSortSelector cfg =
 
         listOfPageSizes =
             List.map (\d -> ( d, d )) (.pageSizes cfg.body)
-
-        nextQuery =
-            .nextQuery cfg.activeSearch
-
-        sorting =
-            .sorts cfg.body
     in
     row
         [ alignTop

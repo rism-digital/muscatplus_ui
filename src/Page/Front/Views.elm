@@ -22,6 +22,16 @@ import Session exposing (Session)
 view : Session -> FrontPageModel FrontMsg -> Element FrontMsg
 view session model =
     let
+        maybeBody =
+            case model.response of
+                Response (FrontData body) ->
+                    Just body
+
+                _ ->
+                    Nothing
+
+        -- returns a partially-applied function that can be used in the viewMaybe
+        -- for the body argument
         backgroundImage =
             case session.showFrontSearchInterface of
                 SourceSearchOption ->
@@ -39,16 +49,6 @@ view session model =
                 _ ->
                     emptyAttribute
 
-        -- returns a partially-applied function that can be used in the viewMaybe
-        -- for the body argument
-        maybeBody =
-            case model.response of
-                Response (FrontData body) ->
-                    Just body
-
-                _ ->
-                    Nothing
-
         searchControlsView =
             viewMaybe
                 (\_ ->
@@ -65,9 +65,6 @@ view session model =
 
         -- viewMaybe will be either the searchViewFn, or the `none`
         -- element if the maybeBody parameter is Nothing.
-        searchPanelView =
-            viewMaybe searchViewFn maybeBody
-
         searchViewFn =
             case session.showFrontSearchInterface of
                 SourceSearchOption ->
@@ -85,6 +82,9 @@ view session model =
                 -- Show a blank page if this is ever the choice; it shouldn't be!
                 LiturgicalFestivalsOption ->
                     \_ -> none
+
+        searchPanelView =
+            viewMaybe searchViewFn maybeBody
     in
     row
         [ width fill

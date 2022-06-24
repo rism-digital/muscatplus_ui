@@ -1,8 +1,9 @@
 module Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, padding, paragraph, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, padding, paddingEach, paragraph, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input exposing (labelHidden)
@@ -10,7 +11,7 @@ import Language exposing (Language)
 import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (lineSpacing)
-import Page.UI.Components exposing (h5)
+import Page.UI.Components exposing (h4, h5)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp)
 import Page.UpdateHelpers exposing (selectAppropriateRangeFacetValues)
@@ -89,11 +90,15 @@ viewRangeFacet config =
         [ width fill
         , alignTop
         , alignLeft
+        , paddingEach { top = 0, bottom = 14, left = 0, right = 0 }
         ]
         [ column
             [ width fill
             , alignTop
             , spacing lineSpacing
+            , paddingEach { top = 0, bottom = 0, left = 14, right = 0 }
+            , Border.widthEach { top = 0, bottom = 0, left = 2, right = 0 }
+            , Border.color (colourScheme.midGrey |> convertColorToElementColor)
             ]
             [ row
                 [ width fill
@@ -114,7 +119,7 @@ viewRangeFacet config =
                     ]
                     [ row
                         [ spacing 10 ]
-                        [ h5 config.language (.label config.rangeFacet) ]
+                        [ h4 config.language (.label config.rangeFacet) ]
                     ]
                 ]
             , row

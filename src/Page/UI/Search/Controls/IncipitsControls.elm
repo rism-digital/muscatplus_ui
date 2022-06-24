@@ -9,7 +9,7 @@ import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
 viewFacetsForIncipitsMode : ControlsConfig msg -> Element msg
-viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
+viewFacetsForIncipitsMode { language, activeSearch, body, panelToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
     let
         facetConfig alias =
             { alias = alias
@@ -46,7 +46,7 @@ viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, user
                     ]
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ row
                     [ width fill
                     , height fill
@@ -66,7 +66,7 @@ viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, user
                     ]
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ row
                     [ width fill
                     , alignTop
@@ -81,7 +81,7 @@ viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, user
                     ]
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ row
                     [ width fill
                     , alignTop
@@ -92,7 +92,7 @@ viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, user
                     ]
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ row
                     [ width fill
                     , alignTop
@@ -108,7 +108,7 @@ viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, user
                     ]
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ row
                     [ width fill
                     , alignTop
@@ -120,7 +120,7 @@ viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, user
                     ]
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ row
                     [ width fill
                     , alignTop
@@ -132,7 +132,7 @@ viewFacetsForIncipitsMode { language, activeSearch, body, sectionToggleMsg, user
                     ]
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ row
                     [ width fill
                     , alignTop

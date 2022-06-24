@@ -91,15 +91,15 @@ buildQueryParameters queryArgs =
                 |> List.concatMap
                     (\( alias, filts ) ->
                         let
-                            allFilts =
-                                List.filterMap (\s -> createPrefixedField s) filts
-
                             createPrefixedField val =
                                 if String.isEmpty val then
                                     Nothing
 
                                 else
                                     Just (alias ++ ":" ++ val)
+
+                            allFilts =
+                                List.filterMap (\s -> createPrefixedField s) filts
                         in
                         List.map (Url.Builder.string "fq") allFilts
                     )

@@ -89,6 +89,13 @@ viewRenderControls language notationFacet (Keyboard model config) =
                     }
                 ]
 
+        tsigLabel =
+            .label (.timesig notationFacet.notationOptions)
+
+        tsigList =
+            .options (.timesig notationFacet.notationOptions)
+                |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
+
         timeSigSelect =
             column
                 [ width shrink
@@ -106,13 +113,6 @@ viewRenderControls language notationFacet (Keyboard model config) =
                     , language = language
                     }
                 ]
-
-        tsigLabel =
-            .label (.timesig notationFacet.notationOptions)
-
-        tsigList =
-            .options (.timesig notationFacet.notationOptions)
-                |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
     in
     row
         [ width fill

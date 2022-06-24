@@ -19,9 +19,6 @@ import Session exposing (Session)
 sourceSearchPanelView : Session -> FrontPageModel FrontMsg -> FrontBody -> Element FrontMsg
 sourceSearchPanelView session model frontBody =
     let
-        activeSearch =
-            model.activeSearch
-
         facetConfig alias =
             { alias = alias
             , language = language
@@ -32,6 +29,9 @@ sourceSearchPanelView session model frontBody =
 
         language =
             session.language
+
+        activeSearch =
+            model.activeSearch
 
         qText =
             toNextQuery activeSearch
@@ -125,9 +125,9 @@ sourceSearchPanelView session model frontBody =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewFacet (facetConfig "source-type") facetFrontMsgConfig
+                    [ viewFacet (facetConfig "record-type") facetFrontMsgConfig
                     , viewFacet (facetConfig "content-types") facetFrontMsgConfig
-                    , viewFacet (facetConfig "material-group-types") facetFrontMsgConfig
+                    , viewFacet (facetConfig "material-types") facetFrontMsgConfig
                     ]
                 ]
             , row

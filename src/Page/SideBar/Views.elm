@@ -3,7 +3,7 @@ module Page.SideBar.Views exposing (view)
 import Color exposing (Color)
 import Config
 import Debouncer.Messages exposing (provideInput)
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, moveUp, paddingEach, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -19,7 +19,7 @@ import Page.UI.Animations exposing (animatedColumn, animatedLabel)
 import Page.UI.Attributes exposing (emptyAttribute, headingXXL, minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, peopleSvg, rismLogo, sourcesSvg)
+import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
@@ -70,6 +70,16 @@ menuOption cfg option currentlyHovered =
             else
                 colourScheme.black
 
+        icon =
+            cfg.icon fontColour
+
+        newCfg =
+            { icon = icon
+            , isCurrent = cfg.isCurrent
+            , label = cfg.label
+            , showLabel = cfg.showLabel
+            }
+
         hoverStyles =
             if currentlyHovered then
                 [ Background.color (colourScheme.lightGrey |> convertColorToElementColor)
@@ -78,9 +88,6 @@ menuOption cfg option currentlyHovered =
             else
                 []
 
-        icon =
-            cfg.icon fontColour
-
         selectedStyle =
             if cfg.isCurrent then
                 [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
@@ -88,13 +95,6 @@ menuOption cfg option currentlyHovered =
 
             else
                 []
-
-        newCfg =
-            { icon = icon
-            , isCurrent = cfg.isCurrent
-            , label = cfg.label
-            , showLabel = cfg.showLabel
-            }
 
         additionalOptions =
             List.concat
@@ -156,8 +156,14 @@ unlinkedMenuOption cfg =
 view : Session -> Element SideBarMsg
 view session =
     let
+        currentlyHoveredOption =
+            session.currentlyHoveredOption
+
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
+
+        currentlySelectedOption =
+            session.showFrontSearchInterface
 
         checkSelected opt =
             case session.route of
@@ -167,13 +173,18 @@ view session =
                 _ ->
                     False
 
-        currentlyHoveredOption =
-            session.currentlyHoveredOption
-
-        currentlySelectedOption =
-            session.showFrontSearchInterface
-
         -- only show the selected option if we're on the front page.
+        showWhenChoosingNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    False
+
+                Nothing ->
+                    True
+
+        sideBarAnimation =
+            session.expandedSideBar
+
         incipitsInterfaceMenuOption =
             viewIf
                 (lazy3 menuOption
@@ -187,6 +198,9 @@ view session =
                 )
                 showWhenChoosingNationalCollection
 
+        -- If a national collection is chosen this will return
+        -- false, indicating that the menu option should not
+        -- be shown when a national collection is selected.
         institutionInterfaceMenuOption =
             menuOption
                 { icon = institutionSvg
@@ -210,19 +224,8 @@ view session =
                 )
                 showWhenChoosingNationalCollection
 
-        -- If a national collection is chosen this will return
-        -- false, indicating that the menu option should not
-        -- be shown when a national collection is selected.
         showLabels =
             showSideBarLabels session.expandedSideBar
-
-        showWhenChoosingNationalCollection =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    False
-
-                Nothing ->
-                    True
 
         sideAnimation =
             case sideBarAnimation of
@@ -244,9 +247,6 @@ view session =
 
                 NoAnimation ->
                     Animation.empty
-
-        sideBarAnimation =
-            session.expandedSideBar
 
         sourcesInterfaceMenuOption =
             menuOption
@@ -284,6 +284,7 @@ view session =
             [ width fill
             , height (px 80)
             , paddingXY 15 10
+            , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
             ]
             [ column
                 [ alignTop
@@ -292,7 +293,7 @@ view session =
                 ]
                 [ row
                     [ width shrink
-                    , spacing 10
+                    , spacing 8
                     ]
                     [ link
                         [ width fill
@@ -302,19 +303,11 @@ view session =
                                 [ alignTop
                                 , width fill
                                 ]
-                                (rismLogo colourScheme.lightBlue headerHeight)
+                                (rismLogo colourScheme.white headerHeight)
                         , url = Config.serverUrl ++ "?mode=sources"
                         }
                     , viewIf
-                        (column
-                            [ headingXXL
-                            , Font.medium
-                            , Font.family [ Font.typeface "Cinzel Decorative" ]
-                            , Font.color (colourScheme.darkGrey |> convertColorToElementColor)
-                            ]
-                            [ el [] (text "Online")
-                            ]
-                        )
+                        (el [ width (px 120), height (px 20), centerY, moveUp 0.5 ] (onlineTextSvg colourScheme.white))
                         showLabels
                     ]
                 ]

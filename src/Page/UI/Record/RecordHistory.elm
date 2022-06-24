@@ -10,17 +10,17 @@ import Time exposing (utc)
 viewRecordHistory : Language -> RecordHistory -> Element msg
 viewRecordHistory language history =
     let
-        created =
-            extractLabelFromLanguageMap language history.createdLabel ++ ": " ++ createdDateFormatted
-
         createdDateFormatted =
             dateFormatter utc history.created
 
-        updated =
-            extractLabelFromLanguageMap language history.updatedLabel ++ ": " ++ updatedDateFormatted
+        created =
+            extractLabelFromLanguageMap language history.createdLabel ++ ": " ++ createdDateFormatted
 
         updatedDateFormatted =
             dateFormatter utc history.updated
+
+        updated =
+            extractLabelFromLanguageMap language history.updatedLabel ++ ": " ++ updatedDateFormatted
     in
     row
         [ width fill

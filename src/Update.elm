@@ -55,13 +55,12 @@ changePage url model =
                 -- coming from another page, or the response doesn't
                 -- already contain server data we instead initialize
                 -- a default search page model.
-                fullQueryParams =
-                    newQparams ++ "&" ++ newKeyboardParams
-
-                newKeyboardParams =
-                    buildNotationQueryParameters kqargs
-                        |> toQuery
-                        |> String.dropLeft 1
+                searchCfg =
+                    { incomingUrl = url
+                    , route = route
+                    , queryArgs = qargs
+                    , keyboardQueryArgs = kqargs
+                    }
 
                 newPageBody =
                     case model of
@@ -71,18 +70,19 @@ changePage url model =
                         _ ->
                             SearchPage.init searchCfg
 
+                newKeyboardParams =
+                    buildNotationQueryParameters kqargs
+                        |> toQuery
+                        |> String.dropLeft 1
+
                 newQparams =
                     toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
 
-                searchCfg =
-                    { incomingUrl = url
-                    , route = route
-                    , queryArgs = qargs
-                    , keyboardQueryArgs = kqargs
-                    }
+                fullQueryParams =
+                    newQparams ++ "&" ++ newKeyboardParams
 
                 searchUrl =
                     { url | query = Just fullQueryParams }
@@ -152,15 +152,15 @@ changePage url model =
 
         Route.SourceContentsPageRoute _ qargs ->
             let
+                recordPath =
+                    String.replace "/contents" "" url.path
+
                 recordCfg =
                     { incomingUrl = url
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = newSession.restrictedToNationalCollection
                     }
-
-                recordPath =
-                    String.replace "/contents" "" url.path
 
                 ( newPageBody, isSameSourcePage ) =
                     case model of
@@ -174,21 +174,24 @@ changePage url model =
                         _ ->
                             ( RecordPage.init recordCfg, False )
 
+                recordUrl =
+                    { url | path = recordPath }
+
                 newQparams =
                     toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
 
-                recordUrl =
-                    { url | path = recordPath }
-
                 sourceUrl =
                     { url | query = Just newQparams }
 
                 refreshCmds =
                     if isSameSourcePage then
-                        RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                        Cmd.batch
+                            [ RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+                            , RecordPage.recordSearchRequest sourceUrl
+                            ]
                             |> Cmd.map Msg.UserInteractedWithRecordPage
 
                     else
@@ -250,15 +253,15 @@ changePage url model =
 
         Route.PersonSourcePageRoute _ qargs ->
             let
+                recordPath =
+                    String.replace "/sources" "" url.path
+
                 recordCfg =
                     { incomingUrl = url
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = newSession.restrictedToNationalCollection
                     }
-
-                recordPath =
-                    String.replace "/sources" "" url.path
 
                 ( newPageBody, isSamePersonPage ) =
                     case model of
@@ -272,14 +275,14 @@ changePage url model =
                         _ ->
                             ( RecordPage.init recordCfg, False )
 
+                recordUrl =
+                    { url | path = recordPath }
+
                 newQparams =
                     toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
-
-                recordUrl =
-                    { url | path = recordPath }
 
                 sourceUrl =
                     { url | query = Just newQparams }
@@ -351,15 +354,15 @@ changePage url model =
 
         Route.InstitutionSourcePageRoute _ qargs ->
             let
+                recordPath =
+                    String.replace "/sources" "" url.path
+
                 recordCfg =
                     { incomingUrl = url
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = newSession.restrictedToNationalCollection
                     }
-
-                recordPath =
-                    String.replace "/sources" "" url.path
 
                 ( newPageBody, isSameInstitutionPage ) =
                     case model of
@@ -373,14 +376,14 @@ changePage url model =
                         _ ->
                             ( RecordPage.init recordCfg, False )
 
+                recordUrl =
+                    { url | path = recordPath }
+
                 newQparams =
                     toNextQuery newPageBody.activeSearch
                         |> buildQueryParameters
                         |> toQuery
                         |> String.dropLeft 1
-
-                recordUrl =
-                    { url | path = recordPath }
 
                 sourceUrl =
                     { url | query = Just newQparams }

@@ -29,6 +29,7 @@ facetSearchMsgConfig =
     , userEnteredTextQueryMsg = SearchMsg.UserEnteredTextInQueryFacet
     , userChangedBehaviourQueryMsg = SearchMsg.UserChangedFacetBehaviour
     , userChoseOptionQueryMsg = SearchMsg.UserChoseOptionForQueryFacet
+    , nothingHappenedMsg = SearchMsg.NothingHappened
     }
 
 
@@ -36,18 +37,20 @@ viewModeItem : ResultMode -> Language -> FacetItem -> Element SearchMsg
 viewModeItem selectedMode language fitem =
     let
         -- uses opaque type destructuring to unpack the values of the facet item.
-        baseRowStyle =
-            [ alignLeft
-            , Font.center
-            , height fill
-            , Border.widthEach { bottom = 3, left = 0, right = 0, top = 0 }
-            ]
-
         (FacetItem value label count) =
             fitem
 
         fullLabel =
             extractLabelFromLanguageMap language label
+
+        iconTmpl svg =
+            el
+                [ width (px 20)
+                , height fill
+                , centerX
+                , centerY
+                ]
+                svg
 
         icon =
             case value of
@@ -69,17 +72,15 @@ viewModeItem selectedMode language fitem =
                 _ ->
                     iconTmpl (unknownSvg colourScheme.slateGrey)
 
-        iconTmpl svg =
-            el
-                [ width (px 20)
-                , height fill
-                , centerX
-                , centerY
-                ]
-                svg
-
         itemCount =
             formatNumberByLanguage language count
+
+        baseRowStyle =
+            [ alignLeft
+            , Font.center
+            , height fill
+            , Border.widthEach { bottom = 3, left = 0, right = 0, top = 0 }
+            ]
 
         rowMode =
             parseStringToResultMode value

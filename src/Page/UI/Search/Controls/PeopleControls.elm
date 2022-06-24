@@ -10,7 +10,7 @@ import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
 viewFacetsForPeopleMode : ControlsConfig msg -> Element msg
-viewFacetsForPeopleMode { language, activeSearch, body, sectionToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
+viewFacetsForPeopleMode { language, activeSearch, body, panelToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
     let
         facetConfig alias =
             { alias = alias
@@ -59,19 +59,19 @@ viewFacetsForPeopleMode { language, activeSearch, body, sectionToggleMsg, userTr
                 [ dividerWithText "Additional filters"
                 ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ viewFacet (facetConfig "roles") facetMsgConfig ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ viewFacet (facetConfig "date-range") facetMsgConfig ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ viewFacet (facetConfig "associated-place") facetMsgConfig ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ viewFacet (facetConfig "gender") facetMsgConfig ]
             , viewFacetSection language
-                sectionToggleMsg
+                panelToggleMsg
                 [ viewFacet (facetConfig "profession") facetMsgConfig ]
             ]
         ]

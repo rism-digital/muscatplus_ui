@@ -37,6 +37,13 @@ viewEncodingsBlock language encodedIncipits =
 viewIncipitPreview : Language -> IncipitBody -> Element msg
 viewIncipitPreview language body =
     let
+        labelLanguageMap =
+            .label body.partOf
+
+        sourceUrl =
+            .source body.partOf
+                |> .id
+
         incipitLink =
             row
                 [ width fill ]
@@ -49,13 +56,6 @@ viewIncipitPreview language body =
                     , url = sourceUrl
                     }
                 ]
-
-        labelLanguageMap =
-            .label body.partOf
-
-        sourceUrl =
-            .source body.partOf
-                |> .id
     in
     row
         [ width fill

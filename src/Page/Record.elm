@@ -24,7 +24,7 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -52,11 +52,6 @@ type alias RecordConfig =
 init : RecordConfig -> RecordPageModel RecordMsg
 init cfg =
     let
-        activeSearch =
-            toNextQuery activeSearchInit
-                |> setNationalCollection cfg.nationalCollection
-                |> flip setNextQuery activeSearchInit
-
         activeSearchInit =
             case cfg.queryArgs of
                 Just qa ->
@@ -67,6 +62,11 @@ init cfg =
 
                 Nothing ->
                     ActiveSearch.empty
+
+        activeSearch =
+            toNextQuery activeSearchInit
+                |> setNationalCollection cfg.nationalCollection
+                |> flip setNextQuery activeSearchInit
 
         selectedResult =
             .fragment cfg.incomingUrl
@@ -93,15 +93,7 @@ load : RecordConfig -> RecordPageModel RecordMsg -> RecordPageModel RecordMsg
 load cfg oldBody =
     let
         activeSearchInit =
-            case cfg.queryArgs of
-                Just q ->
-                    ActiveSearch.init
-                        { queryArgs = q
-                        , keyboardQueryArgs = Nothing
-                        }
-
-                Nothing ->
-                    ActiveSearch.empty
+            ActiveSearch.load oldBody.activeSearch
 
         activeSearch =
             toNextQuery activeSearchInit
@@ -272,6 +264,11 @@ update session msg model =
 
         DebouncerSettledToSendProbeRequest ->
             probeSubmit ServerRespondedWithProbeData session model
+
+        UserClickedFacetPanelToggle panelAlias ->
+            ( userClickedFacetPanelToggle panelAlias model
+            , Cmd.none
+            )
 
         UserClickedRecordViewTab recordTab ->
             let
@@ -459,6 +456,9 @@ updatePageMetadata incomingData =
     case incomingData of
         SourceData sourceBody ->
             let
+                title =
+                    extractLabelFromLanguageMap None sourceBody.label
+
                 fullDescription =
                     case sourceBody.creator of
                         Just c ->
@@ -476,9 +476,6 @@ updatePageMetadata incomingData =
 
                         Nothing ->
                             title
-
-                title =
-                    extractLabelFromLanguageMap None sourceBody.label
             in
             PortSendHeaderMetaInfo { description = fullDescription }
                 |> encodeMessageForPortSend

@@ -1,4 +1,4 @@
-module Language.LocalTranslations exposing (localTranslations)
+module Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 
 {-|
 
@@ -274,4 +274,28 @@ localTranslations =
         , LanguageValues Portugese [ "Aplicar filtros" ]
         , LanguageValues Polish [ "Zastosuj filtry" ]
         ]
+    }
+
+
+facetPanelTitles :
+    { results : LanguageMap
+    , peopleRelationships : LanguageMap
+    , institutionRelationships : LanguageMap
+    , digitizations : LanguageMap
+    , sourceContents : LanguageMap
+    , publicationProduction : LanguageMap
+    }
+facetPanelTitles =
+    { results =
+        [ LanguageValues English [ "Results included" ] ]
+    , peopleRelationships =
+        [ LanguageValues English [ "Source to Person Relationships" ] ]
+    , institutionRelationships =
+        [ LanguageValues English [ "Holding Institutions" ] ]
+    , digitizations =
+        [ LanguageValues English [ "Digital facsimiles" ] ]
+    , sourceContents =
+        [ LanguageValues English [ "Source contents" ] ]
+    , publicationProduction =
+        [ LanguageValues English [ "Publication and Production" ] ]
     }
