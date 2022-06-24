@@ -7,6 +7,7 @@ import Json.Encode as Encode
 import Model exposing (Model(..))
 import Msg exposing (Msg)
 import Page.Search.Msg as SearchMsg
+import Page.SideBar.Msg as SideBarMsg
 import Ports.Incoming exposing (IncomingMessage(..), decodeIncomingMessage, receiveIncomingMessageFromPort)
 
 
@@ -55,6 +56,10 @@ messageReceiverHelper model val =
             case v of
                 PortReceiveTriggerSearch ->
                     handleIncomingSearchTrigger model
+
+                PortReceiveSearchPreferences values ->
+                    SideBarMsg.ClientSetSearchPreferencesThroughPort values
+                        |> Msg.UserInteractedWithSideBar
 
                 PortReceivedUnknownMessage ->
                     Msg.NothingHappened

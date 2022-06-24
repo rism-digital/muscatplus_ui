@@ -7,6 +7,7 @@ import Http.Detailed
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
+import SearchPreferences exposing (SearchPreferences)
 
 
 type SideBarAnimationStatus
@@ -18,6 +19,7 @@ type SideBarAnimationStatus
 type SideBarMsg
     = ServerRespondedWithCountryCodeList (Result (Http.Detailed.Error String) ( Http.Metadata, Dict CountryCode LanguageMap ))
     | ClientDebouncedSideBarMessages (Debouncer.Msg SideBarMsg)
+    | ClientSetSearchPreferencesThroughPort SearchPreferences
     | UserMouseEnteredSideBar
     | UserMouseExitedSideBar
     | UserClickedSideBarOptionForFrontPage SideBarOption
@@ -29,6 +31,7 @@ type SideBarMsg
     | UserMouseUpOnLanguageChooser
     | UserChoseNationalCollection (Maybe CountryCode)
     | UserChangedLanguageSelect String
+    | NothingHappened
 
 
 type SideBarOption

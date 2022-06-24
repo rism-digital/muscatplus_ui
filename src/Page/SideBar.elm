@@ -52,6 +52,13 @@ update msg session =
         ClientDebouncedSideBarMessages subMsg ->
             Debouncer.update update updateDebouncer subMsg session
 
+        ClientSetSearchPreferencesThroughPort preferences ->
+            ( { session
+                | searchPreferences = Just preferences
+              }
+            , Cmd.none
+            )
+
         UserMouseEnteredSideBar ->
             ( { session
                 | expandedSideBar = Expanded
@@ -160,6 +167,9 @@ update msg session =
                 |> encodeMessageForPortSend
                 |> sendOutgoingMessageOnPort
             )
+
+        NothingHappened ->
+            ( session, Cmd.none )
 
 
 updateDebouncer : Debouncer.UpdateConfig SideBarMsg Session

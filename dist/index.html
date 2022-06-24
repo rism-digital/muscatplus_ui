@@ -69,6 +69,7 @@
         const outgoingMessages =
         {
             TRIGGER_SEARCH: "trigger-search",
+            FACET_PANEL_SET: "facet-panel-set"
         }
 
 
@@ -277,6 +278,10 @@
 
                         let _ = setSearchPreferences(newPrefs);
 
+                        app.ports.receiveIncomingMessageFromPort.send({
+                            "msg": outgoingMessages.FACET_PANEL_SET,
+                            "value": newPrefs
+                        })
                         break;
 
                     case incomingMessages.SET_META_INFO:

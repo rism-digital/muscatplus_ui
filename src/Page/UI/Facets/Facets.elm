@@ -1,48 +1,24 @@
-module Page.UI.Facets.Facets exposing (FacetConfig, FacetMsgConfig, viewFacet, viewFacetSection)
+module Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection, viewFacetsControlPanel)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, none, pointer, px, row, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, text, width)
+import Element.Border as Border
 import Element.Events exposing (onClick)
-import Language exposing (Language)
-import Page.Keyboard.Msg exposing (KeyboardMsg)
+import Element.Font as Font
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetSorts, Facets, RangeFacetValue)
-import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.UI.Attributes exposing (facetBorderBottom, lineSpacing)
+import Page.UI.Attributes exposing (facetBorderBottom, headingLG, lineSpacing)
+import Page.UI.Facets.FacetsConfig exposing (FacetConfig, FacetMsgConfig)
 import Page.UI.Facets.NotationFacet exposing (NotationFacetConfig, viewKeyboardControl)
 import Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 import Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 import Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 import Page.UI.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
-import Page.UI.Images exposing (chevronDownSvg)
-import Page.UI.Style exposing (colourScheme)
-
-
-type alias FacetConfig a msg =
-    { alias : FacetAlias
-    , language : Language
-    , activeSearch : ActiveSearch msg
-    , selectColumns : Int
-    , body : { a | facets : Facets }
-    }
-
-
-type alias FacetMsgConfig msg =
-    { userClickedToggleMsg : FacetAlias -> msg
-    , userLostFocusRangeMsg : FacetAlias -> msg
-    , userFocusedRangeMsg : FacetAlias -> msg
-    , userEnteredTextRangeMsg : FacetAlias -> RangeFacetValue -> String -> msg
-    , userClickedFacetExpandSelectMsg : String -> msg
-    , userChangedFacetBehaviourSelectMsg : FacetAlias -> FacetBehaviours -> msg
-    , userChangedSelectFacetSortSelectMsg : FacetAlias -> FacetSorts -> msg
-    , userSelectedFacetItemSelectMsg : FacetAlias -> String -> msg
-    , userInteractedWithPianoKeyboard : KeyboardMsg -> msg
-    , userRemovedQueryMsg : String -> String -> msg
-    , userEnteredTextQueryMsg : FacetAlias -> String -> String -> msg
-    , userChangedBehaviourQueryMsg : FacetAlias -> FacetBehaviours -> msg
-    , userChoseOptionQueryMsg : FacetAlias -> String -> FacetBehaviours -> msg
-    , nothingHappenedMsg : msg
-    }
+import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg, chevronDownSvg)
+import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Set exposing (Set)
 
 
 viewFacet :
@@ -130,9 +106,85 @@ viewFacet cfg msg =
             none
 
 
+viewFacetsControlPanel : String -> LanguageMap -> ControlsConfig msg -> List (Element msg) -> Element msg
+viewFacetsControlPanel alias header cfg body =
+    let
+        -- if all of the body values are empty, skip showing this panel altogether.
+        allAreEmpty =
+            List.all (\a -> a == none) body
+    in
+    if allAreEmpty then
+        none
+
+    else
+        let
+            panelIsVisible =
+                Set.member alias cfg.expandedFacetPanels
+
+            toggleIcon =
+                if panelIsVisible then
+                    caretCircleDownSvg colourScheme.lightBlue
+
+                else
+                    caretCircleRightSvg colourScheme.lightBlue
+
+            panelBody =
+                if panelIsVisible then
+                    row
+                        [ width fill
+                        , paddingXY 0 8
+                        ]
+                        [ column
+                            [ width fill
+                            , spacing lineSpacing
+                            ]
+                            body
+                        ]
+
+                else
+                    none
+        in
+        row
+            [ width fill
+            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+            , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+            , paddingXY 0 10
+            ]
+            [ column
+                [ width fill
+                ]
+                [ row
+                    [ width fill
+                    , Font.color (colourScheme.black |> convertColorToElementColor)
+                    , Border.dotted
+                    , paddingXY 0 8
+                    , spacing 5
+                    , Font.medium
+                    , headingLG
+                    ]
+                    [ el
+                        [ width (px 16)
+                        , height (px 16)
+                        , centerY
+                        , pointer
+                        , onClick (cfg.panelToggleMsg alias cfg.expandedFacetPanels)
+                        ]
+                        toggleIcon
+                    , el
+                        [ centerY
+                        , pointer
+                        , onClick (cfg.panelToggleMsg alias cfg.expandedFacetPanels)
+                        ]
+                        (text (extractLabelFromLanguageMap cfg.language header))
+                    ]
+                , panelBody
+                ]
+            ]
+
+
 viewFacetSection :
     Language
-    -> (String -> msg)
+    -> (String -> Set String -> msg)
     -> List (Element msg)
     -> Element msg
 viewFacetSection language clickMsg facets =
@@ -169,7 +221,7 @@ viewFacetSection language clickMsg facets =
                             [ alignLeft
                             , width (px 10)
                             , pointer
-                            , onClick (clickMsg "") -- TODO: Implement collapsing behaviour!
+                            , onClick (clickMsg "" Set.empty) -- TODO: Implement collapsing behaviour!
                             ]
                             (chevronDownSvg colourScheme.lightBlue)
                         ]

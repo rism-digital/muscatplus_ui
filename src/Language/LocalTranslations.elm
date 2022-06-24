@@ -284,18 +284,24 @@ facetPanelTitles :
     , digitizations : LanguageMap
     , sourceContents : LanguageMap
     , publicationProduction : LanguageMap
+    , biographicalDetails : LanguageMap
+    , roleAndProfession : LanguageMap
     }
 facetPanelTitles =
     { results =
         [ LanguageValues English [ "Results included" ] ]
     , peopleRelationships =
-        [ LanguageValues English [ "Source to Person Relationships" ] ]
+        [ LanguageValues English [ "Source to person relationships" ] ]
     , institutionRelationships =
-        [ LanguageValues English [ "Holding Institutions" ] ]
+        [ LanguageValues English [ "Holding institutions" ] ]
     , digitizations =
         [ LanguageValues English [ "Digital facsimiles" ] ]
     , sourceContents =
         [ LanguageValues English [ "Source contents" ] ]
     , publicationProduction =
-        [ LanguageValues English [ "Publication and Production" ] ]
+        [ LanguageValues English [ "Publication and production" ] ]
+    , biographicalDetails =
+        [ LanguageValues English [ "Biographical details" ] ]
+    , roleAndProfession =
+        [ LanguageValues English [ "Role and Profession" ] ]
     }

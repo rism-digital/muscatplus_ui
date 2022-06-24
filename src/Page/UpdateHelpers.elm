@@ -12,7 +12,6 @@ module Page.UpdateHelpers exposing
     , userChangedResultsPerPage
     , userChangedSelectFacetSort
     , userClickedClosePreviewWindow
-    , userClickedFacetPanelToggle
     , userClickedResultForPreview
     , userClickedSelectFacetExpand
     , userClickedSelectFacetItem
@@ -25,7 +24,7 @@ module Page.UpdateHelpers exposing
     , userRemovedItemFromQueryFacet
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacetPanels, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toExpandedFacetPanels, toExpandedFacets, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacetPanel, toggleExpandedFacets)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toExpandedFacets, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacets)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Browser.Navigation as Nav
 import Config as C
@@ -428,15 +427,22 @@ userClickedSelectFacetExpand alias model =
         |> flip setActiveSearch model
 
 
-userClickedFacetPanelToggle : String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
-userClickedFacetPanelToggle alias model =
-    let
-        newPanelSection =
-            toExpandedFacetPanels model.activeSearch
-                |> toggleExpandedFacetPanel alias
-    in
-    setExpandedFacetPanels newPanelSection model.activeSearch
-        |> flip setActiveSearch model
+
+--userClickedFacetPanelToggle : String -> Session -> ( Session, Cmd msg )
+--userClickedFacetPanelToggle alias session =
+--    let
+--        newPanelSection =
+--            toggleExpandedFacetPanel alias session
+--
+--        cmd =
+--            PortSendSaveSearchPreference { key = "expandedFacetPanels", value = ListPreference (Set.toList newPanelSection) }
+--                |> encodeMessageForPortSend
+--                |> sendOutgoingMessageOnPort
+--    in
+--    ( setExpandedFacetPanels newPanelSection model.activeSearch
+--        |> flip setActiveSearch model
+--    , cmd
+--    )
 
 
 userClickedSelectFacetItem : FacetAlias -> String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }

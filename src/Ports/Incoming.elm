@@ -1,6 +1,7 @@
 port module Ports.Incoming exposing (IncomingMessage(..), decodeIncomingMessage, receiveIncomingMessageFromPort)
 
 import Json.Decode as Decode exposing (Decoder, string)
+import SearchPreferences exposing (SearchPreferences, searchPreferencesDecoder)
 
 
 port receiveIncomingMessageFromPort : (Decode.Value -> msg) -> Sub msg
@@ -8,6 +9,7 @@ port receiveIncomingMessageFromPort : (Decode.Value -> msg) -> Sub msg
 
 type IncomingMessage
     = PortReceiveTriggerSearch
+    | PortReceiveSearchPreferences SearchPreferences
     | PortReceivedUnknownMessage
 
 
@@ -16,6 +18,10 @@ convertMsgStringToIncomingMessage msgString =
     case msgString of
         "trigger-search" ->
             Decode.map (\_ -> PortReceiveTriggerSearch) Decode.value
+
+        "facet-panel-set" ->
+            Decode.field "value" searchPreferencesDecoder
+                |> Decode.map (\values -> PortReceiveSearchPreferences values)
 
         _ ->
             Decode.succeed PortReceivedUnknownMessage

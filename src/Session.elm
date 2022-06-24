@@ -19,10 +19,12 @@ import Device exposing (detectDevice)
 import Dict exposing (Dict)
 import Element exposing (Device)
 import Flags exposing (Flags)
+import Json.Decode as Decode
 import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Route exposing (Route(..), parseUrl)
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg, SideBarOption(..), resultModeToSideBarOption, sideBarExpandDelay)
+import SearchPreferences exposing (SearchPreferences, searchPreferencesDecoder)
 import Url exposing (Url)
 
 
@@ -41,6 +43,7 @@ type alias Session =
     , currentlyInteractingWithLanguageChooser : Bool
     , restrictedToNationalCollection : Maybe CountryCode
     , allNationalCollections : Dict CountryCode LanguageMap
+    , searchPreferences : Maybe SearchPreferences
     }
 
 
@@ -90,6 +93,15 @@ init flags url key =
 
         route =
             parseUrl url
+
+        searchPreferences =
+            case flags.searchPreferences of
+                Just pref ->
+                    Decode.decodeValue searchPreferencesDecoder pref
+                        |> Result.toMaybe
+
+                Nothing ->
+                    Nothing
     in
     { key = key
     , language = language
@@ -105,4 +117,5 @@ init flags url key =
     , currentlyInteractingWithLanguageChooser = False
     , restrictedToNationalCollection = nationalCollectionFilter
     , allNationalCollections = Dict.empty
+    , searchPreferences = searchPreferences
     }

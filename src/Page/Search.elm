@@ -25,10 +25,13 @@ import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder,
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
+import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
+import Set
 import Url exposing (Url)
 import Utlities exposing (convertNodeIdToPath)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
@@ -303,9 +306,19 @@ update session msg model =
             userClickedToggleFacet alias model
                 |> probeSubmit ServerRespondedWithProbeData session
 
-        UserClickedFacetPanelToggle panelAlias ->
-            ( userClickedFacetPanelToggle panelAlias model
-            , Cmd.none
+        UserClickedFacetPanelToggle panelAlias expandedPanels ->
+            let
+                newPanels =
+                    if Set.member panelAlias expandedPanels then
+                        Set.remove panelAlias expandedPanels
+
+                    else
+                        Set.insert panelAlias expandedPanels
+            in
+            ( model
+            , PortSendSaveSearchPreference { key = "expandedFacetPanels", value = ListPreference (Set.toList newPanels) }
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
             )
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->

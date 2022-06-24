@@ -3,7 +3,6 @@ module ActiveSearch exposing (ActiveSearchConfig, empty, init, load, setActiveSe
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebouncer)
 import Dict exposing (Dict)
-import List.Extra as LE
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
@@ -23,7 +22,6 @@ empty : ActiveSearch msg
 empty =
     { nextQuery = Page.Query.defaultQueryArgs
     , expandedFacets = Set.empty
-    , expandedFacetPanels = Set.empty
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
     , keyboard = Just Keyboard.initModel
@@ -47,7 +45,6 @@ init cfg =
     in
     { nextQuery = cfg.queryArgs
     , expandedFacets = Set.empty
-    , expandedFacetPanels = Set.empty
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
     , keyboard = keyboardQuery

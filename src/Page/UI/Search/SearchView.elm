@@ -2,7 +2,7 @@ module Page.UI.Search.SearchView exposing (SearchControlsConfig, SearchResultRou
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Attribute, Device, DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, minimum, none, px, row, scrollbarY, width)
+import Element exposing (Attribute, Device, DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -14,7 +14,7 @@ import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.UI.Attributes exposing (controlsColumnWidth, responsiveCheckboxColumns, resultColumnWidth)
 import Page.UI.Components exposing (viewBlankBottomBar)
-import Page.UI.Facets.Facets exposing (FacetMsgConfig)
+import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewError, viewPreviewRouter)
 import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
@@ -30,7 +30,9 @@ import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScree
 import Page.UI.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData)
+import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
+import Set exposing (Set)
 
 
 type alias SearchResultsSectionConfig a msg =
@@ -54,7 +56,7 @@ type alias SearchResultsSectionConfig a msg =
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     , userResetAllFiltersMsg : msg
-    , panelToggleMsg : String -> msg
+    , panelToggleMsg : String -> Set String -> msg
     , facetMsgConfig : FacetMsgConfig msg
     }
 
@@ -138,6 +140,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 , model = cfg.model
                 , body = body
                 , checkboxColumns = responsiveCheckboxColumns (.device cfg.session)
+                , searchPreferences = .searchPreferences cfg.session
                 , facetMsgConfig = cfg.facetMsgConfig
                 , panelToggleMsg = cfg.panelToggleMsg
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
@@ -153,8 +156,9 @@ type alias SearchControlsConfig a msg =
     , model : { a | activeSearch : ActiveSearch msg }
     , body : SearchBody
     , checkboxColumns : Int
+    , searchPreferences : Maybe SearchPreferences
     , facetMsgConfig : FacetMsgConfig msg
-    , panelToggleMsg : String -> msg
+    , panelToggleMsg : String -> Set String -> msg
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     }
@@ -168,11 +172,20 @@ viewSearchControls cfg =
                 |> toNextQuery
                 |> toMode
 
+        expandedFacetPanels =
+            case cfg.searchPreferences of
+                Just p ->
+                    p.expandedFacetPanels
+
+                Nothing ->
+                    Set.empty
+
         facetConfig =
             { language = cfg.language
             , activeSearch = .activeSearch cfg.model
             , body = cfg.body
             , numberOfSelectColumns = cfg.checkboxColumns
+            , expandedFacetPanels = expandedFacetPanels
             , panelToggleMsg = cfg.panelToggleMsg
             , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
             , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg

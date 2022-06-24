@@ -36,7 +36,7 @@ viewToggleFacet config =
         [ column
             []
             [ row
-                [ paddingXY 10 0 ]
+                [ paddingXY 10 10 ]
                 [ el []
                     (Toggle.view isActive (config.userClickedFacetToggleMsg facetAlias)
                         |> Toggle.setLabel (extractLabelFromLanguageMap config.language (.label config.toggleFacet))

@@ -17,14 +17,14 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Dict
 import Flip exposing (flip)
 import Language exposing (Language(..), extractLabelFromLanguageMap)
-import Page.Query exposing (QueryArgs, defaultQueryArgs, setKeywordQuery, setNationalCollection, setNextQuery, setRows, setSort, toNextQuery)
+import Page.Query exposing (QueryArgs, defaultQueryArgs, setNationalCollection, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -266,9 +266,7 @@ update session msg model =
             probeSubmit ServerRespondedWithProbeData session model
 
         UserClickedFacetPanelToggle panelAlias ->
-            ( userClickedFacetPanelToggle panelAlias model
-            , Cmd.none
-            )
+            ( model, Cmd.none )
 
         UserClickedRecordViewTab recordTab ->
             let

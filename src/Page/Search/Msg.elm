@@ -9,6 +9,7 @@ import Page.RecordTypes.Search exposing (FacetBehaviours, FacetItem, FacetSorts,
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Response exposing (ServerData)
+import Set exposing (Set)
 
 
 type SearchMsg
@@ -23,7 +24,7 @@ type SearchMsg
     | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String
     | UserClickedToggleFacet FacetAlias
-    | UserClickedFacetPanelToggle String
+    | UserClickedFacetPanelToggle String (Set String)
     | UserEnteredTextInQueryFacet FacetAlias String String
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg SearchMsg)
     | DebouncerSettledToSendQueryFacetSuggestionRequest String

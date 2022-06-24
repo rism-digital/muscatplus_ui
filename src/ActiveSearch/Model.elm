@@ -23,7 +23,6 @@ import Set exposing (Set)
 type alias ActiveSearch msg =
     { nextQuery : QueryArgs
     , expandedFacets : Set String
-    , expandedFacetPanels : Set String
     , rangeFacetValues : Dict FacetAlias ( String, String )
     , queryFacetValues : Dict FacetAlias String
     , keyboard : Maybe (Keyboard.Model KeyboardMsg)
