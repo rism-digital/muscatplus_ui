@@ -1,6 +1,6 @@
 module Page.Front.Views exposing (view)
 
-import Element exposing (Element, alignLeft, alignTop, column, fill, height, maximum, minimum, none, padding, paddingEach, paddingXY, paragraph, row, scrollbarY, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, none, padding, paddingEach, paddingXY, paragraph, px, row, scrollbarY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -11,9 +11,11 @@ import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.SideBar.Msg exposing (SideBarOption(..))
+import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (emptyAttribute, headingHero)
 import Page.UI.Components exposing (dividerWithText)
 import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
+import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
@@ -84,6 +86,9 @@ frontBodyViewRouter session model =
                 , userTriggeredSearchSubmitMsg = FrontMsg.UserTriggeredSearchSubmit
                 , userEnteredTextInKeywordQueryBoxMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                 }
+
+        Loading _ ->
+            viewFrontSearchControlsLoading
 
         _ ->
             -- TODO: Implement some sort of error handling here.
@@ -220,6 +225,22 @@ viewFacetPanels cfg =
                     )
                 ]
             ]
+        ]
+
+
+viewFrontSearchControlsLoading : Element FrontMsg
+viewFrontSearchControlsLoading =
+    row
+        [ width fill
+        , height fill
+        ]
+        [ el
+            [ width (px 50)
+            , height (px 50)
+            , centerX
+            , centerY
+            ]
+            (animatedLoader [ width (px 50), height (px 50) ] (spinnerSvg colourScheme.slateGrey))
         ]
 
 
