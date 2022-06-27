@@ -295,19 +295,24 @@ view session =
                     [ width shrink
                     , spacing 8
                     ]
-                    [ link
-                        [ width fill
+                    [ el
+                        [ alignTop
+                        , width fill
+                        , pointer
+                        , onClick (UserClickedSideBarOptionForFrontPage SourceSearchOption)
                         ]
-                        { label =
-                            el
-                                [ alignTop
-                                , width fill
-                                ]
-                                (rismLogo colourScheme.white headerHeight)
-                        , url = Config.serverUrl ++ "?mode=sources"
-                        }
+                        (rismLogo colourScheme.white headerHeight)
                     , viewIf
-                        (el [ width (px 120), height (px 20), centerY, moveUp 0.5 ] (onlineTextSvg colourScheme.white))
+                        (el
+                            [ width (px 120)
+                            , height (px 20)
+                            , centerY
+                            , moveUp 0.5
+                            , pointer
+                            , onClick (UserClickedSideBarOptionForFrontPage SourceSearchOption)
+                            ]
+                            (onlineTextSvg colourScheme.white)
+                        )
                         showLabels
                     ]
                 ]
