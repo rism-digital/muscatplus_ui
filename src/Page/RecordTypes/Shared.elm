@@ -90,31 +90,3 @@ recordHistoryDecoder =
         |> required "created" datetime
         |> required "updatedLabel" languageMapLabelDecoder
         |> required "updated" datetime
-
-
-labelBooleanValueDecoder : Decoder LabelBooleanValue
-labelBooleanValueDecoder =
-    Decode.succeed LabelBooleanValue
-        |> required "label" languageMapLabelDecoder
-        |> required "value" bool
-
-
-toLabel : { a | label : LanguageMap } -> LanguageMap
-toLabel labelValue =
-    labelValue.label
-
-
-toNumericValue : { a | value : Float } -> Float
-toNumericValue labelValue =
-    labelValue.value
-
-
-toValue : { a | value : LanguageMap } -> LanguageMap
-toValue labelValue =
-    labelValue.value
-
-
-typeDecoder : Decoder RecordType
-typeDecoder =
-    string
-        |> andThen (\str -> Decode.succeed (recordTypeFromJsonType str))

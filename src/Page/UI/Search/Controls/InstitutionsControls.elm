@@ -1,14 +1,12 @@
 module Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 
-import Element exposing (Element, alignTop, column, fill, height, none, padding, paddingEach, row, scrollbarY, width)
+import Element exposing (Element)
 import Language.LocalTranslations exposing (facetPanelTitles)
-import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.UI.Components exposing (dividerWithText)
-import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection, viewFacetsControlPanel)
-import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
+import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
+import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
 
 
+institutionFacetPanels : { locationPanel : PanelConfig }
 institutionFacetPanels =
     { locationPanel =
         { alias = "institution-location-panel"

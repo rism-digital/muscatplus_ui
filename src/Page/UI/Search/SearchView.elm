@@ -4,7 +4,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Attribute, Device, DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, row, scrollbarY, width)
+import Element exposing (Attribute, Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -13,7 +13,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
-import Page.RecordTypes.Search exposing (Facets, SearchBody, SearchResult(..))
+import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.UI.Attributes exposing (controlsColumnWidth, responsiveCheckboxColumns, resultColumnWidth)
 import Page.UI.Components exposing (dividerWithText, viewBlankBottomBar)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -33,7 +33,6 @@ import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScree
 import Page.UI.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData)
-import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
 import Set exposing (Set)
 

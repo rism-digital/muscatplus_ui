@@ -34,13 +34,6 @@ buildNotationRequestQuery keyboardQuery =
         |> createSvgRequest ServerRespondedWithRenderedNotation
 
 
-buildNotationValidationQuery : KeyboardQuery -> Cmd KeyboardMsg
-buildNotationValidationQuery keyboardQuery =
-    buildNotationQueryParameters keyboardQuery
-        |> serverUrl [ "incipits/render" ]
-        |> createRequest ServerRespondedWithNotationValidation incipitValidationBodyDecoder
-
-
 buildUpdateQuery : Maybe String -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
 buildUpdateQuery newNoteData model =
     let
@@ -76,19 +69,6 @@ defaultKeyboardQuery =
     , noteData = Nothing
     , queryMode = IntervalQueryMode
     }
-
-
-init : Int -> ( Keyboard KeyboardMsg, Cmd KeyboardMsg )
-init numOctaves =
-    let
-        -- needs a config and a model instance
-        config =
-            { numOctaves = numOctaves }
-
-        model =
-            initModel
-    in
-    ( Keyboard model config, Cmd.none )
 
 
 initModel : Model msg
@@ -128,16 +108,6 @@ update msg model =
             )
 
         ServerRespondedWithRenderedNotation (Err _) ->
-            ( model, Cmd.none )
-
-        ServerRespondedWithNotationValidation (Ok ( _, response )) ->
-            ( { model
-                | inputIsValid = response.isValid
-              }
-            , Cmd.none
-            )
-
-        ServerRespondedWithNotationValidation (Err _) ->
             ( model, Cmd.none )
 
         UserClickedPianoKeyboardKey noteName octave ->

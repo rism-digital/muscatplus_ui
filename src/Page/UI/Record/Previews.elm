@@ -19,6 +19,13 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (ServerData(..))
 
 
+type alias PreviewConfig msg =
+    { closeMsg : msg
+    , sourceItemExpandMsg : msg
+    , sourceItemsExpanded : Bool
+    }
+
+
 viewPreviewError : Language -> msg -> String -> Element msg
 viewPreviewError language closeMsg errMsg =
     row
@@ -76,13 +83,6 @@ viewPreviewLoading language =
                 ]
             ]
         ]
-
-
-type alias PreviewConfig msg =
-    { closeMsg : msg
-    , sourceItemExpandMsg : msg
-    , sourceItemsExpanded : Bool
-    }
 
 
 viewPreviewRouter : Language -> PreviewConfig msg -> Maybe ServerData -> Element msg

@@ -140,40 +140,41 @@ viewQueryFacet config =
             else
                 config.userChoseOptionMsg facetAlias textValue currentBehaviourOption
 
-        interspersedOptions =
-            case enteredOptions of
-                [] ->
-                    [ none ]
-
-                _ ->
-                    let
-                        joinWordEl =
-                            case currentBehaviourOption of
-                                FacetBehaviourIntersection ->
-                                    el
-                                        [ Background.color (colourScheme.darkOrange |> convertColorToElementColor)
-                                        , Font.color (colourScheme.white |> convertColorToElementColor)
-                                        , padding 5
-                                        , Font.medium
-                                        ]
-                                        (text "and")
-
-                                FacetBehaviourUnion ->
-                                    el
-                                        [ Background.color (colourScheme.darkOrange |> convertColorToElementColor)
-                                        , Font.color (colourScheme.white |> convertColorToElementColor)
-                                        , padding 5
-                                        , Font.medium
-                                        ]
-                                        (text "or")
-                    in
-                    List.intersperse joinWordEl enteredOptions
-
         queryTermsDisplay =
             if List.isEmpty enteredOptions then
                 none
 
             else
+                let
+                    interspersedOptions =
+                        case enteredOptions of
+                            [] ->
+                                [ none ]
+
+                            _ ->
+                                let
+                                    joinWordEl =
+                                        case currentBehaviourOption of
+                                            FacetBehaviourIntersection ->
+                                                el
+                                                    [ Background.color (colourScheme.darkOrange |> convertColorToElementColor)
+                                                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                                                    , padding 5
+                                                    , Font.medium
+                                                    ]
+                                                    (text "and")
+
+                                            FacetBehaviourUnion ->
+                                                el
+                                                    [ Background.color (colourScheme.darkOrange |> convertColorToElementColor)
+                                                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                                                    , padding 5
+                                                    , Font.medium
+                                                    ]
+                                                    (text "or")
+                                in
+                                List.intersperse joinWordEl enteredOptions
+                in
                 wrappedRow
                     [ width fill
                     , spacing lineSpacing

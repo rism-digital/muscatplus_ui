@@ -1,7 +1,7 @@
-module Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, SearchControlsConfig)
+module Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig, SearchControlsConfig)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Language exposing (Language)
+import Language exposing (Language, LanguageMap)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (Facets)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -35,4 +35,10 @@ type alias SearchControlsConfig a b msg =
     , panelToggleMsg : String -> Set String -> msg
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
+    }
+
+
+type alias PanelConfig =
+    { alias : String
+    , label : LanguageMap
     }

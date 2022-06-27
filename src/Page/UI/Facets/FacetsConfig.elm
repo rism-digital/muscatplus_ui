@@ -1,4 +1,4 @@
-module Page.UI.Facets.FacetsConfig exposing (..)
+module Page.UI.Facets.FacetsConfig exposing (FacetConfig, FacetMsgConfig)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Language exposing (Language)

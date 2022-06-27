@@ -310,25 +310,6 @@ facetBehavioursDecoder =
             (\str -> Decode.succeed (parseStringToFacetBehaviour str))
 
 
-facetDataToFacetType : FacetData -> FacetType
-facetDataToFacetType fd =
-    case fd of
-        ToggleFacetData _ ->
-            Toggle
-
-        RangeFacetData _ ->
-            Range
-
-        SelectFacetData _ ->
-            Select
-
-        NotationFacetData _ ->
-            Notation
-
-        QueryFacetData _ ->
-            Query_
-
-
 facetItemDecoder : Decoder FacetItem
 facetItemDecoder =
     Decode.succeed FacetItem
@@ -440,23 +421,12 @@ incipitResultBodyDecoder =
         |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
 
 
-incipitResultFlagsDecoder : Decoder IncipitResultFlags
-incipitResultFlagsDecoder =
-    Decode.succeed IncipitResultFlags
-
-
 institutionResultBodyDecoder : Decoder InstitutionResultBody
 institutionResultBodyDecoder =
     Decode.succeed InstitutionResultBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
-
-
-institutionResultFlagsDecoder : Decoder InstitutionResultFlags
-institutionResultFlagsDecoder =
-    Decode.succeed InstitutionResultFlags
-        |> required "numberOfSources" int
 
 
 modeFacetDecoder : Decoder ModeFacet
@@ -542,12 +512,6 @@ personResultBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
-
-
-personResultFlagsDecoder : Decoder PersonResultFlags
-personResultFlagsDecoder =
-    Decode.succeed PersonResultFlags
-        |> required "numberOfSources" int
 
 
 queryFacetDecoder : Decoder QueryFacet
@@ -642,16 +606,6 @@ selectFacetDecoder =
         |> required "defaultSort" facetSortDecoder
 
 
-setFacets : Facets -> { a | facets : Facets } -> { a | facets : Facets }
-setFacets newFacets oldRecord =
-    { oldRecord | facets = newFacets }
-
-
-setSelectFacetItems : List FacetItem -> { a | items : List FacetItem } -> { a | items : List FacetItem }
-setSelectFacetItems newItems oldRecord =
-    { oldRecord | items = newItems }
-
-
 sourceResultBodyDecoder : Decoder SourceResultBody
 sourceResultBodyDecoder =
     Decode.succeed SourceResultBody
@@ -687,34 +641,9 @@ toCurrentBehaviour options =
     options.current
 
 
-toCurrentSort : { a | current : FacetSorts } -> FacetSorts
-toCurrentSort options =
-    options.current
-
-
-toFacets : { a | facets : Facets } -> Facets
-toFacets body =
-    body.facets
-
-
-toSelectFacetItems : { a | items : List FacetItem } -> List FacetItem
-toSelectFacetItems facetBlock =
-    facetBlock.items
-
-
 toggleFacetDecoder : Decoder ToggleFacet
 toggleFacetDecoder =
     Decode.succeed ToggleFacet
         |> required "alias" string
         |> required "label" languageMapLabelDecoder
         |> required "value" string
-
-
-toggleFacetSorts : FacetSorts -> FacetSorts
-toggleFacetSorts oldValue =
-    case oldValue of
-        FacetSortCount ->
-            FacetSortAlpha
-
-        FacetSortAlpha ->
-            FacetSortCount

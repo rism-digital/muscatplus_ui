@@ -1,11 +1,11 @@
 module Page.Search.Views exposing (view)
 
 import ActiveSearch exposing (toActiveSearch)
-import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, clipY, column, fill, height, none, px, row, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, px, row, width)
 import Element.Border as Border
 import Language exposing (Language)
 import Page.Query exposing (toMode, toNextQuery)
-import Page.RecordTypes.Search exposing (ModeFacet, SearchBody, SearchResult(..))
+import Page.RecordTypes.Search exposing (ModeFacet)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)

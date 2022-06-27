@@ -1,14 +1,15 @@
 module Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 
-import Element exposing (Element, alignTop, column, fill, height, padding, paddingEach, row, width)
+import Element exposing (Element)
 import Language.LocalTranslations exposing (facetPanelTitles)
-import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.UI.Components exposing (dividerWithText)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
-import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
+import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
 
 
+personFacetPanels :
+    { biographicalInfoPanel : PanelConfig
+    , roleAndProfession : PanelConfig
+    }
 personFacetPanels =
     { biographicalInfoPanel =
         { alias = "person-biography-panel"

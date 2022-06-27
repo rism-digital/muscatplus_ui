@@ -3,7 +3,7 @@ module Page.SideBar.Views exposing (view)
 import Color exposing (Color)
 import Config
 import Debouncer.Messages exposing (provideInput)
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, moveUp, paddingEach, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, moveUp, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -16,7 +16,7 @@ import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedLabel)
-import Page.UI.Attributes exposing (emptyAttribute, headingXXL, minimalDropShadow)
+import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)

@@ -1,4 +1,22 @@
-module ActiveSearch exposing (ActiveSearchConfig, empty, init, load, setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setExpandedFacetPanels, setExpandedFacets, setKeyboard, setQueryFacetValues, setRangeFacetValues, toActiveSearch, toExpandedFacetPanels, toExpandedFacets, toKeyboard, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacetPanel, toggleExpandedFacets)
+module ActiveSearch exposing
+    ( ActiveSearchConfig
+    , empty
+    , init
+    , load
+    , setActiveSearch
+    , setActiveSuggestion
+    , setActiveSuggestionDebouncer
+    , setExpandedFacets
+    , setKeyboard
+    , setQueryFacetValues
+    , setRangeFacetValues
+    , toActiveSearch
+    , toExpandedFacets
+    , toKeyboard
+    , toQueryFacetValues
+    , toRangeFacetValues
+    , toggleExpandedFacets
+    )
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebouncer)
@@ -82,11 +100,6 @@ setExpandedFacets newFacets oldRecord =
     { oldRecord | expandedFacets = newFacets }
 
 
-setExpandedFacetPanels : Set String -> { a | expandedFacetPanels : Set String } -> { a | expandedFacetPanels : Set String }
-setExpandedFacetPanels newPanels oldRecord =
-    { oldRecord | expandedFacetPanels = newPanels }
-
-
 setKeyboard : Maybe (Keyboard.Model KeyboardMsg) -> { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) } -> { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) }
 setKeyboard newKeyboard oldRecord =
     { oldRecord | keyboard = newKeyboard }
@@ -112,11 +125,6 @@ toExpandedFacets model =
     model.expandedFacets
 
 
-toExpandedFacetPanels : { a | expandedFacetPanels : Set String } -> Set String
-toExpandedFacetPanels model =
-    model.expandedFacetPanels
-
-
 toKeyboard : { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) } -> Maybe (Keyboard.Model KeyboardMsg)
 toKeyboard model =
     model.keyboard
@@ -139,17 +147,3 @@ toggleExpandedFacets newFacet oldFacets =
 
     else
         Set.insert newFacet oldFacets
-
-
-toggleExpandedFacetPanel : String -> Set String -> Set String
-toggleExpandedFacetPanel alias panels =
-    if Set.member alias panels then
-        Set.remove alias panels
-
-    else
-        Set.insert alias panels
-
-
-toActiveSuggestion : { a | activeSuggestion : Maybe ActiveSuggestion } -> Maybe ActiveSuggestion
-toActiveSuggestion model =
-    model.activeSuggestion

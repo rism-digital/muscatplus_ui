@@ -127,9 +127,6 @@ viewSelectFacet config =
             sortedItems =
                 sortFacetItemList config.language chosenSort facetItemList
 
-            totalItems =
-                List.length sortedItems
-
             facetItems =
                 if isExpanded then
                     sortedItems
@@ -191,6 +188,10 @@ viewSelectFacet config =
                                 "Collapse options list"
 
                             else
+                                let
+                                    totalItems =
+                                        List.length sortedItems
+                                in
                                 "Show all " ++ String.fromInt totalItems ++ " values"
                     in
                     el

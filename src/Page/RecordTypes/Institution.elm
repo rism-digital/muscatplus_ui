@@ -30,12 +30,6 @@ type alias CoordinatesSection =
     }
 
 
-type alias EmailAddressBody =
-    { label : LanguageMap
-    , value : String
-    }
-
-
 type alias InstitutionBody =
     { sectionToc : String
     , id : String
@@ -58,16 +52,6 @@ type alias LocationAddressSectionBody =
     , coordinates : Maybe CoordinatesSection
     , website : Maybe LabelStringValue
     , email : Maybe LabelStringValue
-    }
-
-
-type alias MailingAddressBody =
-    { label : LanguageMap }
-
-
-type alias WebsiteAddressBody =
-    { label : LanguageMap
-    , value : String
     }
 
 

@@ -13,37 +13,6 @@ import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, re
 import Page.UI.Style exposing (colourScheme)
 
 
-viewInstitutionFlags : Language -> InstitutionResultFlags -> Element msg
-viewInstitutionFlags language flags =
-    let
-        numSources =
-            if flags.numberOfSources > 0 then
-                let
-                    labelText =
-                        if flags.numberOfSources == 1 then
-                            "1 Source"
-
-                        else
-                            formatNumberByLanguage language (toFloat flags.numberOfSources) ++ " Sources"
-                in
-                makeFlagIcon
-                    { background = colourScheme.darkOrange
-                    , foreground = colourScheme.white
-                    }
-                    (sourcesSvg colourScheme.white)
-                    labelText
-
-            else
-                none
-    in
-    row
-        [ width fill
-        , spacing 10
-        ]
-        [ numSources
-        ]
-
-
 viewInstitutionSearchResult :
     SearchResultConfig msg
     -> InstitutionResultBody

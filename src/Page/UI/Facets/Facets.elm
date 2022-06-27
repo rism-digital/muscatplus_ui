@@ -1,13 +1,12 @@
 module Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection, viewFacetsControlPanel)
 
-import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetSorts, Facets, RangeFacetValue)
+import Page.RecordTypes.Search exposing (FacetData(..))
 import Page.UI.Attributes exposing (facetBorderBottom, headingLG, lineSpacing)
 import Page.UI.Facets.FacetsConfig exposing (FacetConfig, FacetMsgConfig)
 import Page.UI.Facets.NotationFacet exposing (NotationFacetConfig, viewKeyboardControl)

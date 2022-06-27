@@ -13,11 +13,6 @@ import Page.UI.Record.Incipits exposing (viewRenderedIncipits)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 
 
-viewIncipitFlags : Language -> IncipitResultFlags -> Element msg
-viewIncipitFlags language flags =
-    none
-
-
 viewIncipitSearchResult :
     SearchResultConfig msg
     -> IncipitResultBody

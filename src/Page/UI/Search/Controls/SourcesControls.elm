@@ -1,14 +1,21 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
-import Element exposing (Element, alignTop, column, fill, height, padding, paddingEach, row, width)
+import Element exposing (Element, paddingEach, row)
+import Language exposing (LanguageMap)
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
-import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.UI.Components exposing (dividerWithText)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
-import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
+import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
 
 
+sourceFacetPanels :
+    { sourceResultsPanel : PanelConfig
+    , digitizationPanel : PanelConfig
+    , incipitPanel : PanelConfig
+    , peopleRelationshipsPanel : PanelConfig
+    , holdingInstitutionPanel : PanelConfig
+    , sourceContentsPanel : PanelConfig
+    , publicationProductionPanel : PanelConfig
+    }
 sourceFacetPanels =
     { sourceResultsPanel =
         { alias = "source-results-panel"
