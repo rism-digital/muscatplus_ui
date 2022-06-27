@@ -16,11 +16,13 @@ import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.UI.Attributes exposing (controlsColumnWidth, responsiveCheckboxColumns, resultColumnWidth)
 import Page.UI.Components exposing (dividerWithText, viewBlankBottomBar)
+import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewError, viewPreviewRouter)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
+import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
@@ -183,6 +185,29 @@ viewSearchControls cfg =
             , facetMsgConfig = cfg.facetMsgConfig
             }
 
+        mainSearchField =
+            case currentMode of
+                IncipitsMode ->
+                    viewFacet
+                        { alias = "notation"
+                        , language = .language cfg.session
+                        , activeSearch = .activeSearch cfg.model
+                        , selectColumns = cfg.checkboxColumns
+                        , body = cfg.body
+                        }
+                        cfg.facetMsgConfig
+
+                _ ->
+                    row
+                        [ width fill ]
+                        [ searchKeywordInput
+                            { language = .language cfg.session
+                            , submitMsg = cfg.userTriggeredSearchSubmitMsg
+                            , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
+                            , queryText = qText
+                            }
+                        ]
+
         facetLayout =
             case currentMode of
                 SourcesMode ->
@@ -195,7 +220,7 @@ viewSearchControls cfg =
                     viewFacetsForInstitutionsMode facetConfig
 
                 IncipitsMode ->
-                    [ none ]
+                    viewFacetsForIncipitsMode facetConfig
 
                 -- [ viewFacetsForIncipitsMode facetConfig ]
                 LiturgicalFestivalsMode ->
@@ -223,15 +248,7 @@ viewSearchControls cfg =
                     [ width fill
                     , alignTop
                     ]
-                    (row
-                        [ width fill ]
-                        [ searchKeywordInput
-                            { language = .language cfg.session
-                            , submitMsg = cfg.userTriggeredSearchSubmitMsg
-                            , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
-                            , queryText = qText
-                            }
-                        ]
+                    (mainSearchField
                         :: row
                             [ width fill
                             , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }

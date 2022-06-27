@@ -14,9 +14,11 @@ import Page.SideBar.Msg exposing (SideBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (emptyAttribute, headingHero)
 import Page.UI.Components exposing (dividerWithText)
-import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
+import Page.UI.Facets.Facets exposing (viewFacet)
+import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput, viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
+import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
@@ -165,6 +167,35 @@ viewFacetPanels cfg =
             , facetMsgConfig = cfg.facetMsgConfig
             }
 
+        ( mainSearchField, secondaryQueryField ) =
+            case .showFrontSearchInterface cfg.session of
+                IncipitSearchOption ->
+                    ( viewFacet
+                        { alias = "notation"
+                        , language = .language cfg.session
+                        , activeSearch = .activeSearch cfg.model
+                        , selectColumns = cfg.checkboxColumns
+                        , body = cfg.body
+                        }
+                        cfg.facetMsgConfig
+                    , searchKeywordInput
+                        { language = language
+                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        }
+                    )
+
+                _ ->
+                    ( viewFrontKeywordQueryInput
+                        { language = language
+                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        }
+                    , none
+                    )
+
         facetLayout =
             case .showFrontSearchInterface cfg.session of
                 SourceSearchOption ->
@@ -177,7 +208,7 @@ viewFacetPanels cfg =
                     viewFacetsForInstitutionsMode facetConfig
 
                 IncipitSearchOption ->
-                    [ none ]
+                    viewFacetsForIncipitsMode facetConfig
 
                 -- Show a blank page if this is ever the choice; it shouldn't be!
                 LiturgicalFestivalsOption ->
@@ -208,12 +239,7 @@ viewFacetPanels cfg =
                         , padding 10
                         ]
                         [ text headingHeroText ]
-                        :: viewFrontKeywordQueryInput
-                            { language = language
-                            , submitMsg = FrontMsg.UserTriggeredSearchSubmit
-                            , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
-                            , queryText = qText
-                            }
+                        :: mainSearchField
                         :: row
                             [ width fill
                             , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }
@@ -221,6 +247,7 @@ viewFacetPanels cfg =
                             -- TODO: Translate
                             [ dividerWithText "Additional filters"
                             ]
+                        :: secondaryQueryField
                         :: facetLayout
                     )
                 ]
