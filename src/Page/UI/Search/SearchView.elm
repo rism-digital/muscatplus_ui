@@ -185,10 +185,21 @@ viewSearchControls cfg =
             , facetMsgConfig = cfg.facetMsgConfig
             }
 
-        mainSearchField =
+        keywordInputField =
+            row
+                [ width fill ]
+                [ searchKeywordInput
+                    { language = .language cfg.session
+                    , submitMsg = cfg.userTriggeredSearchSubmitMsg
+                    , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
+                    , queryText = qText
+                    }
+                ]
+
+        ( mainSearchField, secondaryQueryField ) =
             case currentMode of
                 IncipitsMode ->
-                    viewFacet
+                    ( viewFacet
                         { alias = "notation"
                         , language = .language cfg.session
                         , activeSearch = .activeSearch cfg.model
@@ -196,17 +207,11 @@ viewSearchControls cfg =
                         , body = cfg.body
                         }
                         cfg.facetMsgConfig
+                    , keywordInputField
+                    )
 
                 _ ->
-                    row
-                        [ width fill ]
-                        [ searchKeywordInput
-                            { language = .language cfg.session
-                            , submitMsg = cfg.userTriggeredSearchSubmitMsg
-                            , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
-                            , queryText = qText
-                            }
-                        ]
+                    ( keywordInputField, none )
 
         facetLayout =
             case currentMode of
@@ -256,6 +261,7 @@ viewSearchControls cfg =
                             -- TODO: Translate
                             [ dividerWithText "Additional filters"
                             ]
+                        :: secondaryQueryField
                         :: facetLayout
                     )
                 ]
