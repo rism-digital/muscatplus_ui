@@ -41,7 +41,7 @@ sourceFacetPanels =
     }
 
 
-viewFacetsForSourcesMode : ControlsConfig msg -> Element msg
+viewFacetsForSourcesMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForSourcesMode cfg =
     let
         facetConfig alias =
@@ -51,11 +51,6 @@ viewFacetsForSourcesMode cfg =
             , selectColumns = cfg.numberOfSelectColumns
             , body = cfg.body
             }
-
-        qText =
-            toNextQuery cfg.activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
 
         compositeVolumesToggle =
             viewFacet (facetConfig "hide-composite-volumes") cfg.facetMsgConfig
@@ -111,89 +106,62 @@ viewFacetsForSourcesMode cfg =
         scoring =
             viewFacet (facetConfig "scoring") cfg.facetMsgConfig
     in
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        , padding 10
-        ]
-        [ column
-            [ width fill
-            , alignTop
+    [ viewFacetsControlPanel
+        (.alias sourceFacetPanels.sourceResultsPanel)
+        (.label sourceFacetPanels.sourceResultsPanel)
+        cfg
+        [ row
+            [ paddingEach { top = 0, bottom = 10, left = 0, right = 0 } ]
+            [ sourceContentsToggle
+            , sourceCollectionsToggle
+            , compositeVolumesToggle
             ]
-            [ row
-                [ width fill ]
-                [ searchKeywordInput
-                    { language = cfg.language
-                    , submitMsg = cfg.userTriggeredSearchSubmitMsg
-                    , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
-                    , queryText = qText
-                    }
-                ]
-            , row
-                [ width fill
-                , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }
-                ]
-                -- TODO: Translate
-                [ dividerWithText "Additional filters"
-                ]
-            , viewFacetsControlPanel
-                (.alias sourceFacetPanels.sourceResultsPanel)
-                (.label sourceFacetPanels.sourceResultsPanel)
-                cfg
-                [ row
-                    [ paddingEach { top = 0, bottom = 10, left = 0, right = 0 } ]
-                    [ sourceContentsToggle
-                    , sourceCollectionsToggle
-                    , compositeVolumesToggle
-                    ]
-                , materialType
-                , contentType
-                , recordType
-                ]
-            , viewFacetsControlPanel
-                (.alias sourceFacetPanels.peopleRelationshipsPanel)
-                (.label sourceFacetPanels.peopleRelationshipsPanel)
-                cfg
-                [ composerRelationships
-                , otherPeopleRelationships
-                ]
-            , viewFacetsControlPanel
-                (.alias sourceFacetPanels.digitizationPanel)
-                (.label sourceFacetPanels.digitizationPanel)
-                cfg
-                [ row
-                    []
-                    [ hasDigitizationToggle
-                    , hasIiifToggle
-                    ]
-                ]
-            , viewFacetsControlPanel
-                (.alias sourceFacetPanels.incipitPanel)
-                (.label sourceFacetPanels.incipitPanel)
-                cfg
-                [ hasIncipitsToggle ]
-            , viewFacetsControlPanel
-                (.alias sourceFacetPanels.sourceContentsPanel)
-                (.label sourceFacetPanels.sourceContentsPanel)
-                cfg
-                [ scoring
-                , subjects
-                , textLanguage
-                ]
-            , viewFacetsControlPanel
-                (.alias sourceFacetPanels.publicationProductionPanel)
-                (.label sourceFacetPanels.publicationProductionPanel)
-                cfg
-                [ dateRange
-                , formatExtent
-                ]
-            , viewFacetsControlPanel
-                (.alias sourceFacetPanels.holdingInstitutionPanel)
-                (.label sourceFacetPanels.holdingInstitutionPanel)
-                cfg
-                [ institutionSigla
-                , institutionNumHoldings
-                ]
+        , materialType
+        , contentType
+        , recordType
+        ]
+    , viewFacetsControlPanel
+        (.alias sourceFacetPanels.peopleRelationshipsPanel)
+        (.label sourceFacetPanels.peopleRelationshipsPanel)
+        cfg
+        [ composerRelationships
+        , otherPeopleRelationships
+        ]
+    , viewFacetsControlPanel
+        (.alias sourceFacetPanels.digitizationPanel)
+        (.label sourceFacetPanels.digitizationPanel)
+        cfg
+        [ row
+            []
+            [ hasDigitizationToggle
+            , hasIiifToggle
             ]
         ]
+    , viewFacetsControlPanel
+        (.alias sourceFacetPanels.incipitPanel)
+        (.label sourceFacetPanels.incipitPanel)
+        cfg
+        [ hasIncipitsToggle ]
+    , viewFacetsControlPanel
+        (.alias sourceFacetPanels.sourceContentsPanel)
+        (.label sourceFacetPanels.sourceContentsPanel)
+        cfg
+        [ scoring
+        , subjects
+        , textLanguage
+        ]
+    , viewFacetsControlPanel
+        (.alias sourceFacetPanels.publicationProductionPanel)
+        (.label sourceFacetPanels.publicationProductionPanel)
+        cfg
+        [ dateRange
+        , formatExtent
+        ]
+    , viewFacetsControlPanel
+        (.alias sourceFacetPanels.holdingInstitutionPanel)
+        (.label sourceFacetPanels.holdingInstitutionPanel)
+        cfg
+        [ institutionSigla
+        , institutionNumHoldings
+        ]
+    ]

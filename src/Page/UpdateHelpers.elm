@@ -3,7 +3,6 @@ module Page.UpdateHelpers exposing
     , addNationalCollectionQueryParameter
     , createProbeUrl
     , probeSubmit
-    , rangeStringParser
     , selectAppropriateRangeFacetValues
     , textQuerySuggestionSubmit
     , updateQueryFacetFilters
@@ -12,6 +11,7 @@ module Page.UpdateHelpers exposing
     , userChangedResultsPerPage
     , userChangedSelectFacetSort
     , userClickedClosePreviewWindow
+    , userClickedFacetPanelToggle
     , userClickedResultForPreview
     , userClickedSelectFacetExpand
     , userClickedSelectFacetItem
@@ -43,9 +43,12 @@ import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Route exposing (Route(..))
 import Parser as P exposing ((|.), (|=), Parser)
+import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData)
+import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
+import Set exposing (Set)
 import Url
 import Url.Builder exposing (toQuery)
 import Utlities exposing (choose, convertPathToNodeId)
@@ -666,3 +669,20 @@ userRemovedItemFromQueryFacet alias query model =
         |> setFilters newActiveFilters
         |> flip setNextQuery model.activeSearch
         |> flip setActiveSearch model
+
+
+userClickedFacetPanelToggle : String -> Set String -> a -> ( a, Cmd msg )
+userClickedFacetPanelToggle panelAlias expandedPanels model =
+    let
+        newPanels =
+            if Set.member panelAlias expandedPanels then
+                Set.remove panelAlias expandedPanels
+
+            else
+                Set.insert panelAlias expandedPanels
+    in
+    ( model
+    , PortSendSaveSearchPreference { key = "expandedFacetPanels", value = ListPreference (Set.toList newPanels) }
+        |> encodeMessageForPortSend
+        |> sendOutgoingMessageOnPort
+    )

@@ -21,7 +21,7 @@ personFacetPanels =
     }
 
 
-viewFacetsForPeopleMode : ControlsConfig msg -> Element msg
+viewFacetsForPeopleMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForPeopleMode cfg =
     let
         facetConfig alias =
@@ -31,11 +31,6 @@ viewFacetsForPeopleMode cfg =
             , selectColumns = cfg.numberOfSelectColumns
             , body = cfg.body
             }
-
-        qText =
-            toNextQuery cfg.activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
 
         dates =
             viewFacet (facetConfig "date-range") cfg.facetMsgConfig
@@ -52,46 +47,19 @@ viewFacetsForPeopleMode cfg =
         profession =
             viewFacet (facetConfig "profession") cfg.facetMsgConfig
     in
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        , padding 10
+    [ viewFacetsControlPanel
+        (.alias personFacetPanels.biographicalInfoPanel)
+        (.label personFacetPanels.biographicalInfoPanel)
+        cfg
+        [ dates
+        , gender
+        , places
         ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            [ row
-                [ width fill ]
-                [ searchKeywordInput
-                    { language = cfg.language
-                    , submitMsg = cfg.userTriggeredSearchSubmitMsg
-                    , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
-                    , queryText = qText
-                    }
-                ]
-            , row
-                [ width fill
-                , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }
-                ]
-                -- TODO: Translate
-                [ dividerWithText "Additional filters"
-                ]
-            , viewFacetsControlPanel
-                (.alias personFacetPanels.biographicalInfoPanel)
-                (.label personFacetPanels.biographicalInfoPanel)
-                cfg
-                [ dates
-                , gender
-                , places
-                ]
-            , viewFacetsControlPanel
-                (.alias personFacetPanels.roleAndProfession)
-                (.label personFacetPanels.roleAndProfession)
-                cfg
-                [ role
-                , profession
-                ]
-            ]
+    , viewFacetsControlPanel
+        (.alias personFacetPanels.roleAndProfession)
+        (.label personFacetPanels.roleAndProfession)
+        cfg
+        [ role
+        , profession
         ]
+    ]

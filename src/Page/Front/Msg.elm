@@ -9,6 +9,7 @@ import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacet
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Response exposing (ServerData)
+import Set exposing (Set)
 
 
 type FrontMsg
@@ -17,6 +18,7 @@ type FrontMsg
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
     | DebouncerCapturedProbeRequest (Debouncer.Msg FrontMsg)
     | DebouncerSettledToSendProbeRequest
+    | UserClickedFacetPanelToggle String (Set String)
     | UserTriggeredSearchSubmit
     | UserResetAllFilters
     | UserEnteredTextInKeywordQueryBox String

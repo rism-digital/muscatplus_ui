@@ -64,7 +64,7 @@ searchResultsViewRouter session model =
             , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
             , facetMsgConfig = facetRecordMsgConfig
-            , panelToggleMsg = \_ _ -> RecordMsg.NothingHappened
+            , panelToggleMsg = RecordMsg.UserClickedFacetPanelToggle
             }
     in
     case model.searchResults of

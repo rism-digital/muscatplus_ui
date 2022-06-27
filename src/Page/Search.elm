@@ -25,7 +25,7 @@ import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder,
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
@@ -307,19 +307,7 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserClickedFacetPanelToggle panelAlias expandedPanels ->
-            let
-                newPanels =
-                    if Set.member panelAlias expandedPanels then
-                        Set.remove panelAlias expandedPanels
-
-                    else
-                        Set.insert panelAlias expandedPanels
-            in
-            ( model
-            , PortSendSaveSearchPreference { key = "expandedFacetPanels", value = ListPreference (Set.toList newPanels) }
-                |> encodeMessageForPortSend
-                |> sendOutgoingMessageOnPort
-            )
+            userClickedFacetPanelToggle panelAlias expandedPanels model
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
             let

@@ -24,10 +24,12 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
+import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
+import Set
 import Url exposing (Url)
 import Utlities exposing (convertNodeIdToPath)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
@@ -265,8 +267,8 @@ update session msg model =
         DebouncerSettledToSendProbeRequest ->
             probeSubmit ServerRespondedWithProbeData session model
 
-        UserClickedFacetPanelToggle panelAlias ->
-            ( model, Cmd.none )
+        UserClickedFacetPanelToggle panelAlias expandedPanels ->
+            userClickedFacetPanelToggle panelAlias expandedPanels model
 
         UserClickedRecordViewTab recordTab ->
             let

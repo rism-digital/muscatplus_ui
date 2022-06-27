@@ -9,6 +9,7 @@ import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacet
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Response exposing (ServerData)
+import Set exposing (Set)
 
 
 type RecordMsg
@@ -19,7 +20,7 @@ type RecordMsg
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
     | DebouncerCapturedProbeRequest (Debouncer.Msg RecordMsg)
     | DebouncerSettledToSendProbeRequest
-    | UserClickedFacetPanelToggle String
+    | UserClickedFacetPanelToggle String (Set String)
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedSearchResultsPagination String

@@ -21,7 +21,7 @@ import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryAr
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
@@ -195,6 +195,9 @@ update session msg model =
 
         DebouncerSettledToSendProbeRequest ->
             probeSubmit ServerRespondedWithProbeData session model
+
+        UserClickedFacetPanelToggle panelAlias expandedPanels ->
+            userClickedFacetPanelToggle panelAlias expandedPanels model
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model

@@ -8,8 +8,8 @@ import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 
 
-viewFacetsForIncipitsMode : ControlsConfig msg -> Element msg
-viewFacetsForIncipitsMode { language, activeSearch, body, panelToggleMsg, userTriggeredSearchSubmitMsg, userEnteredTextInKeywordQueryBoxMsg, facetMsgConfig, numberOfSelectColumns } =
+viewFacetsForIncipitsMode : ControlsConfig body msg -> Element msg
+viewFacetsForIncipitsMode cfg =
     let
         facetConfig alias =
             { alias = alias

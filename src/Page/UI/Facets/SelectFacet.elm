@@ -124,9 +124,6 @@ viewSelectFacet config =
             isExpanded =
                 Set.member facetAlias activeSearch.expandedFacets
 
-            isTruncated =
-                totalItems == 200
-
             sortedItems =
                 sortFacetItemList config.language chosenSort facetItemList
 
@@ -140,18 +137,13 @@ viewSelectFacet config =
                 else
                     List.take 12 sortedItems
 
-            numItemsPerGroup =
-                (toFloat (List.length facetItems) / toFloat config.numberOfColumns)
-                    |> ceiling
-
             query =
                 toNextQuery activeSearch
 
-            -- TODO: Explain this better; why 200 items?
             facetSorts =
                 query.facetSorts
 
-            -- TODO: Translate!
+            -- TODO: Explain this better; why 200 items?
             chosenSort =
                 case Dict.get facetAlias facetSorts of
                     Just userSetSort ->
@@ -160,6 +152,7 @@ viewSelectFacet config =
                     Nothing ->
                         .defaultSort config.selectFacet
 
+            -- TODO: Translate!
             chosenSortMessage =
                 case chosenSort of
                     FacetSortCount ->
@@ -176,12 +169,16 @@ viewSelectFacet config =
                     FacetBehaviourUnion ->
                         ( unionSvg colourScheme.slateGrey, "Options are combined with an OR operator" )
 
-            -- TODO: Translate!
             facetAlias =
                 .alias config.selectFacet
 
+            -- TODO: Translate!
             facetLabel =
                 .label config.selectFacet
+
+            numItemsPerGroup =
+                (toFloat (List.length facetItems) / toFloat config.numberOfColumns)
+                    |> ceiling
 
             groupedFacetItems =
                 LE.greedyGroupsOf numItemsPerGroup facetItems

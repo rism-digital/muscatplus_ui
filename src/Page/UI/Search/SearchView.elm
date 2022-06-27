@@ -1,23 +1,26 @@
-module Page.UI.Search.SearchView exposing (SearchControlsConfig, SearchResultRouterConfig, SearchResultsListPanelConfig, SearchResultsSectionConfig, viewSearchResultsSection)
+module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResultsListPanelConfig, SearchResultsSectionConfig, viewSearchResultsSection)
+
+--import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Attribute, Device, DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, row, scrollbarY, width)
+import Element exposing (Attribute, Device, DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Query exposing (toMode, toNextQuery)
+import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
-import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
+import Page.RecordTypes.Search exposing (Facets, SearchBody, SearchResult(..))
 import Page.UI.Attributes exposing (controlsColumnWidth, responsiveCheckboxColumns, resultColumnWidth)
-import Page.UI.Components exposing (viewBlankBottomBar)
+import Page.UI.Components exposing (dividerWithText, viewBlankBottomBar)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
+import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewError, viewPreviewRouter)
-import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
+import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
@@ -136,11 +139,10 @@ viewSearchResultsSection cfg resultsLoading body =
                 , resetMsg = cfg.userResetAllFiltersMsg
                 }
             , viewSearchControls
-                { language = language
+                { session = cfg.session
                 , model = cfg.model
                 , body = body
                 , checkboxColumns = responsiveCheckboxColumns (.device cfg.session)
-                , searchPreferences = .searchPreferences cfg.session
                 , facetMsgConfig = cfg.facetMsgConfig
                 , panelToggleMsg = cfg.panelToggleMsg
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
@@ -151,29 +153,21 @@ viewSearchResultsSection cfg resultsLoading body =
         ]
 
 
-type alias SearchControlsConfig a msg =
-    { language : Language
-    , model : { a | activeSearch : ActiveSearch msg }
-    , body : SearchBody
-    , checkboxColumns : Int
-    , searchPreferences : Maybe SearchPreferences
-    , facetMsgConfig : FacetMsgConfig msg
-    , panelToggleMsg : String -> Set String -> msg
-    , userTriggeredSearchSubmitMsg : msg
-    , userEnteredTextInKeywordQueryBoxMsg : String -> msg
-    }
-
-
-viewSearchControls : SearchControlsConfig a msg -> Element msg
+viewSearchControls : SearchControlsConfig a b msg -> Element msg
 viewSearchControls cfg =
     let
+        qText =
+            toNextQuery (.activeSearch cfg.model)
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
+
         currentMode =
             toActiveSearch cfg.model
                 |> toNextQuery
                 |> toMode
 
         expandedFacetPanels =
-            case cfg.searchPreferences of
+            case .searchPreferences cfg.session of
                 Just p ->
                     p.expandedFacetPanels
 
@@ -181,14 +175,12 @@ viewSearchControls cfg =
                     Set.empty
 
         facetConfig =
-            { language = cfg.language
+            { language = .language cfg.session
             , activeSearch = .activeSearch cfg.model
             , body = cfg.body
             , numberOfSelectColumns = cfg.checkboxColumns
             , expandedFacetPanels = expandedFacetPanels
             , panelToggleMsg = cfg.panelToggleMsg
-            , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
-            , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
             , facetMsgConfig = cfg.facetMsgConfig
             }
 
@@ -204,10 +196,11 @@ viewSearchControls cfg =
                     viewFacetsForInstitutionsMode facetConfig
 
                 IncipitsMode ->
-                    viewFacetsForIncipitsMode facetConfig
+                    [ none ]
 
+                -- [ viewFacetsForIncipitsMode facetConfig ]
                 LiturgicalFestivalsMode ->
-                    none
+                    [ none ]
     in
     row
         [ width fill
@@ -217,11 +210,39 @@ viewSearchControls cfg =
         ]
         [ column
             [ width (fill |> maximum 1100)
-            , centerX
             , height fill
             , alignTop
+            , centerX
             ]
-            [ facetLayout
+            [ row
+                [ width fill
+                , height fill
+                , alignTop
+                , padding 10
+                ]
+                [ column
+                    [ width fill
+                    , alignTop
+                    ]
+                    (row
+                        [ width fill ]
+                        [ searchKeywordInput
+                            { language = .language cfg.session
+                            , submitMsg = cfg.userTriggeredSearchSubmitMsg
+                            , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
+                            , queryText = qText
+                            }
+                        ]
+                        :: row
+                            [ width fill
+                            , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }
+                            ]
+                            -- TODO: Translate
+                            [ dividerWithText "Additional filters"
+                            ]
+                        :: facetLayout
+                    )
+                ]
             ]
         ]
 

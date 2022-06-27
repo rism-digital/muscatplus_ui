@@ -17,7 +17,7 @@ institutionFacetPanels =
     }
 
 
-viewFacetsForInstitutionsMode : ControlsConfig msg -> Element msg
+viewFacetsForInstitutionsMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForInstitutionsMode cfg =
     let
         facetConfig alias =
@@ -28,45 +28,13 @@ viewFacetsForInstitutionsMode cfg =
             , body = cfg.body
             }
 
-        qText =
-            toNextQuery cfg.activeSearch
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         city =
             viewFacet (facetConfig "city") cfg.facetMsgConfig
     in
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        , padding 10
+    [ viewFacetsControlPanel
+        (.alias institutionFacetPanels.locationPanel)
+        (.label institutionFacetPanels.locationPanel)
+        cfg
+        [ city
         ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            [ row
-                [ width fill ]
-                [ searchKeywordInput
-                    { language = cfg.language
-                    , submitMsg = cfg.userTriggeredSearchSubmitMsg
-                    , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
-                    , queryText = qText
-                    }
-                ]
-            , row
-                [ width fill
-                , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }
-                ]
-                -- TODO: Translate
-                [ dividerWithText "Additional filters"
-                ]
-            , viewFacetsControlPanel
-                (.alias institutionFacetPanels.locationPanel)
-                (.label institutionFacetPanels.locationPanel)
-                cfg
-                [ city
-                ]
-            ]
-        ]
+    ]

@@ -174,8 +174,8 @@ view model =
                     , width fill
                     , height fill
                     ]
-                    [ --publicBetaNotice
-                      loadingIndicator model
+                    [ publicBetaNotice
+                    , loadingIndicator model
                     , pageView
                     ]
                 ]
