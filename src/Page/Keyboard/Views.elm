@@ -22,7 +22,7 @@ import Page.Keyboard.Model exposing (Keyboard(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (queryModeStrToQueryMode)
 import Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
-import Page.Keyboard.Views.PianoInput exposing (viewPianoInput)
+import Page.Keyboard.Views.FullKeyboard exposing (fullKeyboard)
 import Page.RecordTypes.Search exposing (NotationFacet)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
@@ -60,9 +60,10 @@ view notationFacet language (Keyboard model config) =
                     [ row
                         [ width fill ]
                         [ column
-                            [ centerX
+                            []
+                            [ fullKeyboard
+                                []
                             ]
-                            [ viewPianoInput language (Keyboard model config) ]
                         ]
                     , row
                         [ width fill
