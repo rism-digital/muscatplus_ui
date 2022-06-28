@@ -116,7 +116,9 @@ update msg model =
                     choose (String.length noteData > Config.minimumQueryLength) True False
 
                 newModel =
-                    { model | needsProbe = needsProbing }
+                    { model
+                        | needsProbe = needsProbing
+                    }
 
                 note =
                     createPAENote noteName octave
