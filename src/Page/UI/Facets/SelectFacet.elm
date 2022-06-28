@@ -192,7 +192,11 @@ viewSelectFacet config =
                                     totalItems =
                                         List.length sortedItems
                                 in
-                                "Show all " ++ String.fromInt totalItems ++ " values"
+                                if totalItems == 200 then
+                                    "Show top " ++ String.fromInt totalItems ++ " values"
+
+                                else
+                                    "Show all " ++ String.fromInt totalItems ++ " values"
                     in
                     el
                         [ onClick (config.userClickedFacetExpandMsg facetAlias)
