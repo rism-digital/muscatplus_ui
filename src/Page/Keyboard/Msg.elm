@@ -8,12 +8,12 @@ import Page.Keyboard.Model exposing (Clef, KeyNoteName, KeySignature, Octave, Qu
 
 type KeyboardMsg
     = ServerRespondedWithRenderedNotation (Result (Http.Detailed.Error String) ( Http.Metadata, String ))
-    | UserClickedPianoKeyboardKey KeyNoteName Octave
-    | UserClickedPianoKeyboardChangeClef Clef
-    | UserInteractedWithPAEText String
     | DebouncerCapturedPAEText (Debouncer.Msg KeyboardMsg)
     | DebouncerSettledToSendPAEText
+    | UserClickedPianoKeyboardKey KeyNoteName Octave
+    | UserInteractedWithPAEText String
+    | UserChangedQueryMode QueryMode
+    | UserClickedPianoKeyboardChangeClef Clef
     | UserClickedPianoKeyboardChangeTimeSignature TimeSignature
     | UserClickedPianoKeyboardChangeKeySignature KeySignature
-    | UserChangedQueryMode QueryMode
     | NothingHappenedWithTheKeyboard

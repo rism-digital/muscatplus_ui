@@ -18,32 +18,32 @@ type RecordMsg
     | ServerRespondedWithRecordData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | ServerRespondedWithRecordPreview (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
-    | DebouncerCapturedProbeRequest (Debouncer.Msg RecordMsg)
-    | DebouncerSettledToSendProbeRequest
-    | UserClickedFacetPanelToggle String (Set String)
-    | UserClickedRecordViewTab CurrentRecordViewTab
-    | UserClickedExpandSourceItemsSectionInPreview
-    | UserClickedSearchResultsPagination String
-    | UserClickedSearchResultForPreview String
-    | UserClickedClosePreviewWindow
-    | UserTriggeredSearchSubmit
-    | UserEnteredTextInKeywordQueryBox String
-    | UserClickedToggleFacet FacetAlias
-    | UserLostFocusRangeFacet FacetAlias
-    | UserFocusedRangeFacet FacetAlias
-    | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
-    | UserClickedSelectFacetExpand FacetAlias
-    | UserChangedFacetBehaviour FacetAlias FacetBehaviours
-    | UserChangedSelectFacetSort FacetAlias FacetSorts
-    | UserClickedSelectFacetItem FacetAlias String
-    | UserRemovedItemFromQueryFacet FacetAlias String
-    | UserEnteredTextInQueryFacet FacetAlias String String
-    | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg RecordMsg)
-    | DebouncerSettledToSendQueryFacetSuggestionRequest String
-    | UserChoseOptionForQueryFacet FacetAlias String FacetBehaviours
-    | UserChangedResultSorting String
-    | UserChangedResultsPerPage String
-    | UserResetAllFilters
     | ClientCompletedViewportJump
     | ClientCompletedViewportReset
+    | DebouncerCapturedProbeRequest (Debouncer.Msg RecordMsg)
+    | DebouncerSettledToSendProbeRequest
+    | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg RecordMsg)
+    | DebouncerSettledToSendQueryFacetSuggestionRequest String
+    | UserClickedFacetPanelToggle String (Set String)
+    | UserEnteredTextInKeywordQueryBox String
+    | UserClickedToggleFacet FacetAlias
+    | UserChangedFacetBehaviour FacetAlias FacetBehaviours
+    | UserEnteredTextInQueryFacet FacetAlias String String
+    | UserRemovedItemFromQueryFacet FacetAlias String
+    | UserChoseOptionForQueryFacet FacetAlias String FacetBehaviours
+    | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
+    | UserFocusedRangeFacet FacetAlias
+    | UserLostFocusRangeFacet FacetAlias
+    | UserChangedSelectFacetSort FacetAlias FacetSorts
+    | UserClickedSelectFacetExpand FacetAlias
+    | UserClickedSelectFacetItem FacetAlias String
+    | UserTriggeredSearchSubmit
+    | UserResetAllFilters
+    | UserChangedResultSorting String
+    | UserChangedResultsPerPage String
+    | UserClickedSearchResultsPagination String
+    | UserClickedSearchResultForPreview String
+    | UserClickedExpandSourceItemsSectionInPreview
+    | UserClickedClosePreviewWindow
+    | UserClickedRecordViewTab CurrentRecordViewTab
     | NothingHappened

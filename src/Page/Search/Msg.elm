@@ -17,33 +17,33 @@ type SearchMsg
     | ServerRespondedWithProbeData (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ))
     | ServerRespondedWithSearchPreview (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
+    | ClientCompletedViewportReset
+    | ClientCompletedViewportJump
     | DebouncerCapturedProbeRequest (Debouncer.Msg SearchMsg)
     | DebouncerSettledToSendProbeRequest
-    | UserChangedFacetBehaviour FacetAlias FacetBehaviours
-    | UserChangedSelectFacetSort FacetAlias FacetSorts
-    | UserClickedSelectFacetExpand FacetAlias
-    | UserClickedSelectFacetItem FacetAlias String
-    | UserClickedToggleFacet FacetAlias
-    | UserClickedFacetPanelToggle String (Set String)
-    | UserEnteredTextInQueryFacet FacetAlias String String
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg SearchMsg)
     | DebouncerSettledToSendQueryFacetSuggestionRequest String
-    | UserChoseOptionForQueryFacet FacetAlias String FacetBehaviours
+    | UserClickedModeItem FacetItem
+    | UserClickedFacetPanelToggle String (Set String)
+    | UserEnteredTextInKeywordQueryBox String
+    | UserClickedToggleFacet FacetAlias
+    | UserChangedFacetBehaviour FacetAlias FacetBehaviours
+    | UserEnteredTextInQueryFacet FacetAlias String String
     | UserRemovedItemFromQueryFacet FacetAlias String
+    | UserChoseOptionForQueryFacet FacetAlias String FacetBehaviours
     | UserEnteredTextInRangeFacet FacetAlias RangeFacetValue String
     | UserFocusedRangeFacet FacetAlias
     | UserLostFocusRangeFacet FacetAlias
+    | UserChangedSelectFacetSort FacetAlias FacetSorts
+    | UserClickedSelectFacetExpand FacetAlias
+    | UserClickedSelectFacetItem FacetAlias String
+    | UserInteractedWithPianoKeyboard KeyboardMsg
+    | UserTriggeredSearchSubmit
+    | UserResetAllFilters
     | UserChangedResultSorting String
     | UserChangedResultsPerPage String
-    | UserClickedModeItem FacetItem
     | UserClickedSearchResultsPagination String
-    | UserTriggeredSearchSubmit
-    | UserEnteredTextInKeywordQueryBox String
-    | UserClickedClosePreviewWindow
-    | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedSearchResultForPreview String
-    | UserInteractedWithPianoKeyboard KeyboardMsg
-    | UserResetAllFilters
-    | ClientCompletedViewportReset
-    | ClientCompletedViewportJump
+    | UserClickedExpandSourceItemsSectionInPreview
+    | UserClickedClosePreviewWindow
     | NothingHappened
