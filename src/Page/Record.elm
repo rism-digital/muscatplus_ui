@@ -95,10 +95,18 @@ load cfg oldBody =
         activeSearchInit =
             ActiveSearch.load oldBody.activeSearch
 
-        activeSearch =
+        initActiveSearch =
             toNextQuery activeSearchInit
                 |> setNationalCollection cfg.nationalCollection
                 |> flip setNextQuery activeSearchInit
+
+        activeSearch =
+            case cfg.queryArgs of
+                Just qa ->
+                    setNextQuery qa initActiveSearch
+
+                Nothing ->
+                    initActiveSearch
 
         ( previewResp, selectedResult ) =
             case .fragment cfg.incomingUrl of

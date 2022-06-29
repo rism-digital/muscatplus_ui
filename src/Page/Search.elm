@@ -96,14 +96,13 @@ load cfg oldModel =
 
                 Nothing ->
                     ( NoResponseToShow, Nothing )
+
+        newActiveSearch =
+            ActiveSearch.load oldModel.activeSearch
+                |> setNextQuery cfg.queryArgs
     in
     { oldModel
-        | activeSearch =
-            ActiveSearch.load oldModel.activeSearch
-
-        --{ queryArgs = cfg.queryArgs
-        --, keyboardQueryArgs = Just cfg.keyboardQueryArgs
-        --}
+        | activeSearch = newActiveSearch
         , preview = previewResp
         , selectedResult = selectedResult
         , applyFilterPrompt = False
