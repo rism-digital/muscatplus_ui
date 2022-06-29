@@ -155,7 +155,6 @@ viewRenderedIncipits : List RenderedIncipit -> Element msg
 viewRenderedIncipits incipits =
     row
         [ width (fill |> minimum 500 |> maximum 1000)
-        , paddingXY 10 0
         , htmlAttribute (HA.class "search-results-rendered-incipit")
         , Background.color (colourScheme.white |> convertColorToElementColor)
         ]

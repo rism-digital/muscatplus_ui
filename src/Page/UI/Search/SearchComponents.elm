@@ -1,6 +1,6 @@
 module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, viewSearchButtons)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -81,13 +81,13 @@ viewProbeResponseNumbers language probeResponse =
                 (text textMsg)
 
         Error errMsg ->
-            el
+            paragraph
                 [ Font.medium ]
-                (extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults
+                [ extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults
                     ++ ": "
                     ++ errMsg
                     |> text
-                )
+                ]
 
         NoResponseToShow ->
             none

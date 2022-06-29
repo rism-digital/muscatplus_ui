@@ -196,29 +196,16 @@ update session msg model =
         DebouncerSettledToSendProbeRequest ->
             probeSubmit ServerRespondedWithProbeData session model
 
+        DebouncerCapturedQueryFacetSuggestionRequest incomingMsg ->
+            Debouncer.update (update session) updateDebouncerSuggestConfig incomingMsg model
+
+        DebouncerSettledToSendQueryFacetSuggestionRequest suggestionUrl ->
+            ( model
+            , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
+            )
+
         UserClickedFacetPanelToggle panelAlias expandedPanels ->
             userClickedFacetPanelToggle panelAlias expandedPanels model
-
-        UserTriggeredSearchSubmit ->
-            searchSubmit session model
-
-        UserResetAllFilters ->
-            let
-                -- we don't reset *all* parameters; we keep the
-                -- currently selected result mode so that the user
-                -- doesn't get bounced back to the 'sources' tab.
-                currentMode =
-                    toNextQuery model.activeSearch
-                        |> toMode
-
-                adjustedQueryArgs =
-                    { defaultQueryArgs | mode = currentMode }
-            in
-            setNextQuery adjustedQueryArgs model.activeSearch
-                |> setRangeFacetValues Dict.empty
-                |> setKeyboard (Just Keyboard.initModel)
-                |> flip setActiveSearch model
-                |> frontProbeSubmit session
 
         UserEnteredTextInKeywordQueryBox queryText ->
             let
@@ -268,14 +255,6 @@ update session msg model =
             in
             update session debounceMsg newModel
 
-        DebouncerCapturedQueryFacetSuggestionRequest incomingMsg ->
-            Debouncer.update (update session) updateDebouncerSuggestConfig incomingMsg model
-
-        DebouncerSettledToSendQueryFacetSuggestionRequest suggestionUrl ->
-            ( model
-            , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
-            )
-
         UserChoseOptionFromQueryFacetSuggest alias selectedValue currentBehaviour ->
             updateQueryFacetFilters alias selectedValue currentBehaviour model
                 |> frontProbeSubmit session
@@ -317,6 +296,15 @@ update session msg model =
                             setKeyboard (Just keyboardModel) model.activeSearch
                                 |> flip setActiveSearch model
 
+                        probeModel =
+                            if keyboardModel.needsProbe then
+                                { newModel
+                                    | probeResponse = Loading Nothing
+                                }
+
+                            else
+                                newModel
+
                         probeCmd =
                             if keyboardModel.needsProbe then
                                 let
@@ -324,9 +312,9 @@ update session msg model =
                                         sideBarOptionToResultMode session.showFrontSearchInterface
 
                                     probeUrl =
-                                        toNextQuery newModel.activeSearch
+                                        toNextQuery probeModel.activeSearch
                                             |> setMode resultMode
-                                            |> flip setNextQuery newModel.activeSearch
+                                            |> flip setNextQuery probeModel.activeSearch
                                             |> createProbeUrl session
                                 in
                                 createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
@@ -334,7 +322,7 @@ update session msg model =
                             else
                                 Cmd.none
                     in
-                    ( newModel
+                    ( probeModel
                     , Cmd.batch
                         [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
                         , probeCmd
@@ -343,6 +331,48 @@ update session msg model =
 
                 Nothing ->
                     ( model, Cmd.none )
+
+        UserTriggeredSearchSubmit ->
+            searchSubmit session model
+
+        UserResetAllFilters ->
+            let
+                -- we don't reset *all* parameters; we keep the
+                -- currently selected result mode so that the user
+                -- doesn't get bounced back to the 'sources' tab.
+                currentMode =
+                    toNextQuery model.activeSearch
+                        |> toMode
+
+                adjustedQueryArgs =
+                    { defaultQueryArgs | mode = currentMode }
+
+                ( newModel, cmds ) =
+                    setNextQuery adjustedQueryArgs model.activeSearch
+                        |> setRangeFacetValues Dict.empty
+                        |> setKeyboard (Just Keyboard.initModel)
+                        |> flip setActiveSearch model
+                        |> frontProbeSubmit session
+
+                notationRenderCmd =
+                    case session.showFrontSearchInterface of
+                        IncipitSearchOption ->
+                            case toKeyboard newModel.activeSearch of
+                                Just kq ->
+                                    Cmd.map UserInteractedWithPianoKeyboard (buildNotationRequestQuery (toKeyboardQuery kq))
+
+                                Nothing ->
+                                    Cmd.none
+
+                        _ ->
+                            Cmd.none
+            in
+            ( newModel
+            , Cmd.batch
+                [ cmds
+                , notationRenderCmd
+                ]
+            )
 
         NothingHappened ->
             ( model, Cmd.none )

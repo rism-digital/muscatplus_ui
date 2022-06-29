@@ -4,7 +4,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Attribute, Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, row, scrollbarY, width)
+import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -157,33 +157,15 @@ viewSearchResultsSection cfg resultsLoading body =
 viewSearchControls : SearchControlsConfig a b msg -> Element msg
 viewSearchControls cfg =
     let
-        qText =
-            toNextQuery (.activeSearch cfg.model)
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         currentMode =
             toActiveSearch cfg.model
                 |> toNextQuery
                 |> toMode
 
-        expandedFacetPanels =
-            case .searchPreferences cfg.session of
-                Just p ->
-                    p.expandedFacetPanels
-
-                Nothing ->
-                    Set.empty
-
-        facetConfig =
-            { language = .language cfg.session
-            , activeSearch = .activeSearch cfg.model
-            , body = cfg.body
-            , numberOfSelectColumns = cfg.checkboxColumns
-            , expandedFacetPanels = expandedFacetPanels
-            , panelToggleMsg = cfg.panelToggleMsg
-            , facetMsgConfig = cfg.facetMsgConfig
-            }
+        qText =
+            toNextQuery (.activeSearch cfg.model)
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
 
         keywordInputField =
             row
@@ -212,6 +194,24 @@ viewSearchControls cfg =
 
                 _ ->
                     ( keywordInputField, none )
+
+        expandedFacetPanels =
+            case .searchPreferences cfg.session of
+                Just p ->
+                    p.expandedFacetPanels
+
+                Nothing ->
+                    Set.empty
+
+        facetConfig =
+            { language = .language cfg.session
+            , activeSearch = .activeSearch cfg.model
+            , body = cfg.body
+            , numberOfSelectColumns = cfg.checkboxColumns
+            , expandedFacetPanels = expandedFacetPanels
+            , panelToggleMsg = cfg.panelToggleMsg
+            , facetMsgConfig = cfg.facetMsgConfig
+            }
 
         facetLayout =
             case currentMode of

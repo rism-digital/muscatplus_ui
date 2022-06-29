@@ -25,6 +25,7 @@ import NoPrematureLetComputation
 import NoRedundantConcat
 import NoRedundantCons
 import NoSimpleLetBody
+import NoUnsortedCases
 import NoUnsortedLetDeclarations
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
@@ -46,7 +47,6 @@ config =
     , NoExposingEverything.rule
     , NoImportingEverything.rule []
     , NoMissingTypeAnnotation.rule
-    , NoMissingTypeAnnotationInLetIn.rule
     , NoMissingTypeExpose.rule
     , NoSimpleLetBody.rule
     , NoPrematureLetComputation.rule
@@ -76,4 +76,5 @@ config =
             |> NoUnsortedLetDeclarations.glueHelpersBefore
          --|> NoUnsortedLetDeclarations.alphabetically
         )
+    , NoUnsortedCases.rule NoUnsortedCases.defaults
     ]

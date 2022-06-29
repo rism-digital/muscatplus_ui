@@ -1,22 +1,6 @@
 module Page.Keyboard.Views exposing (view)
 
-import Element
-    exposing
-        ( Element
-        , alignLeft
-        , alignTop
-        , centerX
-        , column
-        , el
-        , fill
-        , fillPortion
-        , height
-        , paddingXY
-        , px
-        , row
-        , spacing
-        , width
-        )
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, fillPortion, height, paddingXY, px, row, spacing, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Keyboard.Model exposing (Keyboard(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
@@ -58,9 +42,30 @@ view notationFacet language (Keyboard model config) =
                     , spacing lineSpacing
                     ]
                     [ row
-                        [ width fill ]
+                        [ width fill
+                        , paddingXY 0 10
+                        ]
                         [ column
-                            []
+                            [ width (fillPortion 1)
+                            , centerY
+                            ]
+                            [ viewRenderControls language notationFacet (Keyboard model config) ]
+                        , column
+                            [ width (fillPortion 4)
+                            , centerY
+                            ]
+                            [ el
+                                [ width fill
+                                ]
+                                (viewMaybe viewSVGRenderedIncipit model.notation)
+                            ]
+                        ]
+                    , row
+                        [ width fill
+                        , paddingXY 0 20
+                        ]
+                        [ column
+                            [ centerX ]
                             [ fullKeyboard
                                 []
                             ]
@@ -69,40 +74,32 @@ view notationFacet language (Keyboard model config) =
                         [ width fill
                         , spacing lineSpacing
                         ]
+                        [ viewPaeInput language notationFacet (Keyboard model config)
+                        ]
+                    , row
+                        [ width fill
+                        , spacing lineSpacing
+                        , alignLeft
+                        , paddingXY 0 10
+                        ]
                         [ column
-                            [ width (fillPortion 3) ]
-                            [ viewPaeInput language notationFacet (Keyboard model config) ]
-                        , column
-                            [ width (fillPortion 1) ]
-                            [ row
-                                [ width fill
-                                , width (px 200)
-                                ]
-                                [ dropdownSelect
-                                    { selectedMsg = \s -> UserChangedQueryMode (queryModeStrToQueryMode s)
-                                    , mouseDownMsg = Nothing
-                                    , mouseUpMsg = Nothing
-                                    , choices = queryModeOptions
-                                    , choiceFn = \selected -> queryModeStrToQueryMode selected
-                                    , currentChoice = .queryMode model.query
-                                    , selectIdent = "keyboard-query-mode-select"
-                                    , label = Just (.label notationFacet.queryModes)
-                                    , language = language
-                                    }
-                                ]
+                            [ width fill
+                            , alignLeft
+                            ]
+                            [ dropdownSelect
+                                { selectedMsg = \s -> UserChangedQueryMode (queryModeStrToQueryMode s)
+                                , mouseDownMsg = Nothing
+                                , mouseUpMsg = Nothing
+                                , choices = queryModeOptions
+                                , choiceFn = \selected -> queryModeStrToQueryMode selected
+                                , currentChoice = .queryMode model.query
+                                , selectIdent = "keyboard-query-mode-select"
+                                , label = Just (.label notationFacet.queryModes)
+                                , language = language
+                                }
                             ]
                         ]
                     ]
                 ]
-            , row
-                [ width fill
-                , paddingXY 0 10
-                ]
-                [ el
-                    [ width fill
-                    ]
-                    (viewMaybe viewSVGRenderedIncipit model.notation)
-                ]
-            , viewRenderControls language notationFacet (Keyboard model config)
             ]
         ]

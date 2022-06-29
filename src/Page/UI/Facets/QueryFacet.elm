@@ -45,40 +45,6 @@ queryFacetHelp =
 viewQueryFacet : QueryFacetConfig msg -> Element msg
 viewQueryFacet config =
     let
-        activeValues : List String
-        activeValues =
-            toNextQuery config.activeSearch
-                |> toFilters
-                |> Dict.get facetAlias
-                |> Maybe.withDefault []
-
-        enteredOptions =
-            List.map
-                (\t ->
-                    el
-                        [ padding 5
-
-                        --, Border.color (colourScheme.lightOrange |> convertColorToElementColor)
-                        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
-                        , Font.medium
-                        , bodyRegular
-                        ]
-                        (row [ spacing 5 ]
-                            [ column []
-                                [ text t ]
-                            , column []
-                                [ el
-                                    [ width (px 20)
-                                    , onClick (config.userRemovedMsg facetAlias t)
-                                    ]
-                                    (closeWindowSvg colourScheme.white)
-                                ]
-                            ]
-                        )
-                )
-                (List.reverse activeValues)
-
         activeSuggestion =
             case .activeSuggestion config.activeSearch of
                 Just suggestions ->
@@ -112,8 +78,6 @@ viewQueryFacet config =
         facetAlias =
             .alias config.queryFacet
 
-        -- if an override hasn't been set in the facetBehaviours
-        -- then choose the behaviour that came from the server.
         facetLabel =
             .label config.queryFacet
 
@@ -121,13 +85,15 @@ viewQueryFacet config =
             toBehaviours config.queryFacet
                 |> toBehaviourItems
 
-        -- TODO: Translate
+        -- if an override hasn't been set in the facetBehaviours
+        -- then choose the behaviour that came from the server.
         listOfBehavioursForDropdown =
             List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )) facetBehaviours
 
         suggestionUrl =
             .suggestions config.queryFacet
 
+        -- TODO: Translate
         textValue =
             .queryFacetValues config.activeSearch
                 |> Dict.get facetAlias
@@ -139,6 +105,40 @@ viewQueryFacet config =
 
             else
                 config.userChoseOptionMsg facetAlias textValue currentBehaviourOption
+
+        activeValues : List String
+        activeValues =
+            toNextQuery config.activeSearch
+                |> toFilters
+                |> Dict.get facetAlias
+                |> Maybe.withDefault []
+
+        enteredOptions =
+            List.map
+                (\t ->
+                    el
+                        [ padding 5
+
+                        --, Border.color (colourScheme.lightOrange |> convertColorToElementColor)
+                        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , Font.medium
+                        , bodyRegular
+                        ]
+                        (row [ spacing 5 ]
+                            [ column []
+                                [ text t ]
+                            , column []
+                                [ el
+                                    [ width (px 20)
+                                    , onClick (config.userRemovedMsg facetAlias t)
+                                    ]
+                                    (closeWindowSvg colourScheme.white)
+                                ]
+                            ]
+                        )
+                )
+                (List.reverse activeValues)
 
         queryTermsDisplay =
             if List.isEmpty enteredOptions then

@@ -275,14 +275,88 @@ update session msg model =
         ServerRespondedWithSuggestionData (Err _) ->
             ( model, Cmd.none )
 
+        ClientCompletedViewportReset ->
+            ( model, Cmd.none )
+
+        ClientCompletedViewportJump ->
+            ( model, Cmd.none )
+
         DebouncerCapturedProbeRequest searchMsg ->
             Debouncer.update (update session) updateDebouncerProbeConfig searchMsg model
 
         DebouncerSettledToSendProbeRequest ->
             probeSubmit ServerRespondedWithProbeData session model
 
+        DebouncerCapturedQueryFacetSuggestionRequest suggestMsg ->
+            Debouncer.update (update session) updateDebouncerSuggestConfig suggestMsg model
+
+        DebouncerSettledToSendQueryFacetSuggestionRequest suggestionUrl ->
+            ( model
+            , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
+            )
+
+        UserClickedModeItem item ->
+            let
+                newMode =
+                    convertFacetToResultMode item
+
+                newQuery =
+                    toNextQuery model.activeSearch
+                        |> setMode newMode
+            in
+            setNextQuery newQuery model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
+
+        UserClickedFacetPanelToggle panelAlias expandedPanels ->
+            userClickedFacetPanelToggle panelAlias expandedPanels model
+
+        UserEnteredTextInKeywordQueryBox queryText ->
+            let
+                debounceMsg =
+                    provideInput DebouncerSettledToSendProbeRequest
+                        |> DebouncerCapturedProbeRequest
+            in
+            userEnteredTextInKeywordQueryBox queryText model
+                |> update session debounceMsg
+
+        UserClickedToggleFacet alias ->
+            userClickedToggleFacet alias model
+                |> probeSubmit ServerRespondedWithProbeData session
+
         UserChangedFacetBehaviour alias facetBehaviour ->
             userChangedFacetBehaviour alias facetBehaviour model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UserEnteredTextInQueryFacet alias query suggestionUrl ->
+            let
+                debounceMsg =
+                    String.append suggestionUrl query
+                        |> DebouncerSettledToSendQueryFacetSuggestionRequest
+                        |> provideInput
+                        |> DebouncerCapturedQueryFacetSuggestionRequest
+            in
+            userEnteredTextInQueryFacet alias query model
+                |> update session debounceMsg
+
+        UserRemovedItemFromQueryFacet alias query ->
+            userRemovedItemFromQueryFacet alias query model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
+            updateQueryFacetFilters alias selectedValue currentBehaviour model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UserEnteredTextInRangeFacet alias inputBox value ->
+            ( userEnteredTextInRangeFacet alias inputBox value model
+            , Cmd.none
+            )
+
+        UserFocusedRangeFacet alias ->
+            userFocusedRangeFacet alias model
+
+        UserLostFocusRangeFacet alias ->
+            userLostFocusOnRangeFacet alias model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserChangedSelectFacetSort alias facetSort ->
@@ -298,118 +372,6 @@ update session msg model =
         UserClickedSelectFacetItem alias facetValue ->
             userClickedSelectFacetItem alias facetValue model
                 |> probeSubmit ServerRespondedWithProbeData session
-
-        UserClickedToggleFacet alias ->
-            userClickedToggleFacet alias model
-                |> probeSubmit ServerRespondedWithProbeData session
-
-        UserClickedFacetPanelToggle panelAlias expandedPanels ->
-            userClickedFacetPanelToggle panelAlias expandedPanels model
-
-        UserEnteredTextInQueryFacet alias query suggestionUrl ->
-            let
-                debounceMsg =
-                    String.append suggestionUrl query
-                        |> DebouncerSettledToSendQueryFacetSuggestionRequest
-                        |> provideInput
-                        |> DebouncerCapturedQueryFacetSuggestionRequest
-            in
-            userEnteredTextInQueryFacet alias query model
-                |> update session debounceMsg
-
-        DebouncerCapturedQueryFacetSuggestionRequest suggestMsg ->
-            Debouncer.update (update session) updateDebouncerSuggestConfig suggestMsg model
-
-        DebouncerSettledToSendQueryFacetSuggestionRequest suggestionUrl ->
-            ( model
-            , textQuerySuggestionSubmit suggestionUrl ServerRespondedWithSuggestionData
-            )
-
-        UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
-            updateQueryFacetFilters alias selectedValue currentBehaviour model
-                |> probeSubmit ServerRespondedWithProbeData session
-
-        UserRemovedItemFromQueryFacet alias query ->
-            userRemovedItemFromQueryFacet alias query model
-                |> probeSubmit ServerRespondedWithProbeData session
-
-        UserEnteredTextInRangeFacet alias inputBox value ->
-            ( userEnteredTextInRangeFacet alias inputBox value model
-            , Cmd.none
-            )
-
-        UserFocusedRangeFacet alias ->
-            userFocusedRangeFacet alias model
-
-        UserLostFocusRangeFacet alias ->
-            userLostFocusOnRangeFacet alias model
-                |> probeSubmit ServerRespondedWithProbeData session
-
-        UserChangedResultSorting sort ->
-            userChangedResultSorting sort model
-                |> searchSubmit session
-
-        UserChangedResultsPerPage num ->
-            userChangedResultsPerPage num model
-                |> searchSubmit session
-
-        UserClickedModeItem item ->
-            let
-                newMode =
-                    convertFacetToResultMode item
-
-                newQuery =
-                    toNextQuery model.activeSearch
-                        |> setMode newMode
-            in
-            setNextQuery newQuery model.activeSearch
-                |> flip setActiveSearch model
-                |> searchSubmit session
-
-        UserClickedSearchResultsPagination url ->
-            let
-                oldData =
-                    case model.response of
-                        Response d ->
-                            Just d
-
-                        _ ->
-                            Nothing
-            in
-            ( { model
-                | response = Loading oldData
-                , preview = NoResponseToShow
-              }
-            , Cmd.batch
-                [ Nav.pushUrl session.key url
-                , resetViewportOf ClientCompletedViewportReset "search-results-list"
-                ]
-            )
-
-        UserTriggeredSearchSubmit ->
-            searchSubmit session model
-
-        UserEnteredTextInKeywordQueryBox queryText ->
-            let
-                debounceMsg =
-                    provideInput DebouncerSettledToSendProbeRequest
-                        |> DebouncerCapturedProbeRequest
-            in
-            userEnteredTextInKeywordQueryBox queryText model
-                |> update session debounceMsg
-
-        UserClickedClosePreviewWindow ->
-            userClickedClosePreviewWindow session model
-
-        UserClickedExpandSourceItemsSectionInPreview ->
-            ( { model
-                | sourceItemsExpanded = not model.sourceItemsExpanded
-              }
-            , Cmd.none
-            )
-
-        UserClickedSearchResultForPreview result ->
-            userClickedResultForPreview result session model
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
             case toKeyboard model.activeSearch of
@@ -443,6 +405,9 @@ update session msg model =
                 Nothing ->
                     ( model, Cmd.none )
 
+        UserTriggeredSearchSubmit ->
+            searchSubmit session model
+
         UserResetAllFilters ->
             let
                 -- we don't reset *all* parameters; we keep the
@@ -461,11 +426,46 @@ update session msg model =
                 |> flip setActiveSearch model
                 |> searchSubmit session
 
-        ClientCompletedViewportReset ->
-            ( model, Cmd.none )
+        UserChangedResultSorting sort ->
+            userChangedResultSorting sort model
+                |> searchSubmit session
 
-        ClientCompletedViewportJump ->
-            ( model, Cmd.none )
+        UserChangedResultsPerPage num ->
+            userChangedResultsPerPage num model
+                |> searchSubmit session
+
+        UserClickedSearchResultsPagination url ->
+            let
+                oldData =
+                    case model.response of
+                        Response d ->
+                            Just d
+
+                        _ ->
+                            Nothing
+            in
+            ( { model
+                | response = Loading oldData
+                , preview = NoResponseToShow
+              }
+            , Cmd.batch
+                [ Nav.pushUrl session.key url
+                , resetViewportOf ClientCompletedViewportReset "search-results-list"
+                ]
+            )
+
+        UserClickedSearchResultForPreview result ->
+            userClickedResultForPreview result session model
+
+        UserClickedExpandSourceItemsSectionInPreview ->
+            ( { model
+                | sourceItemsExpanded = not model.sourceItemsExpanded
+              }
+            , Cmd.none
+            )
+
+        UserClickedClosePreviewWindow ->
+            userClickedClosePreviewWindow session model
 
         NothingHappened ->
             ( model, Cmd.none )

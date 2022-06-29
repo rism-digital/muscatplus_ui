@@ -77,6 +77,9 @@ view session model =
 frontBodyViewRouter : Session -> FrontPageModel FrontMsg -> Element FrontMsg
 frontBodyViewRouter session model =
     case model.response of
+        Loading _ ->
+            viewFrontSearchControlsLoading
+
         Response (FrontData body) ->
             viewFrontSearchControls
                 { session = session
@@ -88,9 +91,6 @@ frontBodyViewRouter session model =
                 , userTriggeredSearchSubmitMsg = FrontMsg.UserTriggeredSearchSubmit
                 , userEnteredTextInKeywordQueryBoxMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                 }
-
-        Loading _ ->
-            viewFrontSearchControlsLoading
 
         _ ->
             -- TODO: Implement some sort of error handling here.
@@ -126,11 +126,6 @@ viewFacetPanels cfg =
         language =
             .language cfg.session
 
-        qText =
-            toNextQuery (.activeSearch cfg.model)
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
-
         headingHeroText =
             case .showFrontSearchInterface cfg.session of
                 SourceSearchOption ->
@@ -149,23 +144,10 @@ viewFacetPanels cfg =
                 LiturgicalFestivalsOption ->
                     ""
 
-        expandedFacetPanels =
-            case .searchPreferences cfg.session of
-                Just p ->
-                    p.expandedFacetPanels
-
-                Nothing ->
-                    Set.empty
-
-        facetConfig =
-            { language = .language cfg.session
-            , activeSearch = .activeSearch cfg.model
-            , body = cfg.body
-            , numberOfSelectColumns = cfg.checkboxColumns
-            , expandedFacetPanels = expandedFacetPanels
-            , panelToggleMsg = cfg.panelToggleMsg
-            , facetMsgConfig = cfg.facetMsgConfig
-            }
+        qText =
+            toNextQuery (.activeSearch cfg.model)
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
 
         ( mainSearchField, secondaryQueryField ) =
             case .showFrontSearchInterface cfg.session of
@@ -195,6 +177,24 @@ viewFacetPanels cfg =
                         }
                     , none
                     )
+
+        expandedFacetPanels =
+            case .searchPreferences cfg.session of
+                Just p ->
+                    p.expandedFacetPanels
+
+                Nothing ->
+                    Set.empty
+
+        facetConfig =
+            { language = .language cfg.session
+            , activeSearch = .activeSearch cfg.model
+            , body = cfg.body
+            , numberOfSelectColumns = cfg.checkboxColumns
+            , expandedFacetPanels = expandedFacetPanels
+            , panelToggleMsg = cfg.panelToggleMsg
+            , facetMsgConfig = cfg.facetMsgConfig
+            }
 
         facetLayout =
             case .showFrontSearchInterface cfg.session of

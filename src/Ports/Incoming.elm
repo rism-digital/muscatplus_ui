@@ -16,12 +16,12 @@ type IncomingMessage
 convertMsgStringToIncomingMessage : String -> Decoder IncomingMessage
 convertMsgStringToIncomingMessage msgString =
     case msgString of
-        "trigger-search" ->
-            Decode.map (\_ -> PortReceiveTriggerSearch) Decode.value
-
         "facet-panel-set" ->
             Decode.field "value" searchPreferencesDecoder
                 |> Decode.map (\values -> PortReceiveSearchPreferences values)
+
+        "trigger-search" ->
+            Decode.map (\_ -> PortReceiveTriggerSearch) Decode.value
 
         _ ->
             Decode.succeed PortReceivedUnknownMessage

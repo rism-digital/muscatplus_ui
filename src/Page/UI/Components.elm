@@ -166,9 +166,7 @@ dropdownSelect cfg =
             case cfg.label of
                 Just s ->
                     column
-                        [ width fill
-                        , alignRight
-                        ]
+                        []
                         [ text (extractLabelFromLanguageMap cfg.language s) ]
 
                 Nothing ->

@@ -1,13 +1,14 @@
 module Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
 
 import Element exposing (Element, alignTop, column, el, fill, height, px, row, shrink, spacing, text, width)
+import Element.Font as Font
 import Element.Input as Input
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Keyboard.Model exposing (Keyboard(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (clefStrToClef, keySigStrToKeySignature, timeSigStrToTimeSignature)
 import Page.RecordTypes.Search exposing (NotationFacet)
-import Page.UI.Attributes exposing (bodySM, lineSpacing)
+import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
 
 
@@ -25,7 +26,14 @@ viewPaeInput language notationFacet (Keyboard model config) =
                     [ width fill ]
                     (Input.text
                         [ width fill ]
-                        { label = Input.labelLeft [] (text "PAE Input")
+                        { label =
+                            Input.labelAbove
+                                [ Font.semiBold
+                                , headingMD
+                                ]
+                                (text "PAE Input")
+
+                        -- TODO: Translate
                         , onChange = UserInteractedWithPAEText
                         , placeholder = Nothing
                         , text = Maybe.withDefault "" (.noteData model.query)

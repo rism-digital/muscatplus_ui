@@ -7,6 +7,7 @@ module Page.Keyboard exposing
     , view
     )
 
+import Char exposing (isAlpha, isUpper)
 import Config
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Element exposing (Element)
@@ -47,6 +48,7 @@ buildUpdateQuery newNoteData model =
         newModel =
             { model
                 | query = newQuery
+                , needsProbe = needsProbing model
             }
 
         url =
@@ -81,19 +83,25 @@ initModel =
     }
 
 
-setNotation : Maybe String -> { a | notation : Maybe String } -> { a | notation : Maybe String }
-setNotation newNotation oldRecord =
-    { oldRecord | notation = newNotation }
+filterPitches : String -> String
+filterPitches inputString =
+    String.filter (\c -> isAlpha c && isUpper c) inputString
 
 
-setQuery : KeyboardQuery -> { a | query : KeyboardQuery } -> { a | query : KeyboardQuery }
-setQuery newQuery oldModel =
-    { oldModel | query = newQuery }
+needsProbing : KeyboardModel KeyboardMsg -> Bool
+needsProbing model =
+    -- If the model is already set to needing a probe, then we won't interrupt that process.
+    if model.needsProbe then
+        False
 
+    else
+        -- check if the query is longer than the configured minimum length
+        case .noteData model.query of
+            Just noteData ->
+                choose (String.length (filterPitches noteData) > Config.minimumQueryLength) True False
 
-toNotation : { a | notation : Maybe String } -> Maybe String
-toNotation model =
-    model.notation
+            Nothing ->
+                False
 
 
 update : KeyboardMsg -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
@@ -110,42 +118,30 @@ update msg model =
         ServerRespondedWithRenderedNotation (Err _) ->
             ( model, Cmd.none )
 
+        DebouncerCapturedPAEText textMsg ->
+            Debouncer.update update updateDebouncerPAESearchConfig textMsg model
+
+        DebouncerSettledToSendPAEText ->
+            ( { model
+                | needsProbe = needsProbing model
+              }
+            , Cmd.none
+            )
+
         UserClickedPianoKeyboardKey noteName octave ->
             let
-                needsProbing =
-                    choose (String.length noteData > Config.minimumQueryLength) True False
-
-                newModel =
-                    { model
-                        | needsProbe = needsProbing
-                    }
-
                 note =
                     createPAENote noteName octave
 
-                query =
-                    model.query
-
                 noteData =
-                    case query.noteData of
+                    case .noteData model.query of
                         Just n ->
                             n ++ note
 
                         Nothing ->
                             note
             in
-            buildUpdateQuery (Just noteData) newModel
-
-        UserClickedPianoKeyboardChangeClef clef ->
-            let
-                newModel =
-                    toKeyboardQuery model
-                        |> setClef clef
-                        |> flip setKeyboardQuery model
-            in
-            ( newModel
-            , buildNotationRequestQuery newModel.query
-            )
+            buildUpdateQuery (Just noteData) model
 
         UserInteractedWithPAEText text ->
             let
@@ -172,11 +168,29 @@ update msg model =
             in
             buildUpdateQuery (Just newText) model
 
-        DebouncerCapturedPAEText textMsg ->
-            Debouncer.update update updateDebouncerPAESearchConfig textMsg model
+        UserChangedQueryMode qMode ->
+            let
+                newModel =
+                    toKeyboardQuery model
+                        |> setQueryMode qMode
+                        |> flip setKeyboardQuery model
+            in
+            ( { newModel
+                | needsProbe = needsProbing newModel
+              }
+            , Cmd.none
+            )
 
-        DebouncerSettledToSendPAEText ->
-            ( { model | needsProbe = True }, Cmd.none )
+        UserClickedPianoKeyboardChangeClef clef ->
+            let
+                newModel =
+                    toKeyboardQuery model
+                        |> setClef clef
+                        |> flip setKeyboardQuery model
+            in
+            ( newModel
+            , buildNotationRequestQuery newModel.query
+            )
 
         UserClickedPianoKeyboardChangeTimeSignature tsig ->
             let
@@ -196,19 +210,10 @@ update msg model =
                         |> setKeySignature ksig
                         |> flip setKeyboardQuery model
             in
-            ( newModel
+            ( { newModel
+                | needsProbe = needsProbing newModel
+              }
             , buildNotationRequestQuery newModel.query
-            )
-
-        UserChangedQueryMode qMode ->
-            let
-                newModel =
-                    toKeyboardQuery model
-                        |> setQueryMode qMode
-                        |> flip setKeyboardQuery model
-            in
-            ( { newModel | needsProbe = True }
-            , Cmd.none
             )
 
         NothingHappenedWithTheKeyboard ->
