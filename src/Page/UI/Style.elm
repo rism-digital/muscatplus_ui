@@ -3,14 +3,12 @@ module Page.UI.Style exposing
     , colourScheme
     , colours
     , convertColorToElementColor
-    , footerHeight
     , headerHeight
-    , minMaxFillDesktop
     , searchHeaderHeight
     )
 
 import Color exposing (Color, rgba)
-import Element exposing (Length, fill, maximum, minimum)
+import Element exposing (Length)
 
 
 type alias RGBA =
