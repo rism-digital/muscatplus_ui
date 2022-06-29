@@ -1,10 +1,8 @@
 module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResultsListPanelConfig, SearchResultsSectionConfig, viewSearchResultsSection)
 
---import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
-
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, row, scrollbarY, width)
+import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, paddingXY, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -169,7 +167,9 @@ viewSearchControls cfg =
 
         keywordInputField =
             row
-                [ width fill ]
+                [ width fill
+                , paddingXY 0 10
+                ]
                 [ searchKeywordInput
                     { language = .language cfg.session
                     , submitMsg = cfg.userTriggeredSearchSubmitMsg

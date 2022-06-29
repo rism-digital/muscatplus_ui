@@ -1,7 +1,6 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
 import Element exposing (Element, paddingEach, row)
-import Language exposing (LanguageMap)
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)

@@ -2,15 +2,13 @@ module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchR
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, none, row, spacing, width)
-import Language exposing (Language, formatNumberByLanguage)
-import Page.RecordTypes.Search exposing (InstitutionResultBody, InstitutionResultFlags)
+import Element exposing (Element, column, fill, row, spacing, width)
+import Language exposing (Language)
+import Page.RecordTypes.Search exposing (InstitutionResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (mapMarkerSvg, sourcesSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
-import Page.UI.Style exposing (colourScheme)
 
 
 viewInstitutionSearchResult :

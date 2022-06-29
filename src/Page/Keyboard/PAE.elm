@@ -3,7 +3,6 @@ module Page.Keyboard.PAE exposing
     , clefStrToClef
     , clefSymToClefQueryString
     , createPAENote
-    , keyNoteNameToNoteString
     , keySigStrToKeySignature
     , keySignatureSymToQueryStr
     , queryModeStrToQueryMode

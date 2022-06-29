@@ -2,10 +2,10 @@ module Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, none, row, spacing, width)
+import Element exposing (Element, column, fill, row, spacing, width)
 import Element.Font as Font
 import Language exposing (Language)
-import Page.RecordTypes.Search exposing (IncipitResultBody, IncipitResultFlags)
+import Page.RecordTypes.Search exposing (IncipitResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (musicListSvg, peopleSvg, textIconSvg)

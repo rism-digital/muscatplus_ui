@@ -55,9 +55,11 @@ config =
     , NoUnused.Dependencies.rule
     , NoUnused.Exports.rule
     , NoUnused.Modules.rule
-    , NoUnused.Parameters.rule
+
+    --, NoUnused.Parameters.rule
     , NoUnused.Patterns.rule
-    , NoUnused.Variables.rule
+
+    --, NoUnused.Variables.rule
     , Simplify.rule Simplify.defaults
     , NoRedundantConcat.rule
     , NoRedundantCons.rule

@@ -1,4 +1,4 @@
-module Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection, viewFacetsControlPanel)
+module Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 
 import Dict
 import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, text, width)

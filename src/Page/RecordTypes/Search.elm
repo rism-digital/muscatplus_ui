@@ -9,14 +9,11 @@ module Page.RecordTypes.Search exposing
     , FacetType(..)
     , Facets
     , IncipitResultBody
-    , IncipitResultFlags
     , InstitutionResultBody
-    , InstitutionResultFlags
     , ModeFacet
     , NotationFacet
     , NotationQueryOptions
     , PersonResultBody
-    , PersonResultFlags
     , QueryFacet
     , RangeFacet
     , RangeFacetValue(..)

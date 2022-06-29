@@ -188,36 +188,9 @@ convertRGBAToColor { red, green, blue, alpha } =
     rgba (scaleFrom255 red) (scaleFrom255 green) (scaleFrom255 blue) alpha
 
 
-desktopMaxWidth : Int
-desktopMaxWidth =
-    1440
-
-
-desktopMinWidth : Int
-desktopMinWidth =
-    800
-
-
-footerHeight : Int
-footerHeight =
-    70
-
-
 headerHeight : Int
 headerHeight =
     60
-
-
-minMaxFillDesktop : Length
-minMaxFillDesktop =
-    fill
-        |> minimum desktopMinWidth
-        |> maximum desktopMaxWidth
-
-
-phoneMaxWidth : Int
-phoneMaxWidth =
-    375
 
 
 {-| Converts a RGBA of Integers to a Color value.

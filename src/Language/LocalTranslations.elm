@@ -287,6 +287,8 @@ facetPanelTitles :
     , biographicalDetails : LanguageMap
     , roleAndProfession : LanguageMap
     , location : LanguageMap
+    , clefKeyTime : LanguageMap
+    , composerComposition : LanguageMap
     }
 facetPanelTitles =
     { results =
@@ -304,7 +306,11 @@ facetPanelTitles =
     , biographicalDetails =
         [ LanguageValues English [ "Biographical details" ] ]
     , roleAndProfession =
-        [ LanguageValues English [ "Role and Profession" ] ]
+        [ LanguageValues English [ "Role and profession" ] ]
     , location =
         [ LanguageValues English [ "Location" ] ]
+    , clefKeyTime =
+        [ LanguageValues English [ "Clef, key signature, time signature" ] ]
+    , composerComposition =
+        [ LanguageValues English [ "Composer and composition" ] ]
     }

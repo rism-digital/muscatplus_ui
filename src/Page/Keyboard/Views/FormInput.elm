@@ -22,23 +22,34 @@ viewPaeInput language notationFacet (Keyboard model config) =
                 [ width fill
                 , height fill
                 ]
-                [ el
+                [ Input.text
                     [ width fill ]
-                    (Input.text
-                        [ width fill ]
-                        { label =
-                            Input.labelAbove
-                                [ Font.semiBold
-                                , headingMD
+                    { label =
+                        Input.labelAbove
+                            [ Font.semiBold
+                            , headingMD
+                            ]
+                            (row
+                                [ spacing lineSpacing ]
+                                [ column
+                                    []
+                                    [ text "PAE Input" ]
+                                , column
+                                    []
+                                    [ el
+                                        [ bodySM
+                                        , Font.regular
+                                        ]
+                                        (text "Queries must be longer than three notes.")
+                                    ]
                                 ]
-                                (text "PAE Input")
+                            )
 
-                        -- TODO: Translate
-                        , onChange = UserInteractedWithPAEText
-                        , placeholder = Nothing
-                        , text = Maybe.withDefault "" (.noteData model.query)
-                        }
-                    )
+                    -- TODO: Translate
+                    , onChange = UserInteractedWithPAEText
+                    , placeholder = Nothing
+                    , text = Maybe.withDefault "" (.noteData model.query)
+                    }
                 ]
             ]
         ]

@@ -1,7 +1,5 @@
 module Page.Keyboard.Model exposing
     ( Clef(..)
-    , Key(..)
-    , KeyNoteConfig
     , KeyNoteName(..)
     , KeySignature(..)
     , Keyboard(..)
@@ -15,7 +13,6 @@ module Page.Keyboard.Model exposing
     , clefStringMap
     , keySignatureMap
     , noteMap
-    , octaveConfig
     , queryModeMap
     , setClef
     , setKeySignature
@@ -54,16 +51,6 @@ type Clef
     | F4M
     | G2M
     | G3M
-
-
-type Key
-    = WhiteKey KeyNoteName KeyNoteName
-    | BlackKey KeyNoteName KeyNoteName
-
-
-type alias KeyNoteConfig =
-    { keyType : Key
-    }
 
 
 type KeyNoteName
@@ -230,35 +217,6 @@ noteMap =
     , ( "bB", KBf )
     , ( "B", KB )
     , ( "nB", KBn )
-    ]
-
-
-octaveConfig : List KeyNoteConfig
-octaveConfig =
-    [ { keyType = WhiteKey KC KCn
-      }
-    , { keyType = BlackKey KCs KDf
-      }
-    , { keyType = WhiteKey KD KDn
-      }
-    , { keyType = BlackKey KDs KEf
-      }
-    , { keyType = WhiteKey KE KEn
-      }
-    , { keyType = WhiteKey KF KFn
-      }
-    , { keyType = BlackKey KFs KGf
-      }
-    , { keyType = WhiteKey KG KGn
-      }
-    , { keyType = BlackKey KGs KAf
-      }
-    , { keyType = WhiteKey KA KAn
-      }
-    , { keyType = BlackKey KAs KBf
-      }
-    , { keyType = WhiteKey KB KBn
-      }
     ]
 
 

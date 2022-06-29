@@ -1,11 +1,8 @@
 module Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
 
-import Element exposing (Element, alignLeft, alignTop, column, fill, height, padding, row, scrollbarY, spacing, width)
+import Element exposing (Element)
 import Language.LocalTranslations exposing (facetPanelTitles)
-import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
-import Page.UI.Facets.Facets exposing (viewFacet, viewFacetSection, viewFacetsControlPanel)
-import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
 
 
@@ -16,11 +13,11 @@ incipitFacetPanels :
 incipitFacetPanels =
     { musicalFeaturesPanel =
         { alias = "incipit-musical-features-panel"
-        , label = facetPanelTitles.sourceContents -- TODO: Fix
+        , label = facetPanelTitles.clefKeyTime
         }
     , composerPanel =
         { alias = "incipit-composer-panel"
-        , label = facetPanelTitles.sourceContents -- TODO : Fix
+        , label = facetPanelTitles.composerComposition
         }
     }
 

@@ -1,4 +1,4 @@
-module Page.Keyboard.Views.FullKeyboard exposing (..)
+module Page.Keyboard.Views.FullKeyboard exposing (fullKeyboard)
 
 import Element exposing (Element)
 import Page.Keyboard.Model exposing (KeyNoteName(..))
@@ -22,11 +22,10 @@ fullKeyboard attrs =
 fullKeyboardImpl : List (Attribute KeyboardMsg) -> Svg.Svg KeyboardMsg
 fullKeyboardImpl attrs =
     Svg.node "svg"
-        ([ attribute "viewBox" "0 0 1894 404"
-         , attribute "xmlns" "http://www.w3.org/2000/svg"
-         , attribute "width" "800"
-         ]
-            ++ attrs
+        (attribute "viewBox" "0 0 1894 404"
+            :: attribute "xmlns" "http://www.w3.org/2000/svg"
+            :: attribute "width" "800"
+            :: attrs
         )
         [ Svg.node "g"
             [ attribute "transform" "matrix(1, 0, 0, 1, -4.882425, 0.794207)"

@@ -13,14 +13,13 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Element exposing (Element)
 import Flip exposing (flip)
 import Language exposing (Language)
-import Page.Keyboard.Model exposing (Clef(..), KeySignature(..), Keyboard(..), KeyboardModel, KeyboardQuery, QueryMode(..), TimeSignature(..), setClef, setKeySignature, setKeyboardQuery, setNoteData, setQueryMode, setTimeSignature, toKeyboardQuery)
+import Page.Keyboard.Model exposing (Clef(..), KeySignature(..), Keyboard, KeyboardModel, KeyboardQuery, QueryMode(..), TimeSignature(..), setClef, setKeySignature, setKeyboardQuery, setNoteData, setQueryMode, setTimeSignature, toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (createPAENote)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Keyboard.Views as KeyboardViews
-import Page.RecordTypes.Incipit exposing (incipitValidationBodyDecoder)
 import Page.RecordTypes.Search exposing (NotationFacet)
-import Request exposing (createRequest, createSvgRequest, serverUrl)
+import Request exposing (createSvgRequest, serverUrl)
 import Utlities exposing (choose)
 
 

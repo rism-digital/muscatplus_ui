@@ -27,13 +27,12 @@ module Page.UI.Attributes exposing
     , valueFieldColumnAttributes
     )
 
-import Color exposing (toCssString)
 import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, minimum, paddingXY, px, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, footerHeight, minMaxFillDesktop, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 baseSize : Float
@@ -47,11 +46,6 @@ bodyFont =
         [ Font.typeface "Noto Sans Display"
         , Font.sansSerif
         ]
-
-
-bodyFontAlternateGlyphs : Attribute msg
-bodyFontAlternateGlyphs =
-    htmlAttribute (HA.style "" "")
 
 
 bodyFontColour : Attribute msg
@@ -79,11 +73,6 @@ bodyXXS =
     Font.size 10
 
 
-desktopResponsiveWidth : Attribute msg
-desktopResponsiveWidth =
-    width minMaxFillDesktop
-
-
 {-|
 
     The attribute equivalent of Element.none.
@@ -107,16 +96,6 @@ facetBorderBottom =
 fontBaseSize : Attr decorative msg
 fontBaseSize =
     Font.size (ratioCalc 1.0)
-
-
-footerBackground : Attribute msg
-footerBackground =
-    Background.color (colourScheme.darkBlue |> convertColorToElementColor)
-
-
-headerBottomBorder : Attribute msg
-headerBottomBorder =
-    htmlAttribute (HA.style "border-bottom" ("4px double " ++ toCssString colourScheme.darkGrey))
 
 
 headingHero : Attr decoative msg
@@ -201,15 +180,6 @@ pageBackground =
 ratioCalc : Float -> Int
 ratioCalc size =
     round (baseSize * (2.0 ^ (size / 6.0)))
-
-
-searchColumnVerticalSize : Attribute msg
-searchColumnVerticalSize =
-    let
-        otherElementsHeight =
-            footerHeight + searchHeaderHeight
-    in
-    htmlAttribute (HA.style "height" ("calc(100vh - " ++ String.fromInt otherElementsHeight ++ "px)"))
 
 
 sectionBorderStyles : List (Attribute msg)

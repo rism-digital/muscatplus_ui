@@ -8,7 +8,6 @@ module Page.RecordTypes.Incipit exposing
     , IncipitValidationBody
     , RenderedIncipit(..)
     , incipitBodyDecoder
-    , incipitValidationBodyDecoder
     , renderedIncipitDecoder
     )
 
