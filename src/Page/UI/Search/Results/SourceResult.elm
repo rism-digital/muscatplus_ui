@@ -126,6 +126,7 @@ viewSourceSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "sourceComposers"
                     , displayStyles = []
+                    , formatNumbers = False
                     }
                     summary
                 , viewSearchResultSummaryField
@@ -134,6 +135,7 @@ viewSourceSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "sourceComposer"
                     , displayStyles = []
+                    , formatNumbers = False
                     }
                     summary
                 ]
@@ -147,6 +149,7 @@ viewSourceSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "dateStatements"
                     , displayStyles = []
+                    , formatNumbers = False
                     }
                     summary
                 , viewSearchResultSummaryField
@@ -155,6 +158,7 @@ viewSourceSummary language iconColour summary =
                     , includeLabelInValue = True
                     , fieldName = "numItems"
                     , displayStyles = []
+                    , formatNumbers = True
                     }
                     summary
                 , viewSearchResultSummaryField
@@ -163,6 +167,7 @@ viewSourceSummary language iconColour summary =
                     , includeLabelInValue = True
                     , fieldName = "numExemplars"
                     , displayStyles = []
+                    , formatNumbers = True
                     }
                     summary
                 ]

@@ -49,6 +49,7 @@ viewInstitutionSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "countryName"
                     , displayStyles = []
+                    , formatNumbers = False
                     }
                     summary
                 , viewSearchResultSummaryField
@@ -57,6 +58,7 @@ viewInstitutionSummary language iconColour summary =
                     , includeLabelInValue = True
                     , fieldName = "totalHoldings"
                     , displayStyles = []
+                    , formatNumbers = True
                     }
                     summary
                 ]

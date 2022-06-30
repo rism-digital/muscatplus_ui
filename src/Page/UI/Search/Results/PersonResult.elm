@@ -49,6 +49,7 @@ viewPersonSummary language iconColour summary =
                     , includeLabelInValue = True
                     , fieldName = "numSources"
                     , displayStyles = []
+                    , formatNumbers = True
                     }
                     summary
                 , viewSearchResultSummaryField
@@ -57,6 +58,7 @@ viewPersonSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "roles"
                     , displayStyles = []
+                    , formatNumbers = False
                     }
                     summary
                 ]

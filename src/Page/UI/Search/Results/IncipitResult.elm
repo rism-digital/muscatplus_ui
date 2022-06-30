@@ -53,6 +53,7 @@ viewIncipitSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "incipitComposer"
                     , displayStyles = []
+                    , formatNumbers = False
                     }
                     summary
                 , viewSearchResultSummaryField
@@ -61,6 +62,7 @@ viewIncipitSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "voiceInstrument"
                     , displayStyles = []
+                    , formatNumbers = False
                     }
                     summary
                 ]
@@ -72,6 +74,7 @@ viewIncipitSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "textIncipit"
                     , displayStyles = [ Font.italic ]
+                    , formatNumbers = False
                     }
                     summary
                 ]

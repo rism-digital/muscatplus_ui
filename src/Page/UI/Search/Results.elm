@@ -51,6 +51,7 @@ type alias SearchResultSummaryConfig msg =
     , includeLabelInValue : Bool
     , fieldName : String
     , displayStyles : List (Attribute msg)
+    , formatNumbers : Bool
     }
 
 
@@ -159,13 +160,17 @@ summaryFieldTemplate summaryCfg fieldValue =
         fValueFormatted =
             List.map
                 (\f ->
-                    case String.toInt f of
-                        Just num ->
-                            toFloat num
-                                |> formatNumberByLanguage summaryCfg.language
+                    if summaryCfg.formatNumbers then
+                        case String.toInt f of
+                            Just num ->
+                                toFloat num
+                                    |> formatNumberByLanguage summaryCfg.language
 
-                        Nothing ->
-                            f
+                            Nothing ->
+                                f
+
+                    else
+                        f
                 )
                 fVal
 
