@@ -45,20 +45,20 @@ viewPersonSummary language iconColour summary =
                 ]
                 [ viewSearchResultSummaryField
                     { language = language
-                    , icon = sourcesSvg iconColour
-                    , includeLabelInValue = True
-                    , fieldName = "numSources"
-                    , displayStyles = []
-                    , formatNumbers = True
-                    }
-                    summary
-                , viewSearchResultSummaryField
-                    { language = language
                     , icon = briefcaseSvg iconColour
                     , includeLabelInValue = False
                     , fieldName = "roles"
                     , displayStyles = []
                     , formatNumbers = False
+                    }
+                    summary
+                , viewSearchResultSummaryField
+                    { language = language
+                    , icon = sourcesSvg iconColour
+                    , includeLabelInValue = True
+                    , fieldName = "numSources"
+                    , displayStyles = []
+                    , formatNumbers = True
                     }
                     summary
                 ]
