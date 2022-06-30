@@ -10,7 +10,7 @@ import Element.Input as Input exposing (labelHidden)
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.UI.Attributes exposing (lineSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h4)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp)
@@ -35,24 +35,24 @@ rangeFacetHelp =
     """
 
 
-validateInput : String -> String -> Element msg
-validateInput boxIndicator value =
-    let
-        checkValue =
-            String.trim value
+inputIsValid : String -> String -> ( Bool, Maybe String )
+inputIsValid boxIndicator inp =
+    if String.trim inp /= "*" && String.trim inp /= "" && not (String.all Char.isDigit (String.trim inp)) then
+        ( False
+        , Just (boxIndicator ++ ": Please enter only numbers or a '*'")
+        )
 
-        -- TODO: Translate!
-        errorMessage : Maybe String
-        errorMessage =
-            if String.trim checkValue /= "*" && String.trim checkValue /= "" && not (String.all Char.isDigit (String.trim checkValue)) then
-                Just (boxIndicator ++ ": Please enter only numbers or a '*'")
+    else if String.length inp > 4 then
+        ( False
+        , Just (boxIndicator ++ ": Values of more than four digits are not valid")
+        )
 
-            else if String.length checkValue > 4 then
-                Just (boxIndicator ++ ": Values of more than four digits are not valid")
+    else
+        ( True, Nothing )
 
-            else
-                Nothing
-    in
+
+validateInput : Maybe String -> Element msg
+validateInput errorMessage =
     case errorMessage of
         Just eMsg ->
             row
@@ -85,6 +85,50 @@ viewRangeFacet config =
 
                 Nothing ->
                     ( "*", "*" )
+
+        ( lowerIsValid, lowerValidError ) =
+            inputIsValid "Lower range" lowerValue
+
+        ( upperIsValid, upperValidError ) =
+            inputIsValid "Upper range" upperValue
+
+        -- If both inputs are valid, then we emit the focus/unfocused event that
+        -- will trigger a probe; if either is invalid then we do not set the event
+        -- handler.
+        bothAreValid =
+            lowerIsValid && upperIsValid
+
+        ( focusLostEventLower, focusedEventLower ) =
+            if bothAreValid then
+                ( Events.onLoseFocus (config.userLostFocusMsg facetAlias)
+                , Events.onFocus (config.userFocusedMsg facetAlias)
+                )
+
+            else
+                ( emptyAttribute, emptyAttribute )
+
+        ( focusLostEventUpper, focusedEventUpper ) =
+            if bothAreValid then
+                ( Events.onLoseFocus (config.userLostFocusMsg facetAlias)
+                , Events.onFocus (config.userFocusedMsg facetAlias)
+                )
+
+            else
+                ( emptyAttribute, emptyAttribute )
+
+        lowerValueBorder =
+            if not lowerIsValid then
+                Element.focused [ Border.color (colourScheme.red |> convertColorToElementColor) ]
+
+            else
+                emptyAttribute
+
+        upperValueBorder =
+            if not upperIsValid then
+                Element.focused [ Border.color (colourScheme.red |> convertColorToElementColor) ]
+
+            else
+                emptyAttribute
     in
     row
         [ width fill
@@ -130,8 +174,9 @@ viewRangeFacet config =
                     [ spacing lineSpacing ]
                     [ Input.text
                         [ width (px 80)
-                        , Events.onLoseFocus (config.userLostFocusMsg facetAlias)
-                        , Events.onFocus (config.userFocusedMsg facetAlias)
+                        , focusLostEventLower
+                        , focusedEventLower
+                        , lowerValueBorder
                         ]
                         { label = labelHidden ""
                         , onChange = \c -> config.userEnteredTextMsg facetAlias LowerRangeValue c
@@ -146,8 +191,9 @@ viewRangeFacet config =
                     [ spacing lineSpacing ]
                     [ Input.text
                         [ width (px 80)
-                        , Events.onLoseFocus (config.userLostFocusMsg facetAlias)
-                        , Events.onFocus (config.userFocusedMsg facetAlias)
+                        , focusLostEventUpper
+                        , focusedEventUpper
+                        , upperValueBorder
                         ]
                         { label = labelHidden ""
                         , onChange = \c -> config.userEnteredTextMsg facetAlias UpperRangeValue c
@@ -157,8 +203,8 @@ viewRangeFacet config =
                     ]
                 , column
                     [ width fill ]
-                    [ validateInput "Lower range" lowerValue
-                    , validateInput "Upper range" upperValue
+                    [ validateInput lowerValidError
+                    , validateInput upperValidError
                     ]
                 ]
             ]
