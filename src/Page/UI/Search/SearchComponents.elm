@@ -70,7 +70,7 @@ viewProbeResponseNumbers language probeResponse =
                         extractLabelFromLanguageMap language localTranslations.noResultsWouldBeFound
 
                     else
-                        extractLabelFromLanguageMap language localTranslations.resultsWithFilters
+                        extractLabelFromLanguageMap language localTranslations.numberOfResults
                             ++ ": "
                             ++ formattedNumber
             in
@@ -126,6 +126,15 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
 
             else
                 extractLabelFromLanguageMap language submitLabel
+
+        -- never show the 'needs update' message on the front page, since it doesn't really
+        -- make sense.
+        updateMessage =
+            if isFrontPage then
+                none
+
+            else
+                viewUpdateMessage language model.applyFilterPrompt actionableProbeResponse
     in
     row
         [ alignTop
@@ -189,7 +198,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                         , spacing 5
                         ]
                         [ viewProbeResponseNumbers language model.probeResponse
-                        , viewUpdateMessage language model.applyFilterPrompt actionableProbeResponse
+                        , updateMessage
                         ]
                     ]
                 ]

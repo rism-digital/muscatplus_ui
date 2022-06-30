@@ -35,7 +35,7 @@ localTranslations :
     , recordTop : LanguageMap
     , recordURI : LanguageMap
     , resetAll : LanguageMap
-    , resultsWithFilters : LanguageMap
+    , numberOfResults : LanguageMap
     , search : LanguageMap
     , searchNumberOfRecords : LanguageMap
     , showAllRecords : LanguageMap
@@ -223,8 +223,8 @@ localTranslations =
         , LanguageValues Portugese [ "Reiniciar tudo" ]
         , LanguageValues Polish [ "Zresetować wszystko" ]
         ]
-    , resultsWithFilters =
-        [ LanguageValues English [ "Results with filters applied" ]
+    , numberOfResults =
+        [ LanguageValues English [ "Number of results" ]
         , LanguageValues German [ "Ergebnisse mit angewendeten Filtern" ]
         , LanguageValues French [ "Résultats avec filtres appliqués" ]
         , LanguageValues Italian [ "Risultati con filtri applicati" ]

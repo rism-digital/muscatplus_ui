@@ -3,6 +3,7 @@ module Page.Front exposing
     , Model
     , Msg
     , frontPageRequest
+    , frontProbeSubmit
     , init
     , update
     )
@@ -148,11 +149,21 @@ update session msg model =
 
                         _ ->
                             Cmd.none
+
+                newModel =
+                    { model
+                        | response = Response response
+                        , probeResponse = Loading Nothing
+                    }
+
+                probeUrl =
+                    createProbeUrl session newModel.activeSearch
             in
-            ( { model
-                | response = Response response
-              }
-            , notationRenderCmd
+            ( newModel
+            , Cmd.batch
+                [ notationRenderCmd
+                , createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+                ]
             )
 
         ServerRespondedWithFrontData (Err err) ->
@@ -165,7 +176,6 @@ update session msg model =
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             ( { model
                 | probeResponse = Response response
-                , applyFilterPrompt = True
               }
             , Cmd.none
             )
