@@ -233,7 +233,7 @@ viewNationalCollectionChooserMenuOption session =
 
         iconBackgroundColor =
             if isRestrictedToNationalCollection then
-                Background.color (colourScheme.turquoise |> convertColorToElementColor)
+                Background.color (colourScheme.darkGrey |> convertColorToElementColor)
 
             else
                 emptyAttribute
