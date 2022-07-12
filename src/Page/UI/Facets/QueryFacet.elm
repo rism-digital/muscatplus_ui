@@ -131,6 +131,7 @@ viewQueryFacet config =
                             , column []
                                 [ el
                                     [ width (px 20)
+                                    , height (px 20)
                                     , onClick (config.userRemovedMsg facetAlias t)
                                     ]
                                     (closeWindowSvg colourScheme.white)
