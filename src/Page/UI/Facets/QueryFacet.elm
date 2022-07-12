@@ -118,8 +118,6 @@ viewQueryFacet config =
                 (\t ->
                     el
                         [ padding 5
-
-                        --, Border.color (colourScheme.lightOrange |> convertColorToElementColor)
                         , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
                         , Font.color (colourScheme.white |> convertColorToElementColor)
                         , Font.medium
@@ -176,6 +174,7 @@ viewQueryFacet config =
                                 in
                                 List.intersperse joinWordEl enteredOptions
                 in
+                -- TODO: Translate
                 wrappedRow
                     [ width fill
                     , spacing lineSpacing
