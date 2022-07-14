@@ -3,6 +3,7 @@ module Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Element exposing (Element)
 import Language.LocalTranslations exposing (facetPanelTitles)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
+import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
 
 
@@ -25,28 +26,20 @@ personFacetPanels =
 viewFacetsForPeopleMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForPeopleMode cfg =
     let
-        facetConfig alias =
-            { alias = alias
-            , language = cfg.language
-            , activeSearch = cfg.activeSearch
-            , selectColumns = cfg.numberOfSelectColumns
-            , body = cfg.body
-            }
-
         dates =
-            viewFacet (facetConfig "date-range") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "date-range" []) cfg.facetMsgConfig
 
         gender =
-            viewFacet (facetConfig "gender") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "gender" []) cfg.facetMsgConfig
 
         places =
-            viewFacet (facetConfig "associated-place") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "associated-place" []) cfg.facetMsgConfig
 
         role =
-            viewFacet (facetConfig "roles") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "roles" []) cfg.facetMsgConfig
 
         profession =
-            viewFacet (facetConfig "profession") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "profession" []) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias personFacetPanels.biographicalInfoPanel)

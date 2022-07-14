@@ -35,16 +35,16 @@ view session model =
         backgroundImage =
             case session.showFrontSearchInterface of
                 SourceSearchOption ->
-                    Background.image "/static/images/sources.jpg"
+                    Background.image "/static/images/sources-alt.jpg"
 
                 PeopleSearchOption ->
-                    Background.image "/static/images/people.jpg"
+                    Background.image "/static/images/people-alt.jpg"
 
                 InstitutionSearchOption ->
-                    Background.image "/static/images/institutions.jpg"
+                    Background.image "/static/images/institutions-alt.jpg"
 
                 IncipitSearchOption ->
-                    Background.image "/static/images/incipits.jpg"
+                    Background.image "/static/images/incipits-alt.jpg"
 
                 _ ->
                     emptyAttribute
@@ -158,6 +158,7 @@ viewFacetPanels cfg =
                         , activeSearch = .activeSearch cfg.model
                         , selectColumns = cfg.checkboxColumns
                         , body = cfg.body
+                        , tooltip = []
                         }
                         cfg.facetMsgConfig
                     , searchKeywordInput

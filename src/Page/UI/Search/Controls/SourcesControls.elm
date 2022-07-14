@@ -3,6 +3,7 @@ module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMod
 import Element exposing (Element, paddingEach, row)
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
+import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
 
 
@@ -50,67 +51,59 @@ sourceFacetPanels =
 viewFacetsForSourcesMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForSourcesMode cfg =
     let
-        facetConfig alias =
-            { alias = alias
-            , language = cfg.language
-            , activeSearch = cfg.activeSearch
-            , selectColumns = cfg.numberOfSelectColumns
-            , body = cfg.body
-            }
-
         compositeVolumesToggle =
-            viewFacet (facetConfig "hide-composite-volumes") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "hide-composite-volumes" []) cfg.facetMsgConfig
 
         sourceCollectionsToggle =
-            viewFacet (facetConfig "hide-source-collections") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "hide-source-collections" []) cfg.facetMsgConfig
 
         sourceContentsToggle =
-            viewFacet (facetConfig "hide-source-contents") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "hide-source-contents" []) cfg.facetMsgConfig
 
         hasDigitizationToggle =
-            viewFacet (facetConfig "has-digitization") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "has-digitization" []) cfg.facetMsgConfig
 
         hasIiifToggle =
-            viewFacet (facetConfig "has-iiif") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "has-iiif" []) cfg.facetMsgConfig
 
         hasIncipitsToggle =
-            viewFacet (facetConfig "has-incipits") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "has-incipits" []) cfg.facetMsgConfig
 
         institutionSigla =
-            viewFacet (facetConfig "sigla") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "sigla" []) cfg.facetMsgConfig
 
         institutionNumHoldings =
-            viewFacet (facetConfig "num-holdings") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "num-holdings" []) cfg.facetMsgConfig
 
         composerRelationships =
-            viewFacet (facetConfig "composer") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "composer" []) cfg.facetMsgConfig
 
         otherPeopleRelationships =
-            viewFacet (facetConfig "people") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "people" []) cfg.facetMsgConfig
 
         subjects =
-            viewFacet (facetConfig "subjects") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "subjects" []) cfg.facetMsgConfig
 
         materialType =
-            viewFacet (facetConfig "material-types") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "material-types" []) cfg.facetMsgConfig
 
         contentType =
-            viewFacet (facetConfig "content-types") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "content-types" []) cfg.facetMsgConfig
 
         recordType =
-            viewFacet (facetConfig "record-type") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "record-type" []) cfg.facetMsgConfig
 
         dateRange =
-            viewFacet (facetConfig "date-range") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "date-range" []) cfg.facetMsgConfig
 
         formatExtent =
-            viewFacet (facetConfig "format-extent") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "format-extent" []) cfg.facetMsgConfig
 
         textLanguage =
-            viewFacet (facetConfig "text-language") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "text-language" []) cfg.facetMsgConfig
 
         scoring =
-            viewFacet (facetConfig "scoring") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "scoring" []) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias sourceFacetPanels.sourceResultsPanel)

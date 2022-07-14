@@ -3,6 +3,7 @@ module Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsM
 import Element exposing (Element)
 import Language.LocalTranslations exposing (facetPanelTitles)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
+import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
 
 
@@ -25,25 +26,17 @@ incipitFacetPanels =
 viewFacetsForIncipitsMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForIncipitsMode cfg =
     let
-        facetConfig alias =
-            { alias = alias
-            , language = cfg.language
-            , activeSearch = cfg.activeSearch
-            , selectColumns = cfg.numberOfSelectColumns
-            , body = cfg.body
-            }
-
         composer =
-            viewFacet (facetConfig "composer") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "composer" []) cfg.facetMsgConfig
 
         clef =
-            viewFacet (facetConfig "clef") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "clef" []) cfg.facetMsgConfig
 
         keysig =
-            viewFacet (facetConfig "key-signature") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "key-signature" []) cfg.facetMsgConfig
 
         timesig =
-            viewFacet (facetConfig "time-signature") cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "time-signature" []) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias incipitFacetPanels.musicalFeaturesPanel)
