@@ -51,7 +51,7 @@ import Session exposing (Session)
 import Set exposing (Set)
 import Url
 import Url.Builder exposing (toQuery)
-import Utlities exposing (choose, convertPathToNodeId)
+import Utilities exposing (choose, convertPathToNodeId)
 
 
 addNationalCollectionFilter :

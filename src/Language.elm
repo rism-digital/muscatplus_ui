@@ -19,7 +19,7 @@ import Json.Decode as Decode exposing (Decoder)
 import List.Extra as LE
 import Maybe.Extra as ME
 import Time exposing (Posix, Zone)
-import Utlities exposing (namedValue)
+import Utilities exposing (namedValue)
 
 
 type Language

@@ -20,7 +20,7 @@ import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Keyboard.Views as KeyboardViews
 import Page.RecordTypes.Search exposing (NotationFacet)
 import Request exposing (createSvgRequest, serverUrl)
-import Utlities exposing (choose)
+import Utilities exposing (choose)
 
 
 type alias Model msg =

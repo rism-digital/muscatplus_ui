@@ -17,7 +17,7 @@ import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Url
-import Utlities exposing (convertPathToNodeId)
+import Utilities exposing (convertPathToNodeId)
 
 
 type alias ResultColours =

@@ -40,7 +40,7 @@ import Page.RecordTypes.Shared exposing (FacetAlias)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
-import Utlities exposing (fromListDedupe)
+import Utilities exposing (fromListDedupe)
 
 
 {-|

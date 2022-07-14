@@ -30,7 +30,7 @@ import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
-import Utlities exposing (convertNodeIdToPath)
+import Utilities exposing (convertNodeIdToPath)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 

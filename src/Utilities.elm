@@ -1,4 +1,4 @@
-module Utlities exposing
+module Utilities exposing
     ( choose
     , convertNodeIdToPath
     , convertPathToNodeId

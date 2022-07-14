@@ -34,7 +34,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, ex
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, valueFieldColumnAttributes)
 import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
-import Utlities exposing (toLinkedHtml)
+import Utilities exposing (toLinkedHtml)
 
 
 type alias DropdownSelectConfig a msg =
