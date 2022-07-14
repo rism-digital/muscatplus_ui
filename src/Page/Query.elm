@@ -38,6 +38,7 @@ import Page.RecordTypes.Search
         )
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Request exposing (apply)
+import Url exposing (percentDecode)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
 import Utilities exposing (fromListDedupe)
@@ -92,11 +93,25 @@ buildQueryParameters queryArgs =
                     (\( alias, filts ) ->
                         let
                             createPrefixedField val =
+                                let
+                                    -- the URL builder has `percentEncode` built in, but
+                                    -- the values of the facet are already percent encoded
+                                    -- so decoding here avoids double-encoding later. If the value
+                                    -- can't be decoded (returns "Nothing") then just pass the original
+                                    -- value along and hope it doesn't cause problems. ¯\_(ツ)_/¯
+                                    decodedVal =
+                                        case percentDecode val of
+                                            Just v ->
+                                                v
+
+                                            Nothing ->
+                                                val
+                                in
                                 if String.isEmpty val then
                                     Nothing
 
                                 else
-                                    Just (alias ++ ":" ++ val)
+                                    Just (alias ++ ":" ++ decodedVal)
 
                             allFilts =
                                 List.filterMap (\s -> createPrefixedField s) filts
