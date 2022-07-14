@@ -8,6 +8,7 @@ import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.Error.Views exposing (createProbeErrorMessage)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingMD, headingSM, lineSpacing, minimalDropShadow)
@@ -85,7 +86,7 @@ viewProbeResponseNumbers language probeResponse =
                 [ Font.medium ]
                 [ extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults
                     ++ ": "
-                    ++ errMsg
+                    ++ createProbeErrorMessage errMsg
                     |> text
                 ]
 

@@ -8,6 +8,7 @@ import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.Error.Views exposing (createErrorMessage)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
@@ -86,7 +87,7 @@ viewSearchResultsSection cfg resultsLoading body =
                         (Just resp)
 
                 Error errMsg ->
-                    viewPreviewError (.language cfg.session) cfg.userClosedPreviewWindowMsg errMsg
+                    viewPreviewError (.language cfg.session) cfg.userClosedPreviewWindowMsg (createErrorMessage (.language cfg.session) errMsg)
 
                 NoResponseToShow ->
                     none
@@ -187,6 +188,7 @@ viewSearchControls cfg =
                         , activeSearch = .activeSearch cfg.model
                         , selectColumns = cfg.checkboxColumns
                         , body = cfg.body
+                        , tooltip = []
                         }
                         cfg.facetMsgConfig
                     , keywordInputField

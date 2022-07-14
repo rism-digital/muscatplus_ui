@@ -6,9 +6,9 @@ import Flags exposing (Flags)
 import Model exposing (Model(..))
 import Msg exposing (Msg)
 import Page.About as About
+import Page.Error as NotFound
 import Page.Front as Front
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.NotFound as NotFound
 import Page.Record as Record
 import Page.Route as Route exposing (Route(..))
 import Page.Search as Search

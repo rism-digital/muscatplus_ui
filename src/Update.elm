@@ -7,9 +7,9 @@ import Flip exposing (flip)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.About as AboutPage
+import Page.Error as NotFoundPage
 import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.NotFound as NotFoundPage
 import Page.Query exposing (buildQueryParameters, toNextQuery)
 import Page.Record as RecordPage
 import Page.Route as Route exposing (parseUrl, setRoute, setUrl)

@@ -1,8 +1,8 @@
-module Page.NotFound.Model exposing (NotFoundPageModel)
+module Page.Error.Model exposing (ErrorPageModel)
 
 import Response exposing (Response, ServerData)
 
 
-type alias NotFoundPageModel =
+type alias ErrorPageModel =
     { response : Response ServerData
     }

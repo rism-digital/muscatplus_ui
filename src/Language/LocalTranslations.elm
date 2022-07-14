@@ -1,4 +1,4 @@
-module Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
+module Language.LocalTranslations exposing (errorMessages, facetPanelTitles, localTranslations)
 
 {-|
 
@@ -313,4 +313,13 @@ facetPanelTitles =
         [ LanguageValues English [ "Clef, key signature, time signature" ] ]
     , composerComposition =
         [ LanguageValues English [ "Composer and composition" ] ]
+    }
+
+
+errorMessages :
+    { notFound : LanguageMap
+    }
+errorMessages =
+    { notFound =
+        [ LanguageValues English [ "The page was not found" ] ]
     }

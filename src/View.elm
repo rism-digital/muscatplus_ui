@@ -15,8 +15,8 @@ import Language.LocalTranslations exposing (localTranslations)
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
 import Page.About.Views
+import Page.Error.Views
 import Page.Front.Views
-import Page.NotFound.Views
 import Page.Record.Views.InstitutionPage
 import Page.Record.Views.PersonPage
 import Page.Record.Views.PlacePage
@@ -121,7 +121,7 @@ view model =
         pageView =
             case model of
                 NotFoundPage session pageModel ->
-                    Element.map Msg.UserInteractedWithNotFoundPage (Page.NotFound.Views.view session pageModel)
+                    Element.map Msg.UserInteractedWithNotFoundPage (Page.Error.Views.view session pageModel)
 
                 SearchPage session pageModel ->
                     Element.map Msg.UserInteractedWithSearchPage (Page.Search.Views.view session pageModel)

@@ -3,8 +3,8 @@ module Msg exposing (Msg(..))
 import Browser exposing (UrlRequest)
 import Element exposing (Device)
 import Page.About as About
+import Page.Error as NotFound
 import Page.Front as Front
-import Page.NotFound as NotFound
 import Page.Record as Record
 import Page.Search as Search
 import Page.SideBar as SideBar

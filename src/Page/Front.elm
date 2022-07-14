@@ -20,7 +20,7 @@ import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
-import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
+import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
@@ -168,7 +168,7 @@ update session msg model =
 
         ServerRespondedWithFrontData (Err err) ->
             ( { model
-                | response = Error (createErrorMessage err)
+                | response = Error err
               }
             , Cmd.none
             )
@@ -182,7 +182,7 @@ update session msg model =
 
         ServerRespondedWithProbeData (Err err) ->
             ( { model
-                | probeResponse = Error (createErrorMessage err)
+                | probeResponse = Error err
               }
             , Cmd.none
             )

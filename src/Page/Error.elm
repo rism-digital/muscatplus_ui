@@ -1,22 +1,22 @@
-module Page.NotFound exposing (Model, Msg, init, initialCmd, update)
+module Page.Error exposing (Model, Msg, init, initialCmd, update)
 
-import Page.NotFound.Model exposing (NotFoundPageModel)
-import Page.NotFound.Msg exposing (NotFoundMsg(..))
-import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
+import Page.Error.Model exposing (ErrorPageModel)
+import Page.Error.Msg exposing (NotFoundMsg(..))
+import Page.Request exposing (createRequestWithDecoder)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
 
 
 type alias Model =
-    NotFoundPageModel
+    ErrorPageModel
 
 
 type alias Msg =
     NotFoundMsg
 
 
-init : NotFoundPageModel
+init : ErrorPageModel
 init =
     { response = Loading Nothing }
 
@@ -26,7 +26,7 @@ initialCmd initialUrl =
     createRequestWithDecoder ServerRespondedWithNotFoundData (Url.toString initialUrl)
 
 
-update : Session -> NotFoundMsg -> NotFoundPageModel -> ( NotFoundPageModel, Cmd NotFoundMsg )
+update : Session -> NotFoundMsg -> ErrorPageModel -> ( ErrorPageModel, Cmd NotFoundMsg )
 update session msg model =
     case msg of
         ServerRespondedWithNotFoundData (Ok _) ->
@@ -34,7 +34,7 @@ update session msg model =
 
         ServerRespondedWithNotFoundData (Err error) ->
             ( { model
-                | response = Error (createErrorMessage error)
+                | response = Error error
               }
             , Cmd.none
             )

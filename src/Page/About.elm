@@ -3,7 +3,6 @@ module Page.About exposing (Model, Msg, init, initialCmd, update)
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.Decoders exposing (aboutResponseDecoder)
-import Page.Request exposing (createErrorMessage)
 import Request exposing (createRequest)
 import Response exposing (Response(..))
 import Session exposing (Session)
@@ -40,7 +39,7 @@ update session msg model =
 
         ServerRespondedWithAboutData (Err error) ->
             ( { model
-                | response = Error (createErrorMessage error)
+                | response = Error error
               }
             , Cmd.none
             )

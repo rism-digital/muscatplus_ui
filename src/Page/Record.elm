@@ -22,7 +22,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, ro
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
-import Page.Request exposing (createErrorMessage, createRequestWithDecoder)
+import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
@@ -200,7 +200,7 @@ update session msg model =
 
         ServerRespondedWithPageSearch (Err error) ->
             ( { model
-                | response = Error (createErrorMessage error)
+                | response = Error error
               }
             , Cmd.none
             )
@@ -235,7 +235,7 @@ update session msg model =
 
         ServerRespondedWithRecordData (Err error) ->
             ( { model
-                | response = Error (createErrorMessage error)
+                | response = Error error
               }
             , Cmd.none
             )
@@ -250,7 +250,7 @@ update session msg model =
 
         ServerRespondedWithRecordPreview (Err error) ->
             ( { model
-                | preview = Error (createErrorMessage error)
+                | preview = Error error
                 , sourceItemsExpanded = False
               }
             , Cmd.none

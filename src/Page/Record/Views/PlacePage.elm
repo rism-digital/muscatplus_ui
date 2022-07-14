@@ -2,6 +2,7 @@ module Page.Record.Views.PlacePage exposing (view)
 
 import Element exposing (Element, alignTop, clipY, column, fill, height, none, row, width)
 import Element.Background as Background
+import Page.Error.Views
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.PlacePage.FullRecordPage exposing (viewFullPlacePage)
@@ -17,6 +18,9 @@ view session model =
             case model.response of
                 Response (PlaceData body) ->
                     viewFullPlacePage session model body
+
+                Error _ ->
+                    Page.Error.Views.view session model
 
                 _ ->
                     none

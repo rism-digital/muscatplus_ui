@@ -2,6 +2,7 @@ module Page.Record.Views.InstitutionPage exposing (view)
 
 import Element exposing (Element, alignTop, clipY, column, fill, height, none, row, width)
 import Element.Background as Background
+import Page.Error.Views
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
@@ -20,6 +21,9 @@ view session model =
 
                 Response (InstitutionData body) ->
                     viewFullInstitutionPage session model body
+
+                Error _ ->
+                    Page.Error.Views.view session model
 
                 _ ->
                     none

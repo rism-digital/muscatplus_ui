@@ -10,6 +10,7 @@ import Element.Font as Font
 import Element.Input exposing (button)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.Error.Views exposing (createErrorMessage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
@@ -77,7 +78,7 @@ searchResultsViewRouter session model =
             viewSearchResultsSection resultsConfig False body
 
         Error err ->
-            viewSearchResultsErrorTmpl session.language err
+            viewSearchResultsErrorTmpl session.language (createErrorMessage session.language err)
 
         NoResponseToShow ->
             -- In case we're just booting the app up, show
@@ -131,7 +132,9 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
                         [ spacing 5 ]
                         [ text localizedTabLabel
                         , animatedLoader
-                            [ width (px 15), height (px 15) ]
+                            [ width (px 15)
+                            , height (px 15)
+                            ]
                             (spinnerSvg colourScheme.slateGrey)
                         ]
 

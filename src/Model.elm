@@ -1,8 +1,8 @@
 module Model exposing (Model(..), toSession, updateSession)
 
 import Page.About as About
+import Page.Error as NotFound
 import Page.Front as Front
-import Page.NotFound as NotFound
 import Page.Record as Record
 import Page.Search as Search
 import Session exposing (Session)

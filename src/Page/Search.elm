@@ -21,7 +21,7 @@ import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setMode, setNextQuery, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..))
-import Page.Request exposing (createErrorMessage, createProbeRequestWithDecoder, createRequestWithDecoder)
+import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
@@ -233,7 +233,7 @@ update session msg model =
 
         ServerRespondedWithSearchData (Err error) ->
             ( { model
-                | response = Error (createErrorMessage error)
+                | response = Error error
               }
             , Cmd.none
             )
@@ -259,7 +259,7 @@ update session msg model =
 
         ServerRespondedWithSearchPreview (Err error) ->
             ( { model
-                | preview = Error (createErrorMessage error)
+                | preview = Error error
                 , sourceItemsExpanded = False
               }
             , Cmd.none

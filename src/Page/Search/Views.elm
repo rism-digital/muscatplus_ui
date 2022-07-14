@@ -4,6 +4,7 @@ import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, px, row, width)
 import Element.Border as Border
 import Language exposing (Language)
+import Page.Error.Views exposing (createErrorMessage)
 import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Search exposing (ModeFacet)
 import Page.Search.Model exposing (SearchPageModel)
@@ -84,7 +85,7 @@ searchResultsViewRouter session model =
             viewSearchResultsSection resultsConfig False body
 
         Error err ->
-            viewSearchResultsErrorTmpl session.language err
+            viewSearchResultsErrorTmpl session.language (createErrorMessage session.language err)
 
         NoResponseToShow ->
             -- In case we're just booting the app up, show
