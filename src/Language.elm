@@ -17,6 +17,7 @@ import Dict
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), Locale, base)
 import Json.Decode as Decode exposing (Decoder)
+import List.Extra as LE
 import Time exposing (Posix, Zone)
 import Utlities exposing (namedValue)
 
@@ -81,9 +82,7 @@ extractTextFromLanguageMap lang langMap =
     -}
     let
         firstChoice =
-            langMap
-                |> List.filter (\(LanguageValues l _) -> l == lang)
-                |> List.head
+            LE.find (\(LanguageValues l _) -> l == lang) langMap
     in
     case firstChoice of
         Just (LanguageValues _ t) ->
@@ -92,9 +91,7 @@ extractTextFromLanguageMap lang langMap =
         Nothing ->
             let
                 fallback =
-                    langMap
-                        |> List.filter (\(LanguageValues l _) -> l == None)
-                        |> List.head
+                    LE.find (\(LanguageValues l _) -> l == None) langMap
             in
             case fallback of
                 Just (LanguageValues _ t) ->
@@ -103,9 +100,7 @@ extractTextFromLanguageMap lang langMap =
                 Nothing ->
                     let
                         modifiedEnglish =
-                            langMap
-                                |> List.filter (\(LanguageValues l _) -> l == English)
-                                |> List.head
+                            LE.find (\(LanguageValues l _) -> l == English) langMap
                     in
                     case modifiedEnglish of
                         Just (LanguageValues _ lv) ->
