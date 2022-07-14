@@ -18,6 +18,7 @@ import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), Locale, base)
 import Json.Decode as Decode exposing (Decoder)
 import List.Extra as LE
+import Maybe.Extra as ME
 import Time exposing (Posix, Zone)
 import Utlities exposing (namedValue)
 
@@ -79,35 +80,26 @@ extractTextFromLanguageMap lang langMap =
        if there is no language value matching the language map, and there is no None language in the map, return the string value of the concatenated list for English.
 
        Return a list of the strings, which can either be concatenated together or marked up in paragraphs.
+
+       The 'orListLazy' method will return the first non-Nothing result and then pass that along. If the selected language
+       is not English, but the English value was the first non-Nothing result, it means that we're using this as a
+       fallback when no other values are available, so append an '<Untranslated>' string to the value to signify that
+       it's not available in that language.
     -}
-    let
-        firstChoice =
-            LE.find (\(LanguageValues l _) -> l == lang) langMap
-    in
-    case firstChoice of
-        Just (LanguageValues _ t) ->
-            t
+    ME.orListLazy
+        [ \() -> LE.find (\(LanguageValues l _) -> l == lang) langMap
+        , \() -> LE.find (\(LanguageValues l _) -> l == None) langMap
+        , \() -> LE.find (\(LanguageValues l _) -> l == English) langMap
+        ]
+        |> Maybe.map
+            (\(LanguageValues l v) ->
+                if l == English && lang /= English then
+                    List.map (\t -> t ++ " <Untranslated>") v
 
-        Nothing ->
-            let
-                fallback =
-                    LE.find (\(LanguageValues l _) -> l == None) langMap
-            in
-            case fallback of
-                Just (LanguageValues _ t) ->
-                    t
-
-                Nothing ->
-                    let
-                        modifiedEnglish =
-                            LE.find (\(LanguageValues l _) -> l == English) langMap
-                    in
-                    case modifiedEnglish of
-                        Just (LanguageValues _ lv) ->
-                            List.map (\t -> t ++ " <Untranslated>") lv
-
-                        Nothing ->
-                            [ "[No language value found]" ]
+                else
+                    v
+            )
+        |> Maybe.withDefault [ "[No language value found]" ]
 
 
 {-|
