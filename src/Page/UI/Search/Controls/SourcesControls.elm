@@ -87,12 +87,14 @@ viewFacetsForSourcesMode cfg =
         materialType =
             viewFacet (createFacetConfig cfg "material-types" []) cfg.facetMsgConfig
 
-        contentType =
-            viewFacet (createFacetConfig cfg "content-types" []) cfg.facetMsgConfig
+        {-
+           -- disabled until the 593 issue has been sorted out.
+           contentType =
+               viewFacet (createFacetConfig cfg "content-types" []) cfg.facetMsgConfig
 
-        recordType =
-            viewFacet (createFacetConfig cfg "record-type" []) cfg.facetMsgConfig
-
+           recordType =
+               viewFacet (createFacetConfig cfg "record-type" []) cfg.facetMsgConfig
+        -}
         dateRange =
             viewFacet (createFacetConfig cfg "date-range" []) cfg.facetMsgConfig
 
@@ -116,8 +118,9 @@ viewFacetsForSourcesMode cfg =
             , compositeVolumesToggle
             ]
         , materialType
-        , contentType
-        , recordType
+
+        --, contentType
+        --, recordType
         ]
     , viewFacetsControlPanel
         (.alias sourceFacetPanels.peopleRelationshipsPanel)
