@@ -13,7 +13,6 @@ module Language exposing
     )
 
 import DateFormat
-import Dict
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), Locale, base)
 import Json.Decode as Decode exposing (Decoder)
@@ -50,6 +49,29 @@ type LanguageMapReplacementVariable
 
 type LanguageValues
     = LanguageValues Language (List String)
+
+
+{-|
+
+    A simple list of the language options supported by the site.
+
+-}
+languageOptions : List ( String, String, Language )
+languageOptions =
+    [ ( "en", "English", English )
+    , ( "de", "Deutsch", German )
+    , ( "fr", "Français", French )
+    , ( "it", "Italiano", Italian )
+    , ( "es", "Español", Spanish )
+    , ( "pt", "Português", Portugese )
+    , ( "pl", "Polskie", Polish )
+    , ( "none", "None", None )
+    ]
+
+
+
+-- DATE FORMATTING
+-- TODO: Change this to work with languages
 
 
 dateFormatter : Zone -> Posix -> String
@@ -162,8 +184,15 @@ languageMapDecoder json =
 -}
 languageOptionsForDisplay : List ( String, String )
 languageOptionsForDisplay =
-    List.map (\( l, n, _ ) -> ( l, n )) languageOptions
-        |> List.filter (\( l, _ ) -> l /= "none")
+    List.filterMap
+        (\( l, n, _ ) ->
+            if l /= "none" then
+                Just ( l, n )
+
+            else
+                Nothing
+        )
+        languageOptions
 
 
 {-|
@@ -175,9 +204,15 @@ languageOptionsForDisplay =
 parseLocaleToLanguage : String -> Language
 parseLocaleToLanguage locale =
     -- defaults to English if no language is detected
-    List.map (\( l, _, s ) -> ( l, s )) languageOptions
-        |> Dict.fromList
-        |> Dict.get locale
+    LE.findMap
+        (\( l, _, s ) ->
+            if l == locale then
+                Just s
+
+            else
+                Nothing
+        )
+        languageOptions
         |> Maybe.withDefault English
 
 
@@ -245,24 +280,6 @@ languageDecoder locale =
     Decode.succeed (parseLocaleToLanguage locale)
 
 
-{-|
-
-    A simple list of the language options supported by the site.
-
--}
-languageOptions : List ( String, String, Language )
-languageOptions =
-    [ ( "en", "English", English )
-    , ( "de", "Deutsch", German )
-    , ( "fr", "Français", French )
-    , ( "it", "Italiano", Italian )
-    , ( "es", "Español", Spanish )
-    , ( "pt", "Português", Portugese )
-    , ( "pl", "Polskie", Polish )
-    , ( "none", "None", None )
-    ]
-
-
 languageValuesDecoder : ( String, List String ) -> Decoder LanguageValues
 languageValuesDecoder ( locale, translations ) =
     languageDecoder locale
@@ -280,11 +297,16 @@ parseLanguageToLocale lang =
     -- it's unlikely that a language will get passed in that doesn't exist,
     -- but this will use English as the default language if that ever happens
     -- creates a new list with just the locale and language type, then filters
-    List.map (\( l, _, s ) -> ( l, s )) languageOptions
-        |> List.filter (\( _, sym ) -> sym == lang)
-        |> List.head
-        |> Maybe.withDefault ( "en", English )
-        |> Tuple.first
+    LE.findMap
+        (\( l, _, s ) ->
+            if s == lang then
+                Just l
+
+            else
+                Nothing
+        )
+        languageOptions
+        |> Maybe.withDefault "en"
 
 
 polishLocale : Locale
@@ -308,11 +330,6 @@ portugeseLocale =
 setLanguage : Language -> { a | language : Language } -> { a | language : Language }
 setLanguage newValue oldRecord =
     { oldRecord | language = newValue }
-
-
-
--- DATE FORMATTING
--- TODO: Change this to work with languages
 
 
 spanishLocale : Locale
