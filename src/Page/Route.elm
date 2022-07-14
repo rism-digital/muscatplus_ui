@@ -53,6 +53,4 @@ routeParser =
         , P.map InstitutionPageRoute (s "institutions" </> P.int)
         , P.map InstitutionSourcePageRoute (s "institutions" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map AboutPageRoute (s "about")
-
-        --, P.map PlacePageRoute (s "places" </> P.int)
         ]
