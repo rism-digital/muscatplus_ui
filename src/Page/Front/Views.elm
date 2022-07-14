@@ -35,16 +35,16 @@ view session model =
         backgroundImage =
             case session.showFrontSearchInterface of
                 SourceSearchOption ->
-                    Background.image "/static/images/sources-alt.jpg"
+                    Background.image "/static/images/sources.jpg"
 
                 PeopleSearchOption ->
-                    Background.image "/static/images/people-alt.jpg"
+                    Background.image "/static/images/people.jpg"
 
                 InstitutionSearchOption ->
-                    Background.image "/static/images/institutions-alt.jpg"
+                    Background.image "/static/images/institutions.jpg"
 
                 IncipitSearchOption ->
-                    Background.image "/static/images/incipits-alt.jpg"
+                    Background.image "/static/images/incipits.jpg"
 
                 _ ->
                     emptyAttribute
