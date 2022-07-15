@@ -186,17 +186,14 @@ view session =
             session.expandedSideBar
 
         incipitsInterfaceMenuOption =
-            viewIf
-                (lazy3 menuOption
-                    { icon = musicNotationSvg
-                    , isCurrent = checkSelected IncipitSearchOption
-                    , label = text (extractLabelFromLanguageMap session.language localTranslations.incipits)
-                    , showLabel = showLabels
-                    }
-                    IncipitSearchOption
-                    (checkHover IncipitSearchOption)
-                )
-                showWhenChoosingNationalCollection
+            menuOption
+                { icon = musicNotationSvg
+                , isCurrent = checkSelected IncipitSearchOption
+                , label = text (extractLabelFromLanguageMap session.language localTranslations.incipits)
+                , showLabel = showLabels
+                }
+                IncipitSearchOption
+                (checkHover IncipitSearchOption)
 
         -- If a national collection is chosen this will return
         -- false, indicating that the menu option should not
