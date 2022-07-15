@@ -19,6 +19,7 @@ type SideBarAnimationStatus
 type SideBarMsg
     = ServerRespondedWithCountryCodeList (Result (Http.Detailed.Error String) ( Http.Metadata, Dict CountryCode LanguageMap ))
     | ClientDebouncedSideBarMessages (Debouncer.Msg SideBarMsg)
+    | ClientDebouncedNationalCollectionChooserMessages (Debouncer.Msg SideBarMsg)
     | ClientSetSearchPreferencesThroughPort SearchPreferences
     | UserMouseEnteredSideBar
     | UserMouseExitedSideBar

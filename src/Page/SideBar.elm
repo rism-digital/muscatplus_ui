@@ -52,6 +52,9 @@ update msg session =
         ClientDebouncedSideBarMessages subMsg ->
             Debouncer.update update updateDebouncer subMsg session
 
+        ClientDebouncedNationalCollectionChooserMessages subMsg ->
+            Debouncer.update update ncDebouncer subMsg session
+
         ClientSetSearchPreferencesThroughPort preferences ->
             ( { session
                 | searchPreferences = Just preferences
@@ -177,4 +180,12 @@ updateDebouncer =
     { mapMsg = ClientDebouncedSideBarMessages
     , getDebouncer = .sideBarExpansionDebouncer
     , setDebouncer = \debouncer s -> { s | sideBarExpansionDebouncer = debouncer }
+    }
+
+
+ncDebouncer : Debouncer.UpdateConfig SideBarMsg Session
+ncDebouncer =
+    { mapMsg = ClientDebouncedNationalCollectionChooserMessages
+    , getDebouncer = .nationalCollectionChooserDebouncer
+    , setDebouncer = \debouncer s -> { s | nationalCollectionChooserDebouncer = debouncer }
     }

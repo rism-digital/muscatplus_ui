@@ -14,7 +14,7 @@ module Session exposing (Session, init)
 -}
 
 import Browser.Navigation as Nav
-import Debouncer.Messages as Debouncer exposing (Debouncer)
+import Debouncer.Messages as Debouncer exposing (Debouncer, fromSeconds)
 import Device exposing (detectDevice)
 import Dict exposing (Dict)
 import Element exposing (Device)
@@ -37,6 +37,7 @@ type alias Session =
     , showMuscatLinks : Bool
     , expandedSideBar : SideBarAnimationStatus
     , sideBarExpansionDebouncer : Debouncer SideBarMsg
+    , nationalCollectionChooserDebouncer : Debouncer SideBarMsg
     , showFrontSearchInterface : SideBarOption
     , currentlyHoveredOption : Maybe SideBarOption
     , currentlyHoveredNationalCollectionChooser : Bool
@@ -111,6 +112,7 @@ init flags url key =
     , showMuscatLinks = flags.showMuscatLinks
     , expandedSideBar = NoAnimation
     , sideBarExpansionDebouncer = Debouncer.debounce sideBarExpandDelay |> Debouncer.toDebouncer
+    , nationalCollectionChooserDebouncer = Debouncer.debounce (fromSeconds 0.8) |> Debouncer.toDebouncer
     , showFrontSearchInterface = initialMode
     , currentlyHoveredOption = Nothing
     , currentlyHoveredNationalCollectionChooser = False

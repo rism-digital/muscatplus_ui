@@ -1,6 +1,7 @@
 module Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 
 import Config
+import Debouncer.Messages exposing (provideInput)
 import Dict exposing (Dict)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
@@ -323,7 +324,7 @@ viewNationalCollectionChooserMenuOption session =
         , paddingXY 30 10
         , pointer
         , onRight viewChooser
-        , onMouseEnter UserMouseEnteredCountryChooser
+        , onMouseEnter (UserMouseEnteredCountryChooser |> provideInput |> ClientDebouncedNationalCollectionChooserMessages)
         , onMouseLeave UserMouseExitedCountryChooser
         , iconBackgroundColor
         , hoverStyles
