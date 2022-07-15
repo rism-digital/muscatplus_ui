@@ -1,12 +1,13 @@
-module Page.UI.Tooltip exposing (facetHelp, tooltip, tooltipStyle)
+module Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
 
 import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
-import Page.UI.Images exposing (assistanceSvg)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Attributes exposing (minimalDropShadow)
+import Page.UI.Images exposing (assistanceSvg, infoCircleSvg)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 facetHelp : (Element msg -> Attribute msg) -> String -> Element msg
@@ -19,10 +20,27 @@ facetHelp position helpText =
         (assistanceSvg colourScheme.slateGrey)
 
 
+facetTooltip : (Element msg -> Attribute msg) -> String -> Element msg
+facetTooltip position tttext =
+    el
+        [ width (px 16)
+        , height (px 16)
+        , tooltip position (tooltipBubble tttext)
+        ]
+        (infoCircleSvg colourScheme.lightBlue)
+
+
 helpBubble : String -> Element msg
 helpBubble str =
     el
         tooltipStyle
+        (paragraph [ width (px 350) ] [ text str ])
+
+
+tooltipBubble : String -> Element msg
+tooltipBubble str =
+    el
+        tooltipStyle2
         (paragraph [ width (px 350) ] [ text str ])
 
 
@@ -45,14 +63,23 @@ tooltip position tooltip_ =
 
 tooltipStyle : List (Attribute msg)
 tooltipStyle =
-    [ Background.color (rgb 0 0 0)
-    , Font.color (rgb 1 1 1)
+    [ Background.color (colourScheme.black |> convertColorToElementColor)
+    , Font.color (colourScheme.white |> convertColorToElementColor)
     , width (shrink |> minimum 120)
     , padding 12
     , spacing 5
-
-    --, Border.rounded 5
     , Font.size 14
-    , Border.shadow
-        { blur = 6, color = rgba 0 0 0 0.32, offset = ( 0, 3 ), size = 0 }
+    , minimalDropShadow
+    ]
+
+
+tooltipStyle2 : List (Attribute msg)
+tooltipStyle2 =
+    [ Background.color (colourScheme.white |> convertColorToElementColor)
+    , Font.color (colourScheme.black |> convertColorToElementColor)
+    , width (shrink |> minimum 120)
+    , padding 12
+    , spacing 5
+    , Font.size 14
+    , minimalDropShadow
     ]

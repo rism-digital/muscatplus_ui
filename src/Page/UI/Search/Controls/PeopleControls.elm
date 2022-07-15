@@ -2,6 +2,7 @@ module Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 
 import Element exposing (Element)
 import Language.LocalTranslations exposing (facetPanelTitles)
+import Language.Tooltips exposing (tooltips)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
@@ -27,19 +28,19 @@ viewFacetsForPeopleMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForPeopleMode cfg =
     let
         dates =
-            viewFacet (createFacetConfig cfg "date-range" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "date-range" tooltips.dateRange) cfg.facetMsgConfig
 
         gender =
-            viewFacet (createFacetConfig cfg "gender" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "gender" tooltips.gender) cfg.facetMsgConfig
 
         places =
-            viewFacet (createFacetConfig cfg "associated-place" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "associated-place" tooltips.associatedPlace) cfg.facetMsgConfig
 
         role =
-            viewFacet (createFacetConfig cfg "roles" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "roles" tooltips.roles) cfg.facetMsgConfig
 
         profession =
-            viewFacet (createFacetConfig cfg "profession" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "profession" tooltips.profession) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias personFacetPanels.biographicalInfoPanel)

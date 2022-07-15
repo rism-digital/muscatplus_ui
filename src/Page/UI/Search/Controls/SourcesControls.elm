@@ -1,11 +1,13 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
-import Element exposing (Element, none, paddingEach, row)
+import Element exposing (Element, column, none, paddingEach, row, spacing)
+import Element.Border as Border
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 import Language.Tooltips exposing (tooltips)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 sourceFacetPanels :
@@ -53,40 +55,40 @@ viewFacetsForSourcesMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForSourcesMode cfg =
     let
         compositeVolumesToggle =
-            viewFacet (createFacetConfig cfg "hide-composite-volumes" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "hide-composite-volumes" tooltips.compositeVolume) cfg.facetMsgConfig
 
         sourceCollectionsToggle =
-            viewFacet (createFacetConfig cfg "hide-source-collections" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "hide-source-collections" tooltips.sourceCollections) cfg.facetMsgConfig
 
         sourceContentsToggle =
-            viewFacet (createFacetConfig cfg "hide-source-contents" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "hide-source-contents" tooltips.sourceContents) cfg.facetMsgConfig
 
         hasDigitizationToggle =
-            viewFacet (createFacetConfig cfg "has-digitization" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "has-digitization" tooltips.hasDigitization) cfg.facetMsgConfig
 
         hasIiifToggle =
-            viewFacet (createFacetConfig cfg "has-iiif" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "has-iiif" tooltips.hasIiif) cfg.facetMsgConfig
 
         hasIncipitsToggle =
-            viewFacet (createFacetConfig cfg "has-incipits" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "has-incipits" tooltips.hasIncipits) cfg.facetMsgConfig
 
         institutionSigla =
-            viewFacet (createFacetConfig cfg "sigla" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "sigla" tooltips.institutionSigla) cfg.facetMsgConfig
 
         institutionNumHoldings =
-            viewFacet (createFacetConfig cfg "num-holdings" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "num-holdings" tooltips.institutionNumHoldings) cfg.facetMsgConfig
 
         composerRelationships =
             viewFacet (createFacetConfig cfg "composer" tooltips.composerAuthor) cfg.facetMsgConfig
 
         otherPeopleRelationships =
-            viewFacet (createFacetConfig cfg "people" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "people" tooltips.otherPeople) cfg.facetMsgConfig
 
         subjects =
-            viewFacet (createFacetConfig cfg "subjects" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "subjects" tooltips.subjects) cfg.facetMsgConfig
 
         materialType =
-            viewFacet (createFacetConfig cfg "material-types" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "material-types" tooltips.materialType) cfg.facetMsgConfig
 
         {-
            -- disabled until the 593 issue has been sorted out.
@@ -97,16 +99,16 @@ viewFacetsForSourcesMode cfg =
                viewFacet (createFacetConfig cfg "record-type" []) cfg.facetMsgConfig
         -}
         dateRange =
-            viewFacet (createFacetConfig cfg "date-range" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "date-range" tooltips.dateRange) cfg.facetMsgConfig
 
         formatExtent =
-            viewFacet (createFacetConfig cfg "format-extent" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "format-extent" tooltips.formatExtent) cfg.facetMsgConfig
 
         textLanguage =
-            viewFacet (createFacetConfig cfg "text-language" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "text-language" tooltips.textLanguage) cfg.facetMsgConfig
 
         scoring =
-            viewFacet (createFacetConfig cfg "scoring" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "scoring" tooltips.scoring) cfg.facetMsgConfig
 
         sourceResultsPanel =
             let
@@ -124,10 +126,16 @@ viewFacetsForSourcesMode cfg =
                     (.label sourceFacetPanels.sourceResultsPanel)
                     cfg
                     [ row
-                        [ paddingEach { top = 0, bottom = 10, left = 0, right = 0 } ]
-                        [ sourceContentsToggle
-                        , sourceCollectionsToggle
-                        , compositeVolumesToggle
+                        [ paddingEach { top = 0, bottom = 10, left = 0, right = 0 }
+                        ]
+                        [ column
+                            [ Border.widthEach { top = 0, bottom = 0, left = 2, right = 0 }
+                            , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+                            ]
+                            [ row [] [ sourceContentsToggle ]
+                            , row [] [ sourceCollectionsToggle ]
+                            , row [] [ compositeVolumesToggle ]
+                            ]
                         ]
                     , materialType
 

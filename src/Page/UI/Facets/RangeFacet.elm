@@ -1,19 +1,19 @@
 module Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, padding, paddingEach, paragraph, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, onRight, padding, paddingEach, paragraph, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input exposing (labelHidden)
-import Language exposing (Language, LanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h4)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.UI.Tooltip exposing (facetHelp)
+import Page.UI.Tooltip exposing (facetHelp, facetTooltip)
 import Page.UpdateHelpers exposing (selectAppropriateRangeFacetValues)
 
 
@@ -156,7 +156,7 @@ viewRangeFacet config =
                     , centerX
                     , centerY
                     ]
-                    [ facetHelp above rangeFacetHelp ]
+                    [ facetTooltip onRight (extractLabelFromLanguageMap config.language config.tooltip) ]
                 , column
                     [ width fill
                     , alignLeft
@@ -207,6 +207,16 @@ viewRangeFacet config =
                     [ validateInput lowerValidError
                     , validateInput upperValidError
                     ]
+                ]
+            , row
+                []
+                [ column
+                    [ width shrink
+                    , height shrink
+                    , centerX
+                    , centerY
+                    ]
+                    [ facetHelp above rangeFacetHelp ]
                 ]
             ]
         ]

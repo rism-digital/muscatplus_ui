@@ -33,6 +33,7 @@ colourScheme :
     , red : Color
     , slateGrey : Color
     , translucentGrey : Color
+    , translucentBlack : Color
     , turquoise : Color
     , white : Color
     , yellow : Color
@@ -51,6 +52,7 @@ colourScheme =
     , red = convertRGBAToColor colours.red
     , slateGrey = convertRGBAToColor colours.slateGrey
     , translucentGrey = convertRGBAToColor colours.translucentGrey
+    , translucentBlack = convertRGBAToColor colours.translucentBlack
     , turquoise = convertRGBAToColor colours.turquoise
     , white = convertRGBAToColor colours.white
     , yellow = convertRGBAToColor colours.yellow
@@ -71,6 +73,7 @@ colours :
     , red : RGBA
     , slateGrey : RGBA
     , translucentGrey : RGBA
+    , translucentBlack : RGBA
     , turquoise : RGBA
     , white : RGBA
     , yellow : RGBA
@@ -153,6 +156,12 @@ colours =
         , green = 136
         , blue = 153
         , alpha = 0.5
+        }
+    , translucentBlack =
+        { red = 34
+        , green = 38
+        , blue = 42
+        , alpha = 0.8
         }
     , turquoise =
         { red = 67

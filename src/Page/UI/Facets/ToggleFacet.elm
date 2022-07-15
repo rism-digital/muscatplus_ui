@@ -2,12 +2,13 @@ module Page.UI.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, column, el, paddingXY, row)
+import Element exposing (Element, above, centerX, centerY, column, el, height, inFront, onLeft, paddingXY, row, shrink, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.Query exposing (toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (ToggleFacet)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Facets.Toggle as Toggle
+import Page.UI.Tooltip exposing (facetTooltip)
 
 
 type alias ToggleFacetConfig msg =
@@ -44,5 +45,13 @@ viewToggleFacet config =
                         |> Toggle.render
                     )
                 ]
+            ]
+        , column
+            [ width shrink
+            , height shrink
+            , centerX
+            , centerY
+            ]
+            [ facetTooltip above (extractLabelFromLanguageMap config.language config.tooltip)
             ]
         ]
