@@ -70,6 +70,30 @@ type alias QueryArgs =
     }
 
 
+createPrefixedField : String -> String -> Maybe QueryParameter
+createPrefixedField alias val =
+    if String.isEmpty val then
+        Nothing
+
+    else
+        let
+            -- the URL builder has `percentEncode` built in, but
+            -- the values of the facet are already percent encoded
+            -- so decoding here avoids double-encoding later. If the value
+            -- can't be decoded (returns "Nothing") then just pass the original
+            -- value along and hope it doesn't cause problems. ¯\_(ツ)_/¯
+            decodedVal =
+                case percentDecode val of
+                    Just v ->
+                        v
+
+                    Nothing ->
+                        val
+        in
+        Url.Builder.string "fq" (alias ++ ":" ++ decodedVal)
+            |> Just
+
+
 {-|
 
     Converts our application's QueryArgs to a set of QueryParameters
@@ -88,35 +112,11 @@ buildQueryParameters queryArgs =
                     )
 
         fqParams =
+            -- concatMap will collapse lists-of-lists into a single list: [ [1], [2] ] -> [1, 2]
             Dict.toList queryArgs.filters
                 |> List.concatMap
                     (\( alias, filts ) ->
-                        let
-                            createPrefixedField val =
-                                let
-                                    -- the URL builder has `percentEncode` built in, but
-                                    -- the values of the facet are already percent encoded
-                                    -- so decoding here avoids double-encoding later. If the value
-                                    -- can't be decoded (returns "Nothing") then just pass the original
-                                    -- value along and hope it doesn't cause problems. ¯\_(ツ)_/¯
-                                    decodedVal =
-                                        case percentDecode val of
-                                            Just v ->
-                                                v
-
-                                            Nothing ->
-                                                val
-                                in
-                                if String.isEmpty val then
-                                    Nothing
-
-                                else
-                                    Just (alias ++ ":" ++ decodedVal)
-
-                            allFilts =
-                                List.filterMap (\s -> createPrefixedField s) filts
-                        in
-                        List.map (Url.Builder.string "fq") allFilts
+                        List.filterMap (\s -> createPrefixedField alias s) filts
                     )
 
         fsParams =
