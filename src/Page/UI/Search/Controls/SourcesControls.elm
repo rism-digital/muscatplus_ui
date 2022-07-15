@@ -1,7 +1,8 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
-import Element exposing (Element, paddingEach, row)
+import Element exposing (Element, none, paddingEach, row)
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
+import Language.Tooltips exposing (tooltips)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
@@ -76,7 +77,7 @@ viewFacetsForSourcesMode cfg =
             viewFacet (createFacetConfig cfg "num-holdings" []) cfg.facetMsgConfig
 
         composerRelationships =
-            viewFacet (createFacetConfig cfg "composer" []) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "composer" tooltips.composerAuthor) cfg.facetMsgConfig
 
         otherPeopleRelationships =
             viewFacet (createFacetConfig cfg "people" []) cfg.facetMsgConfig
@@ -106,22 +107,57 @@ viewFacetsForSourcesMode cfg =
 
         scoring =
             viewFacet (createFacetConfig cfg "scoring" []) cfg.facetMsgConfig
-    in
-    [ viewFacetsControlPanel
-        (.alias sourceFacetPanels.sourceResultsPanel)
-        (.label sourceFacetPanels.sourceResultsPanel)
-        cfg
-        [ row
-            [ paddingEach { top = 0, bottom = 10, left = 0, right = 0 } ]
-            [ sourceContentsToggle
-            , sourceCollectionsToggle
-            , compositeVolumesToggle
-            ]
-        , materialType
 
-        --, contentType
-        --, recordType
-        ]
+        sourceResultsPanel =
+            let
+                allAreEmpty =
+                    List.all
+                        (\a -> a == none)
+                        [ sourceContentsToggle, sourceCollectionsToggle, compositeVolumesToggle, materialType ]
+            in
+            if allAreEmpty then
+                none
+
+            else
+                viewFacetsControlPanel
+                    (.alias sourceFacetPanels.sourceResultsPanel)
+                    (.label sourceFacetPanels.sourceResultsPanel)
+                    cfg
+                    [ row
+                        [ paddingEach { top = 0, bottom = 10, left = 0, right = 0 } ]
+                        [ sourceContentsToggle
+                        , sourceCollectionsToggle
+                        , compositeVolumesToggle
+                        ]
+                    , materialType
+
+                    --, contentType
+                    --, recordType
+                    ]
+
+        digitizationResultsPanel =
+            let
+                allAreEmpty =
+                    List.all
+                        (\a -> a == none)
+                        [ hasDigitizationToggle, hasIiifToggle ]
+            in
+            if allAreEmpty then
+                none
+
+            else
+                viewFacetsControlPanel
+                    (.alias sourceFacetPanels.digitizationPanel)
+                    (.label sourceFacetPanels.digitizationPanel)
+                    cfg
+                    [ row
+                        []
+                        [ hasDigitizationToggle
+                        , hasIiifToggle
+                        ]
+                    ]
+    in
+    [ sourceResultsPanel
     , viewFacetsControlPanel
         (.alias sourceFacetPanels.peopleRelationshipsPanel)
         (.label sourceFacetPanels.peopleRelationshipsPanel)
@@ -129,16 +165,7 @@ viewFacetsForSourcesMode cfg =
         [ composerRelationships
         , otherPeopleRelationships
         ]
-    , viewFacetsControlPanel
-        (.alias sourceFacetPanels.digitizationPanel)
-        (.label sourceFacetPanels.digitizationPanel)
-        cfg
-        [ row
-            []
-            [ hasDigitizationToggle
-            , hasIiifToggle
-            ]
-        ]
+    , digitizationResultsPanel
     , viewFacetsControlPanel
         (.alias sourceFacetPanels.incipitPanel)
         (.label sourceFacetPanels.incipitPanel)
