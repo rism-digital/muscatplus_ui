@@ -78,7 +78,9 @@ searchResultsViewRouter session model =
             viewSearchResultsSection resultsConfig False body
 
         Error err ->
-            viewSearchResultsErrorTmpl session.language (createErrorMessage session.language err)
+            createErrorMessage session.language err
+                |> Tuple.first
+                |> viewSearchResultsErrorTmpl session.language
 
         NoResponseToShow ->
             -- In case we're just booting the app up, show

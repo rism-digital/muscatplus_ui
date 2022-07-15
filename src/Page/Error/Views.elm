@@ -6,7 +6,8 @@ import Element.Background as Background
 import Http.Detailed
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (errorMessages)
-import Page.UI.Attributes exposing (headingLG, headingXL, linkColour)
+import Page.UI.Attributes exposing (headingLG, headingSM, headingXL, lineSpacing, linkColour)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData)
@@ -18,25 +19,34 @@ createProbeErrorMessage error =
     ""
 
 
-createErrorMessage : Language -> Http.Detailed.Error String -> String
+createErrorMessage : Language -> Http.Detailed.Error String -> ( String, Maybe String )
 createErrorMessage language error =
     case error of
         Http.Detailed.BadUrl url ->
-            "A Bad URL was supplied: " ++ url
+            ( "A Bad URL was supplied: " ++ url, Nothing )
 
         Http.Detailed.BadStatus metadata message ->
             case metadata.statusCode of
                 404 ->
-                    extractLabelFromLanguageMap language errorMessages.notFound
+                    ( extractLabelFromLanguageMap language errorMessages.notFound
+                    , Just message
+                    )
+
+                400 ->
+                    ( extractLabelFromLanguageMap language errorMessages.badQuery
+                    , Just message
+                    )
 
                 _ ->
-                    "Unknown status"
+                    ( "Response status code: " ++ String.fromInt metadata.statusCode
+                    , Just message
+                    )
 
         Http.Detailed.BadBody _ _ message ->
-            "Unexpected response: " ++ message
+            ( "Unexpected response", Just message )
 
         _ ->
-            "A problem happened with the request"
+            ( "An unknown problem happened with the request", Nothing )
 
 
 view :
@@ -45,14 +55,50 @@ view :
     -> Element msg
 view session model =
     let
+        errorMessages err =
+            createErrorMessage session.language err
+
         errorMessage =
             case model.response of
                 Error err ->
-                    el
-                        [ headingXL ]
-                        (createErrorMessage session.language err
-                            |> text
-                        )
+                    let
+                        allMessages =
+                            errorMessages err
+
+                        mainMessage =
+                            Tuple.first allMessages
+
+                        otherMessage =
+                            Tuple.second allMessages
+
+                        otherMessageFmt strMsg =
+                            el
+                                [ headingSM
+                                , centerX
+                                , centerY
+                                ]
+                                (text strMsg)
+
+                        otherMessageEl =
+                            viewMaybe otherMessageFmt otherMessage
+                    in
+                    row
+                        [ centerX
+                        , centerY
+                        ]
+                        [ column
+                            [ width fill
+                            , spacing lineSpacing
+                            ]
+                            [ el
+                                [ headingXL
+                                , centerX
+                                , centerY
+                                ]
+                                (text mainMessage)
+                            , otherMessageEl
+                            ]
+                        ]
 
                 _ ->
                     none
@@ -86,11 +132,7 @@ view session model =
                         (onlineTextSvg colourScheme.darkBlue)
                     ]
                 ]
-            , row
-                [ centerX
-                , centerY
-                ]
-                [ errorMessage ]
+            , errorMessage
             , row
                 [ centerX
                 , centerY

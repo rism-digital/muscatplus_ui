@@ -87,7 +87,9 @@ viewSearchResultsSection cfg resultsLoading body =
                         (Just resp)
 
                 Error errMsg ->
-                    viewPreviewError (.language cfg.session) cfg.userClosedPreviewWindowMsg (createErrorMessage (.language cfg.session) errMsg)
+                    createErrorMessage (.language cfg.session) errMsg
+                        |> Tuple.first
+                        |> viewPreviewError (.language cfg.session) cfg.userClosedPreviewWindowMsg
 
                 NoResponseToShow ->
                     none

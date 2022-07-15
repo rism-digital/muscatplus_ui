@@ -84,8 +84,8 @@ searchResultsViewRouter session model =
         Response (SearchData body) ->
             viewSearchResultsSection resultsConfig False body
 
-        Error err ->
-            viewSearchResultsErrorTmpl session.language (createErrorMessage session.language err)
+        Error _ ->
+            Page.Error.Views.view session model
 
         NoResponseToShow ->
             -- In case we're just booting the app up, show
