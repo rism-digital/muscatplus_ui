@@ -52,8 +52,8 @@ init flags initialUrl key =
         FrontPageRoute qargs ->
             let
                 initialBody =
-                    Front.init
-                        { queryArgs = qargs }
+                    Front.init { queryArgs = qargs }
+                        |> addNationalCollectionFilter session.restrictedToNationalCollection
             in
             ( FrontPage session initialBody
             , Cmd.batch
