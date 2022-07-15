@@ -318,8 +318,11 @@ facetPanelTitles =
 
 errorMessages :
     { notFound : LanguageMap
+    , badQuery : LanguageMap
     }
 errorMessages =
     { notFound =
         [ LanguageValues English [ "The page was not found" ] ]
+    , badQuery =
+        [ LanguageValues English [ "There was a problem with the query" ] ]
     }
