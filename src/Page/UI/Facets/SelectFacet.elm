@@ -10,7 +10,7 @@ import Element.Font as Font
 import Element.Input exposing (checkbox, labelRight)
 import Element.Region as Region
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import List.Extra as LE
 import Page.Query exposing (toFacetBehaviours, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviours, toCurrentBehaviour)
@@ -26,6 +26,7 @@ import String.Extra as SE
 
 type alias SelectFacetConfig msg =
     { language : Language
+    , tooltip : LanguageMap
     , selectFacet : SelectFacet
     , activeSearch : ActiveSearch msg
     , numberOfColumns : Int

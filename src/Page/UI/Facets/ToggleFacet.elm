@@ -3,7 +3,7 @@ module Page.UI.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Element exposing (Element, column, el, paddingXY, row)
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.Query exposing (toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (ToggleFacet)
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -12,6 +12,7 @@ import Page.UI.Facets.Toggle as Toggle
 
 type alias ToggleFacetConfig msg =
     { language : Language
+    , tooltip : LanguageMap
     , activeSearch : ActiveSearch msg
     , toggleFacet : ToggleFacet
     , userClickedFacetToggleMsg : FacetAlias -> msg

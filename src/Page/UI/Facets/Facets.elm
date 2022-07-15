@@ -31,6 +31,7 @@ viewFacet cfg msg =
                 toggleFacetConfig : ToggleFacetConfig msg
                 toggleFacetConfig =
                     { language = cfg.language
+                    , tooltip = cfg.tooltip
                     , activeSearch = cfg.activeSearch
                     , toggleFacet = facet
                     , userClickedFacetToggleMsg = msg.userClickedToggleMsg
@@ -43,6 +44,7 @@ viewFacet cfg msg =
                 rangeFacetConfig : RangeFacetConfig msg
                 rangeFacetConfig =
                     { language = cfg.language
+                    , tooltip = cfg.tooltip
                     , rangeFacet = facet
                     , activeSearch = cfg.activeSearch
                     , userLostFocusMsg = msg.userLostFocusRangeMsg
@@ -57,6 +59,7 @@ viewFacet cfg msg =
                 selectFacetConfig : SelectFacetConfig msg
                 selectFacetConfig =
                     { language = cfg.language
+                    , tooltip = cfg.tooltip
                     , selectFacet = facet
                     , activeSearch = cfg.activeSearch
                     , numberOfColumns = cfg.selectColumns
@@ -75,6 +78,7 @@ viewFacet cfg msg =
                         notationFacetConfig : NotationFacetConfig msg
                         notationFacetConfig =
                             { language = cfg.language
+                            , tooltip = cfg.tooltip
                             , keyboardModel = keyboardModel
                             , notationFacet = facet
                             , userInteractedWithKeyboardMsg = msg.userInteractedWithPianoKeyboard
@@ -90,6 +94,7 @@ viewFacet cfg msg =
                 queryFacetConfig : QueryFacetConfig msg
                 queryFacetConfig =
                     { language = cfg.language
+                    , tooltip = cfg.tooltip
                     , activeSearch = cfg.activeSearch
                     , queryFacet = facet
                     , userRemovedMsg = msg.userRemovedQueryMsg

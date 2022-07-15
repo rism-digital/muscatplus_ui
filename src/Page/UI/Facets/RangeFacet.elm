@@ -7,7 +7,7 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input exposing (labelHidden)
-import Language exposing (Language)
+import Language exposing (Language, LanguageMap)
 import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
@@ -19,6 +19,7 @@ import Page.UpdateHelpers exposing (selectAppropriateRangeFacetValues)
 
 type alias RangeFacetConfig msg =
     { language : Language
+    , tooltip : LanguageMap
     , rangeFacet : RangeFacet
     , activeSearch : ActiveSearch msg
     , userLostFocusMsg : FacetAlias -> msg

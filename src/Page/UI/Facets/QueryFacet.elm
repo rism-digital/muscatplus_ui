@@ -9,7 +9,7 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.Query exposing (toFacetBehaviours, toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), QueryFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviourItems, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias, LabelValue)
@@ -24,6 +24,7 @@ import Page.UI.Tooltip exposing (facetHelp, tooltip, tooltipStyle)
 
 type alias QueryFacetConfig msg =
     { language : Language
+    , tooltip : LanguageMap
     , activeSearch : ActiveSearch msg
     , queryFacet : QueryFacet
     , userRemovedMsg : String -> String -> msg
