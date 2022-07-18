@@ -24,6 +24,7 @@ tooltips :
     , associatedPlace : LanguageMap
     , roles : LanguageMap
     , profession : LanguageMap
+    , city : LanguageMap
     , incipit : LanguageMap
     }
 tooltips =
@@ -69,6 +70,8 @@ tooltips =
         [ LanguageValues English englishRolesTooltip ]
     , profession =
         [ LanguageValues English englishProfessionTooltip ]
+    , city =
+        [ LanguageValues English englishCityTooltip ]
     , incipit =
         [ LanguageValues English englishIncipitSearchTooltip
         , LanguageValues French frenchIncipitSearchTooltip
@@ -205,6 +208,11 @@ englishProfessionTooltip : List String
 englishProfessionTooltip =
     [ """A known profession, job, or organizational membership.
          These values come from the authority record for a person.""" ]
+
+
+englishCityTooltip : List String
+englishCityTooltip =
+    [ """A city associated with an institution.""" ]
 
 
 englishIncipitSearchTooltip : List String
