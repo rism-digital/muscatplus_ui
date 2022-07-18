@@ -33,7 +33,7 @@ viewPaeInput language notationFacet (Keyboard model config) =
                                 [ spacing lineSpacing ]
                                 [ column
                                     []
-                                    [ text "PAE Input" ]
+                                    [ text "Plaine and Easie Input" ]
                                 , column
                                     []
                                     [ el
