@@ -7,6 +7,7 @@ import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (queryModeStrToQueryMode)
 import Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
 import Page.Keyboard.Views.FullKeyboard exposing (fullKeyboard)
+import Page.Keyboard.Views.PaeHelp exposing (viewPaeHelp)
 import Page.RecordTypes.Search exposing (NotationFacet)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
@@ -99,6 +100,7 @@ view notationFacet language (Keyboard model config) =
                                 }
                             ]
                         ]
+                    , viewPaeHelp language (Keyboard model config)
                     ]
                 ]
             ]

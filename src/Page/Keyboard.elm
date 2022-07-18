@@ -79,6 +79,7 @@ initModel =
     , needsProbe = False
     , inputIsValid = True
     , paeInputSearchDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
+    , paeHelpExpanded = False
     }
 
 
@@ -213,6 +214,13 @@ update msg model =
                 | needsProbe = needsProbing newModel
               }
             , buildNotationRequestQuery newModel.query
+            )
+
+        UserToggledPAEHelpText ->
+            ( { model
+                | paeHelpExpanded = not model.paeHelpExpanded
+              }
+            , Cmd.none
             )
 
         NothingHappenedWithTheKeyboard ->

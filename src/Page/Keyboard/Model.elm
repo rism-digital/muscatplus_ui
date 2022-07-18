@@ -113,6 +113,7 @@ type alias KeyboardModel msg =
     , needsProbe : Bool
     , inputIsValid : Bool
     , paeInputSearchDebouncer : Debouncer msg
+    , paeHelpExpanded : Bool
     }
 
 

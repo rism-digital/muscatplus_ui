@@ -16,4 +16,5 @@ type KeyboardMsg
     | UserClickedPianoKeyboardChangeClef Clef
     | UserClickedPianoKeyboardChangeTimeSignature TimeSignature
     | UserClickedPianoKeyboardChangeKeySignature KeySignature
+    | UserToggledPAEHelpText
     | NothingHappenedWithTheKeyboard
