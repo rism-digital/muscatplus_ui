@@ -116,7 +116,7 @@ extractTextFromLanguageMap lang langMap =
         |> Maybe.map
             (\(LanguageValues l v) ->
                 if l == English && lang /= English then
-                    List.map (\t -> t ++ " <Untranslated>") v
+                    List.map (\t -> t ++ " ❋") v
 
                 else
                     v
