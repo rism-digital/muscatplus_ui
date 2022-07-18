@@ -6,6 +6,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.Error.Views
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Front.Views.Facets exposing (facetFrontMsgConfig)
@@ -93,8 +94,7 @@ frontBodyViewRouter session model =
                 }
 
         _ ->
-            -- TODO: Implement some sort of error handling here.
-            viewFrontSearchControlsError
+            Page.Error.Views.view session model
 
 
 viewFrontSearchControls : SearchControlsConfig a b FrontMsg -> Element FrontMsg
@@ -268,14 +268,10 @@ viewFrontSearchControlsLoading =
             , centerX
             , centerY
             ]
-            (animatedLoader [ width (px 50), height (px 50) ] (spinnerSvg colourScheme.slateGrey))
+            (animatedLoader
+                [ width (px 50)
+                , height (px 50)
+                ]
+                (spinnerSvg colourScheme.slateGrey)
+            )
         ]
-
-
-viewFrontSearchControlsError : Element FrontMsg
-viewFrontSearchControlsError =
-    row
-        [ width fill
-        , height fill
-        ]
-        [ text "nothing to see here." ]
