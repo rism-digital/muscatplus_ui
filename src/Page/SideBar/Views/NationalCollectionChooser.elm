@@ -1,25 +1,24 @@
 module Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 
 import Config
-import Debouncer.Messages exposing (provideInput)
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
-import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
-import Page.SideBar.Msg exposing (SideBarMsg(..), showSideBarLabels)
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
-import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, sectionSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, lineSpacing, minimalDropShadow, sectionSpacing)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
+import String.Extra as SE
 
 
 imageForCountryCode : String -> Element msg
@@ -130,17 +129,21 @@ viewNationalCollectionChooser session =
         [ width (px 500)
         , Background.color (colourScheme.white |> convertColorToElementColor)
         , height (shrink |> minimum 600 |> maximum 800)
-        , Border.width 1
-        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+
+        --, Border.width 1
+        --, Border.color (colourScheme.midGrey |> convertColorToElementColor)
         , moveLeft 20
-        , Border.shadow
-            { blur = 10
-            , color =
-                colourScheme.darkGrey
-                    |> convertColorToElementColor
-            , offset = ( 1, 1 )
-            , size = 1
-            }
+        , minimalDropShadow
+        , Font.color (colourScheme.black |> convertColorToElementColor)
+
+        --, Border.shadow
+        --    { blur = 10
+        --    , color =
+        --        colourScheme.darkGrey
+        --            |> convertColorToElementColor
+        --    , offset = ( 1, 1 )
+        --    , size = 1
+        --    }
         ]
         [ column
             [ width fill
@@ -155,6 +158,7 @@ viewNationalCollectionChooser session =
                     [ alignTop
                     , headingLG
                     ]
+                    -- TODO: Translate
                     (text "Choose a collection to search")
                 ]
             , row
@@ -190,6 +194,7 @@ viewNationalCollectionChooser session =
                     [ width fill ]
                     [ row
                         [ width fill ]
+                        -- TODO: Translate
                         [ paragraph [] [ text "Or choose a national collection" ] ]
                     ]
                 ]
@@ -219,7 +224,7 @@ viewNationalCollectionChooserMenuOption session =
                     False
 
         labelFontColour =
-            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionChooser /= True then
+            if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionChooser == True then
                 colourScheme.white
 
             else
@@ -227,14 +232,14 @@ viewNationalCollectionChooserMenuOption session =
 
         hoverStyles =
             if session.currentlyHoveredNationalCollectionChooser then
-                Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+                Background.color (colourScheme.lightBlue |> convertColorToElementColor)
 
             else
                 emptyAttribute
 
         iconBackgroundColor =
             if isRestrictedToNationalCollection then
-                Background.color (colourScheme.darkGrey |> convertColorToElementColor)
+                Background.color (colourScheme.lightBlue |> convertColorToElementColor)
 
             else
                 emptyAttribute
@@ -242,11 +247,7 @@ viewNationalCollectionChooserMenuOption session =
         iconLabel =
             case session.restrictedToNationalCollection of
                 Just countryCode ->
-                    let
-                        lmap =
-                            Dict.get countryCode session.allNationalCollections
-                    in
-                    case lmap of
+                    case Dict.get countryCode session.allNationalCollections of
                         Just m ->
                             extractLabelFromLanguageMap session.language m
 
@@ -259,9 +260,11 @@ viewNationalCollectionChooserMenuOption session =
         labelEl =
             el
                 [ Font.color (labelFontColour |> convertColorToElementColor)
+                , Font.alignLeft
                 , headingLG
+                , alignLeft
                 ]
-                (text iconLabel)
+                (text (SE.softEllipsis 18 iconLabel))
 
         showLabels =
             showSideBarLabels session.expandedSideBar
@@ -274,10 +277,7 @@ viewNationalCollectionChooserMenuOption session =
                             imageForCountryCode countryCode
                     in
                     column
-                        [ width (px 30)
-                        , alignLeft
-                        , centerY
-                        ]
+                        [ spacingXY 0 4 ]
                         [ el
                             [ width (px 25)
                             , centerX
@@ -285,11 +285,11 @@ viewNationalCollectionChooserMenuOption session =
                             ]
                             countryFlagImage
                         , el
-                            [ width (px 40)
+                            [ width fill
                             , centerX
                             , centerY
-                            , Font.center
                             , Font.bold
+                            , Font.center
                             , headingMD
                             , Font.color (labelFontColour |> convertColorToElementColor)
                             ]
@@ -298,20 +298,17 @@ viewNationalCollectionChooserMenuOption session =
 
                 Nothing ->
                     column
-                        [ width (px 30)
-                        , alignLeft
-                        , centerY
-                        ]
+                        []
                         [ el
                             [ width (px 25)
-                            , alignLeft
+                            , centerX
                             , centerY
                             ]
-                            (globeSvg colourScheme.black)
+                            (globeSvg labelFontColour)
                         ]
 
         viewChooser =
-            if session.currentlyHoveredNationalCollectionChooser then
+            if session.currentlyHoveredNationalCollectionChooser && session.expandedSideBar == Expanded then
                 viewNationalCollectionChooser session
 
             else
@@ -319,18 +316,31 @@ viewNationalCollectionChooserMenuOption session =
     in
     row
         [ width fill
+        , height (px 50)
         , alignTop
-        , spacing 10
-        , paddingXY 30 10
+        , alignLeft
         , pointer
         , onRight viewChooser
-        , onMouseEnter (UserMouseEnteredCountryChooser |> provideInput |> ClientDebouncedNationalCollectionChooserMessages)
+        , onMouseEnter UserMouseEnteredCountryChooser
         , onMouseLeave UserMouseExitedCountryChooser
         , iconBackgroundColor
         , hoverStyles
+        , Font.color (labelFontColour |> convertColorToElementColor)
         ]
-        [ sidebarIcon
-        , viewIf (animatedLabel labelEl) showLabels
+        [ column
+            [ width fill
+            , alignLeft
+            , paddingXY 30 0
+            ]
+            [ row
+                [ width shrink
+                , spacing lineSpacing
+                , alignLeft
+                ]
+                [ sidebarIcon
+                , viewIf (animatedLabel labelEl) showLabels
+                ]
+            ]
         ]
 
 
