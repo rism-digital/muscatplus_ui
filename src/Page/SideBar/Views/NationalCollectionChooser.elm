@@ -2,8 +2,9 @@ module Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollec
 
 import Config
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
@@ -124,89 +125,82 @@ viewNationalCollectionChooser session =
         groupedList =
             LE.greedyGroupsOf 2 sortedList
     in
-    animatedRow
-        nationalCollectionChooserAnimations
-        [ width (px 500)
-        , Background.color (colourScheme.white |> convertColorToElementColor)
-        , height (shrink |> minimum 600 |> maximum 800)
-
-        --, Border.width 1
-        --, Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , moveLeft 20
-        , minimalDropShadow
-        , Font.color (colourScheme.black |> convertColorToElementColor)
-
-        --, Border.shadow
-        --    { blur = 10
-        --    , color =
-        --        colourScheme.darkGrey
-        --            |> convertColorToElementColor
-        --    , offset = ( 1, 1 )
-        --    , size = 1
-        --    }
+    row
+        [ width (px 750)
+        , moveLeft 300
         ]
-        [ column
-            [ width fill
-            , height fill
-            , padding 20
-            , spacing sectionSpacing
-            , scrollbarY
+        [ animatedRow
+            nationalCollectionChooserAnimations
+            [ width (px 500)
+            , alignRight
+            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , height (shrink |> minimum 600 |> maximum 800)
+            , minimalDropShadow
+            , Font.color (colourScheme.black |> convertColorToElementColor)
             ]
-            [ row
-                [ width fill ]
-                [ el
-                    [ alignTop
-                    , headingLG
-                    ]
-                    -- TODO: Translate
-                    (text "Choose a collection to search")
-                ]
-            , row
-                [ width fill ]
-                [ column
-                    [ width fill ]
-                    [ row
-                        [ width fill
-                        , alignTop
-                        , spacing 10
-                        , paddingXY 10 10
-                        , pointer
-                        , mouseOver [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
-                        , onClick (UserChoseNationalCollection Nothing)
-                        ]
-                        [ el
-                            [ width (px 25)
-                            , alignLeft
-                            , centerY
-                            ]
-                            (globeSvg colourScheme.black)
-                        , el
-                            [ width fill
-                            , headingMD
-                            ]
-                            (text (extractLabelFromLanguageMap session.language localTranslations.globalCollection))
-                        ]
-                    ]
-                ]
-            , row
-                [ width fill ]
-                [ column
-                    [ width fill ]
-                    [ row
-                        [ width fill ]
-                        -- TODO: Translate
-                        [ paragraph [] [ text "Or choose a national collection" ] ]
-                    ]
-                ]
-            , row
+            [ column
                 [ width fill
                 , height fill
+                , spacing sectionSpacing
+                , padding 30
+                , scrollbarY
                 ]
-                [ column
+                [ row
+                    [ width fill ]
+                    [ el
+                        [ alignTop
+                        , headingLG
+                        ]
+                        -- TODO: Translate
+                        (text "Choose a collection to search")
+                    ]
+                , row
+                    [ width fill ]
+                    [ column
+                        [ width fill ]
+                        [ row
+                            [ width fill
+                            , alignTop
+                            , spacing 10
+                            , paddingXY 10 10
+                            , pointer
+                            , mouseOver [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
+                            , onClick (UserChoseNationalCollection Nothing)
+                            ]
+                            [ el
+                                [ width (px 25)
+                                , alignLeft
+                                , centerY
+                                ]
+                                (globeSvg colourScheme.black)
+                            , el
+                                [ width fill
+                                , headingMD
+                                ]
+                                (text (extractLabelFromLanguageMap session.language localTranslations.globalCollection))
+                            ]
+                        ]
+                    ]
+                , row
+                    [ width fill ]
+                    [ column
+                        [ width fill ]
+                        [ row
+                            [ width fill ]
+                            -- TODO: Translate
+                            [ paragraph [] [ text "Or choose a national collection" ] ]
+                        ]
+                    ]
+                , row
                     [ width fill
                     , height fill
                     ]
-                    (List.map (\r -> viewNationalCollectionRow session.language r) groupedList)
+                    [ column
+                        [ width fill
+                        , height fill
+                        ]
+                        (List.map (\r -> viewNationalCollectionRow session.language r) groupedList)
+                    ]
                 ]
             ]
         ]
@@ -277,7 +271,11 @@ viewNationalCollectionChooserMenuOption session =
                             imageForCountryCode countryCode
                     in
                     column
-                        [ spacingXY 0 4 ]
+                        [ spacingXY 0 4
+                        , width (px 45)
+                        , Border.width 2
+                        , padding 2
+                        ]
                         [ el
                             [ width (px 25)
                             , centerX
@@ -285,11 +283,9 @@ viewNationalCollectionChooserMenuOption session =
                             ]
                             countryFlagImage
                         , el
-                            [ width fill
-                            , centerX
+                            [ centerX
                             , centerY
                             , Font.bold
-                            , Font.center
                             , headingMD
                             , Font.color (labelFontColour |> convertColorToElementColor)
                             ]
@@ -298,7 +294,10 @@ viewNationalCollectionChooserMenuOption session =
 
                 Nothing ->
                     column
-                        []
+                        [ width (px 45)
+                        , Border.width 2
+                        , padding 2
+                        ]
                         [ el
                             [ width (px 25)
                             , centerX
@@ -313,10 +312,17 @@ viewNationalCollectionChooserMenuOption session =
 
             else
                 none
+
+        ( iconCentering, iconAlignment ) =
+            if session.expandedSideBar /= Expanded then
+                ( centerX, 0 )
+
+            else
+                ( alignLeft, 21 )
     in
     row
         [ width fill
-        , height (px 50)
+        , height (px 60)
         , alignTop
         , alignLeft
         , pointer
@@ -330,12 +336,14 @@ viewNationalCollectionChooserMenuOption session =
         [ column
             [ width fill
             , alignLeft
-            , paddingXY 30 0
+
+            --, paddingXY 26 0
             ]
             [ row
                 [ width shrink
+                , iconCentering
                 , spacing lineSpacing
-                , alignLeft
+                , moveRight iconAlignment
                 ]
                 [ sidebarIcon
                 , viewIf (animatedLabel labelEl) showLabels
