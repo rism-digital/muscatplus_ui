@@ -31,7 +31,7 @@ type alias RangeFacetConfig msg =
 rangeFacetHelp : String
 rangeFacetHelp =
     """
-    Filter using four digit year values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would
+    Filter using a range of numeric values, e.g., 1650. Unlimited ranges are indicated with a '*', e.g., '1650 TO *' would
     find all records from 1650 onwards.
     """
 
