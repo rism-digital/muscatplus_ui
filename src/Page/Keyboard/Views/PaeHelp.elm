@@ -78,9 +78,9 @@ englishPaeHelpText =
         uses upper-case letters, A-G, to represent pitches; for example, """
         , el [ spacing lineSpacing, Font.family [ Font.monospace ], padding 2, Background.color (colourScheme.lightGrey |> convertColorToElementColor) ] (text "EDCDEEE")
         , text """. Using the "x", "b", and "n" characters, you can indicate sharps, flats, and naturals, respectively.
-        The incipit preview above will show you what this will look like."""
+        The incipit preview above will show you what this will look like. """
         , text """The keyboard input will print the corresponding Plaine and Easie code in the input box, so
-        you can also use this interface to enter a search query."""
+        you can also use this interface to enter a search query. """
         , text """Search queries must be longer than three pitches."""
         ]
     , paragraph
@@ -98,6 +98,6 @@ englishPaeHelpText =
          transposition. If you are only interested matching exactly the pitches in the query, choose the
          "Exact pitches" option. This will only match the query in the exact transposition given. """
         , text """Note durations, measures, octaves, and more extensive notational figures beyond pitch and interval
-        are not used in the search. These are features that are planned for later versions."""
+        are not used in the search. These are features that are planned for later versions. """
         ]
     ]
