@@ -5,11 +5,11 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingFormat(..), IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (linkColour, sectionBorderStyles)
+import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (searchSvg)
@@ -31,26 +31,42 @@ splitWorkNumFromId incipitId =
 viewIncipit : Language -> IncipitBody -> Element msg
 viewIncipit language incipit =
     row
-        (width fill
-            :: height fill
-            :: alignTop
-            :: sectionBorderStyles
-        )
+        (width fill :: sectionBorderStyles)
         [ column
-            [ width fill
+            [ spacing lineSpacing
+            , width fill
             , height fill
             , alignTop
-            , HA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
             ]
-            [ viewMaybe (viewSummaryField language) incipit.summary
+            [ row
+                [ width fill
+                , spacing 5
+                ]
+                [ el
+                    [ headingMD
+                    , Font.medium
+                    ]
+                    (text (extractLabelFromLanguageMap language incipit.label))
+                ]
             , row
                 [ width fill ]
                 [ column
                     [ width fill
-                    , spacing 0
+                    , height fill
+                    , alignTop
+                    , HA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
                     ]
-                    [ viewMaybe viewRenderedIncipits incipit.rendered
-                    , viewMaybe (viewLaunchNewIncipitSearch language) incipit.encodings
+                    [ viewMaybe (viewSummaryField language) incipit.summary
+                    , row
+                        [ width fill ]
+                        [ column
+                            [ width fill
+                            , spacing 0
+                            ]
+                            [ viewMaybe viewRenderedIncipits incipit.rendered
+                            , viewMaybe (viewLaunchNewIncipitSearch language) incipit.encodings
+                            ]
+                        ]
                     ]
                 ]
             ]
