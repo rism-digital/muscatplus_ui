@@ -96,7 +96,7 @@ viewIncipitPreview language body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewIncipit language) (Just body) ]
+                    [ viewMaybe (viewIncipit True language) (Just body) ]
                 ]
             , viewMaybe (viewEncodingsBlock language) body.encodings
             ]

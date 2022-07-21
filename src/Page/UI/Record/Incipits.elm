@@ -28,8 +28,25 @@ splitWorkNumFromId incipitId =
         |> Maybe.withDefault "1.1.1"
 
 
-viewIncipit : Language -> IncipitBody -> Element msg
-viewIncipit language incipit =
+viewIncipit : Bool -> Language -> IncipitBody -> Element msg
+viewIncipit suppressTitle language incipit =
+    let
+        title =
+            if suppressTitle then
+                none
+
+            else
+                row
+                    [ width fill
+                    , spacing 5
+                    ]
+                    [ el
+                        [ headingMD
+                        , Font.medium
+                        ]
+                        (text (extractLabelFromLanguageMap language incipit.label))
+                    ]
+    in
     row
         (width fill :: sectionBorderStyles)
         [ column
@@ -38,16 +55,7 @@ viewIncipit language incipit =
             , height fill
             , alignTop
             ]
-            [ row
-                [ width fill
-                , spacing 5
-                ]
-                [ el
-                    [ headingMD
-                    , Font.medium
-                    ]
-                    (text (extractLabelFromLanguageMap language incipit.label))
-                ]
+            [ title
             , row
                 [ width fill ]
                 [ column
@@ -75,7 +83,7 @@ viewIncipit language incipit =
 
 viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
 viewIncipitsSection language incipSection =
-    List.map (\incipit -> viewIncipit language incipit) incipSection.items
+    List.map (\incipit -> viewIncipit False language incipit) incipSection.items
         |> sectionTemplate language incipSection
 
 
