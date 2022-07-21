@@ -345,12 +345,18 @@ makeFlagIcon colours iconImage iconLabel =
         ]
 
 
-renderConcatenatedValue : Language -> LanguageMap -> Element msg
-renderConcatenatedValue language concatValue =
+{-|
+
+    Similar to 'renderValue' but does not insert extra line spacing
+    between the values.
+
+-}
+renderCloselySpacedValue : Language -> LanguageMap -> Element msg
+renderCloselySpacedValue language values =
     textColumn
         [ bodyRegular
         ]
-        [ styledList (extractTextFromLanguageMap language concatValue) ]
+        (styledParagraphs (extractTextFromLanguageMap language values))
 
 
 renderLabel : Language -> LanguageMap -> Element msg
@@ -454,7 +460,7 @@ viewParagraphField language field =
 
 viewSummaryField : Language -> List LabelValue -> Element msg
 viewSummaryField language field =
-    viewLabelValueField renderConcatenatedValue language field
+    viewLabelValueField renderCloselySpacedValue language field
 
 
 viewBlankBottomBar : Element msg
