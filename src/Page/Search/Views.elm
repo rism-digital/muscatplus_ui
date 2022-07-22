@@ -94,6 +94,7 @@ searchResultsViewRouter session model =
 
         _ ->
             -- For any other responses, show the error.
+            -- TODO: Translate
             viewSearchResultsErrorTmpl session.language "An unknown error occurred."
 
 
