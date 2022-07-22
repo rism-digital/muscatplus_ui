@@ -1,10 +1,10 @@
 module Page.About.Views exposing (view)
 
 import Config as C
-import Element exposing (Element, column, fill, height, none, padding, row, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, link, maximum, none, padding, paragraph, row, spacing, text, textColumn, width)
 import Element.Background as Background
 import Page.About.Model exposing (AboutPageModel)
-import Page.UI.Attributes exposing (lineSpacing)
+import Page.UI.Attributes exposing (headingXL, lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -47,12 +47,103 @@ view session model =
             , height fill
             , padding 20
             , Background.color (colourScheme.white |> convertColorToElementColor)
-            , spacing lineSpacing
+            , spacing sectionSpacing
             ]
-            [ text ("UI Version: " ++ C.uiVersion)
-            , serverVersion
-            , indexerVersion
-            , indexedTimestamp
+            [ row
+                [ width (fill |> maximum 900) ]
+                [ el
+                    [ headingXL ]
+                    (text "About RISM Online")
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
+                [ textColumn
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ paragraph
+                        [ width fill ]
+                        [ text """The Répertoire International des Sources Musicales (RISM) - International Inventory
+                        of Musical Sources - is an international, non-profit organization that aims to comprehensively
+                        document extant musical sources worldwide: manuscripts, printed music editions, writings on
+                        music theory, and libretti that are found in libraries, archives, churches, schools, and
+                        private collections."""
+                        ]
+                    , paragraph
+                        [ width fill ]
+                        [ text """RISM Online, a service from """
+                        , link [ linkColour ] { url = "https://rism.digital", label = text "RISM Digital" }
+                        , text """ provides access to these musical sources through extensive search and browse
+                        functions. Multiple entry points, with extensive Source, Person, and Institution search
+                        interfaces, provide users with the ability to quickly narrow down relevant results using several
+                        different approaches, including keyword searches, filters, and relationship information. """
+                        , text """An innovative new Incipit query interface provides fast and accurate notation searches
+                        , with coloured notes that highlight the parts of the incipit that matches a query. Users
+                        can also narrow down incipits that match by specifying a clef, key signature, or time signature
+                         as a filter, or combine a notation search with a keyword search for composer or piece names."""
+                        ]
+                    , paragraph
+                        [ width fill ]
+                        [ text """The National Collection search filter lets users narrow down all search functionality
+                        to the bibliography of a single country. This automatically narrows down the search capabilities 
+                        to just the sources, institutions, and musical incipits available in that country. (Since people 
+                        can span multiple countries, they are excluded from the search functions when a National 
+                        Collection is active.""" ]
+                    , paragraph
+                        [ width fill ]
+                        [ text """URLs in RISM Online are guaranteed to be authoritative, stable, and cite-able. You
+                        can bookmark, cite, and share URLs among colleagues, with an institutional commitment that they
+                        will persist. This includes links to searches and previews, allowing users to share their complex
+                        queries with the knowledge that the recipient will see, as close as possible, the same view.""" ]
+                    ]
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
+                [ el
+                    [ headingXL ]
+                    (text "Contact")
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
+                [ textColumn
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ paragraph
+                        [ width fill ]
+                        [ text """We are constantly improving RISM Online. Feedback about your experience is welcome: 
+                        Could you find what you were looking for? Was there some information missing that you expected
+                        would be there? We would like to know.""" ]
+                    , paragraph
+                        [ width fill ]
+                        [ text "General feedback can be sent to "
+                        , link [ linkColour ] { url = "mailto:feedback@rism.online", label = text "feedback@rism.online. " }
+                        ]
+                    , paragraph
+                        []
+                        [ text """All records also feature a "Report an issue" link at the bottom of the page, which
+                         takes you to a form where you can describe the problem. Whenever possible it is helpful to
+                         include a link to the record or search that triggered the problem so that we can reproduce it.
+                         The URL of the current page is automatically added to the feedback form submission."""
+                        ]
+                    ]
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
+                [ el
+                    [ headingXL ]
+                    (text "Current version")
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ spacing lineSpacing ]
+                    [ text ("UI Version: " ++ C.uiVersion)
+                    , serverVersion
+                    , indexerVersion
+                    , indexedTimestamp
+                    ]
+                ]
             ]
         ]
 

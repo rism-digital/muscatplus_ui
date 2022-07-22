@@ -399,10 +399,18 @@ view session =
                 , spacing 10
                 ]
                 [ menuOptionTemplate
-                    { icon = link [] { label = el [ width (px 25) ] (infoCircleSvg colourScheme.black), url = Config.serverUrl ++ "/about" }
+                    { icon =
+                        link
+                            []
+                            { label =
+                                el
+                                    [ width (px 25) ]
+                                    (infoCircleSvg colourScheme.black)
+                            , url = Config.serverUrl ++ "/about"
+                            }
                     , isCurrent = False
-                    , label = text "About"
-                    , showLabel = False
+                    , label = text "About RISM Online"
+                    , showLabel = showLabels
                     }
                     []
                 ]
