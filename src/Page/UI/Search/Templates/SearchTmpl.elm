@@ -1,7 +1,8 @@
 module Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
+import Html.Attributes as HTA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.UI.Animations exposing (animatedLoader)
@@ -18,6 +19,7 @@ viewResultsListLoadingScreenTmpl isLoading =
             [ width fill
             , height fill
             , Background.color (colourScheme.translucentGrey |> convertColorToElementColor)
+            , htmlAttribute (HTA.attribute "style" "backdrop-filter: blur(3px); z-index:200;")
             ]
             (el
                 [ width (px 50)

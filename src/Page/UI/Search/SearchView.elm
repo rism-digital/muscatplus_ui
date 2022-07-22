@@ -108,6 +108,7 @@ viewSearchResultsSection cfg resultsLoading body =
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+            , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
             [ viewSearchPageSort
                 { language = language
@@ -303,7 +304,6 @@ viewSearchResultsListPanel cfg =
                 [ width fill
                 , height fill
                 , alignTop
-                , inFront (viewResultsListLoadingScreenTmpl cfg.resultsLoading)
                 ]
                 [ viewSearchResultsList cfg.language (.selectedResult cfg.model) cfg.body cfg.clickForPreviewMsg
                 ]
