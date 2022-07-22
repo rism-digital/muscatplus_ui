@@ -31,18 +31,27 @@ import Page.UI.Components exposing (h1)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
+import Url
 
 
 pageFooterTemplate : Session -> Language -> { a | recordHistory : RecordHistory, id : String } -> Element msg
 pageFooterTemplate session language footer =
     let
+        currentUrl =
+            Url.toString session.url
+
+        feedbackLink =
+            link
+                [ linkColour
+                ]
+                -- TODO Translate
+                { label = text "Report an issue"
+                , url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
+                }
+
         muscatLinks =
             if session.showMuscatLinks then
-                row
-                    [ width fill
-                    , alignLeft
-                    ]
-                    [ viewMuscatLinks session ]
+                viewMuscatLinks session
 
             else
                 none
@@ -60,7 +69,14 @@ pageFooterTemplate session language footer =
             , spacing lineSpacing
             ]
             [ pageUriTemplate language footer
-            , muscatLinks
+            , row
+                [ width fill
+                , alignLeft
+                , spacing lineSpacing
+                ]
+                [ muscatLinks
+                , feedbackLink
+                ]
             ]
         , column
             [ width fill
@@ -105,11 +121,10 @@ viewMuscatLinks session =
         linkTmpl muscatUrl =
             column
                 [ alignLeft
-                , width fill
                 , spacing lineSpacing
                 ]
                 [ row
-                    [ width fill ]
+                    []
                     [ text "Muscat: "
                     , link
                         [ linkColour ]
