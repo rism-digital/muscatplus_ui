@@ -205,18 +205,12 @@ valueFieldColumnAttributes =
 resultColumnWidth : Device -> Attribute msg
 resultColumnWidth { class, orientation } =
     case ( class, orientation ) of
-        ( Phone, Portrait ) ->
-            width (px 900)
-
-        ( Desktop, Landscape ) ->
-            width (px 900 |> minimum 900)
-
         ( BigDesktop, Landscape ) ->
             width (px 900 |> minimum 900)
 
         _ ->
             -- TODO: Figure out what else goes here.
-            width (px 900 |> minimum 900)
+            width (px 640 |> minimum 640)
 
 
 controlsColumnWidth : Device -> Attribute msg
