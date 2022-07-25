@@ -244,7 +244,7 @@ localTranslations =
     , searchNumberOfRecords =
         [ LanguageValues English [ "Search {{ numberOfRecords }} {{ recordType }}" ] ]
     , showAllRecords =
-        [ LanguageValues English [ "Show all records" ] ]
+        [ LanguageValues English [ "Show all results" ] ]
     , showResults =
         [ LanguageValues English [ "Show search results" ]
         , LanguageValues German [ "Filter anwenden" ]
