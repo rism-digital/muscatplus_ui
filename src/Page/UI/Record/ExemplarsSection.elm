@@ -1,12 +1,12 @@
 module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignTop, column, el, fill, height, link, px, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (headingMD, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
@@ -19,26 +19,6 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 viewExemplar : Language -> ExemplarBody -> Element msg
 viewExemplar language exemplar =
-    let
-        heldBy =
-            fieldValueWrapper
-                [ wrappedRow
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    [ column
-                        labelFieldColumnAttributes
-                        [ renderLabel language exemplar.label ]
-                    , column
-                        valueFieldColumnAttributes
-                        [ textColumn
-                            [ spacing lineSpacing ]
-                            [ viewHeldBy language exemplar.heldBy ]
-                        ]
-                    ]
-                ]
-    in
     row
         (width fill
             :: height fill
@@ -52,11 +32,23 @@ viewExemplar language exemplar =
             , alignTop
             , spacing lineSpacing
             ]
-            [ heldBy
-            , viewMaybe (viewSummaryField language) exemplar.summary
-            , viewMaybe (viewParagraphField language) exemplar.notes
-            , viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
-            , viewMaybe (viewExemplarRelationships language) exemplar.relationships
+            [ row
+                [ width fill
+                , spacing 5
+                ]
+                [ viewHeldBy language exemplar.heldBy ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ viewMaybe (viewSummaryField language) exemplar.summary
+                    , viewMaybe (viewParagraphField language) exemplar.notes
+                    , viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
+                    , viewMaybe (viewExemplarRelationships language) exemplar.relationships
+                    ]
+                ]
             ]
         ]
 
@@ -107,28 +99,25 @@ viewExternalResourcesSection language linkSection =
 
 viewHeldBy : Language -> BasicInstitutionBody -> Element msg
 viewHeldBy language body =
-    el
-        [ width shrink ]
-        (row
-            [ width fill
-            , spacing 5
+    row
+        [ width fill
+        , spacing 5
+        ]
+        [ el
+            [ width (px 20)
+            , height (px 20)
+            , tooltip above
+                (el
+                    tooltipStyle
+                    (text "Held by")
+                )
             ]
-            [ el
-                [ width (px 16)
-                , height (px 16)
-                , centerY
-                , tooltip above
-                    (el
-                        tooltipStyle
-                        (text "Held by")
-                    )
-                ]
-                (institutionSvg colourScheme.slateGrey)
-            , link
-                [ linkColour
-                ]
-                { label = text (extractLabelFromLanguageMap language body.label)
-                , url = body.id
-                }
+            (institutionSvg colourScheme.slateGrey)
+        , link
+            [ linkColour
+            , headingMD
             ]
-        )
+            { label = text (extractLabelFromLanguageMap language body.label)
+            , url = body.id
+            }
+        ]
