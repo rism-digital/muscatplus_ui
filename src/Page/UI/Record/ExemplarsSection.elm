@@ -1,12 +1,13 @@
 module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
 import Element exposing (Element, above, alignTop, column, el, fill, height, link, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
-import Page.UI.Attributes exposing (headingMD, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (headingLG, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
@@ -115,7 +116,8 @@ viewHeldBy language body =
             (institutionSvg colourScheme.slateGrey)
         , link
             [ linkColour
-            , headingMD
+            , headingLG
+            , Font.medium
             ]
             { label = text (extractLabelFromLanguageMap language body.label)
             , url = body.id

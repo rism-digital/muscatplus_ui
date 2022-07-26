@@ -9,7 +9,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingFormat(..), IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (searchSvg)
@@ -41,7 +41,7 @@ viewIncipit suppressTitle language incipit =
                     , spacing 5
                     ]
                     [ el
-                        [ headingMD
+                        [ headingLG
                         , Font.medium
                         ]
                         (text (extractLabelFromLanguageMap language incipit.label))

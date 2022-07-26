@@ -2,11 +2,12 @@ module Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, pointer, px, row, shrink, spacing, text, width)
 import Element.Events as Events
+import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
-import Page.UI.Attributes exposing (emptyAttribute, headingMD, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, headingLG, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (h2, viewSummaryField)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -34,7 +35,8 @@ viewSourceItem language source =
                     (sourcesSvg colourScheme.slateGrey)
                 , link
                     [ linkColour
-                    , headingMD
+                    , headingLG
+                    , Font.medium
                     ]
                     { label = text (extractLabelFromLanguageMap language source.label)
                     , url = source.id

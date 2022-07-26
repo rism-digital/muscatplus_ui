@@ -6,7 +6,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Attributes exposing (headingMD, labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (headingLG, headingMD, labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalResources exposing (viewExternalResource)
@@ -50,7 +50,7 @@ viewMaterialGroup language mg =
                 , spacing 5
                 ]
                 [ el
-                    [ headingMD
+                    [ headingLG
                     , Font.medium
                     ]
                     (text (extractLabelFromLanguageMap language mg.label))
