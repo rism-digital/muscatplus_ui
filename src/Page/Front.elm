@@ -174,8 +174,24 @@ update session msg model =
             )
 
         ServerRespondedWithProbeData (Ok ( _, response )) ->
+            let
+                keyboardModel =
+                    .keyboard model.activeSearch
+
+                newKeyboardModel =
+                    case keyboardModel of
+                        Just km ->
+                            Just { km | needsProbe = False }
+
+                        Nothing ->
+                            Nothing
+
+                newActiveSearch =
+                    setKeyboard newKeyboardModel model.activeSearch
+            in
             ( { model
                 | probeResponse = Response response
+                , activeSearch = newActiveSearch
               }
             , Cmd.none
             )
