@@ -22,6 +22,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
 import Set
 import String.Extra as SE
+import Url
 
 
 type alias SelectFacetConfig msg =
@@ -346,10 +347,17 @@ viewSelectFacetItem config fitem =
         activeFilters =
             nextQuery.filters
 
+        -- percent-decode the value to match it against the value in the
+        -- active filter list. If we can't decode it (for some reason) just
+        -- return the original value.
+        decodedValue =
+            Url.percentDecode value
+                |> Maybe.withDefault value
+
         shouldBeChecked =
             Dict.get facetAlias activeFilters
                 |> Maybe.withDefault []
-                |> List.member value
+                |> List.member decodedValue
     in
     row
         [ width fill
@@ -371,7 +379,7 @@ viewSelectFacetItem config fitem =
                     , width fill
                     ]
                     (paragraph [ width fill ] [ text (SE.softEllipsis 50 fullLabel) ])
-            , onChange = \_ -> config.userSelectedFacetItemMsg facetAlias value
+            , onChange = \_ -> config.userSelectedFacetItemMsg facetAlias decodedValue
             }
         , el
             [ alignRight
