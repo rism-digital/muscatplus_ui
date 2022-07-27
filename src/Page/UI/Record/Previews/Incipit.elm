@@ -44,12 +44,21 @@ viewIncipitPreview language body =
             .source body.partOf
                 |> .id
 
+        sourceLabel =
+            .source body.partOf
+                |> .label
+
         incipitLink =
             row
-                [ width fill ]
+                [ width fill
+                , spacing 3
+                ]
                 [ el
                     []
                     (text (extractLabelFromLanguageMap language labelLanguageMap ++ ": "))
+                , el
+                    [ Font.medium ]
+                    (text (extractLabelFromLanguageMap language sourceLabel))
                 , link
                     [ linkColour ]
                     { label = text sourceUrl
