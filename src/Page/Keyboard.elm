@@ -3,6 +3,7 @@ module Page.Keyboard exposing
     , buildNotationRequestQuery
     , defaultKeyboardQuery
     , initModel
+    , load
     , update
     , view
     )
@@ -80,6 +81,13 @@ initModel =
     , inputIsValid = True
     , paeInputSearchDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , paeHelpExpanded = False
+    }
+
+
+load : KeyboardQuery -> Model msg -> Model msg
+load queryArgs oldModel =
+    { oldModel
+        | query = queryArgs
     }
 
 

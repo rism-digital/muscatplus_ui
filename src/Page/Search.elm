@@ -100,9 +100,20 @@ load cfg oldModel =
         newActiveSearch =
             ActiveSearch.load oldModel.activeSearch
                 |> setNextQuery cfg.queryArgs
+
+        newKeyboard =
+            case newActiveSearch.keyboard of
+                Just km ->
+                    Just (Keyboard.load cfg.keyboardQueryArgs km)
+
+                Nothing ->
+                    Nothing
+
+        newActiveSearchWithKeyboard =
+            setKeyboard newKeyboard newActiveSearch
     in
     { oldModel
-        | activeSearch = newActiveSearch
+        | activeSearch = newActiveSearchWithKeyboard
         , preview = previewResp
         , selectedResult = selectedResult
         , applyFilterPrompt = False
