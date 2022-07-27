@@ -45,6 +45,8 @@ buildNotationQueryParameters notationInput =
                     []
 
         queryMode =
+            -- only add the 'im' parameter if we're looking for exact pitches
+            -- since the interval mode is the default.
             if notationInput.queryMode == IntervalQueryMode then
                 []
 
