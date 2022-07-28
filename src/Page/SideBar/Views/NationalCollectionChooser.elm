@@ -127,6 +127,7 @@ viewNationalCollectionChooser session =
     in
     row
         [ width (px 750)
+        , height (px 200)
         , moveLeft 300
         ]
         [ animatedRow
