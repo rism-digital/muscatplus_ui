@@ -409,7 +409,12 @@ view session =
                             , url = Config.serverUrl ++ "/about"
                             }
                     , isCurrent = False
-                    , label = text "About RISM Online"
+                    , label =
+                        link
+                            []
+                            { label = text "About RISM Online"
+                            , url = Config.serverUrl ++ "/about"
+                            }
                     , showLabel = showLabels
                     }
                     []
