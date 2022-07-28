@@ -101,6 +101,26 @@ view session model =
                 [ width (fill |> maximum 900) ]
                 [ el
                     [ headingXL ]
+                    (text "Open Data")
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
+                [ textColumn
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ paragraph
+                        [ width fill ]
+                        [ text """All data in RISM Online is available under a Creative Commons CC-BY 3.0 license.
+                        You are free to download and modify the data. If you find the data useful, please include a
+                        link back to RISM Online. We are also interested in knowing how RISM data
+                        is being used, so please get in touch to tell us about your project.""" ]
+                    ]
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
+                [ el
+                    [ headingXL ]
                     (text "Contact")
                 ]
             , row
@@ -111,9 +131,9 @@ view session model =
                     ]
                     [ paragraph
                         [ width fill ]
-                        [ text """We are constantly improving RISM Online. Feedback about your experience is welcome: 
-                        Could you find what you were looking for? Was there some information missing that you expected
-                        would be there? We would like to know.""" ]
+                        [ text """We are constantly improving RISM Online. Feedback about your experience is welcome!
+                        Let us know if you could not find what you were looking for, or if there is some information
+                        incorrect or missing.""" ]
                     , paragraph
                         [ width fill ]
                         [ text "General feedback can be sent to "
