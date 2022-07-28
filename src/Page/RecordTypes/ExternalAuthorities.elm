@@ -5,7 +5,7 @@ module Page.RecordTypes.ExternalAuthorities exposing
     )
 
 import Json.Decode as Decode exposing (Decoder, list, string)
-import Json.Decode.Pipeline exposing (hardcoded, required)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 
@@ -19,7 +19,7 @@ type alias ExternalAuthoritiesSectionBody =
 
 type alias ExternalAuthorityBody =
     { label : LanguageMap
-    , url : String
+    , url : Maybe String
     }
 
 
@@ -35,4 +35,4 @@ externalAuthorityBodyDecoder : Decoder ExternalAuthorityBody
 externalAuthorityBodyDecoder =
     Decode.succeed ExternalAuthorityBody
         |> required "label" languageMapLabelDecoder
-        |> required "url" string
+        |> optional "url" (Decode.maybe string) Nothing

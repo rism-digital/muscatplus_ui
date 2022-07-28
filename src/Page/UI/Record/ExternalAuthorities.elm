@@ -1,6 +1,6 @@
 module Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 
-import Element exposing (Element, alignTop, column, fill, height, link, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignTop, column, el, fill, height, link, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
@@ -47,8 +47,15 @@ viewExternalAuthoritiesSection language extSection =
 
 viewExternalAuthority : Language -> ExternalAuthorityBody -> Element msg
 viewExternalAuthority language authority =
-    link
-        [ linkColour ]
-        { label = text (extractLabelFromLanguageMap language authority.label)
-        , url = authority.url
-        }
+    case authority.url of
+        Just url ->
+            link
+                [ linkColour ]
+                { label = text (extractLabelFromLanguageMap language authority.label)
+                , url = url
+                }
+
+        Nothing ->
+            el
+                []
+                (text (extractLabelFromLanguageMap language authority.label))
