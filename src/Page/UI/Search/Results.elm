@@ -108,7 +108,7 @@ resultTemplate cfg =
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , Border.dotted
         , pointer
-        , paddingXY 20 20
+        , paddingXY 20 12
         , resultRowNodeId
         ]
         [ column
