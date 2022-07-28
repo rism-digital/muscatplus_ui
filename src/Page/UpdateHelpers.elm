@@ -2,6 +2,7 @@ module Page.UpdateHelpers exposing
     ( addNationalCollectionFilter
     , addNationalCollectionQueryParameter
     , createProbeUrl
+    , hasNonZeroSourcesAttached
     , probeSubmit
     , selectAppropriateRangeFacetValues
     , textQuerySuggestionSubmit
@@ -45,7 +46,7 @@ import Page.Route exposing (Route(..))
 import Parser as P exposing ((|.), (|=), Parser)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
-import Response exposing (Response(..), ServerData)
+import Response exposing (Response(..), ServerData(..))
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
 import Set exposing (Set)
@@ -686,3 +687,34 @@ userClickedFacetPanelToggle panelAlias expandedPanels model =
         |> encodeMessageForPortSend
         |> sendOutgoingMessageOnPort
     )
+
+
+hasNonZeroSourcesAttached : ServerData -> Bool
+hasNonZeroSourcesAttached recordBody =
+    case recordBody of
+        SourceData sourceBody ->
+            case sourceBody.sourceItems of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+
+        PersonData personBody ->
+            case personBody.sources of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+
+        InstitutionData institutionBody ->
+            case institutionBody.sources of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+
+        _ ->
+            False

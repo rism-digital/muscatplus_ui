@@ -24,7 +24,7 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.UpdateHelpers exposing (probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -218,10 +218,17 @@ update session msg model =
 
         ServerRespondedWithRecordData (Ok ( _, response )) ->
             let
+                hasSourcesAttached =
+                    hasNonZeroSourcesAttached response
+
                 resultsStatus =
                     case model.searchResults of
                         NoResponseToShow ->
-                            Loading Nothing
+                            if hasSourcesAttached then
+                                Loading Nothing
+
+                            else
+                                model.searchResults
 
                         _ ->
                             model.searchResults
