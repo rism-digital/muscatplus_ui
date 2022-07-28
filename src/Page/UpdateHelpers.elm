@@ -34,6 +34,7 @@ import Flip exposing (flip)
 import Http
 import Http.Detailed
 import List.Extra as LE
+import Maybe.Extra as ME
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setRows, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
@@ -693,28 +694,13 @@ hasNonZeroSourcesAttached : ServerData -> Bool
 hasNonZeroSourcesAttached recordBody =
     case recordBody of
         SourceData sourceBody ->
-            case sourceBody.sourceItems of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
+            ME.isJust sourceBody.sourceItems
 
         PersonData personBody ->
-            case personBody.sources of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
+            ME.isJust personBody.sources
 
         InstitutionData institutionBody ->
-            case institutionBody.sources of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
+            ME.isJust institutionBody.sources
 
         _ ->
             False
