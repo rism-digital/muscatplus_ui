@@ -20,6 +20,7 @@ viewResultsListLoadingScreenTmpl isLoading =
             , height fill
             , Background.color (colourScheme.translucentGrey |> convertColorToElementColor)
             , htmlAttribute (HTA.attribute "style" "backdrop-filter: blur(3px); z-index:200;")
+            , htmlAttribute (HTA.attribute "style" "-webkit-backdrop-filter: blur(3px); z-index:200;")
             ]
             (el
                 [ width (px 50)
