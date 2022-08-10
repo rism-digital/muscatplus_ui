@@ -37,6 +37,7 @@ type RelatedTo
     = PersonRelationship
     | InstitutionRelationship
     | PlaceRelationship
+    | SourceRelationship
     | UnknownRelationship
 
 
@@ -52,6 +53,7 @@ type alias RelationshipBody =
     , qualifier : Maybe QualifierBody
     , relatedTo : Maybe RelatedToBody
     , name : Maybe LanguageMap
+    , note : Maybe LanguageMap
     }
 
 
@@ -183,6 +185,9 @@ relatedToConverter typeString =
         "rism:Place" ->
             Decode.succeed PlaceRelationship
 
+        "rism:Source" ->
+            Decode.succeed SourceRelationship
+
         _ ->
             Decode.succeed UnknownRelationship
 
@@ -200,6 +205,7 @@ relationshipBodyDecoder =
         |> optional "qualifier" (Decode.maybe qualifierBodyDecoder) Nothing
         |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
         |> optional "name" (Decode.maybe languageMapLabelDecoder) Nothing
+        |> optional "note" (Decode.maybe languageMapLabelDecoder) Nothing
 
 
 relationshipsSectionBodyDecoder : Decoder RelationshipsSectionBody

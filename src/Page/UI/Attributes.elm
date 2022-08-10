@@ -27,7 +27,7 @@ module Page.UI.Attributes exposing
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, minimum, paddingXY, px, width)
+import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, minimum, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -199,6 +199,7 @@ valueFieldColumnAttributes : List (Attribute msg)
 valueFieldColumnAttributes =
     [ width (fillPortion 3)
     , alignTop
+    , spacing lineSpacing
     ]
 
 

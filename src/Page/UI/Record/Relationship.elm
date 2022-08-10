@@ -1,11 +1,11 @@
 module Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, shrink, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
-import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, userCircleSvg)
+import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -35,6 +35,13 @@ viewRelatedToBody language body =
                     , el
                         tooltipStyle
                         (text "Place")
+                    )
+
+                SourceRelationship ->
+                    ( sourcesSvg colourScheme.slateGrey
+                    , el
+                        tooltipStyle
+                        (text "Source")
                     )
 
                 UnknownRelationship ->
@@ -100,6 +107,16 @@ viewRelationshipBody language body =
 
                 Nothing ->
                     none
+
+        note =
+            case body.note of
+                Just noteText ->
+                    row
+                        [ width fill ]
+                        [ paragraph [] [ text (extractLabelFromLanguageMap language noteText) ] ]
+
+                Nothing ->
+                    none
     in
     fieldValueWrapper
         [ wrappedRow
@@ -117,6 +134,7 @@ viewRelationshipBody language body =
                     [ relatedToView
                     , qualifierLabel
                     ]
+                , note
                 ]
             ]
         ]
