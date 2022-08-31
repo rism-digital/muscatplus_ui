@@ -27,13 +27,13 @@ createErrorMessage language error =
 
         Http.Detailed.BadStatus metadata message ->
             case metadata.statusCode of
-                404 ->
-                    ( extractLabelFromLanguageMap language errorMessages.notFound
+                400 ->
+                    ( extractLabelFromLanguageMap language errorMessages.badQuery
                     , Just message
                     )
 
-                400 ->
-                    ( extractLabelFromLanguageMap language errorMessages.badQuery
+                404 ->
+                    ( extractLabelFromLanguageMap language errorMessages.notFound
                     , Just message
                     )
 

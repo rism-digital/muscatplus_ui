@@ -54,21 +54,6 @@ sourceFacetPanels =
 viewFacetsForSourcesMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForSourcesMode cfg =
     let
-        compositeVolumesToggle =
-            viewFacet (createFacetConfig cfg "hide-composite-volumes" tooltips.compositeVolume) cfg.facetMsgConfig
-
-        sourceCollectionsToggle =
-            viewFacet (createFacetConfig cfg "hide-source-collections" tooltips.sourceCollections) cfg.facetMsgConfig
-
-        sourceContentsToggle =
-            viewFacet (createFacetConfig cfg "hide-source-contents" tooltips.sourceContents) cfg.facetMsgConfig
-
-        hasDigitizationToggle =
-            viewFacet (createFacetConfig cfg "has-digitization" tooltips.hasDigitization) cfg.facetMsgConfig
-
-        hasIiifToggle =
-            viewFacet (createFacetConfig cfg "has-iiif" tooltips.hasIiif) cfg.facetMsgConfig
-
         hasIncipitsToggle =
             viewFacet (createFacetConfig cfg "has-incipits" tooltips.hasIncipits) cfg.facetMsgConfig
 
@@ -86,9 +71,6 @@ viewFacetsForSourcesMode cfg =
 
         subjects =
             viewFacet (createFacetConfig cfg "subjects" tooltips.subjects) cfg.facetMsgConfig
-
-        materialType =
-            viewFacet (createFacetConfig cfg "material-types" tooltips.materialType) cfg.facetMsgConfig
 
         {-
            -- disabled until the 593 issue has been sorted out.
@@ -112,6 +94,18 @@ viewFacetsForSourcesMode cfg =
 
         sourceResultsPanel =
             let
+                materialType =
+                    viewFacet (createFacetConfig cfg "material-types" tooltips.materialType) cfg.facetMsgConfig
+
+                sourceContentsToggle =
+                    viewFacet (createFacetConfig cfg "hide-source-contents" tooltips.sourceContents) cfg.facetMsgConfig
+
+                sourceCollectionsToggle =
+                    viewFacet (createFacetConfig cfg "hide-source-collections" tooltips.sourceCollections) cfg.facetMsgConfig
+
+                compositeVolumesToggle =
+                    viewFacet (createFacetConfig cfg "hide-composite-volumes" tooltips.compositeVolume) cfg.facetMsgConfig
+
                 allAreEmpty =
                     List.all
                         (\a -> a == none)
@@ -145,6 +139,12 @@ viewFacetsForSourcesMode cfg =
 
         digitizationResultsPanel =
             let
+                hasIiifToggle =
+                    viewFacet (createFacetConfig cfg "has-iiif" tooltips.hasIiif) cfg.facetMsgConfig
+
+                hasDigitizationToggle =
+                    viewFacet (createFacetConfig cfg "has-digitization" tooltips.hasDigitization) cfg.facetMsgConfig
+
                 allAreEmpty =
                     List.all
                         (\a -> a == none)

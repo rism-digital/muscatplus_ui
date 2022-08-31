@@ -219,7 +219,7 @@ viewNationalCollectionChooserMenuOption session =
                     False
 
         labelFontColour =
-            if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionChooser == True then
+            if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionChooser then
                 colourScheme.white
 
             else

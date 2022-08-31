@@ -218,12 +218,13 @@ update session msg model =
 
         ServerRespondedWithRecordData (Ok ( _, response )) ->
             let
-                hasSourcesAttached =
-                    hasNonZeroSourcesAttached response
-
                 resultsStatus =
                     case model.searchResults of
                         NoResponseToShow ->
+                            let
+                                hasSourcesAttached =
+                                    hasNonZeroSourcesAttached response
+                            in
                             if hasSourcesAttached then
                                 Loading Nothing
 
