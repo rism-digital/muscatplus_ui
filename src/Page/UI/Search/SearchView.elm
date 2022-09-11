@@ -45,11 +45,11 @@ type alias SearchResultsSectionConfig a msg =
             | preview : Response ServerData
             , sourceItemsExpanded : Bool
             , activeSearch : ActiveSearch msg
-            , response : Response ServerData
             , selectedResult : Maybe String
             , probeResponse : Response ProbeData
             , applyFilterPrompt : Bool
         }
+    , searchResponse : Response ServerData
     , userClosedPreviewWindowMsg : msg
     , userClickedSourceItemsExpandMsg : msg
     , userClickedResultForPreviewMsg : String -> msg
@@ -117,7 +117,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 , changedResultSortingMsg = cfg.userChangedResultSortingMsg
                 , changedResultRowsPerPageMsg = cfg.userChangedResultsPerPageMsg
                 }
-                (.response cfg.model)
+                cfg.searchResponse
             , viewSearchResultsListPanel
                 { language = language
                 , model = cfg.model

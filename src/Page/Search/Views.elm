@@ -61,6 +61,7 @@ searchResultsViewRouter session model =
         resultsConfig =
             { session = session
             , model = model
+            , searchResponse = model.response
             , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
             , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
             , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
