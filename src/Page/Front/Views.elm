@@ -23,7 +23,7 @@ import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsM
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
-import Page.UI.Search.SearchComponents exposing (viewSearchButtons)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewSearchButtons)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -144,6 +144,13 @@ viewFacetPanels cfg =
                 LiturgicalFestivalsOption ->
                     ""
 
+        submitMsg =
+            if hasActionableProbeResponse (.probeResponse cfg.model) then
+                FrontMsg.UserTriggeredSearchSubmit
+
+            else
+                FrontMsg.NothingHappened
+
         qText =
             toNextQuery (.activeSearch cfg.model)
                 |> toKeywordQuery
@@ -163,7 +170,7 @@ viewFacetPanels cfg =
                         cfg.facetMsgConfig
                     , searchKeywordInput
                         { language = language
-                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
                         }
@@ -172,7 +179,7 @@ viewFacetPanels cfg =
                 _ ->
                     ( viewFrontKeywordQueryInput
                         { language = language
-                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
                         }

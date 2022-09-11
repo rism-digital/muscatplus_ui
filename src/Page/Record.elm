@@ -180,12 +180,8 @@ update session msg model =
 
                 searchResults =
                     case response of
-                        SearchData body ->
-                            if body.totalItems == 0 then
-                                NoResponseToShow
-
-                            else
-                                Response response
+                        SearchData _ ->
+                            Response response
 
                         _ ->
                             NoResponseToShow
