@@ -1,2 +1,7 @@
 User-agent: *
 Disallow:
+
+User-agent: SemrushBot
+Crawl-delay: 60
+
+Sitemap: https://rism.online/sitemap.xml
