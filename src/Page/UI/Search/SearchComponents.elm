@@ -1,4 +1,4 @@
-module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, viewSearchButtons)
+module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, viewSearchButtons)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
