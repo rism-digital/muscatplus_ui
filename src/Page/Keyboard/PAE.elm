@@ -3,30 +3,141 @@ module Page.Keyboard.PAE exposing
     , clefStrToClef
     , clefSymToClefQueryString
     , createPAENote
+    , keyNoteNameToHumanNoteString
+    , keyNoteNameToNoteString
     , keySigStrToKeySignature
     , keySignatureSymToQueryStr
-    , queryModeStrToQueryMode
-    , queryModeToQueryModeStr
     , timeSigStrToTimeSignature
     , timeSignatureSymToQueryStr
     )
 
-import Dict
-import Page.Keyboard.Model
-    exposing
-        ( Clef(..)
-        , KeyNoteName
-        , KeySignature(..)
-        , Octave
-        , QueryMode(..)
-        , TimeSignature(..)
-        , clefStringMap
-        , keySignatureMap
-        , noteMap
-        , queryModeMap
-        , supportedOctaves
-        , timeSignatureMap
-        )
+import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), KeySignature(..), Octave, Octaves, QueryMode(..), TimeSignature(..))
+import Page.Keyboard.Utilities exposing (comparableToSymHelper, symToStringHelper)
+
+
+noteMap : List ( String, KeyNoteName )
+noteMap =
+    [ ( "C", KC )
+    , ( "nC", KCn )
+    , ( "xC", KCs )
+    , ( "bD", KDf )
+    , ( "D", KD )
+    , ( "nD", KDn )
+    , ( "xD", KDs )
+    , ( "bE", KEf )
+    , ( "E", KE )
+    , ( "nE", KEn )
+    , ( "F", KF )
+    , ( "nF", KFn )
+    , ( "xF", KFs )
+    , ( "bG", KGf )
+    , ( "G", KG )
+    , ( "nG", KGn )
+    , ( "xG", KGs )
+    , ( "bA", KAf )
+    , ( "A", KA )
+    , ( "nA", KAn )
+    , ( "xA", KAs )
+    , ( "bB", KBf )
+    , ( "B", KB )
+    , ( "nB", KBn )
+    ]
+
+
+humanNoteMap : List ( String, KeyNoteName )
+humanNoteMap =
+    [ ( "C", KC )
+    , ( "C♮", KCn )
+    , ( "C♯", KCs )
+    , ( "D♭", KDf )
+    , ( "D", KD )
+    , ( "D♮", KDn )
+    , ( "D♯", KDs )
+    , ( "E♭", KEf )
+    , ( "E", KE )
+    , ( "E♮", KEn )
+    , ( "F", KF )
+    , ( "F♮", KFn )
+    , ( "F♯", KFs )
+    , ( "G♭", KGf )
+    , ( "G", KG )
+    , ( "G♮", KGn )
+    , ( "G♯", KGs )
+    , ( "A♭", KAf )
+    , ( "A", KA )
+    , ( "A♮", KAn )
+    , ( "A♯", KAs )
+    , ( "B♭", KBf )
+    , ( "B", KB )
+    , ( "B♮", KBn )
+    ]
+
+
+clefStringMap : List ( String, Clef )
+clefStringMap =
+    [ ( "C-1", C1 )
+    , ( "C-2", C2 )
+    , ( "C-3", C3 )
+    , ( "C-4", C4 )
+    , ( "F-3", F3 )
+    , ( "F-4", F4 )
+    , ( "G-1", G1 )
+    , ( "G-2", G2 )
+    , ( "G-3", G3 )
+    , ( "g-2", G2Oct )
+    , ( "C+1", C1M )
+    , ( "C+2", C2M )
+    , ( "C+3", C3M )
+    , ( "F+3", F3M )
+    , ( "F+4", F4M )
+    , ( "G+2", G2M )
+    , ( "G+3", G3M )
+    ]
+
+
+keySignatureMap : List ( String, KeySignature )
+keySignatureMap =
+    [ ( "n", KS_N )
+    , ( "xF", KS_xF )
+    , ( "xFC", KS_xFC )
+    , ( "xFCG", KS_xFCG )
+    , ( "xFCGD", KS_xFCGD )
+    , ( "xFCGDA", KS_xFCGDA )
+    , ( "xFCGDAE", KS_xFCGDAE )
+    , ( "xFCGDAEB", KS_xFCGDAEB )
+    , ( "bBEADGCF", KS_bBEADGCF )
+    , ( "bBEADGC", KS_bBEADGC )
+    , ( "bBEADG", KS_bBEADG )
+    , ( "bBEAD", KS_bBEAD )
+    , ( "bBEA", KS_bBEA )
+    , ( "bBE", KS_bBE )
+    , ( "bB", KS_bB )
+    ]
+
+
+supportedOctaves : Octaves
+supportedOctaves =
+    [ ( 1, ",,," )
+    , ( 2, ",," )
+    , ( 3, "," )
+    , ( 4, "'" )
+    , ( 5, "''" )
+    , ( 6, "'''" )
+    , ( 7, "''''" )
+    ]
+
+
+timeSignatureMap : List ( String, TimeSignature )
+timeSignatureMap =
+    [ ( "-", TNone )
+    , ( "4/4", T4_4 )
+    , ( "3/4", T3_4 )
+    , ( "6/8", T6_8 )
+    , ( "c", TC )
+    , ( "c/", TCutC )
+    , ( "o", TO )
+    , ( "o.", TODot )
+    ]
 
 
 clefQueryStringToClef : List String -> Clef
@@ -54,21 +165,6 @@ clefSymToClefQueryString clefSym =
         }
 
 
-{-| Takes a list of (comparable, sym) and returns the sym for a given comparable, with a
-default value specified if that comparable is not available in the list.
--}
-comparableToSymHelper :
-    { defaultValue : sym
-    , target : comparable
-    , valueMap : List ( comparable, sym )
-    }
-    -> sym
-comparableToSymHelper cfg =
-    Dict.fromList cfg.valueMap
-        |> Dict.get cfg.target
-        |> Maybe.withDefault cfg.defaultValue
-
-
 createPAENote : KeyNoteName -> Octave -> String
 createPAENote noteName octave =
     let
@@ -87,6 +183,15 @@ keyNoteNameToNoteString keyName =
         { defaultValue = "C"
         , target = keyName
         , valueMap = noteMap
+        }
+
+
+keyNoteNameToHumanNoteString : KeyNoteName -> String
+keyNoteNameToHumanNoteString keyName =
+    symToStringHelper
+        { defaultValue = "C"
+        , target = keyName
+        , valueMap = humanNoteMap
         }
 
 
@@ -122,43 +227,6 @@ octaveShift octNum =
         , target = octNum
         , valueMap = supportedOctaves
         }
-
-
-queryModeStrToQueryMode : String -> QueryMode
-queryModeStrToQueryMode modeStr =
-    comparableToSymHelper
-        { defaultValue = IntervalQueryMode
-        , target = modeStr
-        , valueMap = queryModeMap
-        }
-
-
-queryModeToQueryModeStr : QueryMode -> String
-queryModeToQueryModeStr mode =
-    symToStringHelper
-        { defaultValue = "interval"
-        , target = mode
-        , valueMap = queryModeMap
-        }
-
-
-{-|
-
-    Takes a list of (String, a) and returns the first string value for a given 'a', or a default value
-    if that 'a' is not found in the list.
-
--}
-symToStringHelper :
-    { defaultValue : String
-    , target : a
-    , valueMap : List ( String, a )
-    }
-    -> String
-symToStringHelper cfg =
-    List.filter (\( _, cc ) -> cc == cfg.target) cfg.valueMap
-        |> List.map (\( s, _ ) -> s)
-        |> List.head
-        |> Maybe.withDefault cfg.defaultValue
 
 
 timeSigStrToTimeSignature : String -> TimeSignature

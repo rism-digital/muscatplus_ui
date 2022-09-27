@@ -1,13 +1,55 @@
 module Page.Keyboard.Query exposing
     ( buildNotationQueryParameters
     , notationParamParser
+    , queryModeStrToQueryMode
     )
 
-import Page.Keyboard.Model exposing (Clef(..), KeySignature(..), KeyboardQuery, QueryMode(..), TimeSignature(..))
-import Page.Keyboard.PAE exposing (clefQueryStringToClef, clefSymToClefQueryString, keySigStrToKeySignature, keySignatureSymToQueryStr, queryModeStrToQueryMode, queryModeToQueryModeStr, timeSigStrToTimeSignature, timeSignatureSymToQueryStr)
+import Page.Keyboard.Model
+    exposing
+        ( Clef(..)
+        , KeySignature(..)
+        , KeyboardQuery
+        , QueryMode(..)
+        , TimeSignature(..)
+        )
+import Page.Keyboard.PAE
+    exposing
+        ( clefQueryStringToClef
+        , clefSymToClefQueryString
+        , keySigStrToKeySignature
+        , keySignatureSymToQueryStr
+        , timeSigStrToTimeSignature
+        , timeSignatureSymToQueryStr
+        )
+import Page.Keyboard.Utilities exposing (comparableToSymHelper, symToStringHelper)
 import Request exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
+
+
+queryModeMap : List ( String, QueryMode )
+queryModeMap =
+    [ ( "interval", IntervalQueryMode )
+    , ( "exact-pitches", ExactPitchQueryMode )
+    ]
+
+
+queryModeStrToQueryMode : String -> QueryMode
+queryModeStrToQueryMode modeStr =
+    comparableToSymHelper
+        { defaultValue = IntervalQueryMode
+        , target = modeStr
+        , valueMap = queryModeMap
+        }
+
+
+queryModeToQueryModeStr : QueryMode -> String
+queryModeToQueryModeStr mode =
+    symToStringHelper
+        { defaultValue = "interval"
+        , target = mode
+        , valueMap = queryModeMap
+        }
 
 
 buildNotationQueryParameters : KeyboardQuery -> List QueryParameter
