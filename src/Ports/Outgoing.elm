@@ -14,6 +14,7 @@ type OutgoingMessage
     | PortSendSaveSearchPreference { key : String, value : SearchPreferenceVariant }
     | PortSendHeaderMetaInfo { description : String }
     | PortSendKeyboardAudioNote (List WebAudio.Node)
+    | PortSendEnableMuscatLinks Bool
     | PortSendUnknownMessage
 
 
@@ -72,6 +73,11 @@ convertOutgoingMessageToJsonMsg msg =
         PortSendKeyboardAudioNote audioGraph ->
             [ ( "msg", Encode.string "generate-piano-keyboard-note" )
             , ( "value", Encode.list WebAudio.encode audioGraph )
+            ]
+
+        PortSendEnableMuscatLinks isEnabled ->
+            [ ( "msg", Encode.string "enable-muscat-links" )
+            , ( "value", Encode.bool isEnabled )
             ]
 
         PortSendUnknownMessage ->

@@ -171,6 +171,13 @@ update msg session =
                 |> sendOutgoingMessageOnPort
             )
 
+        ClientUpdatedMuscatLinks newValue ->
+            ( { session
+                | showMuscatLinks = newValue
+              }
+            , Cmd.none
+            )
+
         NothingHappened ->
             ( session, Cmd.none )
 

@@ -3,17 +3,23 @@ module Page.About.Views exposing (view)
 import Config as C
 import Element exposing (Element, column, el, fill, height, link, maximum, none, padding, paragraph, row, spacing, text, textColumn, width)
 import Element.Background as Background
+import Element.Font as Font
 import Page.About.Model exposing (AboutPageModel)
+import Page.About.Msg exposing (AboutMsg(..))
 import Page.UI.Attributes exposing (headingXL, lineSpacing, linkColour, sectionSpacing)
+import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Time exposing (Month(..), Posix)
 
 
-view : Session -> AboutPageModel -> Element msg
+view : Session -> AboutPageModel -> Element AboutMsg
 view session model =
     let
+        isActive =
+            model.linksEnabled
+
         indexedTimestamp =
             case model.response of
                 Response (AboutData body) ->
@@ -145,6 +151,39 @@ view session model =
                          takes you to a form where you can describe the problem. Whenever possible it is helpful to
                          include a link to the record or search that triggered the problem so that we can reproduce it.
                          The URL of the current page is automatically added to the feedback form submission."""
+                        ]
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ el
+                    [ headingXL ]
+                    (text "Viewing options")
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
+                [ textColumn
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ paragraph
+                        [ width fill ]
+                        [ text """Activating this control will put links to the Muscat records in the footer
+                            of every record. Note that you will still need permissions to log in and edit the
+                            records in Muscat. """ ]
+                    , paragraph
+                        [ width fill
+                        , Font.bold
+                        ]
+                        [ text "Please refresh your browser after activating." ]
+                    , paragraph
+                        [ width fill ]
+                        [ el
+                            []
+                            (Toggle.view isActive UserToggledEnableMuscatLinks
+                                |> Toggle.setLabel "Enable Muscat Links"
+                                |> Toggle.render
+                            )
                         ]
                     ]
                 ]

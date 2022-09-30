@@ -32,6 +32,7 @@ type SideBarMsg
     | UserMouseUpOnLanguageChooser
     | UserChoseNationalCollection (Maybe CountryCode)
     | UserChangedLanguageSelect String
+    | ClientUpdatedMuscatLinks Bool
     | NothingHappened
 
 

@@ -61,6 +61,10 @@ messageReceiverHelper model val =
                     SideBarMsg.ClientSetSearchPreferencesThroughPort values
                         |> Msg.UserInteractedWithSideBar
 
+                PortReceiveMuscatLinksSet newValue ->
+                    SideBarMsg.ClientUpdatedMuscatLinks newValue
+                        |> Msg.UserInteractedWithSideBar
+
                 PortReceivedUnknownMessage ->
                     Msg.NothingHappened
 

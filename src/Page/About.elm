@@ -3,6 +3,7 @@ module Page.About exposing (Model, Msg, init, initialCmd, update)
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.Decoders exposing (aboutResponseDecoder)
+import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (createRequest)
 import Response exposing (Response(..))
 import Session exposing (Session)
@@ -17,9 +18,11 @@ type alias Msg =
     AboutMsg
 
 
-init : Model
-init =
-    { response = Loading Nothing }
+init : Session -> Model
+init session =
+    { response = Loading Nothing
+    , linksEnabled = session.showMuscatLinks
+    }
 
 
 initialCmd : Url -> Cmd Msg
@@ -42,6 +45,13 @@ update session msg model =
                 | response = Error error
               }
             , Cmd.none
+            )
+
+        UserToggledEnableMuscatLinks ->
+            ( { model | linksEnabled = not model.linksEnabled }
+            , PortSendEnableMuscatLinks (not model.linksEnabled)
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
             )
 
         NothingHappened ->

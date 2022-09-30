@@ -10,6 +10,7 @@ port receiveIncomingMessageFromPort : (Decode.Value -> msg) -> Sub msg
 type IncomingMessage
     = PortReceiveTriggerSearch
     | PortReceiveSearchPreferences SearchPreferences
+    | PortReceiveMuscatLinksSet Bool
     | PortReceivedUnknownMessage
 
 
@@ -22,6 +23,9 @@ convertMsgStringToIncomingMessage msgString =
 
         "trigger-search" ->
             Decode.map (\_ -> PortReceiveTriggerSearch) Decode.value
+
+        "muscat-links-set" ->
+            Decode.map (\v -> PortReceiveMuscatLinksSet v) Decode.bool
 
         _ ->
             Decode.succeed PortReceivedUnknownMessage

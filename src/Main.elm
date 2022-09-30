@@ -349,7 +349,7 @@ init flags initialUrl key =
                )
         -}
         AboutPageRoute ->
-            ( AboutPage session About.init
+            ( AboutPage session (About.init session)
             , Cmd.batch
                 [ About.initialCmd initialUrl
                     |> Cmd.map Msg.UserInteractedWithAboutPage

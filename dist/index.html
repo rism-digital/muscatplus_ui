@@ -41,7 +41,6 @@
     <script type="text/javascript">
         const LANGUAGE_KEY = "language";
         const MUSCAT_KEY = "muscat-links";
-        const MUSCAT_VAL = "enabled";
         const NATIONAL_COLLECTION_KEY = "national-collection";
         const SEARCH_PREFERENCES_KEY = "search-preferences";
 
@@ -59,7 +58,8 @@
             SET_NATIONAL_COLLECTION_SELECTION: "set-national-collection-selection",
             SAVE_SEARCH_PREFERENCE: "save-search-preference",
             SET_META_INFO: "set-meta-info",
-            GENERATE_PIANO_KEYBOARD_NOTE: "generate-piano-keyboard-note"
+            GENERATE_PIANO_KEYBOARD_NOTE: "generate-piano-keyboard-note",
+            ENABLE_MUSCAT_LINKS: "enable-muscat-links"
         }
 
         /**
@@ -71,7 +71,8 @@
         const outgoingMessages =
         {
             TRIGGER_SEARCH: "trigger-search",
-            SEARCH_PREFERENCES_SET: "search-preferences-set"
+            SEARCH_PREFERENCES_SET: "search-preferences-set",
+            MUSCAT_LINKS_SET: "muscat-links-set"
         }
 
 
@@ -213,8 +214,30 @@
         const detectMuscatLinks = () =>
         {
             const linkSet = localStorage.getItem(MUSCAT_KEY);
+            return linkSet !== null && linkSet === "true";
+        }
 
-            return linkSet !== null && linkSet === MUSCAT_VAL;
+        /**
+         *  Enables or disables the links to Muscat in the footer.
+         *
+         *  @param {boolean} isEnabled
+         *  @returns {boolean}
+         */
+        const setMuscatLinks = (isEnabled) =>
+        {
+            try
+            {
+                localStorage.setItem(MUSCAT_KEY, JSON.stringify(isEnabled));
+            }
+            catch (err)
+            {
+                console.error("Could not set localstorage item.")
+                return false;
+            }
+
+            // return the value that was successfully set. We'll send this back
+            // to Elm as a confirmation of the value.
+            return isEnabled;
         }
 
         /**
@@ -291,7 +314,7 @@
                         app.ports.receiveIncomingMessageFromPort.send({
                             "msg": outgoingMessages.SEARCH_PREFERENCES_SET,
                             "value": newPrefs
-                        })
+                        });
                         break;
 
                     case incomingMessages.SET_META_INFO:
@@ -316,7 +339,20 @@
 
                         virtualAudioCtx.update(value);
                         break;
+                    case incomingMessages.ENABLE_MUSCAT_LINKS:
+                        let newValue = setMuscatLinks(value);
+                        console.log("Setting muscat links to ", newValue);
+                        /*
+                            Send a message back to Elm letting it know that
+                            the muscat links value has been set so that it can
+                            update it's internal state.
+                         */
+                        app.ports.receiveIncomingMessageFromPort.send({
+                            "msg": outgoingMessages.MUSCAT_LINKS_SET,
+                            "value": newValue
+                        });
 
+                        break;
                     default:
                         console.log("Could not understand incoming " + msg );
                 }

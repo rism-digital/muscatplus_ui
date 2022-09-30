@@ -397,7 +397,7 @@ changePage url model =
             )
 
         Route.AboutPageRoute ->
-            ( AboutPage newSession AboutPage.init
+            ( AboutPage newSession (AboutPage.init newSession)
             , Cmd.map Msg.UserInteractedWithAboutPage (AboutPage.initialCmd url)
             )
 

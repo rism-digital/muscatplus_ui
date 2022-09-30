@@ -5,4 +5,5 @@ import Response exposing (Response, ServerData)
 
 type alias AboutPageModel =
     { response : Response ServerData
+    , linksEnabled : Bool
     }
