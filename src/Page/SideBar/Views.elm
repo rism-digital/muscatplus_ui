@@ -174,14 +174,6 @@ view session =
                     False
 
         -- only show the selected option if we're on the front page.
-        showWhenChoosingNationalCollection =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    False
-
-                Nothing ->
-                    True
-
         sideBarAnimation =
             session.expandedSideBar
 
@@ -195,9 +187,6 @@ view session =
                 IncipitSearchOption
                 (checkHover IncipitSearchOption)
 
-        -- If a national collection is chosen this will return
-        -- false, indicating that the menu option should not
-        -- be shown when a national collection is selected.
         institutionInterfaceMenuOption =
             menuOption
                 { icon = institutionSvg
@@ -207,6 +196,17 @@ view session =
                 }
                 InstitutionSearchOption
                 (checkHover InstitutionSearchOption)
+
+        -- If a national collection is chosen this will return
+        -- false, indicating that the menu option should not
+        -- be shown when a national collection is selected.
+        showWhenChoosingNationalCollection =
+            case session.restrictedToNationalCollection of
+                Just _ ->
+                    False
+
+                Nothing ->
+                    True
 
         peopleInterfaceMenuOption =
             viewIf

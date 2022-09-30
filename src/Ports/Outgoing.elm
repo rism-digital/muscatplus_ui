@@ -2,6 +2,7 @@ port module Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSe
 
 import Json.Encode as Encode
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
+import WebAudio
 
 
 port sendOutgoingMessageOnPort : Encode.Value -> Cmd msg
@@ -12,6 +13,7 @@ type OutgoingMessage
     | PortSendSetNationalCollectionSelection (Maybe String)
     | PortSendSaveSearchPreference { key : String, value : SearchPreferenceVariant }
     | PortSendHeaderMetaInfo { description : String }
+    | PortSendKeyboardAudioNote (List WebAudio.Node)
     | PortSendUnknownMessage
 
 
@@ -46,6 +48,9 @@ convertOutgoingMessageToJsonMsg msg =
 
                         ListPreference listPref ->
                             Encode.list (\a -> Encode.string a) listPref
+
+                        BoolPreference boolPref ->
+                            Encode.bool boolPref
             in
             [ ( "msg", Encode.string "save-search-preference" )
             , ( "value"
@@ -62,6 +67,11 @@ convertOutgoingMessageToJsonMsg msg =
               , Encode.object
                     [ ( "description", Encode.string metaInfo.description ) ]
               )
+            ]
+
+        PortSendKeyboardAudioNote audioGraph ->
+            [ ( "msg", Encode.string "generate-piano-keyboard-note" )
+            , ( "value", Encode.list WebAudio.encode audioGraph )
             ]
 
         PortSendUnknownMessage ->

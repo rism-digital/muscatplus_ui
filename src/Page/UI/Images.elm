@@ -1,4 +1,4 @@
-module Page.UI.Images exposing (SvgDetails, assistanceSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronDownSvg, chevronLeftSvg, chevronRightSvg, closeWindowSvg, digitizedImagesSvg, globeSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, searchSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, unknownSvg, userCircleSvg)
+module Page.UI.Images exposing (SvgDetails, assistanceSvg, audioMutedSvg, audioUnmutedSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronDownSvg, chevronLeftSvg, chevronRightSvg, closeWindowSvg, digitizedImagesSvg, globeSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, searchSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, unknownSvg, userCircleSvg)
 
 import Color exposing (Color, toCssString)
 import Element exposing (Element, html)
@@ -703,3 +703,27 @@ caretCircleRight =
 caretCircleRightSvg : Color -> Element msg
 caretCircleRightSvg color =
     makeSvgIcon color caretCircleRight
+
+
+audioMuted : SvgDetails
+audioMuted =
+    { viewBox = "0 0 640 512"
+    , path = "M633.99 471.02L36 3.51C29.1-2.01 19.03-.9 13.51 6l-10 12.49C-2.02 25.39-.9 35.46 6 40.98l598 467.51c6.9 5.52 16.96 4.4 22.49-2.49l10-12.49c5.52-6.9 4.41-16.97-2.5-22.49zM370.23 179.13c-9.14-5-20.01-3.25-27.41 3.33l70.67 55.25c-5.31-24.49-20.57-46.09-43.26-58.58zm30.29-37.75C440.27 166.6 464 209.44 464 256c0 6.75-.64 13.38-1.61 19.93l41.66 32.57c5.03-16.82 7.95-34.39 7.95-52.5 0-63.09-32.06-121.09-85.77-155.16-11.19-7.09-26.03-3.8-33.12 7.41-7.09 11.21-3.78 26.03 7.41 33.13zm53.27-80.96c66.27 43.49 105.82 116.6 105.82 195.58 0 29.13-5.46 57.42-15.57 83.76l39.23 30.67C599.07 334.91 608 296.19 608 256c0-95.33-47.73-183.58-127.65-236.03-11.17-7.33-26.18-4.24-33.51 6.95-7.34 11.17-4.22 26.18 6.95 33.5zM288 88.02C288 73.51 276.13 64 263.81 64c-5.91 0-11.92 2.18-16.78 7.05l-20.5 20.49L288 139.59V88.02zm-48 278.03L177.94 304H80v-96h61.71l-61.4-48H56c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V322.37l-48-37.53v81.21z"
+    }
+
+
+audioMutedSvg : Color -> Element msg
+audioMutedSvg color =
+    makeSvgIcon color audioMuted
+
+
+audioUnmuted : SvgDetails
+audioUnmuted =
+    { viewBox = "0 0 576 512"
+    , path = "M338.23 179.12c-11.58-6.33-26.19-2.16-32.61 9.45-6.39 11.61-2.16 26.2 9.45 32.61C327.98 228.28 336 241.62 336 256c0 14.37-8.02 27.72-20.92 34.81-11.61 6.41-15.84 21-9.45 32.61 6.43 11.66 21.05 15.8 32.61 9.45 28.23-15.55 45.77-45 45.77-76.87s-17.54-61.33-45.78-76.88zM480 256c0-63.09-32.06-121.09-85.77-155.15-11.19-7.09-26.03-3.8-33.12 7.41s-3.78 26.03 7.41 33.12C408.27 166.59 432 209.44 432 256s-23.73 89.4-63.48 114.62c-11.19 7.09-14.5 21.92-7.41 33.12 6.51 10.28 21.12 15.03 33.12 7.41C447.94 377.09 480 319.09 480 256zM448.35 19.97c-11.17-7.33-26.18-4.24-33.51 6.95-7.34 11.17-4.22 26.18 6.95 33.51C488.06 103.91 527.61 177.02 527.61 256c0 78.98-39.55 152.08-105.82 195.57-11.17 7.32-14.29 22.34-6.95 33.5 7.04 10.71 21.93 14.56 33.51 6.95C528.27 439.57 576 351.33 576 256S528.27 72.42 448.35 19.97zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.86 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM208 366.04L145.94 304H48v-96h97.94L208 145.95v220.09z"
+    }
+
+
+audioUnmutedSvg : Color -> Element msg
+audioUnmutedSvg color =
+    makeSvgIcon color audioUnmuted

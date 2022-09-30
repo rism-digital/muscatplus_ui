@@ -2,8 +2,7 @@ module Page.Keyboard.Model exposing
     ( Clef(..)
     , KeyNoteName(..)
     , KeySignature(..)
-    , Keyboard(..)
-    , KeyboardConfig
+    , KeyboardKeyPress(..)
     , KeyboardModel
     , KeyboardQuery
     , Octave
@@ -92,13 +91,9 @@ type KeySignature
     | KS_bB
 
 
-type Keyboard msg
-    = Keyboard (KeyboardModel msg) KeyboardConfig
-
-
-type alias KeyboardConfig =
-    { numOctaves : Int
-    }
+type KeyboardKeyPress
+    = Sounding KeyNoteName Octave
+    | Muted KeyNoteName Octave
 
 
 type alias KeyboardModel msg =
@@ -108,6 +103,7 @@ type alias KeyboardModel msg =
     , inputIsValid : Bool
     , paeInputSearchDebouncer : Debouncer msg
     , paeHelpExpanded : Bool
+    , notesPlaying : List ( KeyNoteName, Octave )
     }
 
 

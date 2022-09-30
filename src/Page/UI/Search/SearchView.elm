@@ -192,6 +192,7 @@ viewSearchControls cfg =
                         , selectColumns = cfg.checkboxColumns
                         , body = cfg.body
                         , tooltip = []
+                        , searchPreferences = .searchPreferences cfg.session
                         }
                         cfg.facetMsgConfig
                     , keywordInputField

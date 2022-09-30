@@ -82,6 +82,7 @@ viewFacet cfg msg =
                             , keyboardModel = keyboardModel
                             , notationFacet = facet
                             , userInteractedWithKeyboardMsg = msg.userInteractedWithPianoKeyboard
+                            , searchPreferences = cfg.searchPreferences
                             }
                     in
                     viewKeyboardControl notationFacetConfig

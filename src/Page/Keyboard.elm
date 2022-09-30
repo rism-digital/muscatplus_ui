@@ -14,13 +14,17 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Element exposing (Element)
 import Flip exposing (flip)
 import Language exposing (Language)
-import Page.Keyboard.Model exposing (Clef(..), KeySignature(..), Keyboard, KeyboardModel, KeyboardQuery, QueryMode(..), TimeSignature(..), setClef, setKeySignature, setKeyboardQuery, setNoteData, setQueryMode, setTimeSignature, toKeyboardQuery)
+import Page.Keyboard.Audio exposing (generateNotes)
+import Page.Keyboard.Model exposing (Clef(..), KeyNoteName, KeySignature(..), KeyboardKeyPress(..), KeyboardModel, KeyboardQuery, Octave, QueryMode(..), TimeSignature(..), setClef, setKeySignature, setKeyboardQuery, setNoteData, setQueryMode, setTimeSignature, toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (createPAENote)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Keyboard.Views as KeyboardViews
 import Page.RecordTypes.Search exposing (NotationFacet)
+import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (createSvgRequest, serverUrl)
+import SearchPreferences exposing (SearchPreferences)
+import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Utilities exposing (choose)
 
 
@@ -58,7 +62,8 @@ buildUpdateQuery newNoteData model =
     ( newModel
     , Cmd.batch
         [ createSvgRequest ServerRespondedWithRenderedNotation url
-        , update debounceMsg newModel |> Tuple.second
+        , update debounceMsg newModel
+            |> Tuple.second
         ]
     )
 
@@ -81,6 +86,7 @@ initModel =
     , inputIsValid = True
     , paeInputSearchDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , paeHelpExpanded = False
+    , notesPlaying = []
     }
 
 
@@ -136,20 +142,82 @@ update msg model =
             , Cmd.none
             )
 
-        UserClickedPianoKeyboardKey noteName octave ->
+        UserClickedPianoKeyboardKeyOn keypress ->
+            case keypress of
+                Sounding noteName octave ->
+                    let
+                        note =
+                            createPAENote noteName octave
+
+                        noteData =
+                            case .noteData model.query of
+                                Just n ->
+                                    n ++ note
+
+                                Nothing ->
+                                    note
+
+                        ( queryModel, cmds ) =
+                            buildUpdateQuery (Just noteData) model
+
+                        playingModel =
+                            { queryModel | notesPlaying = ( noteName, octave ) :: queryModel.notesPlaying }
+                    in
+                    ( playingModel
+                    , Cmd.batch
+                        [ cmds
+                        , PortSendKeyboardAudioNote (generateNotes playingModel.notesPlaying)
+                            |> encodeMessageForPortSend
+                            |> sendOutgoingMessageOnPort
+                        ]
+                    )
+
+                Muted noteName octave ->
+                    let
+                        note =
+                            createPAENote noteName octave
+
+                        noteData =
+                            case .noteData model.query of
+                                Just n ->
+                                    n ++ note
+
+                                Nothing ->
+                                    note
+                    in
+                    buildUpdateQuery (Just noteData) model
+
+        UserClickedPianoKeyboardKeyOff keypress ->
+            case keypress of
+                Sounding noteName octave ->
+                    let
+                        newModel =
+                            { model | notesPlaying = List.filter (\( n, o ) -> n /= noteName && o /= octave) model.notesPlaying }
+
+                        audioOsc =
+                            generateNotes newModel.notesPlaying
+
+                        audioCmd =
+                            PortSendKeyboardAudioNote audioOsc
+                                |> encodeMessageForPortSend
+                                |> sendOutgoingMessageOnPort
+                    in
+                    ( newModel, audioCmd )
+
+                Muted _ _ ->
+                    -- probably not needed, but we reset this just to be sure
+                    ( { model | notesPlaying = [] }, Cmd.none )
+
+        UserToggledAudioMuted newValue ->
             let
-                note =
-                    createPAENote noteName octave
-
-                noteData =
-                    case .noteData model.query of
-                        Just n ->
-                            n ++ note
-
-                        Nothing ->
-                            note
+                storeMutePref =
+                    PortSendSaveSearchPreference { key = "audioMuted", value = BoolPreference newValue }
+                        |> encodeMessageForPortSend
+                        |> sendOutgoingMessageOnPort
             in
-            buildUpdateQuery (Just noteData) model
+            ( model
+            , storeMutePref
+            )
 
         UserInteractedWithPAEText text ->
             let
@@ -239,7 +307,9 @@ updateDebouncerPAESearchConfig : Debouncer.UpdateConfig KeyboardMsg (KeyboardMod
 updateDebouncerPAESearchConfig =
     { mapMsg = DebouncerCapturedPAEText
     , getDebouncer = .paeInputSearchDebouncer
-    , setDebouncer = \debouncer model -> { model | paeInputSearchDebouncer = debouncer }
+    , setDebouncer =
+        \debouncer model ->
+            { model | paeInputSearchDebouncer = debouncer }
     }
 
 
@@ -248,6 +318,6 @@ updateDebouncerPAESearchConfig =
     Exposes only the top level view
 
 -}
-view : NotationFacet -> Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
-view notationFacet lang keyboardConfig =
-    KeyboardViews.view notationFacet lang keyboardConfig
+view : Maybe SearchPreferences -> NotationFacet -> Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
+view searchPreferences notationFacet lang keyboardConfig =
+    KeyboardViews.view searchPreferences notationFacet lang keyboardConfig

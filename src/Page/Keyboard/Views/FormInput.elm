@@ -4,7 +4,7 @@ import Element exposing (Element, alignTop, column, el, fill, height, px, row, s
 import Element.Font as Font
 import Element.Input as Input
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.Keyboard.Model exposing (Keyboard(..))
+import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (clefStrToClef, keySigStrToKeySignature, timeSigStrToTimeSignature)
 import Page.RecordTypes.Search exposing (NotationFacet)
@@ -12,8 +12,8 @@ import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
 
 
-viewPaeInput : Language -> NotationFacet -> Keyboard KeyboardMsg -> Element KeyboardMsg
-viewPaeInput language notationFacet (Keyboard model config) =
+viewPaeInput : Language -> NotationFacet -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
+viewPaeInput language notationFacet model =
     row
         [ width fill ]
         [ column
@@ -55,8 +55,8 @@ viewPaeInput language notationFacet (Keyboard model config) =
         ]
 
 
-viewRenderControls : Language -> NotationFacet -> Keyboard KeyboardMsg -> Element KeyboardMsg
-viewRenderControls language notationFacet (Keyboard model config) =
+viewRenderControls : Language -> NotationFacet -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
+viewRenderControls language notationFacet model =
     let
         clefLabel =
             .label (.clef notationFacet.notationOptions)

@@ -27,6 +27,7 @@ import Page.Route exposing (Route)
 import Page.UpdateHelpers exposing (hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
+import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
 import Url exposing (Url)
 import Utilities exposing (convertNodeIdToPath)
@@ -46,6 +47,7 @@ type alias RecordConfig =
     , route : Route
     , queryArgs : Maybe QueryArgs
     , nationalCollection : Maybe CountryCode
+    , searchPreferences : Maybe SearchPreferences
     }
 
 
@@ -58,10 +60,11 @@ init cfg =
                     ActiveSearch.init
                         { queryArgs = qa
                         , keyboardQueryArgs = Nothing
+                        , searchPreferences = cfg.searchPreferences
                         }
 
                 Nothing ->
-                    ActiveSearch.empty
+                    ActiveSearch.empty cfg.searchPreferences
 
         activeSearch =
             toNextQuery activeSearchInit

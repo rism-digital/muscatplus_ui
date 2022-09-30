@@ -27,17 +27,19 @@ import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
+import SearchPreferences exposing (SearchPreferences)
 import Set exposing (Set)
 
 
 type alias ActiveSearchConfig =
     { queryArgs : QueryArgs
     , keyboardQueryArgs : Maybe KeyboardQuery
+    , searchPreferences : Maybe SearchPreferences
     }
 
 
-empty : ActiveSearch msg
-empty =
+empty : Maybe SearchPreferences -> ActiveSearch msg
+empty prefs =
     { nextQuery = Page.Query.defaultQueryArgs
     , expandedFacets = Set.empty
     , rangeFacetValues = Dict.empty

@@ -5,6 +5,7 @@ import Language exposing (Language, LanguageMap)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, Facets, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
+import SearchPreferences exposing (SearchPreferences)
 
 
 type alias FacetConfig a msg =
@@ -14,6 +15,7 @@ type alias FacetConfig a msg =
     , selectColumns : Int
     , body : { a | facets : Facets }
     , tooltip : LanguageMap
+    , searchPreferences : Maybe SearchPreferences
     }
 
 
@@ -52,4 +54,5 @@ createFacetConfig cfg alias tooltip =
     , selectColumns = cfg.numberOfSelectColumns
     , body = cfg.body
     , tooltip = tooltip
+    , searchPreferences = Nothing
     }

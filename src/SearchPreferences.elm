@@ -1,7 +1,7 @@
 module SearchPreferences exposing (SearchPreferences, searchPreferencesDecoder)
 
-import Json.Decode as Decode exposing (Decoder, list, string)
-import Json.Decode.Pipeline exposing (required)
+import Json.Decode as Decode exposing (Decoder, bool, list, string)
+import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode as Encode
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant)
@@ -29,12 +29,14 @@ import Set exposing (Set)
 -}
 type alias SearchPreferences =
     { expandedFacetPanels : Set String
+    , audioMuted : Bool
     }
 
 
 defaultPreferences : SearchPreferences
 defaultPreferences =
     { expandedFacetPanels = Set.empty
+    , audioMuted = True
     }
 
 
@@ -55,6 +57,7 @@ searchPreferencesDecoder : Decoder SearchPreferences
 searchPreferencesDecoder =
     Decode.succeed SearchPreferences
         |> required "expandedFacetPanels" (list string |> Decode.andThen expandedFacetPanelDecoder)
+        |> optional "audioMuted" bool True
 
 
 expandedFacetPanelDecoder : List String -> Decoder (Set String)

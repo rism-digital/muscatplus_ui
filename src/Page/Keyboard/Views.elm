@@ -1,8 +1,9 @@
 module Page.Keyboard.Views exposing (view)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, fillPortion, height, paddingXY, row, spacing, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, paddingXY, pointer, px, row, spacing, width)
+import Element.Events exposing (onClick)
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.Keyboard.Model exposing (Keyboard(..))
+import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.Query exposing (queryModeStrToQueryMode)
 import Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
@@ -12,12 +13,23 @@ import Page.RecordTypes.Search exposing (NotationFacet)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (audioMutedSvg, audioUnmutedSvg)
 import Page.UI.Record.Incipits exposing (viewSVGRenderedIncipit)
+import Page.UI.Style exposing (colourScheme)
+import SearchPreferences exposing (SearchPreferences)
 
 
-view : NotationFacet -> Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
-view notationFacet language (Keyboard model config) =
+view : Maybe SearchPreferences -> NotationFacet -> Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
+view searchPreferences notationFacet language model =
     let
+        isMuted =
+            case searchPreferences of
+                Just prefs ->
+                    prefs.audioMuted
+
+                Nothing ->
+                    True
+
         queryModeOptions =
             .options notationFacet.queryModes
                 |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
@@ -50,7 +62,7 @@ view notationFacet language (Keyboard model config) =
                             [ width (fillPortion 1)
                             , centerY
                             ]
-                            [ viewRenderControls language notationFacet (Keyboard model config) ]
+                            [ viewRenderControls language notationFacet model ]
                         , column
                             [ width (fillPortion 4)
                             , centerY
@@ -67,15 +79,36 @@ view notationFacet language (Keyboard model config) =
                         ]
                         [ column
                             [ centerX ]
-                            [ fullKeyboard
-                                []
+                            [ row
+                                [ width fill ]
+                                [ fullKeyboard isMuted []
+                                ]
+                            , row
+                                [ width fill
+                                , height (px 18)
+                                , paddingXY 0 10
+                                ]
+                                [ el
+                                    [ width (px 16)
+                                    , height (px 16)
+                                    , alignLeft
+                                    , onClick (UserToggledAudioMuted (not isMuted))
+                                    , pointer
+                                    ]
+                                    (if isMuted then
+                                        audioMutedSvg colourScheme.red
+
+                                     else
+                                        audioUnmutedSvg colourScheme.lightBlue
+                                    )
+                                ]
                             ]
                         ]
                     , row
                         [ width fill
                         , spacing lineSpacing
                         ]
-                        [ viewPaeInput language notationFacet (Keyboard model config)
+                        [ viewPaeInput language notationFacet model
                         ]
                     , row
                         [ width fill
@@ -100,7 +133,7 @@ view notationFacet language (Keyboard model config) =
                                 }
                             ]
                         ]
-                    , viewPaeHelp language (Keyboard model config)
+                    , viewPaeHelp language model
                     ]
                 ]
             ]

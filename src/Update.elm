@@ -41,7 +41,9 @@ changePage url model =
             let
                 initialPageBody =
                     FrontPage.init
-                        { queryArgs = qargs }
+                        { queryArgs = qargs
+                        , searchPreferences = newSession.searchPreferences
+                        }
             in
             ( FrontPage newSession initialPageBody
             , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
@@ -60,6 +62,7 @@ changePage url model =
                     , route = route
                     , queryArgs = qargs
                     , keyboardQueryArgs = kqargs
+                    , searchPreferences = newSession.searchPreferences
                     }
 
                 newPageBody =
@@ -102,6 +105,7 @@ changePage url model =
                     , route = route
                     , queryArgs = Nothing
                     , nationalCollection = newSession.restrictedToNationalCollection
+                    , searchPreferences = newSession.searchPreferences
                     }
 
                 ( newPageBody, isSameSourcePage ) =
@@ -161,6 +165,7 @@ changePage url model =
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = newSession.restrictedToNationalCollection
+                    , searchPreferences = newSession.searchPreferences
                     }
 
                 newPageBody =
@@ -206,6 +211,7 @@ changePage url model =
                     , route = route
                     , queryArgs = Nothing
                     , nationalCollection = newSession.restrictedToNationalCollection
+                    , searchPreferences = newSession.searchPreferences
                     }
 
                 ( newPageBody, isSamePersonPage ) =
@@ -255,6 +261,7 @@ changePage url model =
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = newSession.restrictedToNationalCollection
+                    , searchPreferences = newSession.searchPreferences
                     }
 
                 newPageBody =
@@ -300,6 +307,7 @@ changePage url model =
                     , route = route
                     , queryArgs = Nothing
                     , nationalCollection = newSession.restrictedToNationalCollection
+                    , searchPreferences = newSession.searchPreferences
                     }
 
                 ( newPageBody, isSameInstitutionPage ) =
@@ -349,6 +357,7 @@ changePage url model =
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = newSession.restrictedToNationalCollection
+                    , searchPreferences = newSession.searchPreferences
                     }
 
                 newPageBody =

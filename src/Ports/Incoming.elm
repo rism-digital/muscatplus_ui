@@ -16,7 +16,7 @@ type IncomingMessage
 convertMsgStringToIncomingMessage : String -> Decoder IncomingMessage
 convertMsgStringToIncomingMessage msgString =
     case msgString of
-        "facet-panel-set" ->
+        "search-preferences-set" ->
             Decode.field "value" searchPreferencesDecoder
                 |> Decode.map (\values -> PortReceiveSearchPreferences values)
 

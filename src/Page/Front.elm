@@ -24,12 +24,14 @@ import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
+import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
 import Url exposing (Url)
 
 
 type alias FrontConfig =
     { queryArgs : FrontQueryArgs
+    , searchPreferences : Maybe SearchPreferences
     }
 
 
@@ -73,6 +75,7 @@ init cfg =
         ActiveSearch.init
             { queryArgs = convertedQueryArgs
             , keyboardQueryArgs = Just Keyboard.defaultKeyboardQuery
+            , searchPreferences = cfg.searchPreferences
             }
     , probeResponse = NoResponseToShow
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer

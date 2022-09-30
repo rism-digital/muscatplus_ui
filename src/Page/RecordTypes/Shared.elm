@@ -1,6 +1,5 @@
 module Page.RecordTypes.Shared exposing
     ( FacetAlias
-    , LabelBooleanValue
     , LabelNumericValue
     , LabelStringValue
     , LabelValue

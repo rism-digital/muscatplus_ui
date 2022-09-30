@@ -28,6 +28,7 @@ import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
+import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
 import Url exposing (Url)
 import Utilities exposing (convertNodeIdToPath)
@@ -47,6 +48,7 @@ type alias SearchConfig =
     , route : Route
     , queryArgs : QueryArgs
     , keyboardQueryArgs : KeyboardQuery
+    , searchPreferences : Maybe SearchPreferences
     }
 
 
@@ -75,6 +77,7 @@ init cfg =
         ActiveSearch.init
             { queryArgs = cfg.queryArgs
             , keyboardQueryArgs = Just cfg.keyboardQueryArgs
+            , searchPreferences = cfg.searchPreferences
             }
     , preview = NoResponseToShow
     , sourceItemsExpanded = False
@@ -89,6 +92,10 @@ init cfg =
 load : SearchConfig -> SearchPageModel SearchMsg -> SearchPageModel SearchMsg
 load cfg oldModel =
     let
+        newActiveSearch =
+            ActiveSearch.load oldModel.activeSearch
+                |> setNextQuery cfg.queryArgs
+
         ( previewResp, selectedResult ) =
             case .fragment cfg.incomingUrl of
                 Just f ->
@@ -96,10 +103,6 @@ load cfg oldModel =
 
                 Nothing ->
                     ( NoResponseToShow, Nothing )
-
-        newActiveSearch =
-            ActiveSearch.load oldModel.activeSearch
-                |> setNextQuery cfg.queryArgs
 
         newKeyboard =
             case newActiveSearch.keyboard of

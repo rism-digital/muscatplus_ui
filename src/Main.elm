@@ -52,7 +52,7 @@ init flags initialUrl key =
         FrontPageRoute qargs ->
             let
                 initialBody =
-                    Front.init { queryArgs = qargs }
+                    Front.init { queryArgs = qargs, searchPreferences = session.searchPreferences }
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
             in
             ( FrontPage session initialBody
@@ -70,6 +70,7 @@ init flags initialUrl key =
                     , route = route
                     , queryArgs = qargs
                     , keyboardQueryArgs = kqargs
+                    , searchPreferences = session.searchPreferences
                     }
 
                 initialBody =
@@ -108,6 +109,7 @@ init flags initialUrl key =
                     , route = route
                     , queryArgs = Nothing
                     , nationalCollection = session.restrictedToNationalCollection
+                    , searchPreferences = session.searchPreferences
                     }
 
                 initialBody =
@@ -150,6 +152,7 @@ init flags initialUrl key =
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = session.restrictedToNationalCollection
+                    , searchPreferences = session.searchPreferences
                     }
 
                 initialBody =
@@ -187,6 +190,7 @@ init flags initialUrl key =
                     , route = route
                     , queryArgs = Nothing
                     , nationalCollection = session.restrictedToNationalCollection
+                    , searchPreferences = session.searchPreferences
                     }
 
                 initialBody =
@@ -222,6 +226,7 @@ init flags initialUrl key =
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = session.restrictedToNationalCollection
+                    , searchPreferences = session.searchPreferences
                     }
 
                 initialBody =
@@ -259,6 +264,7 @@ init flags initialUrl key =
                     , route = route
                     , queryArgs = Nothing
                     , nationalCollection = session.restrictedToNationalCollection
+                    , searchPreferences = session.searchPreferences
                     }
 
                 initialBody =
@@ -294,6 +300,7 @@ init flags initialUrl key =
                     , route = route
                     , queryArgs = Just qargs
                     , nationalCollection = session.restrictedToNationalCollection
+                    , searchPreferences = session.searchPreferences
                     }
 
                 initialBody =

@@ -36,6 +36,7 @@
         }
     </style>
     <script src="/static/app.js"></script>
+    <script src="/static/web-audio.js"></script>
 
     <script type="text/javascript">
         const LANGUAGE_KEY = "language";
@@ -57,7 +58,8 @@
             SAVE_LANGUAGE_PREFERENCE: "save-language-preference",
             SET_NATIONAL_COLLECTION_SELECTION: "set-national-collection-selection",
             SAVE_SEARCH_PREFERENCE: "save-search-preference",
-            SET_META_INFO: "set-meta-info"
+            SET_META_INFO: "set-meta-info",
+            GENERATE_PIANO_KEYBOARD_NOTE: "generate-piano-keyboard-note"
         }
 
         /**
@@ -69,7 +71,7 @@
         const outgoingMessages =
         {
             TRIGGER_SEARCH: "trigger-search",
-            FACET_PANEL_SET: "facet-panel-set"
+            SEARCH_PREFERENCES_SET: "search-preferences-set"
         }
 
 
@@ -233,6 +235,11 @@
             return {...currentPrefs, [key]: value}
         }
 
+        // define these to be global, but only initialize if we have a
+        // page interaction that requires the audio context to initialize
+        let audioCtx = null;
+        let virtualAudioCtx = null;
+
         document.addEventListener("DOMContentLoaded", () =>
         {
             const app = Elm.Main.init({
@@ -278,8 +285,11 @@
 
                         let _ = setSearchPreferences(newPrefs);
 
+                        /*
+                            NB: It's Elm that is receiving the incoming messages!
+                         */
                         app.ports.receiveIncomingMessageFromPort.send({
-                            "msg": outgoingMessages.FACET_PANEL_SET,
+                            "msg": outgoingMessages.SEARCH_PREFERENCES_SET,
                             "value": newPrefs
                         })
                         break;
@@ -293,6 +303,18 @@
                         descriptionTag.setAttribute("content", description);
                         document.head.appendChild(descriptionTag);
 
+                        break;
+
+                    case incomingMessages.GENERATE_PIANO_KEYBOARD_NOTE:
+                        // if this is the first time we interact with audio, then initialize
+                        // the audioCtx & virtualAudioCtx objects.
+                        if (!audioCtx && !virtualAudioCtx)
+                        {
+                            audioCtx = new AudioContext();
+                            virtualAudioCtx = new VirtualAudioGraph(audioCtx);
+                        }
+
+                        virtualAudioCtx.update(value);
                         break;
 
                     default:

@@ -1,4 +1,4 @@
-module Page.Keyboard.Utilities exposing (..)
+module Page.Keyboard.Utilities exposing (comparableToSymHelper, symToStringHelper)
 
 {-| Takes a list of (comparable, sym) and returns the sym for a given comparable, with a
 default value specified if that comparable is not available in the list.

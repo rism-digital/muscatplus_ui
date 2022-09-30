@@ -1,19 +1,19 @@
-module Page.Keyboard.Views.PaeHelp exposing (..)
+module Page.Keyboard.Views.PaeHelp exposing (viewPaeHelp)
 
 import Element exposing (Element, column, el, fill, link, padding, paragraph, pointer, row, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (Language(..))
-import Page.Keyboard.Model exposing (Keyboard(..))
+import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
-viewPaeHelp : Language -> Keyboard KeyboardMsg -> Element KeyboardMsg
-viewPaeHelp language (Keyboard model config) =
+viewPaeHelp : Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
+viewPaeHelp language model =
     let
         paeHelpLabel =
             if model.paeHelpExpanded then
