@@ -49,7 +49,9 @@
          * @type {{ SAVE_LANGUAGE_PREFERENCE: string,
          *          SET_NATIONAL_COLLECTION_SELECTION: string,
          *          SAVE_SEARCH_PREFERENCE: string,
-         *          SET_META_INFO: string
+         *          SET_META_INFO: string,
+         *          GENERATE_PIANO_KEYBOARD_NOTE: string,
+         *          ENABLE_MUSCAT_LINKS: string
          *       }}
          */
         const incomingMessages =
@@ -65,7 +67,9 @@
         /**
          * Set up a typed object for the message type values.
          * These are messages OUTGOING from JavaScript and INCOMING to Elm.
-         * @type {{ TRIGGER_SEARCH: string
+         * @type {{ TRIGGER_SEARCH: string,
+         *          SEARCH_PREFERENCES_SET: string,
+         *          MUSCAT_LINKS_SET: string
          *       }}
          */
         const outgoingMessages =
@@ -74,7 +78,6 @@
             SEARCH_PREFERENCES_SET: "search-preferences-set",
             MUSCAT_LINKS_SET: "muscat-links-set"
         }
-
 
         /**
          * Gets the stored language code preference, if set.
@@ -341,7 +344,7 @@
                         break;
                     case incomingMessages.ENABLE_MUSCAT_LINKS:
                         let newValue = setMuscatLinks(value);
-                        console.log("Setting muscat links to ", newValue);
+
                         /*
                             Send a message back to Elm letting it know that
                             the muscat links value has been set so that it can
