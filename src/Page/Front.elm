@@ -3,7 +3,6 @@ module Page.Front exposing
     , Model
     , Msg
     , frontPageRequest
-    , frontProbeSubmit
     , init
     , update
     )

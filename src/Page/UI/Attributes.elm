@@ -3,7 +3,6 @@ module Page.UI.Attributes exposing
     , bodyFontColour
     , bodyRegular
     , bodySM
-    , bodyXS
     , controlsColumnWidth
     , emptyAttribute
     , facetBorderBottom

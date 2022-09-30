@@ -341,18 +341,18 @@ viewSelectFacetItem config fitem =
         fullLabel =
             extractLabelFromLanguageMap config.language label
 
+        decodedValue =
+            Url.percentDecode value
+                |> Maybe.withDefault value
+
         nextQuery =
             .nextQuery config.activeSearch
-
-        activeFilters =
-            nextQuery.filters
 
         -- percent-decode the value to match it against the value in the
         -- active filter list. If we can't decode it (for some reason) just
         -- return the original value.
-        decodedValue =
-            Url.percentDecode value
-                |> Maybe.withDefault value
+        activeFilters =
+            nextQuery.filters
 
         shouldBeChecked =
             Dict.get facetAlias activeFilters

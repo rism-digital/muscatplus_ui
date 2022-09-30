@@ -73,6 +73,9 @@ validateInput errorMessage =
 viewRangeFacet : RangeFacetConfig msg -> Element msg
 viewRangeFacet config =
     let
+        bothAreValid =
+            lowerIsValid && upperIsValid
+
         facetAlias =
             .alias config.rangeFacet
 
@@ -90,14 +93,11 @@ viewRangeFacet config =
         ( lowerIsValid, lowerValidError ) =
             inputIsValid "Lower range" lowerValue
 
-        ( upperIsValid, upperValidError ) =
-            inputIsValid "Upper range" upperValue
-
         -- If both inputs are valid, then we emit the focus/unfocused event that
         -- will trigger a probe; if either is invalid then we do not set the event
         -- handler.
-        bothAreValid =
-            lowerIsValid && upperIsValid
+        ( upperIsValid, upperValidError ) =
+            inputIsValid "Upper range" upperValue
 
         ( focusLostEventLower, focusedEventLower ) =
             if bothAreValid then

@@ -96,7 +96,7 @@ viewLaunchNewIncipitSearch language incipits =
         (List.map
             (\encoded ->
                 case encoded of
-                    EncodedIncipit label PAEEncoding data ->
+                    EncodedIncipit _ PAEEncoding _ ->
                         viewPAESearchLink language encoded
 
                     _ ->
