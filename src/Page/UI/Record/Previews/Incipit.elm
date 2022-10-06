@@ -51,19 +51,26 @@ viewIncipitPreview language body =
         incipitLink =
             row
                 [ width fill
-                , spacing 3
                 ]
-                [ el
-                    []
-                    (text (extractLabelFromLanguageMap language labelLanguageMap ++ ": "))
-                , el
-                    [ Font.medium ]
-                    (text (extractLabelFromLanguageMap language sourceLabel))
-                , link
-                    [ linkColour ]
-                    { label = text sourceUrl
-                    , url = sourceUrl
-                    }
+                [ column
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ row
+                        [ width fill ]
+                        [ el
+                            []
+                            (text (extractLabelFromLanguageMap language labelLanguageMap ++ ": "))
+                        , el
+                            [ Font.medium ]
+                            (link
+                                [ linkColour ]
+                                { label = text (extractLabelFromLanguageMap language sourceLabel)
+                                , url = sourceUrl
+                                }
+                            )
+                        ]
+                    ]
                 ]
     in
     row
