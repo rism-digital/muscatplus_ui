@@ -31,7 +31,7 @@ type SourceContentType
     = LibrettoContent
     | TreatiseContent
     | MusicalContent
-    | CompositeContent
+    | OtherContent
 
 
 type alias SourceContentTypeRecordBody =
@@ -113,7 +113,7 @@ sourceContentTypeOptions =
     [ ( "rism:LibrettoContent", LibrettoContent )
     , ( "rism:TreatiseContent", TreatiseContent )
     , ( "rism:MusicalContent", MusicalContent )
-    , ( "rism:CompositeContent", CompositeContent )
+    , ( "rism:OtherContent", OtherContent )
     ]
 
 
