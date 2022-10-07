@@ -94,8 +94,14 @@ viewFacetsForSourcesMode cfg =
 
         sourceResultsPanel =
             let
-                materialType =
-                    viewFacet (createFacetConfig cfg "material-types" tooltips.materialType) cfg.facetMsgConfig
+                sourceType =
+                    viewFacet (createFacetConfig cfg "source-type" []) cfg.facetMsgConfig
+
+                materialSourceType =
+                    viewFacet (createFacetConfig cfg "material-source-types" []) cfg.facetMsgConfig
+
+                materialContentType =
+                    viewFacet (createFacetConfig cfg "material-content-types" []) cfg.facetMsgConfig
 
                 sourceContentsToggle =
                     viewFacet (createFacetConfig cfg "hide-source-contents" tooltips.sourceContents) cfg.facetMsgConfig
@@ -109,7 +115,7 @@ viewFacetsForSourcesMode cfg =
                 allAreEmpty =
                     List.all
                         (\a -> a == none)
-                        [ sourceContentsToggle, sourceCollectionsToggle, compositeVolumesToggle, materialType ]
+                        [ sourceType, sourceContentsToggle, sourceCollectionsToggle, compositeVolumesToggle, materialSourceType, materialContentType ]
             in
             if allAreEmpty then
                 none
@@ -131,7 +137,9 @@ viewFacetsForSourcesMode cfg =
                             , row [] [ compositeVolumesToggle ]
                             ]
                         ]
-                    , materialType
+                    , sourceType
+                    , materialSourceType
+                    , materialContentType
 
                     --, contentType
                     --, recordType
