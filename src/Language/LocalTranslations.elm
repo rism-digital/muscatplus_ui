@@ -30,7 +30,7 @@ localTranslations :
     , page : LanguageMap
     , people : LanguageMap
     , previous : LanguageMap
-    , queryEnter : LanguageMap
+    , wordsAnywhere : LanguageMap
     , recordPreview : LanguageMap
     , recordTop : LanguageMap
     , recordURI : LanguageMap
@@ -46,7 +46,7 @@ localTranslations :
     }
 localTranslations =
     { applyFiltersToUpdateResults =
-        [ LanguageValues English [ "Update needed" ]
+        [ LanguageValues English [ "Apply Filters" ]
         , LanguageValues German [ "Wenden Sie Filter an, um Suchergebnisse anzuzeigen" ]
         , LanguageValues French [ "Appliquer des filtres pour mettre à jour les résultats de recherche" ]
         , LanguageValues Italian [ "Applica filtri per aggiornare i risultati della ricerca" ]
@@ -192,7 +192,7 @@ localTranslations =
         , LanguageValues Portugese [ "Anterior" ]
         , LanguageValues Polish [ "Poprzedni" ]
         ]
-    , queryEnter =
+    , wordsAnywhere =
         [ LanguageValues English [ "Words anywhere" ]
         , LanguageValues German [ "Eingabe Ihrer Anfrage" ]
         , LanguageValues French [ "Entrez votre requête" ]
@@ -279,11 +279,11 @@ localTranslations =
 
 facetPanelTitles :
     { results : LanguageMap
-    , peopleRelationships : LanguageMap
-    , institutionRelationships : LanguageMap
+    , sourceRelationships : LanguageMap
+    , holdingInstitutions : LanguageMap
     , digitizations : LanguageMap
     , sourceContents : LanguageMap
-    , publicationProduction : LanguageMap
+    , publicationDetails : LanguageMap
     , biographicalDetails : LanguageMap
     , roleAndProfession : LanguageMap
     , location : LanguageMap
@@ -292,23 +292,30 @@ facetPanelTitles :
     }
 facetPanelTitles =
     { results =
-        [ LanguageValues English [ "Results included" ] ]
-    , peopleRelationships =
-        [ LanguageValues English [ "Source to person relationships" ] ]
-    , institutionRelationships =
+        [ LanguageValues English [ "Result types" ] ]
+    , sourceRelationships =
+        [ LanguageValues English [ "Source relationships" ] ]
+    , holdingInstitutions =
         [ LanguageValues English [ "Holding institutions" ] ]
     , digitizations =
         [ LanguageValues English [ "Digital facsimiles" ] ]
     , sourceContents =
         [ LanguageValues English [ "Source contents" ] ]
-    , publicationProduction =
-        [ LanguageValues English [ "Publication and production" ] ]
+    , publicationDetails =
+        [ LanguageValues English [ "Publication details" ] ]
     , biographicalDetails =
         [ LanguageValues English [ "Biographical details" ] ]
     , roleAndProfession =
         [ LanguageValues English [ "Role and profession" ] ]
     , location =
-        [ LanguageValues English [ "Location" ] ]
+        [ LanguageValues English [ "Location" ]
+        , LanguageValues German [ "Ort" ]
+        , LanguageValues Spanish [ "Lugar" ]
+        , LanguageValues French [ "Lieu" ]
+        , LanguageValues Italian [ "Luogo" ]
+        , LanguageValues Polish [ "Lokalizacja" ]
+        , LanguageValues Portugese [ "Local" ]
+        ]
     , clefKeyTime =
         [ LanguageValues English [ "Clef, key signature, time signature" ] ]
     , composerComposition =

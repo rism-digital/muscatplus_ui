@@ -85,7 +85,7 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText } =
                         Just
                             (Input.placeholder
                                 []
-                                (text (extractLabelFromLanguageMap language localTranslations.queryEnter))
+                                (text (extractLabelFromLanguageMap language localTranslations.wordsAnywhere))
                             )
                     , text = queryText
                     }
@@ -132,7 +132,7 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
                                     [ height fill ]
                                     (el
                                         [ centerY ]
-                                        (text (extractLabelFromLanguageMap language localTranslations.queryEnter))
+                                        (text (extractLabelFromLanguageMap language localTranslations.wordsAnywhere))
                                     )
                                 )
                         , text = queryText

@@ -34,11 +34,11 @@ sourceFacetPanels =
         }
     , peopleRelationshipsPanel =
         { alias = "source-people-relationships-panel"
-        , label = facetPanelTitles.peopleRelationships
+        , label = facetPanelTitles.sourceRelationships
         }
     , holdingInstitutionPanel =
         { alias = "holding-institutions-panel"
-        , label = facetPanelTitles.institutionRelationships
+        , label = facetPanelTitles.holdingInstitutions
         }
     , sourceContentsPanel =
         { alias = "source-contents-panel"
@@ -46,7 +46,7 @@ sourceFacetPanels =
         }
     , publicationProductionPanel =
         { alias = "source-production-panel"
-        , label = facetPanelTitles.publicationProduction
+        , label = facetPanelTitles.publicationDetails
         }
     }
 
