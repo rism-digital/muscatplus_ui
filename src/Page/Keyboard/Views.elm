@@ -85,12 +85,12 @@ view searchPreferences notationFacet language model =
                                 ]
                             , row
                                 [ width fill
-                                , height (px 18)
+                                , height (px 20)
                                 , paddingXY 0 10
                                 ]
                                 [ el
-                                    [ width (px 16)
-                                    , height (px 16)
+                                    [ width (px 18)
+                                    , height (px 18)
                                     , alignLeft
                                     , onClick (UserToggledAudioMuted (not isMuted))
                                     , pointer
