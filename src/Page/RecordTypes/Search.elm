@@ -222,7 +222,7 @@ type alias SearchBody =
     , pagination : SearchPagination
     , facets : Facets
     , modes : Maybe ModeFacet
-    , sorts : List SortData
+    , sorts : SortBlock
     , pageSizes : List String
     }
 
@@ -250,6 +250,12 @@ type alias SelectFacet =
     , items : List FacetItem
     , behaviours : FacetBehaviourOptions
     , defaultSort : FacetSorts
+    }
+
+
+type alias SortBlock =
+    { default : String
+    , options : List SortData
     }
 
 
@@ -546,7 +552,7 @@ searchBodyDecoder =
         |> required "view" searchPaginationDecoder
         |> optional "facets" facetsDecoder Dict.empty
         |> optional "modes" (Decode.maybe modeFacetDecoder) Nothing
-        |> required "sorts" (list searchSortsDecoder)
+        |> required "sorts" searchSortBlockDecoder
         |> required "pageSizes" (list string)
 
 
@@ -584,6 +590,13 @@ searchResultTypeDecoder restype =
 
         _ ->
             Decode.fail ("Could not determine result type for " ++ restype)
+
+
+searchSortBlockDecoder : Decoder SortBlock
+searchSortBlockDecoder =
+    Decode.succeed SortBlock
+        |> required "default" string
+        |> required "options" (list searchSortsDecoder)
 
 
 searchSortsDecoder : Decoder SortData

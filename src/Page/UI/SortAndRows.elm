@@ -32,11 +32,18 @@ viewRowSelectAndSortSelector cfg =
             nextQuery.rows
                 |> String.fromInt
 
+        -- Choose the alias that is marked as the default sort
+        -- option in the sorts block.
         chosenSort =
-            Maybe.withDefault "relevance" nextQuery.sort
+            Maybe.withDefault
+                (.sorts cfg.body
+                    |> .default
+                )
+                nextQuery.sort
 
         sorting =
             .sorts cfg.body
+                |> .options
 
         listOfLabelsForResultSort =
             List.map
