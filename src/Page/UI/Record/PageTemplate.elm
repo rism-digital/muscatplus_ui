@@ -21,6 +21,7 @@ import Element
         )
 import Element.Background as Background
 import Element.Border as Border
+import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -105,6 +106,7 @@ pageLinkTemplate language langMap body =
         ]
         [ el
             [ headingSM
+            , Font.semiBold
             ]
             (text (extractLabelFromLanguageMap language langMap ++ ": "))
         , link
