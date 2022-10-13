@@ -10,7 +10,7 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
-import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, pageUriTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate, pageUriTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 
 
@@ -56,7 +56,7 @@ viewInstitutionPreview language body =
                     , spacing lineSpacing
                     ]
                     [ pageHeaderTemplate language body
-                    , pageUriTemplate language body
+                    , pageFullRecordTemplate language body
                     ]
                 ]
             , row

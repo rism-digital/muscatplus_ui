@@ -17,6 +17,7 @@ localTranslations :
     , description : LanguageMap
     , errorLoadingProbeResults : LanguageMap
     , first : LanguageMap
+    , fullRecord : LanguageMap
     , globalCollection : LanguageMap
     , home : LanguageMap
     , incipits : LanguageMap
@@ -81,6 +82,8 @@ localTranslations =
         , LanguageValues Portugese [ "Primeiro" ]
         , LanguageValues Polish [ "Pierwszy" ]
         ]
+    , fullRecord =
+        [ LanguageValues English [ "Full Record" ] ]
     , globalCollection =
         [ LanguageValues English [ "Global collection" ]
         , LanguageValues German [ "Globale Sammlung" ]

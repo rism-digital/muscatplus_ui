@@ -1,4 +1,4 @@
-module Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate, pageUriTemplate)
+module Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageFullRecordTemplate, pageHeaderTemplate, pageUriTemplate)
 
 import Config as C
 import Element
@@ -97,8 +97,8 @@ pageHeaderTemplate language header =
         [ h1 language header.label ]
 
 
-pageUriTemplate : Language -> { a | id : String } -> Element msg
-pageUriTemplate language body =
+pageLinkTemplate : Language -> LanguageMap -> { a | id : String } -> Element msg
+pageLinkTemplate language langMap body =
     row
         [ width fill
         , alignLeft
@@ -106,13 +106,23 @@ pageUriTemplate language body =
         [ el
             [ headingSM
             ]
-            (text (extractLabelFromLanguageMap language localTranslations.recordURI ++ ": "))
+            (text (extractLabelFromLanguageMap language langMap ++ ": "))
         , link
             [ linkColour ]
             { label = el [ headingSM ] (text body.id)
             , url = body.id
             }
         ]
+
+
+pageFullRecordTemplate : Language -> { a | id : String } -> Element msg
+pageFullRecordTemplate language body =
+    pageLinkTemplate language localTranslations.fullRecord body
+
+
+pageUriTemplate : Language -> { a | id : String } -> Element msg
+pageUriTemplate language body =
+    pageLinkTemplate language localTranslations.recordURI body
 
 
 viewMuscatLinks : Session -> Element msg

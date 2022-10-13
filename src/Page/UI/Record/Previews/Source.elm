@@ -10,7 +10,7 @@ import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
-import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, pageUriTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate, pageUriTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
@@ -66,7 +66,7 @@ viewSourcePreview language itemsExpanded expandMsg body =
                     , spacing lineSpacing
                     ]
                     [ pageHeaderTemplate language body
-                    , pageUriTemplate language body
+                    , pageFullRecordTemplate language body
                     ]
                 ]
             , pageBodyView
