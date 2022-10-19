@@ -56,7 +56,7 @@ viewInstitutionSummary language iconColour summary =
                     { language = language
                     , icon = sourcesSvg iconColour
                     , includeLabelInValue = True
-                    , fieldName = "totalHoldings"
+                    , fieldName = "totalSources"
                     , displayStyles = []
                     , formatNumbers = True
                     }
