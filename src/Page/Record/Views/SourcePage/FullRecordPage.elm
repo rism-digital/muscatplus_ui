@@ -14,6 +14,7 @@ import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
+import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
@@ -47,6 +48,7 @@ viewDescriptionTab language body =
             , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
             , viewMaybe (viewExemplarsSection language) body.exemplars
+            , viewMaybe (viewDigitalObjectsSection language) body.digitalObjects
             ]
         ]
 

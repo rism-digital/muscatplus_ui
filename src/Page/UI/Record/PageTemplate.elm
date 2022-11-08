@@ -112,7 +112,10 @@ pageLinkTemplate language langMap body =
             (text (extractLabelFromLanguageMap language langMap ++ ": "))
         , link
             [ linkColour ]
-            { label = el [ headingSM ] (text body.id)
+            { label =
+                el
+                    [ headingSM ]
+                    (text body.id)
             , url = body.id
             }
         ]

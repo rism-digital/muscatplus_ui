@@ -1,0 +1,133 @@
+module Page.UI.Record.DigitalObjectsSection exposing (..)
+
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, column, el, fill, height, image, link, minimum, none, padding, paragraph, px, row, spacing, text, width)
+import Element.Border as Border
+import Element.Font as Font
+import Language exposing (Language, extractLabelFromLanguageMap)
+import List.Extra as LE
+import Page.RecordTypes.DigitalObjects exposing (DigitalObject, DigitalObjectBody(..), DigitalObjectsSectionBody)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
+import Page.UI.Helpers exposing (viewSVGRenderedIncipit)
+import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+
+
+viewDigitalObjectThumbnail :
+    Language
+    -> { a | medium : String, original : String }
+    -> DigitalObject
+    -> Element msg
+viewDigitalObjectThumbnail language imageUrls dObject =
+    let
+        description =
+            extractLabelFromLanguageMap language dObject.label
+    in
+    column
+        [ width (px 320)
+        , height (fill |> minimum 320)
+        , alignTop
+        , spacing lineSpacing
+        , Font.center
+        , Border.width 1
+        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+        , padding 5
+        ]
+        [ link
+            [ centerX ]
+            { url = imageUrls.original
+            , label =
+                image
+                    [ width fill
+                    , height fill
+                    ]
+                    { src = imageUrls.medium
+                    , description = description
+                    }
+            }
+        , paragraph
+            [ Font.center
+            , width (px 300)
+            , alignBottom
+            ]
+            [ text description ]
+        ]
+
+
+viewDigitalObjectRenderedNotation :
+    Language
+    -> { encoding : String, rendering : String }
+    -> DigitalObject
+    -> Element msg
+viewDigitalObjectRenderedNotation language encoding dObject =
+    let
+        description =
+            extractLabelFromLanguageMap language dObject.label
+
+        svgNode =
+            viewSVGRenderedIncipit encoding.rendering
+    in
+    column
+        [ width (px 320)
+        , height (fill |> minimum 320)
+        , alignTop
+        , spacing lineSpacing
+        , Font.center
+        , Border.width 1
+        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+        , padding 5
+        ]
+        [ svgNode
+        , paragraph
+            [ Font.center
+            , width (px 300)
+            , alignBottom
+            ]
+            [ text description ]
+        ]
+
+
+viewDigitalObjectRouter : Language -> DigitalObject -> Element msg
+viewDigitalObjectRouter language dObject =
+    case dObject.body of
+        ImageObject urls ->
+            viewDigitalObjectThumbnail language urls dObject
+
+        EncodingObject enc ->
+            viewDigitalObjectRenderedNotation language enc dObject
+
+
+viewDigitalObjectsSection : Language -> DigitalObjectsSectionBody -> Element msg
+viewDigitalObjectsSection language doSection =
+    let
+        groupedItems =
+            LE.greedyGroupsOf 3 doSection.items
+
+        rowsOfItems =
+            List.map
+                (\rowItems ->
+                    row
+                        [ width fill
+                        , alignTop
+                        , spacing 20
+                        ]
+                        (List.map
+                            (viewDigitalObjectRouter language)
+                            rowItems
+                        )
+                )
+                groupedItems
+
+        sectionBody =
+            [ row
+                [ width fill ]
+                [ column
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing 20
+                    ]
+                    rowsOfItems
+                ]
+            ]
+    in
+    sectionTemplate language doSection sectionBody

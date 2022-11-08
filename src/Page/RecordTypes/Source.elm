@@ -17,6 +17,7 @@ module Page.RecordTypes.Source exposing
 import Json.Decode as Decode exposing (Decoder, int, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
@@ -60,6 +61,7 @@ type alias FullSourceBody =
     , exemplars : Maybe ExemplarsSectionBody
     , sourceItems : Maybe SourceItemsSectionBody
     , externalResources : Maybe ExternalResourcesSectionBody
+    , digitalObjects : Maybe DigitalObjectsSectionBody
     , recordHistory : RecordHistory
     }
 
@@ -218,6 +220,7 @@ sourceBodyDecoder =
         |> optional "exemplars" (Decode.maybe exemplarsSectionBodyDecoder) Nothing
         |> optional "sourceItems" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
+        |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
 

@@ -79,7 +79,10 @@ viewPreviewLoading language =
                     , centerY
                     , centerX
                     ]
-                    (animatedLoader [ width (px 40), height (px 40) ] (spinnerSvg colourScheme.slateGrey))
+                    (animatedLoader
+                        [ width (px 40), height (px 40) ]
+                        (spinnerSvg colourScheme.slateGrey)
+                    )
                 ]
             ]
         ]
