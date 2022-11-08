@@ -1,4 +1,4 @@
-module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewRenderedIncipits, viewSVGRenderedIncipit)
+module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewRenderedIncipits)
 
 import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background
@@ -11,7 +11,7 @@ import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingFormat(..)
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
 import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -193,19 +193,3 @@ viewRenderedIncipits incipits =
             )
             incipits
         )
-
-
-{-|
-
-    Parses an Elm SVG tree (returns SVG data in Html) from the JSON incipit data.
-    Converts it to an elm-ui structure to match the other view functions
-
--}
-viewSVGRenderedIncipit : String -> Element msg
-viewSVGRenderedIncipit incipitData =
-    case SvgParser.parse incipitData of
-        Ok svgData ->
-            Element.html svgData
-
-        Err _ ->
-            text "Could not parse SVG"
