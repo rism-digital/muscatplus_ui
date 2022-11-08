@@ -287,7 +287,7 @@ viewSelectFacet config =
                     [ width fill
                     , spacing lineSpacing
                     ]
-                    (List.map (\fColumn -> viewSelectFacetItemColumn config fColumn) groupedFacetItems)
+                    (List.map (viewSelectFacetItemColumn config) groupedFacetItems)
                 , row
                     [ alignLeft
                     , spacing 12
@@ -397,4 +397,4 @@ viewSelectFacetItemColumn config facetRow =
         , alignTop
         , spacing 4
         ]
-        (List.map (\fitem -> viewSelectFacetItem config fitem) facetRow)
+        (List.map (viewSelectFacetItem config) facetRow)

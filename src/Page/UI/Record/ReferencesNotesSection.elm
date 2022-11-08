@@ -35,7 +35,7 @@ viewLiturgicalFestivalsSection language body =
                 [ renderLabel language body.label ]
             , column
                 valueFieldColumnAttributes
-                (List.map (\l -> viewLiturgicalFestival language l) body.items)
+                (List.map (viewLiturgicalFestival language) body.items)
             ]
         ]
 
@@ -81,7 +81,7 @@ viewPerformanceLocationsSection language body =
                 [ renderLabel language body.label ]
             , column
                 valueFieldColumnAttributes
-                (List.map (\l -> viewPerformanceLocation language l) body.items)
+                (List.map (viewPerformanceLocation language) body.items)
             ]
         ]
 

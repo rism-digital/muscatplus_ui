@@ -26,7 +26,7 @@ buildFrontPageUrl sidebarOption countryCode =
         -- Omits the parameter if the country code is Nothing by filtering it from a list.
         ncParameter =
             List.filterMap identity [ countryCode ]
-                |> List.map (\c -> Url.Builder.string "nc" c)
+                |> List.map (Url.Builder.string "nc")
     in
     serverUrl [ "/" ] (modeParameter :: ncParameter)
 

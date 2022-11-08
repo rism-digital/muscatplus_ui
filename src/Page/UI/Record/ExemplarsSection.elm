@@ -67,13 +67,13 @@ viewExemplarRelationships language body =
             , alignTop
             , spacing lineSpacing
             ]
-            (List.map (\l -> viewRelationshipBody language l) body.items)
+            (List.map (viewRelationshipBody language) body.items)
         ]
 
 
 viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
 viewExemplarsSection language exemplarSection =
-    List.map (\l -> viewExemplar language l) exemplarSection.items
+    List.map (viewExemplar language) exemplarSection.items
         |> sectionTemplate language exemplarSection
 
 
@@ -92,7 +92,7 @@ viewExternalResourcesSection language linkSection =
                 valueFieldColumnAttributes
                 [ textColumn
                     [ spacing lineSpacing ]
-                    (List.map (\l -> viewExternalResource language l) linkSection.items)
+                    (List.map (viewExternalResource language) linkSection.items)
                 ]
             ]
         ]

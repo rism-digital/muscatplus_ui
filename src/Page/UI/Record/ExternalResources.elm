@@ -93,7 +93,7 @@ viewExternalResourcesSection language extSection =
                     , height fill
                     , alignTop
                     ]
-                    (List.map (\l -> viewExternalResource language l) extSection.items)
+                    (List.map (viewExternalResource language) extSection.items)
                 ]
             ]
     in

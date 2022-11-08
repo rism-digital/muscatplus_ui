@@ -29,7 +29,7 @@ viewExternalResourcesSection language linkSection =
                 valueFieldColumnAttributes
                 [ textColumn
                     [ spacing lineSpacing ]
-                    (List.map (\l -> viewExternalResource language l) linkSection.items)
+                    (List.map (viewExternalResource language) linkSection.items)
                 ]
             ]
         ]
@@ -86,14 +86,11 @@ viewMaterialGroupRelationships language relSection =
             , alignTop
             , spacing lineSpacing
             ]
-            (List.map (\t -> viewRelationshipBody language t) relSection.items)
+            (List.map (viewRelationshipBody language) relSection.items)
         ]
 
 
 viewMaterialGroupsSection : Language -> MaterialGroupsSectionBody -> Element msg
 viewMaterialGroupsSection language mgSection =
-    let
-        sectionBody =
-            List.map (\l -> viewMaterialGroup language l) mgSection.items
-    in
-    sectionTemplate language mgSection sectionBody
+    List.map (viewMaterialGroup language) mgSection.items
+        |> sectionTemplate language mgSection

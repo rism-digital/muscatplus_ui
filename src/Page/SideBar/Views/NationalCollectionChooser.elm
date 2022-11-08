@@ -200,7 +200,7 @@ viewNationalCollectionChooser session =
                         [ width fill
                         , height fill
                         ]
-                        (List.map (\r -> viewNationalCollectionRow session.language r) groupedList)
+                        (List.map (viewNationalCollectionRow session.language) groupedList)
                     ]
                 ]
             ]
@@ -384,4 +384,4 @@ viewNationalCollectionRow language collectionRow =
     row
         [ width fill
         ]
-        (List.map (\r -> viewNationalCollectionColumn language r) collectionRow)
+        (List.map (viewNationalCollectionColumn language) collectionRow)

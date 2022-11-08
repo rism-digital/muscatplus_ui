@@ -61,7 +61,7 @@ viewSourceItemsSection language expanded expandMsg siSection =
 
         sectionBody =
             if expanded then
-                List.map (\sourceBody -> viewSourceItem language sourceBody) siSection.items
+                List.map (viewSourceItem language) siSection.items
 
             else
                 []

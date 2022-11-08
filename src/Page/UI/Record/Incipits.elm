@@ -83,7 +83,7 @@ viewIncipit suppressTitle language incipit =
 
 viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
 viewIncipitsSection language incipSection =
-    List.map (\incipit -> viewIncipit False language incipit) incipSection.items
+    List.map (viewIncipit False language) incipSection.items
         |> sectionTemplate language incipSection
 
 

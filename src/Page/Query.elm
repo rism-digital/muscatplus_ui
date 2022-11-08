@@ -351,7 +351,7 @@ modeParamParser =
 
 modeQueryStringToResultMode : List String -> ResultMode
 modeQueryStringToResultMode modeList =
-    List.map (\a -> parseStringToResultMode a) modeList
+    List.map parseStringToResultMode modeList
         |> List.head
         |> Maybe.withDefault SourcesMode
 

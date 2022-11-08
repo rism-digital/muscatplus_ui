@@ -65,7 +65,7 @@ viewSubjectsSection language subjectSection =
                 valueFieldColumnAttributes
                 [ textColumn
                     [ spacing lineSpacing ]
-                    (List.map (\l -> viewSubject language l) subjectSection.items)
+                    (List.map (viewSubject language) subjectSection.items)
                 ]
             ]
         ]
