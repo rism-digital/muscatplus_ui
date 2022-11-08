@@ -40,6 +40,7 @@ pageFooterTemplate session language footer =
     let
         currentUrl =
             Url.toString session.url
+                |> String.replace "#" "%23"
 
         feedbackLink =
             link
