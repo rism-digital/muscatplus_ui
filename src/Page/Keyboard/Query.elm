@@ -31,6 +31,7 @@ queryModeMap : List ( String, QueryMode )
 queryModeMap =
     [ ( "interval", IntervalQueryMode )
     , ( "exact-pitches", ExactPitchQueryMode )
+    , ( "contour", ContourQueryMode )
     ]
 
 

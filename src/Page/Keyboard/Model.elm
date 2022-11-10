@@ -127,6 +127,7 @@ type alias Octaves =
 type QueryMode
     = IntervalQueryMode
     | ExactPitchQueryMode
+    | ContourQueryMode
 
 
 type TimeSignature
