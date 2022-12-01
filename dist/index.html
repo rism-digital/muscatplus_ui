@@ -14,8 +14,26 @@
     <meta name="theme-color" content="#ffffff">
 
     <title>RISM Online</title>
-    <!--<link rel="preconnect" href="https://rsms.me">
-    <link href="https://rsms.me/inter/inter.css" rel="stylesheet"> -->
+    <meta name="description" content="RISM Online provides access to millions of musical records from a global collection of music libraries, archives, and cultural centres.">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "url": "https://rism.online/",
+            "name": "RISM Online",
+            "description": "RISM Online provides access to millions of musical records from a global collection of music libraries, archives, and cultural centres.",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://rism.online/search?&q={query}",
+                "query": "required"
+            },
+            "maintainer": {
+                "@type": "Organization",
+                "name": "RISM Digital",
+                "url": "https://rism.digital"
+            }
+        }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -324,11 +342,14 @@
                         /* */
                         const { description } = value;
 
-                        let descriptionTag = document.createElement("meta");
+                        let descriptionTag = document.querySelector('meta[name="description"]');
+                        if (descriptionTag === null)
+                        {
+                            descriptionTag = document.createElement("meta");
+                            document.head.appendChild(descriptionTag);
+                        }
                         descriptionTag.setAttribute("name", "description");
                         descriptionTag.setAttribute("content", description);
-                        document.head.appendChild(descriptionTag);
-
                         break;
 
                     case incomingMessages.GENERATE_PIANO_KEYBOARD_NOTE:
