@@ -464,25 +464,25 @@ updateDebouncerSuggestConfig =
     }
 
 
-updatePageMetadata : ServerData -> Cmd RecordMsg
+updatePageMetadata : ServerData -> Cmd msg
 updatePageMetadata incomingData =
     case incomingData of
         SourceData sourceBody ->
             let
                 title =
-                    extractLabelFromLanguageMap None sourceBody.label
+                    extractLabelFromLanguageMap English sourceBody.label
 
                 fullDescription =
                     case sourceBody.creator of
                         Just c ->
                             case c.relatedTo of
                                 Just n ->
-                                    extractLabelFromLanguageMap None n.label ++ ": " ++ title
+                                    extractLabelFromLanguageMap English n.label ++ ": " ++ title
 
                                 Nothing ->
                                     case c.name of
                                         Just nm ->
-                                            extractLabelFromLanguageMap None nm ++ ": " ++ title
+                                            extractLabelFromLanguageMap English nm ++ ": " ++ title
 
                                         Nothing ->
                                             title
@@ -495,12 +495,12 @@ updatePageMetadata incomingData =
                 |> sendOutgoingMessageOnPort
 
         PersonData personBody ->
-            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap None personBody.label }
+            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap English personBody.label }
                 |> encodeMessageForPortSend
                 |> sendOutgoingMessageOnPort
 
         InstitutionData instBody ->
-            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap None instBody.label }
+            PortSendHeaderMetaInfo { description = extractLabelFromLanguageMap English instBody.label }
                 |> encodeMessageForPortSend
                 |> sendOutgoingMessageOnPort
 
