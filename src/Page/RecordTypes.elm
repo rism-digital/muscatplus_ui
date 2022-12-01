@@ -1,5 +1,7 @@
 module Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType)
 
+import Dict
+
 
 type RecordType
     = Source
@@ -14,10 +16,9 @@ type RecordType
 
 recordTypeFromJsonType : String -> RecordType
 recordTypeFromJsonType jsonType =
-    List.filter (\( str, _ ) -> str == jsonType) recordTypeOptions
-        |> List.head
-        |> Maybe.withDefault ( "", Unknown )
-        |> Tuple.second
+    Dict.fromList recordTypeOptions
+        |> Dict.get jsonType
+        |> Maybe.withDefault Unknown
 
 
 recordTypeOptions : List ( String, RecordType )
