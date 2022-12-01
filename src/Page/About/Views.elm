@@ -6,7 +6,7 @@ import Element.Background as Background
 import Element.Font as Font
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
-import Page.UI.Attributes exposing (headingXL, lineSpacing, linkColour, sectionSpacing)
+import Page.UI.Attributes exposing (headingLG, headingXL, lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
@@ -83,8 +83,8 @@ view session model =
                         functions. Multiple entry points, with extensive Source, Person, and Institution search
                         interfaces, provide users with the ability to quickly narrow down relevant results using several
                         different approaches, including keyword searches, filters, and relationship information. """
-                        , text """An innovative new Incipit query interface provides fast and accurate notation searches
-                        , with coloured notes that highlight the parts of the incipit that matches a query. Users
+                        , text """An innovative new Incipit query interface provides fast and accurate notation searches,
+                        with coloured notes that highlight the parts of the incipit that matches a query. Users
                         can also narrow down incipits that match by specifying a clef, key signature, or time signature
                          as a filter, or combine a notation search with a keyword search for composer or piece names."""
                         ]
@@ -94,7 +94,7 @@ view session model =
                         to the bibliography of a single country. This automatically narrows down the search capabilities 
                         to just the sources, institutions, and musical incipits available in that country. (Since people 
                         can span multiple countries, they are excluded from the search functions when a National 
-                        Collection is active.""" ]
+                        Collection is active.)""" ]
                     , paragraph
                         [ width fill ]
                         [ text """URLs in RISM Online are guaranteed to be authoritative, stable, and cite-able. You
@@ -184,6 +184,69 @@ view session model =
                                 |> Toggle.setLabel "Enable Muscat Links"
                                 |> Toggle.render
                             )
+                        ]
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ el
+                    [ headingXL ]
+                    (text "Credits and Licenses")
+                ]
+            , row
+                [ width fill ]
+                [ el
+                    [ headingLG ]
+                    (text "Background Images")
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
+                [ textColumn
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ paragraph
+                        [ width fill ]
+                        [ el [ Font.semiBold ] (text "Sources: ")
+                        , text "Luzzaschi, Luzzasco. 1601. "
+                        , el [ Font.italic ] (text "Madrigali di Luzzasco Luzzaschi per cantare, et sonare a vno, e doi, e tre soprani")
+                        , text ". Rome: Simone Verovio. p. 5. "
+                        , link [ linkColour ]
+                            { url = "https://www.loc.gov/resource/ihas.200154752.0/?sp=15&st=image"
+                            , label = text "Library of Congress, Music Division, Washington, DC."
+                            }
+                        ]
+                    , paragraph
+                        [ width fill ]
+                        [ el [ Font.semiBold ] (text "People: ")
+                        , text "Coques, Gonzales. ca. 1653. "
+                        , el [ Font.italic ] (text "Jacques van Eyck and His Family (?) ")
+                        , text "Museum of Fine Arts, Budapest. "
+                        , link [ linkColour ]
+                            { url = "https://commons.wikimedia.org/wiki/File:Gonzales_Coques_-_Portrait_of_the_Duarte_family.jpg"
+                            , label = text "Wikimedia Commons."
+                            }
+                        ]
+                    , paragraph
+                        [ width fill ]
+                        [ el [ Font.semiBold ] (text "Institutions: ")
+                        , text """Iliff, David. 2015. The interior of Duke Humphrey's Library, the oldest
+                        reading room of the Bodleian Library in the University of Oxford. License: CC BY-SA 3.0. """
+                        , link [ linkColour ]
+                            { url = "https://en.wikipedia.org/wiki/File:Duke_Humfrey%27s_Library_Interior_5,_Bodleian_Library,_Oxford,_UK_-_Diliff.jpg"
+                            , label = text "Wikimedia Commons."
+                            }
+                        ]
+                    , paragraph
+                        [ width fill ]
+                        [ el [ Font.semiBold ] (text "Incipits: ")
+                        , text "Sarasin, Lukas. [1760–1802]. "
+                        , el [ Font.italic ] (text "Katalog der Lucas Sarasin'schen Musiksammlung. ")
+                        , text "Universitätsbibliothek Basel, HKun d III 9. Public Domain. "
+                        , link [ linkColour ]
+                            { url = "https://doi.org/10.7891/e-manuscripta-13836"
+                            , label = text "e-Manuscripta."
+                            }
                         ]
                     ]
                 ]
