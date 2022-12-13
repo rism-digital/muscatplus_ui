@@ -24,8 +24,11 @@
             "description": "RISM Online provides access to millions of musical records from a global collection of music libraries, archives, and cultural centres.",
             "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://rism.online/search?&q={query}",
-                "query": "required"
+                "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": "https://rism.online/search?&q={query}"
+                },
+                "query-input": "required name=query"
             },
             "maintainer": {
                 "@type": "Organization",
