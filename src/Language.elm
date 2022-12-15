@@ -114,12 +114,8 @@ extractTextFromLanguageMap lang langMap =
         , \() -> LE.find (\(LanguageValues l _) -> l == English) langMap
         ]
         |> Maybe.map
-            (\(LanguageValues l v) ->
-                if l == English && lang /= English then
-                    List.map (\t -> t ++ " ❋") v
-
-                else
-                    v
+            (\(LanguageValues _ v) ->
+                v
             )
         |> Maybe.withDefault [ "[No language value found]" ]
 
