@@ -6,6 +6,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingFormat(..), IncipitBody, IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
@@ -158,7 +159,7 @@ viewPAESearchLink language (EncodedIncipit label encodingType data) =
                 [ width (px 12)
                 , height (px 12)
                 , centerY
-                , el tooltipStyle (text "New search with this incipit")
+                , el tooltipStyle (text (extractLabelFromLanguageMap language localTranslations.newSearchWithIncipit))
                     |> tooltip above
                 ]
                 (searchSvg colourScheme.white)

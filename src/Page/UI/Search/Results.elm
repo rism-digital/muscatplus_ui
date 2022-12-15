@@ -10,6 +10,7 @@ import Element.Font as Font
 import Flip exposing (flip)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, formatNumberByLanguage)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h3)
@@ -191,7 +192,7 @@ summaryFieldTemplate summaryCfg fieldValue =
                     , Font.color (colourScheme.black |> convertColorToElementColor)
                     , centerY
                     ]
-                    (text "See all")
+                    (text (extractLabelFromLanguageMap summaryCfg.language localTranslations.seeAll))
                 )
                 (fValueLength > 3)
 

@@ -6,7 +6,7 @@ import Element exposing (Element, alignTop, centerX, column, fill, height, htmlA
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views exposing (createErrorMessage)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
@@ -159,6 +159,9 @@ viewSearchResultsSection cfg resultsLoading body =
 viewSearchControls : SearchControlsConfig a b msg -> Element msg
 viewSearchControls cfg =
     let
+        language =
+            .language cfg.session
+
         currentMode =
             toActiveSearch cfg.model
                 |> toNextQuery
@@ -175,7 +178,7 @@ viewSearchControls cfg =
                 , paddingXY 0 10
                 ]
                 [ searchKeywordInput
-                    { language = .language cfg.session
+                    { language = language
                     , submitMsg = cfg.userTriggeredSearchSubmitMsg
                     , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                     , queryText = qText
@@ -187,7 +190,7 @@ viewSearchControls cfg =
                 IncipitsMode ->
                     ( viewFacet
                         { alias = "notation"
-                        , language = .language cfg.session
+                        , language = language
                         , activeSearch = .activeSearch cfg.model
                         , selectColumns = cfg.checkboxColumns
                         , body = cfg.body
@@ -210,7 +213,7 @@ viewSearchControls cfg =
                     Set.empty
 
         facetConfig =
-            { language = .language cfg.session
+            { language = language
             , activeSearch = .activeSearch cfg.model
             , body = cfg.body
             , numberOfSelectColumns = cfg.checkboxColumns
@@ -264,8 +267,7 @@ viewSearchControls cfg =
                             [ width fill
                             , paddingEach { bottom = 0, left = 0, right = 0, top = 10 }
                             ]
-                            -- TODO: Translate
-                            [ dividerWithText "Additional filters"
+                            [ dividerWithText (extractLabelFromLanguageMap language localTranslations.additionalFilters)
                             ]
                         :: secondaryQueryField
                         :: facetLayout

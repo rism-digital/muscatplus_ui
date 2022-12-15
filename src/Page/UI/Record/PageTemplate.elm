@@ -143,13 +143,13 @@ viewMuscatLinks session =
                     [ text "Muscat: "
                     , link
                         [ linkColour ]
-                        { label = text "View"
+                        { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatView)
                         , url = muscatUrl
                         }
                     , text " | "
                     , link
                         [ linkColour ]
-                        { label = text "Edit"
+                        { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatEdit)
                         , url = muscatUrl ++ "/edit"
                         }
                     ]

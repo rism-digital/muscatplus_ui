@@ -412,7 +412,7 @@ view session =
                     , label =
                         link
                             []
-                            { label = text "About RISM Online"
+                            { label = text (extractLabelFromLanguageMap session.language localTranslations.about)
                             , url = Config.serverUrl ++ "/about"
                             }
                     , showLabel = showLabels

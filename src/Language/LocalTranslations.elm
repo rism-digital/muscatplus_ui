@@ -13,7 +13,8 @@ import Language exposing (Language(..), LanguageMap, LanguageValues(..))
 
 
 localTranslations :
-    { addTermsToQuery : LanguageMap
+    { about : LanguageMap
+    , addTermsToQuery : LanguageMap
     , additionalFilters : LanguageMap
     , applyFiltersToUpdateResults : LanguageMap
     , chooseCollection : LanguageMap
@@ -23,13 +24,21 @@ localTranslations :
     , first : LanguageMap
     , fullRecord : LanguageMap
     , globalCollection : LanguageMap
+    , hasDigitization : LanguageMap
+    , hasIIIFManifest : LanguageMap
+    , hasIncipits : LanguageMap
+    , heldBy : LanguageMap
     , home : LanguageMap
     , incipitSearchHelpHide : LanguageMap
     , incipitSearchHelpShow : LanguageMap
     , incipits : LanguageMap
+    , institution : LanguageMap
     , institutions : LanguageMap
     , keywordQuery : LanguageMap
     , last : LanguageMap
+    , muscatEdit : LanguageMap
+    , muscatView : LanguageMap
+    , newSearchWithIncipit : LanguageMap
     , next : LanguageMap
     , noResultsBody : LanguageMap
     , noResultsHeader : LanguageMap
@@ -41,7 +50,11 @@ localTranslations :
     , orChooseCollection : LanguageMap
     , paeInput : LanguageMap
     , page : LanguageMap
+    , partOf : LanguageMap
+    , partOfCollection : LanguageMap
     , people : LanguageMap
+    , person : LanguageMap
+    , place : LanguageMap
     , previous : LanguageMap
     , queryTerms : LanguageMap
     , recordPreview : LanguageMap
@@ -52,6 +65,7 @@ localTranslations :
     , rowsPerPage : LanguageMap
     , search : LanguageMap
     , searchNumberOfRecords : LanguageMap
+    , seeAll : LanguageMap
     , showAllRecords : LanguageMap
     , showNumItems : LanguageMap
     , showResults : LanguageMap
@@ -59,13 +73,17 @@ localTranslations :
     , sortBy : LanguageMap
     , sortByCount : LanguageMap
     , sourceContents : LanguageMap
+    , source : LanguageMap
     , sources : LanguageMap
     , unknownError : LanguageMap
     , updateResults : LanguageMap
+    , viewImages : LanguageMap
     , wordsAnywhere : LanguageMap
     }
 localTranslations =
-    { addTermsToQuery =
+    { about =
+        [ LanguageValues English [ "About RISM Online" ] ]
+    , addTermsToQuery =
         [ LanguageValues English [ "Add terms to your query" ] ]
     , additionalFilters =
         [ LanguageValues English [ "Additional filters" ] ]
@@ -127,6 +145,14 @@ localTranslations =
         , LanguageValues Portugese [ "Coleção global" ]
         , LanguageValues Polish [ "Pełny widok rekordu" ]
         ]
+    , hasDigitization =
+        [ LanguageValues English [ "Has digitization" ] ]
+    , hasIIIFManifest =
+        [ LanguageValues English [ "Has IIIF manifest" ] ]
+    , hasIncipits =
+        [ LanguageValues English [ "Has incipits" ] ]
+    , heldBy =
+        [ LanguageValues English [ "Held by" ] ]
     , home =
         [ LanguageValues English [ "Home" ]
         , LanguageValues German [ "Startseite" ]
@@ -149,6 +175,8 @@ localTranslations =
         , LanguageValues English [ "Incipits" ]
         , LanguageValues French [ "Incipits" ]
         ]
+    , institution =
+        [ LanguageValues English [ "Institution" ] ]
     , institutions =
         [ LanguageValues Spanish [ "Instituciones" ]
         , LanguageValues Portugese [ "Instituições" ]
@@ -176,6 +204,12 @@ localTranslations =
         , LanguageValues Portugese [ "Último" ]
         , LanguageValues Polish [ "Ostatni" ]
         ]
+    , muscatEdit =
+        [ LanguageValues English [ "Edit" ] ]
+    , muscatView =
+        [ LanguageValues English [ "View" ] ]
+    , newSearchWithIncipit =
+        [ LanguageValues English [ "New search with this incipit" ] ]
     , next =
         [ LanguageValues English [ "Next" ]
         , LanguageValues German [ "Nächste" ]
@@ -240,6 +274,10 @@ localTranslations =
         , LanguageValues Portugese [ "Página" ]
         , LanguageValues Polish [ "Strona" ]
         ]
+    , partOf =
+        [ LanguageValues English [ "Part of" ] ]
+    , partOfCollection =
+        [ LanguageValues English [ "This record is part of a collection" ] ]
     , people =
         [ LanguageValues Spanish [ "Personas" ]
         , LanguageValues Portugese [ "Pessoas" ]
@@ -249,6 +287,10 @@ localTranslations =
         , LanguageValues English [ "People" ]
         , LanguageValues French [ "Personnes" ]
         ]
+    , person =
+        [ LanguageValues English [ "Person" ] ]
+    , place =
+        [ LanguageValues English [ "Place" ] ]
     , previous =
         [ LanguageValues English [ "Previous" ]
         , LanguageValues German [ "Vorige" ]
@@ -304,6 +346,8 @@ localTranslations =
         ]
     , searchNumberOfRecords =
         [ LanguageValues English [ "Search {{ numberOfRecords }} {{ recordType }}" ] ]
+    , seeAll =
+        [ LanguageValues English [ "See all" ] ]
     , showAllRecords =
         [ LanguageValues English [ "Show all results" ]
         , LanguageValues German [ "Alle Ergebnisse anzeigen" ]
@@ -338,6 +382,8 @@ localTranslations =
         , LanguageValues Polish [ "Treść źródła" ]
         , LanguageValues Portugese [ "Conteúdo da fonte" ]
         ]
+    , source =
+        [ LanguageValues English [ "Source" ] ]
     , sources =
         [ LanguageValues English [ "Sources" ]
         , LanguageValues German [ "Quellen" ]
@@ -358,6 +404,8 @@ localTranslations =
         , LanguageValues Portugese [ "Aplicar filtros" ]
         , LanguageValues Polish [ "Zastosuj filtry" ]
         ]
+    , viewImages =
+        [ LanguageValues English [ "View images" ] ]
     , wordsAnywhere =
         [ LanguageValues English [ "Words anywhere" ]
         , LanguageValues German [ "Eingabe Ihrer Anfrage" ]

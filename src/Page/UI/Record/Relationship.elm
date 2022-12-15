@@ -2,6 +2,7 @@ module Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelations
 
 import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, shrink, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
@@ -20,28 +21,28 @@ viewRelatedToBody language body =
                     ( userCircleSvg colourScheme.slateGrey
                     , el
                         tooltipStyle
-                        (text "Person")
+                        (text (extractLabelFromLanguageMap language localTranslations.person))
                     )
 
                 InstitutionRelationship ->
                     ( institutionSvg colourScheme.slateGrey
                     , el
                         tooltipStyle
-                        (text "Institution")
+                        (text (extractLabelFromLanguageMap language localTranslations.person))
                     )
 
                 PlaceRelationship ->
                     ( mapMarkerSvg colourScheme.slateGrey
                     , el
                         tooltipStyle
-                        (text "Place")
+                        (text (extractLabelFromLanguageMap language localTranslations.place))
                     )
 
                 SourceRelationship ->
                     ( sourcesSvg colourScheme.slateGrey
                     , el
                         tooltipStyle
-                        (text "Source")
+                        (text (extractLabelFromLanguageMap language localTranslations.source))
                     )
 
                 UnknownRelationship ->

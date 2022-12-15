@@ -3,6 +3,7 @@ module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 import Element exposing (Element, above, alignTop, column, el, fill, height, link, px, row, spacing, text, textColumn, width, wrappedRow)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
@@ -110,7 +111,7 @@ viewHeldBy language body =
             , tooltip above
                 (el
                     tooltipStyle
-                    (text "Held by")
+                    (text (extractLabelFromLanguageMap language localTranslations.heldBy))
                 )
             ]
             (institutionSvg colourScheme.slateGrey)

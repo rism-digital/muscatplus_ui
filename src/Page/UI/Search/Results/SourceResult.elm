@@ -5,6 +5,7 @@ import Dict exposing (Dict)
 import Element exposing (Element, column, fill, link, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SourceResultBody, SourceResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
@@ -27,7 +28,7 @@ viewSourceFlags language flags =
                     , foreground = colourScheme.white
                     }
                     (digitizedImagesSvg colourScheme.white)
-                    "Has digitization"
+                    (extractLabelFromLanguageMap language localTranslations.hasDigitization)
                 )
                 flags.hasDigitization
 
@@ -38,7 +39,7 @@ viewSourceFlags language flags =
                     , foreground = colourScheme.black
                     }
                     iiifLogo
-                    "Has IIIF Manifest"
+                    (extractLabelFromLanguageMap language localTranslations.hasIIIFManifest)
                 )
                 flags.hasIIIFManifest
 
@@ -49,7 +50,7 @@ viewSourceFlags language flags =
                     , foreground = colourScheme.white
                     }
                     (musicNotationSvg colourScheme.white)
-                    "Has incipits"
+                    (extractLabelFromLanguageMap language localTranslations.hasIncipits)
                 )
                 flags.hasIncipits
     in
@@ -74,7 +75,7 @@ viewSourcePartOf language fontLinkColour partOfBody =
             ]
             [ row
                 [ width fill ]
-                [ text "Part of " -- TODO: Translate!
+                [ text (extractLabelFromLanguageMap language localTranslations.partOf ++ " ")
                 , link
                     [ Font.color (fontLinkColour |> convertColorToElementColor) ]
                     { label = text (extractLabelFromLanguageMap language (.label partOfBody.source))

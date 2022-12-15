@@ -2,7 +2,8 @@ module Page.UI.Record.ExternalResources exposing (viewExternalResource, viewExte
 
 import Config as C
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, px, row, spacing, text, width, wrappedRow)
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (renderParagraph)
@@ -29,7 +30,7 @@ viewExternalResource language body =
                                 [ linkColour
                                 , alignLeft
                                 ]
-                                { label = text "View Images"
+                                { label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
                                 , url = C.serverUrl ++ "/viewer.html#?manifest=" ++ body.url
                                 }
                             , text "|"
