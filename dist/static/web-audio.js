@@ -289,12 +289,6 @@ class VirtualAudioGraph {
             case 'MediaStreamAudioDestinationNode':
                 $node = this.$context.createMediaStreamDestination()
                 break
-            // TODO: How should I handle creating / grabbing the media stream?
-            // case 'MediaStreamAudioSourceNode':
-            //   $node = this.$context.createMediaStreamSource(
-
-            //   )
-            //   break
             case 'OscillatorNode':
                 $node = this.$context.createOscillator()
                 break
@@ -369,7 +363,6 @@ class VirtualAudioGraph {
                 $node[label].value = $node[label].default
                 break
             case 'ScheduledUpdate':
-                // TODO: work out how to cancel scheduled updates
                 break
         }
     }
