@@ -4,7 +4,8 @@ import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, col
 import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (emptyAttribute, headingLG, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
@@ -69,10 +70,11 @@ viewSourceItemsSection language expanded expandMsg siSection =
         -- TODO: Translate
         linkLabel =
             if expanded then
-                text "Collapse"
+                text (extractLabelFromLanguageMap language localTranslations.collapse)
 
             else
-                text ("Show " ++ String.fromInt (List.length siSection.items) ++ " items")
+                extractLabelFromLanguageMapWithVariables language [ LanguageMapReplacementVariable "numItems" (String.fromInt (List.length siSection.items)) ] localTranslations.showNumItems
+                    |> text
     in
     row
         [ width fill

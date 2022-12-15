@@ -64,8 +64,8 @@ searchResultsViewRouter session model =
             , userTriggeredSearchSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
             , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
-            , facetMsgConfig = facetRecordMsgConfig
             , panelToggleMsg = RecordMsg.UserClickedFacetPanelToggle
+            , facetMsgConfig = facetRecordMsgConfig
             }
     in
     case model.searchResults of
@@ -89,7 +89,8 @@ searchResultsViewRouter session model =
             viewSearchResultsLoadingTmpl session.language
 
         _ ->
-            viewSearchResultsErrorTmpl session.language "An unknown error occurred."
+            extractLabelFromLanguageMap session.language localTranslations.unknownError
+                |> viewSearchResultsErrorTmpl session.language
 
 
 viewRecordSourceSearchTabBar :
@@ -194,9 +195,8 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
         ]
 
 
-viewRecordTopBarDescriptionOnly : Element msg
-viewRecordTopBarDescriptionOnly =
-    -- TODO: Translate label
+viewRecordTopBarDescriptionOnly : Language -> Element msg
+viewRecordTopBarDescriptionOnly language =
     row
         [ centerX
         , width fill
@@ -211,5 +211,5 @@ viewRecordTopBarDescriptionOnly =
             , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
             , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
             ]
-            (text "Description")
+            (text (extractLabelFromLanguageMap language localTranslations.description))
         ]

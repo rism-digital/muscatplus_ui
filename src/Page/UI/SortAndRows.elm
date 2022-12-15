@@ -6,6 +6,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.UI.Attributes exposing (lineSpacing, minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
@@ -86,8 +87,7 @@ viewRowSelectAndSortSelector cfg =
                         ]
                         [ el
                             [ alignLeft ]
-                            -- TODO: Translate
-                            (text "Sort by")
+                            (text (extractLabelFromLanguageMap cfg.language localTranslations.sortBy))
                         , el
                             [ alignLeft ]
                             (dropdownSelect
@@ -113,8 +113,7 @@ viewRowSelectAndSortSelector cfg =
                         ]
                         [ el
                             [ alignRight ]
-                            -- TODO: Translate
-                            (text "Rows per page")
+                            (text (extractLabelFromLanguageMap cfg.language localTranslations.rowsPerPage))
                         , el
                             [ alignRight ]
                             (dropdownSelect

@@ -152,8 +152,7 @@ viewNationalCollectionChooser session =
                         [ alignTop
                         , headingLG
                         ]
-                        -- TODO: Translate
-                        (text "Choose a collection to search")
+                        (text (extractLabelFromLanguageMap session.language localTranslations.chooseCollection))
                     ]
                 , row
                     [ width fill ]
@@ -188,8 +187,7 @@ viewNationalCollectionChooser session =
                         [ width fill ]
                         [ row
                             [ width fill ]
-                            -- TODO: Translate
-                            [ paragraph [] [ text "Or choose a national collection" ] ]
+                            [ paragraph [] [ text (extractLabelFromLanguageMap session.language localTranslations.orChooseCollection) ] ]
                         ]
                     ]
                 , row
@@ -337,8 +335,6 @@ viewNationalCollectionChooserMenuOption session =
         [ column
             [ width fill
             , alignLeft
-
-            --, paddingXY 26 0
             ]
             [ row
                 [ width shrink

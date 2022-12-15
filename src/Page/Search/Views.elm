@@ -3,7 +3,8 @@ module Page.Search.Views exposing (view)
 import ActiveSearch exposing (toActiveSearch)
 import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, px, row, width)
 import Element.Border as Border
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views exposing (createErrorMessage)
 import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Search exposing (ModeFacet)
@@ -95,8 +96,8 @@ searchResultsViewRouter session model =
 
         _ ->
             -- For any other responses, show the error.
-            -- TODO: Translate
-            viewSearchResultsErrorTmpl session.language "An unknown error occurred."
+            extractLabelFromLanguageMap session.language localTranslations.unknownError
+                |> viewSearchResultsErrorTmpl session.language
 
 
 view : Session -> SearchPageModel SearchMsg -> Element SearchMsg

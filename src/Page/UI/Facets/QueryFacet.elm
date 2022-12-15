@@ -10,6 +10,7 @@ import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toFacetBehaviours, toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), QueryFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviourItems, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias, LabelValue)
@@ -72,10 +73,14 @@ viewQueryFacet config =
         ( behaviourIcon, behaviourText ) =
             case currentBehaviourOption of
                 FacetBehaviourIntersection ->
-                    ( intersectionSvg colourScheme.slateGrey, "Options are combined with an AND operator" )
+                    ( intersectionSvg colourScheme.slateGrey
+                    , extractLabelFromLanguageMap config.language localTranslations.optionsWithAnd
+                    )
 
                 FacetBehaviourUnion ->
-                    ( unionSvg colourScheme.slateGrey, "Options are combined with an OR operator" )
+                    ( unionSvg colourScheme.slateGrey
+                    , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
+                    )
 
         facetAlias =
             .alias config.queryFacet
@@ -176,7 +181,6 @@ viewQueryFacet config =
                                 in
                                 List.intersperse joinWordEl enteredOptions
                 in
-                -- TODO: Translate
                 wrappedRow
                     [ width fill
                     , spacing lineSpacing
@@ -186,7 +190,7 @@ viewQueryFacet config =
                             [ Font.medium
                             , padding 5
                             ]
-                            (text "Query terms:")
+                            (text (extractLabelFromLanguageMap config.language localTranslations.queryTerms ++ ":"))
                         ]
                         interspersedOptions
                     )
@@ -236,7 +240,11 @@ viewQueryFacet config =
                     ]
                     { label = Input.labelHidden (extractLabelFromLanguageMap config.language facetLabel)
                     , onChange = \input -> config.userEnteredTextMsg facetAlias input suggestionUrl
-                    , placeholder = Just (Input.placeholder [] (text "Add terms to your query"))
+                    , placeholder =
+                        extractLabelFromLanguageMap config.language localTranslations.addTermsToQuery
+                            |> text
+                            |> Input.placeholder []
+                            |> Just
                     , text = textValue
                     }
                 ]

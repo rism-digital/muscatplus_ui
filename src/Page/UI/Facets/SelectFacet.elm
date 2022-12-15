@@ -11,6 +11,7 @@ import Element.Input exposing (checkbox, labelRight)
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.Query exposing (toFacetBehaviours, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviours, toCurrentBehaviour)
@@ -151,29 +152,31 @@ viewSelectFacet config =
                     Nothing ->
                         .defaultSort config.selectFacet
 
-            -- TODO: Translate!
             chosenSortMessage =
                 case chosenSort of
                     FacetSortCount ->
-                        "Sort alphabetically (currently sorted by count)"
+                        extractLabelFromLanguageMap config.language localTranslations.sortAlphabetically
 
                     FacetSortAlpha ->
-                        "Sort by count (currently sorted alphabetically)"
+                        extractLabelFromLanguageMap config.language localTranslations.sortByCount
 
             ( behaviourIcon, behaviourText ) =
                 case currentBehaviourOption of
                     FacetBehaviourIntersection ->
-                        ( intersectionSvg colourScheme.slateGrey, "Options are combined with an AND operator" )
+                        ( intersectionSvg colourScheme.slateGrey
+                        , extractLabelFromLanguageMap config.language localTranslations.optionsWithAnd
+                        )
 
                     FacetBehaviourUnion ->
-                        ( unionSvg colourScheme.slateGrey, "Options are combined with an OR operator" )
+                        ( unionSvg colourScheme.slateGrey
+                        , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
+                        )
 
             facetAlias =
                 .alias config.selectFacet
 
-            -- TODO: Translate!
             facetLabel =
-                .label config.selectFacet
+                extractLabelFromLanguageMap config.language (.label config.selectFacet)
 
             numItemsPerGroup =
                 (toFloat (List.length facetItems) / toFloat config.numberOfColumns)
@@ -275,7 +278,7 @@ viewSelectFacet config =
                             ]
                             [ el
                                 [ headingMD, Region.heading 4, Font.medium ]
-                                (text (extractLabelFromLanguageMap config.language facetLabel))
+                                (text facetLabel)
                             , column
                                 [ alignLeft ]
                                 [ showLink

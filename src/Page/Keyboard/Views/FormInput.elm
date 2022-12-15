@@ -4,6 +4,7 @@ import Element exposing (Element, alignTop, column, el, fill, height, px, row, s
 import Element.Font as Font
 import Element.Input as Input
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (clefStrToClef, keySigStrToKeySignature, timeSigStrToTimeSignature)
@@ -33,19 +34,17 @@ viewPaeInput language notationFacet model =
                                 [ spacing lineSpacing ]
                                 [ column
                                     []
-                                    [ text "Plaine and Easie Input" ]
+                                    [ text (extractLabelFromLanguageMap language localTranslations.paeInput) ]
                                 , column
                                     []
                                     [ el
                                         [ bodySM
                                         , Font.regular
                                         ]
-                                        (text "Queries must be longer than three notes.")
+                                        (text (extractLabelFromLanguageMap language localTranslations.notationQueryLength))
                                     ]
                                 ]
                             )
-
-                    -- TODO: Translate
                     , onChange = UserInteractedWithPAEText
                     , placeholder = Nothing
                     , text = Maybe.withDefault "" (.noteData model.query)

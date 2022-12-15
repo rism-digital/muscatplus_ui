@@ -55,7 +55,7 @@ viewFullPlacePage session model body =
                     , paddingXY 5 20
                     ]
                     [ pageHeaderTemplate session.language body
-                    , viewRecordTopBarDescriptionOnly
+                    , viewRecordTopBarDescriptionOnly session.language
                     ]
                 ]
             ]

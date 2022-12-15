@@ -253,8 +253,8 @@ viewFacetPanels cfg =
                             [ width fill
                             , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }
                             ]
-                            -- TODO: Translate
-                            [ dividerWithText "Additional filters"
+                            [ extractLabelFromLanguageMap language localTranslations.additionalFilters
+                                |> dividerWithText
                             ]
                         :: secondaryQueryField
                         :: facetLayout

@@ -4,78 +4,78 @@ import Language exposing (Language(..), LanguageMap, LanguageValues(..))
 
 
 tooltips :
-    { compositeVolume : LanguageMap
-    , sourceCollections : LanguageMap
-    , sourceContents : LanguageMap
+    { associatedPlace : LanguageMap
+    , city : LanguageMap
+    , composerAuthor : LanguageMap
+    , compositeVolume : LanguageMap
+    , dateRange : LanguageMap
+    , formatExtent : LanguageMap
+    , gender : LanguageMap
     , hasDigitization : LanguageMap
     , hasIiif : LanguageMap
     , hasIncipits : LanguageMap
-    , institutionSigla : LanguageMap
-    , institutionNumHoldings : LanguageMap
-    , composerAuthor : LanguageMap
-    , otherPeople : LanguageMap
-    , subjects : LanguageMap
-    , materialType : LanguageMap
-    , dateRange : LanguageMap
-    , formatExtent : LanguageMap
-    , textLanguage : LanguageMap
-    , scoring : LanguageMap
-    , gender : LanguageMap
-    , associatedPlace : LanguageMap
-    , roles : LanguageMap
-    , profession : LanguageMap
-    , city : LanguageMap
     , incipit : LanguageMap
+    , institutionNumHoldings : LanguageMap
+    , institutionSigla : LanguageMap
+    , materialType : LanguageMap
+    , otherPeople : LanguageMap
+    , profession : LanguageMap
+    , roles : LanguageMap
+    , scoring : LanguageMap
+    , sourceCollections : LanguageMap
+    , sourceContents : LanguageMap
+    , subjects : LanguageMap
+    , textLanguage : LanguageMap
     }
 tooltips =
-    { compositeVolume =
+    { associatedPlace =
+        [ LanguageValues English englishAssociatedPlaceTooltip ]
+    , city =
+        [ LanguageValues English englishCityTooltip ]
+    , composerAuthor =
+        [ LanguageValues English englishComposerRelationshipsTooltip
+        , LanguageValues French frenchComposerRelationshipsTooltip
+        ]
+    , compositeVolume =
         [ LanguageValues English englishCompositeVolumeToggleTooltip ]
-    , sourceCollections =
-        [ LanguageValues English englishSourceCollectionsToggleTooltip ]
-    , sourceContents =
-        [ LanguageValues English englishSourceContentsToggleTooltip ]
+    , dateRange =
+        [ LanguageValues English englishDateRangeTooltip ]
+    , formatExtent =
+        [ LanguageValues English englishFormatExtentTooltip ]
+    , gender =
+        [ LanguageValues English englishGenderTooltip ]
     , hasDigitization =
         [ LanguageValues English englishHasDigitizationToggleTooltip ]
     , hasIiif =
         [ LanguageValues English englishHasIiifToggleTooltip ]
     , hasIncipits =
         [ LanguageValues English englishHasIncipitsToggleTooltip ]
-    , institutionSigla =
-        [ LanguageValues English englishInstitutionSiglaTooltip ]
-    , institutionNumHoldings =
-        [ LanguageValues English englishInstitutionNumHoldingsToggle ]
-    , composerAuthor =
-        [ LanguageValues English englishComposerRelationshipsTooltip
-        , LanguageValues French frenchComposerRelationshipsTooltip
-        ]
-    , otherPeople =
-        [ LanguageValues English englishOtherPeopleRelationshipsTooltip ]
-    , subjects =
-        [ LanguageValues English englishSubjectsTooltip ]
-    , materialType =
-        [ LanguageValues English englishMaterialTypeTooltip ]
-    , dateRange =
-        [ LanguageValues English englishDateRangeTooltip ]
-    , formatExtent =
-        [ LanguageValues English englishFormatExtentTooltip ]
-    , textLanguage =
-        [ LanguageValues English englishTextLanguageTooltip ]
-    , scoring =
-        [ LanguageValues English englishScoringTooltip ]
-    , gender =
-        [ LanguageValues English englishGenderTooltip ]
-    , associatedPlace =
-        [ LanguageValues English englishAssociatedPlaceTooltip ]
-    , roles =
-        [ LanguageValues English englishRolesTooltip ]
-    , profession =
-        [ LanguageValues English englishProfessionTooltip ]
-    , city =
-        [ LanguageValues English englishCityTooltip ]
     , incipit =
         [ LanguageValues English englishIncipitSearchTooltip
         , LanguageValues French frenchIncipitSearchTooltip
         ]
+    , institutionNumHoldings =
+        [ LanguageValues English englishInstitutionNumHoldingsToggle ]
+    , institutionSigla =
+        [ LanguageValues English englishInstitutionSiglaTooltip ]
+    , materialType =
+        [ LanguageValues English englishMaterialTypeTooltip ]
+    , otherPeople =
+        [ LanguageValues English englishOtherPeopleRelationshipsTooltip ]
+    , profession =
+        [ LanguageValues English englishProfessionTooltip ]
+    , roles =
+        [ LanguageValues English englishRolesTooltip ]
+    , scoring =
+        [ LanguageValues English englishScoringTooltip ]
+    , sourceCollections =
+        [ LanguageValues English englishSourceCollectionsToggleTooltip ]
+    , sourceContents =
+        [ LanguageValues English englishSourceContentsToggleTooltip ]
+    , subjects =
+        [ LanguageValues English englishSubjectsTooltip ]
+    , textLanguage =
+        [ LanguageValues English englishTextLanguageTooltip ]
     }
 
 

@@ -46,8 +46,7 @@ pageFooterTemplate session language footer =
             link
                 [ linkColour
                 ]
-                -- TODO Translate
-                { label = text "Report an issue"
+                { label = text (extractLabelFromLanguageMap language localTranslations.reportAnIssue)
                 , url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
                 }
 

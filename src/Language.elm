@@ -5,6 +5,7 @@ module Language exposing
     , LanguageValues(..)
     , dateFormatter
     , extractLabelFromLanguageMap
+    , extractLabelFromLanguageMapWithVariables
     , extractTextFromLanguageMap
     , formatNumberByLanguage
     , languageMapDecoder

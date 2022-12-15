@@ -17,10 +17,10 @@ viewPaeHelp language model =
     let
         paeHelpLabel =
             if model.paeHelpExpanded then
-                "Hide Incipit Search Help"
+                extractLabelFromLanguageMap language localTranslations.incipitSearchHelpHide
 
             else
-                "Show Incipit Search Help"
+                extractLabelFromLanguageMap language localTranslations.incipitSearchHelpShow
     in
     row
         [ width fill ]
