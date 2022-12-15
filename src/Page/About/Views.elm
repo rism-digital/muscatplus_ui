@@ -78,7 +78,7 @@ view session model =
                     , paragraph
                         [ width fill ]
                         [ text """RISM Online, a service from """
-                        , link [ linkColour ] { url = "https://rism.digital", label = text "RISM Digital" }
+                        , link [ linkColour ] { label = text "RISM Digital", url = "https://rism.digital" }
                         , text """ provides access to these musical sources through extensive search and browse
                         functions. Multiple entry points, with extensive Source, Person, and Institution search
                         interfaces, provide users with the ability to quickly narrow down relevant results using several
@@ -143,7 +143,7 @@ view session model =
                     , paragraph
                         [ width fill ]
                         [ text "General feedback can be sent to "
-                        , link [ linkColour ] { url = "mailto:feedback@rism.online", label = text "feedback@rism.online. " }
+                        , link [ linkColour ] { label = text "feedback@rism.online. ", url = "mailto:feedback@rism.online" }
                         ]
                     , paragraph
                         []
@@ -212,8 +212,8 @@ view session model =
                         , el [ Font.italic ] (text "Madrigali di Luzzasco Luzzaschi per cantare, et sonare a vno, e doi, e tre soprani")
                         , text ". Rome: Simone Verovio. p. 5. "
                         , link [ linkColour ]
-                            { url = "https://www.loc.gov/resource/ihas.200154752.0/?sp=15&st=image"
-                            , label = text "Library of Congress, Music Division, Washington, DC."
+                            { label = text "Library of Congress, Music Division, Washington, DC."
+                            , url = "https://www.loc.gov/resource/ihas.200154752.0/?sp=15&st=image"
                             }
                         ]
                     , paragraph
@@ -223,8 +223,8 @@ view session model =
                         , el [ Font.italic ] (text "Jacques van Eyck and His Family (?) ")
                         , text "Museum of Fine Arts, Budapest. "
                         , link [ linkColour ]
-                            { url = "https://commons.wikimedia.org/wiki/File:Gonzales_Coques_-_Portrait_of_the_Duarte_family.jpg"
-                            , label = text "Wikimedia Commons."
+                            { label = text "Wikimedia Commons."
+                            , url = "https://commons.wikimedia.org/wiki/File:Gonzales_Coques_-_Portrait_of_the_Duarte_family.jpg"
                             }
                         ]
                     , paragraph
@@ -233,8 +233,8 @@ view session model =
                         , text """Iliff, David. 2015. The interior of Duke Humphrey's Library, the oldest
                         reading room of the Bodleian Library in the University of Oxford. License: CC BY-SA 3.0. """
                         , link [ linkColour ]
-                            { url = "https://en.wikipedia.org/wiki/File:Duke_Humfrey%27s_Library_Interior_5,_Bodleian_Library,_Oxford,_UK_-_Diliff.jpg"
-                            , label = text "Wikimedia Commons."
+                            { label = text "Wikimedia Commons."
+                            , url = "https://en.wikipedia.org/wiki/File:Duke_Humfrey%27s_Library_Interior_5,_Bodleian_Library,_Oxford,_UK_-_Diliff.jpg"
                             }
                         ]
                     , paragraph
@@ -244,8 +244,8 @@ view session model =
                         , el [ Font.italic ] (text "Katalog der Lucas Sarasin'schen Musiksammlung. ")
                         , text "Universitätsbibliothek Basel, HKun d III 9. Public Domain. "
                         , link [ linkColour ]
-                            { url = "https://doi.org/10.7891/e-manuscripta-13836"
-                            , label = text "e-Manuscripta."
+                            { label = text "e-Manuscripta."
+                            , url = "https://doi.org/10.7891/e-manuscripta-13836"
                             }
                         ]
                     ]

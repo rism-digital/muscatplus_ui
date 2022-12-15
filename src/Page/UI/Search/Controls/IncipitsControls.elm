@@ -8,17 +8,17 @@ import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelCon
 
 
 incipitFacetPanels :
-    { musicalFeaturesPanel : PanelConfig
-    , composerPanel : PanelConfig
+    { composerPanel : PanelConfig
+    , musicalFeaturesPanel : PanelConfig
     }
 incipitFacetPanels =
-    { musicalFeaturesPanel =
-        { alias = "incipit-musical-features-panel"
-        , label = facetPanelTitles.clefKeyTime
-        }
-    , composerPanel =
+    { composerPanel =
         { alias = "incipit-composer-panel"
         , label = facetPanelTitles.composerComposition
+        }
+    , musicalFeaturesPanel =
+        { alias = "incipit-musical-features-panel"
+        , label = facetPanelTitles.clefKeyTime
         }
     }
 

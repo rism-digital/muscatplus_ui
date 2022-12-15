@@ -39,10 +39,10 @@ type alias FacetMsgConfig msg =
 
 createFacetConfig :
     { c
-        | language : Language
-        , activeSearch : ActiveSearch msg
-        , numberOfSelectColumns : Int
+        | activeSearch : ActiveSearch msg
         , body : { a | facets : Facets }
+        , language : Language
+        , numberOfSelectColumns : Int
     }
     -> String
     -> LanguageMap

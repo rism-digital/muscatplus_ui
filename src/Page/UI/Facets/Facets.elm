@@ -151,7 +151,7 @@ viewFacetsControlPanel alias header cfg body =
         in
         row
             [ width fill
-            , Border.widthEach { top = 0, bottom = 2, left = 0, right = 0 }
+            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
             , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
             , paddingXY 0 10
             ]

@@ -1,5 +1,6 @@
 module Page.UI.Record.DigitalObjectsSection exposing (..)
 
+import Config as C
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, column, el, fill, height, image, link, minimum, none, padding, paragraph, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
@@ -34,15 +35,15 @@ viewDigitalObjectThumbnail language imageUrls dObject =
         ]
         [ link
             [ centerX ]
-            { url = imageUrls.original
-            , label =
+            { label =
                 image
                     [ width fill
                     , height fill
                     ]
-                    { src = imageUrls.medium
-                    , description = description
+                    { description = description
+                    , src = imageUrls.medium
                     }
+            , url = imageUrls.original
             }
         , paragraph
             [ Font.center
@@ -65,6 +66,9 @@ viewDigitalObjectRenderedNotation language encoding dObject =
 
         svgNode =
             viewSVGRenderedIncipit encoding.rendering
+
+        previewUrl =
+            C.serverUrl ++ "/copperplate/copperplate.html?file=" ++ encoding.encoding
     in
     column
         [ width (px 320)
@@ -82,7 +86,12 @@ viewDigitalObjectRenderedNotation language encoding dObject =
             , width (px 300)
             , alignBottom
             ]
-            [ text description ]
+            [ link
+                []
+                { label = text description
+                , url = previewUrl
+                }
+            ]
         ]
 
 

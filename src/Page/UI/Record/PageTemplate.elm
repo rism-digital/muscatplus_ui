@@ -35,7 +35,7 @@ import Session exposing (Session)
 import Url
 
 
-pageFooterTemplate : Session -> Language -> { a | recordHistory : RecordHistory, id : String } -> Element msg
+pageFooterTemplate : Session -> Language -> { a | id : String, recordHistory : RecordHistory } -> Element msg
 pageFooterTemplate session language footer =
     let
         currentUrl =
@@ -89,7 +89,7 @@ pageFooterTemplate session language footer =
         ]
 
 
-pageHeaderTemplate : Language -> { a | sectionToc : String, label : LanguageMap } -> Element msg
+pageHeaderTemplate : Language -> { a | label : LanguageMap, sectionToc : String } -> Element msg
 pageHeaderTemplate language header =
     row
         [ width fill

@@ -32,8 +32,8 @@ colourScheme :
     , midGrey : Color
     , red : Color
     , slateGrey : Color
-    , translucentGrey : Color
     , translucentBlack : Color
+    , translucentGrey : Color
     , turquoise : Color
     , white : Color
     , yellow : Color
@@ -51,8 +51,8 @@ colourScheme =
     , midGrey = convertRGBAToColor colours.midGrey
     , red = convertRGBAToColor colours.red
     , slateGrey = convertRGBAToColor colours.slateGrey
-    , translucentGrey = convertRGBAToColor colours.translucentGrey
     , translucentBlack = convertRGBAToColor colours.translucentBlack
+    , translucentGrey = convertRGBAToColor colours.translucentGrey
     , turquoise = convertRGBAToColor colours.turquoise
     , white = convertRGBAToColor colours.white
     , yellow = convertRGBAToColor colours.yellow
@@ -72,8 +72,8 @@ colours :
     , midGrey : RGBA
     , red : RGBA
     , slateGrey : RGBA
-    , translucentGrey : RGBA
     , translucentBlack : RGBA
+    , translucentGrey : RGBA
     , turquoise : RGBA
     , white : RGBA
     , yellow : RGBA
@@ -151,17 +151,17 @@ colours =
         , blue = 153
         , alpha = 1
         }
-    , translucentGrey =
-        { red = 119
-        , green = 136
-        , blue = 153
-        , alpha = 0.5
-        }
     , translucentBlack =
         { red = 34
         , green = 38
         , blue = 42
         , alpha = 0.8
+        }
+    , translucentGrey =
+        { red = 119
+        , green = 136
+        , blue = 153
+        , alpha = 0.5
         }
     , turquoise =
         { red = 67

@@ -72,7 +72,6 @@ languageOptions =
 
 
 -- DATE FORMATTING
--- TODO: Change this to work with languages
 
 
 dateFormatter : Zone -> Posix -> String

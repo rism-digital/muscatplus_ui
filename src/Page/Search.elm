@@ -269,9 +269,9 @@ update session msg model =
                     setKeyboard newKeyboardModel model.activeSearch
             in
             ( { model
-                | probeResponse = Response response
+                | activeSearch = newActiveSearch
+                , probeResponse = Response response
                 , applyFilterPrompt = True
-                , activeSearch = newActiveSearch
               }
             , Cmd.none
             )

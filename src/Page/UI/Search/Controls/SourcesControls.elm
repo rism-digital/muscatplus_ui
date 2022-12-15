@@ -11,22 +11,22 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
 sourceFacetPanels :
-    { sourceResultsPanel : PanelConfig
-    , digitizationPanel : PanelConfig
+    { digitizationPanel : PanelConfig
+    , holdingInstitutionPanel : PanelConfig
     , incipitPanel : PanelConfig
     , peopleRelationshipsPanel : PanelConfig
-    , holdingInstitutionPanel : PanelConfig
-    , sourceContentsPanel : PanelConfig
     , publicationProductionPanel : PanelConfig
+    , sourceContentsPanel : PanelConfig
+    , sourceResultsPanel : PanelConfig
     }
 sourceFacetPanels =
-    { sourceResultsPanel =
-        { alias = "source-results-panel"
-        , label = facetPanelTitles.results -- TODO: Change to an actual label
-        }
-    , digitizationPanel =
+    { digitizationPanel =
         { alias = "source-digitizations-panel"
         , label = facetPanelTitles.digitizations -- TODO: Change to an actual label
+        }
+    , holdingInstitutionPanel =
+        { alias = "holding-institutions-panel"
+        , label = facetPanelTitles.holdingInstitutions
         }
     , incipitPanel =
         { alias = "source-incipits-panel"
@@ -36,17 +36,17 @@ sourceFacetPanels =
         { alias = "source-people-relationships-panel"
         , label = facetPanelTitles.sourceRelationships
         }
-    , holdingInstitutionPanel =
-        { alias = "holding-institutions-panel"
-        , label = facetPanelTitles.holdingInstitutions
+    , publicationProductionPanel =
+        { alias = "source-production-panel"
+        , label = facetPanelTitles.publicationDetails
         }
     , sourceContentsPanel =
         { alias = "source-contents-panel"
         , label = facetPanelTitles.sourceContents
         }
-    , publicationProductionPanel =
-        { alias = "source-production-panel"
-        , label = facetPanelTitles.publicationDetails
+    , sourceResultsPanel =
+        { alias = "source-results-panel"
+        , label = facetPanelTitles.results -- TODO: Change to an actual label
         }
     }
 
@@ -126,10 +126,10 @@ viewFacetsForSourcesMode cfg =
                     (.label sourceFacetPanels.sourceResultsPanel)
                     cfg
                     [ row
-                        [ paddingEach { top = 0, bottom = 10, left = 0, right = 0 }
+                        [ paddingEach { bottom = 10, left = 0, right = 0, top = 0 }
                         ]
                         [ column
-                            [ Border.widthEach { top = 0, bottom = 0, left = 2, right = 0 }
+                            [ Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
                             , Border.color (colourScheme.midGrey |> convertColorToElementColor)
                             ]
                             [ row [] [ sourceContentsToggle ]

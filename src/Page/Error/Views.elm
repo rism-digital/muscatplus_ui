@@ -140,7 +140,7 @@ view session model =
                 [ paragraph
                     [ width fill ]
                     [ text "Please return to the "
-                    , link [ linkColour ] { url = C.serverUrl, label = text "home page" }
+                    , link [ linkColour ] { label = text "home page", url = C.serverUrl }
                     , text " and try again"
                     ]
                 ]

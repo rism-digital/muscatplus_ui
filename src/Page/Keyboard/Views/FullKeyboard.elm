@@ -31,14 +31,14 @@ upKeyMsg muted note octave =
 whiteKey :
     Bool
     ->
-        { plainNote : KeyNoteName
+        { keyLabel : Maybe (Svg.Svg KeyboardMsg)
         , naturalNote : KeyNoteName
         , octave : Int
+        , plainNote : KeyNoteName
         , showSymbols : Bool
-        , keyLabel : Maybe (Svg.Svg KeyboardMsg)
         }
     -> List (Svg.Svg KeyboardMsg)
-whiteKey muted { plainNote, naturalNote, octave, showSymbols, keyLabel } =
+whiteKey muted { keyLabel, naturalNote, octave, plainNote, showSymbols } =
     let
         naturalLabel =
             keyNoteNameToHumanNoteString naturalNote ++ String.fromInt octave
@@ -125,13 +125,13 @@ whiteKey muted { plainNote, naturalNote, octave, showSymbols, keyLabel } =
 blackKey :
     Bool
     ->
-        { sharpNote : KeyNoteName
-        , flatNote : KeyNoteName
+        { flatNote : KeyNoteName
         , octave : Int
+        , sharpNote : KeyNoteName
         , showSymbols : Bool
         }
     -> List (Svg.Svg KeyboardMsg)
-blackKey muted { sharpNote, flatNote, octave, showSymbols } =
+blackKey muted { flatNote, octave, sharpNote, showSymbols } =
     let
         sharpLabel =
             keyNoteNameToHumanNoteString sharpNote ++ String.fromInt octave
@@ -260,77 +260,73 @@ fullKeyboardImpl muted attrs =
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 1645.85498, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KB
+                    { keyLabel = Nothing
                     , naturalNote = KBn
                     , octave = 5
+                    , plainNote = KB
                     , showSymbols = True
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 1555.85498, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KA
+                    { keyLabel = Nothing
                     , naturalNote = KAn
                     , octave = 5
+                    , plainNote = KA
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.943466, 0, 0, 0.803335, 1465.756958, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KG
+                    { keyLabel = Nothing
                     , naturalNote = KGn
                     , octave = 5
+                    , plainNote = KG
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 1375.85498, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KF
+                    { keyLabel = Nothing
                     , naturalNote = KFn
                     , octave = 5
+                    , plainNote = KF
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 1285.85498, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KE
+                    { keyLabel = Nothing
                     , naturalNote = KEn
                     , octave = 5
+                    , plainNote = KE
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 1195.85498, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KD
+                    { keyLabel = Nothing
                     , naturalNote = KDn
                     , octave = 5
+                    , plainNote = KD
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 1105.85498, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KC
-                    , naturalNote = KCn
-                    , octave = 5
-                    , showSymbols = False
-                    , keyLabel =
+                    { keyLabel =
                         Just
                             (Svg.node "path"
                                 [ attribute "d" "M -470.212 287.097 L -473.931 287.097 Q -474.09 286.182 -474.517 285.471 Q -474.945 284.76 -475.581 284.263 Q -476.218 283.766 -477.028 283.513 Q -477.839 283.259 -478.773 283.259 Q -480.434 283.259 -481.716 284.089 Q -482.999 284.92 -483.725 286.515 Q -484.451 288.111 -484.451 290.408 Q -484.451 292.745 -483.72 294.341 Q -482.989 295.937 -481.711 296.747 Q -480.434 297.557 -478.783 297.557 Q -477.868 297.557 -477.068 297.314 Q -476.267 297.07 -475.626 296.593 Q -474.985 296.116 -474.542 295.42 Q -474.1 294.723 -473.931 293.829 L -470.212 293.848 Q -470.421 295.3 -471.112 296.573 Q -471.803 297.846 -472.917 298.815 Q -474.03 299.785 -475.522 300.326 Q -477.013 300.868 -478.833 300.868 Q -481.517 300.868 -483.625 299.625 Q -485.733 298.383 -486.946 296.036 Q -488.16 293.689 -488.16 290.408 Q -488.16 287.117 -486.937 284.775 Q -485.714 282.434 -483.606 281.191 Q -481.498 279.948 -478.833 279.948 Q -477.133 279.948 -475.671 280.425 Q -474.209 280.902 -473.066 281.822 Q -471.922 282.742 -471.182 284.069 Q -470.441 285.397 -470.212 287.097 Z M -459.957 300.868 Q -461.945 300.868 -463.516 300.118 Q -465.088 299.367 -466.007 298.054 Q -466.927 296.742 -466.987 295.052 L -463.407 295.052 Q -463.308 296.304 -462.323 297.095 Q -461.339 297.885 -459.957 297.885 Q -458.873 297.885 -458.028 297.388 Q -457.183 296.891 -456.695 296.006 Q -456.208 295.121 -456.218 293.988 Q -456.208 292.834 -456.705 291.939 Q -457.203 291.045 -458.068 290.532 Q -458.933 290.02 -460.056 290.02 Q -460.971 290.01 -461.856 290.358 Q -462.741 290.706 -463.258 291.273 L -466.589 290.726 L -465.525 280.226 L -453.713 280.226 L -453.713 283.309 L -462.472 283.309 L -463.059 288.708 L -462.94 288.708 Q -462.373 288.042 -461.339 287.599 Q -460.305 287.157 -459.072 287.157 Q -457.222 287.157 -455.771 288.027 Q -454.319 288.897 -453.484 290.418 Q -452.649 291.939 -452.649 293.898 Q -452.649 295.917 -453.578 297.493 Q -454.508 299.069 -456.154 299.969 Q -457.799 300.868 -459.957 300.868 Z"
@@ -341,83 +337,83 @@ fullKeyboardImpl muted attrs =
                                 ]
                                 []
                             )
+                    , naturalNote = KCn
+                    , octave = 5
+                    , plainNote = KC
+                    , showSymbols = False
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.943466, 0, 0, 0.803335, 1015.756958, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KB
+                    { keyLabel = Nothing
                     , naturalNote = KBn
                     , octave = 4
+                    , plainNote = KB
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 925.854919, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KA
+                    { keyLabel = Nothing
                     , naturalNote = KAn
                     , octave = 4
+                    , plainNote = KA
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 835.854858, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KG
+                    { keyLabel = Nothing
                     , naturalNote = KGn
                     , octave = 4
+                    , plainNote = KG
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 745.854919, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KF
+                    { keyLabel = Nothing
                     , naturalNote = KFn
                     , octave = 4
+                    , plainNote = KF
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.943466, 0, 0, 0.803335, 655.756958, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KE
+                    { keyLabel = Nothing
                     , naturalNote = KEn
                     , octave = 4
+                    , plainNote = KE
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 565.854919, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KD
+                    { keyLabel = Nothing
                     , naturalNote = KDn
                     , octave = 4
+                    , plainNote = KD
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.943466, 0, 0, 0.803335, 475.756927, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KC
-                    , naturalNote = KCn
-                    , octave = 4
-                    , showSymbols = False
-                    , keyLabel =
+                    { keyLabel =
                         Just
                             (Svg.node "path"
                                 [ attribute "d" "M 196.021 356.517 L 192.096 356.517 C 191.984 355.76 191.777 355.088 191.477 354.5 C 191.175 353.913 190.801 353.413 190.354 353.002 C 189.905 352.592 189.397 352.282 188.827 352.072 C 188.255 351.863 187.641 351.758 186.985 351.758 C 185.815 351.758 184.78 352.101 183.878 352.787 C 182.975 353.474 182.268 354.476 181.757 355.795 C 181.247 357.114 180.991 358.723 180.991 360.622 C 180.991 362.554 181.248 364.18 181.763 365.499 C 182.277 366.819 182.984 367.813 183.883 368.483 C 184.782 369.152 185.812 369.487 186.974 369.487 C 187.618 369.487 188.221 369.387 188.784 369.186 C 189.348 368.984 189.855 368.686 190.306 368.292 C 190.757 367.897 191.138 367.413 191.451 366.837 C 191.761 366.262 191.976 365.604 192.096 364.864 L 196.021 364.889 C 195.873 366.089 195.557 367.215 195.071 368.267 C 194.585 369.319 193.949 370.246 193.166 371.047 C 192.383 371.849 191.465 372.474 190.416 372.922 C 189.367 373.369 188.202 373.593 186.921 373.593 C 185.032 373.593 183.346 373.079 181.863 372.053 C 180.379 371.025 179.21 369.541 178.358 367.601 C 177.503 365.661 177.076 363.335 177.076 360.622 C 177.076 357.902 177.506 355.573 178.367 353.637 C 179.227 351.702 180.399 350.221 181.883 349.193 C 183.366 348.166 185.046 347.652 186.921 347.652 C 188.117 347.652 189.23 347.849 190.259 348.243 C 191.287 348.638 192.204 349.215 193.009 349.976 C 193.813 350.736 194.476 351.665 194.997 352.762 C 195.519 353.86 195.86 355.111 196.021 356.517 Z M 198.978 368.563 L 198.978 364.925 L 208.099 347.997 L 210.681 347.997 L 210.681 353.175 L 209.107 353.175 L 202.967 364.605 L 202.967 364.802 L 215.698 364.802 L 215.698 368.563 L 198.978 368.563 Z M 209.233 373.248 L 209.233 367.453 L 209.275 365.825 L 209.275 347.997 L 212.948 347.997 L 212.948 373.248 L 209.233 373.248 Z"
@@ -427,72 +423,76 @@ fullKeyboardImpl muted attrs =
                                 ]
                                 []
                             )
+                    , naturalNote = KCn
+                    , octave = 4
+                    , plainNote = KC
+                    , showSymbols = False
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 385.854919, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KB
+                    { keyLabel = Nothing
                     , naturalNote = KBn
                     , octave = 3
+                    , plainNote = KB
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.943466, 0, 0, 0.803335, 295.756927, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KA
+                    { keyLabel = Nothing
                     , naturalNote = KAn
                     , octave = 3
+                    , plainNote = KA
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 205.854904, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KG
+                    { keyLabel = Nothing
                     , naturalNote = KGn
                     , octave = 3
+                    , plainNote = KG
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.942892, 0, 0, 0.803335, 115.854912, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KF
+                    { keyLabel = Nothing
                     , naturalNote = KFn
                     , octave = 3
+                    , plainNote = KF
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.943466, 0, 0, 0.803335, 25.756935, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KE
+                    { keyLabel = Nothing
                     , naturalNote = KEn
                     , octave = 3
+                    , plainNote = KE
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.943466, 0, 0, 0.803335, -64.243065, 5.826072)"
                 ]
                 (whiteKeyFn
-                    { plainNote = KD
+                    { keyLabel = Nothing
                     , naturalNote = KDn
                     , octave = 3
+                    , plainNote = KD
                     , showSymbols = False
-                    , keyLabel = Nothing
                     }
                 )
 
@@ -560,9 +560,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KCs
-                    , flatNote = KDf
+                    { flatNote = KDf
                     , octave = 3
+                    , sharpNote = KCs
                     , showSymbols = True
                     }
                 )
@@ -571,9 +571,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KDs
-                    , flatNote = KEf
+                    { flatNote = KEf
                     , octave = 3
+                    , sharpNote = KDs
                     , showSymbols = False
                     }
                 )
@@ -582,9 +582,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KFs
-                    , flatNote = KGf
+                    { flatNote = KGf
                     , octave = 3
+                    , sharpNote = KFs
                     , showSymbols = False
                     }
                 )
@@ -593,9 +593,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KGs
-                    , flatNote = KAf
+                    { flatNote = KAf
                     , octave = 3
+                    , sharpNote = KGs
                     , showSymbols = False
                     }
                 )
@@ -604,9 +604,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KAs
-                    , flatNote = KBf
+                    { flatNote = KBf
                     , octave = 3
+                    , sharpNote = KAs
                     , showSymbols = False
                     }
                 )
@@ -615,9 +615,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KCs
-                    , flatNote = KDf
+                    { flatNote = KDf
                     , octave = 4
+                    , sharpNote = KCs
                     , showSymbols = False
                     }
                 )
@@ -626,9 +626,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KDs
-                    , flatNote = KEf
+                    { flatNote = KEf
                     , octave = 4
+                    , sharpNote = KDs
                     , showSymbols = False
                     }
                 )
@@ -637,9 +637,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KFs
-                    , flatNote = KGf
+                    { flatNote = KGf
                     , octave = 4
+                    , sharpNote = KFs
                     , showSymbols = False
                     }
                 )
@@ -648,18 +648,18 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KGs
-                    , flatNote = KAf
+                    { flatNote = KAf
                     , octave = 4
+                    , sharpNote = KGs
                     , showSymbols = False
                     }
                 )
             , Svg.node "g"
                 [ attribute "transform" "matrix(0.987622, 0, 0, 0.841424, 813.678467, -28.770775)" ]
                 (blackKeyFn
-                    { sharpNote = KAs
-                    , flatNote = KBf
+                    { flatNote = KBf
                     , octave = 4
+                    , sharpNote = KAs
                     , showSymbols = False
                     }
                 )
@@ -668,9 +668,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KCs
-                    , flatNote = KDf
+                    { flatNote = KDf
                     , octave = 5
+                    , sharpNote = KCs
                     , showSymbols = False
                     }
                 )
@@ -679,9 +679,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KDs
-                    , flatNote = KEf
+                    { flatNote = KEf
                     , octave = 5
+                    , sharpNote = KDs
                     , showSymbols = False
                     }
                 )
@@ -690,9 +690,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KFs
-                    , flatNote = KGf
+                    { flatNote = KGf
                     , octave = 5
+                    , sharpNote = KFs
                     , showSymbols = False
                     }
                 )
@@ -701,9 +701,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KGs
-                    , flatNote = KAf
+                    { flatNote = KAf
                     , octave = 5
+                    , sharpNote = KGs
                     , showSymbols = False
                     }
                 )
@@ -712,9 +712,9 @@ fullKeyboardImpl muted attrs =
                 , class "black-key-parent"
                 ]
                 (blackKeyFn
-                    { sharpNote = KAs
-                    , flatNote = KBf
+                    { flatNote = KBf
                     , octave = 5
+                    , sharpNote = KAs
                     , showSymbols = True
                     }
                 )

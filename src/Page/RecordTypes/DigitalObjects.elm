@@ -51,9 +51,9 @@ digitalObjectImageUrlsDecoder : Decoder DigitalObjectBody
 digitalObjectImageUrlsDecoder =
     Decode.map3
         (\thumb med orig ->
-            { thumb = thumb
-            , medium = med
+            { medium = med
             , original = orig
+            , thumb = thumb
             }
         )
         (Decode.at [ "thumb", "url" ] string)

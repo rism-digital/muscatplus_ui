@@ -251,7 +251,7 @@ viewFacetPanels cfg =
                         :: mainSearchField
                         :: row
                             [ width fill
-                            , paddingEach { top = 10, bottom = 0, left = 0, right = 0 }
+                            , paddingEach { bottom = 0, left = 0, right = 0, top = 10 }
                             ]
                             [ extractLabelFromLanguageMap language localTranslations.additionalFilters
                                 |> dividerWithText

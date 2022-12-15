@@ -199,14 +199,14 @@ viewQueryFacet config =
         [ width fill
         , alignTop
         , alignLeft
-        , paddingEach { top = 0, bottom = 14, left = 0, right = 0 }
+        , paddingEach { bottom = 14, left = 0, right = 0, top = 0 }
         ]
         [ column
             [ width fill
             , alignTop
             , spacing lineSpacing
-            , paddingEach { top = 0, bottom = 0, left = 14, right = 0 }
-            , Border.widthEach { top = 0, bottom = 0, left = 2, right = 0 }
+            , paddingEach { bottom = 0, left = 14, right = 0, top = 0 }
+            , Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
             , Border.color (colourScheme.midGrey |> convertColorToElementColor)
             ]
             [ row

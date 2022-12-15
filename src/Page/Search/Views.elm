@@ -72,8 +72,8 @@ searchResultsViewRouter session model =
             , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
             , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
-            , facetMsgConfig = facetSearchMsgConfig
             , panelToggleMsg = SearchMsg.UserClickedFacetPanelToggle
+            , facetMsgConfig = facetSearchMsgConfig
             }
     in
     case model.response of

@@ -4,7 +4,8 @@ import Element exposing (Element, column, el, fill, link, padding, paragraph, po
 import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Language exposing (Language(..))
+import Language exposing (Language(..), extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour)
@@ -71,8 +72,8 @@ englishPaeHelpText =
         [ text "Search queries can be entered using the "
         , link
             [ linkColour ]
-            { url = "https://www.iaml.info/plaine-easie-code"
-            , label = text "Plaine and Easie Code. "
+            { label = text "Plaine and Easie Code. "
+            , url = "https://www.iaml.info/plaine-easie-code"
             }
         , text """The most basic query
         uses upper-case letters, A-G, to represent pitches; for example, """

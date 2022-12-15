@@ -192,8 +192,8 @@ update session msg model =
                     setKeyboard newKeyboardModel model.activeSearch
             in
             ( { model
-                | probeResponse = Response response
-                , activeSearch = newActiveSearch
+                | activeSearch = newActiveSearch
+                , probeResponse = Response response
               }
             , Cmd.none
             )
