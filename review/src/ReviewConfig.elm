@@ -27,6 +27,7 @@ import NoRedundantCons
 import NoSimpleLetBody
 import NoUnsortedCases
 import NoUnsortedLetDeclarations
+import NoUnsortedRecords
 import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
@@ -72,6 +73,7 @@ config =
         |> NoInconsistentAliases.noMissingAliases
         |> NoInconsistentAliases.rule
     , NoModuleOnExposedNames.rule
+    , NoUnsortedRecords.rule NoUnsortedRecords.defaults
     , NoUnsortedLetDeclarations.rule
         (NoUnsortedLetDeclarations.sortLetDeclarations
             |> NoUnsortedLetDeclarations.usedInExpressionLast
