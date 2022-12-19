@@ -80,7 +80,18 @@ viewDigitalObjectRenderedNotation language encoding dObject =
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , padding 5
         ]
-        [ svgNode
+        [ link
+            [ width fill
+            , height fill
+            ]
+            { label =
+                el
+                    [ width fill
+                    , height fill
+                    ]
+                    svgNode
+            , url = previewUrl
+            }
         , paragraph
             [ Font.center
             , width (px 300)
