@@ -437,7 +437,7 @@ update msg model =
             case urlRequest of
                 Browser.Internal url ->
                     -- if the app is loading the viewer, treat it as an external link.
-                    if url.path == "/viewer.html" then
+                    if url.path == "/viewer.html" || url.path == "/copperplate.html" then
                         ( model, Nav.load (Url.toString url) )
 
                     else
