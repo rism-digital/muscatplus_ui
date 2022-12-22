@@ -1,21 +1,21 @@
-## Muscat Plus User Interface
+## RISM Online User Interface
 
-The primary UI for the MuscatPlus interface. 
+The primary UI for RISM Online. (The development name for this project was "Muscat Plus", and so the name persists.) It
+is primarily written in [Elm](https://elm-lang.org).
 
 ### Building and running locally (built-in server)
 
-The only JavaScript dependency is "elm-live", a live-reloading server for Elm development. Dependency management
-happens with `yarn`, so:
+Dependency management happens with `yarn`, so:
 
     $ yarn install
 
 will install all of the necessary packages, then:
 
-    $ yarn run develop
+    $ yarn run develop:build
 
 This will start up a local development server and watch for changes.
 
-The elm dependencies are installed automatically when the application is first compiled. You should 
+The Elm dependencies are installed automatically when the application is first compiled. You should 
 probably check the `src/Config.elm` file to verify the remote API server URL.
 
 ### Building and running locally (local web server)
@@ -35,9 +35,6 @@ On a Mac, you will need to refresh your DNS cache:
 
 You can install nginx on a Mac with [Homebrew](https://formulae.brew.sh/formula/nginx). This creates the configuration
 files in `/usr/local/etc/nginx`. 
-
-You should replace `/usr/local/etc/nginx/nginx.conf` with the one that is [hosted in the Ansible repo](https://github.com/rism-digital/ansible.rism-online/blob/develop/roles/nginx/files/conf/nginx.conf).
-If the `/usr/local/etc/nginx/sites-enabled` directory does not exist, you should create it.
 
 In the `server-setup` directory in this repo you will find an example configuration. You will need to comment
 out one of the `upstream app` sections, depending on how you want to run it. You will also need to configure
@@ -59,7 +56,3 @@ recompiles, installing the output in the `dist` directory. `yarn install` instal
 watch the tree for any changes and re-run the compiler.
 
     $ yarn run develop:build
-
-### Building and running for production
-
-TODO
