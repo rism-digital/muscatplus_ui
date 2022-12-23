@@ -1,13 +1,13 @@
 module Page.UI.Record.DigitalObjectsSection exposing (..)
 
 import Config as C
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, column, el, fill, height, image, link, minimum, none, padding, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, column, el, fill, height, image, minimum, newTabLink, padding, paragraph, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import List.Extra as LE
 import Page.RecordTypes.DigitalObjects exposing (DigitalObject, DigitalObjectBody(..), DigitalObjectsSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
+import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Helpers exposing (viewSVGRenderedIncipit)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -33,7 +33,7 @@ viewDigitalObjectThumbnail language imageUrls dObject =
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , padding 5
         ]
-        [ link
+        [ newTabLink
             [ centerX ]
             { label =
                 image
@@ -50,7 +50,12 @@ viewDigitalObjectThumbnail language imageUrls dObject =
             , width (px 300)
             , alignBottom
             ]
-            [ text description ]
+            [ newTabLink
+                []
+                { label = text description
+                , url = imageUrls.original
+                }
+            ]
         ]
 
 
@@ -80,7 +85,7 @@ viewDigitalObjectRenderedNotation language encoding dObject =
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , padding 5
         ]
-        [ link
+        [ newTabLink
             [ width fill
             , height fill
             ]
@@ -97,7 +102,7 @@ viewDigitalObjectRenderedNotation language encoding dObject =
             , width (px 300)
             , alignBottom
             ]
-            [ link
+            [ newTabLink
                 []
                 { label = text description
                 , url = previewUrl
