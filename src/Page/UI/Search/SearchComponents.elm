@@ -135,7 +135,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 none
 
             else
-                viewUpdateMessage language model.applyFilterPrompt actionableProbeResponse
+                viewUpdateMessage submitButtonMsg language model.applyFilterPrompt actionableProbeResponse
     in
     row
         [ alignTop
@@ -207,10 +207,10 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         ]
 
 
-viewUpdateMessage : Language -> Bool -> Bool -> Element msg
-viewUpdateMessage language applyFilterPrompt actionableProbResponse =
+viewUpdateMessage : Maybe msg -> Language -> Bool -> Bool -> Element msg
+viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
     if applyFilterPrompt && actionableProbResponse then
-        el
+        Input.button
             [ width shrink
             , padding 5
             , Border.width 1
@@ -220,7 +220,9 @@ viewUpdateMessage language applyFilterPrompt actionableProbResponse =
             , Font.bold
             , Font.color (colourScheme.white |> convertColorToElementColor)
             ]
-            (text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults))
+            { label = text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
+            , onPress = submitMsg
+            }
 
     else
         none
