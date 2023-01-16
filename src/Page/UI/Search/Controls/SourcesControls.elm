@@ -69,17 +69,12 @@ viewFacetsForSourcesMode cfg =
         otherPeopleRelationships =
             viewFacet (createFacetConfig cfg "people" tooltips.otherPeople) cfg.facetMsgConfig
 
+        hasAnonymousCreator =
+            viewFacet (createFacetConfig cfg "has-anonymous-creator" tooltips.otherPeople) cfg.facetMsgConfig
+
         subjects =
             viewFacet (createFacetConfig cfg "subjects" tooltips.subjects) cfg.facetMsgConfig
 
-        {-
-           -- disabled until the 593 issue has been sorted out.
-           contentType =
-               viewFacet (createFacetConfig cfg "content-types" []) cfg.facetMsgConfig
-
-           recordType =
-               viewFacet (createFacetConfig cfg "record-type" []) cfg.facetMsgConfig
-        -}
         dateRange =
             viewFacet (createFacetConfig cfg "date-range" tooltips.dateRange) cfg.facetMsgConfig
 
@@ -178,7 +173,8 @@ viewFacetsForSourcesMode cfg =
         (.alias sourceFacetPanels.peopleRelationshipsPanel)
         (.label sourceFacetPanels.peopleRelationshipsPanel)
         cfg
-        [ composerRelationships
+        [ hasAnonymousCreator
+        , composerRelationships
         , otherPeopleRelationships
         ]
     , digitizationResultsPanel
