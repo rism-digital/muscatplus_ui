@@ -94,6 +94,7 @@ update msg session =
             in
             ( { session
                 | showFrontSearchInterface = sidebarOption
+                , expandedSideBar = Collapsed
               }
             , Nav.pushUrl session.key requestUrl
             )
