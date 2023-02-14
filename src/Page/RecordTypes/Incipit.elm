@@ -1,11 +1,10 @@
 module Page.RecordTypes.Incipit exposing
     ( EncodedIncipit(..)
-    , EncodingData
-    , EncodingFormat(..)
     , IncipitBody
     , IncipitFormat(..)
     , IncipitParentSourceBody
     , IncipitValidationBody
+    , PAEEncodedData
     , RenderedIncipit(..)
     , incipitBodyDecoder
     , renderedIncipitDecoder
@@ -19,21 +18,17 @@ import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDe
 
 
 type EncodedIncipit
-    = EncodedIncipit LanguageMap EncodingFormat EncodingData
+    = PAEEncoding LanguageMap PAEEncodedData
+    | MEIEncoding LanguageMap String
 
 
-type alias EncodingData =
+type alias PAEEncodedData =
     { clef : Maybe String
     , keysig : Maybe String
     , timesig : Maybe String
     , key : Maybe String
     , data : String
     }
-
-
-type EncodingFormat
-    = PAEEncoding
-    | MEIEncoding
 
 
 type alias IncipitBody =
@@ -68,14 +63,6 @@ type RenderedIncipit
     = RenderedIncipit IncipitFormat String
 
 
-encodedIncipitDecoder : Decoder EncodedIncipit
-encodedIncipitDecoder =
-    Decode.succeed EncodedIncipit
-        |> required "label" languageMapLabelDecoder
-        |> required "format" incipitEncodingDecoder
-        |> required "data" incipitEncodingDataDecoder
-
-
 incipitBodyDecoder : Decoder IncipitBody
 incipitBodyDecoder =
     Decode.succeed IncipitBody
@@ -87,31 +74,36 @@ incipitBodyDecoder =
         |> optional "encodings" (Decode.maybe (list encodedIncipitDecoder)) Nothing
 
 
-incipitEncodingDataDecoder : Decoder EncodingData
+encodedIncipitDecoder : Decoder EncodedIncipit
+encodedIncipitDecoder =
+    Decode.oneOf
+        [ paeEncodedIncipitDecoder
+        , meiEncodedIncipitDecoder
+        ]
+
+
+paeEncodedIncipitDecoder : Decoder EncodedIncipit
+paeEncodedIncipitDecoder =
+    Decode.succeed PAEEncoding
+        |> required "label" languageMapLabelDecoder
+        |> required "data" incipitEncodingDataDecoder
+
+
+meiEncodedIncipitDecoder : Decoder EncodedIncipit
+meiEncodedIncipitDecoder =
+    Decode.succeed MEIEncoding
+        |> required "label" languageMapLabelDecoder
+        |> required "url" string
+
+
+incipitEncodingDataDecoder : Decoder PAEEncodedData
 incipitEncodingDataDecoder =
-    Decode.succeed EncodingData
+    Decode.succeed PAEEncodedData
         |> optional "clef" (Decode.maybe string) Nothing
         |> optional "keysig" (Decode.maybe string) Nothing
         |> optional "timesig" (Decode.maybe string) Nothing
         |> optional "key" (Decode.maybe string) Nothing
         |> required "data" string
-
-
-incipitEncodingDecoder : Decoder EncodingFormat
-incipitEncodingDecoder =
-    string
-        |> Decode.andThen
-            (\mimetype ->
-                case mimetype of
-                    "application/json" ->
-                        Decode.succeed PAEEncoding
-
-                    "application/xml+mei" ->
-                        Decode.succeed MEIEncoding
-
-                    _ ->
-                        Decode.fail "Unknown encoding format"
-            )
 
 
 incipitFormatDecoder : Decoder IncipitFormat

@@ -1,19 +1,19 @@
 module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewRenderedIncipits)
 
-import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
-import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingFormat(..), IncipitBody, IncipitFormat(..), RenderedIncipit(..))
+import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), PAEEncodedData, RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Attributes exposing (bodySM, headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
-import Page.UI.Images exposing (searchSvg)
+import Page.UI.Images exposing (fileDownloadSvg, searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -92,23 +92,68 @@ viewLaunchNewIncipitSearch : Language -> List EncodedIncipit -> Element msg
 viewLaunchNewIncipitSearch language incipits =
     row
         [ width fill
-        , paddingXY 10 0
+        , spacing 10
         ]
         (List.map
             (\encoded ->
                 case encoded of
-                    EncodedIncipit _ PAEEncoding _ ->
-                        viewPAESearchLink language encoded
+                    PAEEncoding label paeData ->
+                        viewPAESearchLink language label paeData
 
-                    _ ->
-                        none
+                    MEIEncoding label url ->
+                        viewMEIDownloadLink language label url
             )
             incipits
         )
 
 
-viewPAESearchLink : Language -> EncodedIncipit -> Element msg
-viewPAESearchLink language (EncodedIncipit label encodingType data) =
+linkTmpl :
+    { url : String
+    , language : Language
+    , label : LanguageMap
+    , icon : Element msg
+    }
+    -> Element msg
+linkTmpl cfg =
+    link
+        [ centerY
+        , alignLeft
+        , linkColour
+        , Border.width 1
+        , Border.color (colourScheme.white |> convertColorToElementColor)
+        , padding 4
+        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , bodySM
+        , Font.color (colourScheme.white |> convertColorToElementColor)
+        ]
+        { label =
+            row
+                [ spacing 5
+                ]
+                [ el
+                    [ width (px 15)
+                    , height (px 15)
+                    , centerY
+                    ]
+                    cfg.icon
+                , text (extractLabelFromLanguageMap cfg.language cfg.label)
+                ]
+        , url = cfg.url
+        }
+
+
+viewMEIDownloadLink : Language -> LanguageMap -> String -> Element msg
+viewMEIDownloadLink language label url =
+    linkTmpl
+        { url = url
+        , language = language
+        , label = localTranslations.downloadMEI
+        , icon = fileDownloadSvg colourScheme.white
+        }
+
+
+viewPAESearchLink : Language -> LanguageMap -> PAEEncodedData -> Element msg
+viewPAESearchLink language label data =
     let
         clefQueryParam =
             case data.clef of
@@ -145,25 +190,11 @@ viewPAESearchLink language (EncodedIncipit label encodingType data) =
                 [ "search" ]
                 (noteQueryParam :: modeQueryParam :: keySigQueryParam ++ clefQueryParam ++ timeSigQueryParam)
     in
-    link
-        [ centerY
-        , alignLeft
-        , linkColour
-        , Border.width 1
-        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
-        , padding 2
-        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-        ]
-        { label =
-            el
-                [ width (px 12)
-                , height (px 12)
-                , centerY
-                , el tooltipStyle (text (extractLabelFromLanguageMap language localTranslations.newSearchWithIncipit))
-                    |> tooltip above
-                ]
-                (searchSvg colourScheme.white)
-        , url = searchUrl
+    linkTmpl
+        { url = searchUrl
+        , language = language
+        , label = localTranslations.newSearchWithIncipit
+        , icon = searchSvg colourScheme.white
         }
 
 

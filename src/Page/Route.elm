@@ -1,4 +1,4 @@
-module Page.Route exposing (Route(..), parseUrl, setRoute, setUrl)
+module Page.Route exposing (Route(..), isMEIDownloadRoute, parseUrl, setRoute, setUrl)
 
 import Page.Keyboard.Model exposing (KeyboardQuery)
 import Page.Keyboard.Query exposing (notationParamParser)
@@ -23,12 +23,8 @@ type Route
 
 parseUrl : Url -> Route
 parseUrl url =
-    case P.parse routeParser url of
-        Just route ->
-            route
-
-        Nothing ->
-            NotFoundPageRoute
+    P.parse routeParser url
+        |> Maybe.withDefault NotFoundPageRoute
 
 
 setRoute : Route -> { a | route : Route } -> { a | route : Route }
@@ -54,3 +50,14 @@ routeParser =
         , P.map InstitutionSourcePageRoute (s "institutions" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map AboutPageRoute (s "about")
         ]
+
+
+meiDownloadRouteParser : P.Parser (Bool -> a) a
+meiDownloadRouteParser =
+    P.map (\_ _ -> True) (s "sources" </> P.int </> s "incipits" </> P.string </> s "mei")
+
+
+isMEIDownloadRoute : Url -> Bool
+isMEIDownloadRoute url =
+    P.parse meiDownloadRouteParser url
+        |> Maybe.withDefault False

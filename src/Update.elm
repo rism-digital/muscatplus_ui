@@ -12,7 +12,7 @@ import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (buildQueryParameters, toNextQuery)
 import Page.Record as RecordPage
-import Page.Route as Route exposing (parseUrl, setRoute, setUrl)
+import Page.Route as Route exposing (isMEIDownloadRoute, parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Url exposing (Url)
@@ -424,6 +424,18 @@ changePage url model =
             )
 
 
+treatUrlAsExternal : Url -> Bool
+treatUrlAsExternal requestedUrl =
+    if requestedUrl.path == "/viewer.html" || requestedUrl.path == "/copperplate/copperplate.html" then
+        True
+
+    else if isMEIDownloadRoute requestedUrl then
+        True
+
+    else
+        False
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
@@ -437,7 +449,7 @@ update msg model =
             case urlRequest of
                 Browser.Internal url ->
                     -- if the app is loading the viewer, treat it as an external link.
-                    if url.path == "/viewer.html" || url.path == "/copperplate/copperplate.html" then
+                    if treatUrlAsExternal url then
                         ( model, Nav.load (Url.toString url) )
 
                     else

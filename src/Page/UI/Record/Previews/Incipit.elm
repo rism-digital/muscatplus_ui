@@ -3,7 +3,7 @@ module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 import Element exposing (Element, alignTop, column, el, fill, height, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
-import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), EncodingData, EncodingFormat(..), IncipitBody)
+import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, PAEEncodedData)
 import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (h1, h3)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -23,7 +23,7 @@ viewEncodingsBlock language encodedIncipits =
             (List.map
                 (\encoding ->
                     case encoding of
-                        EncodedIncipit label PAEEncoding paeData ->
+                        PAEEncoding label paeData ->
                             viewPaeData language label paeData
 
                         _ ->
@@ -119,7 +119,7 @@ viewIncipitPreview language body =
         ]
 
 
-viewPaeData : Language -> LanguageMap -> EncodingData -> Element msg
+viewPaeData : Language -> LanguageMap -> PAEEncodedData -> Element msg
 viewPaeData language label pae =
     let
         clefRow =

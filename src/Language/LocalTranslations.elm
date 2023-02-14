@@ -20,6 +20,7 @@ localTranslations :
     , chooseCollection : LanguageMap
     , collapse : LanguageMap
     , description : LanguageMap
+    , downloadMEI : LanguageMap
     , errorLoadingProbeResults : LanguageMap
     , first : LanguageMap
     , fullRecord : LanguageMap
@@ -109,6 +110,8 @@ localTranslations =
         , LanguageValues Portugese [ "Descrição" ]
         , LanguageValues Polish [ "Opis" ]
         ]
+    , downloadMEI =
+        [ LanguageValues English [ "Download MEI" ] ]
     , errorLoadingProbeResults =
         [ LanguageValues English [ "Error loading results" ]
         , LanguageValues German [ "Fehler beim Laden der Ergebnisse" ]
