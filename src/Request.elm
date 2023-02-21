@@ -31,7 +31,9 @@ createRequestWithAcceptAndExpect : String -> Expect msg -> String -> Cmd msg
 createRequestWithAcceptAndExpect accept expect url =
     Http.request
         { method = "GET"
-        , headers = [ Http.header "Accept" accept ]
+        , headers =
+            [ Http.header "Accept" accept
+            ]
         , url = url
         , body = Http.emptyBody
         , expect = expect
