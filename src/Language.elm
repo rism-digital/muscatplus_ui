@@ -223,7 +223,7 @@ englishLocale =
 extractLabelFromLanguageMapWithVariables : Language -> List LanguageMapReplacementVariable -> LanguageMap -> String
 extractLabelFromLanguageMapWithVariables lang replacements langMap =
     extractTextFromLanguageMapWithVariables lang replacements langMap
-        |> String.join ";"
+        |> String.join "; "
 
 
 extractTextFromLanguageMapWithVariables : Language -> List LanguageMapReplacementVariable -> LanguageMap -> List String

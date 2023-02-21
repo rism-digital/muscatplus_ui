@@ -67,13 +67,14 @@ viewSourceItemsSection language expanded expandMsg siSection =
             else
                 []
 
-        -- TODO: Translate
         linkLabel =
             if expanded then
                 text (extractLabelFromLanguageMap language localTranslations.collapse)
 
             else
-                extractLabelFromLanguageMapWithVariables language [ LanguageMapReplacementVariable "numItems" (String.fromInt (List.length siSection.items)) ] localTranslations.showNumItems
+                extractLabelFromLanguageMapWithVariables language
+                    [ LanguageMapReplacementVariable "numItems" (String.fromInt siSection.totalItems) ]
+                    localTranslations.showNumItems
                     |> text
     in
     row

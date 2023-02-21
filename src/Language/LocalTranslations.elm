@@ -361,7 +361,7 @@ localTranslations =
         , LanguageValues Polish [ "Wyświetl wszystkie wyniki" ]
         ]
     , showNumItems =
-        [ LanguageValues English [ "Show {numItems} items" ] ]
+        [ LanguageValues English [ "Show {{ numItems }} items" ] ]
     , showResults =
         [ LanguageValues English [ "Show search results" ]
         , LanguageValues German [ "Filter anwenden" ]
