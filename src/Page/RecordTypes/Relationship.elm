@@ -129,7 +129,7 @@ qualifierBodyDecoder =
     Decode.succeed QualifierBody
         |> required "label" languageMapLabelDecoder
         |> required "value" string
-        |> optional "type" qualifierDecoder UnknownQualifier
+        |> optional "id" qualifierDecoder UnknownQualifier
 
 
 qualifierConverter : String -> Decoder RelationshipQualifier
@@ -221,7 +221,7 @@ roleBodyDecoder =
     Decode.succeed RoleBody
         |> required "label" languageMapLabelDecoder
         |> required "value" string
-        |> optional "type" roleDecoder UnknownRole
+        |> optional "id" roleDecoder UnknownRole
 
 
 roleConverter : String -> Decoder RelationshipRole
