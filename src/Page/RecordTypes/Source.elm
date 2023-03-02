@@ -128,7 +128,6 @@ type alias SourceItemsSectionBody =
 exemplarsBodyDecoder : Decoder ExemplarBody
 exemplarsBodyDecoder =
     Decode.succeed ExemplarBody
-        --|> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
