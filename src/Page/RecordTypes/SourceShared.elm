@@ -89,7 +89,7 @@ contentsSectionBodyDecoder : Decoder ContentsSectionBody
 contentsSectionBodyDecoder =
     Decode.succeed ContentsSectionBody
         |> hardcoded "source-record-contents-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "subjects" (Decode.maybe sourceSubjectsBodyDecoder) Nothing
 
@@ -172,7 +172,7 @@ sourceSubjectDecoder =
 sourceSubjectsBodyDecoder : Decoder SubjectsSectionBody
 sourceSubjectsBodyDecoder =
     Decode.succeed SubjectsSectionBody
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list sourceSubjectDecoder)
 
 

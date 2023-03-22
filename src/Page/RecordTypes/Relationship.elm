@@ -212,7 +212,7 @@ relationshipsSectionBodyDecoder : Decoder RelationshipsSectionBody
 relationshipsSectionBodyDecoder =
     Decode.succeed RelationshipsSectionBody
         |> hardcoded "record-relationships-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list relationshipBodyDecoder)
 
 

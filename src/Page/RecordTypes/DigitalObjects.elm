@@ -28,7 +28,7 @@ digitalObjectsSectionBodyDecoder : Decoder DigitalObjectsSectionBody
 digitalObjectsSectionBodyDecoder =
     Decode.succeed DigitalObjectsSectionBody
         |> hardcoded "record-digital-objects-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list digitalObjectDecoder)
 
 

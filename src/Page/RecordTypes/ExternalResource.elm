@@ -66,5 +66,5 @@ externalResourcesSectionBodyDecoder : Decoder ExternalResourcesSectionBody
 externalResourcesSectionBodyDecoder =
     Decode.succeed ExternalResourcesSectionBody
         |> hardcoded "record-external-resources-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list externalResourceBodyDecoder)

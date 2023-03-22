@@ -128,7 +128,7 @@ type alias SourceItemsSectionBody =
 exemplarsBodyDecoder : Decoder ExemplarBody
 exemplarsBodyDecoder =
     Decode.succeed ExemplarBody
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
@@ -140,7 +140,7 @@ exemplarsSectionBodyDecoder : Decoder ExemplarsSectionBody
 exemplarsSectionBodyDecoder =
     Decode.succeed ExemplarsSectionBody
         |> hardcoded "source-record-exemplars-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list exemplarsBodyDecoder)
 
 
@@ -148,14 +148,14 @@ incipitsSectionBodyDecoder : Decoder IncipitsSectionBody
 incipitsSectionBodyDecoder =
     Decode.succeed IncipitsSectionBody
         |> hardcoded "source-record-incipits-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list incipitBodyDecoder)
 
 
 liturgicalFestivalsSectionBodyDecoder : Decoder LiturgicalFestivalsSectionBody
 liturgicalFestivalsSectionBodyDecoder =
     Decode.succeed LiturgicalFestivalsSectionBody
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list liturgicalFestivalBodyDecoder)
 
 
@@ -173,21 +173,21 @@ materialGroupsSectionBodyDecoder : Decoder MaterialGroupsSectionBody
 materialGroupsSectionBodyDecoder =
     Decode.succeed MaterialGroupsSectionBody
         |> hardcoded "source-record-material-groups-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list materialGroupBodyDecoder)
 
 
 partOfSectionBodyDecoder : Decoder PartOfSectionBody
 partOfSectionBodyDecoder =
     Decode.succeed PartOfSectionBody
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "source" basicSourceBodyDecoder
 
 
 performanceLocationsSectionBodyDecoder : Decoder PerformanceLocationsSectionBody
 performanceLocationsSectionBodyDecoder =
     Decode.succeed PerformanceLocationsSectionBody
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list relationshipBodyDecoder)
 
 
@@ -195,7 +195,7 @@ referencesNotesSectionBodyDecoder : Decoder ReferencesNotesSectionBody
 referencesNotesSectionBodyDecoder =
     Decode.succeed ReferencesNotesSectionBody
         |> hardcoded "source-record-references-notes-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "performanceLocations" (Decode.maybe performanceLocationsSectionBodyDecoder) Nothing
         |> optional "liturgicalFestivals" (Decode.maybe liturgicalFestivalsSectionBodyDecoder) Nothing
@@ -227,7 +227,7 @@ sourceItemsSectionBodyDecoder : Decoder SourceItemsSectionBody
 sourceItemsSectionBodyDecoder =
     Decode.succeed SourceItemsSectionBody
         |> hardcoded "source-record-items-section"
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> required "url" string
         |> required "totalItems" int
         |> required "items" (list basicSourceBodyDecoder)
