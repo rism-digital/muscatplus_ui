@@ -20,6 +20,7 @@ import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
 import String.Extra as SE
+import String.Normalize
 
 
 imageForCountryCode : String -> Element msg
@@ -110,7 +111,12 @@ nationalCollectionPrefixToFlagMap =
 
 sortedByLocalizedCountryName : Language -> List ( String, LanguageMap ) -> List ( String, LanguageMap )
 sortedByLocalizedCountryName language countryList =
-    List.sortBy (\( _, label ) -> extractLabelFromLanguageMap language label) countryList
+    List.sortBy
+        (\( _, label ) ->
+            extractLabelFromLanguageMap language label
+                |> String.Normalize.removeDiacritics
+        )
+        countryList
 
 
 viewNationalCollectionChooser : Session -> Element SideBarMsg
