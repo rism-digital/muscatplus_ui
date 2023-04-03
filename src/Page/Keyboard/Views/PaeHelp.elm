@@ -75,22 +75,26 @@ englishPaeHelpText =
             { label = text "Plaine and Easie Code. "
             , url = "https://www.iaml.info/plaine-easie-code"
             }
-        , text """The most basic query
-        uses upper-case letters, A-G, to represent pitches; for example, """
+        , text """The most basic query uses upper-case letters, A-G, to represent pitches; for example, """
         , el [ spacing lineSpacing, Font.family [ Font.monospace ], padding 2, Background.color (colourScheme.lightGrey |> convertColorToElementColor) ] (text "EDCDEEE")
         , text """. You can vary the note properties by using different characters immediately preceding it. The "'"
         (single quote) character will specify a note in the C4 octave, while the "," (comma) will shift the note to the
         C3 octave. Successive octave shifts up and down are accomplished by adding additional characters; "''" is a note
-          in the C5 octave, and ",," is a note in the C2 octave. The "x", "b", and "n" characters immediately preceding
-          the pitch name indicates sharps, flats, and naturals, respectively. For example, to query for the
-          B-A-C-H figure, you might specify: """
+        in the C5 octave, and ",," is a note in the C2 octave. The "x", "b", and "n" characters immediately preceding
+        the pitch name indicates sharps, flats, and naturals, respectively. For example, to query for the
+        B-A-C-H figure, you might specify: """
         , el [ spacing lineSpacing, Font.family [ Font.monospace ], padding 2, Background.color (colourScheme.lightGrey |> convertColorToElementColor) ] (text "'bB'A''C'nB")
         , text """The preview will show you what your query will look like as you enter the notes. """
         , text """The piano keyboard will print the corresponding Plaine and Easie code in the input box as you press
         the keys, so you can use this input method to enter a search query. Search queries must be longer than three
-        pitches."""
+        pitches. """
+        , text """Accidentals are automatically applied to subsequent notes until they are explicitly
+        cancelled, or a bar line is provided, following common practice in notation. You can supply
+        a bar line by inserting a '/' character. Adding a bar line will not otherwise affect your search
+        results. """
         , text """Durations, measures, and figures beyond pitch and interval
-        are shown in the preview, but are not used in the search. Support for these features is planned for later versions. """
+        are shown in the preview, but are not used in the search. Support for these features is planned for later
+        versions. """
         ]
     , paragraph
         [ width fill, spacing lineSpacing ]
