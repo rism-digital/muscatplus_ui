@@ -22,11 +22,15 @@ viewFacetsForInstitutionsMode cfg =
     let
         city =
             viewFacet (createFacetConfig cfg "city" tooltips.city) cfg.facetMsgConfig
+
+        sigla =
+            viewFacet (createFacetConfig cfg "sigla" tooltips.institutionSigla) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias institutionFacetPanels.locationPanel)
         (.label institutionFacetPanels.locationPanel)
         cfg
         [ city
+        , sigla
         ]
     ]
