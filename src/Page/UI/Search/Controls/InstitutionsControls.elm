@@ -8,11 +8,18 @@ import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
 
 
-institutionFacetPanels : { locationPanel : PanelConfig }
+institutionFacetPanels :
+    { locationPanel : PanelConfig
+    , relationshipPanel : PanelConfig
+    }
 institutionFacetPanels =
     { locationPanel =
         { alias = "institution-location-panel"
         , label = facetPanelTitles.location
+        }
+    , relationshipPanel =
+        { alias = "institution-relationship-panel"
+        , label = facetPanelTitles.sourceRelationships
         }
     }
 
@@ -25,6 +32,9 @@ viewFacetsForInstitutionsMode cfg =
 
         sigla =
             viewFacet (createFacetConfig cfg "sigla" tooltips.institutionSigla) cfg.facetMsgConfig
+
+        roles =
+            viewFacet (createFacetConfig cfg "roles" tooltips.roles) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias institutionFacetPanels.locationPanel)
@@ -32,5 +42,11 @@ viewFacetsForInstitutionsMode cfg =
         cfg
         [ city
         , sigla
+        ]
+    , viewFacetsControlPanel
+        (.alias institutionFacetPanels.relationshipPanel)
+        (.label institutionFacetPanels.relationshipPanel)
+        cfg
+        [ roles
         ]
     ]
