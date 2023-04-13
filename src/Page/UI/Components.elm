@@ -353,6 +353,7 @@ renderCloselySpacedValue : Language -> LanguageMap -> Element msg
 renderCloselySpacedValue language values =
     textColumn
         [ bodyRegular
+        , spacing lineSpacing
         ]
         (styledParagraphs (extractTextFromLanguageMap language values))
 
