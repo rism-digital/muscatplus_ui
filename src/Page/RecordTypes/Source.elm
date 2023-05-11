@@ -1,5 +1,6 @@
 module Page.RecordTypes.Source exposing
-    ( ExemplarBody
+    ( BoundWithSectionBody
+    , ExemplarBody
     , ExemplarsSectionBody
     , FullSourceBody
     , IncipitsSectionBody
@@ -35,6 +36,7 @@ type alias ExemplarBody =
     , externalResources : Maybe ExternalResourcesSectionBody
     , notes : Maybe (List LabelValue)
     , relationships : Maybe RelationshipsSectionBody
+    , boundWith : Maybe BoundWithSectionBody
     }
 
 
@@ -42,6 +44,12 @@ type alias ExemplarsSectionBody =
     { sectionToc : String
     , label : LanguageMap
     , items : List ExemplarBody
+    }
+
+
+type alias BoundWithSectionBody =
+    { sectionLabel : LanguageMap
+    , source : BasicSourceBody
     }
 
 
@@ -134,6 +142,7 @@ exemplarsBodyDecoder =
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
+        |> optional "boundWith" (Decode.maybe boundWithSectionBodyDecoder) Nothing
 
 
 exemplarsSectionBodyDecoder : Decoder ExemplarsSectionBody
@@ -142,6 +151,13 @@ exemplarsSectionBodyDecoder =
         |> hardcoded "source-record-exemplars-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list exemplarsBodyDecoder)
+
+
+boundWithSectionBodyDecoder : Decoder BoundWithSectionBody
+boundWithSectionBodyDecoder =
+    Decode.succeed BoundWithSectionBody
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "source" basicSourceBodyDecoder
 
 
 incipitsSectionBodyDecoder : Decoder IncipitsSectionBody

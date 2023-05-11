@@ -1,17 +1,17 @@
 module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
-import Element exposing (Element, above, alignTop, column, el, fill, height, link, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, spacing, text, textColumn, width, wrappedRow)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
-import Page.RecordTypes.Source exposing (ExemplarBody, ExemplarsSectionBody)
+import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (headingLG, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (institutionSvg)
+import Page.UI.Images exposing (institutionSvg, sourcesSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalResource)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -49,6 +49,7 @@ viewExemplar language exemplar =
                     , viewMaybe (viewParagraphField language) exemplar.notes
                     , viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
                     , viewMaybe (viewExemplarRelationships language) exemplar.relationships
+                    , viewMaybe (viewBoundWithSection language) exemplar.boundWith
                     ]
                 ]
             ]
@@ -94,6 +95,47 @@ viewExternalResourcesSection language linkSection =
                 [ textColumn
                     [ spacing lineSpacing ]
                     (List.map (viewExternalResource language) linkSection.items)
+                ]
+            ]
+        ]
+
+
+viewBoundWithSection : Language -> BoundWithSectionBody -> Element msg
+viewBoundWithSection language boundWithSection =
+    let
+        relationshipTooltip =
+            el
+                tooltipStyle
+                (text (extractLabelFromLanguageMap language localTranslations.source))
+    in
+    fieldValueWrapper
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language boundWithSection.sectionLabel ]
+            , column
+                valueFieldColumnAttributes
+                [ row
+                    [ width fill
+                    , spacing 5
+                    ]
+                    [ el
+                        [ width (px 16)
+                        , height (px 16)
+                        , centerY
+                        , relationshipTooltip |> tooltip above
+                        ]
+                        (sourcesSvg colourScheme.slateGrey)
+                    , link
+                        [ linkColour ]
+                        { label = text (extractLabelFromLanguageMap language (.label boundWithSection.source))
+                        , url = .id boundWithSection.source
+                        }
+                    ]
                 ]
             ]
         ]
