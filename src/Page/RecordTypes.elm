@@ -11,6 +11,7 @@ type RecordType
     | Incipit
     | CollectionSearchResult
     | Front
+    | ExternalRecord
     | Unknown
 
 
@@ -30,4 +31,5 @@ recordTypeOptions =
     , ( "rism:Place", Place )
     , ( "Collection", CollectionSearchResult )
     , ( "rism:Front", Front )
+    , ( "rism:ExternalRecord", ExternalRecord )
     ]

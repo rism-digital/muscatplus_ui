@@ -53,6 +53,28 @@ viewSourceFlags language flags =
                     (extractLabelFromLanguageMap language localTranslations.hasIncipits)
                 )
                 flags.hasIncipits
+
+        isDIAMMFlag =
+            viewIf
+                (makeFlagIcon
+                    { background = colourScheme.lightGreen
+                    , foreground = colourScheme.white
+                    }
+                    (musicNotationSvg colourScheme.white)
+                    "Is DIAMM"
+                )
+                flags.isDIAMMRecord
+
+        hasDIAMMFlag =
+            viewIf
+                (makeFlagIcon
+                    { background = colourScheme.yellow
+                    , foreground = colourScheme.black
+                    }
+                    (musicNotationSvg colourScheme.black)
+                    "Has DIAMM"
+                )
+                flags.hasDIAMMRecord
     in
     row
         [ width fill
@@ -61,6 +83,8 @@ viewSourceFlags language flags =
         [ incipitFlag
         , hasDigitizationFlag
         , iiifFlag
+        , isDIAMMFlag
+        , hasDIAMMFlag
         ]
 
 

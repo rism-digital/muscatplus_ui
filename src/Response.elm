@@ -2,6 +2,7 @@ module Response exposing (Response(..), ServerData(..))
 
 import Http.Detailed
 import Page.RecordTypes.About exposing (AboutBody)
+import Page.RecordTypes.ExternalRecord exposing (ExternalRecordBody)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
@@ -34,3 +35,4 @@ type ServerData
     | IncipitData IncipitBody
     | FrontData FrontBody
     | AboutData AboutBody
+    | ExternalData ExternalRecordBody

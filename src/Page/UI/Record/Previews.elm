@@ -8,13 +8,15 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingMD, sectionSpacing)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
+import Page.UI.Record.ExemplarsSection exposing (viewHeldBy)
 import Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 import Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Page.UI.Record.Previews.Person exposing (viewPersonPreview)
-import Page.UI.Record.Previews.Source exposing (viewSourcePreview)
+import Page.UI.Record.Previews.Source exposing (viewBasicSourcePreview, viewSourcePreview)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (ServerData(..))
 
@@ -104,6 +106,17 @@ viewPreviewRouter language cfg previewData =
 
                 Just (IncipitData body) ->
                     viewIncipitPreview language body
+
+                Just (ExternalData body) ->
+                    case body.record of
+                        ExternalSource sourceBody ->
+                            viewBasicSourcePreview language body.project sourceBody
+
+                        ExternalPerson personBody ->
+                            viewPersonPreview language personBody
+
+                        ExternalInstitution institutionBody ->
+                            viewHeldBy language institutionBody
 
                 Nothing ->
                     viewPreviewLoading language

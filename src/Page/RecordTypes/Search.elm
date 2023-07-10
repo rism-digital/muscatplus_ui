@@ -22,6 +22,7 @@ module Page.RecordTypes.Search exposing
     , SearchPagination
     , SearchResult(..)
     , SelectFacet
+    , SortBlock
     , SortData
     , SourceResultBody
     , SourceResultFlags
@@ -280,6 +281,8 @@ type alias SourceResultFlags =
     , isContentsRecord : Bool
     , isCollectionRecord : Bool
     , hasIncipits : Bool
+    , hasDIAMMRecord : Bool
+    , isDIAMMRecord : Bool
     }
 
 
@@ -634,6 +637,8 @@ sourceResultFlagsDecoder =
         |> optional "isContentsRecord" bool False
         |> optional "isCollectionRecord" bool False
         |> optional "hasIncipits" bool False
+        |> optional "hasDIAMMRecord" bool False
+        |> optional "isDIAMMRecord" bool False
 
 
 toBehaviourItems : { a | items : List FacetOptionsLabelValue } -> List FacetOptionsLabelValue

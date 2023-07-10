@@ -7,6 +7,7 @@ import Page.RecordTypes
         , recordTypeFromJsonType
         )
 import Page.RecordTypes.About exposing (aboutBodyDecoder)
+import Page.RecordTypes.ExternalRecord exposing (externalRecordBodyDecoder)
 import Page.RecordTypes.Front exposing (frontBodyDecoder)
 import Page.RecordTypes.Incipit exposing (incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)
@@ -53,6 +54,11 @@ placeResponseDecoder =
     Decode.map PlaceData placeBodyDecoder
 
 
+externalRecordResponseDecoder : Decoder ServerData
+externalRecordResponseDecoder =
+    Decode.map ExternalData externalRecordBodyDecoder
+
+
 recordResponseConverter : String -> Decoder ServerData
 recordResponseConverter typevalue =
     case recordTypeFromJsonType typevalue of
@@ -77,10 +83,13 @@ recordResponseConverter typevalue =
         Front ->
             frontResponseDecoder
 
+        ExternalRecord ->
+            externalRecordResponseDecoder
+
         -- TODO: This is obviously wrong! Fix it with the actual response types
         --       once we have a clear idea of what they are.
-        Unknown ->
-            sourceResponseDecoder
+        _ ->
+            Decode.fail "Could not decode record body response"
 
 
 searchResponseDecoder : Decoder ServerData
