@@ -160,13 +160,13 @@ viewFacetPanels cfg =
             case .showFrontSearchInterface cfg.session of
                 IncipitSearchOption ->
                     ( viewFacet
-                        { alias = "notation"
-                        , language = .language cfg.session
-                        , activeSearch = .activeSearch cfg.model
-                        , selectColumns = cfg.checkboxColumns
+                        { activeSearch = .activeSearch cfg.model
+                        , alias = "notation"
                         , body = cfg.body
-                        , tooltip = []
+                        , language = .language cfg.session
                         , searchPreferences = .searchPreferences cfg.session
+                        , selectColumns = cfg.checkboxColumns
+                        , tooltip = []
                         }
                         cfg.facetMsgConfig
                     , searchKeywordInput

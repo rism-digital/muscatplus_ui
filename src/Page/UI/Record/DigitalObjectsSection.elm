@@ -1,4 +1,4 @@
-module Page.UI.Record.DigitalObjectsSection exposing (..)
+module Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 
 import Config as C
 import Element exposing (Element, alignBottom, alignTop, centerX, column, el, fill, height, image, minimum, newTabLink, padding, paragraph, px, row, spacing, text, width)

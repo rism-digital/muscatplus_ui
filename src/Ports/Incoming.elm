@@ -17,15 +17,15 @@ type IncomingMessage
 convertMsgStringToIncomingMessage : String -> Decoder IncomingMessage
 convertMsgStringToIncomingMessage msgString =
     case msgString of
+        "muscat-links-set" ->
+            Decode.map (\v -> PortReceiveMuscatLinksSet v) Decode.bool
+
         "search-preferences-set" ->
             Decode.field "value" searchPreferencesDecoder
                 |> Decode.map (\values -> PortReceiveSearchPreferences values)
 
         "trigger-search" ->
             Decode.map (\_ -> PortReceiveTriggerSearch) Decode.value
-
-        "muscat-links-set" ->
-            Decode.map (\v -> PortReceiveMuscatLinksSet v) Decode.bool
 
         _ ->
             Decode.succeed PortReceivedUnknownMessage

@@ -73,8 +73,8 @@ localTranslations :
     , sortAlphabetically : LanguageMap
     , sortBy : LanguageMap
     , sortByCount : LanguageMap
-    , sourceContents : LanguageMap
     , source : LanguageMap
+    , sourceContents : LanguageMap
     , sources : LanguageMap
     , unknownError : LanguageMap
     , updateResults : LanguageMap
@@ -377,6 +377,8 @@ localTranslations =
         [ LanguageValues English [ "Sort by" ] ]
     , sortByCount =
         [ LanguageValues English [ "Sort by count (currently sorted alphabetically)" ] ]
+    , source =
+        [ LanguageValues English [ "Source" ] ]
     , sourceContents =
         [ LanguageValues English [ "Source contents" ]
         , LanguageValues German [ "Inhalt der Quelle" ]
@@ -385,8 +387,6 @@ localTranslations =
         , LanguageValues Polish [ "Treść źródła" ]
         , LanguageValues Portugese [ "Conteúdo da fonte" ]
         ]
-    , source =
-        [ LanguageValues English [ "Source" ] ]
     , sources =
         [ LanguageValues English [ "Sources" ]
         , LanguageValues German [ "Quellen" ]

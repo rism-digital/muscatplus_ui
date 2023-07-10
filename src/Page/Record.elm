@@ -176,7 +176,7 @@ update session msg model =
                                 NoResponseToShow
 
                             else
-                                Response { totalItems = body.totalItems, modes = body.modes }
+                                Response { modes = body.modes, totalItems = body.totalItems }
 
                         _ ->
                             NoResponseToShow

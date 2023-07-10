@@ -1,4 +1,10 @@
-module Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageFullRecordTemplate, pageHeaderTemplate, pageUriTemplate)
+module Page.UI.Record.PageTemplate exposing
+    ( pageFooterTemplate
+    , pageFullRecordTemplate
+    , pageHeaderTemplate
+    , pageHeaderTemplateNoToc
+    , pageUriTemplate
+    )
 
 import Config as C
 import Element
@@ -89,11 +95,32 @@ pageFooterTemplate session language footer =
         ]
 
 
-pageHeaderTemplate : Language -> { a | label : LanguageMap, sectionToc : String } -> Element msg
+pageHeaderTemplate :
+    Language
+    ->
+        { a
+            | label : LanguageMap
+            , sectionToc : String
+        }
+    -> Element msg
 pageHeaderTemplate language header =
     row
         [ width fill
         , htmlAttribute (HA.id header.sectionToc)
+        ]
+        [ h1 language header.label ]
+
+
+pageHeaderTemplateNoToc :
+    Language
+    ->
+        { a
+            | label : LanguageMap
+        }
+    -> Element msg
+pageHeaderTemplateNoToc language header =
+    row
+        [ width fill
         ]
         [ h1 language header.label ]
 

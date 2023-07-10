@@ -159,13 +159,13 @@ viewSearchResultsSection cfg resultsLoading body =
 viewSearchControls : SearchControlsConfig a b msg -> Element msg
 viewSearchControls cfg =
     let
-        language =
-            .language cfg.session
-
         currentMode =
             toActiveSearch cfg.model
                 |> toNextQuery
                 |> toMode
+
+        language =
+            .language cfg.session
 
         qText =
             toNextQuery (.activeSearch cfg.model)
@@ -355,9 +355,9 @@ viewSearchResultRouter : SearchResultRouterConfig msg -> Element msg
 viewSearchResultRouter cfg =
     let
         resultConfig =
-            { language = cfg.language
+            { clickForPreviewMsg = cfg.clickForPreviewMsg
+            , language = cfg.language
             , selectedResult = cfg.selectedResult
-            , clickForPreviewMsg = cfg.clickForPreviewMsg
             }
     in
     case cfg.searchResult of

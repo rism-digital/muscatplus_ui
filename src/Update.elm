@@ -429,11 +429,8 @@ treatUrlAsExternal requestedUrl =
     if requestedUrl.path == "/viewer.html" || requestedUrl.path == "/copperplate/copperplate.html" then
         True
 
-    else if isMEIDownloadRoute requestedUrl then
-        True
-
     else
-        False
+        isMEIDownloadRoute requestedUrl
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

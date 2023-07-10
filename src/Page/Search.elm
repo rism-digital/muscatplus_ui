@@ -229,7 +229,7 @@ update session msg model =
                 totalItems =
                     case response of
                         SearchData body ->
-                            Response { totalItems = body.totalItems, modes = body.modes }
+                            Response { modes = body.modes, totalItems = body.totalItems }
 
                         _ ->
                             NoResponseToShow

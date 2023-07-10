@@ -93,8 +93,8 @@ update msg session =
                     buildFrontPageUrl sidebarOption session.restrictedToNationalCollection
             in
             ( { session
-                | showFrontSearchInterface = sidebarOption
-                , expandedSideBar = Collapsed
+                | expandedSideBar = Collapsed
+                , showFrontSearchInterface = sidebarOption
               }
             , Nav.pushUrl session.key requestUrl
             )

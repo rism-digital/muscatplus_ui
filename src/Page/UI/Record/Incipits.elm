@@ -1,6 +1,6 @@
 module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewRenderedIncipits)
 
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -10,15 +10,13 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), PAEEncodedData, RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (bodySM, headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Attributes exposing (bodySM, headingLG, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (fileDownloadSvg, searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Request exposing (serverUrl)
-import SvgParser
 import Url.Builder
 
 
@@ -108,10 +106,10 @@ viewLaunchNewIncipitSearch language incipits =
 
 
 linkTmpl :
-    { url : String
-    , language : Language
+    { icon : Element msg
     , label : LanguageMap
-    , icon : Element msg
+    , language : Language
+    , url : String
     }
     -> Element msg
 linkTmpl cfg =
@@ -145,10 +143,10 @@ linkTmpl cfg =
 viewMEIDownloadLink : Language -> LanguageMap -> String -> Element msg
 viewMEIDownloadLink language label url =
     linkTmpl
-        { url = url
-        , language = language
+        { icon = fileDownloadSvg colourScheme.white
         , label = localTranslations.downloadMEI
-        , icon = fileDownloadSvg colourScheme.white
+        , language = language
+        , url = url
         }
 
 
@@ -191,10 +189,10 @@ viewPAESearchLink language label data =
                 (noteQueryParam :: modeQueryParam :: keySigQueryParam ++ clefQueryParam ++ timeSigQueryParam)
     in
     linkTmpl
-        { url = searchUrl
-        , language = language
+        { icon = searchSvg colourScheme.white
         , label = localTranslations.newSearchWithIncipit
-        , icon = searchSvg colourScheme.white
+        , language = language
+        , url = searchUrl
         }
 
 
