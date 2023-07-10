@@ -44,7 +44,7 @@ viewExternalResource language body =
                                 [ linkColour
                                 , alignLeft
                                 ]
-                                { label = text "Manifest"
+                                { label = text "Manifest" -- TODO: Translate
                                 , url = body.url
                                 }
                             ]
@@ -54,7 +54,7 @@ viewExternalResource language body =
                 _ ->
                     [ link
                         [ linkColour ]
-                        { label = text body.url
+                        { label = renderParagraph language body.label
                         , url = body.url
                         }
                     ]
@@ -68,9 +68,6 @@ viewExternalResource language body =
             , spacing lineSpacing
             ]
             [ row
-                [ width fill ]
-                [ renderParagraph language body.label ]
-            , row
                 [ width fill
                 ]
                 externalResourceLink

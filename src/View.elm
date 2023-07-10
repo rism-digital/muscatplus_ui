@@ -117,7 +117,7 @@ view model =
     , body =
         [ toUnstyled
             (Css.Global.global
-                [ Css.Global.a globalLinkColor
+                [ Css.Global.a globalLinkColor -- Ensures in-text links are also displayed in blue.
                 ]
             )
         , layout
