@@ -50,6 +50,7 @@ viewIncipitSummary language iconColour summary =
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = peopleSvg iconColour
+                    , iconSize = 20
                     , includeLabelInValue = False
                     , fieldName = "incipitComposer"
                     , displayStyles = []
@@ -59,6 +60,7 @@ viewIncipitSummary language iconColour summary =
                 , viewSearchResultSummaryField
                     { language = language
                     , icon = musicListSvg iconColour
+                    , iconSize = 20
                     , includeLabelInValue = False
                     , fieldName = "voiceInstrument"
                     , displayStyles = []
@@ -71,9 +73,10 @@ viewIncipitSummary language iconColour summary =
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = textIconSvg iconColour
+                    , iconSize = 15
                     , includeLabelInValue = False
                     , fieldName = "textIncipit"
-                    , displayStyles = [ Font.italic ]
+                    , displayStyles = [ Font.italic, Font.size 12 ]
                     , formatNumbers = False
                     }
                     summary

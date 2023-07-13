@@ -3,6 +3,7 @@ module Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 import Color exposing (Color)
 import Dict exposing (Dict)
 import Element exposing (Element, column, fill, row, spacing, width)
+import Element.Font as Font
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (PersonResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
@@ -46,18 +47,25 @@ viewPersonSummary language iconColour summary =
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = briefcaseSvg iconColour
+                    , iconSize = 20
                     , includeLabelInValue = False
                     , fieldName = "roles"
                     , displayStyles = []
                     , formatNumbers = False
                     }
                     summary
-                , viewSearchResultSummaryField
+                ]
+            , row
+                [ width fill
+                , spacing 20
+                ]
+                [ viewSearchResultSummaryField
                     { language = language
                     , icon = sourcesSvg iconColour
+                    , iconSize = 15
                     , includeLabelInValue = True
                     , fieldName = "numSources"
-                    , displayStyles = []
+                    , displayStyles = [ Font.size 12 ]
                     , formatNumbers = True
                     }
                     summary

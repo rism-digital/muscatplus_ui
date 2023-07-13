@@ -13,10 +13,13 @@ import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingMD, sectionSpacing)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.ExemplarsSection exposing (viewHeldBy)
+import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
+import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
+import Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 import Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 import Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Page.UI.Record.Previews.Person exposing (viewPersonPreview)
-import Page.UI.Record.Previews.Source exposing (viewBasicSourcePreview, viewSourcePreview)
+import Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (ServerData(..))
 
@@ -110,13 +113,13 @@ viewPreviewRouter language cfg previewData =
                 Just (ExternalData body) ->
                     case body.record of
                         ExternalSource sourceBody ->
-                            viewBasicSourcePreview language body.project sourceBody
+                            viewExternalSourcePreview language body.project sourceBody
 
                         ExternalPerson personBody ->
-                            viewPersonPreview language personBody
+                            viewExternalPersonPreview language body.project personBody
 
                         ExternalInstitution institutionBody ->
-                            viewHeldBy language institutionBody
+                            viewExternalInstitutionPreview language body.project institutionBody
 
                 Nothing ->
                     viewPreviewLoading language

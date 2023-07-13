@@ -49,6 +49,7 @@ type alias SearchResultConfig msg =
 type alias SearchResultSummaryConfig msg =
     { language : Language
     , icon : Element msg
+    , iconSize : Int
     , includeLabelInValue : Bool
     , fieldName : String
     , displayStyles : List (Attribute msg)
@@ -198,8 +199,8 @@ summaryFieldTemplate summaryCfg fieldValue =
 
         iconElement =
             el
-                [ width (px 20)
-                , height (px 20)
+                [ width (px summaryCfg.iconSize)
+                , height (px summaryCfg.iconSize)
                 , padding 2
                 , centerY
                 , el tooltipStyle (text fLabel)

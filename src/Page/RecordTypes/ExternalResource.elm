@@ -5,9 +5,10 @@ module Page.RecordTypes.ExternalResource exposing
     , externalResourcesSectionBodyDecoder
     )
 
-import Json.Decode as Decode exposing (Decoder, andThen, list, string)
-import Json.Decode.Pipeline exposing (hardcoded, required)
+import Json.Decode as Decode exposing (Decoder, andThen, list, maybe, string)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody, externalInstitutionBodyDecoder, externalRecordBodyDecoder)
 import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 
 
@@ -29,6 +30,7 @@ type alias ExternalResourcesSectionBody =
     { sectionToc : String
     , label : LanguageMap
     , items : List ExternalResourceBody
+    , records : Maybe (List ExternalRecordBody)
     }
 
 
@@ -68,3 +70,4 @@ externalResourcesSectionBodyDecoder =
         |> hardcoded "record-external-resources-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list externalResourceBodyDecoder)
+        |> optional "records" (maybe (list externalRecordBodyDecoder)) Nothing

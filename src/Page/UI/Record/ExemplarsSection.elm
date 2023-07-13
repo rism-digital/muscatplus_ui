@@ -13,6 +13,7 @@ import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagrap
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, sourcesSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalResource)
+import Page.UI.Record.PageTemplate exposing (externalLinkTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
@@ -165,4 +166,5 @@ viewHeldBy language body =
             { label = text (extractLabelFromLanguageMap language body.label)
             , url = body.id
             }
+        , externalLinkTemplate body.id
         ]

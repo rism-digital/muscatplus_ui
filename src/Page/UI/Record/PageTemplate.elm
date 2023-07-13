@@ -1,5 +1,6 @@
 module Page.UI.Record.PageTemplate exposing
-    ( pageFooterTemplate
+    ( externalLinkTemplate
+    , pageFooterTemplate
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
@@ -7,24 +8,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element
-    exposing
-        ( Element
-        , alignBottom
-        , alignLeft
-        , alignRight
-        , column
-        , el
-        , fill
-        , htmlAttribute
-        , link
-        , none
-        , padding
-        , row
-        , spacing
-        , text
-        , width
-        )
+import Element exposing (Element, above, alignBottom, alignLeft, alignRight, column, el, fill, height, htmlAttribute, link, none, padding, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -35,8 +19,11 @@ import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingSM, lineSpacing, linkColour)
 import Page.UI.Components exposing (h1)
+import Page.UI.Helpers exposing (viewIf)
+import Page.UI.Images exposing (externalLinkSvg)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Session exposing (Session)
 import Url
 
@@ -130,21 +117,50 @@ pageLinkTemplate language langMap body =
     row
         [ width fill
         , alignLeft
+        , spacing 5
         ]
-        [ el
-            [ headingSM
-            , Font.semiBold
+        [ column
+            [ width shrink ]
+            [ row
+                [ width fill ]
+                [ el
+                    [ headingSM
+                    , Font.semiBold
+                    ]
+                    (text (extractLabelFromLanguageMap language langMap ++ ": "))
+                , link
+                    [ linkColour ]
+                    { label =
+                        el
+                            [ headingSM ]
+                            (text body.id)
+                    , url = body.id
+                    }
+                ]
             ]
-            (text (extractLabelFromLanguageMap language langMap ++ ": "))
-        , link
-            [ linkColour ]
-            { label =
-                el
-                    [ headingSM ]
-                    (text body.id)
-            , url = body.id
-            }
+        , externalLinkTemplate body.id
         ]
+
+
+externalLinkTemplate : String -> Element msg
+externalLinkTemplate url =
+    let
+        isExternalLink =
+            String.startsWith C.serverUrl url
+                |> not
+
+        externalImg =
+            el
+                [ width (px 12)
+                , height (px 12)
+                , tooltip above
+                    (el tooltipStyle (text "External link"))
+
+                -- TODO: Translate
+                ]
+                (externalLinkSvg colourScheme.slateGrey)
+    in
+    viewIf externalImg isExternalLink
 
 
 pageFullRecordTemplate : Language -> { a | id : String } -> Element msg

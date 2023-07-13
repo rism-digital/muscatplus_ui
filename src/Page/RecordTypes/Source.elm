@@ -29,6 +29,27 @@ import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDe
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
 
 
+type alias FullSourceBody =
+    { sectionToc : String
+    , id : String
+    , label : LanguageMap
+    , creator : Maybe RelationshipBody
+    , typeLabel : LanguageMap
+    , record : SourceRecordDescriptors
+    , partOf : Maybe PartOfSectionBody
+    , contents : Maybe ContentsSectionBody
+    , materialGroups : Maybe MaterialGroupsSectionBody
+    , relationships : Maybe RelationshipsSectionBody
+    , incipits : Maybe IncipitsSectionBody
+    , referencesNotes : Maybe ReferencesNotesSectionBody
+    , exemplars : Maybe ExemplarsSectionBody
+    , sourceItems : Maybe SourceItemsSectionBody
+    , externalResources : Maybe ExternalResourcesSectionBody
+    , digitalObjects : Maybe DigitalObjectsSectionBody
+    , recordHistory : RecordHistory
+    }
+
+
 type alias ExemplarBody =
     { label : LanguageMap
     , summary : Maybe (List LabelValue)
@@ -50,27 +71,6 @@ type alias ExemplarsSectionBody =
 type alias BoundWithSectionBody =
     { sectionLabel : LanguageMap
     , source : BasicSourceBody
-    }
-
-
-type alias FullSourceBody =
-    { sectionToc : String
-    , id : String
-    , label : LanguageMap
-    , creator : Maybe RelationshipBody
-    , typeLabel : LanguageMap
-    , record : SourceRecordDescriptors
-    , partOf : Maybe PartOfSectionBody
-    , contents : Maybe ContentsSectionBody
-    , materialGroups : Maybe MaterialGroupsSectionBody
-    , relationships : Maybe RelationshipsSectionBody
-    , incipits : Maybe IncipitsSectionBody
-    , referencesNotes : Maybe ReferencesNotesSectionBody
-    , exemplars : Maybe ExemplarsSectionBody
-    , sourceItems : Maybe SourceItemsSectionBody
-    , externalResources : Maybe ExternalResourcesSectionBody
-    , digitalObjects : Maybe DigitalObjectsSectionBody
-    , recordHistory : RecordHistory
     }
 
 

@@ -8,6 +8,7 @@ import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, Externa
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (renderParagraph)
 import Page.UI.Images exposing (iiifLogo)
+import Page.UI.Record.PageTemplate exposing (externalLinkTemplate)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
@@ -52,11 +53,23 @@ viewExternalResource language body =
                     ]
 
                 _ ->
-                    [ link
-                        [ linkColour ]
-                        { label = renderParagraph language body.label
-                        , url = body.url
-                        }
+                    [ column
+                        [ width fill
+                        , spacing 5
+                        ]
+                        [ row
+                            [ width fill
+                            , alignLeft
+                            , spacing 5
+                            ]
+                            [ link
+                                [ linkColour ]
+                                { label = renderParagraph language body.label
+                                , url = body.url
+                                }
+                            , externalLinkTemplate body.url
+                            ]
+                        ]
                     ]
     in
     wrappedRow

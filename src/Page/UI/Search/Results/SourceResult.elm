@@ -148,6 +148,7 @@ viewSourceSummary language iconColour summary =
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = peopleSvg iconColour
+                    , iconSize = 20
                     , includeLabelInValue = False
                     , fieldName = "sourceComposers"
                     , displayStyles = []
@@ -157,6 +158,7 @@ viewSourceSummary language iconColour summary =
                 , viewSearchResultSummaryField
                     { language = language
                     , icon = userCircleSvg iconColour
+                    , iconSize = 20
                     , includeLabelInValue = False
                     , fieldName = "sourceComposer"
                     , displayStyles = []
@@ -171,27 +173,36 @@ viewSourceSummary language iconColour summary =
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = calendarSvg iconColour
+                    , iconSize = 15
                     , includeLabelInValue = False
                     , fieldName = "dateStatements"
-                    , displayStyles = []
+                    , displayStyles =
+                        [ Font.size 12
+                        ]
                     , formatNumbers = False
                     }
                     summary
                 , viewSearchResultSummaryField
                     { language = language
                     , icon = layerGroupSvg iconColour
+                    , iconSize = 15
                     , includeLabelInValue = True
                     , fieldName = "numItems"
-                    , displayStyles = []
+                    , displayStyles =
+                        [ Font.size 12
+                        ]
                     , formatNumbers = True
                     }
                     summary
                 , viewSearchResultSummaryField
                     { language = language
                     , icon = sourcesSvg iconColour
+                    , iconSize = 15
                     , includeLabelInValue = True
                     , fieldName = "numExemplars"
-                    , displayStyles = []
+                    , displayStyles =
+                        [ Font.size 12
+                        ]
                     , formatNumbers = True
                     }
                     summary
