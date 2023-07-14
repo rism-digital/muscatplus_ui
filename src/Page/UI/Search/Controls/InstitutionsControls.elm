@@ -33,8 +33,14 @@ viewFacetsForInstitutionsMode cfg =
         sigla =
             viewFacet (createFacetConfig cfg "sigla" tooltips.institutionSigla) cfg.facetMsgConfig
 
+        hasSigla =
+            viewFacet (createFacetConfig cfg "has-siglum" tooltips.institutionSigla) cfg.facetMsgConfig
+
         roles =
             viewFacet (createFacetConfig cfg "roles" tooltips.roles) cfg.facetMsgConfig
+
+        numberSources =
+            viewFacet (createFacetConfig cfg "number-sources" tooltips.institutionNumHoldings) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias institutionFacetPanels.locationPanel)
@@ -42,11 +48,13 @@ viewFacetsForInstitutionsMode cfg =
         cfg
         [ city
         , sigla
+        , hasSigla
         ]
     , viewFacetsControlPanel
         (.alias institutionFacetPanels.relationshipPanel)
         (.label institutionFacetPanels.relationshipPanel)
         cfg
         [ roles
+        , numberSources
         ]
     ]
