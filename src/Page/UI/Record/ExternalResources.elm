@@ -1,20 +1,27 @@
 module Page.UI.Record.ExternalResources exposing (viewExternalResource, viewExternalResourcesSection)
 
 import Config as C
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, px, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (renderParagraph)
 import Page.UI.Images exposing (iiifLogo)
-import Page.UI.Record.PageTemplate exposing (externalLinkTemplate)
+import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg
 viewExternalResource language body =
     let
+        resourceLink =
+            if isExternalLink body.url then
+                newTabLink
+
+            else
+                link
+
         externalResourceLink =
             case body.type_ of
                 IIIFManifestResourceType ->
@@ -62,7 +69,7 @@ viewExternalResource language body =
                             , alignLeft
                             , spacing 5
                             ]
-                            [ link
+                            [ resourceLink
                                 [ linkColour ]
                                 { label = renderParagraph language body.label
                                 , url = body.url

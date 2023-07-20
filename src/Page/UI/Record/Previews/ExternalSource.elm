@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews.ExternalSource exposing (..)
 
-import Element exposing (Element, above, alignTop, column, el, fill, height, link, none, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, above, alignRight, alignTop, column, el, fill, fillPortion, height, inFront, link, newTabLink, none, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -40,7 +40,8 @@ viewExternalSourcePreview language project body =
             case project of
                 DIAMM ->
                     el
-                        [ width (px 175) ]
+                        [ width (px 175)
+                        ]
                         diammLogo
 
                 _ ->
@@ -64,7 +65,7 @@ viewExternalSourcePreview language project body =
                 , alignTop
                 ]
                 [ column
-                    [ width fill
+                    [ width (fillPortion 3)
                     , height fill
                     , alignTop
                     , spacing lineSpacing
@@ -73,8 +74,12 @@ viewExternalSourcePreview language project body =
                     , pageFullRecordTemplate language body
                     ]
                 , column
+                    [ inFront projectLogo
+                    , alignRight
+                    , width (fillPortion 1)
+                    , height fill
+                    ]
                     []
-                    [ projectLogo ]
                 ]
             , pageBodyView
             ]
@@ -166,7 +171,7 @@ viewExternalHeldBy language body =
                 )
             ]
             (institutionSvg colourScheme.slateGrey)
-        , link
+        , newTabLink
             [ linkColour
             , headingLG
             , Font.medium

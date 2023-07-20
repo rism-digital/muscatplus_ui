@@ -1,5 +1,6 @@
 module Page.UI.Record.PageTemplate exposing
     ( externalLinkTemplate
+    , isExternalLink
     , pageFooterTemplate
     , pageFullRecordTemplate
     , pageHeaderTemplate
@@ -8,7 +9,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Element, above, alignBottom, alignLeft, alignRight, column, el, fill, height, htmlAttribute, link, none, padding, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, above, alignBottom, alignLeft, alignRight, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -112,8 +113,22 @@ pageHeaderTemplateNoToc language header =
         [ h1 language header.label ]
 
 
+isExternalLink : String -> Bool
+isExternalLink url =
+    String.startsWith C.serverUrl url
+        |> not
+
+
 pageLinkTemplate : Language -> LanguageMap -> { a | id : String } -> Element msg
 pageLinkTemplate language langMap body =
+    let
+        recordLink =
+            if isExternalLink body.id then
+                newTabLink
+
+            else
+                link
+    in
     row
         [ width fill
         , alignLeft
@@ -128,7 +143,7 @@ pageLinkTemplate language langMap body =
                     , Font.semiBold
                     ]
                     (text (extractLabelFromLanguageMap language langMap ++ ": "))
-                , link
+                , recordLink
                     [ linkColour ]
                     { label =
                         el
@@ -145,10 +160,6 @@ pageLinkTemplate language langMap body =
 externalLinkTemplate : String -> Element msg
 externalLinkTemplate url =
     let
-        isExternalLink =
-            String.startsWith C.serverUrl url
-                |> not
-
         externalImg =
             el
                 [ width (px 12)
@@ -160,7 +171,8 @@ externalLinkTemplate url =
                 ]
                 (externalLinkSvg colourScheme.slateGrey)
     in
-    viewIf externalImg isExternalLink
+    isExternalLink url
+        |> viewIf externalImg
 
 
 pageFullRecordTemplate : Language -> { a | id : String } -> Element msg
