@@ -1,6 +1,6 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
-import Element exposing (Element, column, none, paddingEach, row, spacing)
+import Element exposing (Element, alignTop, column, none, paddingEach, row, spacing, spacingXY)
 import Element.Border as Border
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 import Language.Tooltips exposing (tooltips)
@@ -107,6 +107,9 @@ viewFacetsForSourcesMode cfg =
                 compositeVolumesToggle =
                     viewFacet (createFacetConfig cfg "hide-composite-volumes" tooltips.compositeVolume) cfg.facetMsgConfig
 
+                diammRecordsToggle =
+                    viewFacet (createFacetConfig cfg "hide-diamm-records" tooltips.diammProject) cfg.facetMsgConfig
+
                 allAreEmpty =
                     List.all
                         (\a -> a == none)
@@ -122,6 +125,7 @@ viewFacetsForSourcesMode cfg =
                     cfg
                     [ row
                         [ paddingEach { bottom = 10, left = 0, right = 0, top = 0 }
+                        , spacingXY 20 0
                         ]
                         [ column
                             [ Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
@@ -130,6 +134,10 @@ viewFacetsForSourcesMode cfg =
                             [ row [] [ sourceContentsToggle ]
                             , row [] [ sourceCollectionsToggle ]
                             , row [] [ compositeVolumesToggle ]
+                            ]
+                        , column
+                            [ alignTop ]
+                            [ row [] [ diammRecordsToggle ]
                             ]
                         ]
                     , sourceType

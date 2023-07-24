@@ -4,7 +4,8 @@ import Language exposing (Language(..), LanguageMap, LanguageValues(..))
 
 
 tooltips :
-    { associatedPlace : LanguageMap
+    { diammProject : LanguageMap
+    , associatedPlace : LanguageMap
     , city : LanguageMap
     , composerAuthor : LanguageMap
     , compositeVolume : LanguageMap
@@ -28,7 +29,9 @@ tooltips :
     , textLanguage : LanguageMap
     }
 tooltips =
-    { associatedPlace =
+    { diammProject =
+        [ LanguageValues English englishHideDiammRecordsToggleTooltip ]
+    , associatedPlace =
         [ LanguageValues English englishAssociatedPlaceTooltip ]
     , city =
         [ LanguageValues English englishCityTooltip ]
@@ -77,6 +80,11 @@ tooltips =
     , textLanguage =
         [ LanguageValues English englishTextLanguageTooltip ]
     }
+
+
+englishHideDiammRecordsToggleTooltip : List String
+englishHideDiammRecordsToggleTooltip =
+    [ """Exclude search results that come from the DIAMM project.""" ]
 
 
 englishCompositeVolumeToggleTooltip : List String
