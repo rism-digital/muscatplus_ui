@@ -33,6 +33,20 @@ type alias ExternalSourceExemplar =
     { label : LanguageMap
     , summary : Maybe (List LabelValue)
     , heldBy : ExternalInstitutionRecord
+    , externalResources : Maybe ExternalSourceExternalResourcesSection
+    }
+
+
+type alias ExternalSourceExternalResourcesSection =
+    { sectionToc : String
+    , label : LanguageMap
+    , items : List ExternalSourceExternalResource
+    }
+
+
+type alias ExternalSourceExternalResource =
+    { url : String
+    , label : LanguageMap
     }
 
 
@@ -159,6 +173,7 @@ externalSourceExemplarDecoder =
         |> required "sectionLabel" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" externalInstitutionBodyDecoder
+        |> optional "externalResources" (Decode.maybe externalSourceExternalResourcesSectionDecoder) Nothing
 
 
 externalSourceReferencesNotesSectionDecoder : Decoder ExternalSourceReferencesNotesSection
@@ -167,3 +182,18 @@ externalSourceReferencesNotesSectionDecoder =
         |> hardcoded "external-source-references-notes-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
+
+
+externalSourceExternalResourcesSectionDecoder : Decoder ExternalSourceExternalResourcesSection
+externalSourceExternalResourcesSectionDecoder =
+    Decode.succeed ExternalSourceExternalResourcesSection
+        |> hardcoded "external-source-external-resources-section"
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "items" (list externalSourceExternalResourceDecoder)
+
+
+externalSourceExternalResourceDecoder : Decoder ExternalSourceExternalResource
+externalSourceExternalResourceDecoder =
+    Decode.succeed ExternalSourceExternalResource
+        |> required "url" string
+        |> required "label" languageMapLabelDecoder

@@ -1,17 +1,18 @@
 module Page.UI.Record.Previews.ExternalSource exposing (..)
 
-import Element exposing (Element, above, alignRight, alignTop, column, el, fill, fillPortion, height, inFront, link, newTabLink, none, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, fillPortion, height, inFront, link, newTabLink, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
+import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (viewParagraphField, viewSummaryField)
+import Page.UI.Attributes exposing (headingLG, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Components exposing (fieldValueWrapper, renderLabel, renderParagraph, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
-import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, pageFullRecordTemplate, pageHeaderTemplateNoToc)
+import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink, pageFullRecordTemplate, pageHeaderTemplateNoToc)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -119,6 +120,7 @@ viewExternalSourceExemplar language body =
                     , spacing lineSpacing
                     ]
                     [ viewMaybe (viewSummaryField language) body.summary
+                    , viewMaybe (viewExternalSourceExternalResourcesSection language) body.externalResources
 
                     --, viewMaybe (viewParagraphField language) body.notes
                     --, viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
@@ -217,4 +219,68 @@ viewExternalNotesSection language notes =
         , alignTop
         ]
         [ viewParagraphField language notes
+        ]
+
+
+viewExternalSourceExternalResourcesSection : Language -> ExternalSourceExternalResourcesSection -> Element msg
+viewExternalSourceExternalResourcesSection language linkSection =
+    fieldValueWrapper
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language linkSection.label ]
+            , column
+                valueFieldColumnAttributes
+                [ textColumn
+                    [ spacing lineSpacing ]
+                    (List.map (viewExternalResource language) linkSection.items)
+                ]
+            ]
+        ]
+
+
+viewExternalResource : Language -> ExternalSourceExternalResource -> Element msg
+viewExternalResource language body =
+    let
+        resourceLink =
+            if isExternalLink body.url then
+                newTabLink
+
+            else
+                link
+    in
+    wrappedRow
+        [ width fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , spacing lineSpacing
+            ]
+            [ row
+                [ width fill
+                ]
+                [ column
+                    [ width fill
+                    , spacing 5
+                    ]
+                    [ row
+                        [ width fill
+                        , alignLeft
+                        , spacing 5
+                        ]
+                        [ resourceLink
+                            [ linkColour ]
+                            { label = renderParagraph language body.label
+                            , url = body.url
+                            }
+                        , externalLinkTemplate body.url
+                        ]
+                    ]
+                ]
+            ]
         ]
