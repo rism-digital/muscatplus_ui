@@ -57,7 +57,7 @@ viewSourceFlags language flags =
         isDIAMMFlag =
             viewIf
                 (makeFlagIcon
-                    { background = colourScheme.lightGreen
+                    { background = colourScheme.darkBlue
                     , foreground = colourScheme.white
                     }
                     (penNibSvg colourScheme.white)
