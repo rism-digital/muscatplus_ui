@@ -12,7 +12,7 @@ import Page.RecordTypes.Source exposing (PartOfSectionBody)
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, iiifLogo, layerGroupSvg, musicNotationSvg, peopleSvg, sourcesSvg, userCircleSvg)
+import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, iiifLogo, layerGroupSvg, musicNotationSvg, penNibSvg, peopleSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
@@ -60,7 +60,7 @@ viewSourceFlags language flags =
                     { background = colourScheme.lightGreen
                     , foreground = colourScheme.white
                     }
-                    (musicNotationSvg colourScheme.white)
+                    (penNibSvg colourScheme.white)
                     "Is DIAMM"
                 )
                 flags.isDIAMMRecord
@@ -71,7 +71,7 @@ viewSourceFlags language flags =
                     { background = colourScheme.yellow
                     , foreground = colourScheme.black
                     }
-                    (musicNotationSvg colourScheme.black)
+                    (penNibSvg colourScheme.black)
                     "Has DIAMM"
                 )
                 flags.hasDIAMMRecord

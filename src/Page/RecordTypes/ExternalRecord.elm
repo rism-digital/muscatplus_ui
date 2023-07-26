@@ -58,7 +58,9 @@ type alias ExternalSourceReferencesNotesSection =
 
 
 type alias ExternalPersonRecord =
-    {}
+    { id : String
+    , label : LanguageMap
+    }
 
 
 type alias ExternalInstitutionRecord =
@@ -139,6 +141,8 @@ externalInstitutionBodyDecoder =
 externalPersonBodyDecoder : Decoder ExternalPersonRecord
 externalPersonBodyDecoder =
     Decode.succeed ExternalPersonRecord
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
 
 
 externalSourceBodyDecoder : Decoder ExternalSourceRecord

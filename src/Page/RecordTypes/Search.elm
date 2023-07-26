@@ -14,6 +14,7 @@ module Page.RecordTypes.Search exposing
     , NotationFacet
     , NotationQueryOptions
     , PersonResultBody
+    , PersonResultFlags
     , QueryFacet
     , RangeFacet
     , RangeFacetValue(..)
@@ -180,11 +181,13 @@ type alias PersonResultBody =
     { id : String
     , label : LanguageMap
     , summary : Maybe (Dict String LabelValue)
+    , flags : Maybe PersonResultFlags
     }
 
 
 type alias PersonResultFlags =
-    { numberOfSources : Int
+    { hasDIAMMRecord : Bool
+    , isDIAMMRecord : Bool
     }
 
 
@@ -518,6 +521,7 @@ personResultBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
+        |> optional "flags" (Decode.maybe personResultFlagsDecoder) Nothing
 
 
 queryFacetDecoder : Decoder QueryFacet
@@ -662,3 +666,10 @@ toggleFacetDecoder =
         |> required "alias" string
         |> required "label" languageMapLabelDecoder
         |> required "value" string
+
+
+personResultFlagsDecoder : Decoder PersonResultFlags
+personResultFlagsDecoder =
+    Decode.succeed PersonResultFlags
+        |> optional "hasDIAMMRecord" bool False
+        |> optional "isDIAMMRecord" bool False
