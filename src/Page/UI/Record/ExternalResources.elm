@@ -34,7 +34,7 @@ viewExternalResource language body =
                             , alignLeft
                             , spacing 5
                             ]
-                            [ link
+                            [ newTabLink
                                 [ linkColour
                                 , alignLeft
                                 ]
@@ -48,7 +48,7 @@ viewExternalResource language body =
                                 , alignLeft
                                 ]
                                 iiifLogo
-                            , link
+                            , newTabLink
                                 [ linkColour
                                 , alignLeft
                                 ]
