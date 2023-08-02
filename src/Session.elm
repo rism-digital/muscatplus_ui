@@ -32,6 +32,7 @@ type alias Session =
     { key : Nav.Key
     , language : Language
     , device : Device
+    , window : ( Int, Int )
     , url : Url
     , route : Route
     , showMuscatLinks : Bool
@@ -107,6 +108,7 @@ init flags url key =
     { key = key
     , language = language
     , device = initialDevice
+    , window = ( flags.windowWidth, flags.windowHeight )
     , url = url
     , route = route
     , showMuscatLinks = flags.showMuscatLinks
