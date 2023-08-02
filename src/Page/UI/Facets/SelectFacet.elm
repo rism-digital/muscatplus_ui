@@ -143,7 +143,6 @@ viewSelectFacet config =
             facetSorts =
                 query.facetSorts
 
-            -- TODO: Explain this better; why 200 items?
             chosenSort =
                 case Dict.get facetAlias facetSorts of
                     Just userSetSort ->

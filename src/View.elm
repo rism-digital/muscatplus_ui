@@ -3,10 +3,7 @@ module View exposing (view)
 import Browser
 import Css
 import Css.Global
-import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, inFront, layout, link, none, padding, px, row, spacing, text, width)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Font as Font
+import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, layout, none, px, row, width)
 import Element.Keyed as Keyed
 import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
@@ -24,10 +21,9 @@ import Page.Record.Views.SourcePage
 import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, lineSpacing, pageBackground)
-import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, pageBackground)
+import Page.UI.Style exposing (colours)
 import Response exposing (Response(..), ServerData(..))
-import Url
 
 
 view : Model -> Browser.Document Msg
