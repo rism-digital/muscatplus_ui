@@ -55,7 +55,7 @@ config =
     , NoUnused.CustomTypeConstructorArgs.rule
     , NoUnused.Dependencies.rule
     , NoUnused.Exports.rule
-    , NoUnused.Modules.rule
+    , NoUnused.Variables.rule
 
     --, NoUnused.Parameters.rule
     , NoUnused.Patterns.rule
