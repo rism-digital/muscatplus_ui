@@ -1,10 +1,9 @@
 module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection, viewHeldBy)
 
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, spacing, text, width, wrappedRow)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
@@ -12,7 +11,7 @@ import Page.UI.Attributes exposing (headingLG, labelFieldColumnAttributes, lineS
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, sourcesSvg)
-import Page.UI.Record.ExternalResources exposing (viewExternalResource)
+import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (externalLinkTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -78,27 +77,6 @@ viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
 viewExemplarsSection language exemplarSection =
     List.map (viewExemplar language) exemplarSection.items
         |> sectionTemplate language exemplarSection
-
-
-viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
-viewExternalResourcesSection language linkSection =
-    fieldValueWrapper
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language linkSection.label ]
-            , column
-                valueFieldColumnAttributes
-                [ textColumn
-                    [ spacing lineSpacing ]
-                    (List.map (viewExternalResource language) linkSection.items)
-                ]
-            ]
-        ]
 
 
 viewBoundWithSection : Language -> BoundWithSectionBody -> Element msg

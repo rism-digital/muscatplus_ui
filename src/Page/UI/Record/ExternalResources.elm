@@ -1,15 +1,64 @@
 module Page.UI.Record.ExternalResources exposing (viewExternalResource, viewExternalResourcesSection)
 
 import Config as C
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, none, px, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (renderParagraph)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (iiifLogo)
 import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+
+
+viewExternalRecord : Language -> ExternalRecordBody -> Element msg
+viewExternalRecord language body =
+    let
+        recordView =
+            case body.record of
+                ExternalSource sourceRecord ->
+                    column
+                        [ width fill
+                        , spacing 5
+                        ]
+                        [ row
+                            [ width fill
+                            , alignLeft
+                            , spacing 5
+                            ]
+                            [ newTabLink
+                                [ linkColour
+                                , alignLeft
+                                ]
+                                { label = text ("View " ++ extractLabelFromLanguageMap language sourceRecord.label ++ " on DIAMM")
+                                , url = sourceRecord.id
+                                }
+                            ]
+                        ]
+
+                ExternalPerson personRecord ->
+                    none
+
+                ExternalInstitution institutionRecord ->
+                    none
+    in
+    wrappedRow
+        [ width fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , spacing lineSpacing
+            ]
+            [ row
+                [ width fill
+                ]
+                [ recordView ]
+            ]
+        ]
 
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg
@@ -98,6 +147,24 @@ viewExternalResource language body =
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
 viewExternalResourcesSection language extSection =
     let
+        externalRecordsView itms =
+            column
+                [ spacing sectionSpacing
+                , width fill
+                , height fill
+                , alignTop
+                ]
+                (List.map (viewExternalRecord language) itms)
+
+        externalResourceView itms =
+            column
+                [ spacing sectionSpacing
+                , width fill
+                , height fill
+                , alignTop
+                ]
+                (List.map (viewExternalResource language) itms)
+
         sectionBody =
             [ row
                 (width fill
@@ -105,13 +172,8 @@ viewExternalResourcesSection language extSection =
                     :: alignTop
                     :: sectionBorderStyles
                 )
-                [ column
-                    [ spacing sectionSpacing
-                    , width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    (List.map (viewExternalResource language) extSection.items)
+                [ viewMaybe externalResourceView extSection.items
+                , viewMaybe externalRecordsView extSection.externalRecords
                 ]
             ]
     in

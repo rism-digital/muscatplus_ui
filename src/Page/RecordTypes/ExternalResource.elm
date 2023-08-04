@@ -29,8 +29,8 @@ type ExternalResourceType
 type alias ExternalResourcesSectionBody =
     { sectionToc : String
     , label : LanguageMap
-    , items : List ExternalResourceBody
-    , records : Maybe (List ExternalRecordBody)
+    , items : Maybe (List ExternalResourceBody)
+    , externalRecords : Maybe (List ExternalRecordBody)
     }
 
 
@@ -69,5 +69,5 @@ externalResourcesSectionBodyDecoder =
     Decode.succeed ExternalResourcesSectionBody
         |> hardcoded "record-external-resources-section"
         |> required "sectionLabel" languageMapLabelDecoder
-        |> required "items" (list externalResourceBodyDecoder)
-        |> optional "records" (maybe (list externalRecordBodyDecoder)) Nothing
+        |> optional "items" (maybe (list externalResourceBodyDecoder)) Nothing
+        |> optional "externalRecords" (maybe (list externalRecordBodyDecoder)) Nothing

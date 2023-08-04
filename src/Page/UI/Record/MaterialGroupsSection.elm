@@ -1,38 +1,16 @@
 module Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 
-import Element exposing (Element, alignTop, column, el, fill, height, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignTop, column, el, fill, height, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
-import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Attributes exposing (headingLG, headingMD, labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
+import Page.UI.Attributes exposing (headingLG, lineSpacing, sectionBorderStyles, sectionSpacing)
+import Page.UI.Components exposing (viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Record.ExternalResources exposing (viewExternalResource)
+import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
-
-
-viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
-viewExternalResourcesSection language linkSection =
-    fieldValueWrapper
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language linkSection.label ]
-            , column
-                valueFieldColumnAttributes
-                [ textColumn
-                    [ spacing lineSpacing ]
-                    (List.map (viewExternalResource language) linkSection.items)
-                ]
-            ]
-        ]
 
 
 viewMaterialGroup : Language -> MaterialGroupBody -> Element msg
