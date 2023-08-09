@@ -10,6 +10,7 @@ module Page.RecordTypes.Search exposing
     , Facets
     , IncipitResultBody
     , InstitutionResultBody
+    , InstitutionResultFlags
     , ModeFacet
     , NotationFacet
     , NotationQueryOptions
@@ -29,6 +30,7 @@ module Page.RecordTypes.Search exposing
     , SourceResultFlags
     , ToggleFacet
     , facetsDecoder
+    , institutionResultFlagsDecoder
     , modeFacetDecoder
     , parseFacetBehaviourToString
     , parseFacetSortToString
@@ -147,11 +149,13 @@ type alias InstitutionResultBody =
     { id : String
     , label : LanguageMap
     , summary : Maybe (Dict String LabelValue)
+    , flags : Maybe InstitutionResultFlags
     }
 
 
 type alias InstitutionResultFlags =
-    { numberOfSources : Int
+    { hasDIAMMRecord : Bool
+    , isDIAMMRecord : Bool
     }
 
 
@@ -436,6 +440,7 @@ institutionResultBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
+        |> optional "flags" (Decode.maybe institutionResultFlagsDecoder) Nothing
 
 
 modeFacetDecoder : Decoder ModeFacet
@@ -671,5 +676,12 @@ toggleFacetDecoder =
 personResultFlagsDecoder : Decoder PersonResultFlags
 personResultFlagsDecoder =
     Decode.succeed PersonResultFlags
+        |> optional "hasDIAMMRecord" bool False
+        |> optional "isDIAMMRecord" bool False
+
+
+institutionResultFlagsDecoder : Decoder InstitutionResultFlags
+institutionResultFlagsDecoder =
+    Decode.succeed InstitutionResultFlags
         |> optional "hasDIAMMRecord" bool False
         |> optional "isDIAMMRecord" bool False
