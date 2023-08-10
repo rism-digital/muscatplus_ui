@@ -31,6 +31,7 @@
             "hecrj/html-parser": "2.4.0",
             "jzxhuang/http-extras": "2.1.0",
             "kuon/elm-string-normalize": "1.0.5",
+            "marcosh/elm-html-to-unicode": "1.0.4",
             "mdgriffith/elm-ui": "1.1.8",
             "pilatch/flip": "1.0.0",
             "rtfeldman/elm-css": "18.0.0",

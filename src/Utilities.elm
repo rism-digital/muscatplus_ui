@@ -9,6 +9,7 @@ module Utilities exposing
 
 import Dict exposing (Dict)
 import Element exposing (Element)
+import ElmEscapeHtml
 import Html.Parser
 import Html.Parser.Util exposing (toVirtualDom)
 import Regex
@@ -98,14 +99,27 @@ parsed an html string, transforms hrefs in links, and converts to vdom which can
 -}
 toLinkedHtml : String -> Result String (List (Element msg))
 toLinkedHtml htmlString =
+    let
+        toElementList htmlNodes =
+            toVirtualDom htmlNodes
+                |> List.map Element.html
+    in
     case Html.Parser.run htmlString of
         Ok nodes ->
-            let
-                elementList =
-                    toVirtualDom nodes
-                        |> List.map Element.html
-            in
-            Ok elementList
+            Ok <| toElementList nodes
 
         Err _ ->
-            Err "Invalid Html"
+            let
+                -- try again but first aggressively escape any characters that may be
+                -- masquerading as HTML, such as "<" or ">". This may make really bad
+                -- HTML show up in the notes, but it's better than showing nothing.
+                escapedHtml =
+                    ElmEscapeHtml.escape htmlString
+            in
+            case Html.Parser.run escapedHtml of
+                Ok nodes ->
+                    Ok <| toElementList nodes
+
+                Err _ ->
+                    -- bail if it's too far gone to be rescued.
+                    Err "Invalid Html"

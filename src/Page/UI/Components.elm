@@ -411,13 +411,25 @@ styledList textList =
 styledParagraphs : List String -> List (Element msg)
 styledParagraphs textList =
     let
-        parsedHtml t =
-            case toLinkedHtml t of
-                Ok elements ->
-                    elements
+        containsHtml txt =
+            -- If there is no open bracket, there is no HTML.
+            -- If there is an open bracket, there might be HTML,
+            -- so we would pass this through the slow path.
+            String.contains "<" txt
 
-                Err errMsg ->
-                    [ text errMsg ]
+        parsedHtml txt =
+            -- Don't run the HTML Parser and escaping stuff
+            -- if there is no chance that the text contains HTML.
+            if not (containsHtml txt) then
+                [ text txt ]
+
+            else
+                case toLinkedHtml txt of
+                    Ok elements ->
+                        elements
+
+                    Err errMsg ->
+                        [ text errMsg ]
     in
     List.map
         (\t ->
