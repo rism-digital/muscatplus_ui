@@ -52,7 +52,7 @@ viewSubject language subject =
 
 viewSubjectsSection : Language -> SubjectsSectionBody -> Element msg
 viewSubjectsSection language subjectSection =
-    fieldValueWrapper
+    fieldValueWrapper []
         [ wrappedRow
             [ width fill
             , height fill

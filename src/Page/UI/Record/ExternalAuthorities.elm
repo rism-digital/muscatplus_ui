@@ -24,7 +24,7 @@ viewExternalAuthoritiesSection language extSection =
             , height fill
             , alignTop
             ]
-            [ fieldValueWrapper
+            [ fieldValueWrapper []
                 [ wrappedRow
                     [ width fill
                     , height fill

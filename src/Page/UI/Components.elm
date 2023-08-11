@@ -18,7 +18,7 @@ module Page.UI.Components exposing
 
 import Color exposing (Color)
 import Css
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paddingXY, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paddingXY, paragraph, px, rgb, rgba, rotate, row, spacing, spacingXY, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -30,7 +30,7 @@ import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Utilities exposing (toLinkedHtml)
 
@@ -269,19 +269,21 @@ dropdownSelectStyles =
     ]
 
 
-fieldValueWrapper : List (Element msg) -> Element msg
-fieldValueWrapper content =
+fieldValueWrapper : List (Attribute msg) -> List (Element msg) -> Element msg
+fieldValueWrapper contentStyles content =
     wrappedRow
         [ width fill
         , height fill
         , alignTop
         ]
         [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , spacing lineSpacing
-            ]
+            (List.append
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                contentStyles
+            )
             content
         ]
 
@@ -343,6 +345,15 @@ makeFlagIcon colours iconImage iconLabel =
         ]
 
 
+renderValue : Language -> LanguageMap -> Element msg
+renderValue language value =
+    textColumn
+        [ bodyRegular
+        , spacing lineSpacing
+        ]
+        (styledParagraphs (extractTextFromLanguageMap language value))
+
+
 {-|
 
     Similar to 'renderValue' but does not insert extra line spacing
@@ -353,7 +364,6 @@ renderCloselySpacedValue : Language -> LanguageMap -> Element msg
 renderCloselySpacedValue language values =
     textColumn
         [ bodyRegular
-        , spacing lineSpacing
         ]
         (styledParagraphs (extractTextFromLanguageMap language values))
 
@@ -371,21 +381,19 @@ renderLabel language langmap =
 -}
 renderLanguageHelper : List (Element.Attribute msg) -> Language -> LanguageMap -> Element msg
 renderLanguageHelper attrib language heading =
-    paragraph attrib [ text (extractLabelFromLanguageMap language heading) ]
+    paragraph
+        attrib
+        [ text (extractLabelFromLanguageMap language heading) ]
 
 
 renderParagraph : Language -> LanguageMap -> Element msg
 renderParagraph language langmap =
-    renderLanguageHelper [ bodyRegular, spacing lineSpacing ] language langmap
-
-
-renderValue : Language -> LanguageMap -> Element msg
-renderValue language value =
-    textColumn
+    renderLanguageHelper
         [ bodyRegular
         , spacing lineSpacing
         ]
-        (styledParagraphs (extractTextFromLanguageMap language value))
+        language
+        langmap
 
 
 {-|
@@ -411,6 +419,11 @@ styledList textList =
 styledParagraphs : List String -> List (Element msg)
 styledParagraphs textList =
     let
+        listRenderer txt =
+            paragraph
+                [ spacing lineSpacing ]
+                (parsedHtml txt)
+
         containsHtml txt =
             -- If there is no open bracket, there is no HTML.
             -- If there is an open bracket, there might be HTML,
@@ -429,24 +442,22 @@ styledParagraphs textList =
                         elements
 
                     Err errMsg ->
+                        -- the original HTML string content is contained in the
+                        -- error message, so we will show it verbatim.
                         [ text errMsg ]
     in
-    List.map
-        (\t ->
-            parsedHtml t
-                |> paragraph
-                    [ spacing lineSpacing ]
-        )
-        textList
+    List.map listRenderer textList
 
 
 viewLabelValueField :
-    (Language -> LanguageMap -> Element msg)
+    List (Attribute msg)
+    -> (Language -> LanguageMap -> Element msg)
     -> Language
     -> List LabelValue
     -> Element msg
-viewLabelValueField fmt language field =
+viewLabelValueField wrapperStyles fmt language field =
     fieldValueWrapper
+        wrapperStyles
         (List.map
             (\f ->
                 wrappedRow
@@ -465,13 +476,21 @@ viewLabelValueField fmt language field =
 
 
 viewParagraphField : Language -> List LabelValue -> Element msg
-viewParagraphField language field =
-    viewLabelValueField renderValue language field
+viewParagraphField language fieldValues =
+    viewLabelValueField
+        [ spacing sectionSpacing ]
+        renderValue
+        language
+        fieldValues
 
 
 viewSummaryField : Language -> List LabelValue -> Element msg
-viewSummaryField language field =
-    viewLabelValueField renderCloselySpacedValue language field
+viewSummaryField language fieldValues =
+    viewLabelValueField
+        [ spacing lineSpacing ]
+        renderCloselySpacedValue
+        language
+        fieldValues
 
 
 viewBlankBottomBar : Element msg

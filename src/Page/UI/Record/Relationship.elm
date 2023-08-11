@@ -119,7 +119,7 @@ viewRelationshipBody language body =
                 Nothing ->
                     none
     in
-    fieldValueWrapper
+    fieldValueWrapper []
         [ wrappedRow
             [ width fill
             , height fill

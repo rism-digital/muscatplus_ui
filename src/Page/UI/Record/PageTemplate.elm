@@ -165,9 +165,8 @@ externalLinkTemplate url =
                 [ width (px 12)
                 , height (px 12)
                 , tooltip above
+                    -- TODO: Translate
                     (el tooltipStyle (text "External link"))
-
-                -- TODO: Translate
                 ]
                 (externalLinkSvg colourScheme.slateGrey)
     in

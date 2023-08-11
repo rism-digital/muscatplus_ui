@@ -11,7 +11,6 @@ import Page.UI.Components exposing (fieldValueWrapper, renderLabel, renderParagr
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
-import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink, pageFullRecordTemplate, pageHeaderTemplateNoToc)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
@@ -224,7 +223,7 @@ viewExternalNotesSection language notes =
 
 viewExternalSourceExternalResourcesSection : Language -> ExternalSourceExternalResourcesSection -> Element msg
 viewExternalSourceExternalResourcesSection language linkSection =
-    fieldValueWrapper
+    fieldValueWrapper []
         [ wrappedRow
             [ width fill
             , height fill

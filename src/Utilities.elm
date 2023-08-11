@@ -121,5 +121,5 @@ toLinkedHtml htmlString =
                     Ok <| toElementList nodes
 
                 Err _ ->
-                    -- bail if it's too far gone to be rescued.
-                    Err "Invalid Html"
+                    -- return the original string
+                    Err htmlString

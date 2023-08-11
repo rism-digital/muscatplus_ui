@@ -11,7 +11,7 @@ import Page.UI.Helpers exposing (viewMaybe)
 
 viewEmailAddress : Language -> LabelStringValue -> Element msg
 viewEmailAddress language emailAddress =
-    fieldValueWrapper
+    fieldValueWrapper []
         [ wrappedRow
             [ width fill
             , height fill
@@ -71,7 +71,7 @@ viewLocationAddressSection language body =
 
 viewWebsiteAddress : Language -> LabelStringValue -> Element msg
 viewWebsiteAddress language websiteAddress =
-    fieldValueWrapper
+    fieldValueWrapper []
         [ wrappedRow
             [ width fill
             , height fill

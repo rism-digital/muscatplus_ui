@@ -4,6 +4,7 @@ import Element exposing (Element, above, alignTop, centerY, column, el, fill, he
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
@@ -11,7 +12,7 @@ import Page.UI.Attributes exposing (headingLG, labelFieldColumnAttributes, lineS
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, sourcesSvg)
-import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources)
 import Page.UI.Record.PageTemplate exposing (externalLinkTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -40,16 +41,17 @@ viewExemplar language exemplar =
                 ]
                 [ viewHeldBy language exemplar.heldBy ]
             , row
-                [ width fill ]
+                [ width fill
+                ]
                 [ column
                     [ width fill
                     , spacing lineSpacing
                     ]
                     [ viewMaybe (viewSummaryField language) exemplar.summary
                     , viewMaybe (viewParagraphField language) exemplar.notes
-                    , viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
                     , viewMaybe (viewExemplarRelationships language) exemplar.relationships
                     , viewMaybe (viewBoundWithSection language) exemplar.boundWith
+                    , viewMaybe (viewExemplarExternalResourcesSection language) exemplar.externalResources
                     ]
                 ]
             ]
@@ -87,7 +89,7 @@ viewBoundWithSection language boundWithSection =
                 tooltipStyle
                 (text (extractLabelFromLanguageMap language localTranslations.source))
     in
-    fieldValueWrapper
+    fieldValueWrapper []
         [ wrappedRow
             [ width fill
             , height fill
@@ -145,4 +147,24 @@ viewHeldBy language body =
             , url = body.id
             }
         , externalLinkTemplate body.id
+        ]
+
+
+viewExemplarExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
+viewExemplarExternalResourcesSection language extSection =
+    fieldValueWrapper []
+        [ wrappedRow
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ column
+                labelFieldColumnAttributes
+                [ renderLabel language extSection.label ]
+            , column
+                valueFieldColumnAttributes
+                [ viewMaybe (viewExternalResources language) extSection.items
+                , viewMaybe (viewExternalRecords language) extSection.externalRecords
+                ]
+            ]
         ]

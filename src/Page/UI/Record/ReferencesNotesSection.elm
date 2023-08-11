@@ -24,7 +24,7 @@ viewLiturgicalFestival language festival =
 
 viewLiturgicalFestivalsSection : Language -> LiturgicalFestivalsSectionBody -> Element msg
 viewLiturgicalFestivalsSection language body =
-    fieldValueWrapper
+    fieldValueWrapper []
         [ wrappedRow
             [ width fill
             , height fill
@@ -54,13 +54,7 @@ viewLocation language body =
 
 viewNotesSection : Language -> List LabelValue -> Element msg
 viewNotesSection language notes =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ viewParagraphField language notes
-        ]
+    viewParagraphField language notes
 
 
 viewPerformanceLocation : Language -> RelationshipBody -> Element msg
@@ -70,7 +64,7 @@ viewPerformanceLocation language location =
 
 viewPerformanceLocationsSection : Language -> PerformanceLocationsSectionBody -> Element msg
 viewPerformanceLocationsSection language body =
-    fieldValueWrapper
+    fieldValueWrapper []
         [ wrappedRow
             [ width fill
             , height fill

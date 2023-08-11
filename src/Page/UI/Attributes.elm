@@ -142,6 +142,7 @@ labelFieldColumnAttributes : List (Attribute msg)
 labelFieldColumnAttributes =
     [ width (fillPortion 1)
     , alignTop
+    , spacing lineSpacing
     ]
 
 
@@ -198,7 +199,6 @@ valueFieldColumnAttributes : List (Attribute msg)
 valueFieldColumnAttributes =
     [ width (fillPortion 3)
     , alignTop
-    , spacing lineSpacing
     ]
 
 
