@@ -172,7 +172,7 @@ viewExternalHeldBy language body =
                 )
             ]
             (institutionSvg colourScheme.slateGrey)
-        , newTabLink
+        , link
             [ linkColour
             , headingLG
             , Font.medium
@@ -180,7 +180,6 @@ viewExternalHeldBy language body =
             { label = text (extractLabelFromLanguageMap language body.label)
             , url = body.id
             }
-        , externalLinkTemplate body.id
         ]
 
 
