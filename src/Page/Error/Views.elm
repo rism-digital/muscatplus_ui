@@ -100,6 +100,24 @@ view session model =
                             ]
                         ]
 
+                NoResponseToShow ->
+                    row
+                        [ centerX
+                        , centerY
+                        ]
+                        [ column
+                            [ width fill
+                            , spacing lineSpacing
+                            ]
+                            [ el
+                                [ headingXL
+                                , centerY
+                                , centerX
+                                ]
+                                (text "Nothing to see here.")
+                            ]
+                        ]
+
                 _ ->
                     none
     in

@@ -30,7 +30,11 @@ update : Session -> NotFoundMsg -> ErrorPageModel -> ( ErrorPageModel, Cmd NotFo
 update session msg model =
     case msg of
         ServerRespondedWithNotFoundData (Ok _) ->
-            ( model, Cmd.none )
+            ( { model
+                | response = NoResponseToShow
+              }
+            , Cmd.none
+            )
 
         ServerRespondedWithNotFoundData (Err error) ->
             ( { model
