@@ -97,6 +97,7 @@ viewIncipit cfg incipit =
                                     , language = cfg.language
                                     , isExpanded = cfg.infoIsExpanded
                                     , infoToggleMsg = cfg.infoToggleMsg
+                                    , renderings = incipit.rendered
                                     }
                                 )
                                 incipit.encodings
@@ -115,6 +116,7 @@ viewIncipitExtraInfo :
     , language : Language
     , isExpanded : Bool
     , infoToggleMsg : String -> msg
+    , renderings : Maybe (List RenderedIncipit)
     }
     -> List EncodedIncipit
     -> Element msg
@@ -129,7 +131,7 @@ viewIncipitExtraInfo cfg encodings =
 
         panelBody =
             if cfg.isExpanded then
-                viewAdditionalIncipitInfoAndTools cfg.language encodings
+                viewAdditionalIncipitInfoAndTools cfg.language cfg.renderings encodings
 
             else
                 none
@@ -187,8 +189,8 @@ viewIncipitsSection sectionCfg sectionBody =
         |> sectionTemplate sectionCfg.language sectionBody
 
 
-viewAdditionalIncipitInfoAndTools : Language -> List EncodedIncipit -> Element msg
-viewAdditionalIncipitInfoAndTools language incipits =
+viewAdditionalIncipitInfoAndTools : Language -> Maybe (List RenderedIncipit) -> List EncodedIncipit -> Element msg
+viewAdditionalIncipitInfoAndTools language renderings incipits =
     row
         [ width fill
         , spacing 10
@@ -198,7 +200,7 @@ viewAdditionalIncipitInfoAndTools language incipits =
             , alignTop
             , spacing 5
             ]
-            (viewIncipitToolLinks language incipits)
+            (viewIncipitToolLinks language renderings incipits)
         , column
             [ width fill
             , alignTop
@@ -207,18 +209,49 @@ viewAdditionalIncipitInfoAndTools language incipits =
         ]
 
 
-viewIncipitToolLinks : Language -> List EncodedIncipit -> List (Element msg)
-viewIncipitToolLinks language incipits =
-    List.map
-        (\encoded ->
-            case encoded of
-                PAEEncoding label paeData ->
-                    viewPAESearchLink language label paeData
+viewIncipitToolLinks : Language -> Maybe (List RenderedIncipit) -> List EncodedIncipit -> List (Element msg)
+viewIncipitToolLinks language rendered incipits =
+    let
+        encodingLinks =
+            List.map
+                (\encoded ->
+                    case encoded of
+                        PAEEncoding label paeData ->
+                            viewPAESearchLink language label paeData
 
-                MEIEncoding label meiUrl ->
-                    viewMEIDownloadLink language label meiUrl
-        )
-        incipits
+                        MEIEncoding label meiUrl ->
+                            viewMEIDownloadLink language label meiUrl
+                )
+                incipits
+
+        renderingLinks =
+            viewRenderedIncipitToolLinks language rendered
+    in
+    List.concat [ encodingLinks, renderingLinks ]
+
+
+viewRenderedIncipitToolLinks : Language -> Maybe (List RenderedIncipit) -> List (Element msg)
+viewRenderedIncipitToolLinks language renderings =
+    case renderings of
+        Just renderedList ->
+            List.map
+                (\r ->
+                    case r of
+                        RenderedIncipit RenderedPNG url ->
+                            linkTmpl
+                                { icon = fileDownloadSvg colourScheme.lightBlue
+                                , label = localTranslations.downloadPNG
+                                , language = language
+                                , url = url
+                                }
+
+                        _ ->
+                            none
+                )
+                renderedList
+
+        Nothing ->
+            []
 
 
 viewPAECodeBlock : Language -> List EncodedIncipit -> List (Element msg)

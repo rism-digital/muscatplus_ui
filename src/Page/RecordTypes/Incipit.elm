@@ -7,7 +7,8 @@ module Page.RecordTypes.Incipit exposing
     , PAEEncodedData
     , RenderedIncipit(..)
     , incipitBodyDecoder
-    , renderedIncipitDecoder
+    , renderedIncipitDecoderOne
+    , renderedIncipitDecoderTwo
     )
 
 import Json.Decode as Decode exposing (Decoder, bool, list, string)
@@ -44,6 +45,7 @@ type alias IncipitBody =
 type IncipitFormat
     = RenderedSVG
     | RenderedMIDI
+    | RenderedPNG
     | UnknownFormat
 
 
@@ -70,7 +72,7 @@ incipitBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "partOf" incipitParentSourceBodyDecoder
-        |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
+        |> optional "rendered" (Decode.maybe (list (Decode.oneOf [ renderedIncipitDecoderOne, renderedIncipitDecoderTwo ]))) Nothing
         |> optional "encodings" (Decode.maybe (list encodedIncipitDecoder)) Nothing
 
 
@@ -118,6 +120,9 @@ incipitFormatDecoder =
                     "image/svg+xml" ->
                         Decode.succeed RenderedSVG
 
+                    "image/png" ->
+                        Decode.succeed RenderedPNG
+
                     _ ->
                         Decode.succeed UnknownFormat
             )
@@ -137,8 +142,15 @@ incipitValidationBodyDecoder =
         |> optional "messages" (Decode.maybe (list languageMapLabelDecoder)) Nothing
 
 
-renderedIncipitDecoder : Decoder RenderedIncipit
-renderedIncipitDecoder =
+renderedIncipitDecoderOne : Decoder RenderedIncipit
+renderedIncipitDecoderOne =
     Decode.succeed RenderedIncipit
         |> required "format" incipitFormatDecoder
         |> required "data" string
+
+
+renderedIncipitDecoderTwo : Decoder RenderedIncipit
+renderedIncipitDecoderTwo =
+    Decode.succeed RenderedIncipit
+        |> required "format" incipitFormatDecoder
+        |> required "url" string

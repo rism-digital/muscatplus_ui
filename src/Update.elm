@@ -12,7 +12,7 @@ import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (buildQueryParameters, toNextQuery)
 import Page.Record as RecordPage
-import Page.Route as Route exposing (isMEIDownloadRoute, parseUrl, setRoute, setUrl)
+import Page.Route as Route exposing (isMEIDownloadRoute, isPNGDownloadRoute, parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Url exposing (Url)
@@ -426,11 +426,12 @@ changePage url model =
 
 treatUrlAsExternal : Url -> Bool
 treatUrlAsExternal requestedUrl =
-    if requestedUrl.path == "/viewer.html" || requestedUrl.path == "/copperplate/copperplate.html" then
-        True
-
-    else
-        isMEIDownloadRoute requestedUrl
+    List.any identity
+        [ requestedUrl.path == "/viewer.html"
+        , requestedUrl.path == "/copperplate/copperplate.html"
+        , isMEIDownloadRoute requestedUrl
+        , isPNGDownloadRoute requestedUrl
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

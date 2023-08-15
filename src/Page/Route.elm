@@ -1,4 +1,4 @@
-module Page.Route exposing (Route(..), isMEIDownloadRoute, parseUrl, setRoute, setUrl)
+module Page.Route exposing (Route(..), isMEIDownloadRoute, isPNGDownloadRoute, parseUrl, setRoute, setUrl)
 
 import Page.Keyboard.Model exposing (KeyboardQuery)
 import Page.Keyboard.Query exposing (notationParamParser)
@@ -57,7 +57,18 @@ meiDownloadRouteParser =
     P.map (\_ _ -> True) (s "sources" </> P.int </> s "incipits" </> P.string </> s "mei")
 
 
+pngDownloadRouteParser : P.Parser (Bool -> a) a
+pngDownloadRouteParser =
+    P.map (\_ _ -> True) (s "sources" </> P.int </> s "incipits" </> P.string </> s "png")
+
+
 isMEIDownloadRoute : Url -> Bool
 isMEIDownloadRoute url =
     P.parse meiDownloadRouteParser url
+        |> Maybe.withDefault False
+
+
+isPNGDownloadRoute : Url -> Bool
+isPNGDownloadRoute url =
+    P.parse pngDownloadRouteParser url
         |> Maybe.withDefault False

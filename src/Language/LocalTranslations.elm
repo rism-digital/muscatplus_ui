@@ -21,6 +21,7 @@ localTranslations :
     , collapse : LanguageMap
     , description : LanguageMap
     , downloadMEI : LanguageMap
+    , downloadPNG : LanguageMap
     , errorLoadingProbeResults : LanguageMap
     , first : LanguageMap
     , fullRecord : LanguageMap
@@ -112,6 +113,8 @@ localTranslations =
         ]
     , downloadMEI =
         [ LanguageValues English [ "Download MEI" ] ]
+    , downloadPNG =
+        [ LanguageValues English [ "Download PNG" ] ]
     , errorLoadingProbeResults =
         [ LanguageValues English [ "Error loading results" ]
         , LanguageValues German [ "Fehler beim Laden der Ergebnisse" ]

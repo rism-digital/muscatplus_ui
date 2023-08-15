@@ -47,7 +47,7 @@ import Json.Decode as Decode exposing (Decoder, andThen, bool, dict, float, int,
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import List.Extra as LE
-import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoder)
+import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoderOne, renderedIncipitDecoderTwo)
 import Page.RecordTypes.Shared
     exposing
         ( FacetAlias
@@ -431,7 +431,7 @@ incipitResultBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
-        |> optional "rendered" (Decode.maybe (list renderedIncipitDecoder)) Nothing
+        |> optional "rendered" (Decode.maybe (list (Decode.oneOf [ renderedIncipitDecoderOne, renderedIncipitDecoderTwo ]))) Nothing
 
 
 institutionResultBodyDecoder : Decoder InstitutionResultBody
