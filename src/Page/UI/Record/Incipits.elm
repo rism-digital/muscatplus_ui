@@ -1,6 +1,6 @@
 module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewPAEData, viewRenderedIncipits)
 
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -196,13 +196,13 @@ viewAdditionalIncipitInfoAndTools language renderings incipits =
         , spacing 10
         ]
         [ column
-            [ width fill
+            [ width (fillPortion 1)
             , alignTop
             , spacing 5
             ]
             (viewIncipitToolLinks language renderings incipits)
         , column
-            [ width fill
+            [ width (fillPortion 3)
             , alignTop
             ]
             (viewPAECodeBlock language incipits)
