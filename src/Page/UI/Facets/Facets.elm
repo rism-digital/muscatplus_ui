@@ -187,62 +187,64 @@ viewFacetsControlPanel alias header cfg body =
             ]
 
 
-viewFacetSection :
-    Language
-    -> (String -> Set String -> msg)
-    -> List (Element msg)
-    -> Element msg
-viewFacetSection language clickMsg facets =
-    let
-        allEmpty =
-            List.all (\a -> a == none) facets
-    in
-    if allEmpty then
-        none
 
-    else
-        row
-            (width fill
-                :: height fill
-                :: alignTop
-                :: facetBorderBottom
-            )
-            [ column
-                [ spacing lineSpacing
-                , alignTop
-                , width fill
-                , height fill
-                , alignTop
-                ]
-                [ row
-                    [ spacing lineSpacing
-                    , width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    [ column
-                        [ alignLeft ]
-                        [ el
-                            [ alignLeft
-                            , width (px 10)
-                            , pointer
-                            , onClick (clickMsg "" Set.empty) -- TODO: Implement collapsing behaviour!
-                            ]
-                            (chevronDownSvg colourScheme.lightBlue)
-                        ]
-                    ]
-                , row
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    [ column
-                        [ spacing lineSpacing
-                        , width fill
-                        , height fill
-                        , alignTop
-                        ]
-                        facets
-                    ]
-                ]
-            ]
+--
+--viewFacetSection :
+--    Language
+--    -> (String -> Set String -> msg)
+--    -> List (Element msg)
+--    -> Element msg
+--viewFacetSection language clickMsg facets =
+--    let
+--        allEmpty =
+--            List.all (\a -> a == none) facets
+--    in
+--    if allEmpty then
+--        none
+--
+--    else
+--        row
+--            (width fill
+--                :: height fill
+--                :: alignTop
+--                :: facetBorderBottom
+--            )
+--            [ column
+--                [ spacing lineSpacing
+--                , alignTop
+--                , width fill
+--                , height fill
+--                , alignTop
+--                ]
+--                [ row
+--                    [ spacing lineSpacing
+--                    , width fill
+--                    , height fill
+--                    , alignTop
+--                    ]
+--                    [ column
+--                        [ alignLeft ]
+--                        [ el
+--                            [ alignLeft
+--                            , width (px 10)
+--                            , pointer
+--                            , onClick (clickMsg "" Set.empty) -- TODO: Implement collapsing behaviour!
+--                            ]
+--                            (chevronDownSvg colourScheme.lightBlue)
+--                        ]
+--                    ]
+--                , row
+--                    [ width fill
+--                    , height fill
+--                    , alignTop
+--                    ]
+--                    [ column
+--                        [ spacing lineSpacing
+--                        , width fill
+--                        , height fill
+--                        , alignTop
+--                        ]
+--                        facets
+--                    ]
+--                ]
+--            ]

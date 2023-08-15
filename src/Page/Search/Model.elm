@@ -4,6 +4,7 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Response exposing (Response, ServerData)
+import Set exposing (Set)
 
 
 {-|
@@ -16,6 +17,7 @@ type alias SearchPageModel msg =
     , activeSearch : ActiveSearch msg
     , preview : Response ServerData
     , sourceItemsExpanded : Bool
+    , incipitInfoExpanded : Set String
     , selectedResult : Maybe String
     , showFacetPanel : Bool
     , probeResponse : Response ProbeData

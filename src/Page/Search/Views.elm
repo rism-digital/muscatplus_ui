@@ -64,6 +64,7 @@ searchResultsViewRouter session model =
             , model = model
             , searchResponse = model.response
             , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
+            , expandedIncipitInfoSections = model.incipitInfoExpanded
             , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
             , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
             , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
@@ -72,6 +73,7 @@ searchResultsViewRouter session model =
             , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
             , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
+            , userToggledIncipitInfo = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
             , panelToggleMsg = SearchMsg.UserClickedFacetPanelToggle
             , facetMsgConfig = facetSearchMsgConfig
             }

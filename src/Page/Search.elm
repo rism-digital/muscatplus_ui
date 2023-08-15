@@ -30,6 +30,7 @@ import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
+import Set
 import Url exposing (Url)
 import Utilities exposing (convertNodeIdToPath)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
@@ -81,6 +82,7 @@ init cfg =
             }
     , preview = NoResponseToShow
     , sourceItemsExpanded = False
+    , incipitInfoExpanded = Set.empty
     , selectedResult = selectedResult
     , showFacetPanel = False
     , probeResponse = NoResponseToShow
@@ -489,6 +491,21 @@ update session msg model =
         UserClickedExpandSourceItemsSectionInPreview ->
             ( { model
                 | sourceItemsExpanded = not model.sourceItemsExpanded
+              }
+            , Cmd.none
+            )
+
+        UserClickedExpandIncipitInfoSectionInPreview incipitIdent ->
+            let
+                newExpandedSet =
+                    if Set.member incipitIdent model.incipitInfoExpanded then
+                        Set.remove incipitIdent model.incipitInfoExpanded
+
+                    else
+                        Set.insert incipitIdent model.incipitInfoExpanded
+            in
+            ( { model
+                | incipitInfoExpanded = newExpandedSet
               }
             , Cmd.none
             )

@@ -22,12 +22,15 @@ import Page.UI.Record.Previews.Person exposing (viewPersonPreview)
 import Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (ServerData(..))
+import Set exposing (Set)
 
 
 type alias PreviewConfig msg =
     { closeMsg : msg
     , sourceItemExpandMsg : msg
     , sourceItemsExpanded : Bool
+    , incipitInfoSectionsExpanded : Set String
+    , incipitInfoToggleMsg : String -> msg
     }
 
 
@@ -99,7 +102,13 @@ viewPreviewRouter language cfg previewData =
         preview =
             case previewData of
                 Just (SourceData body) ->
-                    viewSourcePreview language cfg.sourceItemsExpanded cfg.sourceItemExpandMsg body
+                    viewSourcePreview
+                        language
+                        cfg.sourceItemsExpanded
+                        cfg.sourceItemExpandMsg
+                        cfg.incipitInfoSectionsExpanded
+                        cfg.incipitInfoToggleMsg
+                        body
 
                 Just (PersonData body) ->
                     viewPersonPreview language body
@@ -108,7 +117,11 @@ viewPreviewRouter language cfg previewData =
                     viewInstitutionPreview language body
 
                 Just (IncipitData body) ->
-                    viewIncipitPreview language body
+                    viewIncipitPreview
+                        language
+                        cfg.incipitInfoSectionsExpanded
+                        cfg.incipitInfoToggleMsg
+                        body
 
                 Just (ExternalData body) ->
                     case body.record of

@@ -1,8 +1,9 @@
-module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewRenderedIncipits)
+module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewPAEData, viewRenderedIncipits)
 
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
@@ -10,14 +11,30 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), PAEEncodedData, RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (bodySM, headingLG, lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (viewSummaryField)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Components exposing (dropdownSelect, h3, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
-import Page.UI.Images exposing (fileDownloadSvg, searchSvg)
+import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg, fileDownloadSvg, searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Request exposing (serverUrl)
+import Set exposing (Set)
 import Url.Builder
+
+
+type alias IncipitDisplayConfig msg =
+    { suppressTitle : Bool
+    , language : Language
+    , infoIsExpanded : Bool
+    , infoToggleMsg : String -> msg
+    }
+
+
+type alias IncipitSectionConfig msg =
+    { language : Language
+    , infoToggleMsg : String -> msg
+    , expandedIncipits : Set String
+    }
 
 
 splitWorkNumFromId : String -> String
@@ -27,11 +44,14 @@ splitWorkNumFromId incipitId =
         |> Maybe.withDefault "1.1.1"
 
 
-viewIncipit : Bool -> Language -> IncipitBody -> Element msg
-viewIncipit suppressTitle language incipit =
+viewIncipit : IncipitDisplayConfig msg -> IncipitBody -> Element msg
+viewIncipit cfg incipit =
     let
+        _ =
+            Debug.log "expanded" cfg.infoIsExpanded
+
         title =
-            if suppressTitle then
+            if cfg.suppressTitle then
                 none
 
             else
@@ -43,7 +63,7 @@ viewIncipit suppressTitle language incipit =
                         [ headingLG
                         , Font.medium
                         ]
-                        (text (extractLabelFromLanguageMap language incipit.label))
+                        (text (extractLabelFromLanguageMap cfg.language incipit.label))
                     ]
     in
     row
@@ -63,7 +83,7 @@ viewIncipit suppressTitle language incipit =
                     , alignTop
                     , HA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
                     ]
-                    [ viewMaybe (viewSummaryField language) incipit.summary
+                    [ viewMaybe (viewSummaryField cfg.language) incipit.summary
                     , row
                         [ width fill ]
                         [ column
@@ -71,7 +91,17 @@ viewIncipit suppressTitle language incipit =
                             , spacing 0
                             ]
                             [ viewMaybe viewRenderedIncipits incipit.rendered
-                            , viewMaybe (viewLaunchNewIncipitSearch language) incipit.encodings
+                            , viewMaybe
+                                (viewIncipitExtraInfo
+                                    { ident = incipit.id
+                                    , language = cfg.language
+                                    , isExpanded = cfg.infoIsExpanded
+                                    , infoToggleMsg = cfg.infoToggleMsg
+                                    }
+                                )
+                                incipit.encodings
+
+                            --, viewMaybe (viewLaunchNewIncipitSearch cfg.language) incipit.encodings
                             ]
                         ]
                     ]
@@ -80,29 +110,129 @@ viewIncipit suppressTitle language incipit =
         ]
 
 
-viewIncipitsSection : Language -> IncipitsSectionBody -> Element msg
-viewIncipitsSection language incipSection =
-    List.map (viewIncipit False language) incipSection.items
-        |> sectionTemplate language incipSection
+viewIncipitExtraInfo :
+    { ident : String
+    , language : Language
+    , isExpanded : Bool
+    , infoToggleMsg : String -> msg
+    }
+    -> List EncodedIncipit
+    -> Element msg
+viewIncipitExtraInfo cfg encodings =
+    let
+        toggleIcon =
+            if cfg.isExpanded then
+                caretCircleDownSvg colourScheme.lightBlue
+
+            else
+                caretCircleRightSvg colourScheme.lightBlue
+
+        panelBody =
+            if cfg.isExpanded then
+                viewAdditionalIncipitInfoAndTools cfg.language encodings
+
+            else
+                none
+    in
+    row
+        [ width fill
+        , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+        , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+        , paddingXY 0 10
+        ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill
+                , Font.color (colourScheme.black |> convertColorToElementColor)
+                , Border.dotted
+                , paddingXY 0 8
+                , spacing 5
+                , Font.medium
+                , headingLG
+                ]
+                [ el
+                    [ width (px 16)
+                    , height (px 16)
+                    , centerY
+                    , pointer
+                    , onClick (cfg.infoToggleMsg cfg.ident)
+                    ]
+                    toggleIcon
+                , el
+                    [ centerY
+                    , pointer
+                    , onClick (cfg.infoToggleMsg cfg.ident)
+                    ]
+                    (text "Incipit Extras")
+                ]
+            , panelBody
+            ]
+        ]
 
 
-viewLaunchNewIncipitSearch : Language -> List EncodedIncipit -> Element msg
-viewLaunchNewIncipitSearch language incipits =
+viewIncipitsSection : IncipitSectionConfig msg -> IncipitsSectionBody -> Element msg
+viewIncipitsSection sectionCfg sectionBody =
+    List.map
+        (\body ->
+            viewIncipit
+                { suppressTitle = False
+                , language = sectionCfg.language
+                , infoIsExpanded = Set.member body.id sectionCfg.expandedIncipits
+                , infoToggleMsg = sectionCfg.infoToggleMsg
+                }
+                body
+        )
+        sectionBody.items
+        |> sectionTemplate sectionCfg.language sectionBody
+
+
+viewAdditionalIncipitInfoAndTools : Language -> List EncodedIncipit -> Element msg
+viewAdditionalIncipitInfoAndTools language incipits =
     row
         [ width fill
         , spacing 10
         ]
-        (List.map
-            (\encoded ->
-                case encoded of
-                    PAEEncoding label paeData ->
-                        viewPAESearchLink language label paeData
+        [ column
+            [ width fill
+            , alignTop
+            , spacing 5
+            ]
+            (viewIncipitToolLinks language incipits)
+        , column
+            [ width fill
+            , alignTop
+            ]
+            (viewPAECodeBlock language incipits)
+        ]
 
-                    MEIEncoding label url ->
-                        viewMEIDownloadLink language label url
-            )
-            incipits
+
+viewIncipitToolLinks : Language -> List EncodedIncipit -> List (Element msg)
+viewIncipitToolLinks language incipits =
+    List.map
+        (\encoded ->
+            case encoded of
+                PAEEncoding label paeData ->
+                    viewPAESearchLink language label paeData
+
+                MEIEncoding label meiUrl ->
+                    viewMEIDownloadLink language label meiUrl
         )
+        incipits
+
+
+viewPAECodeBlock : Language -> List EncodedIncipit -> List (Element msg)
+viewPAECodeBlock language incipits =
+    List.map
+        (\encoded ->
+            case encoded of
+                PAEEncoding label paeData ->
+                    viewPAEData language label paeData
+
+                MEIEncoding _ _ ->
+                    none
+        )
+        incipits
 
 
 linkTmpl :
@@ -117,12 +247,8 @@ linkTmpl cfg =
         [ centerY
         , alignLeft
         , linkColour
-        , Border.width 1
-        , Border.color (colourScheme.white |> convertColorToElementColor)
         , padding 4
-        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-        , bodySM
-        , Font.color (colourScheme.white |> convertColorToElementColor)
+        , bodyRegular
         ]
         { label =
             row
@@ -143,7 +269,7 @@ linkTmpl cfg =
 viewMEIDownloadLink : Language -> LanguageMap -> String -> Element msg
 viewMEIDownloadLink language label url =
     linkTmpl
-        { icon = fileDownloadSvg colourScheme.white
+        { icon = fileDownloadSvg colourScheme.lightBlue
         , label = localTranslations.downloadMEI
         , language = language
         , url = url
@@ -189,7 +315,7 @@ viewPAESearchLink language label data =
                 (noteQueryParam :: modeQueryParam :: keySigQueryParam ++ clefQueryParam ++ timeSigQueryParam)
     in
     linkTmpl
-        { icon = searchSvg colourScheme.white
+        { icon = searchSvg colourScheme.lightBlue
         , label = localTranslations.newSearchWithIncipit
         , language = language
         , url = searchUrl
@@ -223,3 +349,75 @@ viewRenderedIncipits incipits =
             )
             incipits
         )
+
+
+viewPAEData : Language -> LanguageMap -> PAEEncodedData -> Element msg
+viewPAEData language label pae =
+    let
+        clefRow =
+            viewMaybe (viewPAERow "@clef") pae.clef
+
+        dataRow =
+            viewPAERow "@data" pae.data
+
+        keyModeRow =
+            viewMaybe (viewPAERow "@key") pae.key
+
+        keysigRow =
+            viewMaybe (viewPAERow "@keysig") pae.keysig
+
+        timesigRow =
+            viewMaybe (viewPAERow "@timesig") pae.timesig
+    in
+    row
+        [ width fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , alignTop
+            , spacing lineSpacing
+            ]
+            [ row
+                [ width fill
+                , alignTop
+                ]
+                [ h3 language label ]
+            , row
+                (width (px 600)
+                    :: height fill
+                    :: alignTop
+                    :: sectionBorderStyles
+                )
+                [ column
+                    [ width fill
+                    , alignTop
+                    , Font.family [ Font.monospace ]
+                    , bodyRegular
+                    , spacing 5
+                    ]
+                    [ clefRow
+                    , keysigRow
+                    , timesigRow
+                    , keyModeRow
+                    , dataRow
+                    ]
+                ]
+            ]
+        ]
+
+
+viewPAERow : String -> String -> Element msg
+viewPAERow key value =
+    wrappedRow
+        [ width fill
+        , spacingXY 5 0
+        , alignTop
+        ]
+        [ el
+            [ Font.semiBold
+            , alignTop
+            ]
+            (text (key ++ ":"))
+        , paragraph [ alignTop ] [ text value ]
+        ]

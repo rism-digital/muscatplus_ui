@@ -50,6 +50,7 @@ type alias SearchResultsSectionConfig a msg =
             , applyFilterPrompt : Bool
         }
     , searchResponse : Response ServerData
+    , expandedIncipitInfoSections : Set String
     , userClosedPreviewWindowMsg : msg
     , userClickedSourceItemsExpandMsg : msg
     , userClickedResultForPreviewMsg : String -> msg
@@ -59,6 +60,7 @@ type alias SearchResultsSectionConfig a msg =
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     , userResetAllFiltersMsg : msg
+    , userToggledIncipitInfo : String -> msg
     , panelToggleMsg : String -> Set String -> msg
     , facetMsgConfig : FacetMsgConfig msg
     }
@@ -75,6 +77,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         { closeMsg = cfg.userClosedPreviewWindowMsg
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
+                        , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
+                        , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
                         }
                         oldData
 
@@ -83,6 +87,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         { closeMsg = cfg.userClosedPreviewWindowMsg
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
+                        , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
+                        , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
                         }
                         (Just resp)
 

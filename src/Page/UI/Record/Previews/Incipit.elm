@@ -1,41 +1,43 @@
 module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 
-import Element exposing (Element, alignTop, column, el, fill, height, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, link, none, paddingXY, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, PAEEncodedData)
-import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h1, h3)
-import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Record.Incipits exposing (viewIncipit)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
+import Page.UI.Components exposing (h1)
+import Page.UI.Record.Incipits exposing (viewIncipit, viewPAEData)
+import Set exposing (Set)
 
 
-viewEncodingsBlock : Language -> List EncodedIncipit -> Element msg
-viewEncodingsBlock language encodedIncipits =
-    row
-        [ width fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            (List.map
-                (\encoding ->
-                    case encoding of
-                        PAEEncoding label paeData ->
-                            viewPaeData language label paeData
 
-                        _ ->
-                            none
-                )
-                encodedIncipits
-            )
-        ]
+--viewEncodingsBlock : Language -> List EncodedIncipit -> Element msg
+--viewEncodingsBlock language encodedIncipits =
+--    row
+--        [ width fill
+--        , alignTop
+--        ]
+--        [ column
+--            [ width fill
+--            , alignTop
+--            ]
+--            (List.map
+--                (\encoding ->
+--                    case encoding of
+--                        PAEEncoding label paeData ->
+--                            viewPaeData language label paeData
+--
+--                        _ ->
+--                            none
+--                )
+--                encodedIncipits
+--            )
+--        ]
+--
 
 
-viewIncipitPreview : Language -> IncipitBody -> Element msg
-viewIncipitPreview language body =
+viewIncipitPreview : Language -> Set String -> (String -> msg) -> IncipitBody -> Element msg
+viewIncipitPreview language incipitInfoExpanded infoToggleMsg body =
     let
         labelLanguageMap =
             .label body.partOf
@@ -112,76 +114,16 @@ viewIncipitPreview language body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewIncipit True language) (Just body) ]
-                ]
-            , viewMaybe (viewEncodingsBlock language) body.encodings
-            ]
-        ]
-
-
-viewPaeData : Language -> LanguageMap -> PAEEncodedData -> Element msg
-viewPaeData language label pae =
-    let
-        clefRow =
-            viewMaybe (viewPaeRow "@clef") pae.clef
-
-        dataRow =
-            viewPaeRow "@data" pae.data
-
-        keyModeRow =
-            viewMaybe (viewPaeRow "@key") pae.key
-
-        keysigRow =
-            viewMaybe (viewPaeRow "@keysig") pae.keysig
-
-        timesigRow =
-            viewMaybe (viewPaeRow "@timesig") pae.timesig
-    in
-    row
-        [ width fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , alignTop
-            , spacing lineSpacing
-            ]
-            [ row
-                [ width fill
-                , alignTop
-                ]
-                [ h3 language label ]
-            , row
-                (width (px 600)
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , alignTop
-                    , Font.family [ Font.monospace ]
-                    , bodySM
-                    , spacing 5
-                    ]
-                    [ clefRow
-                    , keysigRow
-                    , timesigRow
-                    , keyModeRow
-                    , dataRow
+                    [ viewIncipit
+                        { suppressTitle = True
+                        , language = language
+                        , infoIsExpanded = Set.member body.id incipitInfoExpanded
+                        , infoToggleMsg = infoToggleMsg
+                        }
+                        body
                     ]
                 ]
-            ]
-        ]
 
-
-viewPaeRow : String -> String -> Element msg
-viewPaeRow key value =
-    paragraph
-        [ width fill ]
-        [ el
-            [ Font.semiBold
+            --, viewMaybe (viewEncodingsBlock language) body.encodings
             ]
-            (text (key ++ ":"))
-        , text value
         ]

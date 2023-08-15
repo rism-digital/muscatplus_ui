@@ -5,6 +5,7 @@ import Debouncer.Messages exposing (Debouncer)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Route exposing (Route(..))
 import Response exposing (Response, ServerData)
+import Set exposing (Set)
 
 
 type CurrentRecordViewTab
@@ -18,6 +19,7 @@ type alias RecordPageModel msg =
     , searchResults : Response ServerData
     , preview : Response ServerData
     , sourceItemsExpanded : Bool
+    , incipitInfoExpanded : Set String
     , selectedResult : Maybe String
     , activeSearch : ActiveSearch msg
     , probeResponse : Response ProbeData

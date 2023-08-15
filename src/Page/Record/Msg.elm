@@ -44,6 +44,7 @@ type RecordMsg
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
     | UserClickedExpandSourceItemsSectionInPreview
+    | UserClickedExpandIncipitInfoSectionInPreview String
     | UserClickedClosePreviewWindow
     | UserClickedRecordViewTab CurrentRecordViewTab
     | NothingHappened

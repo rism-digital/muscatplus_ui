@@ -6,7 +6,7 @@ import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
-import Page.Record.Msg exposing (RecordMsg)
+import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Source exposing (FullSourceBody)
@@ -24,10 +24,11 @@ import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
+import Set exposing (Set)
 
 
-viewDescriptionTab : Language -> FullSourceBody -> Element msg
-viewDescriptionTab language body =
+viewDescriptionTab : Language -> (String -> msg) -> Set String -> FullSourceBody -> Element msg
+viewDescriptionTab language incipitInfoToggleMsg expandedIncipits body =
     row
         [ width fill
         , height fill
@@ -42,7 +43,7 @@ viewDescriptionTab language body =
             ]
             [ viewMaybe (viewPartOfSection language) body.partOf
             , viewMaybe (viewContentsSection language body.creator) body.contents
-            , viewMaybe (viewIncipitsSection language) body.incipits
+            , viewMaybe (viewIncipitsSection { language = language, infoToggleMsg = incipitInfoToggleMsg, expandedIncipits = expandedIncipits }) body.incipits
             , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
             , viewMaybe (viewRelationshipsSection language) body.relationships
             , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
@@ -63,7 +64,11 @@ viewFullSourcePage session model body =
         pageBodyView =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    viewDescriptionTab session.language body
+                    viewDescriptionTab
+                        session.language
+                        RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                        model.incipitInfoExpanded
+                        body
 
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTab session model

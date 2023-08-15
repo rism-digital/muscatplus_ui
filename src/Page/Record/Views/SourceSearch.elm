@@ -55,6 +55,7 @@ searchResultsViewRouter session model =
             { session = session
             , model = model
             , searchResponse = model.searchResults
+            , expandedIncipitInfoSections = model.incipitInfoExpanded
             , userClosedPreviewWindowMsg = RecordMsg.UserClickedClosePreviewWindow
             , userClickedSourceItemsExpandMsg = RecordMsg.UserClickedExpandSourceItemsSectionInPreview
             , userClickedResultForPreviewMsg = RecordMsg.UserClickedSearchResultForPreview
@@ -64,6 +65,7 @@ searchResultsViewRouter session model =
             , userTriggeredSearchSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
             , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
+            , userToggledIncipitInfo = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
             , panelToggleMsg = RecordMsg.UserClickedFacetPanelToggle
             , facetMsgConfig = facetRecordMsgConfig
             }

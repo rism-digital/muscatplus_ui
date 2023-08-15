@@ -17,10 +17,11 @@ import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
+import Set exposing (Set)
 
 
-viewSourcePreview : Language -> Bool -> msg -> FullSourceBody -> Element msg
-viewSourcePreview language itemsExpanded expandMsg body =
+viewSourcePreview : Language -> Bool -> msg -> Set String -> (String -> msg) -> FullSourceBody -> Element msg
+viewSourcePreview language itemsExpanded expandMsg incipitInfoExpanded incipitInfoToggleMsg body =
     let
         pageBodyView =
             row
@@ -34,7 +35,14 @@ viewSourcePreview language itemsExpanded expandMsg body =
                     ]
                     [ viewMaybe (viewPartOfSection language) body.partOf
                     , viewMaybe (viewContentsSection language body.creator) body.contents
-                    , viewMaybe (viewIncipitsSection language) body.incipits
+                    , viewMaybe
+                        (viewIncipitsSection
+                            { language = language
+                            , infoToggleMsg = incipitInfoToggleMsg
+                            , expandedIncipits = incipitInfoExpanded
+                            }
+                        )
+                        body.incipits
                     , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
                     , viewMaybe (viewRelationshipsSection language) body.relationships
                     , viewMaybe (viewReferencesNotesSection language) body.referencesNotes

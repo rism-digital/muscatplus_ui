@@ -212,7 +212,7 @@ localTranslations =
     , muscatView =
         [ LanguageValues English [ "View" ] ]
     , newSearchWithIncipit =
-        [ LanguageValues English [ "New search with this incipit" ] ]
+        [ LanguageValues English [ "Search for incipits like this" ] ]
     , next =
         [ LanguageValues English [ "Next" ]
         , LanguageValues German [ "Nächste" ]

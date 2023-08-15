@@ -29,6 +29,7 @@ import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, s
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
+import Set
 import Url exposing (Url)
 import Utilities exposing (convertNodeIdToPath)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
@@ -84,6 +85,7 @@ init cfg =
     , searchResults = NoResponseToShow
     , preview = NoResponseToShow
     , sourceItemsExpanded = False
+    , incipitInfoExpanded = Set.empty
     , selectedResult = selectedResult
     , activeSearch = activeSearch
     , probeResponse = Loading Nothing
@@ -405,6 +407,9 @@ update session msg model =
               }
             , Cmd.none
             )
+
+        UserClickedExpandIncipitInfoSectionInPreview incipitSection ->
+            ( model, Cmd.none )
 
         UserClickedClosePreviewWindow ->
             userClickedClosePreviewWindow session model

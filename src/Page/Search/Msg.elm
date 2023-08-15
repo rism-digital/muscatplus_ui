@@ -45,5 +45,6 @@ type SearchMsg
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
     | UserClickedExpandSourceItemsSectionInPreview
+    | UserClickedExpandIncipitInfoSectionInPreview String
     | UserClickedClosePreviewWindow
     | NothingHappened
