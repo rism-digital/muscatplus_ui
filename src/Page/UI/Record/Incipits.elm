@@ -47,9 +47,6 @@ splitWorkNumFromId incipitId =
 viewIncipit : IncipitDisplayConfig msg -> IncipitBody -> Element msg
 viewIncipit cfg incipit =
     let
-        _ =
-            Debug.log "expanded" cfg.infoIsExpanded
-
         title =
             if cfg.suppressTitle then
                 none
