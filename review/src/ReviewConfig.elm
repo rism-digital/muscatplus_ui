@@ -11,20 +11,23 @@ when inside the directory containing this file.
 
 -}
 
+--import NoMissingTypeAnnotationInLetIn
+
 import NoDebug.Log
 import NoDebug.TodoOrToString
+import NoDeprecated
 import NoExposingEverything
 import NoImportingEverything
 import NoInconsistentAliases
 import NoLeftPizza
 import NoMissingTypeAnnotation
-import NoMissingTypeAnnotationInLetIn
 import NoMissingTypeExpose
 import NoModuleOnExposedNames
 import NoPrematureLetComputation
 import NoRedundantConcat
 import NoRedundantCons
 import NoSimpleLetBody
+import NoSinglePatternCase
 import NoUnsortedCases
 import NoUnsortedLetDeclarations
 import NoUnsortedRecords
@@ -32,8 +35,6 @@ import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
 import NoUnused.Exports
-import NoUnused.Modules
-import NoUnused.Parameters
 import NoUnused.Patterns
 import NoUnused.Variables
 import Review.Rule as Rule exposing (Rule)
@@ -45,7 +46,9 @@ config =
     [ NoDebug.Log.rule
     , NoDebug.TodoOrToString.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
+    , NoSinglePatternCase.rule NoSinglePatternCase.fixInArgument
     , NoExposingEverything.rule
+    , NoDeprecated.rule NoDeprecated.defaults
     , NoImportingEverything.rule []
     , NoMissingTypeAnnotation.rule
     , NoMissingTypeExpose.rule
@@ -59,8 +62,6 @@ config =
 
     --, NoUnused.Parameters.rule
     , NoUnused.Patterns.rule
-
-    --, NoUnused.Variables.rule
     , Simplify.rule Simplify.defaults
     , NoRedundantConcat.rule
     , NoRedundantCons.rule
