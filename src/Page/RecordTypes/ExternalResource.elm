@@ -8,7 +8,7 @@ module Page.RecordTypes.ExternalResource exposing
 import Json.Decode as Decode exposing (Decoder, andThen, list, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody, externalInstitutionBodyDecoder, externalRecordBodyDecoder)
+import Page.RecordTypes.ExternalRecord exposing (ExternalRecordBody, externalRecordBodyDecoder)
 import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 
 

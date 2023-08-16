@@ -44,25 +44,6 @@ type SideBarOption
     | LiturgicalFestivalsOption
 
 
-modeStringToSideBarOption : String -> SideBarOption
-modeStringToSideBarOption mode =
-    case mode of
-        "incipits" ->
-            IncipitSearchOption
-
-        "institutions" ->
-            InstitutionSearchOption
-
-        "people" ->
-            PeopleSearchOption
-
-        "sources" ->
-            SourceSearchOption
-
-        _ ->
-            SourceSearchOption
-
-
 resultModeToSideBarOption : ResultMode -> SideBarOption
 resultModeToSideBarOption mode =
     case mode of

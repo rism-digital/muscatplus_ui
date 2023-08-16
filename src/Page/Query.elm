@@ -26,6 +26,7 @@ module Page.Query exposing
 
 import Config as C
 import Dict exposing (Dict)
+import Maybe.Extra as ME
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
 import Page.RecordTypes.Search
     exposing
@@ -83,12 +84,7 @@ createPrefixedField alias val =
             -- can't be decoded (returns "Nothing") then just pass the original
             -- value along and hope it doesn't cause problems. ¯\_(ツ)_/¯
             decodedVal =
-                case percentDecode val of
-                    Just v ->
-                        v
-
-                    Nothing ->
-                        val
+                Maybe.withDefault val (percentDecode val)
         in
         Url.Builder.string "fq" (alias ++ ":" ++ decodedVal)
             |> Just
@@ -132,12 +128,8 @@ buildQueryParameters queryArgs =
             ]
 
         ncParam =
-            case queryArgs.nationalCollection of
-                Just countryPrefix ->
-                    [ Url.Builder.string "nc" countryPrefix ]
-
-                Nothing ->
-                    []
+            queryArgs.nationalCollection
+                |> ME.unwrap [] (\countryPrefix -> [ Url.Builder.string "nc" countryPrefix ])
 
         pageParam =
             [ String.fromInt queryArgs.page
@@ -145,12 +137,8 @@ buildQueryParameters queryArgs =
             ]
 
         qParam =
-            case queryArgs.keywordQuery of
-                Just q ->
-                    [ Url.Builder.string "q" q ]
-
-                Nothing ->
-                    []
+            queryArgs.keywordQuery
+                |> ME.unwrap [] (\q -> [ Url.Builder.string "q" q ])
 
         rowsParam =
             [ String.fromInt queryArgs.rows
@@ -158,12 +146,8 @@ buildQueryParameters queryArgs =
             ]
 
         sortParam =
-            case queryArgs.sort of
-                Just s ->
-                    [ Url.Builder.string "sort" s ]
-
-                Nothing ->
-                    []
+            queryArgs.sort
+                |> ME.unwrap [] (\s -> [ Url.Builder.string "sort" s ])
     in
     List.concat [ qParam, ncParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam, rowsParam ]
 
@@ -402,8 +386,3 @@ stringSplitToList str =
 
         _ ->
             Nothing
-
-
-toNationalCollection : { a | nationalCollection : Maybe String } -> Maybe String
-toNationalCollection qargs =
-    qargs.nationalCollection

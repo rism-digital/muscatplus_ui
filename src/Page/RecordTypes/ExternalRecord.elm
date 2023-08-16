@@ -1,4 +1,4 @@
-module Page.RecordTypes.ExternalRecord exposing (..)
+module Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalRecordBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
@@ -121,11 +121,11 @@ externalRecordDecoder recordType =
 externalProjectDecoder : String -> Decoder ExternalProject
 externalProjectDecoder extProj =
     case extProj of
-        "https://www.diamm.ac.uk/" ->
-            Decode.succeed DIAMM
-
         "https://cantusdatabase.org/" ->
             Decode.succeed Cantus
+
+        "https://www.diamm.ac.uk/" ->
+            Decode.succeed DIAMM
 
         _ ->
             Decode.succeed RISM

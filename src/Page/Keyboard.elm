@@ -14,8 +14,9 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Element exposing (Element)
 import Flip exposing (flip)
 import Language exposing (Language)
+import Maybe.Extra as ME
 import Page.Keyboard.Audio exposing (generateNotes)
-import Page.Keyboard.Model exposing (Clef(..), KeyNoteName, KeySignature(..), KeyboardKeyPress(..), KeyboardModel, KeyboardQuery, Octave, QueryMode(..), TimeSignature(..), setClef, setKeySignature, setKeyboardQuery, setNoteData, setQueryMode, setTimeSignature, toKeyboardQuery)
+import Page.Keyboard.Model exposing (Clef(..), KeySignature(..), KeyboardKeyPress(..), KeyboardModel, KeyboardQuery, QueryMode(..), TimeSignature(..), setClef, setKeySignature, setKeyboardQuery, setNoteData, setQueryMode, setTimeSignature, toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (createPAENote)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
@@ -25,6 +26,7 @@ import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, s
 import Request exposing (createSvgRequest, serverUrl)
 import SearchPreferences exposing (SearchPreferences)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
+import Set
 import Utilities exposing (choose)
 
 
@@ -110,12 +112,9 @@ needsProbing model =
 
     else
         -- check if the query is longer than the configured minimum length
-        case .noteData model.query of
-            Just noteData ->
-                choose (String.length (filterPitches noteData) > Config.minimumQueryLength) True False
-
-            Nothing ->
-                False
+        .noteData model.query
+            |> ME.unwrap False
+                (\noteData -> String.length (filterPitches noteData) > Config.minimumQueryLength)
 
 
 update : KeyboardMsg -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
@@ -150,12 +149,8 @@ update msg model =
                             createPAENote noteName octave
 
                         noteData =
-                            case .noteData model.query of
-                                Just n ->
-                                    n ++ note
-
-                                Nothing ->
-                                    note
+                            .noteData model.query
+                                |> ME.unwrap note (\n -> n ++ note)
 
                         ( queryModel, cmds ) =
                             buildUpdateQuery (Just noteData) model
@@ -178,12 +173,8 @@ update msg model =
                             createPAENote noteName octave
 
                         noteData =
-                            case .noteData model.query of
-                                Just n ->
-                                    n ++ note
-
-                                Nothing ->
-                                    note
+                            .noteData model.query
+                                |> ME.unwrap note (\n -> n ++ note)
                     in
                     buildUpdateQuery (Just noteData) model
 
@@ -229,12 +220,15 @@ update msg model =
                     else
                         text
 
+                lettersToUppercase =
+                    Set.fromList [ 'a', 'c', 'd', 'e', 'f', 'g' ]
+
                 -- Ensure that any pitches letters that are entered are upper-cased
                 -- skips "b" since that can also be a flat!
                 newText =
                     String.map
                         (\c ->
-                            if List.member c [ 'a', 'c', 'd', 'e', 'f', 'g' ] then
+                            if Set.member c lettersToUppercase then
                                 Char.toUpper c
 
                             else

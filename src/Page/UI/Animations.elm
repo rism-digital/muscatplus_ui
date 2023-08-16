@@ -6,7 +6,7 @@ module Page.UI.Animations exposing
     , progressBar
     )
 
-import Element exposing (Element)
+import Element exposing (Attribute, Element)
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
@@ -17,7 +17,7 @@ import Simple.Animation.Animated as Animated
 import Simple.Animation.Property as P
 
 
-animatedColumn : Animation -> List (Element.Attribute msg) -> List (Element msg) -> Element msg
+animatedColumn : Animation -> List (Attribute msg) -> List (Element msg) -> Element msg
 animatedColumn =
     animatedUi Element.column
 
@@ -46,7 +46,7 @@ animatedLabel labelText =
         labelText
 
 
-animatedLoader : List (Element.Attribute msg) -> Element msg -> Element msg
+animatedLoader : List (Attribute msg) -> Element msg -> Element msg
 animatedLoader attrs loaderImage =
     animatedEl
         (Animation.fromTo
@@ -61,7 +61,7 @@ animatedLoader attrs loaderImage =
         loaderImage
 
 
-animatedRow : Animation -> List (Element.Attribute msg) -> List (Element msg) -> Element msg
+animatedRow : Animation -> List (Attribute msg) -> List (Element msg) -> Element msg
 animatedRow =
     animatedUi Element.row
 
@@ -80,11 +80,12 @@ progressBar =
         Element.none
 
 
-animatedEl : Animation -> List (Element.Attribute msg) -> Element msg -> Element msg
+animatedEl : Animation -> List (Attribute msg) -> Element msg -> Element msg
 animatedEl =
     animatedUi Element.el
 
 
+animatedUi : (List (Attribute msg) -> children -> Element msg) -> Animation -> List (Attribute msg) -> children -> Element msg
 animatedUi =
     Animated.ui
         { behindContent = Element.behindContent

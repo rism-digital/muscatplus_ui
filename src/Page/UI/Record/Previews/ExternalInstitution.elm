@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews.ExternalInstitution exposing (..)
+module Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 
 import Element exposing (Element, alignRight, alignTop, column, el, fill, fillPortion, height, inFront, none, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)

@@ -3,7 +3,7 @@ module Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Debouncer.Messages as Debouncer
 import Http
 import Http.Detailed
-import Page.Keyboard.Model exposing (Clef, KeyNoteName, KeySignature, KeyboardKeyPress, Octave, QueryMode, TimeSignature)
+import Page.Keyboard.Model exposing (Clef, KeySignature, KeyboardKeyPress, QueryMode, TimeSignature)
 
 
 type KeyboardMsg

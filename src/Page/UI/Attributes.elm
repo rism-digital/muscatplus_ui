@@ -5,7 +5,6 @@ module Page.UI.Attributes exposing
     , bodySM
     , controlsColumnWidth
     , emptyAttribute
-    , facetBorderBottom
     , fontBaseSize
     , headingHero
     , headingLG

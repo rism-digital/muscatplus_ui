@@ -144,12 +144,8 @@ viewSelectFacet config =
                 query.facetSorts
 
             chosenSort =
-                case Dict.get facetAlias facetSorts of
-                    Just userSetSort ->
-                        userSetSort
-
-                    Nothing ->
-                        .defaultSort config.selectFacet
+                Dict.get facetAlias facetSorts
+                    |> Maybe.withDefault (.defaultSort config.selectFacet)
 
             chosenSortMessage =
                 case chosenSort of

@@ -1,8 +1,8 @@
-module Page.UI.DiammLogo exposing (..)
+module Page.UI.DiammLogo exposing (diammLogo)
 
 import Element exposing (Element, html)
 import Svg
-import VirtualDom exposing (Attribute, attribute)
+import VirtualDom exposing (attribute)
 
 
 diammLogo : Element msg

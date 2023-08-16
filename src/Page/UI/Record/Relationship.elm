@@ -3,13 +3,16 @@ module Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelations
 import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, shrink, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
+import Utilities exposing (choose)
 
 
 viewRelatedToBody : Language -> RelatedToBody -> Element msg
@@ -74,50 +77,34 @@ viewRelationshipBody : Language -> RelationshipBody -> Element msg
 viewRelationshipBody language body =
     let
         qualifierLabel =
-            case body.qualifier of
-                Just qual ->
+            viewMaybe
+                (\qual ->
                     el [] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
-
-                Nothing ->
-                    none
+                )
+                body.qualifier
 
         relatedToView =
             -- if there is a related-to relationship, display that.
             -- if all we have is a name, display that.
             -- if neither, don't show anything because we can't!
-            case body.relatedTo of
-                Just rel ->
-                    if rel.type_ == PlaceRelationship then
-                        el [] (text (extractLabelFromLanguageMap language rel.label))
-
-                    else
-                        viewRelatedToBody language rel
-
-                Nothing ->
-                    case body.name of
-                        Just nm ->
-                            el [] (text (extractLabelFromLanguageMap language nm))
-
-                        Nothing ->
-                            none
+            ME.unpack
+                (\() ->
+                    viewMaybe (\nm -> el [] (text (extractLabelFromLanguageMap language nm))) body.name
+                )
+                (\rel -> choose (rel.type_ == PlaceRelationship) (el [] (text (extractLabelFromLanguageMap language rel.label))) (viewRelatedToBody language rel))
+                body.relatedTo
 
         roleLabel =
-            case body.role of
-                Just role ->
-                    renderLabel language role.label
-
-                Nothing ->
-                    none
+            viewMaybe (\role -> renderLabel language role.label) body.role
 
         note =
-            case body.note of
-                Just noteText ->
+            viewMaybe
+                (\noteText ->
                     row
                         [ width fill ]
                         [ paragraph [] [ text (extractLabelFromLanguageMap language noteText) ] ]
-
-                Nothing ->
-                    none
+                )
+                body.note
     in
     fieldValueWrapper []
         [ wrappedRow

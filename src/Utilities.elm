@@ -5,6 +5,7 @@ module Utilities exposing
     , fromListDedupe
     , namedValue
     , toLinkedHtml
+    , toggle
     )
 
 import Dict exposing (Dict)
@@ -12,7 +13,18 @@ import Element exposing (Element)
 import ElmEscapeHtml
 import Html.Parser
 import Html.Parser.Util exposing (toVirtualDom)
+import Maybe.Extra as ME
 import Regex
+import Set exposing (Set)
+
+
+toggle : comparable -> Set comparable -> Set comparable
+toggle needle haystack =
+    if Set.member needle haystack then
+        Set.remove needle haystack
+
+    else
+        Set.insert needle haystack
 
 
 choose : Bool -> a -> a -> a
@@ -51,12 +63,7 @@ insertDedupe : (v -> v -> v) -> comparable -> v -> Dict comparable v -> Dict com
 insertDedupe combine key value dict =
     let
         with mbValue =
-            case mbValue of
-                Just oldValue ->
-                    Just (combine oldValue value)
-
-                Nothing ->
-                    Just value
+            ME.unpack (\() -> Just value) (\oldValue -> Just (combine oldValue value)) mbValue
     in
     Dict.update key with dict
 
@@ -106,7 +113,8 @@ toLinkedHtml htmlString =
     in
     case Html.Parser.run htmlString of
         Ok nodes ->
-            Ok <| toElementList nodes
+            toElementList nodes
+                |> Ok
 
         Err _ ->
             let
@@ -118,7 +126,8 @@ toLinkedHtml htmlString =
             in
             case Html.Parser.run escapedHtml of
                 Ok nodes ->
-                    Ok <| toElementList nodes
+                    toElementList nodes
+                        |> Ok
 
                 Err _ ->
                     -- return the original string

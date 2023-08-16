@@ -12,6 +12,7 @@ import Element.Lazy exposing (lazy3)
 import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, parseLocaleToLanguage)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
@@ -24,6 +25,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerH
 import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
+import Utilities exposing (choose)
 
 
 dividingLine : Element msg
@@ -44,12 +46,7 @@ dividingLine =
 
 isCurrentlyHovered : Maybe SideBarOption -> SideBarOption -> Bool
 isCurrentlyHovered hoveredOption thisOption =
-    case hoveredOption of
-        Just opt ->
-            opt == thisOption
-
-        Nothing ->
-            False
+    ME.unwrap False (\opt -> opt == thisOption) hoveredOption
 
 
 menuOption :
@@ -64,11 +61,7 @@ menuOption :
 menuOption cfg option currentlyHovered =
     let
         fontColour =
-            if cfg.isCurrent then
-                colourScheme.white
-
-            else
-                colourScheme.black
+            choose cfg.isCurrent colourScheme.white colourScheme.black
 
         icon =
             cfg.icon fontColour
@@ -201,12 +194,7 @@ view session =
         -- false, indicating that the menu option should not
         -- be shown when a national collection is selected.
         showWhenChoosingNationalCollection =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    False
-
-                Nothing ->
-                    True
+            ME.isNothing session.restrictedToNationalCollection
 
         peopleInterfaceMenuOption =
             viewIf

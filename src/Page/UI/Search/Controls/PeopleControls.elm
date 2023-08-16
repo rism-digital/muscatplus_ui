@@ -1,32 +1,30 @@
 module Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 
 import Element exposing (Element, alignTop, column, paddingEach, row, spacingXY)
-import Element.Border as Border
 import Language.LocalTranslations exposing (facetPanelTitles)
 import Language.Tooltips exposing (tooltips)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
-import Page.UI.Style exposing (colourScheme)
 
 
 personFacetPanels :
     { biographicalInfoPanel : PanelConfig
-    , roleAndProfession : PanelConfig
     , personResultsPanel : PanelConfig
+    , roleAndProfession : PanelConfig
     }
 personFacetPanels =
     { biographicalInfoPanel =
         { alias = "person-biography-panel"
         , label = facetPanelTitles.biographicalDetails
         }
-    , roleAndProfession =
-        { alias = "person-role-profession-panel"
-        , label = facetPanelTitles.roleAndProfession
-        }
     , personResultsPanel =
         { alias = "person-results-panel"
         , label = facetPanelTitles.results
+        }
+    , roleAndProfession =
+        { alias = "person-role-profession-panel"
+        , label = facetPanelTitles.roleAndProfession
         }
     }
 

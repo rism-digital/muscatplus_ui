@@ -9,7 +9,7 @@ import Page.RecordTypes.Search exposing (PersonResultBody, PersonResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (briefcaseSvg, musicNotationSvg, penNibSvg, sourcesSvg)
+import Page.UI.Images exposing (briefcaseSvg, penNibSvg, sourcesSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
 

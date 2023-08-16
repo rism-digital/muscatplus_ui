@@ -18,7 +18,7 @@ module Page.UI.Components exposing
 
 import Color exposing (Color)
 import Css
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paddingXY, paragraph, px, rgb, rgba, rotate, row, spacing, spacingXY, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paddingXY, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -29,8 +29,10 @@ import Html.Events as HE
 import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
+import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Utilities exposing (toLinkedHtml)
 
@@ -161,30 +163,19 @@ dropdownSelect :
 dropdownSelect cfg =
     let
         label =
-            case cfg.label of
-                Just s ->
+            viewMaybe
+                (\s ->
                     column
                         []
                         [ text (extractLabelFromLanguageMap cfg.language s) ]
-
-                Nothing ->
-                    none
+                )
+                cfg.label
 
         mouseDownMsg =
-            case cfg.mouseDownMsg of
-                Just m ->
-                    HE.onMouseDown m
-
-                Nothing ->
-                    HA.classList []
+            ME.unwrap (HA.classList []) HE.onMouseDown cfg.mouseDownMsg
 
         mouseUpMsg =
-            case cfg.mouseUpMsg of
-                Just m ->
-                    HE.onMouseUp m
-
-                Nothing ->
-                    HA.classList []
+            ME.unwrap (HA.classList []) HE.onMouseUp cfg.mouseUpMsg
     in
     row
         [ width fill
@@ -379,7 +370,7 @@ renderLabel language langmap =
     lines are too long.
 
 -}
-renderLanguageHelper : List (Element.Attribute msg) -> Language -> LanguageMap -> Element msg
+renderLanguageHelper : List (Attribute msg) -> Language -> LanguageMap -> Element msg
 renderLanguageHelper attrib language heading =
     paragraph
         attrib
@@ -419,11 +410,6 @@ styledList textList =
 styledParagraphs : List String -> List (Element msg)
 styledParagraphs textList =
     let
-        listRenderer txt =
-            paragraph
-                [ spacing lineSpacing ]
-                (parsedHtml txt)
-
         containsHtml txt =
             -- If there is no open bracket, there is no HTML.
             -- If there is an open bracket, there might be HTML,
@@ -445,6 +431,11 @@ styledParagraphs textList =
                         -- the original HTML string content is contained in the
                         -- error message, so we will show it verbatim.
                         [ text errMsg ]
+
+        listRenderer txt =
+            paragraph
+                [ spacing lineSpacing ]
+                (parsedHtml txt)
     in
     List.map listRenderer textList
 

@@ -29,6 +29,7 @@ import Response exposing (Response(..), ServerData(..))
 view : Model -> Browser.Document Msg
 view model =
     let
+        -- set the colour for links (a tags) globally.
         globalLinkColor =
             let
                 { red, green, blue } =
@@ -39,7 +40,6 @@ view model =
         pageSession =
             toSession model
 
-        -- set the colour for links (a tags) globally.
         defaultTitle =
             "RISM Online"
 
@@ -176,17 +176,11 @@ loadingIndicator model =
     in
     case model of
         SearchPage _ pageModel ->
-            case pageModel.response of
-                Loading _ ->
-                    loadingView
+            if isLoading pageModel.response || isLoading pageModel.preview then
+                loadingView
 
-                _ ->
-                    case pageModel.preview of
-                        Loading _ ->
-                            loadingView
-
-                        _ ->
-                            Keyed.el [] ( "progress-bar-none", none )
+            else
+                Keyed.el [] ( "progress-bar-none", none )
 
         FrontPage _ pageModel ->
             chooseView pageModel.response

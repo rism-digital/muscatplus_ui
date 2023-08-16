@@ -8,6 +8,7 @@ import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.Error.Views exposing (createErrorMessage)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
@@ -77,8 +78,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         { closeMsg = cfg.userClosedPreviewWindowMsg
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
-                        , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
                         , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
+                        , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
                         }
                         oldData
 
@@ -87,8 +88,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         { closeMsg = cfg.userClosedPreviewWindowMsg
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
-                        , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
                         , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
+                        , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
                         }
                         (Just resp)
 
@@ -211,12 +212,8 @@ viewSearchControls cfg =
                     ( keywordInputField, none )
 
         expandedFacetPanels =
-            case .searchPreferences cfg.session of
-                Just p ->
-                    p.expandedFacetPanels
-
-                Nothing ->
-                    Set.empty
+            .searchPreferences cfg.session
+                |> ME.unwrap Set.empty .expandedFacetPanels
 
         facetConfig =
             { language = language

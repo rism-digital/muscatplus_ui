@@ -1,6 +1,6 @@
-module Page.UI.Record.Incipits exposing (viewIncipit, viewIncipitsSection, viewPAEData, viewRenderedIncipits)
+module Page.UI.Record.Incipits exposing (IncipitDisplayConfig, IncipitSectionConfig, viewIncipit, viewIncipitsSection, viewRenderedIncipits)
 
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -11,9 +11,9 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), PAEEncodedData, RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (dropdownSelect, h3, viewSummaryField)
-import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
+import Page.UI.Attributes exposing (bodyRegular, headingLG, lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Components exposing (h3, viewSummaryField)
+import Page.UI.Helpers exposing (viewIf, viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg, fileDownloadSvg, searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -48,11 +48,8 @@ viewIncipit : IncipitDisplayConfig msg -> IncipitBody -> Element msg
 viewIncipit cfg incipit =
     let
         title =
-            if cfg.suppressTitle then
-                none
-
-            else
-                row
+            viewIf
+                (row
                     [ width fill
                     , spacing 5
                     ]
@@ -62,6 +59,8 @@ viewIncipit cfg incipit =
                         ]
                         (text (extractLabelFromLanguageMap cfg.language incipit.label))
                     ]
+                )
+                (not cfg.suppressTitle)
     in
     row
         (width fill :: sectionBorderStyles)
@@ -73,27 +72,40 @@ viewIncipit cfg incipit =
             ]
             [ title
             , row
-                [ width fill ]
+                [ width fill
+                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+                , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+                , paddingXY 0 10
+                ]
                 [ column
                     [ width fill
                     , height fill
                     , alignTop
                     , HA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
                     ]
-                    [ viewMaybe (viewSummaryField cfg.language) incipit.summary
-                    , row
+                    [ row
                         [ width fill ]
                         [ column
                             [ width fill
                             , spacing 0
                             ]
-                            [ viewMaybe viewRenderedIncipits incipit.rendered
-                            , viewMaybe
+                            [ viewMaybe viewRenderedIncipits incipit.rendered ]
+                        ]
+                    , viewMaybe (viewSummaryField cfg.language) incipit.summary
+                    , row
+                        [ width fill
+                        , paddingXY 0 10
+                        ]
+                        [ column
+                            [ width fill
+                            , spacing 0
+                            ]
+                            [ viewMaybe
                                 (viewIncipitExtraInfo
                                     { ident = incipit.id
-                                    , language = cfg.language
-                                    , isExpanded = cfg.infoIsExpanded
                                     , infoToggleMsg = cfg.infoToggleMsg
+                                    , isExpanded = cfg.infoIsExpanded
+                                    , language = cfg.language
                                     , renderings = incipit.rendered
                                     }
                                 )
@@ -110,9 +122,9 @@ viewIncipit cfg incipit =
 
 viewIncipitExtraInfo :
     { ident : String
-    , language : Language
-    , isExpanded : Bool
     , infoToggleMsg : String -> msg
+    , isExpanded : Bool
+    , language : Language
     , renderings : Maybe (List RenderedIncipit)
     }
     -> List EncodedIncipit
@@ -135,9 +147,6 @@ viewIncipitExtraInfo cfg encodings =
     in
     row
         [ width fill
-        , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-        , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
-        , paddingXY 0 10
         ]
         [ column
             [ width fill ]
@@ -163,7 +172,7 @@ viewIncipitExtraInfo cfg encodings =
                     , pointer
                     , onClick (cfg.infoToggleMsg cfg.ident)
                     ]
-                    (text "Incipit Extras")
+                    (text "Incipit Tools")
                 ]
             , panelBody
             ]

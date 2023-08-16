@@ -17,6 +17,7 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Dict
 import Flip exposing (flip)
 import Language exposing (Language(..), extractLabelFromLanguageMap)
+import Maybe.Extra as ME
 import Page.Query exposing (QueryArgs, defaultQueryArgs, setNationalCollection, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
@@ -24,14 +25,14 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.UpdateHelpers exposing (hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
 import Set
 import Url exposing (Url)
-import Utilities exposing (convertNodeIdToPath)
+import Utilities exposing (convertNodeIdToPath, toggle)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
@@ -56,16 +57,15 @@ init : RecordConfig -> RecordPageModel RecordMsg
 init cfg =
     let
         activeSearchInit =
-            case cfg.queryArgs of
-                Just qa ->
-                    ActiveSearch.init
-                        { queryArgs = qa
-                        , keyboardQueryArgs = Nothing
-                        , searchPreferences = cfg.searchPreferences
-                        }
-
-                Nothing ->
-                    ActiveSearch.empty cfg.searchPreferences
+            cfg.queryArgs
+                |> ME.unpack (\() -> ActiveSearch.empty)
+                    (\qa ->
+                        ActiveSearch.init
+                            { queryArgs = qa
+                            , keyboardQueryArgs = Nothing
+                            , searchPreferences = cfg.searchPreferences
+                            }
+                    )
 
         activeSearch =
             toNextQuery activeSearchInit
@@ -106,20 +106,12 @@ load cfg oldBody =
                 |> flip setNextQuery activeSearchInit
 
         activeSearch =
-            case cfg.queryArgs of
-                Just qa ->
-                    setNextQuery qa initActiveSearch
-
-                Nothing ->
-                    initActiveSearch
+            cfg.queryArgs
+                |> ME.unpack (\() -> initActiveSearch) (\qa -> setNextQuery qa initActiveSearch)
 
         ( previewResp, selectedResult ) =
-            case .fragment cfg.incomingUrl of
-                Just f ->
-                    ( oldBody.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
-
-                Nothing ->
-                    ( NoResponseToShow, Nothing )
+            .fragment cfg.incomingUrl
+                |> ME.unwrap ( NoResponseToShow, Nothing ) (\f -> ( oldBody.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) ))
 
         tabView =
             Url.toString cfg.incomingUrl
@@ -150,12 +142,7 @@ recordSearchRequest searchUrl =
 
 requestPreviewIfSelected : Maybe String -> Cmd RecordMsg
 requestPreviewIfSelected selected =
-    case selected of
-        Just s ->
-            recordPagePreviewRequest s
-
-        Nothing ->
-            Cmd.none
+    ME.unwrap Cmd.none recordPagePreviewRequest selected
 
 
 update : Session -> RecordMsg -> RecordPageModel RecordMsg -> ( RecordPageModel RecordMsg, Cmd RecordMsg )
@@ -164,12 +151,8 @@ update session msg model =
         ServerRespondedWithPageSearch (Ok ( _, response )) ->
             let
                 jumpCmd =
-                    case .fragment session.url of
-                        Just frag ->
-                            jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list" frag
-
-                        Nothing ->
-                            Cmd.none
+                    .fragment session.url
+                        |> ME.unwrap Cmd.none (jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list")
 
                 probeState =
                     case response of
@@ -222,11 +205,7 @@ update session msg model =
                 resultsStatus =
                     case model.searchResults of
                         NoResponseToShow ->
-                            let
-                                hasSourcesAttached =
-                                    hasNonZeroSourcesAttached response
-                            in
-                            if hasSourcesAttached then
+                            if hasNonZeroSourcesAttached response then
                                 Loading Nothing
 
                             else
@@ -381,12 +360,7 @@ update session msg model =
         UserClickedSearchResultsPagination pageUrl ->
             let
                 oldData =
-                    case model.searchResults of
-                        Response d ->
-                            Just d
-
-                        _ ->
-                            Nothing
+                    chooseResponse model.searchResults
             in
             ( { model
                 | searchResults = Loading oldData
@@ -408,8 +382,16 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedExpandIncipitInfoSectionInPreview incipitSection ->
-            ( model, Cmd.none )
+        UserClickedExpandIncipitInfoSectionInPreview incipitIdent ->
+            let
+                newExpandedSet =
+                    toggle incipitIdent model.incipitInfoExpanded
+            in
+            ( { model
+                | incipitInfoExpanded = newExpandedSet
+              }
+            , Cmd.none
+            )
 
         UserClickedClosePreviewWindow ->
             userClickedClosePreviewWindow session model
@@ -431,8 +413,7 @@ update session msg model =
                                     let
                                         searchRequest =
                                             Url.fromString searchUrl
-                                                |> Maybe.map (\a -> recordSearchRequest a)
-                                                |> Maybe.withDefault Cmd.none
+                                                |> ME.unwrap Cmd.none (\a -> recordSearchRequest a)
                                     in
                                     Cmd.batch
                                         [ searchRequest
@@ -478,22 +459,16 @@ updatePageMetadata incomingData =
                     extractLabelFromLanguageMap English sourceBody.label
 
                 fullDescription =
-                    case sourceBody.creator of
-                        Just c ->
-                            case c.relatedTo of
-                                Just n ->
-                                    extractLabelFromLanguageMap English n.label ++ ": " ++ title
-
-                                Nothing ->
-                                    case c.name of
-                                        Just nm ->
-                                            extractLabelFromLanguageMap English nm ++ ": " ++ title
-
-                                        Nothing ->
-                                            title
-
-                        Nothing ->
-                            title
+                    sourceBody.creator
+                        |> ME.unwrap title
+                            (\c ->
+                                ME.unpack
+                                    (\() ->
+                                        ME.unwrap title (\nm -> extractLabelFromLanguageMap English nm ++ ": " ++ title) c.name
+                                    )
+                                    (\n -> extractLabelFromLanguageMap English n.label ++ ": " ++ title)
+                                    c.relatedTo
+                            )
             in
             PortSendHeaderMetaInfo { description = fullDescription }
                 |> encodeMessageForPortSend

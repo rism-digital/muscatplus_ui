@@ -15,7 +15,6 @@ module ActiveSearch exposing
     , toKeyboard
     , toQueryFacetValues
     , toRangeFacetValues
-    , toggleExpandedFacets
     )
 
 import ActiveSearch.Model exposing (ActiveSearch)
@@ -38,8 +37,8 @@ type alias ActiveSearchConfig =
     }
 
 
-empty : Maybe SearchPreferences -> ActiveSearch msg
-empty prefs =
+empty : ActiveSearch msg
+empty =
     { nextQuery = Page.Query.defaultQueryArgs
     , expandedFacets = Set.empty
     , rangeFacetValues = Dict.empty
@@ -54,14 +53,12 @@ init : ActiveSearchConfig -> ActiveSearch msg
 init cfg =
     let
         keyboardQuery =
-            case cfg.keyboardQueryArgs of
-                Just kq ->
+            Maybe.map
+                (\kq ->
                     Keyboard.initModel
                         |> setKeyboardQuery kq
-                        |> Just
-
-                Nothing ->
-                    Nothing
+                )
+                cfg.keyboardQueryArgs
     in
     { nextQuery = cfg.queryArgs
     , expandedFacets = Set.empty
@@ -140,12 +137,3 @@ toQueryFacetValues model =
 toRangeFacetValues : { a | rangeFacetValues : Dict FacetAlias ( String, String ) } -> Dict FacetAlias ( String, String )
 toRangeFacetValues model =
     model.rangeFacetValues
-
-
-toggleExpandedFacets : String -> Set String -> Set String
-toggleExpandedFacets newFacet oldFacets =
-    if Set.member newFacet oldFacets then
-        Set.remove newFacet oldFacets
-
-    else
-        Set.insert newFacet oldFacets

@@ -9,7 +9,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SourceResultBody, SourceResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
-import Page.UI.Attributes exposing (bodyRegular)
+import Page.UI.Attributes exposing (bodyRegular, bodySM)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, iiifLogo, layerGroupSvg, musicNotationSvg, penNibSvg, peopleSvg, sourcesSvg, userCircleSvg)
@@ -177,7 +177,7 @@ viewSourceSummary language iconColour summary =
                     , includeLabelInValue = False
                     , fieldName = "dateStatements"
                     , displayStyles =
-                        [ Font.size 12
+                        [ bodySM
                         ]
                     , formatNumbers = False
                     }
@@ -189,7 +189,7 @@ viewSourceSummary language iconColour summary =
                     , includeLabelInValue = True
                     , fieldName = "numItems"
                     , displayStyles =
-                        [ Font.size 12
+                        [ bodySM
                         ]
                     , formatNumbers = True
                     }
@@ -201,7 +201,7 @@ viewSourceSummary language iconColour summary =
                     , includeLabelInValue = True
                     , fieldName = "numExemplars"
                     , displayStyles =
-                        [ Font.size 12
+                        [ bodySM
                         ]
                     , formatNumbers = True
                     }

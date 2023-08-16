@@ -11,6 +11,7 @@ import Flip exposing (flip)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h3)
@@ -18,7 +19,7 @@ import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Url
-import Utilities exposing (convertPathToNodeId)
+import Utilities exposing (choose, convertPathToNodeId)
 
 
 type alias ResultColours =
@@ -61,12 +62,7 @@ resultIsSelected : Maybe String -> String -> ResultColours
 resultIsSelected selectedResult thisId =
     let
         isSelected =
-            case selectedResult of
-                Just r ->
-                    r == thisId
-
-                Nothing ->
-                    False
+            ME.unwrap False ((==) thisId) selectedResult
     in
     if isSelected then
         { backgroundColour = colourScheme.lightBlue
@@ -89,15 +85,14 @@ resultTemplate :
 resultTemplate cfg =
     let
         resultRowNodeId =
-            case Url.fromString cfg.id of
-                Just u ->
-                    String.dropLeft 1 u.path
-                        |> convertPathToNodeId
-                        |> HA.id
-                        |> htmlAttribute
-
-                Nothing ->
-                    emptyAttribute
+            Url.fromString cfg.id
+                |> ME.unpack (\() -> emptyAttribute)
+                    (\u ->
+                        String.dropLeft 1 u.path
+                            |> convertPathToNodeId
+                            |> HA.id
+                            |> htmlAttribute
+                    )
     in
     row
         [ width fill
@@ -162,16 +157,14 @@ summaryFieldTemplate summaryCfg fieldValue =
         fValueFormatted =
             List.map
                 (\f ->
-                    if summaryCfg.formatNumbers then
-                        case String.toInt f of
-                            Just num ->
-                                toFloat num
-                                    |> formatNumberByLanguage summaryCfg.language
-
-                            Nothing ->
-                                f
-
-                    else
+                    choose summaryCfg.formatNumbers
+                        (String.toInt f
+                            |> ME.unpack (\() -> f)
+                                (\num ->
+                                    toFloat num
+                                        |> formatNumberByLanguage summaryCfg.language
+                                )
+                        )
                         f
                 )
                 fVal
@@ -217,13 +210,8 @@ summaryFieldTemplate summaryCfg fieldValue =
             else
                 String.join "; " fValueFormatted
 
-        -- TODO: Translate label!
         templatedVal =
-            if summaryCfg.includeLabelInValue then
-                fValueAsString ++ " " ++ fLabel
-
-            else
-                fValueAsString
+            choose summaryCfg.includeLabelInValue (fValueAsString ++ " " ++ fLabel) fValueAsString
     in
     el
         [ spacing 5

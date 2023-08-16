@@ -1,16 +1,16 @@
 module Page.Error.Views exposing (createErrorMessage, createProbeErrorMessage, view)
 
 import Config as C
-import Element exposing (Element, centerX, centerY, column, el, fill, height, link, moveUp, none, padding, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, centerX, centerY, column, el, fill, height, link, none, padding, paragraph, px, row, spacing, text, width)
 import Element.Background as Background
 import Http.Detailed
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (errorMessages)
-import Page.UI.Attributes exposing (headingLG, headingSM, headingXL, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (headingSM, headingXL, lineSpacing, linkColour)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
-import Response exposing (Response(..), ServerData)
+import Response exposing (Response(..))
 import Session exposing (Session)
 
 

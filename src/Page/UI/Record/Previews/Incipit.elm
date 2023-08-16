@@ -1,39 +1,13 @@
 module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 
-import Element exposing (Element, alignTop, column, el, fill, height, link, none, paddingXY, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, link, paddingXY, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
-import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, PAEEncodedData)
+import Language exposing (Language, extractLabelFromLanguageMap)
+import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Components exposing (h1)
-import Page.UI.Record.Incipits exposing (viewIncipit, viewPAEData)
+import Page.UI.Record.Incipits exposing (viewIncipit)
 import Set exposing (Set)
-
-
-
---viewEncodingsBlock : Language -> List EncodedIncipit -> Element msg
---viewEncodingsBlock language encodedIncipits =
---    row
---        [ width fill
---        , alignTop
---        ]
---        [ column
---            [ width fill
---            , alignTop
---            ]
---            (List.map
---                (\encoding ->
---                    case encoding of
---                        PAEEncoding label paeData ->
---                            viewPaeData language label paeData
---
---                        _ ->
---                            none
---                )
---                encodedIncipits
---            )
---        ]
---
 
 
 viewIncipitPreview : Language -> Set String -> (String -> msg) -> IncipitBody -> Element msg

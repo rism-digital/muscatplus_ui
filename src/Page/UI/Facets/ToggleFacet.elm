@@ -2,7 +2,7 @@ module Page.UI.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, centerX, centerY, column, el, height, inFront, onLeft, paddingXY, row, shrink, width)
+import Element exposing (Element, above, centerX, centerY, column, el, height, paddingXY, row, shrink, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.Query exposing (toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (ToggleFacet)

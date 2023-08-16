@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews.ExternalSource exposing (..)
+module Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 
 import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, fillPortion, height, inFront, link, newTabLink, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Element.Font as Font
@@ -177,8 +177,8 @@ viewExternalHeldBy language body =
             , headingLG
             , Font.medium
             ]
-            { label = text (extractLabelFromLanguageMap language body.label)
-            , url = body.id
+            { url = body.id
+            , label = text (extractLabelFromLanguageMap language body.label)
             }
         ]
 
@@ -273,8 +273,8 @@ viewExternalResource language body =
                         ]
                         [ resourceLink
                             [ linkColour ]
-                            { label = renderParagraph language body.label
-                            , url = body.url
+                            { url = body.url
+                            , label = renderParagraph language body.label
                             }
                         , externalLinkTemplate body.url
                         ]

@@ -1,4 +1,4 @@
-module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection, viewHeldBy)
+module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
 import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, spacing, text, width, wrappedRow)
 import Element.Font as Font

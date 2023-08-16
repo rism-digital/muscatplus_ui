@@ -1,16 +1,14 @@
 module Page.UI.Helpers exposing (viewIf, viewMaybe, viewSVGRenderedIncipit)
 
 import Element exposing (Element, none, text)
+import Maybe.Extra as ME
 import SvgParser
+import Utilities exposing (choose)
 
 
 viewIf : Element msg -> Bool -> Element msg
 viewIf viewFunc condition =
-    if condition then
-        viewFunc
-
-    else
-        none
+    choose condition viewFunc none
 
 
 {-|
@@ -26,8 +24,7 @@ viewIf viewFunc condition =
 -}
 viewMaybe : (a -> Element msg) -> Maybe a -> Element msg
 viewMaybe viewFunc maybeBody =
-    Maybe.map viewFunc maybeBody
-        |> Maybe.withDefault none
+    ME.unpack (\() -> none) viewFunc maybeBody
 
 
 {-|

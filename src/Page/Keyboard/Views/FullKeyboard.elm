@@ -3,7 +3,7 @@ module Page.Keyboard.Views.FullKeyboard exposing (fullKeyboard)
 import Element exposing (Element)
 import Page.Keyboard.Model exposing (KeyNoteName(..), KeyboardKeyPress(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
-import Page.Keyboard.PAE exposing (keyNoteNameToHumanNoteString, keyNoteNameToNoteString)
+import Page.Keyboard.PAE exposing (keyNoteNameToHumanNoteString)
 import Svg
 import Svg.Attributes exposing (class)
 import Svg.Events as SE

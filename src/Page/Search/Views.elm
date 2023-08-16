@@ -5,7 +5,7 @@ import Element exposing (Element, alignTop, centerX, clipY, column, fill, height
 import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Error.Views exposing (createErrorMessage)
+import Page.Error.Views
 import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Search exposing (ModeFacet)
 import Page.Search.Model exposing (SearchPageModel)
@@ -63,8 +63,8 @@ searchResultsViewRouter session model =
             { session = session
             , model = model
             , searchResponse = model.response
-            , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
             , expandedIncipitInfoSections = model.incipitInfoExpanded
+            , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
             , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
             , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
             , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting

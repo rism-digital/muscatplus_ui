@@ -4,12 +4,12 @@ import Language exposing (Language(..), LanguageMap, LanguageValues(..))
 
 
 tooltips :
-    { diammProject : LanguageMap
-    , associatedPlace : LanguageMap
+    { associatedPlace : LanguageMap
     , city : LanguageMap
     , composerAuthor : LanguageMap
     , compositeVolume : LanguageMap
     , dateRange : LanguageMap
+    , diammProject : LanguageMap
     , formatExtent : LanguageMap
     , gender : LanguageMap
     , hasDigitization : LanguageMap
@@ -29,9 +29,7 @@ tooltips :
     , textLanguage : LanguageMap
     }
 tooltips =
-    { diammProject =
-        [ LanguageValues English englishHideDiammRecordsToggleTooltip ]
-    , associatedPlace =
+    { associatedPlace =
         [ LanguageValues English englishAssociatedPlaceTooltip ]
     , city =
         [ LanguageValues English englishCityTooltip ]
@@ -43,6 +41,8 @@ tooltips =
         [ LanguageValues English englishCompositeVolumeToggleTooltip ]
     , dateRange =
         [ LanguageValues English englishDateRangeTooltip ]
+    , diammProject =
+        [ LanguageValues English englishHideDiammRecordsToggleTooltip ]
     , formatExtent =
         [ LanguageValues English englishFormatExtentTooltip ]
     , gender =

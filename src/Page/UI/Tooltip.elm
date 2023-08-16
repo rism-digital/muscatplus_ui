@@ -1,8 +1,7 @@
 module Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
 
-import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, rgb, rgba, shrink, spacing, text, transparent, width)
+import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, inFront, minimum, mouseOver, none, padding, paragraph, px, shrink, spacing, text, transparent, width)
 import Element.Background as Background
-import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
 import Page.UI.Attributes exposing (minimalDropShadow)

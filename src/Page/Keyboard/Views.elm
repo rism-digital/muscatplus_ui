@@ -1,6 +1,6 @@
 module Page.Keyboard.Views exposing (view)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, fillPortion, height, paddingXY, pointer, px, row, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, fillPortion, height, paddingXY, pointer, px, row, spacing, width)
 import Element.Events exposing (onClick)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.Keyboard.Model exposing (KeyboardModel)

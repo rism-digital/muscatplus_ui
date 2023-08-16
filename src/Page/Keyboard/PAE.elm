@@ -4,14 +4,13 @@ module Page.Keyboard.PAE exposing
     , clefSymToClefQueryString
     , createPAENote
     , keyNoteNameToHumanNoteString
-    , keyNoteNameToNoteString
     , keySigStrToKeySignature
     , keySignatureSymToQueryStr
     , timeSigStrToTimeSignature
     , timeSignatureSymToQueryStr
     )
 
-import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), KeySignature(..), Octave, Octaves, QueryMode(..), TimeSignature(..))
+import Page.Keyboard.Model exposing (Clef(..), KeyNoteName(..), KeySignature(..), Octave, Octaves, TimeSignature(..))
 import Page.Keyboard.Utilities exposing (comparableToSymHelper, symToStringHelper)
 
 

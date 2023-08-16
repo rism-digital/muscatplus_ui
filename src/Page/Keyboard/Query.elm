@@ -4,6 +4,7 @@ module Page.Keyboard.Query exposing
     , queryModeStrToQueryMode
     )
 
+import Maybe.Extra as ME
 import Page.Keyboard.Model
     exposing
         ( Clef(..)
@@ -79,13 +80,12 @@ buildNotationQueryParameters notationInput =
                     |> List.singleton
 
         notes =
-            case notationInput.noteData of
-                Just noteString ->
+            ME.unwrap []
+                (\noteString ->
                     Url.Builder.string "n" noteString
                         |> List.singleton
-
-                Nothing ->
-                    []
+                )
+                notationInput.noteData
 
         queryMode =
             -- only add the 'im' parameter if we're looking for exact pitches

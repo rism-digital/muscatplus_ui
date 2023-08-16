@@ -11,22 +11,15 @@ module Page.RecordTypes.Shared exposing
     , recordHistoryDecoder
     )
 
-import Json.Decode as Decode exposing (Decoder, andThen, bool, float, list, string)
+import Json.Decode as Decode exposing (Decoder, andThen, float, list, string)
 import Json.Decode.Extra exposing (datetime)
 import Json.Decode.Pipeline exposing (required)
 import Language exposing (LanguageMap, languageMapDecoder)
-import Page.RecordTypes exposing (RecordType, recordTypeFromJsonType)
 import Time
 
 
 type alias FacetAlias =
     String
-
-
-type alias LabelBooleanValue =
-    { label : LanguageMap
-    , value : Bool
-    }
 
 
 type alias LabelNumericValue =

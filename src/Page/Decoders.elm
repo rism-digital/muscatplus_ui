@@ -86,8 +86,6 @@ recordResponseConverter typevalue =
         ExternalRecord ->
             externalRecordResponseDecoder
 
-        -- TODO: This is obviously wrong! Fix it with the actual response types
-        --       once we have a clear idea of what they are.
         _ ->
             Decode.fail "Could not decode record body response"
 

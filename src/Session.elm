@@ -21,6 +21,7 @@ import Element exposing (Device)
 import Flags exposing (Flags)
 import Json.Decode as Decode
 import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
+import Maybe.Extra as ME
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Route exposing (Route(..), parseUrl)
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg, SideBarOption(..), resultModeToSideBarOption, sideBarExpandDelay)
@@ -87,11 +88,7 @@ init flags url key =
                     Nothing
 
         nationalCollectionFilter =
-            if nationalCollectionFromUrl /= Nothing then
-                nationalCollectionFromUrl
-
-            else
-                flags.nationalCollection
+            ME.unpack (\() -> flags.nationalCollection) (\_ -> nationalCollectionFromUrl) nationalCollectionFromUrl
 
         route =
             parseUrl url

@@ -12,6 +12,7 @@ import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
 import Flip exposing (flip)
+import Maybe.Extra as ME
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
@@ -105,13 +106,12 @@ searchSubmit session model =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
 
         notationQueryParameters =
-            case toKeyboard pageResetModel.activeSearch of
-                Just kq ->
+            ME.unwrap []
+                (\kq ->
                     toKeyboardQuery kq
                         |> buildNotationQueryParameters
-
-                Nothing ->
-                    []
+                )
+                (toKeyboard pageResetModel.activeSearch)
 
         resultMode =
             sideBarOptionToResultMode session.showFrontSearchInterface
@@ -142,12 +142,13 @@ update session msg model =
                 notationRenderCmd =
                     case session.showFrontSearchInterface of
                         IncipitSearchOption ->
-                            case toKeyboard model.activeSearch of
-                                Just kq ->
-                                    Cmd.map UserInteractedWithPianoKeyboard (buildNotationRequestQuery (toKeyboardQuery kq))
-
-                                Nothing ->
-                                    Cmd.none
+                            ME.unwrap Cmd.none
+                                (\kq ->
+                                    toKeyboardQuery kq
+                                        |> buildNotationRequestQuery
+                                        |> Cmd.map UserInteractedWithPianoKeyboard
+                                )
+                                (toKeyboard model.activeSearch)
 
                         _ ->
                             Cmd.none
@@ -177,19 +178,10 @@ update session msg model =
 
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             let
-                keyboardModel =
-                    .keyboard model.activeSearch
-
-                newKeyboardModel =
-                    case keyboardModel of
-                        Just km ->
-                            Just { km | needsProbe = False }
-
-                        Nothing ->
-                            Nothing
-
                 newActiveSearch =
-                    setKeyboard newKeyboardModel model.activeSearch
+                    .keyboard model.activeSearch
+                        |> Maybe.map (\km -> { km | needsProbe = False })
+                        |> flip setKeyboard model.activeSearch
             in
             ( { model
                 | activeSearch = newActiveSearch
@@ -385,12 +377,13 @@ update session msg model =
                 notationRenderCmd =
                     case session.showFrontSearchInterface of
                         IncipitSearchOption ->
-                            case toKeyboard newModel.activeSearch of
-                                Just kq ->
-                                    Cmd.map UserInteractedWithPianoKeyboard (buildNotationRequestQuery (toKeyboardQuery kq))
-
-                                Nothing ->
-                                    Cmd.none
+                            ME.unwrap Cmd.none
+                                (\kq ->
+                                    toKeyboardQuery kq
+                                        |> buildNotationRequestQuery
+                                        |> Cmd.map UserInteractedWithPianoKeyboard
+                                )
+                                (toKeyboard newModel.activeSearch)
 
                         _ ->
                             Cmd.none

@@ -1,7 +1,7 @@
 module Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, none, onRight, padding, paddingEach, paragraph, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, onRight, padding, paddingEach, paragraph, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
@@ -12,6 +12,7 @@ import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h4)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip)
 import Page.UpdateHelpers exposing (selectAppropriateRangeFacetValues)
@@ -54,8 +55,8 @@ inputIsValid boxIndicator inp =
 
 validateInput : Maybe String -> Element msg
 validateInput errorMessage =
-    case errorMessage of
-        Just eMsg ->
+    viewMaybe
+        (\eMsg ->
             row
                 []
                 [ paragraph
@@ -65,9 +66,8 @@ validateInput errorMessage =
                     ]
                     [ text eMsg ]
                 ]
-
-        Nothing ->
-            none
+        )
+        errorMessage
 
 
 viewRangeFacet : RangeFacetConfig msg -> Element msg
@@ -83,12 +83,7 @@ viewRangeFacet config =
             selectAppropriateRangeFacetValues facetAlias config.activeSearch
 
         ( lowerValue, upperValue ) =
-            case facetValues of
-                Just ( l, u ) ->
-                    ( l, u )
-
-                Nothing ->
-                    ( "*", "*" )
+            Maybe.withDefault ( "*", "*" ) facetValues
 
         ( lowerIsValid, lowerValidError ) =
             inputIsValid "Lower range" lowerValue

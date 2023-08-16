@@ -1,6 +1,6 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
@@ -11,7 +11,7 @@ import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelations
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
@@ -119,19 +119,17 @@ viewFullSourcePage session model body =
 
 viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> FullSourceBody -> Element RecordMsg
 viewRecordTopBarRouter language model body =
-    case body.sourceItems of
-        Just sourceBlock ->
-            if sourceBlock.totalItems == 0 then
-                none
-
-            else
-                viewRecordSourceSearchTabBar
+    viewMaybe
+        (\sourceBlock ->
+            viewIf
+                (viewRecordSourceSearchTabBar
                     { language = language
                     , model = model
                     , recordId = body.id
                     , searchUrl = sourceBlock.url
                     , tabLabel = localTranslations.sourceContents
                     }
-
-        Nothing ->
-            none
+                )
+                (not (sourceBlock.totalItems == 0))
+        )
+        body.sourceItems

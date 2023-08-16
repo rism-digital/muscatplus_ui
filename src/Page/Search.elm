@@ -15,6 +15,7 @@ import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
 import Flip exposing (flip)
+import Maybe.Extra as ME
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
@@ -25,14 +26,14 @@ import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDe
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
 import Set
 import Url exposing (Url)
-import Utilities exposing (convertNodeIdToPath)
+import Utilities exposing (convertNodeIdToPath, toggle)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
@@ -66,12 +67,8 @@ init : SearchConfig -> SearchPageModel SearchMsg
 init cfg =
     let
         selectedResult =
-            case .fragment cfg.incomingUrl of
-                Just frg ->
-                    Just (C.serverUrl ++ "/" ++ convertNodeIdToPath frg)
-
-                Nothing ->
-                    Nothing
+            .fragment cfg.incomingUrl
+                |> Maybe.map (\frg -> C.serverUrl ++ "/" ++ convertNodeIdToPath frg)
     in
     { response = Loading Nothing
     , activeSearch =
@@ -99,20 +96,11 @@ load cfg oldModel =
                 |> setNextQuery cfg.queryArgs
 
         ( previewResp, selectedResult ) =
-            case .fragment cfg.incomingUrl of
-                Just f ->
-                    ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) )
-
-                Nothing ->
-                    ( NoResponseToShow, Nothing )
+            .fragment cfg.incomingUrl
+                |> ME.unwrap ( NoResponseToShow, Nothing ) (\f -> ( oldModel.preview, Just (C.serverUrl ++ "/" ++ convertNodeIdToPath f) ))
 
         newKeyboard =
-            case newActiveSearch.keyboard of
-                Just km ->
-                    Just (Keyboard.load cfg.keyboardQueryArgs km)
-
-                Nothing ->
-                    Nothing
+            Maybe.map (Keyboard.load cfg.keyboardQueryArgs) newActiveSearch.keyboard
 
         newActiveSearchWithKeyboard =
             setKeyboard newKeyboard newActiveSearch
@@ -127,12 +115,8 @@ load cfg oldModel =
 
 requestPreviewIfSelected : Maybe String -> Cmd SearchMsg
 requestPreviewIfSelected selected =
-    case selected of
-        Just s ->
-            searchPagePreviewRequest s
-
-        Nothing ->
-            Cmd.none
+    Maybe.map searchPagePreviewRequest selected
+        |> Maybe.withDefault Cmd.none
 
 
 searchPagePreviewRequest : String -> Cmd SearchMsg
@@ -162,12 +146,7 @@ searchSubmit session model =
                 |> flip setActiveSearch model
 
         oldData =
-            case model.response of
-                Response d ->
-                    Just d
-
-                _ ->
-                    Nothing
+            chooseResponse model.response
 
         newModel =
             { nationalCollectionSetModel
@@ -176,13 +155,12 @@ searchSubmit session model =
             }
 
         notationQueryParameters =
-            case toKeyboard pageResetModel.activeSearch of
-                Just kq ->
-                    toKeyboardQuery kq
-                        |> buildNotationQueryParameters
-
-                Nothing ->
-                    []
+            toKeyboard pageResetModel.activeSearch
+                |> ME.unwrap []
+                    (\kq ->
+                        toKeyboardQuery kq
+                            |> buildNotationQueryParameters
+                    )
 
         textQueryParameters =
             toNextQuery nationalCollectionSetModel.activeSearch
@@ -202,12 +180,8 @@ update session msg model =
         ServerRespondedWithSearchData (Ok ( _, response )) ->
             let
                 jumpCmd =
-                    case .fragment session.url of
-                        Just frag ->
-                            jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list" frag
-
-                        Nothing ->
-                            Cmd.none
+                    .fragment session.url
+                        |> ME.unwrap Cmd.none (\frag -> jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list" frag)
 
                 currentMode =
                     toNextQuery model.activeSearch
@@ -216,14 +190,13 @@ update session msg model =
                 notationRenderCmd =
                     case currentMode of
                         IncipitsMode ->
-                            case toKeyboard model.activeSearch of
-                                Just kq ->
-                                    toKeyboardQuery kq
-                                        |> buildNotationRequestQuery
-                                        |> Cmd.map UserInteractedWithPianoKeyboard
-
-                                Nothing ->
-                                    Cmd.none
+                            toKeyboard model.activeSearch
+                                |> ME.unwrap Cmd.none
+                                    (\kq ->
+                                        toKeyboardQuery kq
+                                            |> buildNotationRequestQuery
+                                            |> Cmd.map UserInteractedWithPianoKeyboard
+                                    )
 
                         _ ->
                             Cmd.none
@@ -256,19 +229,10 @@ update session msg model =
 
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             let
-                keyboardModel =
-                    .keyboard model.activeSearch
-
-                newKeyboardModel =
-                    case keyboardModel of
-                        Just km ->
-                            Just { km | needsProbe = False }
-
-                        Nothing ->
-                            Nothing
-
                 newActiveSearch =
-                    setKeyboard newKeyboardModel model.activeSearch
+                    .keyboard model.activeSearch
+                        |> Maybe.map (\km -> { km | needsProbe = False })
+                        |> flip setKeyboard model.activeSearch
             in
             ( { model
                 | activeSearch = newActiveSearch
@@ -417,11 +381,8 @@ update session msg model =
 
                         probeCmd =
                             if keyboardModel.needsProbe then
-                                let
-                                    probeUrl =
-                                        createProbeUrl session newModel.activeSearch
-                                in
-                                createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+                                createProbeUrl session newModel.activeSearch
+                                    |> createProbeRequestWithDecoder ServerRespondedWithProbeData
 
                             else
                                 Cmd.none
@@ -468,12 +429,7 @@ update session msg model =
         UserClickedSearchResultsPagination url ->
             let
                 oldData =
-                    case model.response of
-                        Response d ->
-                            Just d
-
-                        _ ->
-                            Nothing
+                    chooseResponse model.response
             in
             ( { model
                 | response = Loading oldData
@@ -498,11 +454,7 @@ update session msg model =
         UserClickedExpandIncipitInfoSectionInPreview incipitIdent ->
             let
                 newExpandedSet =
-                    if Set.member incipitIdent model.incipitInfoExpanded then
-                        Set.remove incipitIdent model.incipitInfoExpanded
-
-                    else
-                        Set.insert incipitIdent model.incipitInfoExpanded
+                    toggle incipitIdent model.incipitInfoExpanded
             in
             ( { model
                 | incipitInfoExpanded = newExpandedSet

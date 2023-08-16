@@ -2,7 +2,7 @@ module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingEach, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, below, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingEach, paddingXY, pointer, px, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -18,6 +18,7 @@ import Page.RecordTypes.Suggestion exposing (ActiveSuggestion, toAlias, toSugges
 import Page.UI.Attributes exposing (bodyRegular, headingSM, lineSpacing)
 import Page.UI.Components exposing (dropdownSelect, h4)
 import Page.UI.Events exposing (onEnter)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
@@ -49,16 +50,11 @@ viewQueryFacet : QueryFacetConfig msg -> Element msg
 viewQueryFacet config =
     let
         activeSuggestion =
-            case .activeSuggestion config.activeSearch of
-                Just suggestions ->
-                    if toAlias suggestions == facetAlias then
-                        viewSuggestionDropdown config currentBehaviourOption suggestions
-
-                    else
-                        none
-
-                Nothing ->
-                    none
+            viewMaybe
+                (\suggestions ->
+                    viewIf (viewSuggestionDropdown config currentBehaviourOption suggestions) (toAlias suggestions == facetAlias)
+                )
+                (.activeSuggestion config.activeSearch)
 
         serverBehaviourOption =
             toBehaviours config.queryFacet

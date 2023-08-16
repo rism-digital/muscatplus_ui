@@ -10,6 +10,7 @@ import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
+import Maybe.Extra as ME
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
 import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, lineSpacing, minimalDropShadow, sectionSpacing)
@@ -17,7 +18,7 @@ import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
-import Simple.Animation as Animation
+import Simple.Animation as Animation exposing (Animation)
 import Simple.Animation.Property as P
 import String.Extra as SE
 import String.Normalize
@@ -40,6 +41,7 @@ imageForCountryCode countryCode =
         }
 
 
+nationalCollectionChooserAnimations : Animation
 nationalCollectionChooserAnimations =
     Animation.fromTo
         { duration = 150
@@ -215,12 +217,7 @@ viewNationalCollectionChooserMenuOption : Session -> Element SideBarMsg
 viewNationalCollectionChooserMenuOption session =
     let
         isRestrictedToNationalCollection =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
+            ME.isJust session.restrictedToNationalCollection
 
         labelFontColour =
             if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionChooser then
@@ -243,18 +240,17 @@ viewNationalCollectionChooserMenuOption session =
             else
                 emptyAttribute
 
+        globalCollectionLabel =
+            extractLabelFromLanguageMap session.language localTranslations.globalCollection
+
         iconLabel =
-            case session.restrictedToNationalCollection of
-                Just countryCode ->
-                    case Dict.get countryCode session.allNationalCollections of
-                        Just m ->
-                            extractLabelFromLanguageMap session.language m
-
-                        Nothing ->
-                            extractLabelFromLanguageMap session.language localTranslations.globalCollection
-
-                Nothing ->
-                    extractLabelFromLanguageMap session.language localTranslations.globalCollection
+            Maybe.map
+                (\countryCode ->
+                    Maybe.map (\m -> extractLabelFromLanguageMap session.language m) (Dict.get countryCode session.allNationalCollections)
+                )
+                session.restrictedToNationalCollection
+                |> ME.join
+                |> Maybe.withDefault globalCollectionLabel
 
         labelEl =
             el

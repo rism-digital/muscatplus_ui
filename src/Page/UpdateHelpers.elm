@@ -1,6 +1,7 @@
 module Page.UpdateHelpers exposing
     ( addNationalCollectionFilter
     , addNationalCollectionQueryParameter
+    , chooseResponse
     , createProbeUrl
     , hasNonZeroSourcesAttached
     , probeSubmit
@@ -25,7 +26,7 @@ module Page.UpdateHelpers exposing
     , userRemovedItemFromQueryFacet
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toExpandedFacets, toQueryFacetValues, toRangeFacetValues, toggleExpandedFacets)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toExpandedFacets, toQueryFacetValues, toRangeFacetValues)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Browser.Navigation as Nav
 import Config as C
@@ -53,7 +54,17 @@ import Session exposing (Session)
 import Set exposing (Set)
 import Url
 import Url.Builder exposing (toQuery)
-import Utilities exposing (choose, convertPathToNodeId)
+import Utilities exposing (choose, convertPathToNodeId, toggle)
+
+
+chooseResponse : Response a -> Maybe a
+chooseResponse resp =
+    case resp of
+        Response d ->
+            Just d
+
+        _ ->
+            Nothing
 
 
 addNationalCollectionFilter :
@@ -71,17 +82,12 @@ addNationalCollectionQueryParameter : Session -> QueryArgs -> String
 addNationalCollectionQueryParameter session qargs =
     let
         newQargs =
-            case session.restrictedToNationalCollection of
-                Just _ ->
-                    case qargs.nationalCollection of
-                        Just _ ->
-                            qargs
-
-                        Nothing ->
-                            { qargs | nationalCollection = session.restrictedToNationalCollection }
-
-                Nothing ->
-                    qargs
+            session.restrictedToNationalCollection
+                |> ME.unwrap qargs
+                    (\_ ->
+                        qargs.nationalCollection
+                            |> ME.unwrap { qargs | nationalCollection = session.restrictedToNationalCollection } (\_ -> qargs)
+                    )
     in
     buildQueryParameters newQargs
         |> toQuery
@@ -92,13 +98,12 @@ createProbeUrl : Session -> ActiveSearch msg -> String
 createProbeUrl session activeSearch =
     let
         notationQueryParameters =
-            case activeSearch.keyboard of
-                Just p ->
+            ME.unwrap []
+                (\p ->
                     toKeyboardQuery p
                         |> buildNotationQueryParameters
-
-                Nothing ->
-                    []
+                )
+                activeSearch.keyboard
 
         probeUrl =
             case session.route of
@@ -128,7 +133,7 @@ createProbeUrl session activeSearch =
 
 createRangeString : String -> String -> String
 createRangeString lower upper =
-    "[" ++ lower ++ " TO " ++ upper ++ "]"
+    String.concat [ "[", lower, " TO ", upper, "]" ]
 
 
 probeSubmit :
@@ -188,12 +193,8 @@ rangeStringParser rString =
                 |. P.symbol "]"
                 |. P.end
     in
-    case P.run qParser rString of
-        Ok res ->
-            Just res
-
-        Err _ ->
-            Nothing
+    P.run qParser rString
+        |> Result.toMaybe
 
 
 selectAppropriateRangeFacetValues : FacetAlias -> ActiveSearch msg -> Maybe ( String, String )
@@ -206,7 +207,7 @@ selectAppropriateRangeFacetValues facetAlias activeSearch =
         Just ( l, v ) ->
             Just ( l, v )
 
-        _ ->
+        Nothing ->
             let
                 queryRangeValues =
                     Dict.get facetAlias (.filters activeSearch.nextQuery)
@@ -398,14 +399,12 @@ userClickedResultForPreview result session model =
             Url.fromString result
 
         resPath =
-            case resultUrl of
-                Just p ->
+            Maybe.map
+                (\p ->
                     String.dropLeft 1 p.path
                         |> convertPathToNodeId
-                        |> Just
-
-                Nothing ->
-                    Nothing
+                )
+                resultUrl
 
         newUrl =
             { currentUrl | fragment = resPath }
@@ -426,28 +425,10 @@ userClickedSelectFacetExpand alias model =
     let
         newExpandedFacets =
             toExpandedFacets model.activeSearch
-                |> toggleExpandedFacets alias
+                |> toggle alias
     in
     setExpandedFacets newExpandedFacets model.activeSearch
         |> flip setActiveSearch model
-
-
-
---userClickedFacetPanelToggle : String -> Session -> ( Session, Cmd msg )
---userClickedFacetPanelToggle alias session =
---    let
---        newPanelSection =
---            toggleExpandedFacetPanel alias session
---
---        cmd =
---            PortSendSaveSearchPreference { key = "expandedFacetPanels", value = ListPreference (Set.toList newPanelSection) }
---                |> encodeMessageForPortSend
---                |> sendOutgoingMessageOnPort
---    in
---    ( setExpandedFacetPanels newPanelSection model.activeSearch
---        |> flip setActiveSearch model
---    , cmd
---    )
 
 
 userClickedSelectFacetItem : FacetAlias -> String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
@@ -581,16 +562,8 @@ userFocusedRangeFacet alias model =
 
         -- if we have an existing value here, prefer that. If not, choose the query value
         newRangeValues =
-            Dict.update alias
-                (\v ->
-                    case v of
-                        Just m ->
-                            Just m
-
-                        Nothing ->
-                            maybeRangeValue
-                )
-                (.rangeFacetValues model.activeSearch)
+            .rangeFacetValues model.activeSearch
+                |> Dict.update alias (ME.orElse maybeRangeValue)
 
         newActiveSearch =
             setRangeFacetValues newRangeValues model.activeSearch
@@ -634,8 +607,7 @@ userLostFocusOnRangeFacet alias model =
 
         -- ensure the range facet also displays the correct value
         newRangeFacetValues =
-            rangeFacetValues
-                |> Dict.insert alias ( newLowerValue, newUpperValue )
+            Dict.insert alias ( newLowerValue, newUpperValue ) rangeFacetValues
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters
@@ -658,12 +630,7 @@ userRemovedItemFromQueryFacet alias query model =
         newActiveFilters =
             Dict.update alias
                 (\existingValues ->
-                    case existingValues of
-                        Just list ->
-                            Just (List.filter (\s -> s /= query) list)
-
-                        Nothing ->
-                            Nothing
+                    Maybe.map (\list -> List.filter (\s -> s /= query) list) existingValues
                 )
                 activeFilters
     in
@@ -677,11 +644,7 @@ userClickedFacetPanelToggle : String -> Set String -> a -> ( a, Cmd msg )
 userClickedFacetPanelToggle panelAlias expandedPanels model =
     let
         newPanels =
-            if Set.member panelAlias expandedPanels then
-                Set.remove panelAlias expandedPanels
-
-            else
-                Set.insert panelAlias expandedPanels
+            toggle panelAlias expandedPanels
     in
     ( model
     , PortSendSaveSearchPreference { key = "expandedFacetPanels", value = ListPreference (Set.toList newPanels) }

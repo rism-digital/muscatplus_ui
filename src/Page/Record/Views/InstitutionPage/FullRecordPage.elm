@@ -1,6 +1,6 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
@@ -12,7 +12,7 @@ import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, vi
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
@@ -122,21 +122,23 @@ viewFullInstitutionPage session model body =
         ]
 
 
-viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> InstitutionBody -> Element RecordMsg
+viewRecordTopBarRouter :
+    Language
+    -> RecordPageModel RecordMsg
+    -> InstitutionBody
+    -> Element RecordMsg
 viewRecordTopBarRouter language model body =
-    case body.sources of
-        Just sourceBlock ->
-            if sourceBlock.totalItems == 0 then
-                none
-
-            else
-                viewRecordSourceSearchTabBar
+    viewMaybe
+        (\sourceBlock ->
+            viewIf
+                (viewRecordSourceSearchTabBar
                     { language = language
                     , model = model
                     , recordId = body.id
                     , searchUrl = sourceBlock.url
                     , tabLabel = localTranslations.sources
                     }
-
-        Nothing ->
-            none
+                )
+                (not (sourceBlock.totalItems == 0))
+        )
+        body.sources

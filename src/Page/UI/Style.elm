@@ -8,7 +8,7 @@ module Page.UI.Style exposing
     )
 
 import Color exposing (Color, rgba)
-import Element exposing (Length)
+import Element
 
 
 type alias RGBA =

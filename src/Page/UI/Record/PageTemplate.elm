@@ -5,7 +5,6 @@ module Page.UI.Record.PageTemplate exposing
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
-    , pageUriTemplate
     )
 
 import Config as C

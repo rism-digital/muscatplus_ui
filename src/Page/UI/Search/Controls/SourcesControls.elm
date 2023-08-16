@@ -1,6 +1,6 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
-import Element exposing (Element, alignTop, column, none, paddingEach, row, spacing, spacingXY)
+import Element exposing (Element, alignTop, column, none, paddingEach, row, spacingXY)
 import Element.Border as Border
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 import Language.Tooltips exposing (tooltips)
@@ -113,7 +113,14 @@ viewFacetsForSourcesMode cfg =
                 allAreEmpty =
                     List.all
                         (\a -> a == none)
-                        [ sourceType, sourceContentsToggle, sourceCollectionsToggle, compositeVolumesToggle, materialSourceType, materialContentType ]
+                        [ sourceType
+                        , sourceContentsToggle
+                        , sourceCollectionsToggle
+                        , compositeVolumesToggle
+                        , materialSourceType
+                        , materialContentType
+                        , diammRecordsToggle
+                        ]
             in
             if allAreEmpty then
                 none
@@ -143,9 +150,6 @@ viewFacetsForSourcesMode cfg =
                     , sourceType
                     , materialSourceType
                     , materialContentType
-
-                    --, contentType
-                    --, recordType
                     ]
 
         digitizationResultsPanel =

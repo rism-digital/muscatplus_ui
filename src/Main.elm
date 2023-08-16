@@ -52,7 +52,10 @@ init flags initialUrl key =
         FrontPageRoute qargs ->
             let
                 initialBody =
-                    Front.init { queryArgs = qargs, searchPreferences = session.searchPreferences }
+                    Front.init
+                        { queryArgs = qargs
+                        , searchPreferences = session.searchPreferences
+                        }
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
             in
             ( FrontPage session initialBody
@@ -86,7 +89,7 @@ init flags initialUrl key =
                     addNationalCollectionQueryParameter session qargs
 
                 fullQueryParams =
-                    newQparams ++ "&" ++ kqArgParams
+                    String.concat [ newQparams, "&", kqArgParams ]
 
                 searchUrl =
                     { initialUrl | query = Just fullQueryParams }
@@ -117,12 +120,7 @@ init flags initialUrl key =
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
 
                 ncQueryParam =
-                    case session.restrictedToNationalCollection of
-                        Just c ->
-                            Just ("nc=" ++ c)
-
-                        Nothing ->
-                            Nothing
+                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
 
                 sourceContentsPath =
                     if String.endsWith "/" initialUrl.path then
@@ -198,12 +196,7 @@ init flags initialUrl key =
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
 
                 ncQueryParam =
-                    case session.restrictedToNationalCollection of
-                        Just c ->
-                            Just ("nc=" ++ c)
-
-                        Nothing ->
-                            Nothing
+                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
 
                 sourcesUrl =
                     { initialUrl | path = initialUrl.path ++ "/sources", query = ncQueryParam }
@@ -272,12 +265,7 @@ init flags initialUrl key =
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
 
                 ncQueryParam =
-                    case session.restrictedToNationalCollection of
-                        Just c ->
-                            Just ("nc=" ++ c)
-
-                        Nothing ->
-                            Nothing
+                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
 
                 sourcesUrl =
                     { initialUrl | path = initialUrl.path ++ "/sources", query = ncQueryParam }

@@ -11,6 +11,7 @@ import Element exposing (Element)
 import Html.Styled as HS
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
+import Utilities exposing (choose)
 
 
 type Toggle msg
@@ -111,13 +112,7 @@ toggle toggle_ isDisabled isError =
     css
         [ position relative
         , display inlineBlock
-        , cursor
-            (if isDisabled then
-                notAllowed
-
-             else
-                pointer
-            )
+        , cursor (choose isDisabled notAllowed pointer)
         , width (rem 2)
         , height (rem 1)
         , boxSizing borderBox
@@ -136,13 +131,7 @@ toggle toggle_ isDisabled isError =
             , left (px 1)
             , bottom (px 1)
             , property "content" ""
-            , backgroundColor
-                (if toggle_ then
-                    hex "8ce196"
-
-                 else
-                    hex "f1f1f1"
-                )
+            , backgroundColor (choose toggle_ (hex "8ce196") (hex "f1f1f1"))
             , borderRadius (rem 1)
             ]
         , after
@@ -153,25 +142,13 @@ toggle toggle_ isDisabled isError =
             , bottom (px 1)
             , property "content" "''"
             , width (rem 0.8)
-            , backgroundColor
-                (if isDisabled then
-                    hex "eee"
-
-                 else
-                    hex "fff"
-                )
+            , backgroundColor (choose isDisabled (hex "eee") (hex "fff"))
             , borderRadius (rem 1)
             , boxShadow4 (px 0) (px 2) (px 5) (rgba 0 0 0 0.3)
             , transition
                 [ Transitions.margin 300
                 ]
-            , marginLeft
-                (if toggle_ then
-                    rem 0.9
-
-                 else
-                    rem 0.1
-                )
+            , marginLeft (choose toggle_ (rem 0.9) (rem 0.1))
             ]
         ]
 

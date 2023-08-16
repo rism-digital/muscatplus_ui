@@ -1,4 +1,4 @@
-module Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResource, viewExternalResources, viewExternalResourcesSection)
+module Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources, viewExternalResourcesSection)
 
 import Config as C
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, none, px, row, spacing, text, width, wrappedRow)
@@ -12,6 +12,7 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (iiifLogo)
 import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+import Utilities exposing (choose)
 
 
 viewExternalRecord : Language -> ExternalRecordBody -> Element msg
@@ -31,8 +32,8 @@ viewExternalRecord language body =
                         [ linkColour
                         , alignLeft
                         ]
-                        { label = text ("View " ++ extractLabelFromLanguageMap language sourceRecord.label ++ " on DIAMM")
-                        , url = sourceRecord.id
+                        { url = sourceRecord.id
+                        , label = text ("View " ++ extractLabelFromLanguageMap language sourceRecord.label ++ " on DIAMM")
                         }
                     , externalLinkTemplate sourceRecord.id
                     ]
@@ -47,14 +48,6 @@ viewExternalRecord language body =
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg
 viewExternalResource language body =
-    let
-        resourceLink =
-            if isExternalLink body.url then
-                newTabLink
-
-            else
-                link
-    in
     case body.type_ of
         IIIFManifestResourceType ->
             row
@@ -66,8 +59,8 @@ viewExternalResource language body =
                     [ linkColour
                     , alignLeft
                     ]
-                    { label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
-                    , url = C.serverUrl ++ "/viewer.html#?manifest=" ++ body.url
+                    { url = C.serverUrl ++ "/viewer.html#?manifest=" ++ body.url
+                    , label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
                     }
                 , text "|"
                 , el
@@ -80,13 +73,19 @@ viewExternalResource language body =
                     [ linkColour
                     , alignLeft
                     ]
-                    { label = text "Manifest" -- TODO: Translate
-                    , url = body.url
+                    { url = body.url
+
+                    -- TODO: Translate
+                    , label = text "Manifest"
                     }
                 , externalLinkTemplate body.url
                 ]
 
         _ ->
+            let
+                resourceLink =
+                    choose (isExternalLink body.url) newTabLink link
+            in
             row
                 [ width fill
                 , alignLeft
@@ -94,8 +93,8 @@ viewExternalResource language body =
                 ]
                 [ resourceLink
                     [ linkColour ]
-                    { label = renderParagraph language body.label
-                    , url = body.url
+                    { url = body.url
+                    , label = renderParagraph language body.label
                     }
                 , externalLinkTemplate body.url
                 ]

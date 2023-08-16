@@ -3,7 +3,6 @@ module Page.RecordTypes.Incipit exposing
     , IncipitBody
     , IncipitFormat(..)
     , IncipitParentSourceBody
-    , IncipitValidationBody
     , PAEEncodedData
     , RenderedIncipit(..)
     , incipitBodyDecoder
@@ -11,7 +10,7 @@ module Page.RecordTypes.Incipit exposing
     , renderedIncipitDecoderTwo
     )
 
-import Json.Decode as Decode exposing (Decoder, bool, list, string)
+import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
@@ -52,12 +51,6 @@ type IncipitFormat
 type alias IncipitParentSourceBody =
     { label : LanguageMap
     , source : BasicSourceBody
-    }
-
-
-type alias IncipitValidationBody =
-    { isValid : Bool
-    , messages : Maybe (List LanguageMap)
     }
 
 
@@ -117,11 +110,11 @@ incipitFormatDecoder =
                     "audio/midi" ->
                         Decode.succeed RenderedMIDI
 
-                    "image/svg+xml" ->
-                        Decode.succeed RenderedSVG
-
                     "image/png" ->
                         Decode.succeed RenderedPNG
+
+                    "image/svg+xml" ->
+                        Decode.succeed RenderedSVG
 
                     _ ->
                         Decode.succeed UnknownFormat
@@ -133,13 +126,6 @@ incipitParentSourceBodyDecoder =
     Decode.succeed IncipitParentSourceBody
         |> required "label" languageMapLabelDecoder
         |> required "source" basicSourceBodyDecoder
-
-
-incipitValidationBodyDecoder : Decoder IncipitValidationBody
-incipitValidationBodyDecoder =
-    Decode.succeed IncipitValidationBody
-        |> required "valid" bool
-        |> optional "messages" (Decode.maybe (list languageMapLabelDecoder)) Nothing
 
 
 renderedIncipitDecoderOne : Decoder RenderedIncipit

@@ -30,7 +30,6 @@ module Page.RecordTypes.Search exposing
     , SourceResultFlags
     , ToggleFacet
     , facetsDecoder
-    , institutionResultFlagsDecoder
     , modeFacetDecoder
     , parseFacetBehaviourToString
     , parseFacetSortToString
@@ -60,6 +59,7 @@ import Page.RecordTypes.Shared
         , languageMapLabelDecoder
         )
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
+import Utilities exposing (choose)
 
 
 type alias FacetBehaviourOptions =
@@ -350,19 +350,19 @@ facetResponseConverter : String -> Decoder FacetData
 facetResponseConverter typeValue =
     case facetTypeFromJsonType typeValue of
         Range ->
-            Decode.map (\r -> RangeFacetData r) rangeFacetDecoder
+            Decode.map RangeFacetData rangeFacetDecoder
 
         Toggle ->
-            Decode.map (\r -> ToggleFacetData r) toggleFacetDecoder
+            Decode.map ToggleFacetData toggleFacetDecoder
 
         Select ->
-            Decode.map (\r -> SelectFacetData r) selectFacetDecoder
+            Decode.map SelectFacetData selectFacetDecoder
 
         Notation ->
-            Decode.map (\r -> NotationFacetData r) notationFacetDecoder
+            Decode.map NotationFacetData notationFacetDecoder
 
         Query_ ->
-            Decode.map (\r -> QueryFacetData r) queryFacetDecoder
+            Decode.map QueryFacetData queryFacetDecoder
 
         UnknownFacetType ->
             Decode.fail ("Unknown facet type " ++ typeValue)
@@ -471,29 +471,21 @@ notationQueryOptionsDecoder =
 parseFacetBehaviourToString : FacetBehaviours -> String
 parseFacetBehaviourToString beh =
     LE.findMap
-        (\( alias, behaviour ) ->
-            if beh == behaviour then
-                Just alias
-
-            else
-                Nothing
+        (\( alias, facetBehaviour ) ->
+            choose (beh == facetBehaviour) (Just alias) Nothing
         )
         facetBehaviourOptions
         |> Maybe.withDefault "intersection"
 
 
 parseFacetSortToString : FacetSorts -> String
-parseFacetSortToString beh =
+parseFacetSortToString sor =
     LE.findMap
-        (\( alias, behaviour ) ->
-            if beh == behaviour then
-                Just alias
-
-            else
-                Nothing
+        (\( alias, facetSort ) ->
+            choose (sor == facetSort) (Just alias) Nothing
         )
         facetSortOptions
-        |> Maybe.withDefault "intersection"
+        |> Maybe.withDefault "alpha"
 
 
 {-|
@@ -589,16 +581,16 @@ searchResultTypeDecoder : String -> Decoder SearchResult
 searchResultTypeDecoder restype =
     case restype of
         "rism:Incipit" ->
-            Decode.map (\r -> IncipitResult r) incipitResultBodyDecoder
+            Decode.map IncipitResult incipitResultBodyDecoder
 
         "rism:Institution" ->
-            Decode.map (\r -> InstitutionResult r) institutionResultBodyDecoder
+            Decode.map InstitutionResult institutionResultBodyDecoder
 
         "rism:Person" ->
-            Decode.map (\r -> PersonResult r) personResultBodyDecoder
+            Decode.map PersonResult personResultBodyDecoder
 
         "rism:Source" ->
-            Decode.map (\r -> SourceResult r) sourceResultBodyDecoder
+            Decode.map SourceResult sourceResultBodyDecoder
 
         _ ->
             Decode.fail ("Could not determine result type for " ++ restype)
