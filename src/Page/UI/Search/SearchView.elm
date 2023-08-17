@@ -2,9 +2,8 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, paddingXY, row, scrollbarY, width)
+import Element exposing (Element, alignLeft, alignTop, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, paddingXY, row, scrollbarY, width)
 import Element.Background as Background
-import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -73,8 +72,7 @@ viewSearchResultsSection cfg resultsLoading body =
         renderedPreview =
             case .preview cfg.model of
                 Loading oldData ->
-                    viewPreviewRouter
-                        (.language cfg.session)
+                    viewPreviewRouter (.language cfg.session)
                         { closeMsg = cfg.userClosedPreviewWindowMsg
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
@@ -113,8 +111,9 @@ viewSearchResultsSection cfg resultsLoading body =
             [ resultColumnWidth (.device cfg.session)
             , height fill
             , alignTop
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+
+            --, Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+            --, Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
             [ viewSearchPageSort
@@ -253,7 +252,7 @@ viewSearchControls cfg =
             [ width (fill |> maximum 1100)
             , height fill
             , alignTop
-            , centerX
+            , alignLeft
             ]
             [ row
                 [ width fill

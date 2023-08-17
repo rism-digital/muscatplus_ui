@@ -11,7 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views exposing (createProbeErrorMessage)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingMD, headingSM, lineSpacing, minimalDropShadow)
+import Page.UI.Attributes exposing (headingMD, headingSM, lineSpacing)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..))
@@ -146,7 +146,8 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         , height (px 50)
         , paddingXY 10 0
         , centerY
-        , minimalDropShadow
+
+        --, minimalDropShadow
         ]
         [ column
             [ width fill

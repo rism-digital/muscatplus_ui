@@ -119,7 +119,8 @@ viewSourceSearchResult { language, selectedResult, clickForPreviewMsg } body =
         resultBody =
             [ viewMaybe (viewSourceSummary language resultColours.iconColour) body.summary
             , viewMaybe (viewSourcePartOf language resultColours.fontLinkColour) body.partOf
-            , viewMaybe (viewSourceFlags language) body.flags
+
+            --, viewMaybe (viewSourceFlags language) body.flags
             ]
 
         resultColours =
@@ -137,43 +138,54 @@ viewSourceSearchResult { language, selectedResult, clickForPreviewMsg } body =
 
 viewSourceSummary : Language -> Color -> Dict String LabelValue -> Element msg
 viewSourceSummary language iconColour summary =
-    row
-        [ width fill ]
-        [ column
-            [ spacing 5 ]
-            [ row
-                [ width fill
-                , spacing 20
-                ]
-                [ viewSearchResultSummaryField
-                    { language = language
-                    , icon = peopleSvg iconColour
-                    , iconSize = 20
-                    , includeLabelInValue = False
-                    , fieldName = "sourceComposers"
-                    , displayStyles = []
-                    , formatNumbers = False
-                    }
-                    summary
-                , viewSearchResultSummaryField
+    let
+        composerInfo =
+            if Dict.member "sourceComposer" summary then
+                viewSearchResultSummaryField
                     { language = language
                     , icon = userCircleSvg iconColour
                     , iconSize = 20
                     , includeLabelInValue = False
                     , fieldName = "sourceComposer"
-                    , displayStyles = []
+                    , displayStyles = [ bodyRegular ]
                     , formatNumbers = False
                     }
                     summary
+
+            else
+                viewSearchResultSummaryField
+                    { language = language
+                    , icon = peopleSvg iconColour
+                    , iconSize = 20
+                    , includeLabelInValue = False
+                    , fieldName = "sourceComposers"
+                    , displayStyles =
+                        [ bodyRegular
+                        ]
+                    , formatNumbers = False
+                    }
+                    summary
+    in
+    row
+        [ width fill ]
+        [ column
+            [ spacing 5
+            , width fill
+            ]
+            [ row
+                [ spacing 20
+                , width fill
+                ]
+                [ composerInfo
                 ]
             , row
-                [ width fill
-                , spacing 20
+                [ spacing 20
+                , width fill
                 ]
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = calendarSvg iconColour
-                    , iconSize = 15
+                    , iconSize = 18
                     , includeLabelInValue = False
                     , fieldName = "dateStatements"
                     , displayStyles =
@@ -185,7 +197,7 @@ viewSourceSummary language iconColour summary =
                 , viewSearchResultSummaryField
                     { language = language
                     , icon = layerGroupSvg iconColour
-                    , iconSize = 15
+                    , iconSize = 18
                     , includeLabelInValue = True
                     , fieldName = "numItems"
                     , displayStyles =
@@ -197,7 +209,7 @@ viewSourceSummary language iconColour summary =
                 , viewSearchResultSummaryField
                     { language = language
                     , icon = sourcesSvg iconColour
-                    , iconSize = 15
+                    , iconSize = 18
                     , includeLabelInValue = True
                     , fieldName = "numExemplars"
                     , displayStyles =

@@ -58,7 +58,7 @@ bodyRegular =
 
 bodySM : Attr decorative msg
 bodySM =
-    Font.size 12
+    Font.size 13
 
 
 bodyXS : Attr decorative msg

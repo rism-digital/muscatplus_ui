@@ -488,14 +488,17 @@ viewBlankBottomBar : Element msg
 viewBlankBottomBar =
     row
         [ alignTop
-        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
+
+        --, Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+        --, Border.color (colourScheme.midGrey |> convertColorToElementColor)
+        --, Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , width fill
-        , height (px 50)
-        , paddingXY 10 0
+
+        --, height (px 50)
+        --, paddingXY 10 0
         , centerY
         , htmlAttribute (HA.style "z-index" "1")
-        , minimalDropShadow
+
+        --, minimalDropShadow
         ]
         []

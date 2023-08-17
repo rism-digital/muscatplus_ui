@@ -1,14 +1,13 @@
 module Page.UI.SortAndRows exposing (SortAndRowsConfig, viewSearchPageSort)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchBody)
-import Page.UI.Attributes exposing (lineSpacing, minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Response exposing (Response(..), ServerData(..))
@@ -64,7 +63,8 @@ viewRowSelectAndSortSelector cfg =
         , paddingXY 10 0
         , centerY
         , htmlAttribute (HA.style "z-index" "1")
-        , minimalDropShadow
+
+        --, minimalDropShadow
         ]
         [ column
             [ width fill
@@ -74,7 +74,7 @@ viewRowSelectAndSortSelector cfg =
             [ row
                 [ width fill
                 , height fill
-                , spacing lineSpacing
+                , spacing 20
                 , centerY
                 ]
                 [ column
@@ -83,13 +83,18 @@ viewRowSelectAndSortSelector cfg =
                         [ width fill
                         , height fill
                         , alignLeft
+                        , centerY
                         , spacing 5
                         ]
                         [ el
-                            [ alignLeft ]
+                            [ alignLeft
+                            , centerY
+                            ]
                             (text (extractLabelFromLanguageMap cfg.language localTranslations.sortBy))
                         , el
-                            [ alignLeft ]
+                            [ alignLeft
+                            , centerY
+                            ]
                             (dropdownSelect
                                 { selectedMsg = \inp -> cfg.changedResultSortingMsg inp
                                 , mouseDownMsg = Nothing
@@ -108,14 +113,19 @@ viewRowSelectAndSortSelector cfg =
                     [ width fill ]
                     [ row
                         [ width fill
-                        , alignRight
+                        , alignLeft
+                        , centerY
                         , spacing 5
                         ]
                         [ el
-                            [ alignRight ]
+                            [ alignLeft
+                            , centerY
+                            ]
                             (text (extractLabelFromLanguageMap cfg.language localTranslations.rowsPerPage))
                         , el
-                            [ alignRight ]
+                            [ alignLeft
+                            , centerY
+                            ]
                             (dropdownSelect
                                 { selectedMsg = \inp -> cfg.changedResultRowsPerPageMsg inp
                                 , mouseDownMsg = Nothing

@@ -2,7 +2,7 @@ module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResul
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, onLeft, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, maximum, minimum, onLeft, onRight, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -18,6 +18,7 @@ import Page.UI.Components exposing (h3)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
+import String.Extra as SE
 import Url
 import Utilities exposing (choose, convertPathToNodeId)
 
@@ -102,8 +103,9 @@ resultTemplate cfg =
         , Font.color (.textColour cfg.colours |> convertColorToElementColor)
         , onClick (cfg.clickMsg cfg.id)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.dotted
+
+        --, Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        --, Border.dotted
         , pointer
         , paddingXY 20 12
         , resultRowNodeId
@@ -181,10 +183,10 @@ summaryFieldTemplate summaryCfg fieldValue =
             viewIf
                 (el
                     [ tooltip onLeft allEntries
-                    , padding 4
                     , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
                     , Font.color (colourScheme.black |> convertColorToElementColor)
-                    , centerY
+                    , padding 2
+                    , alignTop
                     ]
                     (text (extractLabelFromLanguageMap summaryCfg.language localTranslations.seeAll))
                 )
@@ -195,7 +197,7 @@ summaryFieldTemplate summaryCfg fieldValue =
                 [ width (px summaryCfg.iconSize)
                 , height (px summaryCfg.iconSize)
                 , padding 2
-                , centerY
+                , alignTop
                 , el tooltipStyle (text fLabel)
                     |> tooltip above
                 ]
@@ -205,7 +207,7 @@ summaryFieldTemplate summaryCfg fieldValue =
             if fValueLength > 3 then
                 List.take 3 fValueFormatted
                     |> String.join "; "
-                    |> flip String.append " … "
+                    |> SE.softEllipsis 40
 
             else
                 String.join "; " fValueFormatted
@@ -213,19 +215,34 @@ summaryFieldTemplate summaryCfg fieldValue =
         templatedVal =
             choose summaryCfg.includeLabelInValue (fValueAsString ++ " " ++ fLabel) fValueAsString
     in
-    el
+    column
         [ spacing 5
         , alignTop
+        , width shrink
         ]
-        (row
-            [ spacing 5 ]
+        [ row
+            [ spacing 5
+            , alignTop
+            ]
             [ iconElement
             , el
-                [ centerY ]
-                (el summaryCfg.displayStyles (text templatedVal))
+                [ centerY
+                , padding 2
+                ]
+                (text templatedVal)
+
+            --, paragraph
+            --    (List.concat
+            --        [ [ centerY
+            --          , width fill
+            --          ]
+            --        , summaryCfg.displayStyles
+            --        ]
+            --    )
+            --    [ text templatedVal ]
             , expandedList
             ]
-        )
+        ]
 
 
 viewSearchResultSummaryField : SearchResultSummaryConfig msg -> Dict String LabelValue -> Element msg

@@ -64,7 +64,7 @@ tooltipStyle : List (Attribute msg)
 tooltipStyle =
     [ Background.color (colourScheme.black |> convertColorToElementColor)
     , Font.color (colourScheme.white |> convertColorToElementColor)
-    , width (shrink |> minimum 120)
+    , width (shrink |> minimum 140)
     , padding 12
     , spacing 5
     , Font.size 14
