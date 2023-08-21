@@ -144,7 +144,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , width fill
         , height (px 50)
-        , paddingXY 10 0
+        , paddingXY 30 0
         , centerY
 
         --, minimalDropShadow

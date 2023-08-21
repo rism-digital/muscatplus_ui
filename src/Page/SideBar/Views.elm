@@ -115,13 +115,13 @@ menuOptionTemplate cfg additionalAttributes =
     row
         (width fill
             :: alignTop
-            :: spacing 10
-            :: paddingXY 30 10
+            :: paddingXY 24 10
+            :: spacing 5
             :: pointer
             :: additionalAttributes
         )
         [ el
-            [ width (px 25)
+            [ width (px 20)
             , alignLeft
             , centerY
             ]
@@ -216,19 +216,19 @@ view session =
             case sideBarAnimation of
                 Expanded ->
                     Animation.fromTo
-                        { duration = 200
+                        { duration = 100
                         , options = [ Animation.easeInOutSine ]
                         }
-                        [ P.property "width" "90px" ]
-                        [ P.property "width" "280px" ]
+                        [ P.property "width" "70px" ]
+                        [ P.property "width" "210px" ]
 
                 Collapsed ->
                     Animation.fromTo
-                        { duration = 200
+                        { duration = 100
                         , options = [ Animation.easeInOutSine ]
                         }
-                        [ P.property "width" "280px" ]
-                        [ P.property "width" "90px" ]
+                        [ P.property "width" "210px" ]
+                        [ P.property "width" "70px" ]
 
                 NoAnimation ->
                     Animation.empty
@@ -253,28 +253,30 @@ view session =
     in
     animatedColumn
         sideAnimation
-        [ width (px 90)
+        [ width (px 70)
         , height fill
         , alignTop
         , alignLeft
         , htmlAttribute (HA.style "z-index" "20")
         , Background.color (colourScheme.white |> convertColorToElementColor)
-        , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
-        , sideBarShadow
+
+        --, sideBarShadow
         ]
         [ row
             [ width fill
             , height (px 80)
-            , paddingXY 15 10
+            , paddingXY 0 0
             , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
             ]
             [ column
-                [ alignTop
-                , alignLeft
-                , width fill
+                [ centerY
+                , centerX
+
+                --, width fill
                 ]
                 [ row
                     [ width shrink
@@ -286,7 +288,7 @@ view session =
                         , pointer
                         , onClick (UserClickedSideBarOptionForFrontPage SourceSearchOption)
                         ]
-                        (rismLogo colourScheme.white headerHeight)
+                        (rismLogo colourScheme.white (headerHeight - 10))
                     , viewIf
                         (el
                             [ width (px 120)
@@ -306,7 +308,7 @@ view session =
             [ width fill
             , height shrink
             , alignLeft
-            , paddingXY 0 20
+            , paddingXY 0 10
             ]
             [ column
                 [ width fill
@@ -322,7 +324,7 @@ view session =
             [ width fill
             , height shrink
             , alignLeft
-            , paddingXY 0 20
+            , paddingXY 0 10
             ]
             [ column
                 [ width fill
@@ -358,14 +360,14 @@ view session =
             [ width fill
             , height shrink
             , alignLeft
-            , paddingXY 0 20
+            , paddingXY 0 10
             ]
             [ column
                 [ width fill
                 , height fill
                 , centerX
                 , alignTop
-                , spacing 10
+                , spacing 2
                 ]
                 [ sourcesInterfaceMenuOption
                 , peopleInterfaceMenuOption
@@ -392,7 +394,7 @@ view session =
                             []
                             { label =
                                 el
-                                    [ width (px 25) ]
+                                    [ width (px 20) ]
                                     (infoCircleSvg colourScheme.black)
                             , url = Config.serverUrl ++ "/about"
                             }

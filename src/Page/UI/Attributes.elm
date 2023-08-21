@@ -207,6 +207,9 @@ resultColumnWidth { class, orientation } =
         ( BigDesktop, Landscape ) ->
             width (px 900 |> minimum 900)
 
+        ( Desktop, Landscape ) ->
+            width (px 800)
+
         _ ->
             -- TODO: Figure out what else goes here.
             width (px 640 |> minimum 640)

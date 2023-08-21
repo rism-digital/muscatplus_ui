@@ -47,7 +47,7 @@ viewPagination language pagination clickMsg =
         , height (px 50)
         , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
         , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 1 }
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
 
         --, minimalDropShadow
         ]

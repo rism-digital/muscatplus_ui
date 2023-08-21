@@ -53,7 +53,8 @@ view session model =
     row
         [ width fill
         , height fill
-        , padding 20
+
+        --, padding 20
         , backgroundImage
         ]
         [ column
@@ -62,14 +63,15 @@ view session model =
             , alignLeft
             , alignTop
             , Background.color (colourScheme.cream |> convertColorToElementColor)
-            , Border.shadow
-                { blur = 10
-                , color =
-                    colourScheme.darkGrey
-                        |> convertColorToElementColor
-                , offset = ( 1, 1 )
-                , size = 1
-                }
+
+            --, Border.shadow
+            --    { blur = 10
+            --    , color =
+            --        colourScheme.darkGrey
+            --            |> convertColorToElementColor
+            --    , offset = ( 1, 1 )
+            --    , size = 1
+            --    }
             ]
             [ frontBodyViewRouter session model ]
         ]
@@ -232,7 +234,9 @@ viewFacetPanels cfg =
         [ column
             [ width fill
             , alignTop
-            , paddingXY 20 10
+            , paddingXY 30 10
+
+            --, paddingXY 30 10
             ]
             [ row
                 [ width fill

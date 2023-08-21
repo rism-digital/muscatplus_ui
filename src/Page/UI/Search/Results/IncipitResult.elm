@@ -2,13 +2,15 @@ module Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, row, spacing, width)
+import Element exposing (Element, column, el, fill, fillPortion, maximum, px, row, spacing, width)
 import Element.Font as Font
 import Language exposing (Language)
+import Page.RecordTypes.Incipit exposing (RenderedIncipit)
 import Page.RecordTypes.Search exposing (IncipitResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
+import Page.UI.Attributes exposing (bodySM)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (musicListSvg, peopleSvg, textIconSvg)
+import Page.UI.Images exposing (musicListSvg, peopleSvg, sourcesSvg, textIconSvg)
 import Page.UI.Record.Incipits exposing (viewRenderedIncipits)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 
@@ -21,7 +23,7 @@ viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg } body =
     let
         resultBody =
             [ viewMaybe (viewIncipitSummary language resultColours.iconColour) body.summary
-            , viewMaybe viewRenderedIncipits body.renderedIncipits
+            , viewMaybe viewSearchResultIncipits body.renderedIncipits
             ]
 
         resultColours =
@@ -35,6 +37,13 @@ viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg } body =
         , resultBody = resultBody
         , clickMsg = clickForPreviewMsg
         }
+
+
+viewSearchResultIncipits : List RenderedIncipit -> Element msg
+viewSearchResultIncipits incipits =
+    el
+        [ width (fill |> maximum 800) ]
+        (viewRenderedIncipits incipits)
 
 
 viewIncipitSummary : Language -> Color -> Dict String LabelValue -> Element msg
@@ -59,24 +68,36 @@ viewIncipitSummary language iconColour summary =
                     summary
                 , viewSearchResultSummaryField
                     { language = language
-                    , icon = musicListSvg iconColour
+                    , icon = sourcesSvg iconColour
                     , iconSize = 20
                     , includeLabelInValue = False
-                    , fieldName = "voiceInstrument"
+                    , fieldName = "sourceTitle"
                     , displayStyles = []
                     , formatNumbers = False
                     }
                     summary
                 ]
             , row
-                [ width fill ]
+                [ width fill
+                , spacing 20
+                ]
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = textIconSvg iconColour
-                    , iconSize = 15
+                    , iconSize = 18
                     , includeLabelInValue = False
                     , fieldName = "textIncipit"
-                    , displayStyles = [ Font.italic, Font.size 12 ]
+                    , displayStyles = [ bodySM, Font.italic ]
+                    , formatNumbers = False
+                    }
+                    summary
+                , viewSearchResultSummaryField
+                    { language = language
+                    , icon = musicListSvg iconColour
+                    , iconSize = 18
+                    , includeLabelInValue = False
+                    , fieldName = "voiceInstrument"
+                    , displayStyles = [ bodySM ]
                     , formatNumbers = False
                     }
                     summary

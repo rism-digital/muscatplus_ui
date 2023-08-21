@@ -10,7 +10,7 @@ import Element exposing (Attribute, Element)
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
-import Page.UI.Attributes exposing (headingMD)
+import Page.UI.Attributes exposing (bodyRegular, headingMD)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Simple.Animation as Animation exposing (Animation)
 import Simple.Animation.Animated as Animated
@@ -31,14 +31,14 @@ animatedLabel labelText =
                 [ Animation.easeInOutSine
                 ]
             }
-            [ P.property "width" "90px"
+            [ P.property "width" "50px"
             , P.opacity 0.0
             ]
-            [ P.property "width" "150px"
+            [ P.property "width" "120px"
             , P.opacity 1.0
             ]
         )
-        [ headingMD
+        [ bodyRegular
         , Font.medium
         , Element.width Element.fill
         , Element.alignLeft

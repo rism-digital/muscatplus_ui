@@ -128,7 +128,7 @@ view model =
                 , height fill
                 ]
                 [ column
-                    [ width (px 90)
+                    [ width (px 70)
                     , height fill
                     , alignTop
                     , inFront (Element.map Msg.UserInteractedWithSideBar (Page.SideBar.Views.view pageSession))

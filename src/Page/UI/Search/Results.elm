@@ -102,9 +102,12 @@ resultTemplate cfg =
         , Background.color (.backgroundColour cfg.colours |> convertColorToElementColor)
         , Font.color (.textColour cfg.colours |> convertColorToElementColor)
         , onClick (cfg.clickMsg cfg.id)
-        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+        , Border.color
+            (colourScheme.midGrey
+                |> convertColorToElementColor
+            )
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
 
-        --, Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         --, Border.dotted
         , pointer
         , paddingXY 20 12
@@ -226,9 +229,14 @@ summaryFieldTemplate summaryCfg fieldValue =
             ]
             [ iconElement
             , el
-                [ centerY
-                , padding 2
-                ]
+                (List.concat
+                    [ [ centerY
+                      , padding 2
+                      , width fill
+                      ]
+                    , summaryCfg.displayStyles
+                    ]
+                )
                 (text templatedVal)
 
             --, paragraph

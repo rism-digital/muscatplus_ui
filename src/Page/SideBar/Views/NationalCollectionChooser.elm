@@ -2,7 +2,7 @@ module Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollec
 
 import Config
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, explain, fill, height, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -13,7 +13,7 @@ import List.Extra as LE
 import Maybe.Extra as ME
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
-import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, lineSpacing, minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (bodyRegular, emptyAttribute, headingLG, headingMD, lineSpacing, minimalDropShadow, sectionSpacing)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -35,7 +35,7 @@ imageForCountryCode countryCode =
             Config.flagsPath ++ countryFlagImageName
     in
     image
-        [ width (px 25) ]
+        [ width (px 18) ]
         { description = countryCode
         , src = countryFlagPath
         }
@@ -136,7 +136,7 @@ viewNationalCollectionChooser session =
     row
         [ width (px 750)
         , height (px 200)
-        , moveLeft 300
+        , moveLeft 250
         ]
         [ animatedRow
             nationalCollectionChooserAnimations
@@ -146,6 +146,8 @@ viewNationalCollectionChooser session =
             , height (shrink |> minimum 600 |> maximum 800)
             , minimalDropShadow
             , Font.color (colourScheme.black |> convertColorToElementColor)
+            , onMouseEnter UserMouseEnteredCountryChooser
+            , onMouseLeave UserMouseExitedCountryChooser
             ]
             [ column
                 [ width fill
@@ -183,7 +185,7 @@ viewNationalCollectionChooser session =
                                 (globeSvg colourScheme.black)
                             , el
                                 [ width fill
-                                , headingMD
+                                , bodyRegular
                                 ]
                                 (text (extractLabelFromLanguageMap session.language localTranslations.globalCollection))
                             ]
@@ -195,7 +197,10 @@ viewNationalCollectionChooser session =
                         [ width fill ]
                         [ row
                             [ width fill ]
-                            [ paragraph [] [ text (extractLabelFromLanguageMap session.language localTranslations.orChooseCollection) ] ]
+                            [ paragraph
+                                []
+                                [ text (extractLabelFromLanguageMap session.language localTranslations.orChooseCollection) ]
+                            ]
                         ]
                     ]
                 , row
@@ -256,10 +261,10 @@ viewNationalCollectionChooserMenuOption session =
             el
                 [ Font.color (labelFontColour |> convertColorToElementColor)
                 , Font.alignLeft
-                , headingLG
+                , bodyRegular
                 , alignLeft
                 ]
-                (text (SE.softEllipsis 18 iconLabel))
+                (text (SE.softEllipsis 20 iconLabel))
 
         showLabels =
             showSideBarLabels session.expandedSideBar
@@ -272,13 +277,17 @@ viewNationalCollectionChooserMenuOption session =
                             imageForCountryCode countryCode
                     in
                     column
-                        [ spacingXY 0 4
-                        , width (px 45)
+                        [ width (px 35)
                         , Border.width 2
                         , padding 2
+                        , spacing 2
+
+                        --, spacingXY 0 4
+                        --, padding 2
+                        --, explain Debug.todo
                         ]
                         [ el
-                            [ width (px 25)
+                            [ width (px 18)
                             , centerX
                             , centerY
                             ]
@@ -287,7 +296,7 @@ viewNationalCollectionChooserMenuOption session =
                             [ centerX
                             , centerY
                             , Font.bold
-                            , headingMD
+                            , bodyRegular
                             , Font.color (labelFontColour |> convertColorToElementColor)
                             ]
                             (text countryCode)
@@ -295,12 +304,12 @@ viewNationalCollectionChooserMenuOption session =
 
                 Nothing ->
                     column
-                        [ width (px 45)
+                        [ width (px 35)
                         , Border.width 2
                         , padding 2
                         ]
                         [ el
-                            [ width (px 25)
+                            [ width (px 18)
                             , centerX
                             , centerY
                             ]
@@ -319,7 +328,7 @@ viewNationalCollectionChooserMenuOption session =
                 ( centerX, 0 )
 
             else
-                ( alignLeft, 21 )
+                ( alignLeft, 15 )
     in
     row
         [ width fill
@@ -341,7 +350,9 @@ viewNationalCollectionChooserMenuOption session =
             [ row
                 [ width shrink
                 , iconCentering
-                , spacing lineSpacing
+                , spacing 2
+
+                --, spacing lineSpacing
                 , moveRight iconAlignment
                 ]
                 [ sidebarIcon
@@ -369,7 +380,7 @@ viewNationalCollectionColumn language ( abbr, label ) =
                 [ width fill ]
                 [ paragraph
                     [ spacing 1
-                    , headingMD
+                    , bodyRegular
                     ]
                     [ text (extractLabelFromLanguageMap language label ++ " (" ++ abbr ++ ")") ]
                 ]

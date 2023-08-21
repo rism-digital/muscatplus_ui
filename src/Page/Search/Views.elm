@@ -143,7 +143,7 @@ viewTopBar lang model =
     row
         [ width fill
         , height (px searchHeaderHeight)
-        , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         ]
         [ column

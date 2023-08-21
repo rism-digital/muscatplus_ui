@@ -130,6 +130,6 @@ viewRecordTopBarRouter language model body =
                     , tabLabel = localTranslations.sourceContents
                     }
                 )
-                (not (sourceBlock.totalItems == 0))
+                (sourceBlock.totalItems /= 0)
         )
         body.sourceItems
