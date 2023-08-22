@@ -14,7 +14,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
-import Page.UI.Components exposing (h3)
+import Page.UI.Components exposing (h3, h4)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -221,23 +221,29 @@ summaryFieldTemplate summaryCfg fieldValue =
     column
         [ spacing 5
         , alignTop
-        , width shrink
+        , alignLeft
+        , width fill
         ]
         [ row
             [ spacing 5
             , alignTop
+            , alignLeft
+            , width fill
             ]
             [ iconElement
-            , el
+            , paragraph
                 (List.concat
                     [ [ centerY
                       , padding 2
                       , width fill
+                      , alignLeft
                       ]
                     , summaryCfg.displayStyles
                     ]
                 )
-                (text templatedVal)
+                [ text templatedVal
+                , expandedList
+                ]
 
             --, paragraph
             --    (List.concat
@@ -248,7 +254,6 @@ summaryFieldTemplate summaryCfg fieldValue =
             --        ]
             --    )
             --    [ text templatedVal ]
-            , expandedList
             ]
         ]
 

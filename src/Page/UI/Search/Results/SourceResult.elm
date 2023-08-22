@@ -2,7 +2,7 @@ module Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, link, row, spacing, text, width)
+import Element exposing (Element, column, fill, link, maximum, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -167,7 +167,7 @@ viewSourceSummary language iconColour summary =
                     summary
     in
     row
-        [ width fill ]
+        [ width (fill |> maximum 600) ]
         [ column
             [ spacing 5
             , width fill

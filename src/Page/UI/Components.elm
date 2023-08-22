@@ -354,7 +354,7 @@ renderValue language value =
 renderCloselySpacedValue : Language -> LanguageMap -> Element msg
 renderCloselySpacedValue language values =
     textColumn
-        [ bodyRegular
+        [ bodySM
         ]
         (styledParagraphs (extractTextFromLanguageMap language values))
 

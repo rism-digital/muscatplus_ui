@@ -35,7 +35,7 @@ import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 baseSize : Float
 baseSize =
-    14.0
+    12.0
 
 
 bodyFont : Attribute msg
@@ -93,7 +93,7 @@ facetBorderBottom =
 
 fontBaseSize : Attr decorative msg
 fontBaseSize =
-    Font.size (ratioCalc 1.0)
+    Font.size 14
 
 
 headingHero : Attr decoative msg
@@ -205,10 +205,10 @@ resultColumnWidth : Device -> Attribute msg
 resultColumnWidth { class, orientation } =
     case ( class, orientation ) of
         ( BigDesktop, Landscape ) ->
-            width (px 900 |> minimum 900)
+            width (px 600 |> minimum 600)
 
         ( Desktop, Landscape ) ->
-            width (px 800)
+            width (px 600)
 
         _ ->
             -- TODO: Figure out what else goes here.

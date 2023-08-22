@@ -4,7 +4,7 @@ import Element exposing (Element, alignTop, column, fill, height, htmlAttribute,
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (h2)
+import Page.UI.Components exposing (h2, h3, h4)
 
 
 {-|
@@ -44,7 +44,7 @@ sectionTemplate language header sectionBody =
                 [ width fill
                 , tocId
                 ]
-                [ h2 language header.label ]
+                [ h4 language header.label ]
             , row
                 [ width fill ]
                 [ column

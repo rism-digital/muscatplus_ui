@@ -18,7 +18,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingSM, lineSpacing, linkColour)
-import Page.UI.Components exposing (h1)
+import Page.UI.Components exposing (h1, h2)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (externalLinkSvg)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
@@ -95,7 +95,7 @@ pageHeaderTemplate language header =
         [ width fill
         , htmlAttribute (HA.id header.sectionToc)
         ]
-        [ h1 language header.label ]
+        [ h2 language header.label ]
 
 
 pageHeaderTemplateNoToc :
@@ -109,7 +109,7 @@ pageHeaderTemplateNoToc language header =
     row
         [ width fill
         ]
-        [ h1 language header.label ]
+        [ h2 language header.label ]
 
 
 isExternalLink : String -> Bool
