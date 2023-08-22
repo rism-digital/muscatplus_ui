@@ -59,20 +59,20 @@ viewIncipitSummary language iconColour summary =
                 ]
                 [ viewSearchResultSummaryField
                     { language = language
-                    , icon = peopleSvg iconColour
+                    , icon = sourcesSvg iconColour
                     , iconSize = 20
                     , includeLabelInValue = False
-                    , fieldName = "incipitComposer"
+                    , fieldName = "sourceTitle"
                     , displayStyles = []
                     , formatNumbers = False
                     }
                     summary
                 , viewSearchResultSummaryField
                     { language = language
-                    , icon = sourcesSvg iconColour
+                    , icon = peopleSvg iconColour
                     , iconSize = 20
                     , includeLabelInValue = False
-                    , fieldName = "sourceTitle"
+                    , fieldName = "incipitComposer"
                     , displayStyles = []
                     , formatNumbers = False
                     }

@@ -108,6 +108,8 @@ viewFrontSearchControls cfg =
         [ column
             [ width fill
             , height fill
+            , Border.widthEach { top = 0, bottom = 0, left = 0, right = 1 }
+            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
             [ viewSearchButtons
                 { language = .language cfg.session
@@ -234,9 +236,6 @@ viewFacetPanels cfg =
         [ column
             [ width fill
             , alignTop
-            , paddingXY 30 10
-
-            --, paddingXY 30 10
             ]
             [ row
                 [ width fill
@@ -245,6 +244,7 @@ viewFacetPanels cfg =
                 [ column
                     [ width fill
                     , alignTop
+                    , paddingXY 20 10
                     ]
                     (paragraph
                         [ headingHero
