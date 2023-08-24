@@ -36,7 +36,7 @@ pageFooterTemplate session language footer =
                 |> String.replace "#" "%23"
 
         feedbackLink =
-            link
+            newTabLink
                 [ linkColour
                 ]
                 { label = text (extractLabelFromLanguageMap language localTranslations.reportAnIssue)
@@ -194,13 +194,13 @@ viewMuscatLinks session =
                 [ row
                     []
                     [ text "Muscat: "
-                    , link
+                    , newTabLink
                         [ linkColour ]
                         { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatView)
                         , url = muscatUrl
                         }
                     , text " | "
-                    , link
+                    , newTabLink
                         [ linkColour ]
                         { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatEdit)
                         , url = muscatUrl ++ "/edit"
