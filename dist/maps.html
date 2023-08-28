@@ -75,6 +75,15 @@
                     typesEl.appendChild(typeContentEl);
                     popupContent.appendChild(typesEl);
                 }
+
+                if (props.url)
+                {
+                    var linkEl = document.createElement("a");
+                    linkEl.href = props.url;
+                    linkEl.target = "_top";
+                    linkEl.innerText = "View on RISM Online";
+                    popupContent.appendChild(linkEl);
+                }
                 // popupContent += feature.properties.organizationTypes;
             }
 
