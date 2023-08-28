@@ -9,6 +9,7 @@ module Page.UI.Components exposing
     , h3
     , h4
     , makeFlagIcon
+    , mapViewer
     , renderLabel
     , renderParagraph
     , viewBlankBottomBar
@@ -502,3 +503,15 @@ viewBlankBottomBar =
         --, minimalDropShadow
         ]
         []
+
+
+mapViewer : ( Int, Int ) -> String -> Element msg
+mapViewer ( width, height ) iframeUrl =
+    HT.iframe
+        [ HA.src iframeUrl
+        , HA.width width
+        , HA.height height
+        , HA.style "border" "1px solid #AAA"
+        ]
+        []
+        |> html

@@ -7,7 +7,7 @@ module Page.RecordTypes.Institution exposing
     , institutionBodyDecoder
     )
 
-import Json.Decode as Decode exposing (Decoder, list, string)
+import Json.Decode as Decode exposing (Decoder, float, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required, requiredAt)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)
@@ -25,8 +25,9 @@ type alias BasicInstitutionBody =
 
 
 type alias CoordinatesSection =
-    { label : LanguageMap
-    , coordinates : List String
+    { id : String
+    , label : LanguageMap
+    , coordinates : List Float
     }
 
 
@@ -65,8 +66,9 @@ basicInstitutionBodyDecoder =
 coordinatesSectionDecoder : Decoder CoordinatesSection
 coordinatesSectionDecoder =
     Decode.succeed CoordinatesSection
+        |> required "id" string
         |> required "label" languageMapLabelDecoder
-        |> requiredAt [ "geometry", "coordinates" ] (list string)
+        |> requiredAt [ "geometry", "coordinates" ] (list float)
 
 
 institutionBodyDecoder : Decoder InstitutionBody

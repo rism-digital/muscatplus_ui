@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>RISM Online: Location Maps</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        #map {
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body>
+<div class="leaflet" id="map"></div>
+
+<script type="module">
+    const url_string = window.location;
+    const url = new URL(url_string);
+
+    const lat = url.searchParams.get("lat");
+    const lon = url.searchParams.get("lon");
+    const geojson = url.searchParams.get("geo");
+
+    if (lat && lon && geojson)
+    {
+        const response = await fetch(geojson);
+        const geojson_data = await response.json();
+
+        const map = L.map('map').setView([lat, lon], 15);
+        const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        function onEachFeature(feature, layer)
+        {
+            var popupContent = document.createElement("div");
+
+            // TODO: Add more data here: Institution name, address, etc.
+            if (feature.properties)
+            {
+                var props = feature.properties;
+
+                if (props.name)
+                {
+                    var nmEl = document.createElement("p");
+                    var nmFmt = document.createElement("strong")
+                    nmFmt.innerText = props.name;
+                    nmEl.appendChild(nmFmt)
+                    popupContent.appendChild(nmEl);
+                }
+
+                if (props.organizationTypes)
+                {
+                    var typesEl = document.createElement("dl");
+                    var typeHeader = document.createElement("dt");
+                    typeHeader.innerText = "Organization types";
+                    typesEl.appendChild(typeHeader);
+
+                    var typeContentEl = document.createElement("dd");
+                    typeContentEl.innerText = props.organizationTypes.join(", ");
+                    typesEl.appendChild(typeContentEl);
+                    popupContent.appendChild(typesEl);
+                }
+                // popupContent += feature.properties.organizationTypes;
+            }
+
+            layer.bindPopup(popupContent);
+        }
+
+        var geojsonMarkerOptions = {
+            radius: 7,
+            fillColor: "#ff7800",
+            color: "#000",
+            weight: 1,
+            opacity: 0.5,
+            fillOpacity: 0.8
+        };
+
+        const gjdata = L.geoJSON(geojson_data, {
+            style: function (feature)
+            {
+                return feature.properties && feature.properties.style;
+            },
+
+            onEachFeature: onEachFeature,
+
+            pointToLayer: function (feature, latlng)
+            {
+                var markerOpts;
+                if (feature.properties && feature.properties.primary === false)
+                {
+                    return L.circleMarker(latlng, geojsonMarkerOptions)
+                }
+                else
+                {
+                    return L.marker(latlng);
+                }
+            }
+        }).addTo(map);
+    }
+</script>
+</body>
+</html>

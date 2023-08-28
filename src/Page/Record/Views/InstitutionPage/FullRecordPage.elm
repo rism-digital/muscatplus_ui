@@ -9,9 +9,9 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
-import Page.RecordTypes.Institution exposing (InstitutionBody)
+import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (viewSummaryField)
+import Page.UI.Components exposing (h2, mapViewer, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -21,6 +21,7 @@ import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTempl
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Session exposing (Session)
+import Url.Builder as QB exposing (absolute)
 
 
 viewDescriptionTab : Language -> InstitutionBody -> Element msg
@@ -59,6 +60,7 @@ viewDescriptionTab language body =
             , viewMaybe (viewNotesSection language) body.notes
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
             , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
+            , viewMaybe (viewLocationMapSection language) body.location
             ]
         ]
 
@@ -142,3 +144,42 @@ viewRecordTopBarRouter language model body =
                 (sourceBlock.totalItems /= 0)
         )
         body.sources
+
+
+viewLocationMapSection : Language -> LocationAddressSectionBody -> Element msg
+viewLocationMapSection language location =
+    let
+        mapSection : Language -> CoordinatesSection -> Element msg
+        mapSection lang coords =
+            let
+                coordsQ =
+                    List.map2 (\dim val -> QB.string dim (String.fromFloat val)) [ "lon", "lat" ] coords.coordinates
+
+                geoJsonQ =
+                    QB.string "geo" coords.id
+
+                mapsUrl =
+                    (geoJsonQ :: coordsQ)
+                        |> absolute [ "maps.html" ]
+            in
+            row
+                [ width fill
+                , height fill
+                , paddingXY 0 20
+                ]
+                [ column
+                    [ width fill
+                    , height fill
+                    , spacing 20
+                    , alignTop
+                    ]
+                    [ row
+                        [ width fill ]
+                        [ h2 language coords.label ]
+                    , row
+                        [ width fill ]
+                        [ mapViewer ( 900, 400 ) mapsUrl ]
+                    ]
+                ]
+    in
+    viewMaybe (mapSection language) location.coordinates
