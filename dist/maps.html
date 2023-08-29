@@ -84,7 +84,6 @@
                     linkEl.innerText = "View on RISM Online";
                     popupContent.appendChild(linkEl);
                 }
-                // popupContent += feature.properties.organizationTypes;
             }
 
             layer.bindPopup(popupContent);
@@ -106,7 +105,6 @@
             },
 
             onEachFeature: onEachFeature,
-
             pointToLayer: function (feature, latlng)
             {
                 var markerOpts;
