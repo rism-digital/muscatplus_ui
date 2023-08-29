@@ -46,9 +46,9 @@ viewFacetsForInstitutionsMode cfg =
         (.alias institutionFacetPanels.locationPanel)
         (.label institutionFacetPanels.locationPanel)
         cfg
-        [ city
+        [ hasSigla
+        , city
         , sigla
-        , hasSigla
         ]
     , viewFacetsControlPanel
         (.alias institutionFacetPanels.relationshipPanel)

@@ -101,6 +101,7 @@ update msg session =
         UserMouseEnteredSideBarOption button ->
             ( { session
                 | currentlyHoveredOption = Just button
+                , currentlyInteractingWithLanguageChooser = False -- This helps deal with a problem in detecting when a language is actually changed. This would prevent the sidebar from closing.
               }
             , Cmd.none
             )
@@ -122,6 +123,20 @@ update msg session =
         UserMouseExitedCountryChooser ->
             ( { session
                 | currentlyHoveredNationalCollectionChooser = False
+              }
+            , Cmd.none
+            )
+
+        UserMouseEnteredNationalCollectionSidebarOption ->
+            ( { session
+                | currentlyHoveredNationalCollectionSidebarOption = True
+              }
+            , Cmd.none
+            )
+
+        UserMouseExitedNationalCollectionSidebarOption ->
+            ( { session
+                | currentlyHoveredNationalCollectionSidebarOption = False
               }
             , Cmd.none
             )

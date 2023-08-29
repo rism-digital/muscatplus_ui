@@ -32,7 +32,7 @@ import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, emptyAttribute, emptyHtmlAttribute, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Utilities exposing (toLinkedHtml)
@@ -173,10 +173,10 @@ dropdownSelect cfg =
                 cfg.label
 
         mouseDownMsg =
-            ME.unwrap (HA.classList []) HE.onMouseDown cfg.mouseDownMsg
+            ME.unwrap emptyHtmlAttribute HE.onMouseDown cfg.mouseDownMsg
 
         mouseUpMsg =
-            ME.unwrap (HA.classList []) HE.onMouseUp cfg.mouseUpMsg
+            ME.unwrap emptyHtmlAttribute HE.onMouseUp cfg.mouseUpMsg
     in
     row
         [ width fill

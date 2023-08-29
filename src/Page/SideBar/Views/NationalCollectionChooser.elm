@@ -2,7 +2,7 @@ module Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollec
 
 import Config
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, explain, fill, height, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -13,7 +13,7 @@ import List.Extra as LE
 import Maybe.Extra as ME
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
-import Page.UI.Attributes exposing (bodyRegular, emptyAttribute, headingLG, headingMD, lineSpacing, minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (bodyRegular, emptyAttribute, headingLG, sectionSpacing)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -135,7 +135,7 @@ viewNationalCollectionChooser session =
     in
     row
         [ width (px 750)
-        , height (px 200)
+        , height (px 80)
         , moveLeft 250
         ]
         [ animatedRow
@@ -144,10 +144,11 @@ viewNationalCollectionChooser session =
             , alignRight
             , Background.color (colourScheme.white |> convertColorToElementColor)
             , height (shrink |> minimum 600 |> maximum 800)
-            , minimalDropShadow
             , Font.color (colourScheme.black |> convertColorToElementColor)
             , onMouseEnter UserMouseEnteredCountryChooser
             , onMouseLeave UserMouseExitedCountryChooser
+            , Border.width 1
+            , Border.color (colourScheme.midGrey |> convertColorToElementColor)
             ]
             [ column
                 [ width fill
@@ -225,14 +226,14 @@ viewNationalCollectionChooserMenuOption session =
             ME.isJust session.restrictedToNationalCollection
 
         labelFontColour =
-            if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionChooser then
+            if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionSidebarOption then
                 colourScheme.white
 
             else
                 colourScheme.black
 
         hoverStyles =
-            if session.currentlyHoveredNationalCollectionChooser then
+            if session.currentlyHoveredNationalCollectionSidebarOption then
                 Background.color (colourScheme.lightBlue |> convertColorToElementColor)
 
             else
@@ -317,7 +318,7 @@ viewNationalCollectionChooserMenuOption session =
                         ]
 
         viewChooser =
-            if session.currentlyHoveredNationalCollectionChooser && session.expandedSideBar == Expanded then
+            if session.currentlyHoveredNationalCollectionSidebarOption && session.expandedSideBar == Expanded then
                 viewNationalCollectionChooser session
 
             else
@@ -337,8 +338,8 @@ viewNationalCollectionChooserMenuOption session =
         , alignLeft
         , pointer
         , onRight viewChooser
-        , onMouseEnter UserMouseEnteredCountryChooser
-        , onMouseLeave UserMouseExitedCountryChooser
+        , onMouseEnter UserMouseEnteredNationalCollectionSidebarOption
+        , onMouseLeave UserMouseExitedNationalCollectionSidebarOption
         , iconBackgroundColor
         , hoverStyles
         , Font.color (labelFontColour |> convertColorToElementColor)

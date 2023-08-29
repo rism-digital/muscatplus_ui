@@ -2,19 +2,18 @@ module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResul
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, maximum, minimum, onLeft, onRight, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Flip exposing (flip)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
-import Page.UI.Components exposing (h3, h4)
+import Page.UI.Components exposing (h3)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -178,14 +177,14 @@ summaryFieldTemplate summaryCfg fieldValue =
             viewIf
                 (column
                     tooltipStyle
-                    (List.map (\t -> el [] (text t)) fVal)
+                    (List.map (\t -> el [ width fill ] (text t)) fVal)
                 )
                 (fValueLength > 3)
 
         expandedList =
             viewIf
                 (el
-                    [ tooltip onLeft allEntries
+                    [ tooltip onRight allEntries
                     , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
                     , Font.color (colourScheme.black |> convertColorToElementColor)
                     , padding 2

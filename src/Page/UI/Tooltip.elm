@@ -68,7 +68,8 @@ tooltipStyle =
     , padding 12
     , spacing 5
     , Font.size 14
-    , minimalDropShadow
+
+    --, minimalDropShadow
     ]
 
 
@@ -80,5 +81,6 @@ tooltipStyle2 =
     , padding 12
     , spacing 5
     , Font.size 14
-    , minimalDropShadow
+
+    --, minimalDropShadow
     ]

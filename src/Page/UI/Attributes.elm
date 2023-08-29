@@ -5,6 +5,7 @@ module Page.UI.Attributes exposing
     , bodySM
     , controlsColumnWidth
     , emptyAttribute
+    , emptyHtmlAttribute
     , fontBaseSize
     , headingHero
     , headingLG
@@ -29,6 +30,7 @@ import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(.
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Html as HT
 import Html.Attributes as HA
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
@@ -81,6 +83,11 @@ bodyXXS =
 emptyAttribute : Attribute msg
 emptyAttribute =
     htmlAttribute (HA.classList [])
+
+
+emptyHtmlAttribute : HT.Attribute msg
+emptyHtmlAttribute =
+    HA.classList []
 
 
 facetBorderBottom : List (Attribute msg)
