@@ -7,6 +7,7 @@ import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Components exposing (h1)
 import Page.UI.Record.Incipits exposing (viewIncipit)
+import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, pageHeaderTemplateNoToc)
 import Set exposing (Set)
 
 
@@ -72,10 +73,7 @@ viewIncipitPreview language incipitInfoExpanded infoToggleMsg body =
                     , height fill
                     , alignTop
                     ]
-                    [ row
-                        [ width fill
-                        ]
-                        [ h1 language body.label ]
+                    [ pageHeaderTemplateNoToc language Nothing body
                     , incipitLink
                     ]
                 ]

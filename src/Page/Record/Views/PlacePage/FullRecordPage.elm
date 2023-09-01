@@ -5,7 +5,6 @@ import Element.Background as Background
 import Element.Border as Border
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.Record.Views.SourceSearch exposing (viewRecordTopBarDescriptionOnly)
 import Page.RecordTypes.Place exposing (PlaceBody)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Images exposing (mapMarkerSvg)
@@ -54,8 +53,9 @@ viewFullPlacePage session model body =
                     , alignTop
                     , paddingXY 5 20
                     ]
-                    [ pageHeaderTemplate session.language body
-                    , viewRecordTopBarDescriptionOnly session.language
+                    [ pageHeaderTemplate session.language Nothing body
+
+                    --, viewRecordTopBarDescriptionOnly session.language
                     ]
                 ]
             ]

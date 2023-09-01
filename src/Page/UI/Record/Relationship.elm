@@ -52,7 +52,7 @@ viewRelatedToBody language body =
                     ( none, none )
     in
     el
-        [ width shrink ]
+        []
         (row
             [ width fill
             , spacing 5

@@ -113,7 +113,7 @@ viewFullPersonPage session model body =
                     , alignTop
                     , paddingXY 5 20
                     ]
-                    [ pageHeaderTemplate session.language body
+                    [ pageHeaderTemplate session.language Nothing body
                     , viewRecordTopBarRouter session.language model body
                     ]
                 ]

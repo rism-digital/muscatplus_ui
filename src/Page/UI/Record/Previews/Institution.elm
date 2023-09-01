@@ -55,7 +55,7 @@ viewInstitutionPreview language body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ pageHeaderTemplate language body
+                    [ pageHeaderTemplate language Nothing body
                     , pageFullRecordTemplate language body
                     ]
                 ]

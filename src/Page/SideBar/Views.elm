@@ -21,7 +21,7 @@ import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight, searchHeaderHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
@@ -34,6 +34,8 @@ dividingLine =
         [ width fill
         , height shrink
         , paddingXY 15 0
+        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         ]
         [ column
             [ width fill
@@ -242,14 +244,6 @@ view session =
                 }
                 SourceSearchOption
                 (checkHover SourceSearchOption)
-
-        sideBarShadow =
-            case sideBarAnimation of
-                Expanded ->
-                    minimalDropShadow
-
-                _ ->
-                    emptyAttribute
     in
     animatedColumn
         sideAnimation
@@ -259,8 +253,6 @@ view session =
         , alignLeft
         , htmlAttribute (HA.style "z-index" "20")
         , Background.color (colourScheme.white |> convertColorToElementColor)
-        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
 
@@ -268,8 +260,7 @@ view session =
         ]
         [ row
             [ width fill
-            , height (px 80)
-            , paddingXY 0 0
+            , height (px searchHeaderHeight)
             , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
             ]
             [ column
@@ -309,6 +300,8 @@ view session =
             , height shrink
             , alignLeft
             , paddingXY 0 10
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
             [ column
                 [ width fill
@@ -325,6 +318,8 @@ view session =
             , height shrink
             , alignLeft
             , paddingXY 0 10
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
             [ column
                 [ width fill
@@ -361,6 +356,8 @@ view session =
             , height shrink
             , alignLeft
             , paddingXY 0 10
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
             [ column
                 [ width fill
@@ -377,37 +374,49 @@ view session =
             ]
         , dividingLine
         , row
-            [ width fill
-            , height shrink
-            , alignLeft
-            , alignBottom
-            , paddingXY 0 20
+            [ height fill
+            , width fill
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
             [ column
-                [ alignLeft
-                , alignTop
-                , spacing 10
+                [ height fill
+                , width fill
+                , paddingXY 0 10
                 ]
-                [ menuOptionTemplate
-                    { icon =
-                        link
-                            []
-                            { label =
-                                el
-                                    [ width (px 20) ]
-                                    (infoCircleSvg colourScheme.black)
-                            , url = Config.serverUrl ++ "/about"
+                [ row
+                    [ width fill
+                    , height shrink
+                    , alignLeft
+                    , alignBottom
+                    ]
+                    [ column
+                        [ alignLeft
+                        , alignTop
+                        , spacing 10
+                        ]
+                        [ menuOptionTemplate
+                            { icon =
+                                link
+                                    []
+                                    { label =
+                                        el
+                                            [ width (px 20) ]
+                                            (infoCircleSvg colourScheme.black)
+                                    , url = Config.serverUrl ++ "/about"
+                                    }
+                            , isCurrent = False
+                            , label =
+                                link
+                                    []
+                                    { label = text (extractLabelFromLanguageMap session.language localTranslations.about)
+                                    , url = Config.serverUrl ++ "/about"
+                                    }
+                            , showLabel = showLabels
                             }
-                    , isCurrent = False
-                    , label =
-                        link
                             []
-                            { label = text (extractLabelFromLanguageMap session.language localTranslations.about)
-                            , url = Config.serverUrl ++ "/about"
-                            }
-                    , showLabel = showLabels
-                    }
-                    []
+                        ]
+                    ]
                 ]
             ]
         ]

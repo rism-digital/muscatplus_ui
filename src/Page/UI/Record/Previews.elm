@@ -11,6 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingMD, sectionSpacing)
+import Page.UI.Components exposing (h2, h3)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
@@ -186,9 +187,8 @@ viewRecordPreviewTitleBar language closeMsg =
         , el
             [ alignLeft
             , centerY
-            , headingMD
-            , Font.semiBold
             , Font.color (colourScheme.white |> convertColorToElementColor)
+            , width fill
             ]
-            (text (extractLabelFromLanguageMap language localTranslations.recordPreview))
+            (h2 language localTranslations.recordPreview)
         ]

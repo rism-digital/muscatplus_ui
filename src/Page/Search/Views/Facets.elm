@@ -1,14 +1,16 @@
 module Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)
 
-import Element exposing (Element, alignLeft, centerX, centerY, el, fill, height, paddingXY, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, none, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
+import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input exposing (button)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), ModeFacet)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (headingSM)
+import Page.UI.Attributes exposing (headingLG, headingSM, minimalDropShadow)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -75,22 +77,43 @@ viewModeItem selectedMode language fitem =
         itemCount =
             formatNumberByLanguage language count
 
-        baseRowStyle =
-            [ alignLeft
-            , Font.center
-            , height fill
-            , Border.widthEach { bottom = 3, left = 0, right = 0, top = 0 }
-            ]
-
         rowMode =
             parseStringToResultMode value
 
-        rowStyle =
+        selectedTab =
+            ( Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+            , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
+            , Font.color (colourScheme.white |> convertColorToElementColor)
+            )
+
+        unselectedTab =
+            ( Border.color (colourScheme.midGrey |> convertColorToElementColor)
+            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Font.color (colourScheme.black |> convertColorToElementColor)
+            )
+
+        ( borderColour, backgroundColour, fontColour ) =
             if selectedMode == rowMode then
-                Border.color (colourScheme.lightBlue |> convertColorToElementColor) :: baseRowStyle
+                selectedTab
 
             else
-                Border.color (colourScheme.cream |> convertColorToElementColor) :: baseRowStyle
+                unselectedTab
+
+        rowStyle =
+            [ alignLeft
+            , alignBottom
+            , Font.center
+            , height fill
+            , paddingXY 20 5
+            , spacingXY 5 0
+            , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
+            , Border.roundEach { topLeft = 5, topRight = 5, bottomLeft = 0, bottomRight = 0 }
+            , onClick (UserClickedModeItem fitem)
+            , borderColour
+            , backgroundColour
+            , fontColour
+            , pointer
+            ]
     in
     row
         rowStyle
@@ -98,20 +121,11 @@ viewModeItem selectedMode language fitem =
             [ paddingXY 5 0 ]
             icon
         , el
-            []
-            (button
-                [ alignLeft
-                , spacing 10
-                ]
-                { label =
-                    el
-                        [ headingSM
-                        , alignLeft
-                        ]
-                        (text (fullLabel ++ " (" ++ itemCount ++ ")"))
-                , onPress = Just (UserClickedModeItem fitem)
-                }
-            )
+            [ alignLeft
+            , spacing 10
+            , headingLG
+            ]
+            (text (fullLabel ++ " (" ++ itemCount ++ ")"))
         ]
 
 
@@ -119,13 +133,15 @@ viewModeItems : ResultMode -> Language -> ModeFacet -> Element SearchMsg
 viewModeItems selectedMode language typeFacet =
     let
         rowLabel =
-            row
-                [ Font.medium
-                , height fill
-                , centerY
-                , headingSM
-                ]
-                [ text (extractLabelFromLanguageMap language typeFacet.label) ]
+            none
+
+        --row
+        --    [ Font.medium
+        --    , height fill
+        --    , centerY
+        --    , headingLG
+        --    ]
+        --    [ text (extractLabelFromLanguageMap language typeFacet.label) ]
     in
     row
         [ centerX
@@ -133,6 +149,6 @@ viewModeItems selectedMode language typeFacet =
         , height (px 40)
         , paddingXY 20 0
         , spacing 10
-        , centerY
+        , alignBottom
         ]
-        (rowLabel :: List.map (\t -> viewModeItem selectedMode language t) typeFacet.items)
+        (List.map (\t -> viewModeItem selectedMode language t) typeFacet.items)

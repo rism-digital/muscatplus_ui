@@ -1,6 +1,6 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
@@ -22,7 +22,7 @@ import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Session exposing (Session)
 import Set exposing (Set)
 
@@ -85,29 +85,24 @@ viewFullSourcePage session model body =
             ]
             [ row
                 [ width fill
-                , alignTop
+                , height (px searchHeaderHeight)
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-                , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-                , Background.color (colourScheme.cream |> convertColorToElementColor)
+                , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+
+                --, Background.color (colourScheme.cream |> convertColorToElementColor)
                 ]
                 [ column
-                    [ width (px 80) ]
-                    [ el
-                        [ width (px 48)
-                        , height (px 48)
-                        , centerX
-                        , centerY
-                        ]
-                        (sourcesSvg colourScheme.slateGrey)
-                    ]
-                , column
                     [ width fill
                     , height fill
-                    , alignTop
+                    , paddingXY 20 0
+                    , centerY
+                    , alignLeft
                     , spacingXY 0 lineSpacing
-                    , paddingXY 5 20
+
+                    --, alignBottom
+                    --, paddingXY 5 20
                     ]
-                    [ pageHeaderTemplate session.language body
+                    [ pageHeaderTemplate session.language Nothing body
                     , viewRecordTopBarRouter session.language model body
                     ]
                 ]

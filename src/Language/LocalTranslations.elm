@@ -38,6 +38,7 @@ localTranslations :
     , institutions : LanguageMap
     , keywordQuery : LanguageMap
     , last : LanguageMap
+    , liturgicalFeasts : LanguageMap
     , muscatEdit : LanguageMap
     , muscatView : LanguageMap
     , newSearchWithIncipit : LanguageMap
@@ -210,6 +211,7 @@ localTranslations =
         , LanguageValues Portugese [ "Último" ]
         , LanguageValues Polish [ "Ostatni" ]
         ]
+    , liturgicalFeasts = []
     , muscatEdit =
         [ LanguageValues English [ "Edit" ] ]
     , muscatView =

@@ -14,7 +14,7 @@ import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.SideBar.Msg exposing (SideBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (emptyAttribute, headingHero)
-import Page.UI.Components exposing (dividerWithText)
+import Page.UI.Components exposing (dividerWithText, h1)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput, viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
@@ -24,7 +24,7 @@ import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInsti
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewSearchButtons)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Set
@@ -62,16 +62,7 @@ view session model =
             , height fill
             , alignLeft
             , alignTop
-            , Background.color (colourScheme.cream |> convertColorToElementColor)
-
-            --, Border.shadow
-            --    { blur = 10
-            --    , color =
-            --        colourScheme.darkGrey
-            --            |> convertColorToElementColor
-            --    , offset = ( 1, 1 )
-            --    , size = 1
-            --    }
+            , Background.color (colourScheme.white |> convertColorToElementColor)
             ]
             [ frontBodyViewRouter session model ]
         ]
@@ -111,7 +102,8 @@ viewFrontSearchControls cfg =
             , Border.widthEach { top = 0, bottom = 0, left = 0, right = 1 }
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             ]
-            [ viewSearchButtons
+            [ viewFacetPanels cfg
+            , viewSearchButtons
                 { language = .language cfg.session
                 , model = cfg.model
                 , isFrontPage = True
@@ -119,7 +111,6 @@ viewFrontSearchControls cfg =
                 , submitMsg = FrontMsg.UserTriggeredSearchSubmit
                 , resetMsg = FrontMsg.UserResetAllFilters
                 }
-            , viewFacetPanels cfg
             ]
         ]
 
@@ -133,20 +124,20 @@ viewFacetPanels cfg =
         headingHeroText =
             case .showFrontSearchInterface cfg.session of
                 SourceSearchOption ->
-                    extractLabelFromLanguageMap language localTranslations.sources
+                    localTranslations.sources
 
                 PeopleSearchOption ->
-                    extractLabelFromLanguageMap language localTranslations.people
+                    localTranslations.people
 
                 InstitutionSearchOption ->
-                    extractLabelFromLanguageMap language localTranslations.institutions
+                    localTranslations.institutions
 
                 IncipitSearchOption ->
-                    extractLabelFromLanguageMap language localTranslations.incipits
+                    localTranslations.incipits
 
                 -- Show a blank page if this is ever the choice; it shouldn't be!
                 LiturgicalFestivalsOption ->
-                    ""
+                    []
 
         submitMsg =
             if hasActionableProbeResponse (.probeResponse cfg.model) then
@@ -249,9 +240,9 @@ viewFacetPanels cfg =
                     (paragraph
                         [ headingHero
                         , Font.semiBold
-                        , padding 10
+                        , paddingXY 0 10
                         ]
-                        [ text headingHeroText ]
+                        [ h1 language headingHeroText ]
                         :: mainSearchField
                         :: row
                             [ width fill

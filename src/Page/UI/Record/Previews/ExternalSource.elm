@@ -7,7 +7,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (headingLG, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, renderLabel, renderParagraph, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, renderParagraph, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
@@ -70,7 +70,7 @@ viewExternalSourcePreview language project body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ pageHeaderTemplateNoToc language body
+                    [ pageHeaderTemplateNoToc language Nothing body
                     , pageFullRecordTemplate language body
                     ]
                 , column
@@ -174,11 +174,14 @@ viewExternalHeldBy language body =
             (institutionSvg colourScheme.slateGrey)
         , link
             [ linkColour
-            , headingLG
-            , Font.medium
+
+            --, headingLG
+            --, Font.medium
             ]
             { url = body.id
-            , label = text (extractLabelFromLanguageMap language body.label)
+
+            --, label = text (extractLabelFromLanguageMap language body.label)
+            , label = h2 language body.label
             }
         ]
 

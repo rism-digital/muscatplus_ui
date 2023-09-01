@@ -14,7 +14,7 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.UI.Attributes exposing (headingXXL, lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (h4)
+import Page.UI.Components exposing (h2, h4)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Tooltip exposing (facetHelp)
 
@@ -65,7 +65,7 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText } =
                     ]
                     [ row
                         [ spacing 10 ]
-                        [ h4 language localTranslations.keywordQuery ]
+                        [ h2 language localTranslations.keywordQuery ]
                     ]
                 ]
             , row

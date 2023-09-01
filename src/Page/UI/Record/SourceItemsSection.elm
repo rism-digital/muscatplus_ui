@@ -9,7 +9,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (emptyAttribute, headingLG, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h2, viewSummaryField)
+import Page.UI.Components exposing (h2, h3, viewSummaryField)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 
@@ -39,7 +39,7 @@ viewSourceItem language source =
                     , headingLG
                     , Font.medium
                     ]
-                    { label = text (extractLabelFromLanguageMap language source.label)
+                    { label = h2 language source.label
                     , url = source.id
                     }
                 ]

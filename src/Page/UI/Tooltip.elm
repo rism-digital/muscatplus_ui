@@ -4,7 +4,7 @@ import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, in
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
-import Page.UI.Attributes exposing (minimalDropShadow)
+import Page.UI.Attributes exposing (bodyRegular, minimalDropShadow)
 import Page.UI.Images exposing (assistanceSvg, infoCircleSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
@@ -67,7 +67,7 @@ tooltipStyle =
     , width (shrink |> minimum 140)
     , padding 12
     , spacing 5
-    , Font.size 14
+    , bodyRegular
 
     --, minimalDropShadow
     ]
@@ -75,12 +75,12 @@ tooltipStyle =
 
 tooltipStyle2 : List (Attribute msg)
 tooltipStyle2 =
-    [ Background.color (colourScheme.white |> convertColorToElementColor)
-    , Font.color (colourScheme.black |> convertColorToElementColor)
+    [ Background.color (colourScheme.black |> convertColorToElementColor)
+    , Font.color (colourScheme.white |> convertColorToElementColor)
     , width (shrink |> minimum 120)
     , padding 12
     , spacing 5
-    , Font.size 14
+    , bodyRegular
 
     --, minimalDropShadow
     ]

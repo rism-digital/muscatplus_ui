@@ -2,11 +2,12 @@ module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchR
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, row, spacing, width)
+import Element exposing (Element, column, fill, maximum, row, spacing, width)
 import Element.Font as Font
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (InstitutionResultBody, InstitutionResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
+import Page.UI.Attributes exposing (bodyRegular, bodySM)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (mapMarkerSvg, penNibSvg, sourcesSvg)
@@ -22,7 +23,8 @@ viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg } bod
     let
         resultBody =
             [ viewMaybe (viewInstitutionSummary language resultColours.iconColour) body.summary
-            , viewMaybe (viewInstitutionFlags language) body.flags
+
+            --, viewMaybe (viewInstitutionFlags language) body.flags
             ]
 
         resultColours =
@@ -41,9 +43,11 @@ viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg } bod
 viewInstitutionSummary : Language -> Color -> Dict String LabelValue -> Element msg
 viewInstitutionSummary language iconColour summary =
     row
-        [ width fill ]
+        [ width (fill |> maximum 600) ]
         [ column
-            [ spacing 5 ]
+            [ spacing 5
+            , width fill
+            ]
             [ row
                 [ width fill
                 , spacing 20
@@ -54,23 +58,18 @@ viewInstitutionSummary language iconColour summary =
                     , iconSize = 20
                     , includeLabelInValue = False
                     , fieldName = "countryName"
-                    , displayStyles = []
+                    , displayStyles = [ bodyRegular ]
                     , formatNumbers = False
                     }
                     summary
-                ]
-            , row
-                [ width fill
-                , spacing 20
-                ]
-                [ viewSearchResultSummaryField
+                , viewSearchResultSummaryField
                     { language = language
                     , icon = sourcesSvg iconColour
-                    , iconSize = 15
+                    , iconSize = 20
                     , includeLabelInValue = True
                     , fieldName = "totalSources"
                     , displayStyles =
-                        [ Font.size 12 ]
+                        [ bodyRegular ]
                     , formatNumbers = True
                     }
                     summary

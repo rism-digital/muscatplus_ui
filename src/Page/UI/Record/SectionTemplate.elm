@@ -44,7 +44,7 @@ sectionTemplate language header sectionBody =
                 [ width fill
                 , tocId
                 ]
-                [ h4 language header.label ]
+                [ h2 language header.label ]
             , row
                 [ width fill ]
                 [ column

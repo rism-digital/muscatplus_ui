@@ -2,7 +2,7 @@ module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResul
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, mouseOver, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -13,7 +13,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
-import Page.UI.Components exposing (h3)
+import Page.UI.Components exposing (h2, h3)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -181,19 +181,6 @@ summaryFieldTemplate summaryCfg fieldValue =
                 )
                 (fValueLength > 3)
 
-        expandedList =
-            viewIf
-                (el
-                    [ tooltip onRight allEntries
-                    , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-                    , Font.color (colourScheme.black |> convertColorToElementColor)
-                    , padding 2
-                    , alignTop
-                    ]
-                    (text (extractLabelFromLanguageMap summaryCfg.language localTranslations.seeAll))
-                )
-                (fValueLength > 3)
-
         iconElement =
             el
                 [ width (px summaryCfg.iconSize)
@@ -209,7 +196,7 @@ summaryFieldTemplate summaryCfg fieldValue =
             if fValueLength > 3 then
                 List.take 3 fValueFormatted
                     |> String.join "; "
-                    |> SE.softEllipsis 40
+                    |> SE.softEllipsis 30
 
             else
                 String.join "; " fValueFormatted
@@ -227,32 +214,20 @@ summaryFieldTemplate summaryCfg fieldValue =
             [ spacing 5
             , alignTop
             , alignLeft
-            , width fill
             ]
             [ iconElement
             , paragraph
                 (List.concat
                     [ [ centerY
                       , padding 2
-                      , width fill
                       , alignLeft
+                      , tooltip onRight allEntries
                       ]
                     , summaryCfg.displayStyles
                     ]
                 )
                 [ text templatedVal
-                , expandedList
                 ]
-
-            --, paragraph
-            --    (List.concat
-            --        [ [ centerY
-            --          , width fill
-            --          ]
-            --        , summaryCfg.displayStyles
-            --        ]
-            --    )
-            --    [ text templatedVal ]
             ]
         ]
 

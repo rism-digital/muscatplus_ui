@@ -2,9 +2,10 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignLeft, alignTop, column, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, paddingXY, row, scrollbarY, width)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, paddingXY, px, row, scrollbarY, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -14,7 +15,7 @@ import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
-import Page.UI.Attributes exposing (controlsColumnWidth, responsiveCheckboxColumns, resultColumnWidth)
+import Page.UI.Attributes exposing (controlsColumnWidth, headingMD, responsiveCheckboxColumns, resultColumnWidth)
 import Page.UI.Components exposing (dividerWithText, viewBlankBottomBar)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -116,15 +117,7 @@ viewSearchResultsSection cfg resultsLoading body =
             , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
             , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
-            [ viewSearchPageSort
-                { language = language
-                , activeSearch = .activeSearch cfg.model
-                , body = body
-                , changedResultSortingMsg = cfg.userChangedResultSortingMsg
-                , changedResultRowsPerPageMsg = cfg.userChangedResultsPerPageMsg
-                }
-                cfg.searchResponse
-            , viewSearchResultsListPanel
+            [ viewSearchResultsListPanel
                 { language = language
                 , model = cfg.model
                 , body = body
@@ -139,14 +132,14 @@ viewSearchResultsSection cfg resultsLoading body =
             , alignTop
             , inFront renderedPreview
             ]
-            [ viewSearchButtons
+            [ viewSearchPageSort
                 { language = language
-                , model = cfg.model
-                , isFrontPage = False
-                , submitLabel = localTranslations.updateResults
-                , submitMsg = cfg.userTriggeredSearchSubmitMsg
-                , resetMsg = cfg.userResetAllFiltersMsg
+                , activeSearch = .activeSearch cfg.model
+                , body = body
+                , changedResultSortingMsg = cfg.userChangedResultSortingMsg
+                , changedResultRowsPerPageMsg = cfg.userChangedResultsPerPageMsg
                 }
+                cfg.searchResponse
             , viewSearchControls
                 { session = cfg.session
                 , model = cfg.model
@@ -157,7 +150,43 @@ viewSearchResultsSection cfg resultsLoading body =
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
                 , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                 }
-            , viewBlankBottomBar
+            , viewActiveFilters
+            , viewSearchButtons
+                { language = language
+                , model = cfg.model
+                , isFrontPage = False
+                , submitLabel = localTranslations.updateResults
+                , submitMsg = cfg.userTriggeredSearchSubmitMsg
+                , resetMsg = cfg.userResetAllFiltersMsg
+                }
+
+            --, viewBlankBottomBar
+            ]
+        ]
+
+
+viewActiveFilters : Element msg
+viewActiveFilters =
+    row
+        [ width fill
+        , height (px 80)
+        , paddingXY 20 10
+        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+        ]
+        [ column
+            [ width fill
+            , height fill
+            ]
+            [ row
+                [ width fill ]
+                [ el [ headingMD, Font.medium ] (text "Active Filters") ]
+            , row
+                [ width fill
+                , alignLeft
+                ]
+                []
             ]
         ]
 

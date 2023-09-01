@@ -93,8 +93,8 @@ viewFullInstitutionPage session model body =
             [ row
                 [ width fill
                 , alignTop
-                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-                , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+                , Border.color (colourScheme.midGrey |> convertColorToElementColor)
                 , Background.color (colourScheme.cream |> convertColorToElementColor)
                 ]
                 [ column
@@ -114,7 +114,7 @@ viewFullInstitutionPage session model body =
                     , alignTop
                     , paddingXY 5 20
                     ]
-                    [ pageHeaderTemplate session.language body
+                    [ pageHeaderTemplate session.language Nothing body
                     , viewRecordTopBarRouter session.language model body
                     ]
                 ]

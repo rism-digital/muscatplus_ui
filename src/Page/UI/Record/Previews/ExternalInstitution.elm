@@ -58,7 +58,7 @@ viewExternalInstitutionPreview language project body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ pageHeaderTemplateNoToc language body
+                    [ pageHeaderTemplateNoToc language Nothing body
                     , pageFullRecordTemplate language body
                     ]
                 , column

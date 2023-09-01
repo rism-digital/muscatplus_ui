@@ -12,7 +12,7 @@ import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), PAEEncodedData, RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
 import Page.UI.Attributes exposing (bodyRegular, headingLG, lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (h3, viewSummaryField)
+import Page.UI.Components exposing (h2, h3, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg, fileDownloadSvg, searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -53,11 +53,7 @@ viewIncipit cfg incipit =
                     [ width fill
                     , spacing 5
                     ]
-                    [ el
-                        [ headingLG
-                        , Font.medium
-                        ]
-                        (text (extractLabelFromLanguageMap cfg.language incipit.label))
+                    [ h2 cfg.language incipit.label
                     ]
                 )
                 (not cfg.suppressTitle)
@@ -172,7 +168,7 @@ viewIncipitExtraInfo cfg encodings =
                     , pointer
                     , onClick (cfg.infoToggleMsg cfg.ident)
                     ]
-                    (text "Incipit Tools")
+                    (text "Incipit options")
                 ]
             , panelBody
             ]

@@ -5,10 +5,11 @@ module Page.UI.Record.PageTemplate exposing
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
+    , subHeaderTemplate
     )
 
 import Config as C
-import Element exposing (Element, above, alignBottom, alignLeft, alignRight, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -17,10 +18,10 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
-import Page.UI.Attributes exposing (headingSM, lineSpacing, linkColour)
-import Page.UI.Components exposing (h1, h2)
-import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (externalLinkSvg)
+import Page.UI.Attributes exposing (headingHero, headingMD, headingSM, lineSpacing, linkColour)
+import Page.UI.Components exposing (h1, h2, h2s)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
+import Page.UI.Images exposing (externalLinkSvg, sourcesSvg)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -55,8 +56,9 @@ pageFooterTemplate session language footer =
         , padding 20
         , alignBottom
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
-        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-        , Background.color (colourScheme.cream |> convertColorToElementColor)
+        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+
+        --, Background.color (colourScheme.cream |> convertColorToElementColor)
         ]
         [ column
             [ width fill
@@ -84,32 +86,73 @@ pageFooterTemplate session language footer =
 
 pageHeaderTemplate :
     Language
+    -> Maybe (Element msg)
     ->
         { a
             | label : LanguageMap
             , sectionToc : String
         }
     -> Element msg
-pageHeaderTemplate language header =
-    row
-        [ width fill
-        , htmlAttribute (HA.id header.sectionToc)
-        ]
-        [ h2 language header.label ]
+pageHeaderTemplate language icon header =
+    headerTmpl
+        { hLevel = h1 language
+        , icon = icon
+        , body = header
+        , extraAttrs =
+            [ htmlAttribute (HA.id header.sectionToc)
+            ]
+        }
 
 
 pageHeaderTemplateNoToc :
     Language
+    -> Maybe (Element msg)
     ->
         { a
             | label : LanguageMap
         }
     -> Element msg
-pageHeaderTemplateNoToc language header =
+pageHeaderTemplateNoToc language icon header =
+    headerTmpl
+        { hLevel = h1 language
+        , icon = icon
+        , body = header
+        , extraAttrs = []
+        }
+
+
+subHeaderTemplate :
+    Language
+    -> Maybe (Element msg)
+    -> { a | label : LanguageMap }
+    -> Element msg
+subHeaderTemplate language icon header =
+    headerTmpl
+        { hLevel = h2s language
+        , icon = icon
+        , body = header
+        , extraAttrs = []
+        }
+
+
+headerTmpl :
+    { hLevel : LanguageMap -> Element msg
+    , icon : Maybe (Element msg)
+    , body : { a | label : LanguageMap }
+    , extraAttrs : List (Attribute msg)
+    }
+    -> Element msg
+headerTmpl cfg =
     row
-        [ width fill
+        ([ width fill
+         , spacing 5
+         , alignBottom
+         ]
+            ++ cfg.extraAttrs
+        )
+        [ viewMaybe identity cfg.icon
+        , cfg.hLevel (.label cfg.body)
         ]
-        [ h2 language header.label ]
 
 
 isExternalLink : String -> Bool
@@ -138,7 +181,7 @@ pageLinkTemplate language langMap body =
             [ row
                 [ width fill ]
                 [ el
-                    [ headingSM
+                    [ headingMD
                     , Font.semiBold
                     ]
                     (text (extractLabelFromLanguageMap language langMap ++ ": "))
@@ -146,7 +189,7 @@ pageLinkTemplate language langMap body =
                     [ linkColour ]
                     { label =
                         el
-                            [ headingSM ]
+                            [ headingMD ]
                             (text body.id)
                     , url = body.id
                     }

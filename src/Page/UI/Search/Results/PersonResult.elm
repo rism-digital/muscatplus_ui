@@ -2,11 +2,12 @@ module Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, row, spacing, width)
+import Element exposing (Element, column, fill, maximum, row, spacing, width)
 import Element.Font as Font
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (PersonResultBody, PersonResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
+import Page.UI.Attributes exposing (bodyRegular, bodySM)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (briefcaseSvg, penNibSvg, sourcesSvg)
@@ -56,7 +57,8 @@ viewPersonSearchResult { language, selectedResult, clickForPreviewMsg } body =
     let
         resultBody =
             [ viewMaybe (viewPersonSummary language resultColours.iconColour) body.summary
-            , viewMaybe (viewPersonFlags language) body.flags
+
+            --, viewMaybe (viewPersonFlags language) body.flags
             ]
 
         resultColours =
@@ -75,9 +77,11 @@ viewPersonSearchResult { language, selectedResult, clickForPreviewMsg } body =
 viewPersonSummary : Language -> Color -> Dict String LabelValue -> Element msg
 viewPersonSummary language iconColour summary =
     row
-        [ width fill ]
+        [ width (fill |> maximum 600) ]
         [ column
-            [ spacing 5 ]
+            [ spacing 5
+            , width fill
+            ]
             [ row
                 [ width fill
                 , spacing 20
@@ -88,7 +92,7 @@ viewPersonSummary language iconColour summary =
                     , iconSize = 20
                     , includeLabelInValue = False
                     , fieldName = "roles"
-                    , displayStyles = []
+                    , displayStyles = [ bodyRegular ]
                     , formatNumbers = False
                     }
                     summary
@@ -100,10 +104,12 @@ viewPersonSummary language iconColour summary =
                 [ viewSearchResultSummaryField
                     { language = language
                     , icon = sourcesSvg iconColour
-                    , iconSize = 15
+                    , iconSize = 18
                     , includeLabelInValue = True
                     , fieldName = "numSources"
-                    , displayStyles = [ Font.size 12 ]
+                    , displayStyles =
+                        [ bodySM
+                        ]
                     , formatNumbers = True
                     }
                     summary

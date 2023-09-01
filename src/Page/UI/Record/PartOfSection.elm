@@ -5,7 +5,7 @@ import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
-import Page.UI.Attributes exposing (headingSM, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (headingLG, headingSM, lineSpacing, linkColour)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
 
 
@@ -17,8 +17,8 @@ viewPartOfSection language partOf =
     in
     row
         [ width shrink
-        , Border.widthEach { bottom = 1, left = 1, right = 1, top = 10 }
-        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , Border.widthEach { bottom = 1, left = 1, right = 1, top = 5 }
+        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
         , paddingXY 10 20
         ]
         [ column
@@ -29,11 +29,11 @@ viewPartOfSection language partOf =
             [ row
                 [ width fill ]
                 [ el
-                    [ headingSM ]
+                    [ headingLG ]
                     (text (extractLabelFromLanguageMap language localTranslations.partOfCollection ++ ": "))
                 , link
                     [ linkColour
-                    , headingSM
+                    , headingLG
                     ]
                     { label = text (extractLabelFromLanguageMap language source.label)
                     , url = source.id

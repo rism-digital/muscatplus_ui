@@ -1,13 +1,15 @@
 module Page.Record.Views.SourceSearch exposing
     ( viewRecordSourceSearchTabBar
-    , viewRecordTopBarDescriptionOnly
     , viewSourceSearchTab
     )
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, none, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, shrink, spacing, spacingXY, text, width)
+import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input exposing (button)
+import Element.Region as Region
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views exposing (createErrorMessage)
@@ -15,7 +17,8 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingSM)
+import Page.UI.Attributes exposing (bodySerifFont, headingLG, headingMD, headingSM, linkColour)
+import Page.UI.Components exposing (h3, h4)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
@@ -108,21 +111,33 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
         currentMode =
             model.currentTab
 
-        descriptionTabBorder =
+        selectedTab =
+            ( colourScheme.darkBlue |> convertColorToElementColor
+            , colourScheme.darkBlue |> convertColorToElementColor
+            , colourScheme.white |> convertColorToElementColor
+            )
+
+        unselectedTab =
+            ( colourScheme.midGrey |> convertColorToElementColor
+            , colourScheme.white |> convertColorToElementColor
+            , colourScheme.black |> convertColorToElementColor
+            )
+
+        ( descriptionTabBorder, descriptionTabBackground, descriptionTabFontColour ) =
             case currentMode of
                 DefaultRecordViewTab _ ->
-                    colourScheme.lightBlue |> convertColorToElementColor
+                    selectedTab
 
                 _ ->
-                    colourScheme.cream |> convertColorToElementColor
+                    unselectedTab
 
-        searchTabBorder =
+        ( searchTabBorder, searchTabBackground, searchTabFontColour ) =
             case currentMode of
                 RelatedSourcesSearchTab _ ->
-                    colourScheme.lightBlue |> convertColorToElementColor
+                    selectedTab
 
                 _ ->
-                    colourScheme.cream |> convertColorToElementColor
+                    unselectedTab
 
         localizedTabLabel =
             extractLabelFromLanguageMap language tabLabel
@@ -135,7 +150,7 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
             case model.searchResults of
                 Loading _ ->
                     row
-                        [ spacing 5 ]
+                        []
                         [ text localizedTabLabel
                         , animatedLoader
                             [ width (px 15)
@@ -145,73 +160,68 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
                         ]
 
                 Response (SearchData searchData) ->
-                    row
-                        [ spacing 5 ]
-                        [ localizedTabLabel
+                    el
+                        []
+                        (localizedTabLabel
                             ++ " ("
                             ++ sourceCount searchData
                             ++ ")"
                             |> text
-                        ]
+                        )
 
                 _ ->
                     none
     in
     row
-        [ centerX
-        , width fill
-        , height (px 25)
-        , spacing 15
+        [ width (fill |> maximum 300)
+        , height (px 35)
+        , alignBottom
+        , spacing 10
+        , alignLeft
         ]
-        [ el
-            [ width shrink
-            , height fill
-            , Font.center
+        [ column
+            [ height fill
             , alignLeft
             , pointer
-            , Border.widthEach { bottom = 3, left = 0, right = 0, top = 0 }
+            , paddingXY 20 5
+            , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
+            , Border.roundEach { topLeft = 5, topRight = 5, bottomLeft = 0, bottomRight = 0 }
             , Border.color descriptionTabBorder
+            , Background.color descriptionTabBackground
+            , Font.color descriptionTabFontColour
+            , onClick (UserClickedRecordViewTab (DefaultRecordViewTab recordId))
             ]
-            (button
-                []
-                { label = text (extractLabelFromLanguageMap language localTranslations.description)
-                , onPress = Just (UserClickedRecordViewTab (DefaultRecordViewTab recordId))
-                }
-            )
-        , el
-            [ width shrink
-            , height fill
-            , alignLeft
-            , centerY
+            [ el
+                [ alignBottom
+                , centerY
+                ]
+                (h3 language localTranslations.description)
+
+            --{ label = h3 language localTranslations.description
+            --, onPress = Just (UserClickedRecordViewTab (DefaultRecordViewTab recordId))
+            --}
+            ]
+        , column
+            [ height fill
             , pointer
-            , headingSM
-            , Border.widthEach { bottom = 3, left = 0, right = 0, top = 0 }
+            , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
+            , Border.roundEach { topLeft = 5, topRight = 5, bottomLeft = 0, bottomRight = 0 }
             , Border.color searchTabBorder
+            , Background.color searchTabBackground
+            , Font.color searchTabFontColour
+            , paddingXY 20 0
+            , onClick (UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl))
             ]
-            (button
-                []
-                { label = sourceLabel
-                , onPress = Just (UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl))
-                }
-            )
-        ]
+            [ el
+                [ headingLG
+                , Region.heading 4
+                , Font.medium
+                , centerY
+                ]
+                sourceLabel
 
-
-viewRecordTopBarDescriptionOnly : Language -> Element msg
-viewRecordTopBarDescriptionOnly language =
-    row
-        [ centerX
-        , width fill
-        , height (px 25)
-        , spacing 15
-        ]
-        [ el
-            [ width shrink
-            , height fill
-            , Font.center
-            , alignLeft
-            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-            , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+            --{ label = sourceLabel
+            --, onPress = Just (UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl))
+            --}
             ]
-            (text (extractLabelFromLanguageMap language localTranslations.description))
         ]

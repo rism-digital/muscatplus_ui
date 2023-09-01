@@ -11,9 +11,9 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views exposing (createProbeErrorMessage)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingMD, headingSM, lineSpacing)
+import Page.UI.Attributes exposing (headingLG, headingMD, headingSM, lineSpacing)
 import Page.UI.Images exposing (spinnerSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Response exposing (Response(..))
 
 
@@ -77,13 +77,15 @@ viewProbeResponseNumbers language probeResponse =
             in
             el
                 [ Font.medium
-                , headingMD
+                , headingLG
                 ]
                 (text textMsg)
 
         Error errMsg ->
             paragraph
-                [ Font.medium ]
+                [ Font.medium
+                , headingLG
+                ]
                 [ extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults
                     ++ ": "
                     ++ createProbeErrorMessage errMsg
@@ -140,11 +142,11 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
     row
         [ alignTop
         , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
         , width fill
-        , height (px 50)
-        , paddingXY 30 0
+        , height (px 70)
+        , paddingXY 20 0
         , centerY
 
         --, minimalDropShadow
@@ -170,7 +172,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
-                        , headingSM
+                        , headingLG
                         , submitPointerStyle
                         ]
                         { label = text submitButtonLabel
@@ -182,12 +184,12 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                     [ Input.button
                         [ Border.color (colourScheme.turquoise |> convertColorToElementColor)
                         , Background.color (colourScheme.turquoise |> convertColorToElementColor)
-                        , paddingXY 10 10
+                        , padding 10
                         , height (px 40)
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color (colourScheme.white |> convertColorToElementColor)
-                        , headingSM
+                        , headingLG
                         ]
                         { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
                         , onPress = Just resetMsg
@@ -213,12 +215,9 @@ viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
     if applyFilterPrompt && actionableProbResponse then
         Input.button
             [ width shrink
-            , padding 5
-            , Border.width 1
-            , Border.color (colourScheme.white |> convertColorToElementColor)
+            , padding 10
             , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
-            , headingSM
-            , Font.bold
+            , headingLG
             , Font.color (colourScheme.white |> convertColorToElementColor)
             ]
             { label = text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)

@@ -145,10 +145,17 @@ colours =
         , blue = 67
         , alpha = 1
         }
+
+    --, slateGrey =
+    --    { red = 119
+    --    , green = 136
+    --    , blue = 153
+    --    , alpha = 1
+    --    }
     , slateGrey =
-        { red = 119
-        , green = 136
-        , blue = 153
+        { red = 170
+        , green = 170
+        , blue = 170
         , alpha = 1
         }
     , translucentBlack =
@@ -170,8 +177,8 @@ colours =
         , alpha = 1
         }
     , white =
-        { red = 255
-        , green = 255
+        { red = 250
+        , green = 252
         , blue = 255
         , alpha = 255
         }
@@ -209,4 +216,4 @@ scaleFrom255 c =
 
 searchHeaderHeight : Int
 searchHeaderHeight =
-    80
+    95

@@ -14,6 +14,7 @@ import Maybe.Extra as ME
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
 import Page.UI.Attributes exposing (bodyRegular, emptyAttribute, headingLG, sectionSpacing)
+import Page.UI.Components exposing (h2, h3)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
@@ -159,11 +160,12 @@ viewNationalCollectionChooser session =
                 ]
                 [ row
                     [ width fill ]
-                    [ el
-                        [ alignTop
-                        , headingLG
-                        ]
-                        (text (extractLabelFromLanguageMap session.language localTranslations.chooseCollection))
+                    --[ el
+                    --    [ alignTop
+                    --    , headingLG
+                    --    ]
+                    --    (text (extractLabelFromLanguageMap session.language localTranslations.chooseCollection))
+                    [ h2 session.language localTranslations.chooseCollection
                     ]
                 , row
                     [ width fill ]
@@ -198,10 +200,10 @@ viewNationalCollectionChooser session =
                         [ width fill ]
                         [ row
                             [ width fill ]
-                            [ paragraph
-                                []
-                                [ text (extractLabelFromLanguageMap session.language localTranslations.orChooseCollection) ]
-                            ]
+                            --[ paragraph
+                            --    []
+                            --    [ text (extractLabelFromLanguageMap session.language localTranslations.orChooseCollection) ]
+                            [ h3 session.language localTranslations.orChooseCollection ]
                         ]
                     ]
                 , row
@@ -226,7 +228,10 @@ viewNationalCollectionChooserMenuOption session =
             ME.isJust session.restrictedToNationalCollection
 
         labelFontColour =
-            if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionSidebarOption then
+            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionSidebarOption then
+                colourScheme.black
+
+            else if isRestrictedToNationalCollection then
                 colourScheme.white
 
             else
@@ -234,14 +239,17 @@ viewNationalCollectionChooserMenuOption session =
 
         hoverStyles =
             if session.currentlyHoveredNationalCollectionSidebarOption then
-                Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+                Background.color (colourScheme.lightGrey |> convertColorToElementColor)
 
             else
                 emptyAttribute
 
         iconBackgroundColor =
             if isRestrictedToNationalCollection then
-                Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+                Background.color
+                    (colourScheme.darkGrey
+                        |> convertColorToElementColor
+                    )
 
             else
                 emptyAttribute

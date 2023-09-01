@@ -3,6 +3,7 @@ module Page.UI.Attributes exposing
     , bodyFontColour
     , bodyRegular
     , bodySM
+    , bodySerifFont
     , controlsColumnWidth
     , emptyAttribute
     , emptyHtmlAttribute
@@ -26,7 +27,7 @@ module Page.UI.Attributes exposing
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, minimum, paddingXY, px, spacing, width)
+import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, maximum, minimum, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -44,6 +45,14 @@ bodyFont : Attribute msg
 bodyFont =
     Font.family
         [ Font.typeface "Noto Sans Display"
+        , Font.sansSerif
+        ]
+
+
+bodySerifFont : Attribute msg
+bodySerifFont =
+    Font.family
+        [ Font.typeface "Noto Serif"
         , Font.sansSerif
         ]
 
@@ -103,7 +112,7 @@ fontBaseSize =
     Font.size 14
 
 
-headingHero : Attr decoative msg
+headingHero : Attr decorative msg
 headingHero =
     Font.size (ratioCalc 8.0)
 
@@ -146,7 +155,7 @@ headingXXL =
 
 labelFieldColumnAttributes : List (Attribute msg)
 labelFieldColumnAttributes =
-    [ width (fillPortion 1)
+    [ width (fill |> maximum 250 |> minimum 200)
     , alignTop
     , spacing lineSpacing
     ]
@@ -167,18 +176,18 @@ linkColour =
 minimalDropShadow : Attribute msg
 minimalDropShadow =
     Border.shadow
-        { blur = 4
+        { blur = 8
         , color =
-            colourScheme.darkGrey
+            colourScheme.lightGrey
                 |> convertColorToElementColor
         , offset = ( 0, 0 )
-        , size = 0
+        , size = 2
         }
 
 
 pageBackground : Attribute msg
 pageBackground =
-    Background.color (colourScheme.cream |> convertColorToElementColor)
+    Background.color (colourScheme.white |> convertColorToElementColor)
 
 
 {-| <https://spencermortensen.com/articles/typographic-scale/>
@@ -190,9 +199,10 @@ ratioCalc size =
 
 sectionBorderStyles : List (Attribute msg)
 sectionBorderStyles =
-    [ Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
-    , Border.color (colourScheme.midGrey |> convertColorToElementColor)
-    , paddingXY lineSpacing 0
+    [ paddingXY lineSpacing 0
+
+    --, Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
+    --, Border.color (colourScheme.midGrey |> convertColorToElementColor)
     ]
 
 

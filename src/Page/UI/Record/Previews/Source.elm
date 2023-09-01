@@ -1,26 +1,35 @@
 module Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 
-import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
-import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
+import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 
 
 viewSourcePreview : Language -> Bool -> msg -> Set String -> (String -> msg) -> FullSourceBody -> Element msg
 viewSourcePreview language itemsExpanded expandMsg incipitInfoExpanded incipitInfoToggleMsg body =
     let
+        sourceIcon =
+            el
+                [ width (px 28)
+                , height (px 28)
+                ]
+                (sourcesSvg colourScheme.midGrey)
+
         pageBodyView =
             row
                 [ width fill
@@ -73,7 +82,7 @@ viewSourcePreview language itemsExpanded expandMsg incipitInfoExpanded incipitIn
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ pageHeaderTemplate language body
+                    [ subHeaderTemplate language (Just sourceIcon) body
                     , pageFullRecordTemplate language body
                     ]
                 ]

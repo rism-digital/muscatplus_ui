@@ -9,7 +9,7 @@ import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (headingLG, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, sourcesSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources)
@@ -140,11 +140,9 @@ viewHeldBy language body =
             (institutionSvg colourScheme.slateGrey)
         , link
             [ linkColour
-            , headingLG
-            , Font.medium
             ]
-            { label = text (extractLabelFromLanguageMap language body.label)
-            , url = body.id
+            { url = body.id
+            , label = h2 language body.label
             }
         , externalLinkTemplate body.id
         ]

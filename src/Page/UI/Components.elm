@@ -6,6 +6,7 @@ module Page.UI.Components exposing
     , fieldValueWrapper
     , h1
     , h2
+    , h2s
     , h3
     , h4
     , makeFlagIcon
@@ -32,7 +33,7 @@ import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, emptyAttribute, emptyHtmlAttribute, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyAttribute, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
 import Utilities exposing (toLinkedHtml)
@@ -282,32 +283,37 @@ fieldValueWrapper contentStyles content =
 
 h1 : Language -> LanguageMap -> Element msg
 h1 language heading =
-    renderLanguageHelper [ headingXXL, Region.heading 1, Font.medium ] language heading
+    renderLanguageHelper [ headingHero, Region.heading 1, Font.medium, bodySerifFont ] language heading
 
 
 h2 : Language -> LanguageMap -> Element msg
 h2 language heading =
-    renderLanguageHelper [ headingXL, Region.heading 2, Font.medium ] language heading
+    renderLanguageHelper [ headingXXL, Region.heading 2, Font.medium ] language heading
+
+
+h2s : Language -> LanguageMap -> Element msg
+h2s language heading =
+    renderLanguageHelper [ headingXXL, Region.heading 2, Font.medium, bodySerifFont ] language heading
 
 
 h3 : Language -> LanguageMap -> Element msg
 h3 language heading =
-    renderLanguageHelper [ headingLG, Region.heading 3, Font.medium ] language heading
+    renderLanguageHelper [ headingXL, Region.heading 3, Font.medium ] language heading
 
 
 h4 : Language -> LanguageMap -> Element msg
 h4 language heading =
-    renderLanguageHelper [ headingMD, Region.heading 4, Font.medium ] language heading
+    renderLanguageHelper [ headingLG, Region.heading 4, Font.medium ] language heading
 
 
 h5 : Language -> LanguageMap -> Element msg
 h5 language heading =
-    renderLanguageHelper [ headingSM, Region.heading 5, Font.medium ] language heading
+    renderLanguageHelper [ headingMD, Region.heading 5, Font.medium ] language heading
 
 
 h6 : Language -> LanguageMap -> Element msg
 h6 language heading =
-    renderLanguageHelper [ headingXS, Region.heading 6, Font.medium ] language heading
+    renderLanguageHelper [ headingSM, Region.heading 6, Font.medium ] language heading
 
 
 makeFlagIcon :
