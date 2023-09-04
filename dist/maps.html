@@ -47,17 +47,17 @@
 
         function onEachFeature(feature, layer)
         {
-            var popupContent = document.createElement("div");
+            let popupContent = document.createElement("div");
 
             // TODO: Add more data here: Institution name, address, etc.
             if (feature.properties)
             {
-                var props = feature.properties;
+                let props = feature.properties;
 
                 if (props.name)
                 {
-                    var nmEl = document.createElement("p");
-                    var nmFmt = document.createElement("strong")
+                    let nmEl = document.createElement("p");
+                    let nmFmt = document.createElement("strong")
                     nmFmt.innerText = props.name;
                     nmEl.appendChild(nmFmt)
                     popupContent.appendChild(nmEl);
@@ -65,12 +65,12 @@
 
                 if (props.organizationTypes)
                 {
-                    var typesEl = document.createElement("dl");
-                    var typeHeader = document.createElement("dt");
+                    let typesEl = document.createElement("dl");
+                    let typeHeader = document.createElement("dt");
                     typeHeader.innerText = "Organization types";
                     typesEl.appendChild(typeHeader);
 
-                    var typeContentEl = document.createElement("dd");
+                    let typeContentEl = document.createElement("dd");
                     typeContentEl.innerText = props.organizationTypes.join(", ");
                     typesEl.appendChild(typeContentEl);
                     popupContent.appendChild(typesEl);
@@ -78,7 +78,7 @@
 
                 if (props.url)
                 {
-                    var linkEl = document.createElement("a");
+                    let linkEl = document.createElement("a");
                     linkEl.href = props.url;
                     linkEl.target = "_top";
                     linkEl.innerText = "View on RISM Online";
@@ -89,7 +89,7 @@
             layer.bindPopup(popupContent);
         }
 
-        var geojsonMarkerOptions = {
+        let geojsonMarkerOptions = {
             radius: 7,
             fillColor: "#ff7800",
             color: "#000",
@@ -107,7 +107,6 @@
             onEachFeature: onEachFeature,
             pointToLayer: function (feature, latlng)
             {
-                var markerOpts;
                 if (feature.properties && feature.properties.primary === false)
                 {
                     return L.circleMarker(latlng, geojsonMarkerOptions)
