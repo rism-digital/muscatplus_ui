@@ -1,10 +1,11 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
@@ -19,7 +20,7 @@ import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
 import Session exposing (Session)
 
 
@@ -90,28 +91,17 @@ viewFullPersonPage session model body =
             ]
             [ row
                 [ width fill
-                , alignTop
+                , height (px searchHeaderHeight)
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-                , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-                , Background.color (colourScheme.cream |> convertColorToElementColor)
+                , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
                 ]
                 [ column
-                    [ width (px 80)
-                    ]
-                    [ el
-                        [ width (px 50)
-                        , height (px 50)
-                        , centerX
-                        , centerY
-                        ]
-                        (userCircleSvg colourScheme.slateGrey)
-                    ]
-                , column
                     [ spacingXY 0 lineSpacing
                     , width fill
                     , height fill
-                    , alignTop
-                    , paddingXY 5 20
+                    , centerY
+                    , alignLeft
+                    , paddingXY 20 0
                     ]
                     [ pageHeaderTemplate session.language Nothing body
                     , viewRecordTopBarRouter session.language model body
@@ -125,17 +115,22 @@ viewFullPersonPage session model body =
 
 viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> PersonBody -> Element RecordMsg
 viewRecordTopBarRouter language model body =
-    viewMaybe
+    let
+        spacerEl =
+            el [ height (px 35) ] (text "")
+    in
+    ME.unpack (\() -> spacerEl)
         (\sourceBlock ->
-            viewIf
-                (viewRecordSourceSearchTabBar
+            if sourceBlock.totalItems /= 0 then
+                viewRecordSourceSearchTabBar
                     { language = language
                     , model = model
                     , recordId = body.id
                     , searchUrl = sourceBlock.url
-                    , tabLabel = localTranslations.sources
+                    , tabLabel = localTranslations.sourceContents
                     }
-                )
-                (sourceBlock.totalItems /= 0)
+
+            else
+                spacerEl
         )
         body.sources

@@ -1,10 +1,11 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
@@ -88,8 +89,6 @@ viewFullSourcePage session model body =
                 , height (px searchHeaderHeight)
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
                 , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-
-                --, Background.color (colourScheme.cream |> convertColorToElementColor)
                 ]
                 [ column
                     [ width fill
@@ -98,9 +97,6 @@ viewFullSourcePage session model body =
                     , centerY
                     , alignLeft
                     , spacingXY 0 lineSpacing
-
-                    --, alignBottom
-                    --, paddingXY 5 20
                     ]
                     [ pageHeaderTemplate session.language Nothing body
                     , viewRecordTopBarRouter session.language model body
@@ -114,17 +110,22 @@ viewFullSourcePage session model body =
 
 viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> FullSourceBody -> Element RecordMsg
 viewRecordTopBarRouter language model body =
-    viewMaybe
+    let
+        spacerEl =
+            el [ height (px 35) ] (text "")
+    in
+    ME.unpack (\() -> spacerEl)
         (\sourceBlock ->
-            viewIf
-                (viewRecordSourceSearchTabBar
+            if sourceBlock.totalItems /= 0 then
+                viewRecordSourceSearchTabBar
                     { language = language
                     , model = model
                     , recordId = body.id
                     , searchUrl = sourceBlock.url
                     , tabLabel = localTranslations.sourceContents
                     }
-                )
-                (sourceBlock.totalItems /= 0)
+
+            else
+                spacerEl
         )
         body.sourceItems
