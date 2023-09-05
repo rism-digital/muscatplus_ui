@@ -361,14 +361,14 @@ renderValue language value =
 renderCloselySpacedValue : Language -> LanguageMap -> Element msg
 renderCloselySpacedValue language values =
     textColumn
-        [ bodySM
+        [ bodyRegular
         ]
         (styledParagraphs (extractTextFromLanguageMap language values))
 
 
 renderLabel : Language -> LanguageMap -> Element msg
 renderLabel language langmap =
-    renderLanguageHelper [ Font.medium, bodyRegular ] language langmap
+    renderLanguageHelper [ Font.semiBold, bodyRegular ] language langmap
 
 
 {-|

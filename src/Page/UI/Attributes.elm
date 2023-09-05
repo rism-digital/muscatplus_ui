@@ -27,7 +27,7 @@ module Page.UI.Attributes exposing
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, maximum, minimum, paddingXY, px, spacing, width)
+import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, maximum, minimum, paddingEach, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -158,6 +158,7 @@ labelFieldColumnAttributes =
     [ width (fill |> maximum 250 |> minimum 200)
     , alignTop
     , spacing lineSpacing
+    , paddingEach { top = 0, bottom = 5, left = 0, right = 0 }
     ]
 
 

@@ -1,11 +1,11 @@
 module Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, shrink, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
@@ -117,12 +117,14 @@ viewRelationshipBody language body =
                 [ roleLabel ]
             , column
                 valueFieldColumnAttributes
-                [ row
-                    [ width fill ]
-                    [ relatedToView
-                    , qualifierLabel
+                [ textColumn
+                    [ bodyRegular ]
+                    [ row []
+                        [ relatedToView
+                        , qualifierLabel
+                        , note
+                        ]
                     ]
-                , note
                 ]
             ]
         ]
