@@ -141,7 +141,7 @@ viewRecordTopBarRouter language model body =
                     , model = model
                     , recordId = body.id
                     , searchUrl = sourceBlock.url
-                    , tabLabel = localTranslations.sourceContents
+                    , tabLabel = localTranslations.sources
                     }
 
             else
