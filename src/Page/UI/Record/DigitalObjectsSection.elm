@@ -10,7 +10,7 @@ import Page.RecordTypes.DigitalObjects exposing (DigitalObject, DigitalObjectBod
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Helpers exposing (viewSVGRenderedIncipit)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 viewDigitalObjectThumbnail :
@@ -30,7 +30,7 @@ viewDigitalObjectThumbnail language imageUrls dObject =
         , spacing lineSpacing
         , Font.center
         , Border.width 1
-        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+        , Border.color colourScheme.slateGrey
         , padding 5
         ]
         [ newTabLink
@@ -82,7 +82,7 @@ viewDigitalObjectRenderedNotation language encoding dObject =
         , spacing lineSpacing
         , Font.center
         , Border.width 1
-        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+        , Border.color colourScheme.slateGrey
         , padding 5
         ]
         [ newTabLink

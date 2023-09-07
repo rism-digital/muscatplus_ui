@@ -7,7 +7,7 @@ import Language.Tooltips exposing (tooltips)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 sourceFacetPanels :
@@ -136,7 +136,7 @@ viewFacetsForSourcesMode cfg =
                         ]
                         [ column
                             [ Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
-                            , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+                            , Border.color colourScheme.midGrey
                             ]
                             [ row [] [ sourceContentsToggle ]
                             , row [] [ sourceCollectionsToggle ]

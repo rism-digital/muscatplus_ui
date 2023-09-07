@@ -9,7 +9,7 @@ import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (h3, renderParagraph)
 import Page.UI.Images exposing (spinnerSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 viewResultsListLoadingScreenTmpl : Bool -> Element msg
@@ -18,7 +18,7 @@ viewResultsListLoadingScreenTmpl isLoading =
         el
             [ width fill
             , height fill
-            , Background.color (colourScheme.translucentGrey |> convertColorToElementColor)
+            , Background.color colourScheme.translucentGrey
             , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
             ]
             (el
@@ -47,7 +47,7 @@ viewSearchResultsLoadingTmpl language =
         [ column
             [ width fill
             , height fill
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             , scrollbarY
             , alignTop
             ]

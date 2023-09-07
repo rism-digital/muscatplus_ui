@@ -6,12 +6,12 @@ import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingMD, sectionSpacing)
-import Page.UI.Components exposing (h2, h3)
+import Page.UI.Attributes exposing (sectionSpacing)
+import Page.UI.Components exposing (h2)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
@@ -20,7 +20,7 @@ import Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 import Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Page.UI.Record.Previews.Person exposing (viewPersonPreview)
 import Page.UI.Record.Previews.Source exposing (viewSourcePreview)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (ServerData(..))
 import Set exposing (Set)
 
@@ -42,15 +42,15 @@ viewPreviewError language closeMsg errMsg =
         , clipY
         , alignTop
         , alignRight
-        , Background.color (colourScheme.white |> convertColorToElementColor)
-        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , Background.color colourScheme.white
+        , Border.color colourScheme.lightBlue
         , Border.width 3
         ]
         [ column
             [ width fill
             , height fill
             , alignTop
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
             [ viewRecordPreviewTitleBar language closeMsg
@@ -146,8 +146,8 @@ viewPreviewRouter language cfg previewData =
         , clipY
         , alignTop
         , alignRight
-        , Background.color (colourScheme.white |> convertColorToElementColor)
-        , Border.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , Background.color colourScheme.white
+        , Border.color colourScheme.lightBlue
         , Border.width 3
         , htmlAttribute (HA.style "z-index" "10")
         ]
@@ -155,7 +155,7 @@ viewPreviewRouter language cfg previewData =
             [ width fill
             , height fill
             , alignTop
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
             [ viewRecordPreviewTitleBar language cfg.closeMsg
@@ -172,8 +172,8 @@ viewRecordPreviewTitleBar language closeMsg =
         , spacing 10
         , paddingXY 10 0
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , Border.color colourScheme.darkBlue
+        , Background.color colourScheme.lightBlue
         ]
         [ el
             [ alignLeft
@@ -187,7 +187,7 @@ viewRecordPreviewTitleBar language closeMsg =
         , el
             [ alignLeft
             , centerY
-            , Font.color (colourScheme.white |> convertColorToElementColor)
+            , Font.color colourScheme.white
             , width fill
             ]
             (h2 language localTranslations.recordPreview)

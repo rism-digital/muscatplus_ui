@@ -19,7 +19,7 @@ import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (bodyRegular, headingMD, lineSpacing, linkColour)
 import Page.UI.Components exposing (basicCheckbox, dropdownSelect)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
 import Set
 import String.Extra as SE
@@ -249,7 +249,7 @@ viewSelectFacet config =
                 , spacing lineSpacing
                 , paddingEach { bottom = 0, left = 14, right = 0, top = 0 }
                 , Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
-                , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+                , Border.color colourScheme.midGrey
                 ]
                 [ row
                     [ width fill
@@ -361,7 +361,7 @@ viewSelectFacetItem config fitem =
         [ width fill
         , alignLeft
         , padding 5
-        , mouseOver [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
+        , mouseOver [ Background.color colourScheme.lightGrey ]
         ]
         [ checkbox
             [ Element.htmlAttribute (HA.alt fullLabel)

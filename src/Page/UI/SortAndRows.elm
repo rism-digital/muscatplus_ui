@@ -9,7 +9,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.UI.Components exposing (dropdownSelect)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 
 
@@ -55,8 +55,8 @@ viewRowSelectAndSortSelector cfg =
     in
     row
         [ alignTop
-        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+        , Background.color colourScheme.lightGrey
+        , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , width fill
         , height (px 50)

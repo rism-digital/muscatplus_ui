@@ -1,9 +1,7 @@
 module Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 
-import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, maximum, row, spacing, width)
-import Element.Font as Font
+import Element exposing (Color, Element, column, fill, maximum, row, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (PersonResultBody, PersonResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)

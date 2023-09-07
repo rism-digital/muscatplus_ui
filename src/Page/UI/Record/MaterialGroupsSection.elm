@@ -1,12 +1,11 @@
 module Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 
-import Element exposing (Element, alignTop, column, el, fill, height, row, spacing, text, width)
-import Element.Font as Font
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
+import Language exposing (Language)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Attributes exposing (headingLG, lineSpacing, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h3, h4, viewParagraphField, viewSummaryField)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
+import Page.UI.Components exposing (h3, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)

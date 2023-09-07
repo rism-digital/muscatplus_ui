@@ -1,6 +1,6 @@
 module Page.Front.Views exposing (view)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, none, padding, paddingEach, paddingXY, paragraph, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, none, paddingEach, paddingXY, paragraph, px, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -24,7 +24,7 @@ import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInsti
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewSearchButtons)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Set
@@ -62,7 +62,7 @@ view session model =
             , height fill
             , alignLeft
             , alignTop
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             ]
             [ frontBodyViewRouter session model ]
         ]
@@ -100,7 +100,7 @@ viewFrontSearchControls cfg =
             [ width fill
             , height fill
             , Border.widthEach { top = 0, bottom = 0, left = 0, right = 1 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+            , Border.color colourScheme.slateGrey
             ]
             [ viewFacetPanels cfg
             , viewSearchButtons

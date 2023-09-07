@@ -4,7 +4,7 @@ import Element exposing (Element, alignTop, column, fill, height, htmlAttribute,
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (h2, h3, h4)
+import Page.UI.Components exposing (h2)
 
 
 {-|

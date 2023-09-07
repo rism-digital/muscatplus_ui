@@ -20,7 +20,7 @@ import Page.UI.Components exposing (dropdownSelect, h4)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
 
 
@@ -121,8 +121,8 @@ viewQueryFacet config =
                 (\t ->
                     el
                         [ padding 5
-                        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , Background.color colourScheme.lightBlue
+                        , Font.color colourScheme.white
                         , Font.medium
                         , bodyRegular
                         ]
@@ -159,8 +159,8 @@ viewQueryFacet config =
                                         case currentBehaviourOption of
                                             FacetBehaviourIntersection ->
                                                 el
-                                                    [ Background.color (colourScheme.darkOrange |> convertColorToElementColor)
-                                                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                                                    [ Background.color colourScheme.darkOrange
+                                                    , Font.color colourScheme.white
                                                     , padding 5
                                                     , Font.medium
                                                     ]
@@ -168,8 +168,8 @@ viewQueryFacet config =
 
                                             FacetBehaviourUnion ->
                                                 el
-                                                    [ Background.color (colourScheme.darkOrange |> convertColorToElementColor)
-                                                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                                                    [ Background.color colourScheme.darkOrange
+                                                    , Font.color colourScheme.white
                                                     , padding 5
                                                     , Font.medium
                                                     ]
@@ -203,7 +203,7 @@ viewQueryFacet config =
             , spacing lineSpacing
             , paddingEach { bottom = 0, left = 14, right = 0, top = 0 }
             , Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
-            , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+            , Border.color colourScheme.midGrey
             ]
             [ row
                 [ width fill
@@ -291,10 +291,10 @@ viewSuggestionDropdown : QueryFacetConfig msg -> FacetBehaviours -> ActiveSugges
 viewSuggestionDropdown config currentBehaviour activeSuggestions =
     column
         [ width (px 500)
-        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Background.color colourScheme.white
         , spacing 5
         , Border.width 1
-        , Border.color (colourScheme.darkGrey |> convertColorToElementColor)
+        , Border.color colourScheme.darkGrey
         ]
         (toSuggestionList activeSuggestions
             |> List.map (viewSuggestionItem config currentBehaviour)
@@ -314,8 +314,8 @@ viewSuggestionItem config currentBehaviour suggestionItem =
         [ width fill
         , pointer
         , mouseOver
-            [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
-            , Font.color (colourScheme.white |> convertColorToElementColor)
+            [ Background.color colourScheme.lightBlue
+            , Font.color colourScheme.white
             ]
         , padding 10
         , onClick (config.userChoseOptionMsg facetAlias suggestValue currentBehaviour)

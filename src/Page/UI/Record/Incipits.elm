@@ -16,7 +16,7 @@ import Page.UI.Components exposing (h2, h3, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg, fileDownloadSvg, searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Request exposing (serverUrl)
 import Set exposing (Set)
 import Url.Builder
@@ -70,7 +70,7 @@ viewIncipit cfg incipit =
             , row
                 [ width fill
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-                , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+                , Border.color colourScheme.lightGrey
                 , paddingXY 0 10
                 ]
                 [ column
@@ -148,7 +148,7 @@ viewIncipitExtraInfo cfg encodings =
             [ width fill ]
             [ row
                 [ width fill
-                , Font.color (colourScheme.black |> convertColorToElementColor)
+                , Font.color colourScheme.black
                 , Border.dotted
                 , paddingXY 0 8
                 , spacing 5
@@ -371,7 +371,7 @@ viewRenderedIncipits incipits =
     row
         [ width (fill |> minimum 500 |> maximum 1000)
         , htmlAttribute (HA.class "search-results-rendered-incipit")
-        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Background.color colourScheme.white
         ]
         (List.map
             (\rendered ->

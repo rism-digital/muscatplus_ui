@@ -27,7 +27,6 @@ import Request exposing (createSvgRequest, serverUrl)
 import SearchPreferences exposing (SearchPreferences)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Set
-import Utilities exposing (choose)
 
 
 type alias Model msg =

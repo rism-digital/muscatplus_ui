@@ -2,7 +2,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, paddingXY, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, paddingEach, paddingXY, px, row, scrollbarY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -16,7 +16,7 @@ import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.UI.Attributes exposing (controlsColumnWidth, headingMD, responsiveCheckboxColumns, resultColumnWidth)
-import Page.UI.Components exposing (dividerWithText, viewBlankBottomBar)
+import Page.UI.Components exposing (dividerWithText)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
@@ -34,7 +34,7 @@ import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.UI.Search.SearchComponents exposing (viewSearchButtons)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.SortAndRows exposing (viewSearchPageSort)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData)
 import Session exposing (Session)
 import Set exposing (Set)
@@ -107,14 +107,14 @@ viewSearchResultsSection cfg resultsLoading body =
     row
         [ width fill
         , height fill
-        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Background.color colourScheme.white
         ]
         [ column
             [ resultColumnWidth (.device cfg.session)
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+            , Border.color colourScheme.slateGrey
             , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
             [ viewSearchResultsListPanel
@@ -171,9 +171,9 @@ viewActiveFilters =
         [ width fill
         , height (px 80)
         , paddingXY 20 10
-        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+        , Background.color colourScheme.lightGrey
         , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
-        , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+        , Border.color colourScheme.midGrey
         ]
         [ column
             [ width fill

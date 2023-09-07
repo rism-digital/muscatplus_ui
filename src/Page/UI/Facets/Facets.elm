@@ -16,7 +16,7 @@ import Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 import Page.UI.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
 import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Set
 
 
@@ -152,7 +152,7 @@ viewFacetsControlPanel alias header cfg body =
         row
             [ width fill
             , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-            , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+            , Border.color colourScheme.lightGrey
             , paddingXY 0 10
             ]
             [ column
@@ -160,7 +160,7 @@ viewFacetsControlPanel alias header cfg body =
                 ]
                 [ row
                     [ width fill
-                    , Font.color (colourScheme.black |> convertColorToElementColor)
+                    , Font.color colourScheme.black
                     , Border.dotted
                     , paddingXY 0 8
                     , spacing 5

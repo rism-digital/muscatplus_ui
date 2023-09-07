@@ -13,11 +13,11 @@ import List.Extra as LE
 import Maybe.Extra as ME
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
-import Page.UI.Attributes exposing (bodyRegular, emptyAttribute, headingLG, sectionSpacing)
+import Page.UI.Attributes exposing (bodyRegular, emptyAttribute, sectionSpacing)
 import Page.UI.Components exposing (h2, h3)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Simple.Animation as Animation exposing (Animation)
 import Simple.Animation.Property as P
@@ -143,13 +143,13 @@ viewNationalCollectionChooser session =
             nationalCollectionChooserAnimations
             [ width (px 500)
             , alignRight
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             , height (shrink |> minimum 600 |> maximum 800)
-            , Font.color (colourScheme.black |> convertColorToElementColor)
+            , Font.color colourScheme.black
             , onMouseEnter UserMouseEnteredCountryChooser
             , onMouseLeave UserMouseExitedCountryChooser
             , Border.width 1
-            , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+            , Border.color colourScheme.midGrey
             ]
             [ column
                 [ width fill
@@ -177,7 +177,7 @@ viewNationalCollectionChooser session =
                             , spacing 10
                             , paddingXY 10 10
                             , pointer
-                            , mouseOver [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
+                            , mouseOver [ Background.color colourScheme.lightGrey ]
                             , onClick (UserChoseNationalCollection Nothing)
                             ]
                             [ el
@@ -239,17 +239,14 @@ viewNationalCollectionChooserMenuOption session =
 
         hoverStyles =
             if session.currentlyHoveredNationalCollectionSidebarOption then
-                Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+                Background.color colourScheme.lightGrey
 
             else
                 emptyAttribute
 
         iconBackgroundColor =
             if isRestrictedToNationalCollection then
-                Background.color
-                    (colourScheme.darkGrey
-                        |> convertColorToElementColor
-                    )
+                Background.color colourScheme.darkGrey
 
             else
                 emptyAttribute
@@ -268,7 +265,7 @@ viewNationalCollectionChooserMenuOption session =
 
         labelEl =
             el
-                [ Font.color (labelFontColour |> convertColorToElementColor)
+                [ Font.color labelFontColour
                 , Font.alignLeft
                 , bodyRegular
                 , alignLeft
@@ -306,7 +303,7 @@ viewNationalCollectionChooserMenuOption session =
                             , centerY
                             , Font.bold
                             , bodyRegular
-                            , Font.color (labelFontColour |> convertColorToElementColor)
+                            , Font.color labelFontColour
                             ]
                             (text countryCode)
                         ]
@@ -350,7 +347,7 @@ viewNationalCollectionChooserMenuOption session =
         , onMouseLeave UserMouseExitedNationalCollectionSidebarOption
         , iconBackgroundColor
         , hoverStyles
-        , Font.color (labelFontColour |> convertColorToElementColor)
+        , Font.color labelFontColour
         ]
         [ column
             [ width fill
@@ -377,7 +374,7 @@ viewNationalCollectionColumn language ( abbr, label ) =
         [ width fill
         , padding 10
         , mouseOver
-            [ Background.color (colourScheme.lightGrey |> convertColorToElementColor) ]
+            [ Background.color colourScheme.lightGrey ]
         , onClick (UserChoseNationalCollection (Just abbr))
         ]
         [ row

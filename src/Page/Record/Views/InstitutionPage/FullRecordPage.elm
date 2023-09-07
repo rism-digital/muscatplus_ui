@@ -1,7 +1,6 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
-import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -13,14 +12,14 @@ import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, vi
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (h2, mapViewer, viewSummaryField)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Session exposing (Session)
 import Url.Builder as QB exposing (absolute)
 
@@ -104,7 +103,7 @@ viewFullInstitutionPage session model body =
                 [ width fill
                 , height (px searchHeaderHeight)
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-                , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+                , Border.color colourScheme.darkBlue
                 ]
                 [ column
                     [ spacingXY 0 lineSpacing

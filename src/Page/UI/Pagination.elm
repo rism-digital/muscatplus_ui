@@ -8,10 +8,10 @@ import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
-import Page.UI.Attributes exposing (headingLG, minimalDropShadow)
+import Page.UI.Attributes exposing (headingLG)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme)
 
 
 paginationLink : Element a -> (String -> a) -> String -> Element a
@@ -45,8 +45,8 @@ viewPagination language pagination clickMsg =
         [ width fill
         , alignBottom
         , height (px 70)
-        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+        , Background.color colourScheme.lightGrey
+        , Border.color colourScheme.darkBlue
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
 
         --, minimalDropShadow

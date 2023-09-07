@@ -1,12 +1,11 @@
 module Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 
 import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, fillPortion, height, inFront, link, newTabLink, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
-import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (headingLG, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, renderParagraph, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)

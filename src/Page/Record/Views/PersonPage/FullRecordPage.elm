@@ -1,7 +1,6 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
-import Element.Background as Background
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -12,15 +11,14 @@ import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, vi
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (userCircleSvg)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Session exposing (Session)
 
 
@@ -93,7 +91,7 @@ viewFullPersonPage session model body =
                 [ width fill
                 , height (px searchHeaderHeight)
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-                , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+                , Border.color colourScheme.darkBlue
                 ]
                 [ column
                     [ spacingXY 0 lineSpacing

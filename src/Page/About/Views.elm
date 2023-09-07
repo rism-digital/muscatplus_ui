@@ -8,14 +8,14 @@ import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.UI.Attributes exposing (headingLG, headingXL, lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Facets.Toggle as Toggle
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Time exposing (Month(..), Posix)
 
 
 view : Session -> AboutPageModel -> Element AboutMsg
-view session model =
+view _ model =
     let
         isActive =
             model.linksEnabled
@@ -52,7 +52,7 @@ view session model =
             [ width fill
             , height fill
             , padding 20
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             , spacing sectionSpacing
             ]
             [ row

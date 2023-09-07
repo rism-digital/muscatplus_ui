@@ -13,14 +13,12 @@ module Page.UI.Components exposing
     , mapViewer
     , renderLabel
     , renderParagraph
-    , viewBlankBottomBar
     , viewParagraphField
     , viewSummaryField
     )
 
-import Color exposing (Color)
 import Css
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paddingXY, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -33,9 +31,9 @@ import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyAttribute, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXS, headingXXL, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Style exposing (colourScheme, colours, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 import Utilities exposing (toLinkedHtml)
 
 
@@ -126,8 +124,9 @@ basicCheckbox checked =
 dividerWithText : String -> Element msg
 dividerWithText dividerText =
     let
-        { red, green, blue } =
-            colours.slateGrey
+        { red, green, blue, alpha } =
+            colourScheme.slateGrey
+                |> rgbaFloatToInt
 
         beforeAndAfterStyles =
             [ Css.property "content" "\"\""
@@ -326,12 +325,12 @@ makeFlagIcon colours iconImage iconLabel =
         [ bodySM
         , padding 4
         , Border.width 1
-        , Border.color (colours.foreground |> convertColorToElementColor)
-        , Background.color (colours.background |> convertColorToElementColor)
+        , Border.color colours.foreground
+        , Background.color colours.background
         ]
         [ row
             [ spacing 5
-            , Font.color (colours.foreground |> convertColorToElementColor)
+            , Font.color colours.foreground
             ]
             [ el
                 [ width (px 15)

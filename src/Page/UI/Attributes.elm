@@ -33,7 +33,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Html as HT
 import Html.Attributes as HA
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 baseSize : Float
@@ -59,7 +59,7 @@ bodySerifFont =
 
 bodyFontColour : Attribute msg
 bodyFontColour =
-    Font.color (colourScheme.black |> convertColorToElementColor)
+    Font.color colourScheme.black
 
 
 bodyRegular : Attr decorative msg
@@ -102,7 +102,7 @@ emptyHtmlAttribute =
 facetBorderBottom : List (Attribute msg)
 facetBorderBottom =
     [ Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-    , Border.color (colourScheme.lightGrey |> convertColorToElementColor)
+    , Border.color colourScheme.lightGrey
     , paddingXY 0 lineSpacing
     ]
 
@@ -170,7 +170,6 @@ lineSpacing =
 linkColour : Attribute msg
 linkColour =
     colourScheme.lightBlue
-        |> convertColorToElementColor
         |> Font.color
 
 
@@ -180,7 +179,6 @@ minimalDropShadow =
         { blur = 8
         , color =
             colourScheme.lightGrey
-                |> convertColorToElementColor
         , offset = ( 0, 0 )
         , size = 2
         }
@@ -188,7 +186,7 @@ minimalDropShadow =
 
 pageBackground : Attribute msg
 pageBackground =
-    Background.color (colourScheme.white |> convertColorToElementColor)
+    Background.color colourScheme.white
 
 
 {-| <https://spencermortensen.com/articles/typographic-scale/>

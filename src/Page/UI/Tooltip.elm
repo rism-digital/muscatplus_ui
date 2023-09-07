@@ -4,9 +4,9 @@ import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, in
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
-import Page.UI.Attributes exposing (bodyRegular, minimalDropShadow)
+import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Images exposing (assistanceSvg, infoCircleSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 facetHelp : (Element msg -> Attribute msg) -> String -> Element msg
@@ -62,8 +62,8 @@ tooltip position tooltip_ =
 
 tooltipStyle : List (Attribute msg)
 tooltipStyle =
-    [ Background.color (colourScheme.black |> convertColorToElementColor)
-    , Font.color (colourScheme.white |> convertColorToElementColor)
+    [ Background.color colourScheme.black
+    , Font.color colourScheme.white
     , width (shrink |> minimum 140)
     , padding 12
     , spacing 5
@@ -75,8 +75,8 @@ tooltipStyle =
 
 tooltipStyle2 : List (Attribute msg)
 tooltipStyle2 =
-    [ Background.color (colourScheme.black |> convertColorToElementColor)
-    , Font.color (colourScheme.white |> convertColorToElementColor)
+    [ Background.color colourScheme.black
+    , Font.color colourScheme.white
     , width (shrink |> minimum 120)
     , padding 12
     , spacing 5

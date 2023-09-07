@@ -1,8 +1,7 @@
 module Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 
-import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, link, maximum, row, spacing, text, width)
+import Element exposing (Color, Element, column, fill, link, maximum, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -14,7 +13,7 @@ import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, iiifLogo, layerGroupSvg, musicNotationSvg, penNibSvg, peopleSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 viewSourceFlags : Language -> SourceResultFlags -> Element msg
@@ -101,7 +100,7 @@ viewSourcePartOf language fontLinkColour partOfBody =
                 [ width fill ]
                 [ text (extractLabelFromLanguageMap language localTranslations.partOf ++ " ")
                 , link
-                    [ Font.color (fontLinkColour |> convertColorToElementColor) ]
+                    [ Font.color fontLinkColour ]
                     { label = text (extractLabelFromLanguageMap language (.label partOfBody.source))
                     , url = .id partOfBody.source
                     }

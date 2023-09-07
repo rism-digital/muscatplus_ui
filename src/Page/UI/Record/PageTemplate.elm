@@ -9,8 +9,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, above, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, text, width)
-import Element.Background as Background
+import Element exposing (Attribute, Element, above, alignBottom, alignLeft, alignRight, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
@@ -18,12 +17,12 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
-import Page.UI.Attributes exposing (headingHero, headingMD, headingSM, lineSpacing, linkColour)
-import Page.UI.Components exposing (h1, h2, h2s)
+import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour)
+import Page.UI.Components exposing (h1, h2s)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (externalLinkSvg, sourcesSvg)
+import Page.UI.Images exposing (externalLinkSvg)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Session exposing (Session)
 import Url
@@ -56,7 +55,7 @@ pageFooterTemplate session language footer =
         , padding 20
         , alignBottom
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
-        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+        , Border.color colourScheme.darkBlue
 
         --, Background.color (colourScheme.cream |> convertColorToElementColor)
         ]

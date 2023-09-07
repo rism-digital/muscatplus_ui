@@ -14,7 +14,7 @@ import Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -144,7 +144,7 @@ viewTopBar lang model =
         [ width fill
         , height (px searchHeaderHeight)
         , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+        , Border.color colourScheme.darkBlue
         ]
         [ column
             [ width fill

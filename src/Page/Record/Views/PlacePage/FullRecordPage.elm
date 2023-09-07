@@ -9,7 +9,7 @@ import Page.RecordTypes.Place exposing (PlaceBody)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Images exposing (mapMarkerSvg)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
 
@@ -33,8 +33,8 @@ viewFullPlacePage session model body =
                 [ width fill
                 , alignTop
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-                , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
-                , Background.color (colourScheme.cream |> convertColorToElementColor)
+                , Border.color colourScheme.slateGrey
+                , Background.color colourScheme.cream
                 ]
                 [ column
                     [ width (px 80) ]

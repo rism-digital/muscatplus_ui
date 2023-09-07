@@ -9,7 +9,7 @@ import Language.LocalTranslations exposing (errorMessages)
 import Page.UI.Attributes exposing (headingSM, headingXL, lineSpacing, linkColour)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..))
 import Session exposing (Session)
 
@@ -130,7 +130,7 @@ view session model =
             , height fill
             , padding 20
             , spacing 10
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             ]
             [ row
                 [ centerX

@@ -1,21 +1,19 @@
 module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
 
-import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, mouseOver, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, formatNumberByLanguage)
-import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
-import Page.UI.Components exposing (h2, h3)
+import Page.UI.Components exposing (h3)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import String.Extra as SE
 import Url
@@ -23,10 +21,10 @@ import Utilities exposing (choose, convertPathToNodeId)
 
 
 type alias ResultColours =
-    { backgroundColour : Color
-    , fontLinkColour : Color
-    , textColour : Color
-    , iconColour : Color
+    { backgroundColour : Element.Color
+    , fontLinkColour : Element.Color
+    , textColour : Element.Color
+    , iconColour : Element.Color
     }
 
 
@@ -98,13 +96,10 @@ resultTemplate cfg =
         [ width fill
         , alignTop
         , alignLeft
-        , Background.color (.backgroundColour cfg.colours |> convertColorToElementColor)
-        , Font.color (.textColour cfg.colours |> convertColorToElementColor)
+        , Background.color (.backgroundColour cfg.colours)
+        , Font.color (.textColour cfg.colours)
         , onClick (cfg.clickMsg cfg.id)
-        , Border.color
-            (colourScheme.midGrey
-                |> convertColorToElementColor
-            )
+        , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
 
         --, Border.dotted
@@ -123,7 +118,7 @@ resultTemplate cfg =
                 , alignTop
                 ]
                 [ el
-                    [ Font.color (.fontLinkColour cfg.colours |> convertColorToElementColor)
+                    [ Font.color (.fontLinkColour cfg.colours)
                     , width fill
                     , alignTop
                     ]

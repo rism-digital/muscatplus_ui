@@ -10,7 +10,7 @@ import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 viewPaeHelp : Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
@@ -59,7 +59,7 @@ viewHelpText language =
         [ column
             [ width fill
             , padding 10
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             ]
             [ textColumn [ spacing lineSpacing ] helpText ]
         ]
@@ -76,14 +76,14 @@ englishPaeHelpText =
             , url = "https://www.iaml.info/plaine-easie-code"
             }
         , text """The most basic query uses upper-case letters, A-G, to represent pitches; for example, """
-        , el [ spacing lineSpacing, Font.family [ Font.monospace ], padding 2, Background.color (colourScheme.lightGrey |> convertColorToElementColor) ] (text "EDCDEEE")
+        , el [ spacing lineSpacing, Font.family [ Font.monospace ], padding 2, Background.color colourScheme.lightGrey ] (text "EDCDEEE")
         , text """. You can vary the note properties by using different characters immediately preceding it. The "'"
         (single quote) character will specify a note in the C4 octave, while the "," (comma) will shift the note to the
         C3 octave. Successive octave shifts up and down are accomplished by adding additional characters; "''" is a note
         in the C5 octave, and ",," is a note in the C2 octave. The "x", "b", and "n" characters immediately preceding
         the pitch name indicates sharps, flats, and naturals, respectively. For example, to query for the
         B-A-C-H figure, you might specify: """
-        , el [ spacing lineSpacing, Font.family [ Font.monospace ], padding 2, Background.color (colourScheme.lightGrey |> convertColorToElementColor) ] (text "'bB'A''C'nB")
+        , el [ spacing lineSpacing, Font.family [ Font.monospace ], padding 2, Background.color colourScheme.lightGrey ] (text "'bB'A''C'nB")
         , text """The preview will show you what your query will look like as you enter the notes. """
         , text """The piano keyboard will print the corresponding Plaine and Easie code in the input box as you press
         the keys, so you can use this input method to enter a search query. Search queries must be longer than three

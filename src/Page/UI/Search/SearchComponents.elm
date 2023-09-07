@@ -11,9 +11,9 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views exposing (createProbeErrorMessage)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG, headingMD, headingSM, lineSpacing)
+import Page.UI.Attributes exposing (headingLG, lineSpacing)
 import Page.UI.Images exposing (spinnerSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..))
 
 
@@ -106,19 +106,19 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
 
         ( submitButtonColours, submitButtonMsg, submitPointerStyle ) =
             if model.applyFilterPrompt && actionableProbeResponse then
-                ( colourScheme.lightBlue |> convertColorToElementColor
+                ( colourScheme.lightBlue
                 , Just submitMsg
                 , pointer
                 )
 
             else if isFrontPage then
-                ( colourScheme.lightBlue |> convertColorToElementColor
+                ( colourScheme.lightBlue
                 , Just submitMsg
                 , pointer
                 )
 
             else
-                ( colourScheme.midGrey |> convertColorToElementColor
+                ( colourScheme.midGrey
                 , Nothing
                 , htmlAttribute (HA.style "cursor" "not-allowed")
                 )
@@ -141,8 +141,8 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
     in
     row
         [ alignTop
-        , Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-        , Border.color (colourScheme.darkBlue |> convertColorToElementColor)
+        , Background.color colourScheme.lightGrey
+        , Border.color colourScheme.darkBlue
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
         , width fill
         , height (px 70)
@@ -171,7 +171,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                         , height (px 40)
                         , width (shrink |> minimum 120)
                         , Font.center
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , Font.color colourScheme.white
                         , headingLG
                         , submitPointerStyle
                         ]
@@ -182,13 +182,13 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 , column
                     [ width shrink ]
                     [ Input.button
-                        [ Border.color (colourScheme.turquoise |> convertColorToElementColor)
-                        , Background.color (colourScheme.turquoise |> convertColorToElementColor)
+                        [ Border.color colourScheme.turquoise
+                        , Background.color colourScheme.turquoise
                         , padding 10
                         , height (px 40)
                         , width (shrink |> minimum 120)
                         , Font.center
-                        , Font.color (colourScheme.white |> convertColorToElementColor)
+                        , Font.color colourScheme.white
                         , headingLG
                         ]
                         { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
@@ -216,9 +216,9 @@ viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
         Input.button
             [ width shrink
             , padding 10
-            , Background.color (colourScheme.lightOrange |> convertColorToElementColor)
+            , Background.color colourScheme.lightOrange
             , headingLG
-            , Font.color (colourScheme.white |> convertColorToElementColor)
+            , Font.color colourScheme.white
             ]
             { label = text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
             , onPress = submitMsg

@@ -1,8 +1,7 @@
 module Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 
-import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, el, fill, fillPortion, maximum, px, row, shrink, spacing, width)
+import Element exposing (Color, Element, column, el, fill, maximum, row, spacing, width)
 import Element.Font as Font
 import Language exposing (Language)
 import Page.RecordTypes.Incipit exposing (RenderedIncipit)

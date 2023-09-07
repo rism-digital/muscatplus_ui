@@ -13,7 +13,7 @@ import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h4)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip)
 import Page.UpdateHelpers exposing (selectAppropriateRangeFacetValues)
 
@@ -60,9 +60,9 @@ validateInput errorMessage =
             row
                 []
                 [ paragraph
-                    [ Background.color (colourScheme.red |> convertColorToElementColor)
+                    [ Background.color colourScheme.red
                     , padding 4
-                    , Font.color (colourScheme.white |> convertColorToElementColor)
+                    , Font.color colourScheme.white
                     ]
                     [ text eMsg ]
                 ]
@@ -114,14 +114,14 @@ viewRangeFacet config =
 
         lowerValueBorder =
             if not lowerIsValid then
-                Element.focused [ Border.color (colourScheme.red |> convertColorToElementColor) ]
+                Element.focused [ Border.color colourScheme.red ]
 
             else
                 emptyAttribute
 
         upperValueBorder =
             if not upperIsValid then
-                Element.focused [ Border.color (colourScheme.red |> convertColorToElementColor) ]
+                Element.focused [ Border.color colourScheme.red ]
 
             else
                 emptyAttribute
@@ -138,7 +138,7 @@ viewRangeFacet config =
             , spacing lineSpacing
             , paddingEach { bottom = 0, left = 14, right = 0, top = 0 }
             , Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
-            , Border.color (colourScheme.midGrey |> convertColorToElementColor)
+            , Border.color colourScheme.midGrey
             ]
             [ row
                 [ width fill

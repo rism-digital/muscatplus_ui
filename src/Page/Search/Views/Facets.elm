@@ -5,15 +5,14 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input exposing (button)
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), ModeFacet)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (headingLG, headingSM, minimalDropShadow)
+import Page.UI.Attributes exposing (headingLG)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 
 
 facetSearchMsgConfig : FacetMsgConfig SearchMsg
@@ -81,15 +80,15 @@ viewModeItem selectedMode language fitem =
             parseStringToResultMode value
 
         selectedTab =
-            ( Border.color (colourScheme.darkBlue |> convertColorToElementColor)
-            , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
-            , Font.color (colourScheme.white |> convertColorToElementColor)
+            ( Border.color colourScheme.darkBlue
+            , Background.color colourScheme.darkBlue
+            , Font.color colourScheme.white
             )
 
         unselectedTab =
-            ( Border.color (colourScheme.midGrey |> convertColorToElementColor)
-            , Background.color (colourScheme.white |> convertColorToElementColor)
-            , Font.color (colourScheme.black |> convertColorToElementColor)
+            ( Border.color colourScheme.midGrey
+            , Background.color colourScheme.white
+            , Font.color colourScheme.black
             )
 
         ( borderColour, backgroundColour, fontColour ) =

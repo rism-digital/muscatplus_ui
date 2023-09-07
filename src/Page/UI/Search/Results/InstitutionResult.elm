@@ -1,13 +1,11 @@
 module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 
-import Color exposing (Color)
 import Dict exposing (Dict)
-import Element exposing (Element, column, fill, maximum, row, spacing, width)
-import Element.Font as Font
+import Element exposing (Color, Element, column, fill, maximum, row, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (InstitutionResultBody, InstitutionResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodyRegular, bodySM)
+import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (mapMarkerSvg, penNibSvg, sourcesSvg)

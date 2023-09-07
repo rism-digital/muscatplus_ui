@@ -3,12 +3,11 @@ module Page.Record.Views.SourceSearch exposing
     , viewSourceSearchTab
     )
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, maximum, none, padding, paddingXY, pointer, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, clipY, column, el, fill, height, maximum, none, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input exposing (button)
 import Element.Region as Region
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
@@ -17,12 +16,12 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (bodySerifFont, headingLG, headingMD, headingSM, linkColour)
-import Page.UI.Components exposing (h3, h4)
+import Page.UI.Attributes exposing (headingLG)
+import Page.UI.Components exposing (h3)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -112,15 +111,15 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
             model.currentTab
 
         selectedTab =
-            ( colourScheme.darkBlue |> convertColorToElementColor
-            , colourScheme.darkBlue |> convertColorToElementColor
-            , colourScheme.white |> convertColorToElementColor
+            ( colourScheme.darkBlue
+            , colourScheme.darkBlue
+            , colourScheme.white
             )
 
         unselectedTab =
-            ( colourScheme.midGrey |> convertColorToElementColor
-            , colourScheme.white |> convertColorToElementColor
-            , colourScheme.black |> convertColorToElementColor
+            ( colourScheme.midGrey
+            , colourScheme.white
+            , colourScheme.black
             )
 
         ( descriptionTabBorder, descriptionTabBackground, descriptionTabFontColour ) =

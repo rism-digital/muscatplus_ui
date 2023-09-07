@@ -5,9 +5,8 @@ import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
-import Page.UI.Components exposing (h1)
 import Page.UI.Record.Incipits exposing (viewIncipit)
-import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, pageHeaderTemplateNoToc)
+import Page.UI.Record.PageTemplate exposing (pageHeaderTemplateNoToc)
 import Set exposing (Set)
 
 

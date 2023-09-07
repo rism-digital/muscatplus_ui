@@ -6,7 +6,7 @@ import Page.Error.Views
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -38,7 +38,7 @@ view session model =
             , height fill
             , alignTop
             , clipY
-            , Background.color (colourScheme.white |> convertColorToElementColor)
+            , Background.color colourScheme.white
             ]
             [ pageView ]
         ]

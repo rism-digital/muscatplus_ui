@@ -1,9 +1,8 @@
 module Page.SideBar.Views exposing (view)
 
-import Color exposing (Color)
 import Config
 import Debouncer.Messages exposing (provideInput)
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, moveUp, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Color, Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, moveUp, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -17,11 +16,10 @@ import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedLabel)
-import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor, headerHeight, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, headerHeight, searchHeaderHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
@@ -35,12 +33,12 @@ dividingLine =
         , height shrink
         , paddingXY 15 0
         , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-        , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+        , Border.color colourScheme.slateGrey
         ]
         [ column
             [ width fill
             , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+            , Border.color colourScheme.slateGrey
             ]
             []
         ]
@@ -77,7 +75,7 @@ menuOption cfg option currentlyHovered =
 
         hoverStyles =
             if currentlyHovered then
-                [ Background.color (colourScheme.lightGrey |> convertColorToElementColor)
+                [ Background.color colourScheme.lightGrey
                 ]
 
             else
@@ -85,7 +83,7 @@ menuOption cfg option currentlyHovered =
 
         selectedStyle =
             if cfg.isCurrent then
-                [ Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+                [ Background.color colourScheme.lightBlue
                 ]
 
             else
@@ -96,7 +94,7 @@ menuOption cfg option currentlyHovered =
                 [ [ onClick (UserClickedSideBarOptionForFrontPage option)
                   , onMouseEnter (UserMouseEnteredSideBarOption option)
                   , onMouseLeave (UserMouseExitedSideBarOption option)
-                  , Font.color (fontColour |> convertColorToElementColor)
+                  , Font.color fontColour
                   ]
                 , hoverStyles
                 , selectedStyle
@@ -252,7 +250,7 @@ view session =
         , alignTop
         , alignLeft
         , htmlAttribute (HA.style "z-index" "20")
-        , Background.color (colourScheme.white |> convertColorToElementColor)
+        , Background.color colourScheme.white
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
 
@@ -261,7 +259,7 @@ view session =
         [ row
             [ width fill
             , height (px searchHeaderHeight)
-            , Background.color (colourScheme.darkBlue |> convertColorToElementColor)
+            , Background.color colourScheme.darkBlue
             ]
             [ column
                 [ centerY
@@ -301,7 +299,7 @@ view session =
             , alignLeft
             , paddingXY 0 10
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+            , Border.color colourScheme.slateGrey
             ]
             [ column
                 [ width fill
@@ -319,7 +317,7 @@ view session =
             , alignLeft
             , paddingXY 0 10
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+            , Border.color colourScheme.slateGrey
             ]
             [ column
                 [ width fill
@@ -357,7 +355,7 @@ view session =
             , alignLeft
             , paddingXY 0 10
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+            , Border.color colourScheme.slateGrey
             ]
             [ column
                 [ width fill
@@ -377,7 +375,7 @@ view session =
             [ height fill
             , width fill
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color (colourScheme.slateGrey |> convertColorToElementColor)
+            , Border.color colourScheme.slateGrey
             ]
             [ column
                 [ height fill

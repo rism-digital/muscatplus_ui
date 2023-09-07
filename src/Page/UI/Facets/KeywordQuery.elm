@@ -14,7 +14,7 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.UI.Attributes exposing (headingXXL, lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (h2, h4)
+import Page.UI.Components exposing (h2)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Tooltip exposing (facetHelp)
 

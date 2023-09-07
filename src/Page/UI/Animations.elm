@@ -10,8 +10,8 @@ import Element exposing (Attribute, Element)
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
-import Page.UI.Attributes exposing (bodyRegular, headingMD)
-import Page.UI.Style exposing (colourScheme, convertColorToElementColor)
+import Page.UI.Attributes exposing (bodyRegular)
+import Page.UI.Style exposing (colourScheme)
 import Simple.Animation as Animation exposing (Animation)
 import Simple.Animation.Animated as Animated
 import Simple.Animation.Property as P
@@ -71,7 +71,7 @@ progressBar =
     animatedEl progressBarAnimation
         [ Element.height (Element.px 10)
         , Element.width (Element.px 0)
-        , Background.color (colourScheme.lightBlue |> convertColorToElementColor)
+        , Background.color colourScheme.lightBlue
         , Element.htmlAttribute (HA.style "position" "fixed")
         , Element.htmlAttribute (HA.style "top" "0")
         , Element.htmlAttribute (HA.style "left" "0")

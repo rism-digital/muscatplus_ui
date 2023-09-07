@@ -22,7 +22,7 @@ import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, pageBackground)
-import Page.UI.Style exposing (colours)
+import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 import Response exposing (Response(..), ServerData(..))
 
 
@@ -32,8 +32,9 @@ view model =
         -- set the colour for links (a tags) globally.
         globalLinkColor =
             let
-                { red, green, blue } =
-                    colours.lightBlue
+                { red, green, blue, alpha } =
+                    colourScheme.lightBlue
+                        |> rgbaFloatToInt
             in
             [ Css.color (Css.rgb red green blue) ]
 

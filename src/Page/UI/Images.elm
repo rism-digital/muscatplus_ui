@@ -1,6 +1,6 @@
 module Page.UI.Images exposing (SvgDetails, assistanceSvg, audioMutedSvg, audioUnmutedSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, closeWindowSvg, digitizedImagesSvg, externalLinkSvg, fileDownloadSvg, globeSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, rismLogo, searchSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, unknownSvg, userCircleSvg)
 
-import Color exposing (Color, toCssString)
+import Color exposing (toCssString)
 import Element exposing (Element, html)
 import Svg exposing (defs, g, metadata, svg)
 import Svg.Attributes exposing (d, fill, height, id, style, transform, version, viewBox, width)
@@ -12,14 +12,19 @@ type alias SvgDetails =
     }
 
 
-makeSvgIcon : Color -> SvgDetails -> Element msg
+makeSvgIcon : Element.Color -> SvgDetails -> Element msg
 makeSvgIcon color details =
+    let
+        htColor =
+            Element.toRgb color
+                |> Color.fromRgba
+    in
     html
         (svg
             [ viewBox details.viewBox ]
             [ Svg.path
                 [ d details.path
-                , fill (toCssString color)
+                , fill (toCssString htColor)
                 ]
                 []
             ]
@@ -33,7 +38,7 @@ assistance =
     }
 
 
-assistanceSvg : Color -> Element msg
+assistanceSvg : Element.Color -> Element msg
 assistanceSvg color =
     makeSvgIcon color assistance
 
@@ -45,7 +50,7 @@ backspace =
     }
 
 
-backspaceSvg : Color -> Element msg
+backspaceSvg : Element.Color -> Element msg
 backspaceSvg color =
     makeSvgIcon color backspace
 
@@ -57,7 +62,7 @@ bookOpen =
     }
 
 
-bookOpenSvg : Color -> Element msg
+bookOpenSvg : Element.Color -> Element msg
 bookOpenSvg color =
     makeSvgIcon color bookOpen
 
@@ -69,7 +74,7 @@ briefcase =
     }
 
 
-briefcaseSvg : Color -> Element msg
+briefcaseSvg : Element.Color -> Element msg
 briefcaseSvg color =
     makeSvgIcon color briefcase
 
@@ -81,7 +86,7 @@ calendar =
     }
 
 
-calendarSvg : Color -> Element msg
+calendarSvg : Element.Color -> Element msg
 calendarSvg color =
     makeSvgIcon color calendar
 
@@ -93,7 +98,7 @@ checkedBox =
     }
 
 
-checkedBoxSvg : Color -> Element msg
+checkedBoxSvg : Element.Color -> Element msg
 checkedBoxSvg color =
     makeSvgIcon color checkedBox
 
@@ -105,7 +110,7 @@ chevronDoubleLeft =
     }
 
 
-chevronDoubleLeftSvg : Color -> Element msg
+chevronDoubleLeftSvg : Element.Color -> Element msg
 chevronDoubleLeftSvg color =
     makeSvgIcon color chevronDoubleLeft
 
@@ -117,7 +122,7 @@ chevronDoubleRight =
     }
 
 
-chevronDoubleRightSvg : Color -> Element msg
+chevronDoubleRightSvg : Element.Color -> Element msg
 chevronDoubleRightSvg color =
     makeSvgIcon color chevronDoubleRight
 
@@ -129,7 +134,7 @@ chevronDown =
     }
 
 
-chevronDownSvg : Color -> Element msg
+chevronDownSvg : Element.Color -> Element msg
 chevronDownSvg color =
     makeSvgIcon color chevronDown
 
@@ -141,7 +146,7 @@ chevronLeft =
     }
 
 
-chevronLeftSvg : Color -> Element msg
+chevronLeftSvg : Element.Color -> Element msg
 chevronLeftSvg color =
     makeSvgIcon color chevronLeft
 
@@ -153,7 +158,7 @@ chevronRight =
     }
 
 
-chevronRightSvg : Color -> Element msg
+chevronRightSvg : Element.Color -> Element msg
 chevronRightSvg color =
     makeSvgIcon color chevronRight
 
@@ -165,7 +170,7 @@ chevronUp =
     }
 
 
-chevronUpSvg : Color -> Element msg
+chevronUpSvg : Element.Color -> Element msg
 chevronUpSvg color =
     makeSvgIcon color chevronUp
 
@@ -177,7 +182,7 @@ closeWindow =
     }
 
 
-closeWindowSvg : Color -> Element msg
+closeWindowSvg : Element.Color -> Element msg
 closeWindowSvg color =
     makeSvgIcon color closeWindow
 
@@ -189,7 +194,7 @@ digitizedImages =
     }
 
 
-digitizedImagesSvg : Color -> Element msg
+digitizedImagesSvg : Element.Color -> Element msg
 digitizedImagesSvg color =
     makeSvgIcon color digitizedImages
 
@@ -201,7 +206,7 @@ edit =
     }
 
 
-editSvg : Color -> Element msg
+editSvg : Element.Color -> Element msg
 editSvg color =
     makeSvgIcon color edit
 
@@ -213,7 +218,7 @@ externalLink =
     }
 
 
-externalLinkSvg : Color -> Element msg
+externalLinkSvg : Element.Color -> Element msg
 externalLinkSvg color =
     makeSvgIcon color externalLink
 
@@ -225,7 +230,7 @@ fileDownload =
     }
 
 
-fileDownloadSvg : Color -> Element msg
+fileDownloadSvg : Element.Color -> Element msg
 fileDownloadSvg color =
     makeSvgIcon color fileDownload
 
@@ -237,7 +242,7 @@ flag =
     }
 
 
-flagSvg : Color -> Element msg
+flagSvg : Element.Color -> Element msg
 flagSvg color =
     makeSvgIcon color flag
 
@@ -256,12 +261,12 @@ globeStand =
     }
 
 
-globeStandSvg : Color -> Element msg
+globeStandSvg : Element.Color -> Element msg
 globeStandSvg color =
     makeSvgIcon color globeStand
 
 
-globeSvg : Color -> Element msg
+globeSvg : Element.Color -> Element msg
 globeSvg color =
     makeSvgIcon color globe
 
@@ -330,7 +335,7 @@ infoCircle =
     }
 
 
-infoCircleSvg : Color -> Element msg
+infoCircleSvg : Element.Color -> Element msg
 infoCircleSvg color =
     makeSvgIcon color infoCircle
 
@@ -342,7 +347,7 @@ institution =
     }
 
 
-institutionSvg : Color -> Element msg
+institutionSvg : Element.Color -> Element msg
 institutionSvg color =
     makeSvgIcon color institution
 
@@ -354,7 +359,7 @@ intersection =
     }
 
 
-intersectionSvg : Color -> Element msg
+intersectionSvg : Element.Color -> Element msg
 intersectionSvg color =
     makeSvgIcon color intersection
 
@@ -366,7 +371,7 @@ languages =
     }
 
 
-languagesSvg : Color -> Element msg
+languagesSvg : Element.Color -> Element msg
 languagesSvg color =
     makeSvgIcon color languages
 
@@ -378,7 +383,7 @@ layerGroup =
     }
 
 
-layerGroupSvg : Color -> Element msg
+layerGroupSvg : Element.Color -> Element msg
 layerGroupSvg color =
     makeSvgIcon color layerGroup
 
@@ -390,7 +395,7 @@ liturgicalFestival =
     }
 
 
-liturgicalFestivalSvg : Color -> Element msg
+liturgicalFestivalSvg : Element.Color -> Element msg
 liturgicalFestivalSvg color =
     makeSvgIcon color liturgicalFestival
 
@@ -402,7 +407,7 @@ mapMarker =
     }
 
 
-mapMarkerSvg : Color -> Element msg
+mapMarkerSvg : Element.Color -> Element msg
 mapMarkerSvg color =
     makeSvgIcon color mapMarker
 
@@ -414,7 +419,7 @@ menuHamburger =
     }
 
 
-menuHamburgerSvg : Color -> Element msg
+menuHamburgerSvg : Element.Color -> Element msg
 menuHamburgerSvg color =
     makeSvgIcon color menuHamburger
 
@@ -426,7 +431,7 @@ musicList =
     }
 
 
-musicListSvg : Color -> Element msg
+musicListSvg : Element.Color -> Element msg
 musicListSvg color =
     makeSvgIcon color musicList
 
@@ -438,7 +443,7 @@ musicNotation =
     }
 
 
-musicNotationSvg : Color -> Element msg
+musicNotationSvg : Element.Color -> Element msg
 musicNotationSvg color =
     makeSvgIcon color musicNotation
 
@@ -450,7 +455,7 @@ pen =
     }
 
 
-penSvg : Color -> Element msg
+penSvg : Element.Color -> Element msg
 penSvg color =
     makeSvgIcon color pen
 
@@ -462,7 +467,7 @@ penNib =
     }
 
 
-penNibSvg : Color -> Element msg
+penNibSvg : Element.Color -> Element msg
 penNibSvg color =
     makeSvgIcon color penNib
 
@@ -474,7 +479,7 @@ people =
     }
 
 
-peopleSvg : Color -> Element msg
+peopleSvg : Element.Color -> Element msg
 peopleSvg color =
     makeSvgIcon color people
 
@@ -486,7 +491,7 @@ printingPress =
     }
 
 
-printingPressSvg : Color -> Element msg
+printingPressSvg : Element.Color -> Element msg
 printingPressSvg color =
     makeSvgIcon color printingPress
 
@@ -498,7 +503,7 @@ quoteRight =
     }
 
 
-quoteRightSvg : Color -> Element msg
+quoteRightSvg : Element.Color -> Element msg
 quoteRightSvg color =
     makeSvgIcon color quoteRight
 
@@ -510,11 +515,13 @@ quoteRightSvg color =
     The colour is, for now, simply a hex string value (including the leading "#")
 
 -}
-rismLogo : Color -> Int -> Element msg
+rismLogo : Element.Color -> Int -> Element msg
 rismLogo colour size =
     let
         hexColour =
-            toCssString colour
+            Element.toRgb colour
+                |> Color.fromRgba
+                |> toCssString
     in
     html
         (svg
@@ -577,7 +584,7 @@ rismLogo colour size =
         )
 
 
-onlineTextSvg : Color -> Element msg
+onlineTextSvg : Element.Color -> Element msg
 onlineTextSvg color =
     makeSvgIcon color
         { viewBox = "142.433 178.352 224.572 40.992"
@@ -592,7 +599,7 @@ scrollOld =
     }
 
 
-scrollOldSvg : Color -> Element msg
+scrollOldSvg : Element.Color -> Element msg
 scrollOldSvg color =
     makeSvgIcon color scrollOld
 
@@ -604,7 +611,7 @@ search =
     }
 
 
-searchSvg : Color -> Element msg
+searchSvg : Element.Color -> Element msg
 searchSvg color =
     makeSvgIcon color search
 
@@ -616,7 +623,7 @@ sortAlphaDesc =
     }
 
 
-sortAlphaDescSvg : Color -> Element msg
+sortAlphaDescSvg : Element.Color -> Element msg
 sortAlphaDescSvg color =
     makeSvgIcon color sortAlphaDesc
 
@@ -628,7 +635,7 @@ sortNumericDesc =
     }
 
 
-sortNumericDescSvg : Color -> Element msg
+sortNumericDescSvg : Element.Color -> Element msg
 sortNumericDescSvg color =
     makeSvgIcon color sortNumericDesc
 
@@ -640,7 +647,7 @@ source =
     }
 
 
-sourceSvg : Color -> Element msg
+sourceSvg : Element.Color -> Element msg
 sourceSvg color =
     makeSvgIcon color source
 
@@ -652,13 +659,18 @@ sources =
     }
 
 
-sourcesSvg : Color -> Element msg
+sourcesSvg : Element.Color -> Element msg
 sourcesSvg color =
     makeSvgIcon color sources
 
 
-spinnerSvg : Color -> Element msg
+spinnerSvg : Element.Color -> Element msg
 spinnerSvg color =
+    let
+        htColor =
+            Element.toRgb color
+                |> Color.fromRgba
+    in
     html
         (svg [ viewBox "0 0 512 512" ]
             [ defs []
@@ -668,13 +680,13 @@ spinnerSvg color =
             , Svg.path
                 [ d "M478.71 364.58zm-22 6.11l-27.83-15.9a15.92 15.92 0 0 1-6.94-19.2A184 184 0 1 1 256 72c5.89 0 11.71.29 17.46.83-.74-.07-1.48-.15-2.23-.21-8.49-.69-15.23-7.31-15.23-15.83v-32a16 16 0 0 1 15.34-16C266.24 8.46 261.18 8 256 8 119 8 8 119 8 256s111 248 248 248c98 0 182.42-56.95 222.71-139.42-4.13 7.86-14.23 10.55-22 6.11z"
                 , Svg.Attributes.class "fa-secondary"
-                , fill (toCssString color)
+                , fill (toCssString htColor)
                 ]
                 []
             , Svg.path
                 [ d "M271.23 72.62c-8.49-.69-15.23-7.31-15.23-15.83V24.73c0-9.11 7.67-16.78 16.77-16.17C401.92 17.18 504 124.67 504 256a246 246 0 0 1-25 108.24c-4 8.17-14.37 11-22.26 6.45l-27.84-15.9c-7.41-4.23-9.83-13.35-6.2-21.07A182.53 182.53 0 0 0 440 256c0-96.49-74.27-175.63-168.77-183.38z"
                 , Svg.Attributes.class "fa-primary"
-                , fill (toCssString color)
+                , fill (toCssString htColor)
                 ]
                 []
             ]
@@ -688,7 +700,7 @@ textIcon =
     }
 
 
-textIconSvg : Color -> Element msg
+textIconSvg : Element.Color -> Element msg
 textIconSvg color =
     makeSvgIcon color textIcon
 
@@ -700,7 +712,7 @@ union =
     }
 
 
-unionSvg : Color -> Element msg
+unionSvg : Element.Color -> Element msg
 unionSvg color =
     makeSvgIcon color union
 
@@ -712,7 +724,7 @@ unknown =
     }
 
 
-unknownSvg : Color -> Element msg
+unknownSvg : Element.Color -> Element msg
 unknownSvg color =
     makeSvgIcon color unknown
 
@@ -724,7 +736,7 @@ userCircle =
     }
 
 
-userCircleSvg : Color -> Element msg
+userCircleSvg : Element.Color -> Element msg
 userCircleSvg color =
     makeSvgIcon color userCircle
 
@@ -736,7 +748,7 @@ caretCircleDown =
     }
 
 
-caretCircleDownSvg : Color -> Element msg
+caretCircleDownSvg : Element.Color -> Element msg
 caretCircleDownSvg color =
     makeSvgIcon color caretCircleDown
 
@@ -748,7 +760,7 @@ caretCircleRight =
     }
 
 
-caretCircleRightSvg : Color -> Element msg
+caretCircleRightSvg : Element.Color -> Element msg
 caretCircleRightSvg color =
     makeSvgIcon color caretCircleRight
 
@@ -760,7 +772,7 @@ audioMuted =
     }
 
 
-audioMutedSvg : Color -> Element msg
+audioMutedSvg : Element.Color -> Element msg
 audioMutedSvg color =
     makeSvgIcon color audioMuted
 
@@ -772,6 +784,6 @@ audioUnmuted =
     }
 
 
-audioUnmutedSvg : Color -> Element msg
+audioUnmutedSvg : Element.Color -> Element msg
 audioUnmutedSvg color =
     makeSvgIcon color audioUnmuted
