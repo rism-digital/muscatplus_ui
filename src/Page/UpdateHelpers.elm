@@ -441,18 +441,19 @@ userClickedSelectFacetItem alias facetValue model =
         newActiveFilters =
             Dict.update alias
                 (\existingValues ->
-                    case existingValues of
-                        Just list ->
+                    ME.unpack
+                        (\() -> Just [ facetValue ])
+                        (\list ->
                             if List.member facetValue list == False then
                                 Just (facetValue :: list)
 
                             else
                                 Just (LE.remove facetValue list)
-
-                        Nothing ->
-                            Just [ facetValue ]
+                        )
+                        existingValues
                 )
                 activeFilters
+                |> Dict.filter (\_ value -> List.isEmpty value |> not)
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters
