@@ -2,6 +2,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
+import Dict
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, paddingEach, paddingXY, px, row, scrollbarY, text, width)
 import Element.Background as Background
 import Element.Border as Border
@@ -22,7 +23,7 @@ import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewError, viewPreviewRouter)
-import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
+import Page.UI.Search.Controls.ControlsConfig exposing (ActiveFiltersCfg, SearchControlsConfig)
 import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
@@ -151,6 +152,10 @@ viewSearchResultsSection cfg resultsLoading body =
                 , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                 }
             , viewActiveFilters
+                { session = cfg.session
+                , model = cfg.model
+                , body = body
+                }
             , viewSearchButtons
                 { language = language
                 , model = cfg.model
@@ -159,14 +164,24 @@ viewSearchResultsSection cfg resultsLoading body =
                 , submitMsg = cfg.userTriggeredSearchSubmitMsg
                 , resetMsg = cfg.userResetAllFiltersMsg
                 }
-
-            --, viewBlankBottomBar
             ]
         ]
 
 
-viewActiveFilters : Element msg
-viewActiveFilters =
+viewActiveFilters : ActiveFiltersCfg a b msg -> Element msg
+viewActiveFilters { session, model, body } =
+    let
+        activeSearch =
+            .nextQuery model.activeSearch
+
+        filters =
+            activeSearch.filters
+                |> Dict.toList
+
+        asfTmpl ( label, value ) =
+            el []
+                (text (label ++ " " ++ String.join "; " value))
+    in
     row
         [ width fill
         , height (px 80)
@@ -186,7 +201,7 @@ viewActiveFilters =
                 [ width fill
                 , alignLeft
                 ]
-                []
+                (List.map asfTmpl filters)
             ]
         ]
 

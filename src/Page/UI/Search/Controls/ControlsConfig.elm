@@ -1,4 +1,4 @@
-module Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig, SearchControlsConfig)
+module Page.UI.Search.Controls.ControlsConfig exposing (ActiveFiltersCfg, ControlsConfig, PanelConfig, SearchControlsConfig)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Language exposing (Language, LanguageMap)
@@ -41,4 +41,11 @@ type alias SearchControlsConfig a b msg =
 type alias PanelConfig =
     { alias : String
     , label : LanguageMap
+    }
+
+
+type alias ActiveFiltersCfg a b msg =
+    { session : Session
+    , model : { a | activeSearch : ActiveSearch msg }
+    , body : { b | facets : Facets }
     }

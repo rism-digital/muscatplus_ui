@@ -49,6 +49,7 @@ type alias SourceRecordDescriptors =
 
 type SourceRecordType
     = SourceItemRecord
+    | SourceSingleItemRecord
     | SourceCollectionRecord
     | SourceCompositeRecord
 
@@ -149,6 +150,7 @@ sourceRecordTypeFromJsonType jsonType =
 sourceRecordTypeOptions : List ( String, SourceRecordType )
 sourceRecordTypeOptions =
     [ ( "rism:ItemRecord", SourceItemRecord )
+    , ( "rism:SingleItemRecord", SourceSingleItemRecord )
     , ( "rism:CollectionRecord", SourceCollectionRecord )
     , ( "rism:CompositeRecord", SourceCompositeRecord )
     ]
