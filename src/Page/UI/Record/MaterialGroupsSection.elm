@@ -1,6 +1,6 @@
 module Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 
-import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
@@ -32,9 +32,10 @@ viewMaterialGroup language mg =
                 [ width fill ]
                 [ column
                     [ width fill
-                    , spacing sectionSpacing
                     , height fill
                     , alignTop
+                    , spacing lineSpacing
+                    , paddingXY lineSpacing 10
                     ]
                     [ viewMaybe (viewSummaryField language) mg.summary
                     , viewMaybe (viewParagraphField language) mg.notes

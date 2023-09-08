@@ -1,6 +1,6 @@
 module Page.UI.Record.Incipits exposing (IncipitDisplayConfig, IncipitSectionConfig, viewIncipit, viewIncipitsSection, viewRenderedIncipits)
 
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, link, maximum, minimum, none, padding, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, link, maximum, minimum, none, padding, paddingEach, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -61,8 +61,7 @@ viewIncipit cfg incipit =
     row
         (width fill :: sectionBorderStyles)
         [ column
-            [ spacing lineSpacing
-            , width fill
+            [ width fill
             , height fill
             , alignTop
             ]
@@ -71,7 +70,7 @@ viewIncipit cfg incipit =
                 [ width fill
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.lightGrey
-                , paddingXY 0 10
+                , paddingXY lineSpacing 10
                 ]
                 [ column
                     [ width fill
@@ -80,7 +79,9 @@ viewIncipit cfg incipit =
                     , HA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
                     ]
                     [ row
-                        [ width fill ]
+                        [ width fill
+                        , paddingEach { top = 0, bottom = 10, left = 0, right = 0 }
+                        ]
                         [ column
                             [ width fill
                             , spacing 0
