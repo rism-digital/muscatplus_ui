@@ -16,7 +16,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG)
+import Page.UI.Attributes exposing (headingLG, headingXL)
 import Page.UI.Components exposing (h3)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
@@ -182,9 +182,9 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
             [ height fill
             , alignLeft
             , pointer
-            , paddingXY 20 5
+            , paddingXY 20 0
             , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
-            , Border.roundEach { topLeft = 5, topRight = 5, bottomLeft = 0, bottomRight = 0 }
+            , Border.roundEach { topLeft = 3, topRight = 3, bottomLeft = 0, bottomRight = 0 }
             , Border.color descriptionTabBorder
             , Background.color descriptionTabBackground
             , Font.color descriptionTabFontColour
@@ -195,32 +195,24 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
                 , centerY
                 ]
                 (h3 language localTranslations.description)
-
-            --{ label = h3 language localTranslations.description
-            --, onPress = Just (UserClickedRecordViewTab (DefaultRecordViewTab recordId))
-            --}
             ]
         , column
             [ height fill
             , pointer
             , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
-            , Border.roundEach { topLeft = 5, topRight = 5, bottomLeft = 0, bottomRight = 0 }
+            , Border.roundEach { topLeft = 3, topRight = 3, bottomLeft = 0, bottomRight = 0 }
             , Border.color searchTabBorder
             , Background.color searchTabBackground
             , Font.color searchTabFontColour
-            , paddingXY 20 0
+            , paddingXY 20 5
             , onClick (UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl))
             ]
             [ el
-                [ headingLG
-                , Region.heading 4
+                [ headingXL
+                , Region.heading 3
                 , Font.medium
                 , centerY
                 ]
                 sourceLabel
-
-            --{ label = sourceLabel
-            --, onPress = Just (UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl))
-            --}
             ]
         ]
