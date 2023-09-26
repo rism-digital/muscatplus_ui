@@ -106,7 +106,7 @@ update msg session =
             , Cmd.none
             )
 
-        UserMouseExitedSideBarOption _ ->
+        UserMouseExitedSideBarOption ->
             ( { session
                 | currentlyHoveredOption = Nothing
               }

@@ -1,6 +1,6 @@
 module Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)
 
-import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, none, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -79,24 +79,18 @@ viewModeItem selectedMode language fitem =
         rowMode =
             parseStringToResultMode value
 
-        selectedTab =
-            ( Border.color colourScheme.darkBlue
-            , Background.color colourScheme.darkBlue
-            , Font.color colourScheme.white
-            )
-
-        unselectedTab =
-            ( Border.color colourScheme.midGrey
-            , Background.color colourScheme.white
-            , Font.color colourScheme.black
-            )
-
         ( borderColour, backgroundColour, fontColour ) =
             if selectedMode == rowMode then
-                selectedTab
+                ( Border.color colourScheme.darkBlue
+                , Background.color colourScheme.darkBlue
+                , Font.color colourScheme.white
+                )
 
             else
-                unselectedTab
+                ( Border.color colourScheme.midGrey
+                , Background.color colourScheme.white
+                , Font.color colourScheme.black
+                )
 
         rowStyle =
             [ alignLeft
@@ -106,7 +100,7 @@ viewModeItem selectedMode language fitem =
             , paddingXY 20 5
             , spacingXY 5 0
             , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
-            , Border.roundEach { topLeft = 5, topRight = 5, bottomLeft = 0, bottomRight = 0 }
+            , Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 5, topRight = 5 }
             , onClick (UserClickedModeItem fitem)
             , borderColour
             , backgroundColour
@@ -130,18 +124,6 @@ viewModeItem selectedMode language fitem =
 
 viewModeItems : ResultMode -> Language -> ModeFacet -> Element SearchMsg
 viewModeItems selectedMode language typeFacet =
-    let
-        rowLabel =
-            none
-
-        --row
-        --    [ Font.medium
-        --    , height fill
-        --    , centerY
-        --    , headingLG
-        --    ]
-        --    [ text (extractLabelFromLanguageMap language typeFacet.label) ]
-    in
     row
         [ centerX
         , width fill

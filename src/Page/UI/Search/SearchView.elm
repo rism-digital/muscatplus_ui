@@ -187,7 +187,7 @@ viewActiveFilters { session, model, body } =
         , height (px 80)
         , paddingXY 20 10
         , Background.color colourScheme.lightGrey
-        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , Border.color colourScheme.midGrey
         ]
         [ column

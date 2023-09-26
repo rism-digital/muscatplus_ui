@@ -93,7 +93,7 @@ menuOption cfg option currentlyHovered =
             List.concat
                 [ [ onClick (UserClickedSideBarOptionForFrontPage option)
                   , onMouseEnter (UserMouseEnteredSideBarOption option)
-                  , onMouseLeave (UserMouseExitedSideBarOption option)
+                  , onMouseLeave UserMouseExitedSideBarOption
                   , Font.color fontColour
                   ]
                 , hoverStyles
@@ -167,9 +167,6 @@ view session =
                     False
 
         -- only show the selected option if we're on the front page.
-        sideBarAnimation =
-            session.expandedSideBar
-
         incipitsInterfaceMenuOption =
             menuOption
                 { icon = musicNotationSvg
@@ -212,6 +209,9 @@ view session =
         showLabels =
             showSideBarLabels session.expandedSideBar
 
+        sideBarAnimation =
+            session.expandedSideBar
+
         sideAnimation =
             case sideBarAnimation of
                 Expanded ->
@@ -253,8 +253,6 @@ view session =
         , Background.color colourScheme.white
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
-
-        --, sideBarShadow
         ]
         [ row
             [ width fill

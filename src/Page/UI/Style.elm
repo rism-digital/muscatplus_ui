@@ -207,11 +207,6 @@ colourScheme =
     }
 
 
-convertRGBAToColor : RGBA -> Element.Color
-convertRGBAToColor rgba =
-    Element.fromRgb255 rgba
-
-
 {-| Converts a RGBA of Integers to a Color value.
 -}
 rgbaFloatToInt : Element.Color -> { red : Int, green : Int, blue : Int, alpha : Float }

@@ -99,7 +99,7 @@ viewFrontSearchControls cfg =
         [ column
             [ width fill
             , height fill
-            , Border.widthEach { top = 0, bottom = 0, left = 0, right = 1 }
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
             , Border.color colourScheme.slateGrey
             ]
             [ viewFacetPanels cfg

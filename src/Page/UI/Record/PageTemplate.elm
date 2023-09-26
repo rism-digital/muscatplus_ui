@@ -94,12 +94,12 @@ pageHeaderTemplate :
     -> Element msg
 pageHeaderTemplate language icon header =
     headerTmpl
-        { hLevel = h1 language
-        , icon = icon
-        , body = header
+        { body = header
         , extraAttrs =
             [ htmlAttribute (HA.id header.sectionToc)
             ]
+        , hLevel = h1 language
+        , icon = icon
         }
 
 
@@ -113,10 +113,10 @@ pageHeaderTemplateNoToc :
     -> Element msg
 pageHeaderTemplateNoToc language icon header =
     headerTmpl
-        { hLevel = h1 language
-        , icon = icon
-        , body = header
+        { body = header
         , extraAttrs = []
+        , hLevel = h1 language
+        , icon = icon
         }
 
 
@@ -127,27 +127,26 @@ subHeaderTemplate :
     -> Element msg
 subHeaderTemplate language icon header =
     headerTmpl
-        { hLevel = h2s language
-        , icon = icon
-        , body = header
+        { body = header
         , extraAttrs = []
+        , hLevel = h2s language
+        , icon = icon
         }
 
 
 headerTmpl :
-    { hLevel : LanguageMap -> Element msg
-    , icon : Maybe (Element msg)
-    , body : { a | label : LanguageMap }
+    { body : { a | label : LanguageMap }
     , extraAttrs : List (Attribute msg)
+    , hLevel : LanguageMap -> Element msg
+    , icon : Maybe (Element msg)
     }
     -> Element msg
 headerTmpl cfg =
     row
-        ([ width fill
-         , spacing 5
-         , alignBottom
-         ]
-            ++ cfg.extraAttrs
+        (width fill
+            :: spacing 5
+            :: alignBottom
+            :: cfg.extraAttrs
         )
         [ viewMaybe identity cfg.icon
         , cfg.hLevel (.label cfg.body)

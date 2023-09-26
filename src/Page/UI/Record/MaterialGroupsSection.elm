@@ -4,7 +4,7 @@ import Element exposing (Element, alignTop, column, fill, height, paddingXY, row
 import Language exposing (Language)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
 import Page.UI.Components exposing (h3, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)

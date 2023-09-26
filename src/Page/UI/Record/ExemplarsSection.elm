@@ -140,8 +140,8 @@ viewHeldBy language body =
         , link
             [ linkColour
             ]
-            { url = body.id
-            , label = h2 language body.label
+            { label = h2 language body.label
+            , url = body.id
             }
         , externalLinkTemplate body.id
         ]

@@ -25,7 +25,7 @@ type SideBarMsg
     | UserMouseExitedSideBar
     | UserClickedSideBarOptionForFrontPage SideBarOption
     | UserMouseEnteredSideBarOption SideBarOption
-    | UserMouseExitedSideBarOption SideBarOption
+    | UserMouseExitedSideBarOption
     | UserMouseEnteredCountryChooser
     | UserMouseExitedCountryChooser
     | UserMouseEnteredNationalCollectionSidebarOption

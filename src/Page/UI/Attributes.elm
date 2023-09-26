@@ -18,7 +18,6 @@ module Page.UI.Attributes exposing
     , labelFieldColumnAttributes
     , lineSpacing
     , linkColour
-    , minimalDropShadow
     , pageBackground
     , responsiveCheckboxColumns
     , resultColumnWidth
@@ -158,7 +157,7 @@ labelFieldColumnAttributes =
     [ width (fill |> maximum 250 |> minimum 200)
     , alignTop
     , spacing lineSpacing
-    , paddingEach { top = 0, bottom = 5, left = 0, right = 0 }
+    , paddingEach { bottom = 5, left = 0, right = 0, top = 0 }
     ]
 
 
@@ -220,11 +219,11 @@ valueFieldColumnAttributes =
 resultColumnWidth : Device -> Attribute msg
 resultColumnWidth { class, orientation } =
     case ( class, orientation ) of
-        ( BigDesktop, Landscape ) ->
-            width (px 600 |> minimum 600)
-
         ( Desktop, Landscape ) ->
             width (px 600)
+
+        ( BigDesktop, Landscape ) ->
+            width (px 600 |> minimum 600)
 
         _ ->
             -- TODO: Figure out what else goes here.

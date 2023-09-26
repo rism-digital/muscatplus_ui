@@ -80,7 +80,7 @@ viewIncipit cfg incipit =
                     ]
                     [ row
                         [ width fill
-                        , paddingEach { top = 0, bottom = 10, left = 0, right = 0 }
+                        , paddingEach { bottom = 10, left = 0, right = 0, top = 0 }
                         ]
                         [ column
                             [ width fill
