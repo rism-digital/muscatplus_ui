@@ -1,6 +1,5 @@
 module Page.UI.Style exposing
-    ( RGBA
-    , colourScheme
+    ( colourScheme
     , headerHeight
     , rgbaFloatToInt
     , searchHeaderHeight

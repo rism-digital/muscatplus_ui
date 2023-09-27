@@ -124,7 +124,7 @@ basicCheckbox checked =
 dividerWithText : String -> Element msg
 dividerWithText dividerText =
     let
-        { red, green, blue, alpha } =
+        { blue, green, red } =
             colourScheme.slateGrey
                 |> rgbaFloatToInt
 
