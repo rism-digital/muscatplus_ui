@@ -2,6 +2,7 @@ module ActiveSearch.Model exposing (ActiveSearch)
 
 import Debouncer.Messages exposing (Debouncer)
 import Dict exposing (Dict)
+import Language exposing (LanguageMap)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
@@ -25,6 +26,7 @@ type alias ActiveSearch msg =
     , expandedFacets : Set String
     , rangeFacetValues : Dict FacetAlias ( String, String )
     , queryFacetValues : Dict FacetAlias String
+    , aliasLabelMap : Dict FacetAlias LanguageMap
     , keyboard : Maybe (Keyboard.Model KeyboardMsg)
     , activeSuggestion : Maybe ActiveSuggestion
     , activeSuggestionDebouncer : Debouncer msg

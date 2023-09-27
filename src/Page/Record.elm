@@ -10,7 +10,7 @@ module Page.Record exposing
     , update
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setRangeFacetValues)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setRangeFacetValues)
 import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
@@ -18,14 +18,15 @@ import Dict
 import Flip exposing (flip)
 import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Maybe.Extra as ME
-import Page.Query exposing (QueryArgs, defaultQueryArgs, setNationalCollection, setNextQuery, toNextQuery)
+import Page.Query exposing (QueryArgs, defaultQueryArgs, setFilters, setNationalCollection, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
+import Page.RecordTypes.Search exposing (toFacetLabel)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route)
-import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -154,6 +155,35 @@ update session msg model =
                     .fragment session.url
                         |> ME.unwrap Cmd.none (jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list")
 
+                aliasLabelMap =
+                    case response of
+                        SearchData body ->
+                            Dict.map (\_ v -> toFacetLabel v) body.facets
+
+                        _ ->
+                            Dict.empty
+
+                activeFilters =
+                    toNextQuery model.activeSearch
+                        |> .filters
+
+                updatedFiltersWithCorrectLanguageMaps =
+                    case response of
+                        SearchData body ->
+                            updateActiveFiltersWithLangMapResultsFromServer activeFilters body.facets
+
+                        _ ->
+                            activeFilters
+
+                newNextQuery =
+                    toNextQuery model.activeSearch
+                        |> setFilters updatedFiltersWithCorrectLanguageMaps
+
+                newActiveSearch =
+                    model.activeSearch
+                        |> setAliasLabelMap aliasLabelMap
+                        |> setNextQuery newNextQuery
+
                 probeState =
                     case response of
                         SearchData body ->
@@ -176,6 +206,7 @@ update session msg model =
             in
             ( { model
                 | searchResults = searchResults
+                , activeSearch = newActiveSearch
                 , probeResponse = probeState
                 , applyFilterPrompt = False
               }
@@ -307,7 +338,7 @@ update session msg model =
                 |> update session debounceMsg
 
         UserRemovedItemFromQueryFacet alias query ->
-            userRemovedItemFromQueryFacet alias query model
+            userRemovedItemFromActiveFilters alias query model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
@@ -336,12 +367,16 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue ->
-            userClickedSelectFacetItem alias facetValue model
+        UserClickedSelectFacetItem alias facetValue label ->
+            userClickedSelectFacetItem alias facetValue label model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model
+
+        UserRemovedActiveFilter alias value ->
+            userRemovedItemFromActiveFilters alias value model
+                |> probeSubmit ServerRespondedWithProbeData session
 
         UserResetAllFilters ->
             setNextQuery defaultQueryArgs model.activeSearch

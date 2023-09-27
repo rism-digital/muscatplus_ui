@@ -35,7 +35,7 @@ type alias SelectFacetConfig msg =
     , userClickedFacetExpandMsg : String -> msg
     , userChangedFacetBehaviourMsg : FacetAlias -> FacetBehaviours -> msg
     , userChangedSelectFacetSortMsg : FacetAlias -> FacetSorts -> msg
-    , userSelectedFacetItemMsg : FacetAlias -> String -> msg
+    , userSelectedFacetItemMsg : FacetAlias -> String -> LanguageMap -> msg
     }
 
 
@@ -355,6 +355,7 @@ viewSelectFacetItem config fitem =
         shouldBeChecked =
             Dict.get facetAlias activeFilters
                 |> Maybe.withDefault []
+                |> List.map (\( a, _ ) -> a)
                 |> List.member decodedValue
     in
     row
@@ -377,7 +378,7 @@ viewSelectFacetItem config fitem =
                     , width fill
                     ]
                     (paragraph [ width fill ] [ text (SE.softEllipsis 50 fullLabel) ])
-            , onChange = \_ -> config.userSelectedFacetItemMsg facetAlias decodedValue
+            , onChange = \_ -> config.userSelectedFacetItemMsg facetAlias decodedValue label
             }
         , el
             [ alignRight

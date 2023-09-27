@@ -27,7 +27,7 @@ type alias FacetMsgConfig msg =
     , userClickedFacetExpandSelectMsg : String -> msg
     , userChangedFacetBehaviourSelectMsg : FacetAlias -> FacetBehaviours -> msg
     , userChangedSelectFacetSortSelectMsg : FacetAlias -> FacetSorts -> msg
-    , userSelectedFacetItemSelectMsg : FacetAlias -> String -> msg
+    , userSelectedFacetItemSelectMsg : FacetAlias -> String -> LanguageMap -> msg
     , userInteractedWithPianoKeyboard : KeyboardMsg -> msg
     , userRemovedQueryMsg : String -> String -> msg
     , userEnteredTextQueryMsg : FacetAlias -> String -> String -> msg

@@ -9,11 +9,12 @@ import Language exposing (LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Search exposing (FacetData(..))
 import Page.UI.Attributes exposing (headingLG, lineSpacing)
 import Page.UI.Facets.FacetsConfig exposing (FacetConfig, FacetMsgConfig)
-import Page.UI.Facets.NotationFacet exposing (NotationFacetConfig, viewKeyboardControl)
-import Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
-import Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
-import Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
-import Page.UI.Facets.ToggleFacet exposing (ToggleFacetConfig, viewToggleFacet)
+import Page.UI.Facets.NotationFacet exposing (viewKeyboardControl)
+import Page.UI.Facets.QueryFacet exposing (viewQueryFacet)
+import Page.UI.Facets.RangeFacet exposing (viewRangeFacet)
+import Page.UI.Facets.SelectFacet exposing (viewSelectFacet)
+import Page.UI.Facets.ToggleFacet exposing (viewToggleFacet)
+import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig)
 import Page.UI.Style exposing (colourScheme)
@@ -27,85 +28,65 @@ viewFacet :
 viewFacet cfg msg =
     case Dict.get cfg.alias (.facets cfg.body) of
         Just (ToggleFacetData facet) ->
-            let
-                toggleFacetConfig : ToggleFacetConfig msg
-                toggleFacetConfig =
-                    { language = cfg.language
-                    , tooltip = cfg.tooltip
-                    , activeSearch = cfg.activeSearch
-                    , toggleFacet = facet
-                    , userClickedFacetToggleMsg = msg.userClickedToggleMsg
-                    }
-            in
-            viewToggleFacet toggleFacetConfig
+            viewToggleFacet
+                { language = cfg.language
+                , tooltip = cfg.tooltip
+                , activeSearch = cfg.activeSearch
+                , toggleFacet = facet
+                , userClickedFacetToggleMsg = msg.userClickedToggleMsg
+                }
 
         Just (RangeFacetData facet) ->
-            let
-                rangeFacetConfig : RangeFacetConfig msg
-                rangeFacetConfig =
-                    { language = cfg.language
-                    , tooltip = cfg.tooltip
-                    , rangeFacet = facet
-                    , activeSearch = cfg.activeSearch
-                    , userLostFocusMsg = msg.userLostFocusRangeMsg
-                    , userFocusedMsg = msg.userFocusedRangeMsg
-                    , userEnteredTextMsg = msg.userEnteredTextRangeMsg
-                    }
-            in
-            viewRangeFacet rangeFacetConfig
+            viewRangeFacet
+                { language = cfg.language
+                , tooltip = cfg.tooltip
+                , rangeFacet = facet
+                , activeSearch = cfg.activeSearch
+                , userLostFocusMsg = msg.userLostFocusRangeMsg
+                , userFocusedMsg = msg.userFocusedRangeMsg
+                , userEnteredTextMsg = msg.userEnteredTextRangeMsg
+                }
 
         Just (SelectFacetData facet) ->
-            let
-                selectFacetConfig : SelectFacetConfig msg
-                selectFacetConfig =
-                    { language = cfg.language
-                    , tooltip = cfg.tooltip
-                    , selectFacet = facet
-                    , activeSearch = cfg.activeSearch
-                    , numberOfColumns = cfg.selectColumns
-                    , userClickedFacetExpandMsg = msg.userClickedFacetExpandSelectMsg
-                    , userChangedFacetBehaviourMsg = msg.userChangedFacetBehaviourSelectMsg
-                    , userChangedSelectFacetSortMsg = msg.userChangedSelectFacetSortSelectMsg
-                    , userSelectedFacetItemMsg = msg.userSelectedFacetItemSelectMsg
-                    }
-            in
-            viewSelectFacet selectFacetConfig
+            viewSelectFacet
+                { language = cfg.language
+                , tooltip = cfg.tooltip
+                , selectFacet = facet
+                , activeSearch = cfg.activeSearch
+                , numberOfColumns = cfg.selectColumns
+                , userClickedFacetExpandMsg = msg.userClickedFacetExpandSelectMsg
+                , userChangedFacetBehaviourMsg = msg.userChangedFacetBehaviourSelectMsg
+                , userChangedSelectFacetSortMsg = msg.userChangedSelectFacetSortSelectMsg
+                , userSelectedFacetItemMsg = msg.userSelectedFacetItemSelectMsg
+                }
 
         Just (NotationFacetData facet) ->
             case .keyboard cfg.activeSearch of
                 Just keyboardModel ->
-                    let
-                        notationFacetConfig : NotationFacetConfig msg
-                        notationFacetConfig =
-                            { language = cfg.language
-                            , tooltip = cfg.tooltip
-                            , keyboardModel = keyboardModel
-                            , notationFacet = facet
-                            , userInteractedWithKeyboardMsg = msg.userInteractedWithPianoKeyboard
-                            , searchPreferences = cfg.searchPreferences
-                            }
-                    in
-                    viewKeyboardControl notationFacetConfig
+                    viewKeyboardControl
+                        { language = cfg.language
+                        , tooltip = cfg.tooltip
+                        , keyboardModel = keyboardModel
+                        , notationFacet = facet
+                        , userInteractedWithKeyboardMsg = msg.userInteractedWithPianoKeyboard
+                        , searchPreferences = cfg.searchPreferences
+                        }
 
                 Nothing ->
                     none
 
         Just (QueryFacetData facet) ->
-            let
-                queryFacetConfig : QueryFacetConfig msg
-                queryFacetConfig =
-                    { language = cfg.language
-                    , tooltip = cfg.tooltip
-                    , activeSearch = cfg.activeSearch
-                    , queryFacet = facet
-                    , userRemovedMsg = msg.userRemovedQueryMsg
-                    , userEnteredTextMsg = msg.userEnteredTextQueryMsg
-                    , userChangedBehaviourMsg = msg.userChangedBehaviourQueryMsg
-                    , userChoseOptionMsg = msg.userChoseOptionQueryMsg
-                    , nothingHappenedMsg = msg.nothingHappenedMsg
-                    }
-            in
-            viewQueryFacet queryFacetConfig
+            viewQueryFacet
+                { language = cfg.language
+                , tooltip = cfg.tooltip
+                , activeSearch = cfg.activeSearch
+                , queryFacet = facet
+                , userRemovedMsg = msg.userRemovedQueryMsg
+                , userEnteredTextMsg = msg.userEnteredTextQueryMsg
+                , userChangedBehaviourMsg = msg.userChangedBehaviourQueryMsg
+                , userChoseOptionMsg = msg.userChoseOptionQueryMsg
+                , nothingHappenedMsg = msg.nothingHappenedMsg
+                }
 
         _ ->
             none
@@ -134,8 +115,8 @@ viewFacetsControlPanel alias header cfg body =
                     caretCircleRightSvg colourScheme.lightBlue
 
             panelBody =
-                if panelIsVisible then
-                    row
+                viewIf
+                    (row
                         [ width fill
                         , paddingXY 0 8
                         ]
@@ -145,9 +126,8 @@ viewFacetsControlPanel alias header cfg body =
                             ]
                             body
                         ]
-
-                else
-                    none
+                    )
+                    panelIsVisible
         in
         row
             [ width fill

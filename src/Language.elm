@@ -11,6 +11,7 @@ module Language exposing
     , languageMapDecoder
     , languageOptionsForDisplay
     , parseLocaleToLanguage
+    , toLanguageMap
     )
 
 import DateFormat
@@ -50,6 +51,17 @@ type LanguageMapReplacementVariable
 
 type LanguageValues
     = LanguageValues Language (List String)
+
+
+{-|
+
+    Takes a string and creates a language map. Used for compatibility
+    where the value of a language map is then extracted as a string.
+
+-}
+toLanguageMap : String -> LanguageMap
+toLanguageMap s =
+    [ LanguageValues None [ s ] ]
 
 
 {-|
@@ -282,27 +294,28 @@ languageValuesDecoder ( locale, translations ) =
         |> Decode.map (\lang -> LanguageValues lang translations)
 
 
-{-|
 
-    Takes a language type and returns the string representation,
-    e.g., "en", "de", etc.
-
--}
-parseLanguageToLocale : Language -> String
-parseLanguageToLocale lang =
-    -- it's unlikely that a language will get passed in that doesn't exist,
-    -- but this will use English as the default language if that ever happens
-    -- creates a new list with just the locale and language type, then filters
-    LE.findMap
-        (\( l, _, s ) ->
-            if s == lang then
-                Just l
-
-            else
-                Nothing
-        )
-        languageOptions
-        |> Maybe.withDefault "en"
+--{-|
+--
+--    Takes a language type and returns the string representation,
+--    e.g., "en", "de", etc.
+--
+---}
+--parseLanguageToLocale : Language -> String
+--parseLanguageToLocale lang =
+--    -- it's unlikely that a language will get passed in that doesn't exist,
+--    -- but this will use English as the default language if that ever happens
+--    -- creates a new list with just the locale and language type, then filters
+--    LE.findMap
+--        (\( l, _, s ) ->
+--            if s == lang then
+--                Just l
+--
+--            else
+--                Nothing
+--        )
+--        languageOptions
+--        |> Maybe.withDefault "en"
 
 
 polishLocale : Locale
@@ -321,11 +334,6 @@ portugeseLocale =
         , thousandSeparator = "\u{202F}"
         , decimalSeparator = ","
     }
-
-
-setLanguage : Language -> { a | language : Language } -> { a | language : Language }
-setLanguage newValue oldRecord =
-    { oldRecord | language = newValue }
 
 
 spanishLocale : Locale

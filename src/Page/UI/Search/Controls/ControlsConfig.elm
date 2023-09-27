@@ -48,4 +48,5 @@ type alias ActiveFiltersCfg a b msg =
     { session : Session
     , model : { a | activeSearch : ActiveSearch msg }
     , body : { b | facets : Facets }
+    , userRemovedActiveFilterMsg : String -> String -> msg
     }

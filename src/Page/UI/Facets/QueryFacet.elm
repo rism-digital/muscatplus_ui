@@ -109,7 +109,7 @@ viewQueryFacet config =
             else
                 config.userChoseOptionMsg facetAlias textValue currentBehaviourOption
 
-        activeValues : List String
+        activeValues : List ( String, LanguageMap )
         activeValues =
             toNextQuery config.activeSearch
                 |> toFilters
@@ -118,78 +118,34 @@ viewQueryFacet config =
 
         enteredOptions =
             List.map
-                (\t ->
-                    el
-                        [ padding 5
+                (\( value, label ) ->
+                    row
+                        [ spacing 5
+                        , padding 5
                         , Background.color colourScheme.lightBlue
                         , Font.color colourScheme.white
                         , Font.medium
                         , bodyRegular
                         ]
-                        (row [ spacing 5 ]
-                            [ column []
-                                [ text t ]
-                            , column []
-                                [ el
-                                    [ width (px 20)
-                                    , height (px 20)
-                                    , onClick (config.userRemovedMsg facetAlias t)
-                                    ]
-                                    (closeWindowSvg colourScheme.white)
+                        [ column []
+                            [ text (extractLabelFromLanguageMap config.language label) ]
+                        , column []
+                            [ el
+                                [ width (px 20)
+                                , height (px 20)
+                                , pointer
+                                , onClick (config.userRemovedMsg facetAlias value)
                                 ]
+                                (closeWindowSvg colourScheme.white)
                             ]
-                        )
+                        ]
                 )
                 (List.reverse activeValues)
 
         queryTermsDisplay =
-            if List.isEmpty enteredOptions then
-                none
-
-            else
-                let
-                    interspersedOptions =
-                        case enteredOptions of
-                            [] ->
-                                [ none ]
-
-                            _ ->
-                                let
-                                    joinWordEl =
-                                        case currentBehaviourOption of
-                                            FacetBehaviourIntersection ->
-                                                el
-                                                    [ Background.color colourScheme.darkOrange
-                                                    , Font.color colourScheme.white
-                                                    , padding 5
-                                                    , Font.medium
-                                                    ]
-                                                    (text "and")
-
-                                            FacetBehaviourUnion ->
-                                                el
-                                                    [ Background.color colourScheme.darkOrange
-                                                    , Font.color colourScheme.white
-                                                    , padding 5
-                                                    , Font.medium
-                                                    ]
-                                                    (text "or")
-                                in
-                                List.intersperse joinWordEl enteredOptions
-                in
-                wrappedRow
-                    [ width fill
-                    , spacing lineSpacing
-                    ]
-                    (List.append
-                        [ el
-                            [ Font.medium
-                            , padding 5
-                            ]
-                            (text (extractLabelFromLanguageMap config.language localTranslations.queryTerms ++ ":"))
-                        ]
-                        interspersedOptions
-                    )
+            List.isEmpty enteredOptions
+                |> not
+                |> viewIf (queryTermView config.language enteredOptions currentBehaviourOption)
     in
     row
         [ width fill
@@ -322,3 +278,50 @@ viewSuggestionItem config currentBehaviour suggestionItem =
         ]
         [ text suggestValue
         ]
+
+
+queryTermView : Language -> List (Element msg) -> FacetBehaviours -> Element msg
+queryTermView language enteredOptions currentBehaviourOption =
+    let
+        interspersedOptions =
+            case enteredOptions of
+                [] ->
+                    [ none ]
+
+                _ ->
+                    let
+                        joinWordEl =
+                            case currentBehaviourOption of
+                                FacetBehaviourIntersection ->
+                                    el
+                                        [ Background.color colourScheme.darkOrange
+                                        , Font.color colourScheme.white
+                                        , padding 5
+                                        , Font.medium
+                                        ]
+                                        (text "and")
+
+                                FacetBehaviourUnion ->
+                                    el
+                                        [ Background.color colourScheme.darkOrange
+                                        , Font.color colourScheme.white
+                                        , padding 5
+                                        , Font.medium
+                                        ]
+                                        (text "or")
+                    in
+                    List.intersperse joinWordEl enteredOptions
+    in
+    wrappedRow
+        [ width fill
+        , spacing lineSpacing
+        ]
+        (List.append
+            [ el
+                [ Font.medium
+                , padding 5
+                ]
+                (text (extractLabelFromLanguageMap language localTranslations.queryTerms ++ ":"))
+            ]
+            interspersedOptions
+        )

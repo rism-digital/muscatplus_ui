@@ -3,6 +3,7 @@ module Page.Record.Msg exposing (RecordMsg(..))
 import Debouncer.Basic as Debouncer
 import Http
 import Http.Detailed
+import Language exposing (LanguageMap)
 import Page.Record.Model exposing (CurrentRecordViewTab)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue)
@@ -36,8 +37,9 @@ type RecordMsg
     | UserLostFocusRangeFacet FacetAlias
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
-    | UserClickedSelectFacetItem FacetAlias String
+    | UserClickedSelectFacetItem FacetAlias String LanguageMap
     | UserTriggeredSearchSubmit
+    | UserRemovedActiveFilter FacetAlias String
     | UserResetAllFilters
     | UserChangedResultSorting String
     | UserChangedResultsPerPage String

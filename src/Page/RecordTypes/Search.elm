@@ -39,6 +39,7 @@ module Page.RecordTypes.Search exposing
     , toBehaviourItems
     , toBehaviours
     , toCurrentBehaviour
+    , toFacetLabel
     )
 
 import Dict exposing (Dict)
@@ -81,6 +82,25 @@ type FacetData
     | SelectFacetData SelectFacet
     | NotationFacetData NotationFacet
     | QueryFacetData QueryFacet
+
+
+toFacetLabel : FacetData -> LanguageMap
+toFacetLabel facet =
+    case facet of
+        ToggleFacetData t ->
+            t.label
+
+        RangeFacetData r ->
+            r.label
+
+        SelectFacetData s ->
+            s.label
+
+        NotationFacetData n ->
+            n.label
+
+        QueryFacetData q ->
+            q.label
 
 
 {-|

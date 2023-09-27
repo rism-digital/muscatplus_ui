@@ -6,6 +6,7 @@ module ActiveSearch exposing
     , setActiveSearch
     , setActiveSuggestion
     , setActiveSuggestionDebouncer
+    , setAliasLabelMap
     , setExpandedFacets
     , setKeyboard
     , setQueryFacetValues
@@ -20,6 +21,7 @@ module ActiveSearch exposing
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebouncer)
 import Dict exposing (Dict)
+import Language exposing (LanguageMap)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
@@ -43,6 +45,7 @@ empty =
     , expandedFacets = Set.empty
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
+    , aliasLabelMap = Dict.empty
     , keyboard = Just Keyboard.initModel
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
@@ -64,6 +67,7 @@ init cfg =
     , expandedFacets = Set.empty
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
+    , aliasLabelMap = Dict.empty
     , keyboard = keyboardQuery
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
@@ -87,6 +91,11 @@ setActiveSearch newSearch oldRecord =
 setActiveSuggestion : Maybe ActiveSuggestion -> { a | activeSuggestion : Maybe ActiveSuggestion } -> { a | activeSuggestion : Maybe ActiveSuggestion }
 setActiveSuggestion newValue oldRecord =
     { oldRecord | activeSuggestion = newValue }
+
+
+setAliasLabelMap : Dict FacetAlias LanguageMap -> { a | aliasLabelMap : Dict FacetAlias LanguageMap } -> { a | aliasLabelMap : Dict FacetAlias LanguageMap }
+setAliasLabelMap newValue oldRecord =
+    { oldRecord | aliasLabelMap = newValue }
 
 
 setActiveSuggestionDebouncer : Debouncer msg -> { a | activeSuggestionDebouncer : Debouncer msg } -> { a | activeSuggestionDebouncer : Debouncer msg }

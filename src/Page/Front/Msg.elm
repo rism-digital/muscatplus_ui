@@ -3,6 +3,7 @@ module Page.Front.Msg exposing (FrontMsg(..))
 import Debouncer.Messages as Debouncer
 import Http
 import Http.Detailed
+import Language exposing (LanguageMap)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue)
@@ -32,7 +33,7 @@ type FrontMsg
     | UserLostFocusRangeFacet FacetAlias
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
-    | UserClickedSelectFacetItem FacetAlias String
+    | UserClickedSelectFacetItem FacetAlias String LanguageMap
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserTriggeredSearchSubmit
     | UserResetAllFilters

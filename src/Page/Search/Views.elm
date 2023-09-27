@@ -73,6 +73,7 @@ searchResultsViewRouter session model =
             , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
             , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
+            , userRemovedActiveFilterMsg = SearchMsg.UserRemovedActiveFilter
             , userToggledIncipitInfo = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
             , panelToggleMsg = SearchMsg.UserClickedFacetPanelToggle
             , facetMsgConfig = facetSearchMsgConfig

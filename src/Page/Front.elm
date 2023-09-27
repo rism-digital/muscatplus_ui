@@ -22,7 +22,7 @@ import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryAr
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -259,7 +259,7 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserRemovedItemFromQueryFacet alias query ->
-            userRemovedItemFromQueryFacet alias query model
+            userRemovedItemFromActiveFilters alias query model
                 |> frontProbeSubmit session
 
         UserEnteredTextInQueryFacet alias query suggestionUrl ->
@@ -301,8 +301,8 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue ->
-            userClickedSelectFacetItem alias facetValue model
+        UserClickedSelectFacetItem alias facetValue label ->
+            userClickedSelectFacetItem alias facetValue label model
                 |> frontProbeSubmit session
 
         UserInteractedWithPianoKeyboard keyboardMsg ->

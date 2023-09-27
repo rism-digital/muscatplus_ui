@@ -3,24 +3,28 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, paddingEach, paddingXY, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import List.Extra as LE
 import Maybe.Extra as ME
 import Page.Error.Views exposing (createErrorMessage)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
-import Page.UI.Attributes exposing (controlsColumnWidth, headingMD, responsiveCheckboxColumns, resultColumnWidth)
+import Page.UI.Attributes exposing (bodySM, controlsColumnWidth, headingMD, lineSpacing, responsiveCheckboxColumns, resultColumnWidth)
 import Page.UI.Components exposing (dividerWithText)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.UI.Helpers exposing (viewIf)
+import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewError, viewPreviewRouter)
 import Page.UI.Search.Controls.ControlsConfig exposing (ActiveFiltersCfg, SearchControlsConfig)
@@ -63,6 +67,7 @@ type alias SearchResultsSectionConfig a msg =
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     , userResetAllFiltersMsg : msg
+    , userRemovedActiveFilterMsg : String -> String -> msg
     , userToggledIncipitInfo : String -> msg
     , panelToggleMsg : String -> Set String -> msg
     , facetMsgConfig : FacetMsgConfig msg
@@ -104,6 +109,24 @@ viewSearchResultsSection cfg resultsLoading body =
 
         language =
             .language cfg.session
+
+        hasActiveFilters =
+            .activeSearch cfg.model
+                |> .nextQuery
+                |> .filters
+                |> Dict.isEmpty
+                |> not
+
+        activeFilters =
+            viewIf
+                (viewActiveFilters
+                    { session = cfg.session
+                    , model = cfg.model
+                    , body = body
+                    , userRemovedActiveFilterMsg = cfg.userRemovedActiveFilterMsg
+                    }
+                )
+                hasActiveFilters
     in
     row
         [ width fill
@@ -133,7 +156,15 @@ viewSearchResultsSection cfg resultsLoading body =
             , alignTop
             , inFront renderedPreview
             ]
-            [ viewSearchPageSort
+            [ viewSearchButtons
+                { language = language
+                , model = cfg.model
+                , isFrontPage = False
+                , submitLabel = localTranslations.updateResults
+                , submitMsg = cfg.userTriggeredSearchSubmitMsg
+                , resetMsg = cfg.userResetAllFiltersMsg
+                }
+            , viewSearchPageSort
                 { language = language
                 , activeSearch = .activeSearch cfg.model
                 , body = body
@@ -151,40 +182,58 @@ viewSearchResultsSection cfg resultsLoading body =
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
                 , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                 }
-            , viewActiveFilters
-                { session = cfg.session
-                , model = cfg.model
-                , body = body
-                }
-            , viewSearchButtons
-                { language = language
-                , model = cfg.model
-                , isFrontPage = False
-                , submitLabel = localTranslations.updateResults
-                , submitMsg = cfg.userTriggeredSearchSubmitMsg
-                , resetMsg = cfg.userResetAllFiltersMsg
-                }
+            , activeFilters
             ]
         ]
 
 
 viewActiveFilters : ActiveFiltersCfg a b msg -> Element msg
-viewActiveFilters { session, model, body } =
+viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
     let
-        activeSearch =
+        nextQuery =
             .nextQuery model.activeSearch
 
         filters =
-            activeSearch.filters
+            nextQuery.filters
                 |> Dict.toList
 
-        asfTmpl ( label, value ) =
-            el []
-                (text (label ++ " " ++ String.join "; " value))
+        asfTmpl : ( String, List ( String, LanguageMap ) ) -> List (Element msg)
+        asfTmpl ( alias, values ) =
+            LE.reverseMap
+                (\( value, valueLabel ) ->
+                    let
+                        label =
+                            Dict.get alias (.aliasLabelMap model.activeSearch)
+                                |> ME.unwrap alias (\l -> extractLabelFromLanguageMap session.language l)
+                    in
+                    row
+                        [ spacing 5
+                        , padding 3
+                        , Background.color colourScheme.white
+                        , Border.color colourScheme.lightBlue
+                        , Border.rounded 3
+                        , Border.width 1
+                        , Font.color colourScheme.black
+                        , bodySM
+                        ]
+                        [ column []
+                            [ text (label ++ ": " ++ extractLabelFromLanguageMap session.language valueLabel) ]
+                        , column []
+                            [ el
+                                [ width (px 20)
+                                , height (px 20)
+                                , pointer
+                                , onClick (userRemovedActiveFilterMsg alias value)
+                                ]
+                                (closeWindowSvg colourScheme.lightBlue)
+                            ]
+                        ]
+                )
+                values
     in
-    row
+    wrappedRow
         [ width fill
-        , height (px 80)
+        , height shrink
         , paddingXY 20 10
         , Background.color colourScheme.lightGrey
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
@@ -193,15 +242,18 @@ viewActiveFilters { session, model, body } =
         [ column
             [ width fill
             , height fill
+            , spacing lineSpacing
             ]
             [ row
                 [ width fill ]
                 [ el [ headingMD, Font.medium ] (text "Active Filters") ]
-            , row
+            , wrappedRow
                 [ width fill
+                , height fill
                 , alignLeft
+                , spacing 10
                 ]
-                (List.map asfTmpl filters)
+                (List.concatMap asfTmpl filters)
             ]
         ]
 

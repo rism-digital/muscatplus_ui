@@ -26,6 +26,7 @@ module Page.Query exposing
 
 import Config as C
 import Dict exposing (Dict)
+import Language exposing (LanguageMap, toLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
 import Page.RecordTypes.Search
@@ -60,7 +61,7 @@ type alias FrontQueryArgs =
 
 type alias QueryArgs =
     { keywordQuery : Maybe String
-    , filters : Dict FacetAlias (List String)
+    , filters : Dict FacetAlias (List ( String, LanguageMap ))
     , sort : Maybe String
     , page : Int
     , rows : Int
@@ -112,7 +113,8 @@ buildQueryParameters queryArgs =
             Dict.toList queryArgs.filters
                 |> List.concatMap
                     (\( alias, filts ) ->
-                        List.filterMap (\s -> createPrefixedField alias s) filts
+                        List.map Tuple.first filts
+                            |> List.filterMap (\s -> createPrefixedField alias s)
                     )
 
         fsParams =
@@ -216,7 +218,7 @@ setFacetSorts newValues oldRecord =
     { oldRecord | facetSorts = newValues }
 
 
-setFilters : Dict FacetAlias (List String) -> { a | filters : Dict FacetAlias (List String) } -> { a | filters : Dict FacetAlias (List String) }
+setFilters : Dict FacetAlias (List ( String, LanguageMap )) -> { a | filters : Dict FacetAlias (List ( String, LanguageMap )) } -> { a | filters : Dict FacetAlias (List ( String, LanguageMap )) }
 setFilters newFilters oldRecord =
     { oldRecord | filters = newFilters }
 
@@ -261,7 +263,7 @@ toFacetSorts query =
     query.facetSorts
 
 
-toFilters : { a | filters : Dict FacetAlias (List String) } -> Dict FacetAlias (List String)
+toFilters : { a | filters : Dict FacetAlias (List ( String, LanguageMap )) } -> Dict FacetAlias (List ( String, LanguageMap ))
 toFilters queryArgs =
     queryArgs.filters
 
@@ -310,15 +312,22 @@ fbParamParser =
     Q.custom "fb" (\a -> facetBehaviourQueryStringToBehaviour a)
 
 
-filterQueryStringToFilter : List String -> Dict FacetAlias (List String)
+filterQueryStringToFilter : List String -> Dict FacetAlias (List ( String, LanguageMap ))
 filterQueryStringToFilter fqList =
     -- discards any filters that do not conform to the expected values
-    -- TODO: Convert this to a parser that can handle colons in the 'values'
-    List.filterMap stringSplitToList fqList
-        |> fromListDedupe (\a b -> List.append a b)
+    -- this creates an intermediary list of filters that wraps a language map around the incoming
+    -- query param. This can be updated later in the chain, once we know what the actual language
+    -- map values should be. (This comes from the facet values from the server, so we can't get this
+    -- information from the query parameter alone.)
+    List.filterMap (\qs -> stringSplitToList qs) fqList
+        |> List.map (\( a, v ) -> ( a, List.map (\fv -> ( fv, toLanguageMap fv )) v ))
+        |> fromListDedupe
+            (\alias values ->
+                List.append alias values
+            )
 
 
-fqParamParser : Q.Parser (Dict FacetAlias (List String))
+fqParamParser : Q.Parser (Dict FacetAlias (List ( String, LanguageMap )))
 fqParamParser =
     Q.custom "fq" (\a -> filterQueryStringToFilter a)
 

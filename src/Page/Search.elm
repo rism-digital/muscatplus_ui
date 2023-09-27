@@ -9,7 +9,7 @@ module Page.Search exposing
     , update
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setKeyboard, setRangeFacetValues, toKeyboard)
 import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
@@ -19,14 +19,14 @@ import Maybe.Extra as ME
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setMode, setNextQuery, toMode, toNextQuery)
+import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setFilters, setMode, setNextQuery, toMode, toNextQuery)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetItem(..))
+import Page.RecordTypes.Search exposing (FacetItem(..), toFacetLabel)
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromQueryFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -181,7 +181,7 @@ update session msg model =
             let
                 jumpCmd =
                     .fragment session.url
-                        |> ME.unwrap Cmd.none (\frag -> jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list" frag)
+                        |> ME.unwrap Cmd.none (jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list")
 
                 currentMode =
                     toNextQuery model.activeSearch
@@ -201,6 +201,35 @@ update session msg model =
                         _ ->
                             Cmd.none
 
+                aliasLabelMap =
+                    case response of
+                        SearchData body ->
+                            Dict.map (\_ v -> toFacetLabel v) body.facets
+
+                        _ ->
+                            Dict.empty
+
+                activeFilters =
+                    toNextQuery model.activeSearch
+                        |> .filters
+
+                updatedFiltersWithCorrectLanguageMaps =
+                    case response of
+                        SearchData body ->
+                            updateActiveFiltersWithLangMapResultsFromServer activeFilters body.facets
+
+                        _ ->
+                            activeFilters
+
+                newNextQuery =
+                    toNextQuery model.activeSearch
+                        |> setFilters updatedFiltersWithCorrectLanguageMaps
+
+                newActiveSearch =
+                    model.activeSearch
+                        |> setAliasLabelMap aliasLabelMap
+                        |> setNextQuery newNextQuery
+
                 totalItems =
                     case response of
                         SearchData body ->
@@ -211,6 +240,7 @@ update session msg model =
             in
             ( { model
                 | response = Response response
+                , activeSearch = newActiveSearch
                 , probeResponse = totalItems
                 , applyFilterPrompt = False
               }
@@ -335,7 +365,7 @@ update session msg model =
                 |> update session debounceMsg
 
         UserRemovedItemFromQueryFacet alias query ->
-            userRemovedItemFromQueryFacet alias query model
+            userRemovedItemFromActiveFilters alias query model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserChoseOptionForQueryFacet alias selectedValue currentBehaviour ->
@@ -364,8 +394,12 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedSelectFacetItem alias facetValue ->
-            userClickedSelectFacetItem alias facetValue model
+        UserClickedSelectFacetItem alias facetValue label ->
+            userClickedSelectFacetItem alias facetValue label model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UserRemovedActiveFilter alias value ->
+            userRemovedItemFromActiveFilters alias value model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserInteractedWithPianoKeyboard keyboardMsg ->

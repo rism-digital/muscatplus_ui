@@ -7,6 +7,7 @@ module Page.UpdateHelpers exposing
     , probeSubmit
     , selectAppropriateRangeFacetValues
     , textQuerySuggestionSubmit
+    , updateActiveFiltersWithLangMapResultsFromServer
     , updateQueryFacetFilters
     , userChangedFacetBehaviour
     , userChangedResultSorting
@@ -23,7 +24,7 @@ module Page.UpdateHelpers exposing
     , userEnteredTextInRangeFacet
     , userFocusedRangeFacet
     , userLostFocusOnRangeFacet
-    , userRemovedItemFromQueryFacet
+    , userRemovedItemFromActiveFilters
     )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toExpandedFacets, toQueryFacetValues, toRangeFacetValues)
@@ -34,13 +35,14 @@ import Dict exposing (Dict)
 import Flip exposing (flip)
 import Http
 import Http.Detailed
+import Language exposing (LanguageMap, toLanguageMap)
 import List.Extra as LE
 import Maybe.Extra as ME
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setRows, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue(..))
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
@@ -52,7 +54,7 @@ import Response exposing (Response(..), ServerData(..))
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
 import Set exposing (Set)
-import Url
+import Url exposing (percentDecode)
 import Url.Builder exposing (toQuery)
 import Utilities exposing (choose, convertPathToNodeId, toggle)
 
@@ -213,8 +215,8 @@ selectAppropriateRangeFacetValues facetAlias activeSearch =
                     Dict.get facetAlias (.filters activeSearch.nextQuery)
             in
             case queryRangeValues of
-                Just (m :: []) ->
-                    rangeStringParser m
+                Just (( a, _ ) :: []) ->
+                    rangeStringParser a
 
                 _ ->
                     Nothing
@@ -255,13 +257,13 @@ updateQueryFacetFilters alias text currentBehaviour model =
                 (\existingValues ->
                     case existingValues of
                         Just [] ->
-                            Just [ text ]
+                            Just [ ( text, toLanguageMap text ) ]
 
                         Just v ->
-                            Just (text :: v)
+                            Just (( text, toLanguageMap text ) :: v)
 
                         Nothing ->
-                            Just [ text ]
+                            Just [ ( text, toLanguageMap text ) ]
                 )
                 activeFilters
 
@@ -431,26 +433,29 @@ userClickedSelectFacetExpand alias model =
         |> flip setActiveSearch model
 
 
-userClickedSelectFacetItem : FacetAlias -> String -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
-userClickedSelectFacetItem alias facetValue model =
+userClickedSelectFacetItem :
+    FacetAlias
+    -> String
+    -> LanguageMap
+    -> { a | activeSearch : ActiveSearch msg }
+    -> { a | activeSearch : ActiveSearch msg }
+userClickedSelectFacetItem alias facetValue label model =
     let
         activeFilters =
-            toNextQuery model.activeSearch
+            .nextQuery model.activeSearch
                 |> toFilters
 
         newActiveFilters =
             Dict.update alias
-                (\existingValues ->
-                    ME.unpack
-                        (\() -> Just [ facetValue ])
-                        (\list ->
-                            if List.member facetValue list == False then
-                                Just (facetValue :: list)
+                (ME.unpack
+                    (\() -> Just [ ( facetValue, label ) ])
+                    (\list ->
+                        if List.member ( facetValue, label ) list == False then
+                            Just (( facetValue, label ) :: list)
 
-                            else
-                                Just (LE.remove facetValue list)
-                        )
-                        existingValues
+                        else
+                            Just (LE.remove ( facetValue, label ) list)
+                    )
                 )
                 activeFilters
                 |> Dict.filter (\_ value -> List.isEmpty value |> not)
@@ -473,7 +478,7 @@ userClickedToggleFacet alias model =
                 Dict.remove alias oldFilters
 
             else
-                Dict.insert alias [ "true" ] oldFilters
+                Dict.insert alias [ ( "true", toLanguageMap "true" ) ] oldFilters
 
         newQueryArgs =
             toNextQuery model.activeSearch
@@ -555,7 +560,7 @@ userFocusedRangeFacet alias model =
 
         maybeRangeValue =
             case Dict.get alias nextQueryFilters of
-                Just (m :: []) ->
+                Just (( m, _ ) :: []) ->
                     rangeStringParser m
 
                 _ ->
@@ -604,7 +609,11 @@ userLostFocusOnRangeFacet alias model =
                 Dict.remove alias oldFilters
 
             else
-                Dict.insert alias (List.singleton (createRangeString newLowerValue newUpperValue)) oldFilters
+                let
+                    rangeString =
+                        createRangeString newLowerValue newUpperValue
+                in
+                Dict.insert alias (List.singleton ( rangeString, toLanguageMap rangeString )) oldFilters
 
         -- ensure the range facet also displays the correct value
         newRangeFacetValues =
@@ -617,23 +626,20 @@ userLostFocusOnRangeFacet alias model =
         |> flip setActiveSearch model
 
 
-userRemovedItemFromQueryFacet :
+userRemovedItemFromActiveFilters :
     FacetAlias
     -> String
     -> { a | activeSearch : ActiveSearch msg }
     -> { a | activeSearch : ActiveSearch msg }
-userRemovedItemFromQueryFacet alias query model =
+userRemovedItemFromActiveFilters alias value model =
     let
         activeFilters =
             toNextQuery model.activeSearch
                 |> toFilters
 
         newActiveFilters =
-            Dict.update alias
-                (\existingValues ->
-                    Maybe.map (\list -> List.filter (\s -> s /= query) list) existingValues
-                )
-                activeFilters
+            Dict.update alias (Maybe.map (\list -> List.filter (\( s, _ ) -> s /= value) list)) activeFilters
+                |> Dict.filter (\_ v -> not (List.isEmpty v))
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters
@@ -668,3 +674,46 @@ hasNonZeroSourcesAttached recordBody =
 
         _ ->
             False
+
+
+updateActiveFiltersWithLangMapResultsFromServer :
+    Dict FacetAlias (List ( String, LanguageMap ))
+    -> Dict FacetAlias FacetData
+    -> Dict FacetAlias (List ( String, LanguageMap ))
+updateActiveFiltersWithLangMapResultsFromServer oldFilters fromServer =
+    let
+        filterUpdater : FacetAlias -> List ( String, LanguageMap ) -> List ( String, LanguageMap )
+        filterUpdater alias values =
+            Dict.get alias fromServer
+                |> Maybe.map
+                    (\facetFromServer ->
+                        case facetFromServer of
+                            SelectFacetData sdata ->
+                                correlateQueryValuesWithFacetLangMap values sdata.items
+
+                            _ ->
+                                values
+                    )
+                |> Maybe.withDefault []
+    in
+    Dict.map filterUpdater oldFilters
+
+
+correlateQueryValuesWithFacetLangMap : List ( String, LanguageMap ) -> List FacetItem -> List ( String, LanguageMap )
+correlateQueryValuesWithFacetLangMap qValues serverValues =
+    List.map
+        (\( qVal, qLabel ) ->
+            LE.find
+                (\(FacetItem fVal _ _) ->
+                    let
+                        decodedFVal =
+                            percentDecode fVal
+                                |> Maybe.withDefault fVal
+                    in
+                    decodedFVal == qVal
+                )
+                serverValues
+                |> Maybe.map (\(FacetItem fVal fLabel _) -> ( fVal, fLabel ))
+                |> Maybe.withDefault ( qVal, qLabel )
+        )
+        qValues
