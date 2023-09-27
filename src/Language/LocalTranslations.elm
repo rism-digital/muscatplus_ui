@@ -91,13 +91,13 @@ localTranslations =
     , additionalFilters =
         [ LanguageValues English [ "Additional filters" ] ]
     , applyFiltersToUpdateResults =
-        [ LanguageValues English [ "Apply Filters" ]
-        , LanguageValues German [ "Wenden Sie Filter an, um Suchergebnisse anzuzeigen" ]
-        , LanguageValues French [ "Appliquer des filtres pour mettre à jour les résultats de recherche" ]
-        , LanguageValues Italian [ "Applica filtri per aggiornare i risultati della ricerca" ]
-        , LanguageValues Spanish [ "Aplicar filtros para actualizar los resultados de búsqueda" ]
-        , LanguageValues Portugese [ "Aplicar filtros para atualizar os resultados da pesquisa" ]
-        , LanguageValues Polish [ "Zastosuj filtry, aby zaktualizować wyniki wyszukiwania" ]
+        [ LanguageValues English [ "Apply filters" ]
+        , LanguageValues German [ "Filter anwenden" ]
+        , LanguageValues French [ "Appliquer les filtres" ]
+        , LanguageValues Italian [ "Applica filtri" ]
+        , LanguageValues Spanish [ "Aplicar filtros" ]
+        , LanguageValues Portugese [ "Aplicar filtros" ]
+        , LanguageValues Polish [ "Zastosuj filtry" ]
         ]
     , chooseCollection =
         [ LanguageValues English [ "Choose a collection to search" ] ]
