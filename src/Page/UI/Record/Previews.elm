@@ -11,7 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (sectionSpacing)
-import Page.UI.Components exposing (h2)
+import Page.UI.Components exposing (h2, h3, h4)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
@@ -168,7 +168,7 @@ viewRecordPreviewTitleBar : Language -> msg -> Element msg
 viewRecordPreviewTitleBar language closeMsg =
     row
         [ width fill
-        , height (px 46)
+        , height (px 30)
         , spacing 10
         , paddingXY 10 0
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
@@ -179,8 +179,8 @@ viewRecordPreviewTitleBar language closeMsg =
             [ alignLeft
             , centerY
             , onClick closeMsg
-            , width (px 25)
-            , height (px 25)
+            , width (px 18)
+            , height (px 18)
             , pointer
             ]
             (closeWindowSvg colourScheme.white)
@@ -190,5 +190,5 @@ viewRecordPreviewTitleBar language closeMsg =
             , Font.color colourScheme.white
             , width fill
             ]
-            (h2 language localTranslations.recordPreview)
+            (h4 language localTranslations.recordPreview)
         ]

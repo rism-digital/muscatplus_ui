@@ -1,7 +1,7 @@
 module Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 
 import Dict
-import Element exposing (Element, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
@@ -118,11 +118,10 @@ viewFacetsControlPanel alias header cfg body =
                 viewIf
                     (row
                         [ width fill
-                        , paddingXY 0 8
                         ]
                         [ column
                             [ width fill
-                            , spacing lineSpacing
+                            , spacingXY 10 20
                             ]
                             body
                         ]
@@ -133,7 +132,8 @@ viewFacetsControlPanel alias header cfg body =
             [ width fill
             , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
             , Border.color colourScheme.lightGrey
-            , paddingXY 0 10
+
+            --, paddingXY 0 10
             ]
             [ column
                 [ width fill

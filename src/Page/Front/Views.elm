@@ -102,8 +102,7 @@ viewFrontSearchControls cfg =
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
             , Border.color colourScheme.slateGrey
             ]
-            [ viewFacetPanels cfg
-            , viewSearchButtons
+            [ viewSearchButtons
                 { language = .language cfg.session
                 , model = cfg.model
                 , isFrontPage = True
@@ -111,6 +110,7 @@ viewFrontSearchControls cfg =
                 , submitMsg = FrontMsg.UserTriggeredSearchSubmit
                 , resetMsg = FrontMsg.UserResetAllFilters
                 }
+            , viewFacetPanels cfg
             ]
         ]
 

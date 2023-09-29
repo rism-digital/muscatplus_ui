@@ -59,8 +59,8 @@ viewRowSelectAndSortSelector cfg =
         , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , width fill
-        , height (px 50)
-        , paddingXY 10 0
+        , height (px 40)
+        , paddingXY 20 0
         , centerY
         , htmlAttribute (HA.style "z-index" "1")
 

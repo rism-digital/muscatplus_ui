@@ -2,7 +2,7 @@ module Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, mouseOver, none, onRight, padding, paddingEach, paragraph, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, height, mouseOver, none, onRight, padding, paddingEach, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -16,7 +16,7 @@ import List.Extra as LE
 import Page.Query exposing (toFacetBehaviours, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.UI.Attributes exposing (bodyRegular, headingMD, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (bodyRegular, headingLG, headingMD, lineSpacing, linkColour)
 import Page.UI.Components exposing (basicCheckbox, dropdownSelect)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -241,20 +241,20 @@ viewSelectFacet config =
             [ width fill
             , alignTop
             , alignLeft
-            , paddingEach { bottom = 14, left = 0, right = 0, top = 0 }
             ]
             [ column
                 [ width fill
                 , alignTop
                 , spacing lineSpacing
-                , paddingEach { bottom = 0, left = 14, right = 0, top = 0 }
-                , Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
-                , Border.color colourScheme.midGrey
                 ]
                 [ row
                     [ width fill
                     , alignTop
                     , spacing lineSpacing
+                    , padding 10
+                    , Background.color colourScheme.lightGrey
+                    , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
+                    , Border.color colourScheme.midGrey
                     ]
                     [ column
                         [ width shrink
@@ -272,11 +272,44 @@ viewSelectFacet config =
                             [ spacing 10
                             ]
                             [ el
-                                [ headingMD, Region.heading 4, Font.medium ]
+                                [ headingLG, Region.heading 4, Font.medium ]
                                 (text facetLabel)
                             , column
                                 [ alignLeft ]
-                                [ showLink
+                                [ row
+                                    [ height (px 25)
+                                    , spacing 2
+                                    , padding 3
+                                    , Border.rounded 3
+                                    , Border.width 1
+                                    , Border.color colourScheme.midGrey
+                                    , Background.color colourScheme.white
+                                    ]
+                                    [ el
+                                        [ width (px 25)
+                                        , height (px 10)
+                                        , el tooltipStyle (text behaviourText)
+                                            |> tooltip above
+                                        ]
+                                        behaviourIcon
+                                    , behaviourDropdown
+                                    ]
+                                ]
+                            , column
+                                []
+                                [ el
+                                    [ width (px 25)
+                                    , height (px 25)
+                                    , onClick (config.userChangedSelectFacetSortMsg facetAlias (toggledSortType chosenSort))
+                                    , el tooltipStyle (text chosenSortMessage)
+                                        |> tooltip above
+                                    , padding 3
+                                    , Border.rounded 3
+                                    , Border.width 1
+                                    , Border.color colourScheme.midGrey
+                                    , Background.color colourScheme.white
+                                    ]
+                                    (sortIcon chosenSort)
                                 ]
                             ]
                         ]
@@ -287,39 +320,19 @@ viewSelectFacet config =
                     ]
                     (List.map (viewSelectFacetItemColumn config) groupedFacetItems)
                 , row
-                    [ alignLeft
-                    , spacing 12
-                    , bodyRegular
+                    [ alignRight ]
+                    [ showLink
                     ]
-                    [ column
-                        []
-                        [ facetHelp above selectFacetHelp ]
-                    , column
-                        []
-                        [ row
-                            [ spacing 2 ]
-                            [ el
-                                [ width (px 20)
-                                , height (px 10)
-                                , el tooltipStyle (text behaviourText)
-                                    |> tooltip above
-                                ]
-                                behaviourIcon
-                            , behaviourDropdown
-                            ]
-                        ]
-                    , column
-                        []
-                        [ el
-                            [ width (px 20)
-                            , height (px 20)
-                            , onClick (config.userChangedSelectFacetSortMsg facetAlias (toggledSortType chosenSort))
-                            , el tooltipStyle (text chosenSortMessage)
-                                |> tooltip above
-                            ]
-                            (sortIcon chosenSort)
-                        ]
-                    ]
+
+                --, row
+                --    [ alignLeft
+                --    , spacing 12
+                --    , bodyRegular
+                --    ]
+                --    [ column
+                --        []
+                --        [ facetHelp above selectFacetHelp ]
+                --    ]
                 ]
             ]
 
