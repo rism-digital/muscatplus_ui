@@ -17,7 +17,7 @@ import Page.Query exposing (toFacetBehaviours, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (bodyRegular, headingLG, headingMD, lineSpacing, linkColour)
-import Page.UI.Components exposing (basicCheckbox, dropdownSelect)
+import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h4)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
@@ -170,9 +170,6 @@ viewSelectFacet config =
             facetAlias =
                 .alias config.selectFacet
 
-            facetLabel =
-                extractLabelFromLanguageMap config.language (.label config.selectFacet)
-
             numItemsPerGroup =
                 (toFloat (List.length facetItems) / toFloat config.numberOfColumns)
                     |> ceiling
@@ -271,9 +268,7 @@ viewSelectFacet config =
                         [ row
                             [ spacing 10
                             ]
-                            [ el
-                                [ headingLG, Region.heading 4, Font.medium ]
-                                (text facetLabel)
+                            [ h4 config.language (.label config.selectFacet)
                             , column
                                 [ alignLeft ]
                                 [ row

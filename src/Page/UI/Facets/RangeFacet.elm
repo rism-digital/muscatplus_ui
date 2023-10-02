@@ -130,20 +130,20 @@ viewRangeFacet config =
         [ width fill
         , alignTop
         , alignLeft
-        , paddingEach { bottom = 14, left = 0, right = 0, top = 0 }
         ]
         [ column
             [ width fill
             , alignTop
             , spacing lineSpacing
-            , paddingEach { bottom = 0, left = 14, right = 0, top = 0 }
-            , Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
-            , Border.color colourScheme.midGrey
             ]
             [ row
                 [ width fill
                 , alignTop
                 , spacing lineSpacing
+                , padding 10
+                , Background.color colourScheme.lightGrey
+                , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
+                , Border.color colourScheme.midGrey
                 ]
                 [ column
                     [ width shrink
@@ -198,20 +198,20 @@ viewRangeFacet config =
                         }
                     ]
                 , column
+                    [ width shrink
+                    , height shrink
+                    , alignLeft
+                    , alignTop
+                    ]
+                    [ facetHelp above rangeFacetHelp ]
+                ]
+            , row
+                [ width fill ]
+                [ column
                     [ width fill ]
                     [ validateInput lowerValidError
                     , validateInput upperValidError
                     ]
-                ]
-            , row
-                []
-                [ column
-                    [ width shrink
-                    , height shrink
-                    , centerX
-                    , centerY
-                    ]
-                    [ facetHelp above rangeFacetHelp ]
                 ]
             ]
         ]
