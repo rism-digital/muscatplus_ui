@@ -5,11 +5,12 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Element.Region as Region
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), ModeFacet)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (headingLG)
+import Page.UI.Attributes exposing (headingLG, headingXL)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg, unknownSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -114,9 +115,10 @@ viewModeItem selectedMode language fitem =
             [ paddingXY 5 0 ]
             icon
         , el
-            [ alignLeft
-            , spacing 10
-            , headingLG
+            [ headingXL
+            , Region.heading 3
+            , Font.medium
+            , centerY
             ]
             (text (fullLabel ++ " (" ++ itemCount ++ ")"))
         ]
