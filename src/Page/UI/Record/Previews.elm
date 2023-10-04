@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews exposing (PreviewConfig, viewPreviewError, viewPreviewRouter)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, moveDown, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -141,15 +141,17 @@ viewPreviewRouter language cfg previewData =
                     none
     in
     row
-        [ width fill
-        , height fill
+        [ width shrink
+        , height (fill |> maximum 1000)
         , clipY
         , alignTop
-        , alignRight
+        , alignLeft
         , Background.color colourScheme.white
-        , Border.color colourScheme.lightBlue
+        , Border.color colourScheme.darkBlue
         , Border.width 3
         , htmlAttribute (HA.style "z-index" "10")
+        , moveDown 100
+        , Border.shadow { offset = ( 2, 0 ), size = 2, blur = 5, color = colourScheme.darkGrey }
         ]
         [ column
             [ width fill
@@ -173,7 +175,7 @@ viewRecordPreviewTitleBar language closeMsg =
         , paddingXY 10 0
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , Border.color colourScheme.darkBlue
-        , Background.color colourScheme.lightBlue
+        , Background.color colourScheme.darkBlue
         ]
         [ el
             [ alignLeft
