@@ -142,8 +142,10 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
     row
         [ alignTop
         , Background.color colourScheme.lightGrey
+        , Border.color colourScheme.midGrey
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , width fill
-        , height (px 70)
+        , height (px 60)
         , paddingXY 20 0
         , centerY
         ]

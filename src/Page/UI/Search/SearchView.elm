@@ -3,13 +3,13 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingEach, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Maybe.Extra as ME
@@ -18,8 +18,8 @@ import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
-import Page.UI.Attributes exposing (bodySM, controlsColumnWidth, headingMD, lineSpacing, responsiveCheckboxColumns, resultColumnWidth)
-import Page.UI.Components exposing (dividerWithText)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, controlsColumnWidth, headingLG, headingMD, lineSpacing, responsiveCheckboxColumns, resultColumnWidth)
+import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
@@ -137,11 +137,19 @@ viewSearchResultsSection cfg resultsLoading body =
             [ resultColumnWidth (.device cfg.session)
             , height fill
             , alignTop
-            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
             , Border.color colourScheme.slateGrey
             , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
-            [ viewSearchResultsListPanel
+            [ viewSearchPageSort
+                { language = language
+                , activeSearch = .activeSearch cfg.model
+                , body = body
+                , changedResultSortingMsg = cfg.userChangedResultSortingMsg
+                , changedResultRowsPerPageMsg = cfg.userChangedResultsPerPageMsg
+                }
+                cfg.searchResponse
+            , viewSearchResultsListPanel
                 { language = language
                 , model = cfg.model
                 , body = body
@@ -164,14 +172,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 , submitMsg = cfg.userTriggeredSearchSubmitMsg
                 , resetMsg = cfg.userResetAllFiltersMsg
                 }
-            , viewSearchPageSort
-                { language = language
-                , activeSearch = .activeSearch cfg.model
-                , body = body
-                , changedResultSortingMsg = cfg.userChangedResultSortingMsg
-                , changedResultRowsPerPageMsg = cfg.userChangedResultsPerPageMsg
-                }
-                cfg.searchResponse
+            , activeFilters
             , viewSearchControls
                 { session = cfg.session
                 , model = cfg.model
@@ -182,7 +183,6 @@ viewSearchResultsSection cfg resultsLoading body =
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
                 , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                 }
-            , activeFilters
             ]
         ]
 
@@ -214,7 +214,7 @@ viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
                         , Border.rounded 3
                         , Border.width 1
                         , Font.color colourScheme.black
-                        , bodySM
+                        , bodyRegular
                         ]
                         [ column []
                             [ text (label ++ ": " ++ extractLabelFromLanguageMap session.language valueLabel) ]
@@ -235,9 +235,9 @@ viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
         [ width fill
         , height shrink
         , paddingXY 20 10
-        , Background.color colourScheme.lightGrey
-        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
-        , Border.color colourScheme.midGrey
+        , Background.color colourScheme.translucentBlue
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.lightBlue
         ]
         [ column
             [ width fill
@@ -246,7 +246,9 @@ viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
             ]
             [ row
                 [ width fill ]
-                [ el [ headingMD, Font.medium ] (text "Active Filters") ]
+                [ toLanguageMap "Active Filters"
+                    |> h3 session.language
+                ]
             , wrappedRow
                 [ width fill
                 , height fill
@@ -361,12 +363,6 @@ viewSearchControls cfg =
                     , alignTop
                     ]
                     (mainSearchField
-                        :: row
-                            [ width fill
-                            , paddingEach { bottom = 0, left = 0, right = 0, top = 10 }
-                            ]
-                            [ dividerWithText (extractLabelFromLanguageMap language localTranslations.additionalFilters)
-                            ]
                         :: secondaryQueryField
                         :: facetLayout
                     )

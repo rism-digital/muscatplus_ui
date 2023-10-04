@@ -1,4 +1,4 @@
-module Page.UI.Images exposing (SvgDetails, assistanceSvg, audioMutedSvg, audioUnmutedSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, closeWindowSvg, digitizedImagesSvg, externalLinkSvg, fileDownloadSvg, globeSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, rismLogo, searchSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, unknownSvg, userCircleSvg)
+module Page.UI.Images exposing (SvgDetails, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, closeWindowSvg, digitizedImagesSvg, externalLinkSvg, fileDownloadSvg, globeSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, rismLogo, searchSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, unknownSvg, userCircleSvg)
 
 import Color exposing (toCssString)
 import Element exposing (Element, html)
@@ -55,6 +55,30 @@ backspaceSvg color =
     makeSvgIcon color backspace
 
 
+book : SvgDetails
+book =
+    { viewBox = "0 0 448 512"
+    , path = "M96 0C43 0 0 43 0 96V416c0 53 43 96 96 96H384h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V384c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H384 96zm0 384H352v64H96c-17.7 0-32-14.3-32-32s14.3-32 32-32zm32-240c0-8.8 7.2-16 16-16H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16zm16 48H336c8.8 0 16 7.2 16 16s-7.2 16-16 16H144c-8.8 0-16-7.2-16-16s7.2-16 16-16z"
+    }
+
+
+bookSvg : Element.Color -> Element msg
+bookSvg color =
+    makeSvgIcon color book
+
+
+bookCopy : SvgDetails
+bookCopy =
+    { viewBox = "0 0 576 512"
+    , path = "M160 96L96 96C43 96 0 139 0 192V416c0 53 43 96 96 96H320h32c17.7 0 32-14.3 32-32s-14.3-32-32-32H320 288 96c-17.7 0-32-14.3-32-32s14.3-32 32-32h81.1c-10.9-18.8-17.1-40.7-17.1-64V96zM320 416h32H512h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288c17.7 0 32-14.3 32-32V32c0-17.7-14.3-32-32-32H512 288c-53 0-96 43-96 96V320c0 24.6 9.2 47 24.4 64c17.6 19.6 43.1 32 71.6 32h32zm-64-96c0-17.7 14.3-32 32-32h96 96v64H384 288c-17.7 0-32-14.3-32-32z"
+    }
+
+
+bookCopySvg : Element.Color -> Element msg
+bookCopySvg color =
+    makeSvgIcon color bookCopy
+
+
 bookOpen : SvgDetails
 bookOpen =
     { viewBox = "0 0 640 512"
@@ -65,6 +89,18 @@ bookOpen =
 bookOpenSvg : Element.Color -> Element msg
 bookOpenSvg color =
     makeSvgIcon color bookOpen
+
+
+bookOpenCover : SvgDetails
+bookOpenCover =
+    { viewBox = "0 0 640 512"
+    , path = "M304 32V408L96 368V34.7C96 14.9 113.8-.2 133.3 3.1L304 32zM89.7 405.1L320 451.2l230.3-46.1c15-3 25.7-16.1 25.7-31.4V28.8l25.7-5.1C621.5 19.7 640 34.8 640 55V421.8c0 15.3-10.8 28.4-25.7 31.4L320 512 25.7 453.1C10.8 450.2 0 437 0 421.8V55C0 34.8 18.5 19.7 38.3 23.7L64 28.8v345c0 15.3 10.8 28.4 25.7 31.4zM336 408V32L506.7 3.1C526.2-.2 544 14.9 544 34.7V368L336 408z"
+    }
+
+
+bookOpenCoverSvg : Element.Color -> Element msg
+bookOpenCoverSvg color =
+    makeSvgIcon color bookOpenCover
 
 
 briefcase : SvgDetails

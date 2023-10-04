@@ -1,10 +1,9 @@
 module Page.Front.Views exposing (view)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, none, paddingEach, paddingXY, paragraph, px, row, scrollbarY, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, none, paddingXY, paragraph, px, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views
 import Page.Front.Model exposing (FrontPageModel)
@@ -14,7 +13,7 @@ import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.SideBar.Msg exposing (SideBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (emptyAttribute, headingHero)
-import Page.UI.Components exposing (dividerWithText, h1)
+import Page.UI.Components exposing (h1)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput, viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
@@ -244,13 +243,6 @@ viewFacetPanels cfg =
                         ]
                         [ h1 language headingHeroText ]
                         :: mainSearchField
-                        :: row
-                            [ width fill
-                            , paddingEach { bottom = 0, left = 0, right = 0, top = 10 }
-                            ]
-                            [ extractLabelFromLanguageMap language localTranslations.additionalFilters
-                                |> dividerWithText
-                            ]
                         :: secondaryQueryField
                         :: facetLayout
                     )

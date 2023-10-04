@@ -1,7 +1,7 @@
 module Page.UI.SortAndRows exposing (SortAndRowsConfig, viewSearchPageSort)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingEach, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -59,12 +59,10 @@ viewRowSelectAndSortSelector cfg =
         , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , width fill
-        , height (px 40)
+        , height (px 60)
         , paddingXY 20 0
         , centerY
         , htmlAttribute (HA.style "z-index" "1")
-
-        --, minimalDropShadow
         ]
         [ column
             [ width fill
@@ -85,6 +83,11 @@ viewRowSelectAndSortSelector cfg =
                         , alignLeft
                         , centerY
                         , spacing 5
+                        , padding 5
+                        , Border.rounded 3
+                        , Border.width 1
+                        , Border.color colourScheme.midGrey
+                        , Background.color colourScheme.white
                         ]
                         [ el
                             [ alignLeft
@@ -112,10 +115,15 @@ viewRowSelectAndSortSelector cfg =
                 , column
                     [ width fill ]
                     [ row
-                        [ width fill
+                        [ width shrink
                         , alignLeft
                         , centerY
                         , spacing 5
+                        , padding 5
+                        , Border.rounded 3
+                        , Border.width 1
+                        , Border.color colourScheme.midGrey
+                        , Background.color colourScheme.white
                         ]
                         [ el
                             [ alignLeft

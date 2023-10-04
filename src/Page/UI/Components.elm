@@ -13,6 +13,7 @@ module Page.UI.Components exposing
     , mapViewer
     , renderLabel
     , renderParagraph
+    , sourceIconChooser
     , viewParagraphField
     , viewSummaryField
     )
@@ -31,8 +32,10 @@ import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
+import Page.RecordTypes.SourceShared exposing (SourceRecordType(..))
 import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 import Utilities exposing (toLinkedHtml)
 
@@ -490,26 +493,6 @@ viewSummaryField language fieldValues =
         fieldValues
 
 
-viewBlankBottomBar : Element msg
-viewBlankBottomBar =
-    row
-        [ alignTop
-
-        --, Background.color (colourScheme.lightGrey |> convertColorToElementColor)
-        --, Border.color (colourScheme.midGrey |> convertColorToElementColor)
-        --, Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
-        , width fill
-
-        --, height (px 50)
-        --, paddingXY 10 0
-        , centerY
-        , htmlAttribute (HA.style "z-index" "1")
-
-        --, minimalDropShadow
-        ]
-        []
-
-
 mapViewer : ( Int, Int ) -> String -> Element msg
 mapViewer ( width, height ) iframeUrl =
     HT.iframe
@@ -520,3 +503,19 @@ mapViewer ( width, height ) iframeUrl =
         ]
         []
         |> html
+
+
+sourceIconChooser : SourceRecordType -> (Element.Color -> Element msg)
+sourceIconChooser recordType =
+    case recordType of
+        SourceItemRecord ->
+            bookOpenSvg
+
+        SourceSingleItemRecord ->
+            bookOpenCoverSvg
+
+        SourceCollectionRecord ->
+            bookSvg
+
+        SourceCompositeRecord ->
+            bookCopySvg

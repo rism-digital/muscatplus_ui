@@ -9,13 +9,17 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (emptyAttribute, headingLG, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h2, viewSummaryField)
+import Page.UI.Components exposing (h2, sourceIconChooser, viewSummaryField)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 
 
 viewSourceItem : Language -> BasicSourceBody -> Element msg
 viewSourceItem language source =
+    let
+        sourceIcon =
+            sourceIconChooser (.type_ (.recordType source.record))
+    in
     row
         (width fill :: sectionBorderStyles)
         [ column
@@ -29,11 +33,11 @@ viewSourceItem language source =
                 , spacing 5
                 ]
                 [ el
-                    [ width (px 20)
-                    , height (px 20)
+                    [ width (px 25)
+                    , height (px 25)
                     , centerY
                     ]
-                    (sourcesSvg colourScheme.slateGrey)
+                    (sourceIcon colourScheme.slateGrey)
                 , link
                     [ linkColour
                     , headingLG

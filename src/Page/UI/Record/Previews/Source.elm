@@ -1,9 +1,10 @@
 module Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 
-import Element exposing (Element, alignTop, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
+import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
@@ -24,11 +25,15 @@ viewSourcePreview : Language -> Bool -> msg -> Set String -> (String -> msg) -> 
 viewSourcePreview language itemsExpanded expandMsg incipitInfoExpanded incipitInfoToggleMsg body =
     let
         sourceIcon =
+            sourceIconChooser (.type_ (.recordType body.record))
+
+        sourceIconView =
             el
-                [ width (px 28)
-                , height (px 28)
+                [ width (px 30)
+                , height (px 30)
+                , centerY
                 ]
-                (sourcesSvg colourScheme.midGrey)
+                (sourceIcon colourScheme.midGrey)
 
         pageBodyView =
             row
@@ -82,7 +87,7 @@ viewSourcePreview language itemsExpanded expandMsg incipitInfoExpanded incipitIn
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ subHeaderTemplate language (Just sourceIcon) body
+                    [ subHeaderTemplate language (Just sourceIconView) body
                     , pageFullRecordTemplate language body
                     ]
                 ]

@@ -72,6 +72,7 @@ colourScheme :
     , slateGrey : Element.Color
     , translucentBlack : Element.Color
     , translucentGrey : Element.Color
+    , translucentBlue : Element.Color
     , turquoise : Element.Color
     , white : Element.Color
     , yellow : Element.Color
@@ -181,6 +182,13 @@ colourScheme =
             , green = 136
             , blue = 153
             , alpha = 0.5
+            }
+    , translucentBlue =
+        Element.fromRgb255
+            { red = 0
+            , green = 115
+            , blue = 181
+            , alpha = 0.3
             }
     , turquoise =
         Element.fromRgb255

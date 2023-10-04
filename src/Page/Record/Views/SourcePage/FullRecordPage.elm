@@ -11,6 +11,7 @@ import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelations
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
+import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
@@ -47,11 +48,15 @@ viewFullSourcePage session model body =
                     viewSourceSearchTab session model
 
         sourceIcon =
+            sourceIconChooser (.type_ (.recordType body.record))
+
+        sourceIconView =
             el
-                [ width (px 28)
-                , height (px 28)
+                [ width (px 30)
+                , height (px 30)
+                , centerY
                 ]
-                (sourcesSvg colourScheme.midGrey)
+                (sourceIcon colourScheme.midGrey)
     in
     row
         [ width fill
@@ -77,7 +82,7 @@ viewFullSourcePage session model body =
                     , alignLeft
                     , spacingXY 0 lineSpacing
                     ]
-                    [ pageHeaderTemplate session.language (Just sourceIcon) body
+                    [ pageHeaderTemplate session.language (Just sourceIconView) body
                     , viewRecordTopBarRouter session.language model body
                     ]
                 ]
