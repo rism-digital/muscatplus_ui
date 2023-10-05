@@ -1,7 +1,7 @@
 module Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources, viewExternalResourcesSection)
 
 import Config as C
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, none, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, none, paragraph, px, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody)
@@ -89,14 +89,19 @@ viewExternalResource language body =
             row
                 [ width fill
                 , alignLeft
-                , spacing 5
                 ]
-                [ resourceLink
-                    [ linkColour ]
-                    { url = body.url
-                    , label = renderParagraph language body.label
-                    }
-                , externalLinkTemplate body.url
+                [ paragraph
+                    [ width fill
+                    , alignLeft
+                    ]
+                    [ resourceLink
+                        [ linkColour
+                        ]
+                        { url = body.url
+                        , label = renderParagraph language body.label
+                        }
+                    , externalLinkTemplate body.url
+                    ]
                 ]
 
 

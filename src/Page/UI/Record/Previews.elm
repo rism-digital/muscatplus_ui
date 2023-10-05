@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews exposing (PreviewConfig, viewPreviewError, viewPreviewRouter)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, moveDown, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -26,7 +26,8 @@ import Set exposing (Set)
 
 
 type alias PreviewConfig msg =
-    { closeMsg : msg
+    { windowSize : ( Int, Int )
+    , closeMsg : msg
     , sourceItemExpandMsg : msg
     , sourceItemsExpanded : Bool
     , incipitInfoSectionsExpanded : Set String
@@ -99,6 +100,12 @@ viewPreviewLoading language =
 viewPreviewRouter : Language -> PreviewConfig msg -> Maybe ServerData -> Element msg
 viewPreviewRouter language cfg previewData =
     let
+        ( windowWidth, windowHeight ) =
+            cfg.windowSize
+
+        previewHeight =
+            round (toFloat windowHeight * 0.6)
+
         preview =
             case previewData of
                 Just (SourceData body) ->
@@ -141,8 +148,8 @@ viewPreviewRouter language cfg previewData =
                     none
     in
     row
-        [ width shrink
-        , height (fill |> maximum 1000)
+        [ width (shrink |> minimum 600 |> maximum 800)
+        , height (fill |> maximum previewHeight)
         , clipY
         , alignTop
         , alignLeft

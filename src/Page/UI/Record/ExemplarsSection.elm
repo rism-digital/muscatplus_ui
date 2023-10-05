@@ -1,6 +1,6 @@
 module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, paragraph, px, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
@@ -123,27 +123,34 @@ viewBoundWithSection language boundWithSection =
 
 viewHeldBy : Language -> BasicInstitutionBody -> Element msg
 viewHeldBy language body =
-    row
+    column
         [ width fill
-        , spacing 5
         ]
-        [ el
-            [ width (px 20)
-            , height (px 20)
-            , tooltip above
-                (el
-                    tooltipStyle
-                    (text (extractLabelFromLanguageMap language localTranslations.heldBy))
-                )
+        [ row
+            [ width fill
+            , spacing 5
             ]
-            (institutionSvg colourScheme.slateGrey)
-        , link
-            [ linkColour
+            [ el
+                [ width (px 25)
+                , height (px 25)
+                , tooltip above
+                    (el
+                        tooltipStyle
+                        (text (extractLabelFromLanguageMap language localTranslations.heldBy))
+                    )
+                ]
+                (institutionSvg colourScheme.slateGrey)
+            , paragraph
+                [ width fill ]
+                [ link
+                    [ linkColour
+                    ]
+                    { label = h2 language body.label
+                    , url = body.id
+                    }
+                ]
+            , externalLinkTemplate body.id
             ]
-            { label = h2 language body.label
-            , url = body.id
-            }
-        , externalLinkTemplate body.id
         ]
 
 

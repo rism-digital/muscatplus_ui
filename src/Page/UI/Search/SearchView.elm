@@ -87,7 +87,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
                         ]
                         (viewPreviewRouter (.language cfg.session)
-                            { closeMsg = cfg.userClosedPreviewWindowMsg
+                            { windowSize = .window cfg.session
+                            , closeMsg = cfg.userClosedPreviewWindowMsg
                             , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                             , sourceItemsExpanded = .sourceItemsExpanded cfg.model
                             , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
@@ -104,7 +105,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
                         ]
                         (viewPreviewRouter (.language cfg.session)
-                            { closeMsg = cfg.userClosedPreviewWindowMsg
+                            { windowSize = .window cfg.session
+                            , closeMsg = cfg.userClosedPreviewWindowMsg
                             , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                             , sourceItemsExpanded = .sourceItemsExpanded cfg.model
                             , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections

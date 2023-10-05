@@ -1,6 +1,6 @@
 module Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes as HA
@@ -38,14 +38,15 @@ viewSourceItem language source =
                     , centerY
                     ]
                     (sourceIcon colourScheme.slateGrey)
-                , link
-                    [ linkColour
-                    , headingLG
-                    , Font.medium
+                , paragraph
+                    [ width fill ]
+                    [ link
+                        [ linkColour
+                        ]
+                        { label = h2 language source.label
+                        , url = source.id
+                        }
                     ]
-                    { label = h2 language source.label
-                    , url = source.id
-                    }
                 ]
             , Maybe.withDefault [] source.summary
                 |> viewSummaryField language
