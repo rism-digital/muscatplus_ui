@@ -148,7 +148,7 @@ viewPreviewRouter language cfg previewData =
                     none
     in
     row
-        [ width (shrink |> minimum 600 |> maximum 800)
+        [ width (fill |> minimum 600 |> maximum 800)
         , height (fill |> maximum previewHeight)
         , clipY
         , alignTop
