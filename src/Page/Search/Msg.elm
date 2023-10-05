@@ -3,6 +3,7 @@ module Page.Search.Msg exposing (SearchMsg(..))
 import Debouncer.Messages as Debouncer
 import Http
 import Http.Detailed
+import KeyCodes exposing (ArrowDirection)
 import Language exposing (LanguageMap)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
@@ -49,4 +50,5 @@ type SearchMsg
     | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedExpandIncipitInfoSectionInPreview String
     | UserClickedClosePreviewWindow
+    | UserPressedAnArrowKey ArrowDirection
     | NothingHappened

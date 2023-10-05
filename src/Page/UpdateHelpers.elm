@@ -24,6 +24,7 @@ module Page.UpdateHelpers exposing
     , userEnteredTextInRangeFacet
     , userFocusedRangeFacet
     , userLostFocusOnRangeFacet
+    , userPressedArrowKeysInSearchResultsList
     , userRemovedItemFromActiveFilters
     )
 
@@ -35,6 +36,7 @@ import Dict exposing (Dict)
 import Flip exposing (flip)
 import Http
 import Http.Detailed
+import KeyCodes exposing (ArrowDirection(..))
 import Language exposing (LanguageMap, toLanguageMap)
 import List.Extra as LE
 import Maybe.Extra as ME
@@ -42,7 +44,7 @@ import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setRows, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts, RangeFacetValue(..))
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts, RangeFacetValue(..), extractIdFromSearchResult)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
@@ -717,3 +719,64 @@ correlateQueryValuesWithFacetLangMap qValues serverValues =
                 |> Maybe.withDefault ( qVal, qLabel )
         )
         qValues
+
+
+userPressedArrowKeysInSearchResultsList :
+    ArrowDirection
+    -> Session
+    -> { a | response : Response ServerData, selectedResult : Maybe String, preview : Response ServerData }
+    -> ( { a | response : Response ServerData, preview : Response ServerData, selectedResult : Maybe String }, Cmd msg )
+userPressedArrowKeysInSearchResultsList arrowDirection session model =
+    let
+        ( listOfItems, numOfItems ) =
+            case model.response of
+                Response (SearchData d) ->
+                    ( Just (List.map (\it -> extractIdFromSearchResult it) d.items)
+                    , List.length d.items
+                    )
+
+                _ ->
+                    ( Nothing, 0 )
+
+        currentResultIdx : Maybe Int
+        currentResultIdx =
+            Maybe.map2
+                (\li sr ->
+                    LE.elemIndex sr li
+                )
+                listOfItems
+                model.selectedResult
+                |> ME.join
+
+        nextResultIdent : Maybe String
+        nextResultIdent =
+            -- Handles the case where the arrow key would produce a next index that
+            -- is greater or less than the total number of items in the list.
+            case arrowDirection of
+                ArrowDown ->
+                    Maybe.map2
+                        (\cr li ->
+                            LE.getAt (min (numOfItems - 1) (cr + 1)) li
+                        )
+                        currentResultIdx
+                        listOfItems
+                        |> ME.join
+
+                ArrowUp ->
+                    Maybe.map2
+                        (\cr li ->
+                            LE.getAt (max 0 (cr - 1)) li
+                        )
+                        currentResultIdx
+                        listOfItems
+                        |> ME.join
+
+                _ ->
+                    Nothing
+    in
+    case nextResultIdent of
+        Just nr ->
+            userClickedResultForPreview nr session model
+
+        Nothing ->
+            ( model, Cmd.none )

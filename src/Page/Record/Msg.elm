@@ -3,6 +3,7 @@ module Page.Record.Msg exposing (RecordMsg(..))
 import Debouncer.Basic as Debouncer
 import Http
 import Http.Detailed
+import KeyCodes exposing (ArrowDirection)
 import Language exposing (LanguageMap)
 import Page.Record.Model exposing (CurrentRecordViewTab)
 import Page.RecordTypes.Probe exposing (ProbeData)
@@ -49,4 +50,5 @@ type RecordMsg
     | UserClickedExpandIncipitInfoSectionInPreview String
     | UserClickedClosePreviewWindow
     | UserClickedRecordViewTab CurrentRecordViewTab
+    | UserPressedAnArrowKey ArrowDirection
     | NothingHappened

@@ -1,9 +1,10 @@
 module Subscriptions exposing (subscriptions)
 
-import Browser.Events exposing (onResize)
+import Browser.Events exposing (onKeyUp, onResize)
 import Device exposing (detectDevice)
 import Json.Decode as Decode
 import Json.Encode as Encode
+import KeyCodes exposing (ArrowDirection(..), keyDecoder)
 import Model exposing (Model(..))
 import Msg exposing (Msg)
 import Page.Search.Msg as SearchMsg
@@ -21,6 +22,7 @@ subscriptions model =
     Sub.batch
         [ onResize (\width height -> Msg.UserResizedWindow (detectDevice width height))
         , receiveIncomingMessageFromPort (messageReceiverHelper model)
+        , handleKeyboardNavigation model
         ]
 
 
@@ -70,3 +72,18 @@ messageReceiverHelper model val =
 
         Err e ->
             Msg.ClientReceivedABadPortMessage (Decode.errorToString e)
+
+
+handleKeyboardNavigation : Model -> Sub Msg
+handleKeyboardNavigation model =
+    Sub.map
+        (\subm ->
+            case subm of
+                NotAnArrowKey ->
+                    Msg.UserInteractedWithSearchPage SearchMsg.NothingHappened
+
+                _ ->
+                    SearchMsg.UserPressedAnArrowKey subm
+                        |> Msg.UserInteractedWithSearchPage
+        )
+        (onKeyUp keyDecoder)

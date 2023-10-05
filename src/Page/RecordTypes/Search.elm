@@ -29,6 +29,7 @@ module Page.RecordTypes.Search exposing
     , SourceResultBody
     , SourceResultFlags
     , ToggleFacet
+    , extractIdFromSearchResult
     , facetsDecoder
     , modeFacetDecoder
     , parseFacetBehaviourToString
@@ -318,6 +319,22 @@ type alias ToggleFacet =
     , label : LanguageMap
     , value : String
     }
+
+
+extractIdFromSearchResult : SearchResult -> String
+extractIdFromSearchResult searchResult =
+    case searchResult of
+        SourceResult d ->
+            d.id
+
+        PersonResult p ->
+            p.id
+
+        InstitutionResult i ->
+            i.id
+
+        IncipitResult ic ->
+            ic.id
 
 
 facetBehaviourOptions : List ( String, FacetBehaviours )
