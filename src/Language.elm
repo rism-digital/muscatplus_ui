@@ -10,6 +10,7 @@ module Language exposing
     , formatNumberByLanguage
     , languageMapDecoder
     , languageOptionsForDisplay
+    , limitLength
     , parseLocaleToLanguage
     , toLanguageMap
     )
@@ -20,6 +21,7 @@ import FormatNumber.Locales exposing (Decimals(..), Locale, base)
 import Json.Decode as Decode exposing (Decoder)
 import List.Extra as LE
 import Maybe.Extra as ME
+import String.Extra as SE
 import Time exposing (Posix, Zone)
 import Utilities exposing (namedValue)
 
@@ -62,6 +64,16 @@ type LanguageValues
 toLanguageMap : String -> LanguageMap
 toLanguageMap s =
     [ LanguageValues None [ s ] ]
+
+
+limitLength : Int -> LanguageMap -> LanguageMap
+limitLength len langMap =
+    List.map
+        (\(LanguageValues langCode sVals) ->
+            List.map (\sv -> SE.softEllipsis len sv) sVals
+                |> LanguageValues langCode
+        )
+        langMap
 
 
 {-|

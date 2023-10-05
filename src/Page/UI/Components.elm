@@ -19,7 +19,7 @@ module Page.UI.Components exposing
     )
 
 import Css
-import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerX, centerY, clip, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -29,7 +29,7 @@ import Html.Attributes as HA
 import Html.Events as HE
 import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, limitLength)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceRecordType(..))
@@ -285,7 +285,15 @@ fieldValueWrapper contentStyles content =
 
 h1 : Language -> LanguageMap -> Element msg
 h1 language heading =
-    renderLanguageHelper [ headingHero, Region.heading 1, Font.medium, bodySerifFont ] language heading
+    renderLanguageHelper
+        [ headingHero
+        , Region.heading 1
+        , Font.medium
+        , bodySerifFont
+        , htmlAttribute (HA.style "font-size" "calc(18px + 0.2vw)")
+        ]
+        language
+        (limitLength 140 heading)
 
 
 h2 : Language -> LanguageMap -> Element msg
@@ -383,7 +391,9 @@ renderLanguageHelper : List (Attribute msg) -> Language -> LanguageMap -> Elemen
 renderLanguageHelper attrib language heading =
     paragraph
         attrib
-        [ text (extractLabelFromLanguageMap language heading) ]
+        [ extractLabelFromLanguageMap language heading
+            |> text
+        ]
 
 
 renderParagraph : Language -> LanguageMap -> Element msg

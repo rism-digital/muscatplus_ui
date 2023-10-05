@@ -9,7 +9,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, above, alignBottom, alignLeft, alignRight, centerY, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignBottom, alignLeft, alignRight, centerY, clip, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
@@ -146,6 +146,7 @@ headerTmpl cfg =
         (width fill
             :: spacing 5
             :: centerY
+            :: clip
             :: cfg.extraAttrs
         )
         [ viewMaybe identity cfg.icon
