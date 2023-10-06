@@ -10,7 +10,7 @@ import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (sectionSpacing)
+import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (h2, h3, h4)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
@@ -106,6 +106,9 @@ viewPreviewRouter language cfg previewData =
         previewHeight =
             round (toFloat windowHeight * 0.6)
 
+        moveDownAmount =
+            toFloat windowHeight * 0.08
+
         preview =
             case previewData of
                 Just (SourceData body) ->
@@ -157,8 +160,8 @@ viewPreviewRouter language cfg previewData =
         , Border.color colourScheme.darkBlue
         , Border.width 3
         , htmlAttribute (HA.style "z-index" "10")
-        , moveDown 100
-        , Border.shadow { offset = ( 2, 0 ), size = 2, blur = 5, color = colourScheme.darkGrey }
+        , moveDown moveDownAmount
+        , minimalDropShadow
         ]
         [ column
             [ width fill

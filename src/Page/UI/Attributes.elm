@@ -18,6 +18,7 @@ module Page.UI.Attributes exposing
     , labelFieldColumnAttributes
     , lineSpacing
     , linkColour
+    , minimalDropShadow
     , pageBackground
     , responsiveCheckboxColumns
     , resultColumnWidth
@@ -177,7 +178,7 @@ minimalDropShadow =
     Border.shadow
         { blur = 8
         , color =
-            colourScheme.lightGrey
+            colourScheme.darkGrey
         , offset = ( 0, 0 )
         , size = 2
         }
@@ -198,9 +199,6 @@ ratioCalc size =
 sectionBorderStyles : List (Attribute msg)
 sectionBorderStyles =
     [ paddingXY lineSpacing 0
-
-    --, Border.widthEach { bottom = 0, left = 2, right = 0, top = 0 }
-    --, Border.color (colourScheme.midGrey |> convertColorToElementColor)
     ]
 
 

@@ -64,6 +64,7 @@ colourScheme :
     , darkGrey : Element.Color
     , darkOrange : Element.Color
     , lightBlue : Element.Color
+    , lightestBlue : Element.Color
     , lightGreen : Element.Color
     , lightGrey : Element.Color
     , lightOrange : Element.Color
@@ -118,6 +119,13 @@ colourScheme =
             { red = 0
             , green = 115
             , blue = 181
+            , alpha = 1
+            }
+    , lightestBlue =
+        Element.fromRgb255
+            { red = 245
+            , green = 251
+            , blue = 255
             , alpha = 1
             }
     , lightGreen =

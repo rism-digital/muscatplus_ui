@@ -70,7 +70,7 @@ viewFacetsForSourcesMode cfg =
             viewFacet (createFacetConfig cfg "people" tooltips.otherPeople) cfg.facetMsgConfig
 
         hasAnonymousCreator =
-            viewFacet (createFacetConfig cfg "has-anonymous-creator" tooltips.otherPeople) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "has-anonymous-creator" tooltips.anonymousCreator) cfg.facetMsgConfig
 
         subjects =
             viewFacet (createFacetConfig cfg "subjects" tooltips.subjects) cfg.facetMsgConfig

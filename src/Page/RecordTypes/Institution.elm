@@ -3,6 +3,7 @@ module Page.RecordTypes.Institution exposing
     , CoordinatesSection
     , InstitutionBody
     , LocationAddressSectionBody
+    , OrganizationDetailsSectionBody
     , basicInstitutionBodyDecoder
     , institutionBodyDecoder
     )
@@ -31,12 +32,19 @@ type alias CoordinatesSection =
     }
 
 
+type alias OrganizationDetailsSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , summary : List LabelValue
+    }
+
+
 type alias InstitutionBody =
     { sectionToc : String
     , id : String
     , label : LanguageMap
     , typeLabel : LanguageMap
-    , summary : Maybe (List LabelValue)
+    , organizationDetails : Maybe OrganizationDetailsSectionBody
     , relationships : Maybe RelationshipsSectionBody
     , notes : Maybe NotesSectionBody
     , externalAuthorities : Maybe ExternalAuthoritiesSectionBody
@@ -63,6 +71,14 @@ basicInstitutionBodyDecoder =
         |> required "label" languageMapLabelDecoder
 
 
+organizationDetailsSectionBodyDecoder : Decoder OrganizationDetailsSectionBody
+organizationDetailsSectionBodyDecoder =
+    Decode.succeed OrganizationDetailsSectionBody
+        |> hardcoded "institution-summary-section"
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "summary" (list labelValueDecoder)
+
+
 coordinatesSectionDecoder : Decoder CoordinatesSection
 coordinatesSectionDecoder =
     Decode.succeed CoordinatesSection
@@ -78,7 +94,7 @@ institutionBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "organizationDetails" (Decode.maybe organizationDetailsSectionBodyDecoder) Nothing
         |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "notes" (Decode.maybe notesSectionBodyDecoder) Nothing
         |> optional "externalAuthorities" (Decode.maybe externalAuthoritiesSectionBodyDecoder) Nothing

@@ -10,6 +10,7 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
+import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 
@@ -68,7 +69,7 @@ viewInstitutionPreview language body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe summaryBody body.summary
+                    [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
                     , viewMaybe (viewLocationAddressSection language) body.location
                     , viewMaybe (viewRelationshipsSection language) body.relationships
                     , viewMaybe (viewNotesSection language) body.notes

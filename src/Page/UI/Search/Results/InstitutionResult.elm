@@ -9,7 +9,7 @@ import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (mapMarkerSvg, penNibSvg, sourcesSvg)
-import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
+import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -17,7 +17,7 @@ viewInstitutionSearchResult :
     SearchResultConfig msg
     -> InstitutionResultBody
     -> Element msg
-viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg } body =
+viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
     let
         resultBody =
             [ viewMaybe (viewInstitutionSummary language resultColours.iconColour) body.summary
@@ -26,7 +26,7 @@ viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg } bod
             ]
 
         resultColours =
-            resultIsSelected selectedResult body.id
+            setResultColours resultIdx selectedResult body.id
     in
     resultTemplate
         { id = body.id
@@ -35,6 +35,7 @@ viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg } bod
         , colours = resultColours
         , resultBody = resultBody
         , clickMsg = clickForPreviewMsg
+        , sourceDatabaseIcon = Nothing
         }
 
 

@@ -1,7 +1,7 @@
-module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
+module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -32,6 +32,7 @@ type alias ResultConfig msg =
     { id : String
     , language : Language
     , resultTitle : LanguageMap
+    , sourceDatabaseIcon : Maybe (Element msg)
     , colours : ResultColours
     , resultBody : List (Element msg)
     , clickMsg : String -> msg
@@ -42,6 +43,7 @@ type alias SearchResultConfig msg =
     { language : Language
     , selectedResult : Maybe String
     , clickForPreviewMsg : String -> msg
+    , resultIdx : Int
     }
 
 
@@ -56,17 +58,27 @@ type alias SearchResultSummaryConfig msg =
     }
 
 
-resultIsSelected : Maybe String -> String -> ResultColours
-resultIsSelected selectedResult thisId =
+setResultColours : Int -> Maybe String -> String -> ResultColours
+setResultColours resultIdx selectedResult thisId =
     let
         isSelected =
             ME.unwrap False ((==) thisId) selectedResult
+
+        isOdd =
+            modBy 2 resultIdx == 1
     in
     if isSelected then
         { backgroundColour = colourScheme.lightBlue
         , fontLinkColour = colourScheme.white
         , textColour = colourScheme.white
         , iconColour = colourScheme.white
+        }
+
+    else if isOdd then
+        { backgroundColour = colourScheme.lightestBlue
+        , fontLinkColour = colourScheme.lightBlue
+        , textColour = colourScheme.black
+        , iconColour = colourScheme.slateGrey
         }
 
     else
@@ -91,6 +103,17 @@ resultTemplate cfg =
                             |> HA.id
                             |> htmlAttribute
                     )
+
+        dbLogo =
+            viewMaybe
+                (\i ->
+                    row
+                        [ width fill
+                        , height (px 40)
+                        ]
+                        [ i ]
+                )
+                cfg.sourceDatabaseIcon
     in
     row
         [ width fill
@@ -101,8 +124,6 @@ resultTemplate cfg =
         , onClick (cfg.clickMsg cfg.id)
         , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-
-        --, Border.dotted
         , pointer
         , paddingXY 20 12
         , resultRowNodeId
@@ -117,12 +138,12 @@ resultTemplate cfg =
                 , alignLeft
                 , alignTop
                 ]
-                [ el
+                [ column
                     [ Font.color (.fontLinkColour cfg.colours)
                     , width fill
                     , alignTop
                     ]
-                    (h3 cfg.language cfg.resultTitle)
+                    [ h3 cfg.language cfg.resultTitle ]
                 ]
             , row
                 [ width fill

@@ -1,5 +1,6 @@
 module Page.RecordTypes.Person exposing
-    ( NameVariantsSectionBody
+    ( BiographicalDetailsSectionBody
+    , NameVariantsSectionBody
     , PersonBody
     , personBodyDecoder
     )
@@ -22,12 +23,19 @@ type alias NameVariantsSectionBody =
     }
 
 
+type alias BiographicalDetailsSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , summary : List LabelValue
+    }
+
+
 type alias PersonBody =
     { sectionToc : String
     , id : String
     , label : LanguageMap
     , typeLabel : LanguageMap
-    , summary : Maybe (List LabelValue)
+    , biographicalDetails : Maybe BiographicalDetailsSectionBody
     , nameVariants : Maybe NameVariantsSectionBody
     , relationships : Maybe RelationshipsSectionBody
     , notes : Maybe NotesSectionBody
@@ -46,6 +54,14 @@ nameVariantsSectionBodyDecoder =
         |> required "items" (list labelValueDecoder)
 
 
+biographicalDetailsSectionBodyDecoder : Decoder BiographicalDetailsSectionBody
+biographicalDetailsSectionBodyDecoder =
+    Decode.succeed BiographicalDetailsSectionBody
+        |> hardcoded "person-biographical-details-section"
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "summary" (list labelValueDecoder)
+
+
 personBodyDecoder : Decoder PersonBody
 personBodyDecoder =
     Decode.succeed PersonBody
@@ -53,7 +69,7 @@ personBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "biographicalDetails" (Decode.maybe biographicalDetailsSectionBodyDecoder) Nothing
         |> optional "nameVariants" (Decode.maybe nameVariantsSectionBodyDecoder) Nothing
         |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "notes" (Decode.maybe notesSectionBodyDecoder) Nothing

@@ -101,7 +101,13 @@ viewFrontSearchControls cfg =
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
             , Border.color colourScheme.slateGrey
             ]
-            [ viewSearchButtons
+            [ row
+                [ width fill
+                , height (px 35)
+                , Background.color colourScheme.lightGrey
+                ]
+                []
+            , viewSearchButtons
                 { language = .language cfg.session
                 , model = cfg.model
                 , isFrontPage = True

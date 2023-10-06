@@ -1,6 +1,6 @@
 module Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
@@ -51,26 +51,23 @@ viewRelatedToBody language body =
                 UnknownRelationship ->
                     ( none, none )
     in
-    el
-        []
-        (row
-            [ width fill
-            , spacing 5
+    row
+        [ width fill
+        , spacing 5
+        ]
+        [ el
+            [ width (px 16)
+            , height (px 16)
+            , centerY
+            , relationshipTooltip |> tooltip above
             ]
-            [ el
-                [ width (px 16)
-                , height (px 16)
-                , centerY
-                , relationshipTooltip |> tooltip above
-                ]
-                relIcon
-            , link
-                [ linkColour ]
-                { label = text (extractLabelFromLanguageMap language body.label)
-                , url = body.id
-                }
-            ]
-        )
+            relIcon
+        , link
+            [ linkColour ]
+            { label = text (extractLabelFromLanguageMap language body.label)
+            , url = body.id
+            }
+        ]
 
 
 viewRelationshipBody : Language -> RelationshipBody -> Element msg
@@ -91,7 +88,11 @@ viewRelationshipBody language body =
                 (\() ->
                     viewMaybe (\nm -> el [] (text (extractLabelFromLanguageMap language nm))) body.name
                 )
-                (\rel -> choose (rel.type_ == PlaceRelationship) (el [] (text (extractLabelFromLanguageMap language rel.label))) (viewRelatedToBody language rel))
+                (\rel ->
+                    choose (rel.type_ == PlaceRelationship)
+                        (el [] (text (extractLabelFromLanguageMap language rel.label)))
+                        (viewRelatedToBody language rel)
+                )
                 body.relatedTo
 
         roleLabel =
@@ -119,7 +120,9 @@ viewRelationshipBody language body =
                 valueFieldColumnAttributes
                 [ textColumn
                     [ bodyRegular ]
-                    [ row []
+                    [ row
+                        [ alignLeft
+                        ]
                         [ relatedToView
                         , qualifierLabel
                         , note

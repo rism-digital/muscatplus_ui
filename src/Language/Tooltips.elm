@@ -4,7 +4,8 @@ import Language exposing (Language(..), LanguageMap, LanguageValues(..))
 
 
 tooltips :
-    { associatedPlace : LanguageMap
+    { anonymousCreator : LanguageMap
+    , associatedPlace : LanguageMap
     , city : LanguageMap
     , composerAuthor : LanguageMap
     , compositeVolume : LanguageMap
@@ -29,7 +30,9 @@ tooltips :
     , textLanguage : LanguageMap
     }
 tooltips =
-    { associatedPlace =
+    { anonymousCreator =
+        [ LanguageValues English englishAnonymousCreatorTooltip ]
+    , associatedPlace =
         [ LanguageValues English englishAssociatedPlaceTooltip ]
     , city =
         [ LanguageValues English englishCityTooltip ]
@@ -80,6 +83,11 @@ tooltips =
     , textLanguage =
         [ LanguageValues English englishTextLanguageTooltip ]
     }
+
+
+englishAnonymousCreatorTooltip : List String
+englishAnonymousCreatorTooltip =
+    [ """Limit your results to only source records that have no known named creator.""" ]
 
 
 englishHideDiammRecordsToggleTooltip : List String

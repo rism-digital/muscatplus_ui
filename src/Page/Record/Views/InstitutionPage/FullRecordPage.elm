@@ -17,6 +17,7 @@ import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
+import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
@@ -54,7 +55,7 @@ viewDescriptionTab language body =
             , spacing sectionSpacing
             , padding 20
             ]
-            [ viewMaybe summaryBody body.summary
+            [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
             , viewMaybe (viewLocationAddressSection language) body.location
             , viewMaybe (viewRelationshipsSection language) body.relationships
             , viewMaybe (viewNotesSection language) body.notes
@@ -82,8 +83,8 @@ viewFullInstitutionPage session model body =
 
         icon =
             el
-                [ width (px 35)
-                , height (px 35)
+                [ width (px 25)
+                , height (px 25)
                 , centerX
                 , centerY
                 ]

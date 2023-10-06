@@ -1,6 +1,6 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -12,6 +12,8 @@ import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (peopleSvg)
+import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
@@ -52,7 +54,7 @@ viewDescriptionTab language body =
             , alignTop
             , padding 20
             ]
-            [ viewMaybe summaryBody body.summary
+            [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
             , viewMaybe (viewNameVariantsSection language) body.nameVariants
             , viewMaybe (viewRelationshipsSection language) body.relationships
             , viewMaybe (viewNotesSection language) body.notes
@@ -76,6 +78,15 @@ viewFullPersonPage session model body =
 
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTab session model
+
+        icon =
+            el
+                [ width (px 25)
+                , height (px 25)
+                , centerX
+                , centerY
+                ]
+                (peopleSvg colourScheme.slateGrey)
     in
     row
         [ width fill
@@ -101,7 +112,7 @@ viewFullPersonPage session model body =
                     , alignLeft
                     , paddingXY 20 0
                     ]
-                    [ pageHeaderTemplate session.language Nothing body
+                    [ pageHeaderTemplate session.language (Just icon) body
                     , viewRecordTopBarRouter session.language model body
                     ]
                 ]

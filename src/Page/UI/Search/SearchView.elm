@@ -439,13 +439,14 @@ viewSearchResultsList language selectedResult body clickMsg =
             [ width fill
             , alignTop
             ]
-            (List.map
-                (\result ->
+            (List.indexedMap
+                (\idx result ->
                     viewSearchResultRouter
                         { language = language
                         , selectedResult = selectedResult
                         , searchResult = result
                         , clickForPreviewMsg = clickMsg
+                        , resultIdx = idx
                         }
                 )
                 body.items
@@ -458,6 +459,7 @@ type alias SearchResultRouterConfig msg =
     , selectedResult : Maybe String
     , searchResult : SearchResult
     , clickForPreviewMsg : String -> msg
+    , resultIdx : Int
     }
 
 
@@ -468,6 +470,7 @@ viewSearchResultRouter cfg =
             { clickForPreviewMsg = cfg.clickForPreviewMsg
             , language = cfg.language
             , selectedResult = cfg.selectedResult
+            , resultIdx = cfg.resultIdx
             }
     in
     case cfg.searchResult of

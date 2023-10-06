@@ -52,8 +52,8 @@ viewFullSourcePage session model body =
 
         sourceIconView =
             el
-                [ width (px 30)
-                , height (px 30)
+                [ width (px 25)
+                , height (px 25)
                 , centerY
                 ]
                 (sourceIcon colourScheme.midGrey)

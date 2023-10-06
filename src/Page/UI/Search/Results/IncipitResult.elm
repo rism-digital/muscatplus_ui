@@ -11,14 +11,14 @@ import Page.UI.Attributes exposing (bodySM)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (musicListSvg, peopleSvg, sourcesSvg, textIconSvg)
 import Page.UI.Record.Incipits exposing (viewRenderedIncipits)
-import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
+import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 
 
 viewIncipitSearchResult :
     SearchResultConfig msg
     -> IncipitResultBody
     -> Element msg
-viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg } body =
+viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
     let
         resultBody =
             [ viewMaybe (viewIncipitSummary language resultColours.iconColour) body.summary
@@ -26,7 +26,7 @@ viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg } body =
             ]
 
         resultColours =
-            resultIsSelected selectedResult body.id
+            setResultColours resultIdx selectedResult body.id
     in
     resultTemplate
         { id = body.id
@@ -35,6 +35,7 @@ viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg } body =
         , colours = resultColours
         , resultBody = resultBody
         , clickMsg = clickForPreviewMsg
+        , sourceDatabaseIcon = Nothing
         }
 
 

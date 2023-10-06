@@ -1,18 +1,21 @@
 module Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, column, fill, link, maximum, row, spacing, text, width)
+import Element exposing (Color, Element, alignRight, column, el, fill, height, inFront, link, maximum, none, px, row, spacing, text, width)
+import Element.Background as Background
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.RecordTypes.Search exposing (SourceResultBody, SourceResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
 import Page.UI.Attributes exposing (bodyRegular, bodySM)
 import Page.UI.Components exposing (makeFlagIcon)
+import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, iiifLogo, layerGroupSvg, musicNotationSvg, penNibSvg, peopleSvg, sourcesSvg, userCircleSvg)
-import Page.UI.Search.Results exposing (SearchResultConfig, resultIsSelected, resultTemplate, viewSearchResultSummaryField)
+import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -113,17 +116,38 @@ viewSourceSearchResult :
     SearchResultConfig msg
     -> SourceResultBody
     -> Element msg
-viewSourceSearchResult { language, selectedResult, clickForPreviewMsg } body =
+viewSourceSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
     let
+        resultColours =
+            setResultColours resultIdx selectedResult body.id
+
+        diammLogoEl =
+            Maybe.map
+                (\f ->
+                    if f.isDIAMMRecord then
+                        Just
+                            (row
+                                [ width fill ]
+                                [ el
+                                    [ width (px 80)
+                                    , height (px 40)
+                                    , alignRight
+                                    ]
+                                    diammLogo
+                                ]
+                            )
+
+                    else
+                        Nothing
+                )
+                body.flags
+                |> ME.join
+
         resultBody =
             [ viewMaybe (viewSourceSummary language resultColours.iconColour) body.summary
             , viewMaybe (viewSourcePartOf language resultColours.fontLinkColour) body.partOf
-
-            --, viewMaybe (viewSourceFlags language) body.flags
+            , viewMaybe identity diammLogoEl
             ]
-
-        resultColours =
-            resultIsSelected selectedResult body.id
     in
     resultTemplate
         { id = body.id
@@ -132,6 +156,7 @@ viewSourceSearchResult { language, selectedResult, clickForPreviewMsg } body =
         , colours = resultColours
         , resultBody = resultBody
         , clickMsg = clickForPreviewMsg
+        , sourceDatabaseIcon = diammLogoEl
         }
 
 
