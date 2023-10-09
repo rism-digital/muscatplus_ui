@@ -9,6 +9,7 @@ import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
+import Maybe.Extra as ME
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), PAEEncodedData, RenderedIncipit(..))
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
 import Page.UI.Attributes exposing (bodyRegular, headingLG, lineSpacing, linkColour, sectionBorderStyles)
@@ -136,11 +137,7 @@ viewIncipitExtraInfo cfg encodings =
                 caretCircleRightSvg colourScheme.lightBlue
 
         panelBody =
-            if cfg.isExpanded then
-                viewAdditionalIncipitInfoAndTools cfg.language cfg.renderings encodings
-
-            else
-                none
+            viewIf (viewAdditionalIncipitInfoAndTools cfg.language cfg.renderings encodings) cfg.isExpanded
     in
     row
         [ width fill
@@ -316,20 +313,10 @@ viewPAESearchLink : Language -> LanguageMap -> PAEEncodedData -> Element msg
 viewPAESearchLink language label data =
     let
         clefQueryParam =
-            case data.clef of
-                Just cl ->
-                    [ Url.Builder.string "ic" cl ]
-
-                Nothing ->
-                    []
+            ME.unwrap [] (\cl -> [ Url.Builder.string "ic" cl ]) data.clef
 
         keySigQueryParam =
-            case data.keysig of
-                Just ks ->
-                    [ Url.Builder.string "ik" ks ]
-
-                Nothing ->
-                    []
+            ME.unwrap [] (\ks -> [ Url.Builder.string "ik" ks ]) data.keysig
 
         modeQueryParam =
             Url.Builder.string "mode" "incipits"
@@ -338,12 +325,7 @@ viewPAESearchLink language label data =
             Url.Builder.string "n" data.data
 
         timeSigQueryParam =
-            case data.timesig of
-                Just ts ->
-                    [ Url.Builder.string "it" ts ]
-
-                Nothing ->
-                    []
+            ME.unwrap [] (\ts -> [ Url.Builder.string "it" ts ]) data.timesig
 
         searchUrl =
             serverUrl

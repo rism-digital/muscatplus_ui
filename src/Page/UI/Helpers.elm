@@ -8,7 +8,7 @@ import Utilities exposing (choose)
 
 viewIf : Element msg -> Bool -> Element msg
 viewIf viewFunc condition =
-    choose condition viewFunc none
+    choose condition (\() -> viewFunc) (\() -> none)
 
 
 {-|

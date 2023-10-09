@@ -61,7 +61,7 @@ menuOption :
 menuOption cfg option currentlyHovered =
     let
         fontColour =
-            choose cfg.isCurrent colourScheme.white colourScheme.black
+            choose cfg.isCurrent (always colourScheme.white) (always colourScheme.black)
 
         icon =
             cfg.icon fontColour
@@ -74,20 +74,14 @@ menuOption cfg option currentlyHovered =
             }
 
         hoverStyles =
-            if currentlyHovered then
-                [ Background.color colourScheme.lightGrey
-                ]
-
-            else
-                []
+            choose currentlyHovered
+                (\() -> [ Background.color colourScheme.lightGrey ])
+                (\() -> [])
 
         selectedStyle =
-            if cfg.isCurrent then
-                [ Background.color colourScheme.lightBlue
-                ]
-
-            else
-                []
+            choose cfg.isCurrent
+                (\() -> [ Background.color colourScheme.lightBlue ])
+                (\() -> [])
 
         additionalOptions =
             List.concat

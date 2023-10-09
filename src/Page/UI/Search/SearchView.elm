@@ -18,7 +18,7 @@ import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, controlsColumnWidth, headingLG, headingMD, lineSpacing, responsiveCheckboxColumns, resultColumnWidth)
+import Page.UI.Attributes exposing (bodyRegular, controlsColumnWidth, lineSpacing, responsiveCheckboxColumns, resultColumnWidth)
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -77,48 +77,50 @@ type alias SearchResultsSectionConfig a msg =
 viewSearchResultsSection : SearchResultsSectionConfig a msg -> Bool -> SearchBody -> Element msg
 viewSearchResultsSection cfg resultsLoading body =
     let
+        background =
+            el
+                [ width fill
+                , height fill
+                , Background.color colourScheme.translucentGrey
+                , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
+                ]
+
         renderedPreview =
             case .preview cfg.model of
                 Loading oldData ->
-                    el
-                        [ width fill
-                        , height fill
-                        , Background.color colourScheme.translucentGrey
-                        , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
-                        ]
-                        (viewPreviewRouter (.language cfg.session)
-                            { windowSize = .window cfg.session
-                            , closeMsg = cfg.userClosedPreviewWindowMsg
-                            , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
-                            , sourceItemsExpanded = .sourceItemsExpanded cfg.model
-                            , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
-                            , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
-                            }
-                            oldData
-                        )
+                    viewPreviewRouter
+                        { language = .language cfg.session
+                        , windowSize = .window cfg.session
+                        , closeMsg = cfg.userClosedPreviewWindowMsg
+                        , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
+                        , sourceItemsExpanded = .sourceItemsExpanded cfg.model
+                        , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
+                        , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
+                        }
+                        oldData
+                        |> background
 
                 Response resp ->
-                    el
-                        [ width fill
-                        , height fill
-                        , Background.color colourScheme.translucentGrey
-                        , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
-                        ]
-                        (viewPreviewRouter (.language cfg.session)
-                            { windowSize = .window cfg.session
-                            , closeMsg = cfg.userClosedPreviewWindowMsg
-                            , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
-                            , sourceItemsExpanded = .sourceItemsExpanded cfg.model
-                            , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
-                            , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
-                            }
-                            (Just resp)
-                        )
+                    viewPreviewRouter
+                        { language = .language cfg.session
+                        , windowSize = .window cfg.session
+                        , closeMsg = cfg.userClosedPreviewWindowMsg
+                        , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
+                        , sourceItemsExpanded = .sourceItemsExpanded cfg.model
+                        , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
+                        , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
+                        }
+                        (Just resp)
+                        |> background
 
                 Error errMsg ->
-                    createErrorMessage (.language cfg.session) errMsg
-                        |> Tuple.first
-                        |> viewPreviewError (.language cfg.session) cfg.userClosedPreviewWindowMsg
+                    viewPreviewError
+                        { language = .language cfg.session
+                        , windowSize = .window cfg.session
+                        , closeMsg = cfg.userClosedPreviewWindowMsg
+                        , errorMessage = errMsg
+                        }
+                        |> background
 
                 NoResponseToShow ->
                     none
@@ -262,7 +264,7 @@ viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
             ]
             [ row
                 [ width fill ]
-                [ toLanguageMap "Active Filters"
+                [ toLanguageMap "Selected filters"
                     |> h3 session.language
                 ]
             , wrappedRow

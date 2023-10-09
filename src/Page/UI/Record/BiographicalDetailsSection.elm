@@ -11,21 +11,22 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 viewBiographicalDetailsSection : Language -> BiographicalDetailsSectionBody -> Element msg
 viewBiographicalDetailsSection language biographicalDetails =
     let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ viewSummaryField language biographicalDetails.summary ]
-                ]
-            ]
+        sectionTmpl =
+            sectionTemplate language biographicalDetails
     in
-    sectionTemplate language biographicalDetails sectionBody
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewSummaryField language biographicalDetails.summary ]
+            ]
+        ]

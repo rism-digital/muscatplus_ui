@@ -6,7 +6,6 @@ import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
@@ -21,8 +20,16 @@ import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 
 
-viewSourcePreview : Language -> Bool -> msg -> Set String -> (String -> msg) -> FullSourceBody -> Element msg
-viewSourcePreview language itemsExpanded expandMsg incipitInfoExpanded incipitInfoToggleMsg body =
+viewSourcePreview :
+    { language : Language
+    , itemsExpanded : Bool
+    , expandMsg : msg
+    , incipitInfoExpanded : Set String
+    , incipitInfoToggleMsg : String -> msg
+    }
+    -> FullSourceBody
+    -> Element msg
+viewSourcePreview cfg body =
     let
         sourceIcon =
             sourceIconChooser (.type_ (.recordType body.record))
@@ -45,22 +52,22 @@ viewSourcePreview language itemsExpanded expandMsg incipitInfoExpanded incipitIn
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewPartOfSection language) body.partOf
-                    , viewMaybe (viewContentsSection language body.creator) body.contents
+                    [ viewMaybe (viewPartOfSection cfg.language) body.partOf
+                    , viewMaybe (viewContentsSection cfg.language body.creator) body.contents
                     , viewMaybe
                         (viewIncipitsSection
-                            { language = language
-                            , infoToggleMsg = incipitInfoToggleMsg
-                            , expandedIncipits = incipitInfoExpanded
+                            { language = cfg.language
+                            , infoToggleMsg = cfg.incipitInfoToggleMsg
+                            , expandedIncipits = cfg.incipitInfoExpanded
                             }
                         )
                         body.incipits
-                    , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
-                    , viewMaybe (viewRelationshipsSection language) body.relationships
-                    , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
-                    , viewMaybe (viewSourceItemsSection language itemsExpanded expandMsg) body.sourceItems
-                    , viewMaybe (viewExternalResourcesSection language) body.externalResources
-                    , viewMaybe (viewExemplarsSection language) body.exemplars
+                    , viewMaybe (viewMaterialGroupsSection cfg.language) body.materialGroups
+                    , viewMaybe (viewRelationshipsSection cfg.language) body.relationships
+                    , viewMaybe (viewReferencesNotesSection cfg.language) body.referencesNotes
+                    , viewMaybe (viewSourceItemsSection cfg.language cfg.itemsExpanded cfg.expandMsg) body.sourceItems
+                    , viewMaybe (viewExternalResourcesSection cfg.language) body.externalResources
+                    , viewMaybe (viewExemplarsSection cfg.language) body.exemplars
                     ]
                 ]
     in
@@ -87,8 +94,8 @@ viewSourcePreview language itemsExpanded expandMsg incipitInfoExpanded incipitIn
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ subHeaderTemplate language (Just sourceIconView) body
-                    , pageFullRecordTemplate language body
+                    [ subHeaderTemplate cfg.language (Just sourceIconView) body
+                    , pageFullRecordTemplate cfg.language body
                     ]
                 ]
             , pageBodyView

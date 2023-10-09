@@ -1,12 +1,14 @@
 module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, column, fill, maximum, row, spacing, width)
+import Element exposing (Color, Element, alignRight, column, el, fill, height, maximum, px, row, spacing, width)
 import Language exposing (Language)
+import Maybe.Extra as ME
 import Page.RecordTypes.Search exposing (InstitutionResultBody, InstitutionResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
+import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (mapMarkerSvg, penNibSvg, sourcesSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
@@ -19,8 +21,31 @@ viewInstitutionSearchResult :
     -> Element msg
 viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
     let
+        diammLogoEl =
+            Maybe.map
+                (\f ->
+                    if f.isDIAMMRecord then
+                        Just
+                            (row
+                                [ width fill ]
+                                [ el
+                                    [ width (px 80)
+                                    , height (px 40)
+                                    , alignRight
+                                    ]
+                                    diammLogo
+                                ]
+                            )
+
+                    else
+                        Nothing
+                )
+                body.flags
+                |> ME.join
+
         resultBody =
             [ viewMaybe (viewInstitutionSummary language resultColours.iconColour) body.summary
+            , viewMaybe identity diammLogoEl
 
             --, viewMaybe (viewInstitutionFlags language) body.flags
             ]

@@ -11,21 +11,22 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
 viewRelationshipsSection language relSection =
     let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    (List.map (viewRelationshipBody language) relSection.items)
-                ]
-            ]
+        sectionTmpl =
+            sectionTemplate language relSection
     in
-    sectionTemplate language relSection sectionBody
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                (List.map (viewRelationshipBody language) relSection.items)
+            ]
+        ]

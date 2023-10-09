@@ -33,6 +33,6 @@ symToStringHelper :
     -> String
 symToStringHelper cfg =
     List.filter (\( _, cc ) -> cc == cfg.target) cfg.valueMap
-        |> List.map (\( s, _ ) -> s)
+        |> List.map Tuple.first
         |> List.head
         |> Maybe.withDefault cfg.defaultValue

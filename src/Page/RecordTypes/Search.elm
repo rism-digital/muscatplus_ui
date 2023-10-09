@@ -509,7 +509,7 @@ parseFacetBehaviourToString : FacetBehaviours -> String
 parseFacetBehaviourToString beh =
     LE.findMap
         (\( alias, facetBehaviour ) ->
-            choose (beh == facetBehaviour) (Just alias) Nothing
+            choose (beh == facetBehaviour) (\() -> Just alias) (\() -> Nothing)
         )
         facetBehaviourOptions
         |> Maybe.withDefault "intersection"
@@ -519,7 +519,7 @@ parseFacetSortToString : FacetSorts -> String
 parseFacetSortToString sor =
     LE.findMap
         (\( alias, facetSort ) ->
-            choose (sor == facetSort) (Just alias) Nothing
+            choose (sor == facetSort) (\() -> Just alias) (\() -> Nothing)
         )
         facetSortOptions
         |> Maybe.withDefault "alpha"

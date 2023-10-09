@@ -11,21 +11,22 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 viewOrganizationDetailsSection : Language -> OrganizationDetailsSectionBody -> Element msg
 viewOrganizationDetailsSection language organizationDetails =
     let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ viewSummaryField language organizationDetails.summary ]
-                ]
-            ]
+        sectionTmpl =
+            sectionTemplate language organizationDetails
     in
-    sectionTemplate language organizationDetails sectionBody
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewSummaryField language organizationDetails.summary ]
+            ]
+        ]

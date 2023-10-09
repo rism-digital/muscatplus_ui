@@ -27,22 +27,6 @@ import Url.Builder as QB exposing (absolute)
 
 viewDescriptionTab : Language -> InstitutionBody -> Element msg
 viewDescriptionTab language body =
-    let
-        summaryBody labels =
-            row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , spacing lineSpacing
-                    ]
-                    [ viewSummaryField language labels ]
-                ]
-    in
     row
         [ width fill
         , height fill

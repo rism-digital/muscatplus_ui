@@ -136,7 +136,11 @@ sourceRecordDescriptorsDecoder =
 sourceRecordTypeDecoder : Decoder SourceRecordType
 sourceRecordTypeDecoder =
     string
-        |> andThen (\str -> Decode.succeed (sourceRecordTypeFromJsonType str))
+        |> andThen
+            (\str ->
+                sourceRecordTypeFromJsonType str
+                    |> Decode.succeed
+            )
 
 
 sourceRecordTypeFromJsonType : String -> SourceRecordType

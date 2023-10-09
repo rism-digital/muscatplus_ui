@@ -26,22 +26,6 @@ import Session exposing (Session)
 
 viewDescriptionTab : Language -> PersonBody -> Element msg
 viewDescriptionTab language body =
-    let
-        summaryBody labels =
-            row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ spacing lineSpacing
-                    , width fill
-                    , height fill
-                    ]
-                    [ viewSummaryField language labels ]
-                ]
-    in
     row
         [ width fill
         , height fill
@@ -128,7 +112,8 @@ viewRecordTopBarRouter language model body =
         spacerEl =
             el [ height (px 35) ] (text "")
     in
-    ME.unpack (\() -> spacerEl)
+    ME.unpack
+        (\() -> spacerEl)
         (\sourceBlock ->
             if sourceBlock.totalItems /= 0 then
                 viewRecordSourceSearchTabBar

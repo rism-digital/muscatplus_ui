@@ -27,13 +27,13 @@ toggle needle haystack =
         Set.insert needle haystack
 
 
-choose : Bool -> a -> a -> a
+choose : Bool -> (() -> a) -> (() -> a) -> a
 choose predicate isTrue isFalse =
     if predicate then
-        isTrue
+        isTrue ()
 
     else
-        isFalse
+        isFalse ()
 
 
 convertNodeIdToPath : String -> String

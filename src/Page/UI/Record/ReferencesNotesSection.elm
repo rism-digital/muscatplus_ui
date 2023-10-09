@@ -83,26 +83,27 @@ viewPerformanceLocationsSection language body =
 viewReferencesNotesSection : Language -> ReferencesNotesSectionBody -> Element msg
 viewReferencesNotesSection language refNotesSection =
     let
-        sectionBody =
-            [ row
-                (List.append
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ viewMaybe (viewNotesSection language) refNotesSection.notes
-                    , viewMaybe (viewPerformanceLocationsSection language) refNotesSection.performanceLocations
-                    , viewMaybe (viewLiturgicalFestivalsSection language) refNotesSection.liturgicalFestivals
-                    ]
+        sectionTmpl =
+            sectionTemplate language refNotesSection
+    in
+    sectionTmpl
+        [ row
+            (List.append
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewMaybe (viewNotesSection language) refNotesSection.notes
+                , viewMaybe (viewPerformanceLocationsSection language) refNotesSection.performanceLocations
+                , viewMaybe (viewLiturgicalFestivalsSection language) refNotesSection.liturgicalFestivals
                 ]
             ]
-    in
-    sectionTemplate language refNotesSection sectionBody
+        ]

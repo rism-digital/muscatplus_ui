@@ -6,6 +6,7 @@ import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Language exposing (LanguageMap, extractLabelFromLanguageMap)
+import Maybe.Extra as ME
 import Page.RecordTypes.Search exposing (FacetData(..))
 import Page.UI.Attributes exposing (headingLG, lineSpacing)
 import Page.UI.Facets.FacetsConfig exposing (FacetConfig, FacetMsgConfig)
@@ -61,8 +62,9 @@ viewFacet cfg msg =
                 }
 
         Just (NotationFacetData facet) ->
-            case .keyboard cfg.activeSearch of
-                Just keyboardModel ->
+            ME.unpack
+                (\() -> none)
+                (\keyboardModel ->
                     viewKeyboardControl
                         { language = cfg.language
                         , tooltip = cfg.tooltip
@@ -71,9 +73,8 @@ viewFacet cfg msg =
                         , userInteractedWithKeyboardMsg = msg.userInteractedWithPianoKeyboard
                         , searchPreferences = cfg.searchPreferences
                         }
-
-                Nothing ->
-                    none
+                )
+                (.keyboard cfg.activeSearch)
 
         Just (QueryFacetData facet) ->
             viewQueryFacet
@@ -88,7 +89,7 @@ viewFacet cfg msg =
                 , nothingHappenedMsg = msg.nothingHappenedMsg
                 }
 
-        _ ->
+        Nothing ->
             none
 
 

@@ -84,7 +84,7 @@ viewExternalResource language body =
         _ ->
             let
                 resourceLink =
-                    choose (isExternalLink body.url) newTabLink link
+                    choose (isExternalLink body.url) (always newTabLink) (always link)
             in
             row
                 [ width fill

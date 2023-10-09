@@ -134,4 +134,4 @@ viewModeItems selectedMode language typeFacet =
         , spacing 10
         , alignBottom
         ]
-        (List.map (\t -> viewModeItem selectedMode language t) typeFacet.items)
+        (List.map (viewModeItem selectedMode language) typeFacet.items)

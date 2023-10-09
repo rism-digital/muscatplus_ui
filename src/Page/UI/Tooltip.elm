@@ -68,8 +68,6 @@ tooltipStyle =
     , padding 12
     , spacing 5
     , bodyRegular
-
-    --, minimalDropShadow
     ]
 
 
@@ -81,6 +79,4 @@ tooltipStyle2 =
     , padding 12
     , spacing 5
     , bodyRegular
-
-    --, minimalDropShadow
     ]

@@ -11,21 +11,22 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 viewNameVariantsSection : Language -> NameVariantsSectionBody -> Element msg
 viewNameVariantsSection language variantsSection =
     let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ viewSummaryField language variantsSection.items ]
-                ]
-            ]
+        sectionTmpl =
+            sectionTemplate language variantsSection
     in
-    sectionTemplate language variantsSection sectionBody
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewSummaryField language variantsSection.items ]
+            ]
+        ]

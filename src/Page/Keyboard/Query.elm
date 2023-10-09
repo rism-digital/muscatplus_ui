@@ -162,23 +162,23 @@ noteDataQueryStringToList ndata =
 
 queryModeParamParser : Q.Parser QueryMode
 queryModeParamParser =
-    Q.custom "im" (\a -> queryModeStringToQueryMode a)
+    Q.custom "im" queryModeStringToQueryMode
 
 
 queryModeStringToQueryMode : List String -> QueryMode
 queryModeStringToQueryMode qmlist =
     List.head qmlist
-        |> Maybe.map (\a -> queryModeStrToQueryMode a)
+        |> Maybe.map queryModeStrToQueryMode
         |> Maybe.withDefault IntervalQueryMode
 
 
 timeSigParamParser : Q.Parser TimeSignature
 timeSigParamParser =
-    Q.custom "it" (\a -> timeSigQueryStringToTimeSignature a)
+    Q.custom "it" timeSigQueryStringToTimeSignature
 
 
 timeSigQueryStringToTimeSignature : List String -> TimeSignature
 timeSigQueryStringToTimeSignature tsiglist =
     List.head tsiglist
-        |> Maybe.map (\a -> timeSigStrToTimeSignature a)
+        |> Maybe.map timeSigStrToTimeSignature
         |> Maybe.withDefault TNone

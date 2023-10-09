@@ -318,16 +318,6 @@ viewSelectFacet config =
                     [ alignRight ]
                     [ showLink
                     ]
-
-                --, row
-                --    [ alignLeft
-                --    , spacing 12
-                --    , bodyRegular
-                --    ]
-                --    [ column
-                --        []
-                --        [ facetHelp above selectFacetHelp ]
-                --    ]
                 ]
             ]
 
@@ -363,7 +353,7 @@ viewSelectFacetItem config fitem =
         shouldBeChecked =
             Dict.get facetAlias activeFilters
                 |> Maybe.withDefault []
-                |> List.map (\( a, _ ) -> a)
+                |> List.map Tuple.first
                 |> List.member decodedValue
     in
     row

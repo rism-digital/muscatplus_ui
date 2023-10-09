@@ -160,13 +160,7 @@ viewNationalCollectionChooser session =
                 ]
                 [ row
                     [ width fill ]
-                    --[ el
-                    --    [ alignTop
-                    --    , headingLG
-                    --    ]
-                    --    (text (extractLabelFromLanguageMap session.language localTranslations.chooseCollection))
-                    [ h2 session.language localTranslations.chooseCollection
-                    ]
+                    [ h2 session.language localTranslations.chooseCollection ]
                 , row
                     [ width fill ]
                     [ column
@@ -200,9 +194,6 @@ viewNationalCollectionChooser session =
                         [ width fill ]
                         [ row
                             [ width fill ]
-                            --[ paragraph
-                            --    []
-                            --    [ text (extractLabelFromLanguageMap session.language localTranslations.orChooseCollection) ]
                             [ h3 session.language localTranslations.orChooseCollection ]
                         ]
                     ]

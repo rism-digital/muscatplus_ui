@@ -1,13 +1,15 @@
 module Page.UI.Record.Previews exposing (PreviewConfig, viewPreviewError, viewPreviewRouter)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
+import Http.Detailed
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.Error.Views exposing (createErrorMessage)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
@@ -26,7 +28,8 @@ import Set exposing (Set)
 
 
 type alias PreviewConfig msg =
-    { windowSize : ( Int, Int )
+    { language : Language
+    , windowSize : ( Int, Int )
     , closeMsg : msg
     , sourceItemExpandMsg : msg
     , sourceItemsExpanded : Bool
@@ -35,17 +38,42 @@ type alias PreviewConfig msg =
     }
 
 
-viewPreviewError : Language -> msg -> String -> Element msg
-viewPreviewError language closeMsg errMsg =
+viewPreviewError :
+    { language : Language
+    , windowSize : ( Int, Int )
+    , closeMsg : msg
+    , errorMessage : Http.Detailed.Error String
+    }
+    -> Element msg
+viewPreviewError cfg =
+    let
+        ( mainMessage, details ) =
+            createErrorMessage cfg.language cfg.errorMessage
+
+        messageDetails =
+            Maybe.withDefault "" details
+
+        ( _, windowHeight ) =
+            cfg.windowSize
+
+        previewHeight =
+            round (toFloat windowHeight * 0.6)
+
+        moveDownAmount =
+            toFloat windowHeight * 0.08
+    in
     row
-        [ width fill
-        , height fill
+        [ width (fill |> minimum 600 |> maximum 800)
+        , height (fill |> maximum previewHeight)
         , clipY
         , alignTop
-        , alignRight
+        , alignLeft
         , Background.color colourScheme.white
-        , Border.color colourScheme.lightBlue
+        , Border.color colourScheme.darkBlue
         , Border.width 3
+        , htmlAttribute (HA.style "z-index" "10")
+        , moveDown moveDownAmount
+        , minimalDropShadow
         ]
         [ column
             [ width fill
@@ -54,18 +82,26 @@ viewPreviewError language closeMsg errMsg =
             , Background.color colourScheme.white
             , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
-            [ viewRecordPreviewTitleBar language closeMsg
-            , el
-                [ centerX
-                , centerY
+            [ viewRecordPreviewTitleBar cfg.language cfg.closeMsg
+            , row
+                [ width fill
+                , height fill
                 ]
-                (text errMsg)
+                [ paragraph
+                    [ centerX
+                    , centerY
+                    , padding 20
+                    ]
+                    [ el [ width fill ] (text mainMessage)
+                    , el [ width fill ] (text messageDetails)
+                    ]
+                ]
             ]
         ]
 
 
-viewPreviewLoading : Language -> Element msg
-viewPreviewLoading language =
+viewPreviewLoading : Element msg
+viewPreviewLoading =
     row
         [ width fill
         , height fill
@@ -97,10 +133,10 @@ viewPreviewLoading language =
         ]
 
 
-viewPreviewRouter : Language -> PreviewConfig msg -> Maybe ServerData -> Element msg
-viewPreviewRouter language cfg previewData =
+viewPreviewRouter : PreviewConfig msg -> Maybe ServerData -> Element msg
+viewPreviewRouter cfg previewData =
     let
-        ( windowWidth, windowHeight ) =
+        ( _, windowHeight ) =
             cfg.windowSize
 
         previewHeight =
@@ -113,39 +149,41 @@ viewPreviewRouter language cfg previewData =
             case previewData of
                 Just (SourceData body) ->
                     viewSourcePreview
-                        language
-                        cfg.sourceItemsExpanded
-                        cfg.sourceItemExpandMsg
-                        cfg.incipitInfoSectionsExpanded
-                        cfg.incipitInfoToggleMsg
+                        { language = cfg.language
+                        , itemsExpanded = cfg.sourceItemsExpanded
+                        , expandMsg = cfg.sourceItemExpandMsg
+                        , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
+                        , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
+                        }
                         body
 
                 Just (PersonData body) ->
-                    viewPersonPreview language body
+                    viewPersonPreview cfg.language body
 
                 Just (InstitutionData body) ->
-                    viewInstitutionPreview language body
+                    viewInstitutionPreview cfg.language body
 
                 Just (IncipitData body) ->
                     viewIncipitPreview
-                        language
-                        cfg.incipitInfoSectionsExpanded
-                        cfg.incipitInfoToggleMsg
+                        { language = cfg.language
+                        , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
+                        , infoToggleMsg = cfg.incipitInfoToggleMsg
+                        }
                         body
 
                 Just (ExternalData body) ->
                     case body.record of
                         ExternalSource sourceBody ->
-                            viewExternalSourcePreview language body.project sourceBody
+                            viewExternalSourcePreview cfg.language body.project sourceBody
 
                         ExternalPerson personBody ->
-                            viewExternalPersonPreview language body.project personBody
+                            viewExternalPersonPreview cfg.language body.project personBody
 
                         ExternalInstitution institutionBody ->
-                            viewExternalInstitutionPreview language body.project institutionBody
+                            viewExternalInstitutionPreview cfg.language body.project institutionBody
 
                 Nothing ->
-                    viewPreviewLoading language
+                    viewPreviewLoading
 
                 _ ->
                     none
@@ -170,7 +208,7 @@ viewPreviewRouter language cfg previewData =
             , Background.color colourScheme.white
             , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
-            [ viewRecordPreviewTitleBar language cfg.closeMsg
+            [ viewRecordPreviewTitleBar cfg.language cfg.closeMsg
             , preview
             ]
         ]

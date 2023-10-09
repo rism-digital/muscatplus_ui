@@ -3,6 +3,7 @@ module Page.Keyboard.Views exposing (view)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, fillPortion, height, paddingXY, pointer, px, row, spacing, width)
 import Element.Events exposing (onClick)
 import Language exposing (Language, extractLabelFromLanguageMap)
+import Maybe.Extra as ME
 import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.Query exposing (queryModeStrToQueryMode)
@@ -22,12 +23,7 @@ view : Maybe SearchPreferences -> NotationFacet -> Language -> KeyboardModel Key
 view searchPreferences notationFacet language model =
     let
         isMuted =
-            case searchPreferences of
-                Just prefs ->
-                    prefs.audioMuted
-
-                Nothing ->
-                    True
+            ME.unwrap True (\prefs -> prefs.audioMuted) searchPreferences
 
         queryModeOptions =
             .options notationFacet.queryModes
@@ -107,7 +103,7 @@ view searchPreferences notationFacet language model =
                         [ width fill
                         , spacing lineSpacing
                         ]
-                        [ viewPaeInput language notationFacet model
+                        [ viewPaeInput language model
                         ]
                     , row
                         [ width fill

@@ -14,28 +14,29 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 viewContentsSection : Language -> Maybe RelationshipBody -> ContentsSectionBody -> Element msg
 viewContentsSection language creator contents =
     let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ viewMaybe (viewRelationshipBody language) creator
-                    , Maybe.withDefault [] contents.summary
-                        |> viewSummaryField language
-                    , viewMaybe (viewSubjectsSection language) contents.subjects
-                    ]
+        sectionTmpl =
+            sectionTemplate language contents
+    in
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewMaybe (viewRelationshipBody language) creator
+                , Maybe.withDefault [] contents.summary
+                    |> viewSummaryField language
+                , viewMaybe (viewSubjectsSection language) contents.subjects
                 ]
             ]
-    in
-    sectionTemplate language contents sectionBody
+        ]
 
 
 viewSubject : Language -> Subject -> Element msg

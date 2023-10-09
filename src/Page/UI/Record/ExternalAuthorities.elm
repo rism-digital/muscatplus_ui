@@ -13,35 +13,36 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element msg
 viewExternalAuthoritiesSection language extSection =
     let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ fieldValueWrapper []
-                        [ wrappedRow
-                            [ width fill
-                            , height fill
-                            , alignTop
-                            ]
-                            [ column
-                                (spacing lineSpacing :: valueFieldColumnAttributes)
-                                (List.map (viewExternalAuthority language) extSection.items)
-                            ]
+        sectionTmpl =
+            sectionTemplate language extSection
+    in
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ fieldValueWrapper []
+                    [ wrappedRow
+                        [ width fill
+                        , height fill
+                        , alignTop
+                        ]
+                        [ column
+                            (spacing lineSpacing :: valueFieldColumnAttributes)
+                            (List.map (viewExternalAuthority language) extSection.items)
                         ]
                     ]
                 ]
             ]
-    in
-    sectionTemplate language extSection sectionBody
+        ]
 
 
 viewExternalAuthority : Language -> ExternalAuthorityBody -> Element msg

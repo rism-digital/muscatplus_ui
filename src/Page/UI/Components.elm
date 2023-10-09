@@ -291,6 +291,7 @@ h1 language heading =
         , Font.medium
         , bodySerifFont
         , htmlAttribute (HA.style "font-size" "calc(18px + 0.2vw)")
+        , htmlAttribute (HA.style "line-height" "2rem")
         ]
         language
         (limitLength 140 heading)

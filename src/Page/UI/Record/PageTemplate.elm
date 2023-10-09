@@ -56,8 +56,6 @@ pageFooterTemplate session language footer =
         , alignBottom
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
         , Border.color colourScheme.darkBlue
-
-        --, Background.color (colourScheme.cream |> convertColorToElementColor)
         ]
         [ column
             [ width fill

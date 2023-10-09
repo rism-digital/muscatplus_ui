@@ -1,37 +1,31 @@
 module Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 
-import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (viewSummaryField)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Style exposing (colourScheme)
 
 
 viewInstitutionPreview : Language -> InstitutionBody -> Element msg
 viewInstitutionPreview language body =
     let
-        summaryBody labels =
-            row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , spacing lineSpacing
-                    ]
-                    [ viewSummaryField language labels ]
+        recordIcon =
+            el
+                [ width (px 25)
+                , height (px 25)
+                , centerY
                 ]
+                (institutionSvg colourScheme.midGrey)
     in
     row
         [ width fill
@@ -56,7 +50,7 @@ viewInstitutionPreview language body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ pageHeaderTemplate language Nothing body
+                    [ pageHeaderTemplate language (Just recordIcon) body
                     , pageFullRecordTemplate language body
                     ]
                 ]

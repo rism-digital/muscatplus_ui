@@ -1,18 +1,34 @@
 module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 
-import Element exposing (Element, alignTop, column, el, fill, height, link, paddingXY, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, link, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
+import Page.UI.Images exposing (musicNotationSvg)
 import Page.UI.Record.Incipits exposing (viewIncipit)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplateNoToc)
+import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 
 
-viewIncipitPreview : Language -> Set String -> (String -> msg) -> IncipitBody -> Element msg
-viewIncipitPreview language incipitInfoExpanded infoToggleMsg body =
+viewIncipitPreview :
+    { language : Language
+    , incipitInfoExpanded : Set String
+    , infoToggleMsg : String -> msg
+    }
+    -> IncipitBody
+    -> Element msg
+viewIncipitPreview cfg body =
     let
+        recordIcon =
+            el
+                [ width (px 25)
+                , height (px 25)
+                , centerY
+                ]
+                (musicNotationSvg colourScheme.midGrey)
+
         labelLanguageMap =
             .label body.partOf
 
@@ -36,12 +52,12 @@ viewIncipitPreview language incipitInfoExpanded infoToggleMsg body =
                         [ width fill ]
                         [ el
                             []
-                            (text (extractLabelFromLanguageMap language labelLanguageMap ++ ": "))
+                            (text (extractLabelFromLanguageMap cfg.language labelLanguageMap ++ ": "))
                         , el
                             [ Font.medium ]
                             (link
                                 [ linkColour ]
-                                { label = text (extractLabelFromLanguageMap language sourceLabel)
+                                { label = text (extractLabelFromLanguageMap cfg.language sourceLabel)
                                 , url = sourceUrl
                                 }
                             )
@@ -72,7 +88,7 @@ viewIncipitPreview language incipitInfoExpanded infoToggleMsg body =
                     , height fill
                     , alignTop
                     ]
-                    [ pageHeaderTemplateNoToc language Nothing body
+                    [ pageHeaderTemplateNoToc cfg.language (Just recordIcon) body
                     , incipitLink
                     ]
                 ]
@@ -87,9 +103,9 @@ viewIncipitPreview language incipitInfoExpanded infoToggleMsg body =
                     ]
                     [ viewIncipit
                         { suppressTitle = True
-                        , language = language
-                        , infoIsExpanded = Set.member body.id incipitInfoExpanded
-                        , infoToggleMsg = infoToggleMsg
+                        , language = cfg.language
+                        , infoIsExpanded = Set.member body.id cfg.incipitInfoExpanded
+                        , infoToggleMsg = cfg.infoToggleMsg
                         }
                         body
                     ]

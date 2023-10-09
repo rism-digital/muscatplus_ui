@@ -1,22 +1,22 @@
 module Page.Keyboard.Views.FullKeyboard exposing (fullKeyboard)
 
 import Element exposing (Element)
+import Maybe.Extra as ME
 import Page.Keyboard.Model exposing (KeyNoteName(..), KeyboardKeyPress(..))
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (keyNoteNameToHumanNoteString)
 import Svg
 import Svg.Attributes exposing (class)
 import Svg.Events as SE
+import Utilities exposing (choose)
 import VirtualDom exposing (Attribute, attribute)
 
 
 keyMsg : Bool -> KeyNoteName -> Int -> KeyboardMsg
 keyMsg muted note octave =
-    if muted then
-        UserClickedPianoKeyboardKeyOn (Muted note octave)
-
-    else
-        UserClickedPianoKeyboardKeyOn (Sounding note octave)
+    choose muted
+        (\() -> UserClickedPianoKeyboardKeyOn (Muted note octave))
+        (\() -> UserClickedPianoKeyboardKeyOn (Sounding note octave))
 
 
 upKeyMsg : Bool -> KeyNoteName -> Int -> KeyboardMsg
@@ -60,12 +60,7 @@ whiteKey muted { keyLabel, naturalNote, octave, plainNote, showSymbols } =
                 Svg.text ""
 
         keyLabelPath =
-            case keyLabel of
-                Just s ->
-                    s
-
-                Nothing ->
-                    Svg.text ""
+            ME.unwrap (Svg.text "") identity keyLabel
     in
     [ Svg.node "title"
         []

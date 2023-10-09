@@ -1,16 +1,26 @@
 module Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
 
-import Element exposing (Element, alignRight, alignTop, column, el, fill, fillPortion, height, inFront, none, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, inFront, none, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.ExternalRecord exposing (ExternalPersonRecord, ExternalProject(..))
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.DiammLogo exposing (diammLogo)
+import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplateNoToc)
+import Page.UI.Style exposing (colourScheme)
 
 
 viewExternalPersonPreview : Language -> ExternalProject -> ExternalPersonRecord -> Element msg
 viewExternalPersonPreview language project body =
     let
+        recordIcon =
+            el
+                [ width (px 25)
+                , height (px 25)
+                , centerY
+                ]
+                (peopleSvg colourScheme.midGrey)
+
         pageBodyView =
             row
                 [ width fill
@@ -58,7 +68,7 @@ viewExternalPersonPreview language project body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ pageHeaderTemplateNoToc language Nothing body
+                    [ pageHeaderTemplateNoToc language (Just recordIcon) body
                     , pageFullRecordTemplate language body
                     ]
                 , column

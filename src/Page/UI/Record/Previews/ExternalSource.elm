@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, fillPortion, height, inFront, link, newTabLink, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, inFront, link, newTabLink, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
@@ -9,7 +9,7 @@ import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, lin
 import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, renderParagraph, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (institutionSvg)
+import Page.UI.Images exposing (bookSvg, institutionSvg)
 import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink, pageFullRecordTemplate, pageHeaderTemplateNoToc)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
@@ -19,6 +19,14 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 viewExternalSourcePreview : Language -> ExternalProject -> ExternalSourceRecord -> Element msg
 viewExternalSourcePreview language project body =
     let
+        recordIcon =
+            el
+                [ width (px 25)
+                , height (px 25)
+                , centerY
+                ]
+                (bookSvg colourScheme.midGrey)
+
         pageBodyView =
             row
                 [ width fill
@@ -69,7 +77,7 @@ viewExternalSourcePreview language project body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ pageHeaderTemplateNoToc language Nothing body
+                    [ pageHeaderTemplateNoToc language (Just recordIcon) body
                     , pageFullRecordTemplate language body
                     ]
                 , column
@@ -119,11 +127,6 @@ viewExternalSourceExemplar language body =
                     ]
                     [ viewMaybe (viewSummaryField language) body.summary
                     , viewMaybe (viewExternalSourceExternalResourcesSection language) body.externalResources
-
-                    --, viewMaybe (viewParagraphField language) body.notes
-                    --, viewMaybe (viewExternalResourcesSection language) exemplar.externalResources
-                    --, viewMaybe (viewExemplarRelationships language) exemplar.relationships
-                    --, viewMaybe (viewBoundWithSection language) exemplar.boundWith
                     ]
                 ]
             ]
@@ -133,26 +136,27 @@ viewExternalSourceExemplar language body =
 viewExternalSourceContentsSection : Language -> ExternalSourceContents -> Element msg
 viewExternalSourceContentsSection language body =
     let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ Maybe.withDefault [] body.summary
-                        |> viewSummaryField language
-                    ]
+        sectionTmpl =
+            sectionTemplate language body
+    in
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ Maybe.withDefault [] body.summary
+                    |> viewSummaryField language
                 ]
             ]
-    in
-    sectionTemplate language body sectionBody
+        ]
 
 
 viewExternalHeldBy : Language -> ExternalInstitutionRecord -> Element msg
@@ -173,13 +177,8 @@ viewExternalHeldBy language body =
             (institutionSvg colourScheme.slateGrey)
         , link
             [ linkColour
-
-            --, headingLG
-            --, Font.medium
             ]
             { url = body.id
-
-            --, label = text (extractLabelFromLanguageMap language body.label)
             , label = h2 language body.label
             }
         ]
@@ -188,27 +187,28 @@ viewExternalHeldBy language body =
 viewExternalSourceReferencesNotesSection : Language -> ExternalSourceReferencesNotesSection -> Element msg
 viewExternalSourceReferencesNotesSection language body =
     let
-        sectionBody =
-            [ row
-                (List.append
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ viewMaybe (viewExternalNotesSection language) body.notes
-                    ]
+        sectionTmpl =
+            sectionTemplate language body
+    in
+    sectionTmpl
+        [ row
+            (List.append
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewMaybe (viewExternalNotesSection language) body.notes
                 ]
             ]
-    in
-    sectionTemplate language body sectionBody
+        ]
 
 
 viewExternalNotesSection : Language -> List LabelValue -> Element msg

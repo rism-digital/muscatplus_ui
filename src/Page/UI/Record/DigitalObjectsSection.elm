@@ -142,17 +142,18 @@ viewDigitalObjectsSection language doSection =
                 )
                 groupedItems
 
-        sectionBody =
-            [ row
-                [ width fill ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing 20
-                    ]
-                    rowsOfItems
-                ]
-            ]
+        sectionTmpl =
+            sectionTemplate language doSection
     in
-    sectionTemplate language doSection sectionBody
+    sectionTmpl
+        [ row
+            [ width fill ]
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing 20
+                ]
+                rowsOfItems
+            ]
+        ]

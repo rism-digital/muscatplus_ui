@@ -178,14 +178,15 @@ summaryFieldTemplate summaryCfg fieldValue =
             List.map
                 (\f ->
                     choose summaryCfg.formatNumbers
-                        (String.toInt f
-                            |> ME.unpack (\() -> f)
-                                (\num ->
-                                    toFloat num
-                                        |> formatNumberByLanguage summaryCfg.language
-                                )
+                        (\() ->
+                            String.toInt f
+                                |> ME.unpack (\() -> f)
+                                    (\num ->
+                                        toFloat num
+                                            |> formatNumberByLanguage summaryCfg.language
+                                    )
                         )
-                        f
+                        (\() -> f)
                 )
                 fVal
 
@@ -218,7 +219,9 @@ summaryFieldTemplate summaryCfg fieldValue =
                 String.join "; " fValueFormatted
 
         templatedVal =
-            choose summaryCfg.includeLabelInValue (fValueAsString ++ " " ++ fLabel) fValueAsString
+            choose summaryCfg.includeLabelInValue
+                (\() -> fValueAsString ++ " " ++ fLabel)
+                (\() -> fValueAsString)
     in
     column
         [ spacing 5

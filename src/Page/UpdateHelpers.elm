@@ -594,10 +594,10 @@ userLostFocusOnRangeFacet alias model =
                 |> Maybe.withDefault ( "*", "*" )
 
         newLowerValue =
-            choose (lowerValue == "") "*" lowerValue
+            choose (lowerValue == "") (always "*") (\() -> lowerValue)
 
         newUpperValue =
-            choose (upperValue == "") "*" upperValue
+            choose (upperValue == "") (always "*") (\() -> upperValue)
 
         rangeFacetValues =
             toRangeFacetValues model.activeSearch
@@ -656,7 +656,10 @@ userClickedFacetPanelToggle panelAlias expandedPanels model =
             toggle panelAlias expandedPanels
     in
     ( model
-    , PortSendSaveSearchPreference { key = "expandedFacetPanels", value = ListPreference (Set.toList newPanels) }
+    , PortSendSaveSearchPreference
+        { key = "expandedFacetPanels"
+        , value = ListPreference (Set.toList newPanels)
+        }
         |> encodeMessageForPortSend
         |> sendOutgoingMessageOnPort
     )
@@ -687,7 +690,8 @@ updateActiveFiltersWithLangMapResultsFromServer oldFilters fromServer =
         filterUpdater : FacetAlias -> List ( String, LanguageMap ) -> List ( String, LanguageMap )
         filterUpdater alias values =
             Dict.get alias fromServer
-                |> Maybe.map
+                |> ME.unpack
+                    (always [])
                     (\facetFromServer ->
                         case facetFromServer of
                             SelectFacetData sdata ->
@@ -696,7 +700,6 @@ updateActiveFiltersWithLangMapResultsFromServer oldFilters fromServer =
                             _ ->
                                 values
                     )
-                |> Maybe.withDefault []
     in
     Dict.map filterUpdater oldFilters
 
@@ -715,8 +718,9 @@ correlateQueryValuesWithFacetLangMap qValues serverValues =
                     decodedFVal == qVal
                 )
                 serverValues
-                |> Maybe.map (\(FacetItem fVal fLabel _) -> ( fVal, fLabel ))
-                |> Maybe.withDefault ( qVal, qLabel )
+                |> ME.unpack
+                    (\() -> ( qVal, qLabel ))
+                    (\(FacetItem fVal fLabel _) -> ( fVal, fLabel ))
         )
         qValues
 
@@ -774,9 +778,7 @@ userPressedArrowKeysInSearchResultsList arrowDirection session model =
                 _ ->
                     Nothing
     in
-    case nextResultIdent of
-        Just nr ->
-            userClickedResultForPreview nr session model
-
-        Nothing ->
-            ( model, Cmd.none )
+    ME.unpack
+        (\() -> ( model, Cmd.none ))
+        (\nr -> userClickedResultForPreview nr session model)
+        nextResultIdent

@@ -12,6 +12,7 @@ import Page.Error.Views exposing (createProbeErrorMessage)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, lineSpacing)
+import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..))
@@ -123,6 +124,17 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 , htmlAttribute (HA.style "cursor" "not-allowed")
                 )
 
+        borderBottom =
+            if isFrontPage then
+                [ Border.color colourScheme.darkBlue
+                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+                ]
+
+            else
+                [ Border.color colourScheme.midGrey
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+                ]
+
         submitButtonLabel =
             if isFrontPage then
                 extractLabelFromLanguageMap language localTranslations.showAllRecords
@@ -133,22 +145,20 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         -- never show the 'needs update' message on the front page, since it doesn't really
         -- make sense.
         updateMessage =
-            if isFrontPage then
-                none
-
-            else
-                viewUpdateMessage submitButtonMsg language model.applyFilterPrompt actionableProbeResponse
+            viewIf
+                (viewUpdateMessage submitButtonMsg language model.applyFilterPrompt actionableProbeResponse)
+                isFrontPage
     in
     row
-        [ alignTop
-        , Background.color colourScheme.lightGrey
-        , Border.color colourScheme.midGrey
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , width fill
-        , height (px 60)
-        , paddingXY 20 0
-        , centerY
-        ]
+        ([ alignTop
+         , Background.color colourScheme.lightGrey
+         , width fill
+         , height (px 60)
+         , paddingXY 20 0
+         , centerY
+         ]
+            ++ borderBottom
+        )
         [ column
             [ width fill
             , height fill
@@ -210,17 +220,16 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
 
 viewUpdateMessage : Maybe msg -> Language -> Bool -> Bool -> Element msg
 viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
-    if applyFilterPrompt && actionableProbResponse then
-        Input.button
-            [ width shrink
-            , padding 10
-            , Background.color colourScheme.lightOrange
-            , headingLG
-            , Font.color colourScheme.white
-            ]
-            { label = text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
-            , onPress = submitMsg
-            }
-
-    else
-        none
+    (applyFilterPrompt && actionableProbResponse)
+        |> viewIf
+            (Input.button
+                [ width shrink
+                , padding 10
+                , Background.color colourScheme.lightOrange
+                , headingLG
+                , Font.color colourScheme.white
+                ]
+                { label = text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
+                , onPress = submitMsg
+                }
+            )

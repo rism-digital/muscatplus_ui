@@ -11,22 +11,23 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 viewNotesSection : Language -> NotesSectionBody -> Element msg
 viewNotesSection language notesSection =
     let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ spacing lineSpacing
-                    , width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    [ viewParagraphField language notesSection.notes
-                    ]
+        sectionTmpl =
+            sectionTemplate language notesSection
+    in
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ spacing lineSpacing
+                , width fill
+                , height fill
+                , alignTop
+                ]
+                [ viewParagraphField language notesSection.notes
                 ]
             ]
-    in
-    sectionTemplate language notesSection sectionBody
+        ]

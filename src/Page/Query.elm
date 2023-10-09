@@ -309,7 +309,7 @@ facetSortQueryStringToFacetSort fsList =
 
 fbParamParser : Q.Parser (Dict FacetAlias FacetBehaviours)
 fbParamParser =
-    Q.custom "fb" (\a -> facetBehaviourQueryStringToBehaviour a)
+    Q.custom "fb" facetBehaviourQueryStringToBehaviour
 
 
 filterQueryStringToFilter : List String -> Dict FacetAlias (List ( String, LanguageMap ))
@@ -329,17 +329,17 @@ filterQueryStringToFilter fqList =
 
 fqParamParser : Q.Parser (Dict FacetAlias (List ( String, LanguageMap )))
 fqParamParser =
-    Q.custom "fq" (\a -> filterQueryStringToFilter a)
+    Q.custom "fq" filterQueryStringToFilter
 
 
 fsParamParser : Q.Parser (Dict String FacetSorts)
 fsParamParser =
-    Q.custom "fs" (\a -> facetSortQueryStringToFacetSort a)
+    Q.custom "fs" facetSortQueryStringToFacetSort
 
 
 modeParamParser : Q.Parser ResultMode
 modeParamParser =
-    Q.custom "mode" (\a -> modeQueryStringToResultMode a)
+    Q.custom "mode" modeQueryStringToResultMode
 
 
 modeQueryStringToResultMode : List String -> ResultMode
