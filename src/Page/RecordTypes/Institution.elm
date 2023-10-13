@@ -26,9 +26,11 @@ type alias BasicInstitutionBody =
 
 
 type alias CoordinatesSection =
-    { id : String
+    { sectionToc : String
+    , id : String
     , label : LanguageMap
     , coordinates : List Float
+    , coordinatesLabel : LanguageMap
     }
 
 
@@ -82,9 +84,11 @@ organizationDetailsSectionBodyDecoder =
 coordinatesSectionDecoder : Decoder CoordinatesSection
 coordinatesSectionDecoder =
     Decode.succeed CoordinatesSection
+        |> hardcoded "institution-coordinates-section"
         |> required "id" string
-        |> required "label" languageMapLabelDecoder
+        |> required "sectionLabel" languageMapLabelDecoder
         |> requiredAt [ "geometry", "coordinates" ] (list float)
+        |> requiredAt [ "geometry", "label" ] languageMapLabelDecoder
 
 
 institutionBodyDecoder : Decoder InstitutionBody

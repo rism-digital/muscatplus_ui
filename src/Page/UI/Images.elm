@@ -1,4 +1,4 @@
-module Page.UI.Images exposing (SvgDetails, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, closeWindowSvg, digitizedImagesSvg, externalLinkSvg, fileDownloadSvg, globeSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, rismLogo, searchSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, unknownSvg, userCircleSvg)
+module Page.UI.Images exposing (SvgDetails, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, digitizedImagesSvg, externalLinkSvg, fileDownloadSvg, globeSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, rismLogo, searchSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, unknownSvg, userCircleSvg)
 
 import Color exposing (toCssString)
 import Element exposing (Element, html)
@@ -209,6 +209,18 @@ chevronUp =
 chevronUpSvg : Element.Color -> Element msg
 chevronUpSvg color =
     makeSvgIcon color chevronUp
+
+
+circle : SvgDetails
+circle =
+    { viewBox = "0 0 512 512"
+    , path = "M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"
+    }
+
+
+circleSvg : Element.Color -> Element msg
+circleSvg color =
+    makeSvgIcon color circle
 
 
 closeWindow : SvgDetails

@@ -1,6 +1,6 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, spacingXY, text, textColumn, width, wrappedRow)
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -10,16 +10,17 @@ import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h2, mapViewer, viewSummaryField)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Components exposing (fieldValueWrapper, h2, mapViewer, renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (institutionSvg)
+import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
 import Session exposing (Session)
 import Url.Builder as QB exposing (absolute)
@@ -153,40 +154,86 @@ viewRecordTopBarRouter language model body =
 --        spacerEl
 
 
-viewLocationMapSection : Language -> LocationAddressSectionBody -> Element msg
-viewLocationMapSection language location =
+mapSection : Language -> CoordinatesSection -> Element msg
+mapSection language coords =
     let
-        mapSection : Language -> CoordinatesSection -> Element msg
-        mapSection lang coords =
-            let
-                coordsQ =
-                    List.map2 (\dim val -> QB.string dim (String.fromFloat val)) [ "lon", "lat" ] coords.coordinates
+        coordsQ =
+            List.map2 (\dim val -> QB.string dim (String.fromFloat val)) [ "lon", "lat" ] coords.coordinates
 
-                geoJsonQ =
-                    QB.string "geo" coords.id
+        geoJsonQ =
+            QB.string "geo" coords.id
 
-                mapsUrl =
-                    (geoJsonQ :: coordsQ)
-                        |> absolute [ "maps.html" ]
-            in
-            row
+        coordsValue =
+            List.map String.fromFloat coords.coordinates
+                |> String.join ", "
+
+        mapsUrl =
+            (geoJsonQ :: coordsQ)
+                |> absolute [ "maps.html" ]
+
+        sectionTmpl =
+            sectionTemplate language coords
+    in
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
                 [ width fill
                 , height fill
-                , paddingXY 0 20
+                , alignTop
+                , spacing lineSpacing
                 ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , spacing 20
-                    , alignTop
+                [ fieldValueWrapper []
+                    [ wrappedRow
+                        [ width fill
+                        , height fill
+                        , alignTop
+                        ]
+                        [ column
+                            labelFieldColumnAttributes
+                            [ renderLabel language coords.coordinatesLabel ]
+                        , column
+                            valueFieldColumnAttributes
+                            [ textColumn
+                                [ spacing lineSpacing ]
+                                [ text coordsValue ]
+                            ]
+                        ]
                     ]
-                    [ row
-                        [ width fill ]
-                        [ h2 language coords.label ]
-                    , row
-                        [ width fill ]
-                        [ mapViewer ( 900, 400 ) mapsUrl ]
+                , row
+                    [ width fill ]
+                    [ mapViewer ( 900, 400 ) mapsUrl ]
+                , row
+                    [ width fill ]
+                    [ column
+                        [ width fill
+                        , spacing lineSpacing
+                        ]
+                        [ paragraph
+                            [ width fill
+                            , spacing 5
+                            ]
+                            [ el [ width (px 15), height (px 15) ] (mapMarkerSvg colourScheme.lightBlue)
+                            , el [ paddingXY 5 0 ] (text "Location")
+                            ]
+                        , paragraph
+                            [ width fill
+                            , spacing 5
+                            ]
+                            [ el [ width (px 15), height (px 15) ] (circleSvg colourScheme.darkOrange)
+                            , el [ paddingXY 5 0 ] (text "Nearby institutions")
+                            ]
+                        ]
                     ]
                 ]
-    in
+            ]
+        ]
+
+
+viewLocationMapSection : Language -> LocationAddressSectionBody -> Element msg
+viewLocationMapSection language location =
     viewMaybe (mapSection language) location.coordinates
