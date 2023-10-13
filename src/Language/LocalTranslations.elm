@@ -39,8 +39,10 @@ localTranslations :
     , keywordQuery : LanguageMap
     , last : LanguageMap
     , liturgicalFeasts : LanguageMap
+    , location : LanguageMap
     , muscatEdit : LanguageMap
     , muscatView : LanguageMap
+    , nearbyInstitutions : LanguageMap
     , newSearchWithIncipit : LanguageMap
     , next : LanguageMap
     , noResultsBody : LanguageMap
@@ -212,10 +214,28 @@ localTranslations =
         , LanguageValues Polish [ "Ostatni" ]
         ]
     , liturgicalFeasts = []
+    , location =
+        [ LanguageValues English [ "Location" ]
+        , LanguageValues German [ "Ort" ]
+        , LanguageValues French [ "Lieu" ]
+        , LanguageValues Italian [ "Luogo" ]
+        , LanguageValues Spanish [ "Lugar" ]
+        , LanguageValues Portugese [ "Local" ]
+        , LanguageValues Polish [ "Lokalizacja" ]
+        ]
     , muscatEdit =
         [ LanguageValues English [ "Edit" ] ]
     , muscatView =
         [ LanguageValues English [ "View" ] ]
+    , nearbyInstitutions =
+        [ LanguageValues English [ "Nearby institutions" ]
+        , LanguageValues German [ "Nahegelegene Körperschaften" ]
+        , LanguageValues French [ "Institutions proches" ]
+        , LanguageValues Italian [ "Istituzioni vicine" ]
+        , LanguageValues Spanish [ "Instituciones cercanas" ]
+        , LanguageValues Portugese [ "Instituições próximas" ]
+        , LanguageValues Polish [ "Pobliskie instytucje" ]
+        ]
     , newSearchWithIncipit =
         [ LanguageValues English [ "Search for incipits like this" ] ]
     , next =

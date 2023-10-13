@@ -2,7 +2,7 @@ module Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstit
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, spacingXY, text, textColumn, width, wrappedRow)
 import Element.Border as Border
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
@@ -218,14 +218,14 @@ mapSection language coords =
                             , spacing 5
                             ]
                             [ el [ width (px 15), height (px 15) ] (mapMarkerSvg colourScheme.lightBlue)
-                            , el [ paddingXY 5 0 ] (text "Location")
+                            , el [ paddingXY 5 0 ] (text (extractLabelFromLanguageMap language localTranslations.location))
                             ]
                         , paragraph
                             [ width fill
                             , spacing 5
                             ]
                             [ el [ width (px 15), height (px 15) ] (circleSvg colourScheme.darkOrange)
-                            , el [ paddingXY 5 0 ] (text "Nearby institutions")
+                            , el [ paddingXY 5 0 ] (text (extractLabelFromLanguageMap language localTranslations.nearbyInstitutions))
                             ]
                         ]
                     ]
