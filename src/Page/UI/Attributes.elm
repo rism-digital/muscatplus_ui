@@ -21,9 +21,10 @@ module Page.UI.Attributes exposing
     , minimalDropShadow
     , pageBackground
     , responsiveCheckboxColumns
-    , resultColumnWidth
+    , resultsColumnWidth
     , sectionBorderStyles
     , sectionSpacing
+    , sidebarWidth
     , valueFieldColumnAttributes
     )
 
@@ -214,20 +215,6 @@ valueFieldColumnAttributes =
     ]
 
 
-resultColumnWidth : Device -> Attribute msg
-resultColumnWidth { class, orientation } =
-    case ( class, orientation ) of
-        ( Desktop, Landscape ) ->
-            width (px 600)
-
-        ( BigDesktop, Landscape ) ->
-            width (px 600 |> minimum 600)
-
-        _ ->
-            -- TODO: Figure out what else goes here.
-            width (px 640 |> minimum 640)
-
-
 controlsColumnWidth : Device -> Attribute msg
 controlsColumnWidth { class, orientation } =
     case ( class, orientation ) of
@@ -258,3 +245,13 @@ responsiveCheckboxColumns { class, orientation } =
 
         _ ->
             3
+
+
+sidebarWidth : Int
+sidebarWidth =
+    70
+
+
+resultsColumnWidth : Int
+resultsColumnWidth =
+    600

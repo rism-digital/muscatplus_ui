@@ -12,7 +12,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views exposing (createErrorMessage)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
 import Page.UI.Components exposing (h2, h3, h4)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
@@ -136,11 +136,14 @@ viewPreviewLoading =
 viewPreviewRouter : PreviewConfig msg -> Maybe ServerData -> Element msg
 viewPreviewRouter cfg previewData =
     let
-        ( _, windowHeight ) =
+        ( windowWidth, windowHeight ) =
             cfg.windowSize
 
         previewHeight =
             round (toFloat windowHeight * 0.6)
+
+        previewWidth =
+            round (toFloat (windowWidth - (sidebarWidth + resultsColumnWidth)) * 0.8)
 
         moveDownAmount =
             toFloat windowHeight * 0.08
@@ -189,7 +192,7 @@ viewPreviewRouter cfg previewData =
                     none
     in
     row
-        [ width (fill |> minimum 600 |> maximum 800)
+        [ width (fill |> maximum previewWidth)
         , height (fill |> maximum previewHeight)
         , clipY
         , alignTop

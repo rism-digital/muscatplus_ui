@@ -16,6 +16,7 @@ import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedLabel)
+import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
@@ -239,7 +240,7 @@ view session =
     in
     animatedColumn
         sideAnimation
-        [ width (px 70)
+        [ width (px sidebarWidth)
         , height fill
         , alignTop
         , alignLeft
@@ -256,8 +257,6 @@ view session =
             [ column
                 [ centerY
                 , centerX
-
-                --, width fill
                 ]
                 [ row
                     [ width shrink

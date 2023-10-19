@@ -63,7 +63,7 @@ type Msg
     = ClientChangedUrl Url
     | ClientReceivedABadPortMessage String
     | UserRequestedUrlChange UrlRequest
-    | UserResizedWindow Device
+    | UserResizedWindow Device Int Int
     | UserInteractedWithFrontPage Front.Msg
     | UserInteractedWithSearchPage Search.Msg
     | UserInteractedWithRecordPage Record.Msg

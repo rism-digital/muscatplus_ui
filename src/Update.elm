@@ -2,7 +2,7 @@ module Update exposing (update)
 
 import Browser
 import Browser.Navigation as Nav
-import Device exposing (setDevice)
+import Device exposing (setDevice, setWindow)
 import Flip exposing (flip)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
@@ -460,11 +460,12 @@ update msg model =
                 Browser.External href ->
                     ( model, Nav.load href )
 
-        ( Msg.UserResizedWindow device, _ ) ->
+        ( Msg.UserResizedWindow device width height, _ ) ->
             let
                 newModel =
                     toSession model
                         |> setDevice device
+                        |> setWindow ( width, height )
                         |> flip updateSession model
             in
             ( newModel, Cmd.none )

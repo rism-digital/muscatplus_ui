@@ -20,7 +20,7 @@ import Ports.Incoming exposing (IncomingMessage(..), decodeIncomingMessage, rece
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ onResize (\width height -> Msg.UserResizedWindow (detectDevice width height))
+        [ onResize (\width height -> Msg.UserResizedWindow (detectDevice width height) width height)
         , receiveIncomingMessageFromPort (messageReceiverHelper model)
         , handleKeyboardNavigation model
         ]

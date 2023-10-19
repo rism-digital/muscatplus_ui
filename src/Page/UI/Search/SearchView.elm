@@ -3,7 +3,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -13,12 +13,11 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, to
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Maybe.Extra as ME
-import Page.Error.Views exposing (createErrorMessage)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
-import Page.UI.Attributes exposing (bodyRegular, controlsColumnWidth, lineSpacing, responsiveCheckboxColumns, resultColumnWidth)
+import Page.UI.Attributes exposing (bodyRegular, controlsColumnWidth, lineSpacing, responsiveCheckboxColumns, resultsColumnWidth)
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -152,7 +151,7 @@ viewSearchResultsSection cfg resultsLoading body =
         , Background.color colourScheme.white
         ]
         [ column
-            [ resultColumnWidth (.device cfg.session)
+            [ width (px resultsColumnWidth)
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }

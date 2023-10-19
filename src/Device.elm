@@ -1,4 +1,4 @@
-module Device exposing (detectDevice, setDevice)
+module Device exposing (detectDevice, setDevice, setWindow)
 
 import Element exposing (Device, classifyDevice)
 
@@ -11,3 +11,8 @@ detectDevice width height =
 setDevice : Device -> { a | device : Device } -> { a | device : Device }
 setDevice newDevice oldRecord =
     { oldRecord | device = newDevice }
+
+
+setWindow : ( Int, Int ) -> { a | window : ( Int, Int ) } -> { a | window : ( Int, Int ) }
+setWindow newWindow oldRecord =
+    { oldRecord | window = newWindow }
