@@ -17,7 +17,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
-import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour)
 import Page.UI.Components exposing (h1, h2s)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (externalLinkSvg)
@@ -178,7 +178,7 @@ pageLinkTemplate language langMap body =
             [ row
                 [ width fill ]
                 [ el
-                    [ headingMD
+                    [ headingLG
                     , Font.semiBold
                     ]
                     (text (extractLabelFromLanguageMap language langMap ++ ": "))
@@ -186,7 +186,7 @@ pageLinkTemplate language langMap body =
                     [ linkColour ]
                     { label =
                         el
-                            [ headingMD ]
+                            [ headingLG ]
                             (text body.id)
                     , url = body.id
                     }
