@@ -140,13 +140,10 @@ viewPreviewRouter cfg previewData =
             cfg.windowSize
 
         previewHeight =
-            round (toFloat windowHeight * 0.6)
+            round (toFloat windowHeight * 0.8)
 
         previewWidth =
             round (toFloat (windowWidth - (sidebarWidth + resultsColumnWidth)) * 0.8)
-
-        moveDownAmount =
-            toFloat windowHeight * 0.08
 
         preview =
             case previewData of
@@ -201,7 +198,8 @@ viewPreviewRouter cfg previewData =
         , Border.color colourScheme.darkBlue
         , Border.width 3
         , htmlAttribute (HA.style "z-index" "10")
-        , moveDown moveDownAmount
+        , centerY
+        , centerX
         , minimalDropShadow
         ]
         [ column
