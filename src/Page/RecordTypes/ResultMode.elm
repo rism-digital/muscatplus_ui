@@ -4,6 +4,8 @@ module Page.RecordTypes.ResultMode exposing
     , parseStringToResultMode
     )
 
+import Dict
+
 
 type ResultMode
     = SourcesMode
@@ -29,10 +31,9 @@ parseResultModeToString mode =
 -}
 parseStringToResultMode : String -> ResultMode
 parseStringToResultMode string =
-    List.filter (\( str, _ ) -> str == string) resultModeOptions
-        |> List.head
-        |> Maybe.withDefault ( "sources", SourcesMode )
-        |> Tuple.second
+    Dict.fromList resultModeOptions
+        |> Dict.get string
+        |> Maybe.withDefault SourcesMode
 
 
 resultModeOptions : List ( String, ResultMode )

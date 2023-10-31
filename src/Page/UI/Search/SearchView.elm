@@ -227,10 +227,6 @@ viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
                         [ spacing 5
                         , padding 4
                         , Background.color colourScheme.darkBlue
-
-                        --, Border.color colourScheme.darkGrey
-                        --, Border.rounded 3
-                        --, Border.width 1
                         , Font.color colourScheme.white
                         , Font.semiBold
                         , bodyRegular
