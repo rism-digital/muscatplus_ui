@@ -10,9 +10,16 @@ module Page.RecordTypes.SourceShared exposing
     , Subject
     , SubjectsSectionBody
     , contentsSectionBodyDecoder
+    , sourceContentTypeDecoder
+    , sourceContentTypeRecordBodyDecoder
     , sourceRecordDescriptorsDecoder
+    , sourceRecordTypeDecoder
+    , sourceRecordTypeRecordBodyDecoder
+    , sourceTypeDecoder
+    , sourceTypeRecordBodyDecoder
     )
 
+import Dict
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
@@ -31,6 +38,7 @@ type SourceContentType
     = LibrettoContent
     | TreatiseContent
     | MusicalContent
+    | MixedContent
     | OtherContent
 
 
@@ -98,15 +106,18 @@ contentsSectionBodyDecoder =
 sourceContentTypeDecoder : Decoder SourceContentType
 sourceContentTypeDecoder =
     string
-        |> andThen (\str -> Decode.succeed (sourceContentTypeFromJsonType str))
+        |> andThen
+            (\str ->
+                sourceContentTypeFromJsonType str
+                    |> Decode.succeed
+            )
 
 
 sourceContentTypeFromJsonType : String -> SourceContentType
 sourceContentTypeFromJsonType jsonType =
-    List.filter (\( str, _ ) -> str == jsonType) sourceContentTypeOptions
-        |> List.head
-        |> Maybe.withDefault ( "", MusicalContent )
-        |> Tuple.second
+    Dict.fromList sourceContentTypeOptions
+        |> Dict.get jsonType
+        |> Maybe.withDefault OtherContent
 
 
 sourceContentTypeOptions : List ( String, SourceContentType )
@@ -114,6 +125,7 @@ sourceContentTypeOptions =
     [ ( "rism:LibrettoContent", LibrettoContent )
     , ( "rism:TreatiseContent", TreatiseContent )
     , ( "rism:MusicalContent", MusicalContent )
+    , ( "rism:MixedContent", MixedContent )
     , ( "rism:OtherContent", OtherContent )
     ]
 
@@ -145,10 +157,9 @@ sourceRecordTypeDecoder =
 
 sourceRecordTypeFromJsonType : String -> SourceRecordType
 sourceRecordTypeFromJsonType jsonType =
-    List.filter (\( str, _ ) -> str == jsonType) sourceRecordTypeOptions
-        |> List.head
-        |> Maybe.withDefault ( "", SourceItemRecord )
-        |> Tuple.second
+    Dict.fromList sourceRecordTypeOptions
+        |> Dict.get jsonType
+        |> Maybe.withDefault SourceItemRecord
 
 
 sourceRecordTypeOptions : List ( String, SourceRecordType )
@@ -185,15 +196,18 @@ sourceSubjectsBodyDecoder =
 sourceTypeDecoder : Decoder SourceType
 sourceTypeDecoder =
     string
-        |> andThen (\str -> Decode.succeed (sourceTypeFromJsonType str))
+        |> andThen
+            (\str ->
+                sourceTypeFromJsonType str
+                    |> Decode.succeed
+            )
 
 
 sourceTypeFromJsonType : String -> SourceType
 sourceTypeFromJsonType jsonType =
-    List.filter (\( str, _ ) -> str == jsonType) sourceTypeOptions
-        |> List.head
-        |> Maybe.withDefault ( "", UnspecifiedSource )
-        |> Tuple.second
+    Dict.fromList sourceTypeOptions
+        |> Dict.get jsonType
+        |> Maybe.withDefault UnspecifiedSource
 
 
 sourceTypeOptions : List ( String, SourceType )
