@@ -155,7 +155,7 @@ viewSearchResultsSection cfg resultsLoading body =
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color colourScheme.slateGrey
+            , Border.color colourScheme.midGrey
             , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
             [ viewSearchPageSort

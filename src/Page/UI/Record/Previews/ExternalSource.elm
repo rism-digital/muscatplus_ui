@@ -174,7 +174,7 @@ viewExternalHeldBy language body =
                     (text (extractLabelFromLanguageMap language localTranslations.heldBy))
                 )
             ]
-            (institutionSvg colourScheme.slateGrey)
+            (institutionSvg colourScheme.midGrey)
         , link
             [ linkColour
             ]

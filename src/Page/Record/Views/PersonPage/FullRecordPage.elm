@@ -70,7 +70,7 @@ viewFullPersonPage session model body =
                 , centerX
                 , centerY
                 ]
-                (peopleSvg colourScheme.slateGrey)
+                (peopleSvg colourScheme.midGrey)
     in
     row
         [ width fill

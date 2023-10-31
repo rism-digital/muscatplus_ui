@@ -156,7 +156,7 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
                             [ width (px 15)
                             , height (px 15)
                             ]
-                            (spinnerSvg colourScheme.slateGrey)
+                            (spinnerSvg colourScheme.midGrey)
                         ]
 
                 Response (SearchData searchData) ->

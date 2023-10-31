@@ -145,8 +145,8 @@ viewFacetsForSourcesMode cfg =
                             ]
                         ]
                     , sourceType
-                    , materialSourceType
                     , materialContentType
+                    , materialSourceType
                     ]
 
         digitizationResultsPanel =

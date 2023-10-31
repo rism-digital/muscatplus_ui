@@ -21,28 +21,28 @@ viewRelatedToBody language body =
         ( relIcon, relationshipTooltip ) =
             case body.type_ of
                 PersonRelationship ->
-                    ( userCircleSvg colourScheme.slateGrey
+                    ( userCircleSvg colourScheme.midGrey
                     , el
                         tooltipStyle
                         (text (extractLabelFromLanguageMap language localTranslations.person))
                     )
 
                 InstitutionRelationship ->
-                    ( institutionSvg colourScheme.slateGrey
+                    ( institutionSvg colourScheme.midGrey
                     , el
                         tooltipStyle
                         (text (extractLabelFromLanguageMap language localTranslations.person))
                     )
 
                 PlaceRelationship ->
-                    ( mapMarkerSvg colourScheme.slateGrey
+                    ( mapMarkerSvg colourScheme.midGrey
                     , el
                         tooltipStyle
                         (text (extractLabelFromLanguageMap language localTranslations.place))
                     )
 
                 SourceRelationship ->
-                    ( sourcesSvg colourScheme.slateGrey
+                    ( sourcesSvg colourScheme.midGrey
                     , el
                         tooltipStyle
                         (text (extractLabelFromLanguageMap language localTranslations.source))

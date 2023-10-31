@@ -126,7 +126,7 @@ viewPreviewLoading =
                     ]
                     (animatedLoader
                         [ width (px 40), height (px 40) ]
-                        (spinnerSvg colourScheme.slateGrey)
+                        (spinnerSvg colourScheme.midGrey)
                     )
                 ]
             ]

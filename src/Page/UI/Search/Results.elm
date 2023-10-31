@@ -78,14 +78,14 @@ setResultColours resultIdx selectedResult thisId =
         { backgroundColour = colourScheme.lightestBlue
         , fontLinkColour = colourScheme.lightBlue
         , textColour = colourScheme.black
-        , iconColour = colourScheme.slateGrey
+        , iconColour = colourScheme.midGrey
         }
 
     else
         { backgroundColour = colourScheme.white
         , fontLinkColour = colourScheme.lightBlue
         , textColour = colourScheme.black
-        , iconColour = colourScheme.slateGrey
+        , iconColour = colourScheme.midGrey
         }
 
 

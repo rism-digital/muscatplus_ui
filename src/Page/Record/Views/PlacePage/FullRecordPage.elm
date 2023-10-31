@@ -33,8 +33,7 @@ viewFullPlacePage session model body =
                 [ width fill
                 , alignTop
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-                , Border.color colourScheme.slateGrey
-                , Background.color colourScheme.cream
+                , Border.color colourScheme.midGrey
                 ]
                 [ column
                     [ width (px 80) ]
@@ -44,7 +43,7 @@ viewFullPlacePage session model body =
                         , centerX
                         , centerY
                         ]
-                        (mapMarkerSvg colourScheme.slateGrey)
+                        (mapMarkerSvg colourScheme.midGrey)
                     ]
                 , column
                     [ spacingXY 0 lineSpacing

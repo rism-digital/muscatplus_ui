@@ -27,7 +27,7 @@ viewResultsListLoadingScreenTmpl isLoading =
                 , centerX
                 , centerY
                 ]
-                (animatedLoader [ width (px 50), height (px 50) ] (spinnerSvg colourScheme.slateGrey))
+                (animatedLoader [ width (px 50), height (px 50) ] (spinnerSvg colourScheme.midGrey))
             )
 
     else

@@ -57,22 +57,22 @@ viewModeItem selectedMode language fitem =
         icon =
             case value of
                 "festivals" ->
-                    iconTmpl (liturgicalFestivalSvg colourScheme.slateGrey)
+                    iconTmpl (liturgicalFestivalSvg colourScheme.midGrey)
 
                 "incipits" ->
-                    iconTmpl (musicNotationSvg colourScheme.slateGrey)
+                    iconTmpl (musicNotationSvg colourScheme.midGrey)
 
                 "institutions" ->
-                    iconTmpl (institutionSvg colourScheme.slateGrey)
+                    iconTmpl (institutionSvg colourScheme.midGrey)
 
                 "people" ->
-                    iconTmpl (peopleSvg colourScheme.slateGrey)
+                    iconTmpl (peopleSvg colourScheme.midGrey)
 
                 "sources" ->
-                    iconTmpl (sourcesSvg colourScheme.slateGrey)
+                    iconTmpl (sourcesSvg colourScheme.midGrey)
 
                 _ ->
-                    iconTmpl (unknownSvg colourScheme.slateGrey)
+                    iconTmpl (unknownSvg colourScheme.midGrey)
 
         itemCount =
             formatNumberByLanguage language count

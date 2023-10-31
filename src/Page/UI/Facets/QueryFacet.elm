@@ -69,12 +69,12 @@ viewQueryFacet config =
         ( behaviourIcon, behaviourText ) =
             case currentBehaviourOption of
                 FacetBehaviourIntersection ->
-                    ( intersectionSvg colourScheme.slateGrey
+                    ( intersectionSvg colourScheme.midGrey
                     , extractLabelFromLanguageMap config.language localTranslations.optionsWithAnd
                     )
 
                 FacetBehaviourUnion ->
-                    ( unionSvg colourScheme.slateGrey
+                    ( unionSvg colourScheme.midGrey
                     , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
                     )
 

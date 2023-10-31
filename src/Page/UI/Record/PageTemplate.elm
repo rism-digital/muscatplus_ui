@@ -207,7 +207,7 @@ externalLinkTemplate url =
                     -- TODO: Translate
                     (el tooltipStyle (text "External link"))
                 ]
-                (externalLinkSvg colourScheme.slateGrey)
+                (externalLinkSvg colourScheme.midGrey)
     in
     isExternalLink url
         |> viewIf externalImg

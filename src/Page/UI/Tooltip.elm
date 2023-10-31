@@ -16,7 +16,7 @@ facetHelp position helpText =
         , height (px 16)
         , tooltip position (helpBubble helpText)
         ]
-        (assistanceSvg colourScheme.slateGrey)
+        (assistanceSvg colourScheme.midGrey)
 
 
 facetTooltip : (Element msg -> Attribute msg) -> String -> Element msg

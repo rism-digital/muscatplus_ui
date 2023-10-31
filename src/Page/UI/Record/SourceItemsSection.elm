@@ -37,7 +37,7 @@ viewSourceItem language source =
                     , height (px 25)
                     , centerY
                     ]
-                    (sourceIcon colourScheme.slateGrey)
+                    (sourceIcon colourScheme.midGrey)
                 , paragraph
                     [ width fill ]
                     [ link

@@ -34,12 +34,12 @@ dividingLine =
         , height shrink
         , paddingXY 15 0
         , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-        , Border.color colourScheme.slateGrey
+        , Border.color colourScheme.midGrey
         ]
         [ column
             [ width fill
             , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-            , Border.color colourScheme.slateGrey
+            , Border.color colourScheme.midGrey
             ]
             []
         ]
@@ -290,7 +290,7 @@ view session =
             , alignLeft
             , paddingXY 0 10
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.slateGrey
+            , Border.color colourScheme.midGrey
             ]
             [ column
                 [ width fill
@@ -308,7 +308,7 @@ view session =
             , alignLeft
             , paddingXY 0 10
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.slateGrey
+            , Border.color colourScheme.midGrey
             ]
             [ column
                 [ width fill
@@ -346,7 +346,7 @@ view session =
             , alignLeft
             , paddingXY 0 10
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.slateGrey
+            , Border.color colourScheme.midGrey
             ]
             [ column
                 [ width fill
@@ -366,7 +366,7 @@ view session =
             [ height fill
             , width fill
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.slateGrey
+            , Border.color colourScheme.midGrey
             ]
             [ column
                 [ height fill

@@ -99,7 +99,7 @@ viewFrontSearchControls cfg =
             [ width fill
             , height fill
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.slateGrey
+            , Border.color colourScheme.midGrey
             ]
             [ row
                 [ width fill
@@ -273,6 +273,6 @@ viewFrontSearchControlsLoading =
                 [ width (px 50)
                 , height (px 50)
                 ]
-                (spinnerSvg colourScheme.slateGrey)
+                (spinnerSvg colourScheme.midGrey)
             )
         ]

@@ -57,8 +57,8 @@ viewPagination language pagination clickMsg =
                 [ width shrink
                 , alignLeft
                 ]
-                [ viewMaybe (paginationLink (chevronDoubleLeftSvg colourScheme.slateGrey) clickMsg) (Just pagination.first)
-                , viewMaybe (paginationLink (chevronLeftSvg colourScheme.slateGrey) clickMsg) pagination.previous
+                [ viewMaybe (paginationLink (chevronDoubleLeftSvg colourScheme.midGrey) clickMsg) (Just pagination.first)
+                , viewMaybe (paginationLink (chevronLeftSvg colourScheme.midGrey) clickMsg) pagination.previous
                 ]
             ]
         , column
@@ -86,8 +86,8 @@ viewPagination language pagination clickMsg =
                 [ width shrink
                 , alignRight
                 ]
-                [ viewMaybe (paginationLink (chevronRightSvg colourScheme.slateGrey) clickMsg) pagination.next
-                , viewMaybe (paginationLink (chevronDoubleRightSvg colourScheme.slateGrey) clickMsg) pagination.last
+                [ viewMaybe (paginationLink (chevronRightSvg colourScheme.midGrey) clickMsg) pagination.next
+                , viewMaybe (paginationLink (chevronDoubleRightSvg colourScheme.midGrey) clickMsg) pagination.last
                 ]
             ]
         ]

@@ -83,10 +83,10 @@ sortIcon : FacetSorts -> Element msg
 sortIcon sortType =
     case sortType of
         FacetSortCount ->
-            sortAlphaDescSvg colourScheme.slateGrey
+            sortAlphaDescSvg colourScheme.midGrey
 
         FacetSortAlpha ->
-            sortNumericDescSvg colourScheme.slateGrey
+            sortNumericDescSvg colourScheme.midGrey
 
 
 toggledSortType : FacetSorts -> FacetSorts
@@ -158,12 +158,12 @@ viewSelectFacet config =
             ( behaviourIcon, behaviourText ) =
                 case currentBehaviourOption of
                     FacetBehaviourIntersection ->
-                        ( intersectionSvg colourScheme.slateGrey
+                        ( intersectionSvg colourScheme.midGrey
                         , extractLabelFromLanguageMap config.language localTranslations.optionsWithAnd
                         )
 
                     FacetBehaviourUnion ->
-                        ( unionSvg colourScheme.slateGrey
+                        ( unionSvg colourScheme.midGrey
                         , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
                         )
 

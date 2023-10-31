@@ -128,7 +128,7 @@ dividerWithText : String -> Element msg
 dividerWithText dividerText =
     let
         { blue, green, red } =
-            colourScheme.slateGrey
+            colourScheme.midGrey
                 |> rgbaFloatToInt
 
         beforeAndAfterStyles =

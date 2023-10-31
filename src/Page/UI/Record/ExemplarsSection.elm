@@ -109,7 +109,7 @@ viewBoundWithSection language boundWithSection =
                         , centerY
                         , relationshipTooltip |> tooltip above
                         ]
-                        (sourcesSvg colourScheme.slateGrey)
+                        (sourcesSvg colourScheme.midGrey)
                     , link
                         [ linkColour ]
                         { label = text (extractLabelFromLanguageMap language (.label boundWithSection.source))
@@ -139,7 +139,7 @@ viewHeldBy language body =
                         (text (extractLabelFromLanguageMap language localTranslations.heldBy))
                     )
                 ]
-                (institutionSvg colourScheme.slateGrey)
+                (institutionSvg colourScheme.midGrey)
             , paragraph
                 [ width fill ]
                 [ link

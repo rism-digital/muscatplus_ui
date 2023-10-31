@@ -73,7 +73,7 @@ viewFullInstitutionPage session model body =
                 , centerX
                 , centerY
                 ]
-                (institutionSvg colourScheme.slateGrey)
+                (institutionSvg colourScheme.midGrey)
     in
     row
         [ width fill

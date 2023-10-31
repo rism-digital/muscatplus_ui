@@ -30,7 +30,7 @@ viewDigitalObjectThumbnail language imageUrls dObject =
         , spacing lineSpacing
         , Font.center
         , Border.width 1
-        , Border.color colourScheme.slateGrey
+        , Border.color colourScheme.midGrey
         , padding 5
         ]
         [ newTabLink
@@ -82,7 +82,7 @@ viewDigitalObjectRenderedNotation language encoding dObject =
         , spacing lineSpacing
         , Font.center
         , Border.width 1
-        , Border.color colourScheme.slateGrey
+        , Border.color colourScheme.midGrey
         , padding 5
         ]
         [ newTabLink
