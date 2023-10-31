@@ -19,6 +19,7 @@ localTranslations :
     , applyFiltersToUpdateResults : LanguageMap
     , chooseCollection : LanguageMap
     , collapse : LanguageMap
+    , contentTypes : LanguageMap
     , description : LanguageMap
     , downloadMEI : LanguageMap
     , downloadPNG : LanguageMap
@@ -64,6 +65,7 @@ localTranslations :
     , queryTerms : LanguageMap
     , recordPreview : LanguageMap
     , recordTop : LanguageMap
+    , recordType : LanguageMap
     , recordURI : LanguageMap
     , reportAnIssue : LanguageMap
     , resetAll : LanguageMap
@@ -80,6 +82,7 @@ localTranslations :
     , source : LanguageMap
     , sourceContents : LanguageMap
     , sources : LanguageMap
+    , sourceType : LanguageMap
     , unknownError : LanguageMap
     , updateResults : LanguageMap
     , viewImages : LanguageMap
@@ -105,6 +108,8 @@ localTranslations =
         [ LanguageValues English [ "Choose a collection to search" ] ]
     , collapse =
         [ LanguageValues English [ "Collapse" ] ]
+    , contentTypes =
+        [ LanguageValues English [ "Content types" ] ]
     , description =
         [ LanguageValues English [ "Description" ]
         , LanguageValues German [ "Beschreibung" ]
@@ -155,9 +160,9 @@ localTranslations =
         , LanguageValues Polish [ "Pełny widok rekordu" ]
         ]
     , hasDigitization =
-        [ LanguageValues English [ "Has digitization" ] ]
+        [ LanguageValues English [ "Digital images available" ] ]
     , hasIIIFManifest =
-        [ LanguageValues English [ "Has IIIF manifest" ] ]
+        [ LanguageValues English [ "IIIF manifest available" ] ]
     , hasIncipits =
         [ LanguageValues English [ "Has incipits" ] ]
     , heldBy =
@@ -341,6 +346,8 @@ localTranslations =
         ]
     , recordTop =
         [ LanguageValues English [ "Record top" ] ]
+    , recordType =
+        [ LanguageValues English [ "Record type" ] ]
     , recordURI =
         [ LanguageValues English [ "Record URI (Permalink)" ]
         , LanguageValues German [ "URI des Datensatzes (Permalink)" ]
@@ -421,6 +428,8 @@ localTranslations =
         , LanguageValues Portugese [ "Fontes" ]
         , LanguageValues Polish [ "Źródła" ]
         ]
+    , sourceType =
+        [ LanguageValues English [ "Source type" ] ]
     , unknownError =
         [ LanguageValues English [ "An unknown error occurred." ] ]
     , updateResults =
