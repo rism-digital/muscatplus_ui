@@ -1,6 +1,7 @@
 module Page.UI.Components exposing
     ( DropdownSelectConfig
     , basicCheckbox
+    , contentTypeIconChooser
     , dividerWithText
     , dropdownSelect
     , fieldValueWrapper
@@ -14,12 +15,13 @@ module Page.UI.Components exposing
     , renderLabel
     , renderParagraph
     , sourceIconChooser
+    , sourceTypeIconChooser
     , viewParagraphField
     , viewSummaryField
     )
 
 import Css
-import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerX, centerY, clip, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, clip, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -32,11 +34,12 @@ import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, limitLength)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.RecordTypes.SourceShared exposing (SourceRecordType(..))
+import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
 import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, folderGridSvg, graduationCapSvg, musicNotationSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (toLinkedHtml)
 
 
@@ -328,7 +331,9 @@ h6 language heading =
 
 
 makeFlagIcon :
-    { background : Color, foreground : Color }
+    { background : Color
+    , foreground : Color
+    }
     -> Element msg
     -> String
     -> Element msg
@@ -336,20 +341,19 @@ makeFlagIcon colours iconImage iconLabel =
     column
         [ bodySM
         , padding 4
-        , Border.width 1
-        , Border.color colours.foreground
         , Background.color colours.background
         ]
         [ row
             [ spacing 5
-            , Font.color colours.foreground
+            , el tooltipStyle (text iconLabel)
+                |> tooltip above
             ]
             [ el
                 [ width (px 15)
                 , height (px 15)
+                , centerX
                 ]
                 iconImage
-            , text iconLabel
             ]
         ]
 
@@ -530,3 +534,38 @@ sourceIconChooser recordType =
 
         SourceCompositeRecord ->
             bookCopySvg
+
+
+sourceTypeIconChooser : SourceType -> (Element.Color -> Element msg)
+sourceTypeIconChooser sourceType =
+    case sourceType of
+        PrintedSource ->
+            printingPressSvg
+
+        ManuscriptSource ->
+            penNibSvg
+
+        CompositeSource ->
+            rectanglesMixedSvg
+
+        UnspecifiedSource ->
+            \_ -> none
+
+
+contentTypeIconChooser : SourceContentType -> (Element.Color -> Element msg)
+contentTypeIconChooser contentType =
+    case contentType of
+        MusicalContent ->
+            musicNotationSvg
+
+        LibrettoContent ->
+            commentsSvg
+
+        TreatiseContent ->
+            graduationCapSvg
+
+        MixedContent ->
+            shapesSvg
+
+        OtherContent ->
+            folderGridSvg

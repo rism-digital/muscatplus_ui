@@ -189,11 +189,9 @@ viewPreviewRouter cfg previewData =
                     none
     in
     row
-        [ width (fill |> maximum previewWidth)
+        [ width (px previewWidth |> maximum 1100)
         , height (fill |> maximum previewHeight)
         , clipY
-        , alignTop
-        , alignLeft
         , Background.color colourScheme.white
         , Border.color colourScheme.darkBlue
         , Border.width 3

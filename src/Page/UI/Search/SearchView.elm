@@ -225,12 +225,14 @@ viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
                     in
                     row
                         [ spacing 5
-                        , padding 3
-                        , Background.color colourScheme.white
-                        , Border.color colourScheme.lightBlue
-                        , Border.rounded 3
-                        , Border.width 1
-                        , Font.color colourScheme.black
+                        , padding 4
+                        , Background.color colourScheme.darkBlue
+
+                        --, Border.color colourScheme.darkGrey
+                        --, Border.rounded 3
+                        --, Border.width 1
+                        , Font.color colourScheme.white
+                        , Font.semiBold
                         , bodyRegular
                         ]
                         [ column []
@@ -242,7 +244,7 @@ viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
                                 , pointer
                                 , onClick (userRemovedActiveFilterMsg alias value)
                                 ]
-                                (closeWindowSvg colourScheme.lightBlue)
+                                (closeWindowSvg colourScheme.white)
                             ]
                         ]
                 )
@@ -252,9 +254,9 @@ viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
         [ width fill
         , height shrink
         , paddingXY 20 10
-        , Background.color colourScheme.translucentBlue
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.color colourScheme.lightBlue
+        , Background.color colourScheme.lightestBlue
+        , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.darkGrey
         ]
         [ column
             [ width fill
