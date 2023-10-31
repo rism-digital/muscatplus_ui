@@ -35,7 +35,6 @@ viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg, resultId
         , colours = resultColours
         , resultBody = resultBody
         , clickMsg = clickForPreviewMsg
-        , sourceDatabaseIcon = Nothing
         }
 
 

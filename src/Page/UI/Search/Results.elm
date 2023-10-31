@@ -32,7 +32,6 @@ type alias ResultConfig msg =
     { id : String
     , language : Language
     , resultTitle : LanguageMap
-    , sourceDatabaseIcon : Maybe (Element msg)
     , colours : ResultColours
     , resultBody : List (Element msg)
     , clickMsg : String -> msg
@@ -103,17 +102,6 @@ resultTemplate cfg =
                             |> HA.id
                             |> htmlAttribute
                     )
-
-        dbLogo =
-            viewMaybe
-                (\i ->
-                    row
-                        [ width fill
-                        , height (px 40)
-                        ]
-                        [ i ]
-                )
-                cfg.sourceDatabaseIcon
     in
     row
         [ width fill

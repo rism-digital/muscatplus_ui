@@ -60,7 +60,6 @@ viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg, resu
         , colours = resultColours
         , resultBody = resultBody
         , clickMsg = clickForPreviewMsg
-        , sourceDatabaseIcon = Nothing
         }
 
 

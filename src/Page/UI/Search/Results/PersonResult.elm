@@ -94,7 +94,6 @@ viewPersonSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx
         , colours = resultColours
         , resultBody = resultBody
         , clickMsg = clickForPreviewMsg
-        , sourceDatabaseIcon = Nothing
         }
 
 
