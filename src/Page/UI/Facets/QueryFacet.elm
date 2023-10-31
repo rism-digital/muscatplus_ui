@@ -213,6 +213,7 @@ viewQueryFacet config =
                                         , selectIdent = facetAlias ++ "-query-behaviour-select"
                                         , label = Nothing
                                         , language = config.language
+                                        , inverted = False
                                         }
                                     )
                                 ]

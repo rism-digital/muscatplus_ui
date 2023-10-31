@@ -108,6 +108,7 @@ viewRowSelectAndSortSelector cfg =
                                 , selectIdent = "pagination-sort-select" -- TODO: Check that this is unique!
                                 , label = Nothing
                                 , language = cfg.language
+                                , inverted = False
                                 }
                             )
                         ]
@@ -144,6 +145,7 @@ viewRowSelectAndSortSelector cfg =
                                 , selectIdent = "pagination-rows-select"
                                 , label = Nothing
                                 , language = cfg.language
+                                , inverted = False
                                 }
                             )
                         ]

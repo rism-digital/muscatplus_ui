@@ -5,6 +5,7 @@ module Page.UI.Record.PageTemplate exposing
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
+    , pageLinkTemplate
     , subHeaderTemplate
     )
 

@@ -53,6 +53,7 @@ type alias DropdownSelectConfig a msg =
     , selectIdent : String
     , label : Maybe LanguageMap
     , language : Language
+    , inverted : Bool
     }
 
 
@@ -169,6 +170,13 @@ dropdownSelect :
     -> Element msg
 dropdownSelect cfg =
     let
+        textColour =
+            if cfg.inverted then
+                "White"
+
+            else
+                "DarkSlateGrey"
+
         label =
             viewMaybe
                 (\s ->
@@ -194,13 +202,19 @@ dropdownSelect cfg =
             , alignLeft
             ]
             [ html
-                (HT.div dropdownSelectParentStyles
+                (HT.div
+                    (List.append
+                        [ HA.style "border-bottom" ("2px dotted " ++ textColour) ]
+                        dropdownSelectParentStyles
+                    )
                     [ HT.select
                         (List.append
                             [ HE.onInput cfg.selectedMsg
                             , HA.id cfg.selectIdent
                             , mouseDownMsg
                             , mouseUpMsg
+                            , HA.style "color" textColour
+                            , HA.style "background" ("transparent url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><g><path d=\"M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z\" fill=\"" ++ textColour ++ "\"/></g></svg>') no-repeat")
                             ]
                             dropdownSelectStyles
                         )
@@ -224,14 +238,11 @@ dropdownSelectOption val name choiceFn currentChoice =
 
         isSelected =
             valToChoice == currentChoice
-
-        attrib =
-            [ HA.value val
-            , HA.selected isSelected
-            ]
     in
     HT.option
-        attrib
+        [ HA.value val
+        , HA.selected isSelected
+        ]
         [ HT.text name ]
 
 
@@ -242,7 +253,6 @@ dropdownSelectParentStyles =
     , HA.style "width" "auto"
     , HA.style "cursor" "pointer"
     , HA.style "line-height" "1.2"
-    , HA.style "border-bottom" "2px dotted #778899"
     , HA.style "position" "relative"
     ]
 
@@ -262,7 +272,6 @@ dropdownSelectStyles =
     , HA.style "line-height" "inherit"
     , HA.style "outline" "none"
     , HA.style "position" "relative"
-    , HA.style "background" "transparent url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><g><path d=\"M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z\" fill=\"LightSlateGray\"/></g></svg>') no-repeat"
     , HA.style "background-position" "right 5px top 50%"
     ]
 

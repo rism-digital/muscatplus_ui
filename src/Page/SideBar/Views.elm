@@ -33,13 +33,14 @@ dividingLine =
         [ width fill
         , height shrink
         , paddingXY 15 0
-        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-        , Border.color colourScheme.midGrey
+        , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+        , Border.color colourScheme.darkBlue
+        , Background.color colourScheme.darkBlue
         ]
         [ column
             [ width fill
-            , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-            , Border.color colourScheme.midGrey
+            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.color colourScheme.white
             ]
             []
         ]
@@ -53,6 +54,7 @@ isCurrentlyHovered hoveredOption thisOption =
 menuOption :
     { icon : Color -> Element SideBarMsg
     , isCurrent : Bool
+    , isHovered : Bool
     , label : Element SideBarMsg
     , showLabel : Bool
     }
@@ -62,7 +64,14 @@ menuOption :
 menuOption cfg option currentlyHovered =
     let
         fontColour =
-            choose cfg.isCurrent (always colourScheme.white) (always colourScheme.black)
+            if cfg.isCurrent && cfg.isHovered then
+                colourScheme.darkBlue
+
+            else if cfg.isCurrent || cfg.isHovered then
+                colourScheme.darkBlue
+
+            else
+                colourScheme.white
 
         icon =
             cfg.icon fontColour
@@ -76,12 +85,12 @@ menuOption cfg option currentlyHovered =
 
         hoverStyles =
             choose currentlyHovered
-                (\() -> [ Background.color colourScheme.lightGrey ])
+                (\() -> [ Background.color colourScheme.white ])
                 (\() -> [])
 
         selectedStyle =
             choose cfg.isCurrent
-                (\() -> [ Background.color colourScheme.lightBlue ])
+                (\() -> [ Background.color colourScheme.white ])
                 (\() -> [])
 
         additionalOptions =
@@ -133,7 +142,7 @@ unlinkedMenuOption :
     -> Element SideBarMsg
 unlinkedMenuOption cfg =
     menuOptionTemplate
-        { icon = cfg.icon colourScheme.black
+        { icon = cfg.icon colourScheme.white
         , isCurrent = False
         , label = cfg.label
         , showLabel = cfg.showLabel
@@ -166,6 +175,7 @@ view session =
             menuOption
                 { icon = musicNotationSvg
                 , isCurrent = checkSelected IncipitSearchOption
+                , isHovered = checkHover IncipitSearchOption
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.incipits)
                 , showLabel = showLabels
                 }
@@ -176,6 +186,7 @@ view session =
             menuOption
                 { icon = institutionSvg
                 , isCurrent = checkSelected InstitutionSearchOption
+                , isHovered = checkHover InstitutionSearchOption
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.institutions)
                 , showLabel = showLabels
                 }
@@ -193,6 +204,7 @@ view session =
                 (lazy3 menuOption
                     { icon = peopleSvg
                     , isCurrent = checkSelected PeopleSearchOption
+                    , isHovered = checkHover PeopleSearchOption
                     , label = text (extractLabelFromLanguageMap session.language localTranslations.people)
                     , showLabel = showLabels
                     }
@@ -232,6 +244,7 @@ view session =
             menuOption
                 { icon = sourcesSvg
                 , isCurrent = checkSelected SourceSearchOption
+                , isHovered = checkHover SourceSearchOption
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.sources)
                 , showLabel = showLabels
                 }
@@ -289,8 +302,9 @@ view session =
             , height shrink
             , alignLeft
             , paddingXY 0 10
-            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.midGrey
+            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+            , Border.color colourScheme.darkBlue
+            , Background.color colourScheme.darkBlue
             ]
             [ column
                 [ width fill
@@ -307,8 +321,9 @@ view session =
             , height shrink
             , alignLeft
             , paddingXY 0 10
-            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.midGrey
+            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+            , Border.color colourScheme.darkBlue
+            , Background.color colourScheme.darkBlue
             ]
             [ column
                 [ width fill
@@ -333,6 +348,7 @@ view session =
                                 , selectIdent = "site-language-select"
                                 , label = Nothing
                                 , language = session.language
+                                , inverted = True
                                 }
                             )
                     , showLabel = showLabels
@@ -345,8 +361,9 @@ view session =
             , height shrink
             , alignLeft
             , paddingXY 0 10
-            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.midGrey
+            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+            , Border.color colourScheme.darkBlue
+            , Background.color colourScheme.darkBlue
             ]
             [ column
                 [ width fill
@@ -365,8 +382,9 @@ view session =
         , row
             [ height fill
             , width fill
-            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.midGrey
+            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+            , Border.color colourScheme.darkBlue
+            , Background.color colourScheme.darkBlue
             ]
             [ column
                 [ height fill
@@ -391,7 +409,7 @@ view session =
                                     { label =
                                         el
                                             [ width (px 20) ]
-                                            (infoCircleSvg colourScheme.black)
+                                            (infoCircleSvg colourScheme.white)
                                     , url = Config.serverUrl ++ "/about"
                                     }
                             , isCurrent = False

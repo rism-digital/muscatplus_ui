@@ -1,13 +1,13 @@
 module Page.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)
 
-import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, padding, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Region as Region
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
-import Page.RecordTypes.ResultMode exposing (ResultMode, parseStringToResultMode)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), ModeFacet)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
 import Page.UI.Attributes exposing (headingLG, headingXL)
@@ -47,49 +47,55 @@ viewModeItem selectedMode language fitem =
 
         iconTmpl svg =
             el
-                [ width (px 20)
+                [ width (px 30)
                 , height fill
+                , padding 4
                 , centerX
                 , centerY
                 ]
                 svg
 
+        rowMode =
+            parseStringToResultMode value
+
+        currentModeIsSelected =
+            selectedMode == rowMode
+
+        iconColour =
+            if currentModeIsSelected then
+                colourScheme.white
+
+            else
+                colourScheme.darkBlue
+
         icon =
-            case value of
-                "festivals" ->
-                    iconTmpl (liturgicalFestivalSvg colourScheme.midGrey)
+            case rowMode of
+                LiturgicalFestivalsMode ->
+                    iconTmpl (liturgicalFestivalSvg iconColour)
 
-                "incipits" ->
-                    iconTmpl (musicNotationSvg colourScheme.midGrey)
+                IncipitsMode ->
+                    iconTmpl (musicNotationSvg iconColour)
 
-                "institutions" ->
-                    iconTmpl (institutionSvg colourScheme.midGrey)
+                InstitutionsMode ->
+                    iconTmpl (institutionSvg iconColour)
 
-                "people" ->
-                    iconTmpl (peopleSvg colourScheme.midGrey)
+                PeopleMode ->
+                    iconTmpl (peopleSvg iconColour)
 
-                "sources" ->
-                    iconTmpl (sourcesSvg colourScheme.midGrey)
-
-                _ ->
-                    iconTmpl (unknownSvg colourScheme.midGrey)
+                SourcesMode ->
+                    iconTmpl (sourcesSvg iconColour)
 
         itemCount =
             formatNumberByLanguage language count
 
-        rowMode =
-            parseStringToResultMode value
-
-        ( borderColour, backgroundColour, fontColour ) =
-            if selectedMode == rowMode then
-                ( Border.color colourScheme.darkBlue
-                , Background.color colourScheme.darkBlue
+        ( backgroundColour, fontColour ) =
+            if currentModeIsSelected then
+                ( Background.color colourScheme.darkBlue
                 , Font.color colourScheme.white
                 )
 
             else
-                ( Border.color colourScheme.midGrey
-                , Background.color colourScheme.white
+                ( Background.color colourScheme.white
                 , Font.color colourScheme.black
                 )
 
@@ -101,9 +107,9 @@ viewModeItem selectedMode language fitem =
             , paddingXY 20 5
             , spacingXY 5 0
             , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
-            , Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 5, topRight = 5 }
+            , Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 3, topRight = 3 }
             , onClick (UserClickedModeItem fitem)
-            , borderColour
+            , Border.color colourScheme.darkBlue
             , backgroundColour
             , fontColour
             , pointer

@@ -7,7 +7,7 @@ import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Images exposing (musicNotationSvg)
 import Page.UI.Record.Incipits exposing (viewIncipit)
-import Page.UI.Record.PageTemplate exposing (pageHeaderTemplateNoToc)
+import Page.UI.Record.PageTemplate exposing (pageHeaderTemplateNoToc, pageLinkTemplate, subHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 
@@ -36,34 +36,8 @@ viewIncipitPreview cfg body =
             .source body.partOf
                 |> .id
 
-        sourceLabel =
-            .source body.partOf
-                |> .label
-
         incipitLink =
-            row
-                [ width fill
-                ]
-                [ column
-                    [ width fill
-                    , spacing lineSpacing
-                    ]
-                    [ row
-                        [ width fill ]
-                        [ el
-                            []
-                            (text (extractLabelFromLanguageMap cfg.language labelLanguageMap ++ ": "))
-                        , el
-                            [ Font.medium ]
-                            (link
-                                [ linkColour ]
-                                { label = text (extractLabelFromLanguageMap cfg.language sourceLabel)
-                                , url = sourceUrl
-                                }
-                            )
-                        ]
-                    ]
-                ]
+            pageLinkTemplate cfg.language labelLanguageMap { id = sourceUrl }
     in
     row
         [ width fill
@@ -88,7 +62,7 @@ viewIncipitPreview cfg body =
                     , height fill
                     , alignTop
                     ]
-                    [ pageHeaderTemplateNoToc cfg.language (Just recordIcon) body
+                    [ subHeaderTemplate cfg.language (Just recordIcon) body
                     , incipitLink
                     ]
                 ]
@@ -110,7 +84,5 @@ viewIncipitPreview cfg body =
                         body
                     ]
                 ]
-
-            --, viewMaybe (viewEncodingsBlock language) body.encodings
             ]
         ]

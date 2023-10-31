@@ -95,13 +95,13 @@ init flags url key =
             parseUrl url
 
         searchPreferences =
-            case flags.searchPreferences of
-                Just pref ->
+            Maybe.map
+                (\pref ->
                     Decode.decodeValue searchPreferencesDecoder pref
                         |> Result.toMaybe
-
-                Nothing ->
-                    Nothing
+                )
+                flags.searchPreferences
+                |> ME.join
     in
     { key = key
     , language = language

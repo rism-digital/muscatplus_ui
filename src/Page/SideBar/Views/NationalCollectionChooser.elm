@@ -219,25 +219,22 @@ viewNationalCollectionChooserMenuOption session =
             ME.isJust session.restrictedToNationalCollection
 
         labelFontColour =
-            if isRestrictedToNationalCollection && session.currentlyHoveredNationalCollectionSidebarOption then
-                colourScheme.black
-
-            else if isRestrictedToNationalCollection then
-                colourScheme.white
+            if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionSidebarOption then
+                colourScheme.darkBlue
 
             else
-                colourScheme.black
+                colourScheme.white
 
         hoverStyles =
             if session.currentlyHoveredNationalCollectionSidebarOption then
-                Background.color colourScheme.lightGrey
+                Background.color colourScheme.white
 
             else
                 emptyAttribute
 
         iconBackgroundColor =
             if isRestrictedToNationalCollection then
-                Background.color colourScheme.darkGrey
+                Background.color colourScheme.white
 
             else
                 emptyAttribute
@@ -278,10 +275,6 @@ viewNationalCollectionChooserMenuOption session =
                         , Border.width 2
                         , padding 2
                         , spacing 2
-
-                        --, spacingXY 0 4
-                        --, padding 2
-                        --, explain Debug.todo
                         ]
                         [ el
                             [ width (px 18)
@@ -348,8 +341,6 @@ viewNationalCollectionChooserMenuOption session =
                 [ width shrink
                 , iconCentering
                 , spacing 2
-
-                --, spacing lineSpacing
                 , moveRight iconAlignment
                 ]
                 [ sidebarIcon

@@ -231,6 +231,7 @@ viewSelectFacet config =
                         , selectIdent = facetAlias ++ "-select-behaviour-select"
                         , label = Nothing
                         , language = config.language
+                        , inverted = False
                         }
                     )
         in

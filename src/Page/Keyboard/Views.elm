@@ -125,6 +125,7 @@ view searchPreferences notationFacet language model =
                                 , selectIdent = "keyboard-query-mode-select"
                                 , label = Just (.label notationFacet.queryModes)
                                 , language = language
+                                , inverted = False
                                 }
                             ]
                         ]

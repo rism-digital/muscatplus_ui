@@ -79,6 +79,7 @@ viewRenderControls language notationFacet model =
                     , selectIdent = "keyboard-clef-select"
                     , label = Just clefLabel
                     , language = language
+                    , inverted = False
                     }
                 ]
 
@@ -104,6 +105,7 @@ viewRenderControls language notationFacet model =
                     , selectIdent = "keyboard-key-sig-select"
                     , label = Just keySigLabel
                     , language = language
+                    , inverted = False
                     }
                 ]
 
@@ -129,6 +131,7 @@ viewRenderControls language notationFacet model =
                     , selectIdent = "keyboard-time-sig-select"
                     , label = Just tsigLabel
                     , language = language
+                    , inverted = False
                     }
                 ]
     in
