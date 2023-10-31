@@ -61,6 +61,7 @@ import Page.RecordTypes.Shared
         , languageMapLabelDecoder
         )
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
+import Page.RecordTypes.SourceShared exposing (SourceContentType, SourceContentTypeRecordBody, SourceRecordType, SourceRecordTypeRecordBody, SourceType, SourceTypeRecordBody, sourceContentTypeDecoder, sourceContentTypeRecordBodyDecoder, sourceRecordTypeDecoder, sourceRecordTypeRecordBodyDecoder, sourceTypeDecoder, sourceTypeRecordBodyDecoder)
 import Utilities exposing (choose)
 
 
@@ -311,6 +312,9 @@ type alias SourceResultFlags =
     , hasIncipits : Bool
     , hasDIAMMRecord : Bool
     , isDIAMMRecord : Bool
+    , sourceType : SourceTypeRecordBody
+    , contentTypes : List SourceContentTypeRecordBody
+    , recordType : SourceRecordTypeRecordBody
     }
 
 
@@ -677,6 +681,9 @@ sourceResultFlagsDecoder =
         |> optional "hasIncipits" bool False
         |> optional "hasDIAMMRecord" bool False
         |> optional "isDIAMMRecord" bool False
+        |> required "sourceType" sourceTypeRecordBodyDecoder
+        |> required "contentTypes" (list sourceContentTypeRecordBodyDecoder)
+        |> required "recordType" sourceRecordTypeRecordBodyDecoder
 
 
 toBehaviourItems : { a | items : List FacetOptionsLabelValue } -> List FacetOptionsLabelValue
