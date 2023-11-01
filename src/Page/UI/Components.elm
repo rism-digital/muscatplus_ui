@@ -37,7 +37,7 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
 import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, folderGridSvg, graduationCapSvg, musicNotationSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, fileMusicSvg, folderGridSvg, graduationCapSvg, musicNotationSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (toLinkedHtml)
@@ -341,29 +341,24 @@ h6 language heading =
 
 makeFlagIcon :
     { background : Color
-    , foreground : Color
     }
     -> Element msg
     -> String
     -> Element msg
 makeFlagIcon colours iconImage iconLabel =
     column
-        [ bodySM
-        , padding 4
+        [ padding 4
         , Background.color colours.background
+        , el tooltipStyle (text iconLabel)
+            |> tooltip above
         ]
-        [ row
-            [ spacing 5
-            , el tooltipStyle (text iconLabel)
-                |> tooltip above
+        [ el
+            [ width (px 18)
+            , height (px 18)
+            , alignLeft
+            , alignTop
             ]
-            [ el
-                [ width (px 15)
-                , height (px 15)
-                , centerX
-                ]
-                iconImage
-            ]
+            iconImage
         ]
 
 
@@ -565,7 +560,7 @@ contentTypeIconChooser : SourceContentType -> (Element.Color -> Element msg)
 contentTypeIconChooser contentType =
     case contentType of
         MusicalContent ->
-            musicNotationSvg
+            fileMusicSvg
 
         LibrettoContent ->
             commentsSvg
@@ -577,4 +572,4 @@ contentTypeIconChooser contentType =
             shapesSvg
 
         OtherContent ->
-            folderGridSvg
+            ellipsesSvg

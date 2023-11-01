@@ -8,7 +8,7 @@ import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
-import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
+import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
@@ -45,7 +45,7 @@ viewFullSourcePage session model body =
                         body
 
                 RelatedSourcesSearchTab _ ->
-                    viewSourceSearchTab session model
+                    viewSourceSearchTabBody session model
 
         sourceIcon =
             sourceIconChooser (.type_ (.recordType body.record))
@@ -126,24 +126,16 @@ viewDescriptionTab language incipitInfoToggleMsg expandedIncipits body =
         ]
 
 
-viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> FullSourceBody -> Element RecordMsg
+viewRecordTopBarRouter :
+    Language
+    -> RecordPageModel RecordMsg
+    -> FullSourceBody
+    -> Element RecordMsg
 viewRecordTopBarRouter language model body =
-    let
-        spacerEl =
-            el [ height (px 35) ] (text "")
-    in
-    ME.unpack (\() -> spacerEl)
-        (\sourceBlock ->
-            if sourceBlock.totalItems /= 0 then
-                viewRecordSourceSearchTabBar
-                    { language = language
-                    , model = model
-                    , recordId = body.id
-                    , searchUrl = sourceBlock.url
-                    , tabLabel = localTranslations.sourceContents
-                    }
-
-            else
-                spacerEl
-        )
-        body.sourceItems
+    viewRecordSourceSearchTabBar
+        { language = language
+        , model = model
+        , recordId = body.id
+        , body = body.sourceItems
+        , tabLabel = localTranslations.sourceContents
+        }

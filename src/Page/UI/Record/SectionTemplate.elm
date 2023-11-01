@@ -1,6 +1,6 @@
 module Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
-import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, row, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, paddingEach, row, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, sectionSpacing)
@@ -43,6 +43,7 @@ sectionTemplate language header sectionBody =
             [ row
                 [ width fill
                 , tocId
+                , paddingEach { bottom = lineSpacing, top = 0, left = 0, right = 0 }
                 ]
                 [ h2 language header.label ]
             , row

@@ -1,6 +1,6 @@
 module Page.Record.Views.SourceSearch exposing
     ( viewRecordSourceSearchTabBar
-    , viewSourceSearchTab
+    , viewSourceSearchTabBody
     )
 
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, clipY, column, el, fill, height, maximum, none, paddingXY, pointer, px, row, spacing, text, width)
@@ -15,9 +15,11 @@ import Page.Error.Views exposing (createErrorMessage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
+import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody)
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingXL)
 import Page.UI.Components exposing (h3)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
@@ -26,11 +28,11 @@ import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
-viewSourceSearchTab :
+viewSourceSearchTabBody :
     Session
     -> RecordPageModel RecordMsg
     -> Element RecordMsg
-viewSourceSearchTab session model =
+viewSourceSearchTabBody session model =
     row
         [ width fill
         , height fill
@@ -98,7 +100,7 @@ searchResultsViewRouter session model =
                 |> viewSearchResultsErrorTmpl session.language
 
 
-viewRecordSourceSearchTabBar :
+viewSourceSearchTab :
     { language : Language
     , model : RecordPageModel RecordMsg
     , recordId : String
@@ -106,38 +108,10 @@ viewRecordSourceSearchTabBar :
     , tabLabel : LanguageMap
     }
     -> Element RecordMsg
-viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } =
+viewSourceSearchTab { language, model, recordId, searchUrl, tabLabel } =
     let
         currentMode =
             model.currentTab
-
-        selectedTab =
-            ( colourScheme.darkBlue
-            , colourScheme.darkBlue
-            , colourScheme.white
-            )
-
-        unselectedTab =
-            ( colourScheme.midGrey
-            , colourScheme.white
-            , colourScheme.black
-            )
-
-        ( descriptionTabBorder, descriptionTabBackground, descriptionTabFontColour ) =
-            case currentMode of
-                DefaultRecordViewTab _ ->
-                    selectedTab
-
-                _ ->
-                    unselectedTab
-
-        ( searchTabBorder, searchTabBackground, searchTabFontColour ) =
-            case currentMode of
-                RelatedSourcesSearchTab _ ->
-                    selectedTab
-
-                _ ->
-                    unselectedTab
 
         localizedTabLabel =
             extractLabelFromLanguageMap language tabLabel
@@ -145,6 +119,18 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
         sourceCount searchData =
             toFloat searchData.totalItems
                 |> formatNumberByLanguage language
+
+        ( searchTabBackground, searchTabFontColour ) =
+            case currentMode of
+                RelatedSourcesSearchTab _ ->
+                    ( colourScheme.darkBlue
+                    , colourScheme.white
+                    )
+
+                _ ->
+                    ( colourScheme.white
+                    , colourScheme.black
+                    )
 
         sourceLabel =
             case model.searchResults of
@@ -172,6 +158,66 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
                 _ ->
                     none
     in
+    column
+        [ height fill
+        , pointer
+        , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
+        , Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 3, topRight = 3 }
+        , Border.color colourScheme.darkBlue
+        , Background.color searchTabBackground
+        , Font.color searchTabFontColour
+        , paddingXY 20 5
+        , onClick (UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl))
+        ]
+        [ el
+            [ headingXL
+            , Region.heading 3
+            , Font.medium
+            , centerY
+            ]
+            sourceLabel
+        ]
+
+
+viewRecordSourceSearchTabBar :
+    { language : Language
+    , model : RecordPageModel RecordMsg
+    , recordId : String
+    , body : Maybe { a | url : String }
+    , tabLabel : LanguageMap
+    }
+    -> Element RecordMsg
+viewRecordSourceSearchTabBar { language, model, recordId, body, tabLabel } =
+    let
+        currentMode =
+            model.currentTab
+
+        sourceSearchTab =
+            case body of
+                Just s ->
+                    viewSourceSearchTab
+                        { language = language
+                        , model = model
+                        , recordId = recordId
+                        , searchUrl = s.url
+                        , tabLabel = tabLabel
+                        }
+
+                Nothing ->
+                    none
+
+        ( descriptionTabBackground, descriptionTabFontColour ) =
+            case currentMode of
+                DefaultRecordViewTab _ ->
+                    ( colourScheme.darkBlue
+                    , colourScheme.white
+                    )
+
+                _ ->
+                    ( colourScheme.white
+                    , colourScheme.black
+                    )
+    in
     row
         [ width (fill |> maximum 300)
         , height (px 35)
@@ -186,7 +232,7 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
             , paddingXY 20 0
             , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
             , Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 3, topRight = 3 }
-            , Border.color descriptionTabBorder
+            , Border.color colourScheme.darkBlue
             , Background.color descriptionTabBackground
             , Font.color descriptionTabFontColour
             , onClick (UserClickedRecordViewTab (DefaultRecordViewTab recordId))
@@ -197,23 +243,5 @@ viewRecordSourceSearchTabBar { language, model, recordId, searchUrl, tabLabel } 
                 ]
                 (h3 language localTranslations.description)
             ]
-        , column
-            [ height fill
-            , pointer
-            , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
-            , Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 3, topRight = 3 }
-            , Border.color searchTabBorder
-            , Background.color searchTabBackground
-            , Font.color searchTabFontColour
-            , paddingXY 20 5
-            , onClick (UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl))
-            ]
-            [ el
-                [ headingXL
-                , Region.heading 3
-                , Font.medium
-                , centerY
-                ]
-                sourceLabel
-            ]
+        , sourceSearchTab
         ]

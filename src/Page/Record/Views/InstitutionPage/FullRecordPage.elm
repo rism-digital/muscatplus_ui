@@ -8,7 +8,7 @@ import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
-import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
+import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Components exposing (fieldValueWrapper, h2, mapViewer, renderLabel, viewSummaryField)
@@ -64,7 +64,7 @@ viewFullInstitutionPage session model body =
                     viewDescriptionTab session.language body
 
                 RelatedSourcesSearchTab _ ->
-                    viewSourceSearchTab session model
+                    viewSourceSearchTabBody session model
 
         icon =
             el
@@ -99,7 +99,7 @@ viewFullInstitutionPage session model body =
                     , paddingXY 20 0
                     ]
                     [ pageHeaderTemplate session.language (Just icon) body
-                    , viewRecordTopBarRouter session.language model body
+                    , viewRecordTopBar session.language model body
                     ]
                 ]
             , pageBodyView
@@ -108,50 +108,19 @@ viewFullInstitutionPage session model body =
         ]
 
 
-viewRecordTopBarRouter :
+viewRecordTopBar :
     Language
     -> RecordPageModel RecordMsg
     -> InstitutionBody
     -> Element RecordMsg
-viewRecordTopBarRouter language model body =
-    let
-        spacerEl =
-            el [ height (px 35) ] (text "")
-    in
-    ME.unpack (\() -> spacerEl)
-        (\sourceBlock ->
-            if sourceBlock.totalItems /= 0 then
-                viewRecordSourceSearchTabBar
-                    { language = language
-                    , model = model
-                    , recordId = body.id
-                    , searchUrl = sourceBlock.url
-                    , tabLabel = localTranslations.sources
-                    }
-
-            else
-                spacerEl
-        )
-        body.sources
-
-
-
---case body.sources of
---    Just sourceBlock ->
---        if sourceBlock.totalItems /= 0 then
---            viewRecordSourceSearchTabBar
---                { language = language
---                , model = model
---                , recordId = body.id
---                , searchUrl = sourceBlock.url
---                , tabLabel = localTranslations.sourceContents
---                }
---
---        else
---            spacerEl
---
---    Nothing ->
---        spacerEl
+viewRecordTopBar language model body =
+    viewRecordSourceSearchTabBar
+        { language = language
+        , model = model
+        , recordId = body.id
+        , body = body.sources
+        , tabLabel = localTranslations.sources
+        }
 
 
 mapSection : Language -> CoordinatesSection -> Element msg

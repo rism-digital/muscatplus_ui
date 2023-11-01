@@ -1,6 +1,6 @@
 module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, paragraph, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, paragraph, px, row, spacing, spacingXY, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
@@ -128,7 +128,7 @@ viewHeldBy language body =
         ]
         [ row
             [ width fill
-            , spacing 5
+            , spacingXY 10 5
             ]
             [ el
                 [ width (px 25)

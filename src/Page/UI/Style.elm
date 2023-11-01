@@ -75,6 +75,9 @@ colourScheme :
     , turquoise : Element.Color
     , white : Element.Color
     , yellow : Element.Color
+    , puce : Element.Color
+    , olive : Element.Color
+    , transparent : Element.Color
     }
 colourScheme =
     { black =
@@ -198,10 +201,31 @@ colourScheme =
             }
     , yellow =
         Element.fromRgb255
-            { red = 249
-            , green = 199
-            , blue = 79
+            { red = 224
+            , green = 153
+            , blue = 0
             , alpha = 1
+            }
+    , puce =
+        Element.fromRgb255
+            { red = 184
+            , green = 140
+            , blue = 158
+            , alpha = 1
+            }
+    , olive =
+        Element.fromRgb255
+            { red = 132
+            , green = 147
+            , blue = 36
+            , alpha = 1
+            }
+    , transparent =
+        Element.fromRgb255
+            { red = 255
+            , green = 255
+            , blue = 255
+            , alpha = 0
             }
     }
 

@@ -1,7 +1,7 @@
 module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, alignRight, column, el, fill, height, maximum, px, row, spacing, width)
+import Element exposing (Color, Element, alignRight, column, el, fill, height, maximum, onLeft, px, row, spacing, spacingXY, text, width)
 import Language exposing (Language)
 import Maybe.Extra as ME
 import Page.RecordTypes.Search exposing (InstitutionResultBody, InstitutionResultFlags)
@@ -10,9 +10,10 @@ import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (mapMarkerSvg, penNibSvg, sourcesSvg)
+import Page.UI.Images exposing (linkSvg, mapMarkerSvg, penNibSvg, sourcesSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 
 viewInstitutionSearchResult :
@@ -46,8 +47,7 @@ viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg, resu
         resultBody =
             [ viewMaybe (viewInstitutionSummary language resultColours.iconColour) body.summary
             , viewMaybe identity diammLogoEl
-
-            --, viewMaybe (viewInstitutionFlags language) body.flags
+            , viewMaybe (viewInstitutionFlags language) body.flags
             ]
 
         resultColours =
@@ -106,30 +106,30 @@ viewInstitutionFlags language flags =
     let
         isDIAMMFlag =
             viewIf
-                (makeFlagIcon
-                    { background = colourScheme.darkBlue
-                    , foreground = colourScheme.white
-                    }
-                    (penNibSvg colourScheme.white)
-                    "Is DIAMM"
+                (el
+                    [ width (px 60)
+                    , alignRight
+                    , el tooltipStyle (text "Source: DIAMM")
+                        |> tooltip onLeft
+                    ]
+                    diammLogo
                 )
                 flags.isDIAMMRecord
 
-        hasDIAMMFlag =
+        linkedWithExternalRecordFlag =
             viewIf
                 (makeFlagIcon
-                    { background = colourScheme.yellow
-                    , foreground = colourScheme.black
+                    { background = colourScheme.olive
                     }
-                    (penNibSvg colourScheme.black)
-                    "Has DIAMM"
+                    (linkSvg colourScheme.white)
+                    "Linked with DIAMM"
                 )
-                flags.hasDIAMMRecord
+                flags.linkedWithExternalRecord
     in
     row
         [ width fill
-        , spacing 10
+        , spacingXY 5 0
         ]
-        [ isDIAMMFlag
-        , hasDIAMMFlag
+        [ linkedWithExternalRecordFlag
+        , isDIAMMFlag
         ]

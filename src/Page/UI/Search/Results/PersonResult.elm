@@ -22,7 +22,6 @@ viewPersonFlags language flags =
             viewIf
                 (makeFlagIcon
                     { background = colourScheme.darkBlue
-                    , foreground = colourScheme.white
                     }
                     (penNibSvg colourScheme.white)
                     "Is DIAMM"
@@ -33,9 +32,8 @@ viewPersonFlags language flags =
             viewIf
                 (makeFlagIcon
                     { background = colourScheme.yellow
-                    , foreground = colourScheme.black
                     }
-                    (penNibSvg colourScheme.black)
+                    (penNibSvg colourScheme.white)
                     "Has DIAMM"
                 )
                 flags.hasDIAMMRecord

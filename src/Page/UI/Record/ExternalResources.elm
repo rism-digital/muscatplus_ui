@@ -43,7 +43,25 @@ viewExternalRecord language body =
             none
 
         ExternalInstitution institutionRecord ->
-            none
+            column
+                [ width fill
+                , spacing 5
+                ]
+                [ row
+                    [ width fill
+                    , alignLeft
+                    , spacing 5
+                    ]
+                    [ newTabLink
+                        [ linkColour
+                        , alignLeft
+                        ]
+                        { url = institutionRecord.id
+                        , label = text ("View " ++ extractLabelFromLanguageMap language institutionRecord.label ++ " on DIAMM")
+                        }
+                    , externalLinkTemplate institutionRecord.id
+                    ]
+                ]
 
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg

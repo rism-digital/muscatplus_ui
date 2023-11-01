@@ -16,7 +16,7 @@ import Page.UI.Attributes exposing (bodyRegular, bodySM, emptyAttribute)
 import Page.UI.Components exposing (contentTypeIconChooser, makeFlagIcon, sourceIconChooser, sourceTypeIconChooser)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, fileMusicSvg, iiifLogo, layerGroupSvg, musicNotationSvg, penNibSvg, peopleSvg, sourcesSvg, userCircleSvg)
+import Page.UI.Images exposing (calendarSvg, digitizedImagesSvg, fileMusicSvg, iiifLogo, layerGroupSvg, linkSvg, musicNotationSvg, penNibSvg, peopleSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -29,8 +29,7 @@ viewSourceFlags language flags =
         hasDigitizationFlag =
             viewIf
                 (makeFlagIcon
-                    { background = colourScheme.darkOrange
-                    , foreground = colourScheme.white
+                    { background = colourScheme.puce
                     }
                     (digitizedImagesSvg colourScheme.white)
                     (extractLabelFromLanguageMap language localTranslations.hasDigitization)
@@ -40,8 +39,7 @@ viewSourceFlags language flags =
         iiifFlag =
             viewIf
                 (makeFlagIcon
-                    { background = colourScheme.white
-                    , foreground = colourScheme.black
+                    { background = colourScheme.lightGrey
                     }
                     iiifLogo
                     (extractLabelFromLanguageMap language localTranslations.hasIIIFManifest)
@@ -52,9 +50,8 @@ viewSourceFlags language flags =
             viewIf
                 (makeFlagIcon
                     { background = colourScheme.red
-                    , foreground = colourScheme.white
                     }
-                    (fileMusicSvg colourScheme.white)
+                    (musicNotationSvg colourScheme.white)
                     (extractLabelFromLanguageMap language localTranslations.hasIncipits)
                 )
                 flags.hasIncipits
@@ -71,16 +68,15 @@ viewSourceFlags language flags =
                 )
                 flags.isDIAMMRecord
 
-        hasDIAMMFlag =
+        linkedWithExternalRecordFlag =
             viewIf
                 (makeFlagIcon
-                    { background = colourScheme.yellow
-                    , foreground = colourScheme.black
+                    { background = colourScheme.olive
                     }
-                    (penNibSvg colourScheme.black)
-                    "Has DIAMM"
+                    (linkSvg colourScheme.white)
+                    "Linked with DIAMM"
                 )
-                flags.hasDIAMMRecord
+                flags.linkedWithExternalRecord
 
         recordTypeFlag =
             let
@@ -92,7 +88,6 @@ viewSourceFlags language flags =
             in
             makeFlagIcon
                 { background = colourScheme.darkBlue
-                , foreground = colourScheme.white
                 }
                 (sourceIconChooser (.type_ flags.recordType) colourScheme.white)
                 (iconType ++ ": " ++ iconLabel)
@@ -107,7 +102,6 @@ viewSourceFlags language flags =
             in
             makeFlagIcon
                 { background = colourScheme.turquoise
-                , foreground = colourScheme.white
                 }
                 (sourceTypeIconChooser (.type_ flags.sourceType) colourScheme.white)
                 (iconType ++ ": " ++ iconLabel)
@@ -125,7 +119,7 @@ viewSourceFlags language flags =
         , incipitFlag
         , hasDigitizationFlag
         , iiifFlag
-        , hasDIAMMFlag
+        , linkedWithExternalRecordFlag
         , isDIAMMFlag
         ]
 
@@ -133,10 +127,7 @@ viewSourceFlags language flags =
 assembleContentTypeFlags : Language -> List SourceContentTypeRecordBody -> Element msg
 assembleContentTypeFlags language sourceContentTypes =
     let
-        lastIdx =
-            List.length sourceContentTypes - 1
-
-        sourceTypeIcon idx { label, type_ } =
+        sourceTypeIcon { label, type_ } =
             let
                 icon =
                     contentTypeIconChooser type_
@@ -146,28 +137,16 @@ assembleContentTypeFlags language sourceContentTypes =
 
                 iconType =
                     extractLabelFromLanguageMap language localTranslations.contentTypes
-
-                fullLabel =
-                    iconType ++ ": " ++ iconLabel
             in
-            column
-                [ Background.color colourScheme.yellow
-                , padding 4
-                , spacing 0
-                , el tooltipStyle (text fullLabel)
-                    |> tooltip above
-                ]
-                [ el
-                    [ width (px 15)
-                    , height (px 15)
-                    , centerX
-                    ]
-                    (icon colourScheme.black)
-                ]
+            makeFlagIcon
+                { background = colourScheme.yellow
+                }
+                (icon colourScheme.white)
+                (iconType ++ ": " ++ iconLabel)
     in
     row
         [ spacing 0 ]
-        (List.indexedMap sourceTypeIcon sourceContentTypes)
+        (List.map sourceTypeIcon sourceContentTypes)
 
 
 viewSourcePartOf : Language -> Color -> PartOfSectionBody -> Element msg

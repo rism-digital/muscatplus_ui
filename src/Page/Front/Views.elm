@@ -52,8 +52,6 @@ view session model =
     row
         [ width fill
         , height fill
-
-        --, padding 20
         , backgroundImage
         ]
         [ column
@@ -98,8 +96,8 @@ viewFrontSearchControls cfg =
         [ column
             [ width fill
             , height fill
-            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.midGrey
+            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+            , Border.color colourScheme.darkBlue
             ]
             [ row
                 [ width fill

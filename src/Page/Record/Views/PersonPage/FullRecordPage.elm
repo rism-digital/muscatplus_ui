@@ -7,7 +7,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTab)
+import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
@@ -61,7 +61,7 @@ viewFullPersonPage session model body =
                     viewDescriptionTab session.language body
 
                 RelatedSourcesSearchTab _ ->
-                    viewSourceSearchTab session model
+                    viewSourceSearchTabBody session model
 
         icon =
             el
@@ -108,23 +108,10 @@ viewFullPersonPage session model body =
 
 viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> PersonBody -> Element RecordMsg
 viewRecordTopBarRouter language model body =
-    let
-        spacerEl =
-            el [ height (px 35) ] (text "")
-    in
-    ME.unpack
-        (\() -> spacerEl)
-        (\sourceBlock ->
-            if sourceBlock.totalItems /= 0 then
-                viewRecordSourceSearchTabBar
-                    { language = language
-                    , model = model
-                    , recordId = body.id
-                    , searchUrl = sourceBlock.url
-                    , tabLabel = localTranslations.sources
-                    }
-
-            else
-                spacerEl
-        )
-        body.sources
+    viewRecordSourceSearchTabBar
+        { language = language
+        , model = model
+        , recordId = body.id
+        , body = body.sources
+        , tabLabel = localTranslations.sources
+        }
