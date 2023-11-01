@@ -23,7 +23,7 @@ import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
 import Set
 import String.Extra as SE
-import Url
+import Url exposing (percentDecode)
 
 
 type alias SelectFacetConfig msg =
@@ -354,7 +354,7 @@ viewSelectFacetItem config fitem =
         shouldBeChecked =
             Dict.get facetAlias activeFilters
                 |> Maybe.withDefault []
-                |> List.map Tuple.first
+                |> List.map (\( val, _ ) -> percentDecode val |> Maybe.withDefault val)
                 |> List.member decodedValue
     in
     row
