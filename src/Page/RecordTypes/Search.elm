@@ -62,6 +62,7 @@ import Page.RecordTypes.Shared
         )
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.SourceShared exposing (SourceContentType, SourceContentTypeRecordBody, SourceRecordType, SourceRecordTypeRecordBody, SourceType, SourceTypeRecordBody, sourceContentTypeDecoder, sourceContentTypeRecordBodyDecoder, sourceRecordTypeDecoder, sourceRecordTypeRecordBodyDecoder, sourceTypeDecoder, sourceTypeRecordBodyDecoder)
+import Url exposing (percentDecode)
 import Utilities exposing (choose)
 
 
@@ -367,9 +368,20 @@ facetBehavioursDecoder =
 facetItemDecoder : Decoder FacetItem
 facetItemDecoder =
     Decode.succeed FacetItem
-        |> required "value" string
+        |> required "value" facetItemValueDecoder
         |> required "label" languageMapLabelDecoder
         |> required "count" float
+
+
+facetItemValueDecoder : Decoder String
+facetItemValueDecoder =
+    string
+        |> andThen
+            (\str ->
+                percentDecode str
+                    |> Maybe.withDefault str
+                    |> Decode.succeed
+            )
 
 
 facetNotationOptionsDecoder : Decoder FacetNotationOptions
