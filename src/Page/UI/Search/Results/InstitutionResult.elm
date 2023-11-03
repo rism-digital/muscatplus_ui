@@ -22,31 +22,8 @@ viewInstitutionSearchResult :
     -> Element msg
 viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
     let
-        diammLogoEl =
-            Maybe.map
-                (\f ->
-                    if f.isDIAMMRecord then
-                        Just
-                            (row
-                                [ width fill ]
-                                [ el
-                                    [ width (px 80)
-                                    , height (px 40)
-                                    , alignRight
-                                    ]
-                                    diammLogo
-                                ]
-                            )
-
-                    else
-                        Nothing
-                )
-                body.flags
-                |> ME.join
-
         resultBody =
             [ viewMaybe (viewInstitutionSummary language resultColours.iconColour) body.summary
-            , viewMaybe identity diammLogoEl
             , viewMaybe (viewInstitutionFlags language) body.flags
             ]
 
