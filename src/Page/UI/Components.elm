@@ -302,7 +302,7 @@ h1 language heading =
         , Region.heading 1
         , Font.medium
         , bodySerifFont
-        , htmlAttribute (HA.style "font-size" "calc(18px + 0.2vw)")
+        , htmlAttribute (HA.style "font-size" "calc(24px + 0.2vw)")
         , htmlAttribute (HA.style "line-height" "2rem")
         ]
         language

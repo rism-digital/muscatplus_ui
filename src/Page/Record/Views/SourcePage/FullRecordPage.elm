@@ -58,7 +58,7 @@ viewFullSourcePage session model body =
                 , height (px 25)
                 , centerY
                 ]
-                (sourceIcon colourScheme.midGrey)
+                (sourceIcon colourScheme.darkBlue)
     in
     row
         [ width fill

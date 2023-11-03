@@ -60,6 +60,7 @@ type alias RGBA =
 colourScheme :
     { black : Element.Color
     , darkBlue : Element.Color
+    , darkBlueTranslucent : Element.Color
     , darkOrange : Element.Color
     , lightBlue : Element.Color
     , lightestBlue : Element.Color
@@ -93,6 +94,13 @@ colourScheme =
             , green = 53
             , blue = 87
             , alpha = 1
+            }
+    , darkBlueTranslucent =
+        Element.fromRgb255
+            { red = 29
+            , green = 53
+            , blue = 87
+            , alpha = 0.4
             }
     , darkGrey =
         Element.fromRgb255

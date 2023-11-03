@@ -27,7 +27,7 @@ viewIncipitPreview cfg body =
                 , height (px 25)
                 , centerY
                 ]
-                (musicNotationSvg colourScheme.midGrey)
+                (musicNotationSvg colourScheme.darkBlue)
 
         labelLanguageMap =
             .label body.partOf
@@ -60,7 +60,7 @@ viewIncipitPreview cfg body =
                     [ spacing lineSpacing
                     , width fill
                     , height fill
-                    , alignTop
+                    , centerY
                     ]
                     [ subHeaderTemplate cfg.language (Just recordIcon) body
                     , incipitLink

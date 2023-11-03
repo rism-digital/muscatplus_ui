@@ -213,7 +213,7 @@ type alias PersonResultBody =
 
 
 type alias PersonResultFlags =
-    { hasDIAMMRecord : Bool
+    { linkedWithExternalRecord : Bool
     , isDIAMMRecord : Bool
     }
 
@@ -724,7 +724,7 @@ toggleFacetDecoder =
 personResultFlagsDecoder : Decoder PersonResultFlags
 personResultFlagsDecoder =
     Decode.succeed PersonResultFlags
-        |> optional "hasDIAMMRecord" bool False
+        |> optional "linkedWithExternalRecord" bool False
         |> optional "isDIAMMRecord" bool False
 
 

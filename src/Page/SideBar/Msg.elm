@@ -80,7 +80,7 @@ showSideBarLabels status =
 
 sideBarExpandDelay : Int
 sideBarExpandDelay =
-    500
+    200
 
 
 sideBarOptionToModeString : SideBarOption -> String

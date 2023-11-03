@@ -24,7 +24,7 @@ viewPersonPreview language body =
                 , height (px 25)
                 , centerY
                 ]
-                (peopleSvg colourScheme.midGrey)
+                (peopleSvg colourScheme.darkBlue)
     in
     row
         [ width fill

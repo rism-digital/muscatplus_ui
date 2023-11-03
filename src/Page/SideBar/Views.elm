@@ -15,7 +15,7 @@ import Maybe.Extra as ME
 import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
-import Page.UI.Animations exposing (animatedColumn, animatedLabel)
+import Page.UI.Animations exposing (animatedColumn, animatedEl, animatedLabel)
 import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
@@ -119,13 +119,13 @@ menuOptionTemplate cfg additionalAttributes =
     row
         (width fill
             :: alignTop
-            :: paddingXY 24 10
-            :: spacing 5
+            :: paddingXY 22 10
+            :: spacing 10
             :: pointer
             :: additionalAttributes
         )
         [ el
-            [ width (px 20)
+            [ width (px 24)
             , alignLeft
             , centerY
             ]
@@ -223,7 +223,7 @@ view session =
             case sideBarAnimation of
                 Expanded ->
                     Animation.fromTo
-                        { duration = 100
+                        { duration = 60
                         , options = [ Animation.easeInOutSine ]
                         }
                         [ P.property "width" "70px" ]
@@ -231,11 +231,40 @@ view session =
 
                 Collapsed ->
                     Animation.fromTo
-                        { duration = 100
+                        { duration = 60
                         , options = [ Animation.easeInOutSine ]
                         }
                         [ P.property "width" "210px" ]
                         [ P.property "width" "70px" ]
+
+                NoAnimation ->
+                    Animation.empty
+
+        logoAnimation =
+            case sideBarAnimation of
+                Expanded ->
+                    Animation.fromTo
+                        { duration = 300
+                        , options =
+                            [ Animation.easeInSine
+                            ]
+                        }
+                        [ P.opacity 0.0
+                        ]
+                        [ P.opacity 1.0
+                        ]
+
+                Collapsed ->
+                    Animation.fromTo
+                        { duration = 50
+                        , options =
+                            [ Animation.easeOutSine
+                            ]
+                        }
+                        [ P.opacity 1.0
+                        ]
+                        [ P.opacity 0.0
+                        ]
 
                 NoAnimation ->
                     Animation.empty
@@ -261,6 +290,7 @@ view session =
         , Background.color colourScheme.white
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
+        , Border.shadow { offset = ( 2, 1 ), size = 1, blur = 4, color = colourScheme.darkBlueTranslucent }
         ]
         [ row
             [ width fill
@@ -273,7 +303,7 @@ view session =
                 ]
                 [ row
                     [ width shrink
-                    , spacing 8
+                    , spacing 10
                     ]
                     [ el
                         [ alignTop
@@ -283,7 +313,8 @@ view session =
                         ]
                         (rismLogo colourScheme.white (headerHeight - 10))
                     , viewIf
-                        (el
+                        (animatedEl
+                            logoAnimation
                             [ width (px 120)
                             , height (px 20)
                             , centerY
@@ -412,7 +443,7 @@ view session =
                                             (infoCircleSvg colourScheme.white)
                                     , url = Config.serverUrl ++ "/about"
                                     }
-                            , isCurrent = False
+                            , isCurrent = session.route == AboutPageRoute
                             , label =
                                 link
                                     [ Font.color colourScheme.white ]

@@ -40,7 +40,7 @@ viewSourcePreview cfg body =
                 , height (px 25)
                 , centerY
                 ]
-                (sourceIcon colourScheme.midGrey)
+                (sourceIcon colourScheme.darkBlue)
 
         pageBodyView =
             row

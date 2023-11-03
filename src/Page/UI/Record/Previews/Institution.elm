@@ -25,7 +25,7 @@ viewInstitutionPreview language body =
                 , height (px 25)
                 , centerY
                 ]
-                (institutionSvg colourScheme.midGrey)
+                (institutionSvg colourScheme.darkBlue)
     in
     row
         [ width fill

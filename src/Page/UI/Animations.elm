@@ -1,5 +1,6 @@
 module Page.UI.Animations exposing
     ( animatedColumn
+    , animatedEl
     , animatedLabel
     , animatedLoader
     , animatedRow
@@ -69,9 +70,9 @@ animatedRow =
 progressBar : Element msg
 progressBar =
     animatedEl progressBarAnimation
-        [ Element.height (Element.px 10)
+        [ Element.height (Element.px 4)
         , Element.width (Element.px 0)
-        , Background.color colourScheme.lightBlue
+        , Background.color colourScheme.darkBlue
         , Element.htmlAttribute (HA.style "position" "fixed")
         , Element.htmlAttribute (HA.style "top" "0")
         , Element.htmlAttribute (HA.style "left" "0")

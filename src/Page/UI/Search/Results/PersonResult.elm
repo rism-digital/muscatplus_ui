@@ -1,50 +1,18 @@
 module Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, alignRight, column, el, fill, height, maximum, px, row, spacing, width)
+import Element exposing (Color, Element, alignRight, column, el, fill, maximum, onLeft, px, row, spacing, text, width)
 import Language exposing (Language)
-import Maybe.Extra as ME
 import Page.RecordTypes.Search exposing (PersonResultBody, PersonResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular, bodySM)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (briefcaseSvg, penNibSvg, sourcesSvg)
+import Page.UI.Images exposing (briefcaseSvg, linkSvg, sourcesSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
-
-
-viewPersonFlags : Language -> PersonResultFlags -> Element msg
-viewPersonFlags language flags =
-    let
-        isDIAMMFlag =
-            viewIf
-                (makeFlagIcon
-                    { background = colourScheme.darkBlue
-                    }
-                    (penNibSvg colourScheme.white)
-                    "Is DIAMM"
-                )
-                flags.isDIAMMRecord
-
-        hasDIAMMFlag =
-            viewIf
-                (makeFlagIcon
-                    { background = colourScheme.yellow
-                    }
-                    (penNibSvg colourScheme.white)
-                    "Has DIAMM"
-                )
-                flags.hasDIAMMRecord
-    in
-    row
-        [ width fill
-        , spacing 10
-        ]
-        [ isDIAMMFlag
-        , hasDIAMMFlag
-        ]
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 
 viewPersonSearchResult :
@@ -53,33 +21,9 @@ viewPersonSearchResult :
     -> Element msg
 viewPersonSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
     let
-        diammLogoEl =
-            Maybe.map
-                (\f ->
-                    if f.isDIAMMRecord then
-                        Just
-                            (row
-                                [ width fill ]
-                                [ el
-                                    [ width (px 80)
-                                    , height (px 40)
-                                    , alignRight
-                                    ]
-                                    diammLogo
-                                ]
-                            )
-
-                    else
-                        Nothing
-                )
-                body.flags
-                |> ME.join
-
         resultBody =
             [ viewMaybe (viewPersonSummary language resultColours.iconColour) body.summary
-            , viewMaybe identity diammLogoEl
-
-            --, viewMaybe (viewPersonFlags language) body.flags
+            , viewMaybe (viewPersonFlags language) body.flags
             ]
 
         resultColours =
@@ -93,6 +37,40 @@ viewPersonSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx
         , resultBody = resultBody
         , clickMsg = clickForPreviewMsg
         }
+
+
+viewPersonFlags : Language -> PersonResultFlags -> Element msg
+viewPersonFlags language flags =
+    let
+        isDIAMMFlag =
+            viewIf
+                (el
+                    [ width (px 60)
+                    , alignRight
+                    , el tooltipStyle (text "Source: DIAMM")
+                        |> tooltip onLeft
+                    ]
+                    diammLogo
+                )
+                flags.isDIAMMRecord
+
+        linkedWithExternalRecordFlag =
+            viewIf
+                (makeFlagIcon
+                    { background = colourScheme.olive
+                    }
+                    (linkSvg colourScheme.white)
+                    "Linked with DIAMM"
+                )
+                flags.linkedWithExternalRecord
+    in
+    row
+        [ width fill
+        , spacing 10
+        ]
+        [ linkedWithExternalRecordFlag
+        , isDIAMMFlag
+        ]
 
 
 viewPersonSummary : Language -> Color -> Dict String LabelValue -> Element msg

@@ -2,11 +2,12 @@ module Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollec
 
 import Config
 import Dict exposing (Dict)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
@@ -148,8 +149,10 @@ viewNationalCollectionChooser session =
             , Font.color colourScheme.black
             , onMouseEnter UserMouseEnteredCountryChooser
             , onMouseLeave UserMouseExitedCountryChooser
-            , Border.width 1
-            , Border.color colourScheme.midGrey
+            , Border.width 2
+            , Border.color colourScheme.darkBlue
+            , Border.shadow { offset = ( 2, 1 ), size = 1, blur = 6, color = colourScheme.darkGrey }
+            , htmlAttribute (HA.style "clip-path" "inset(-10px -15px -10px 0px)")
             ]
             [ column
                 [ width fill
@@ -340,7 +343,7 @@ viewNationalCollectionChooserMenuOption session =
             [ row
                 [ width shrink
                 , iconCentering
-                , spacing 2
+                , spacing 10
                 , moveRight iconAlignment
                 ]
                 [ sidebarIcon
