@@ -92,12 +92,12 @@ viewFrontSearchControls cfg =
     row
         [ width fill
         , height fill
+        , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+        , Border.color colourScheme.darkBlue
         ]
         [ column
             [ width fill
             , height fill
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color colourScheme.darkBlue
             ]
             [ row
                 [ width fill
@@ -260,17 +260,37 @@ viewFrontSearchControlsLoading =
     row
         [ width fill
         , height fill
+        , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+        , Border.color colourScheme.darkBlue
         ]
-        [ el
-            [ width (px 50)
-            , height (px 50)
-            , centerX
-            , centerY
+        [ column
+            [ width fill
+            , height fill
             ]
-            (animatedLoader
-                [ width (px 50)
-                , height (px 50)
+            [ row
+                [ width fill
+                , height (px 95)
+                , Background.color colourScheme.lightGrey
+                , Border.color colourScheme.darkBlue
+                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
                 ]
-                (spinnerSvg colourScheme.midGrey)
-            )
+                []
+            , row
+                [ width fill
+                , height fill
+                ]
+                [ el
+                    [ width (px 50)
+                    , height (px 50)
+                    , centerX
+                    , centerY
+                    ]
+                    (animatedLoader
+                        [ width (px 50)
+                        , height (px 50)
+                        ]
+                        (spinnerSvg colourScheme.midGrey)
+                    )
+                ]
+            ]
         ]
