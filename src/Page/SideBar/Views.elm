@@ -415,7 +415,7 @@ view session =
                             , isCurrent = False
                             , label =
                                 link
-                                    []
+                                    [ Font.color colourScheme.white ]
                                     { label = text (extractLabelFromLanguageMap session.language localTranslations.about)
                                     , url = Config.serverUrl ++ "/about"
                                     }
