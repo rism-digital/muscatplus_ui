@@ -5,8 +5,11 @@ import Language exposing (Language)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..))
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.DiammLogo exposing (diammLogo)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
+import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplateNoToc)
+import Page.UI.Record.Previews.ExternalShared exposing (viewExternalRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -31,7 +34,9 @@ viewExternalInstitutionPreview language project body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    []
+                    [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
+                    , viewMaybe (viewExternalRelationshipsSection language) body.relationships
+                    ]
                 ]
 
         projectLogo =

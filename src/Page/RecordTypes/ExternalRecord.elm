@@ -1,8 +1,9 @@
-module Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalRecordBodyDecoder)
+module Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalRelationshipBody, ExternalRelationshipsSection, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalRecordBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.Relationship exposing (RelatedToBody, RoleBody, relatedToBodyDecoder, roleBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 
 
@@ -66,6 +67,28 @@ type alias ExternalPersonRecord =
 type alias ExternalInstitutionRecord =
     { id : String
     , label : LanguageMap
+    , organizationDetails : Maybe ExternalOrganizationDetailsSection
+    , relationships : Maybe ExternalRelationshipsSection
+    }
+
+
+type alias ExternalRelationshipsSection =
+    { sectionToc : String
+    , label : LanguageMap
+    , items : List ExternalRelationshipBody
+    }
+
+
+type alias ExternalRelationshipBody =
+    { role : Maybe RoleBody
+    , relatedTo : Maybe RelatedToBody
+    }
+
+
+type alias ExternalOrganizationDetailsSection =
+    { sectionToc : String
+    , label : LanguageMap
+    , summary : List LabelValue
     }
 
 
@@ -136,6 +159,31 @@ externalInstitutionBodyDecoder =
     Decode.succeed ExternalInstitutionRecord
         |> required "id" string
         |> required "label" languageMapLabelDecoder
+        |> optional "organizationDetails" (Decode.maybe externalOrganizationDetailsSectionDecoder) Nothing
+        |> optional "relationships" (Decode.maybe externalRelationshipsSectionDecoder) Nothing
+
+
+externalRelationshipsSectionDecoder : Decoder ExternalRelationshipsSection
+externalRelationshipsSectionDecoder =
+    Decode.succeed ExternalRelationshipsSection
+        |> hardcoded "external-relationships-section"
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "items" (list externalRelationshipBodyDecoder)
+
+
+externalRelationshipBodyDecoder : Decoder ExternalRelationshipBody
+externalRelationshipBodyDecoder =
+    Decode.succeed ExternalRelationshipBody
+        |> optional "role" (Decode.maybe roleBodyDecoder) Nothing
+        |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
+
+
+externalOrganizationDetailsSectionDecoder : Decoder ExternalOrganizationDetailsSection
+externalOrganizationDetailsSectionDecoder =
+    Decode.succeed ExternalOrganizationDetailsSection
+        |> hardcoded "external-organization-details-section"
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "summary" (list labelValueDecoder)
 
 
 externalPersonBodyDecoder : Decoder ExternalPersonRecord
