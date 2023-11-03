@@ -32,7 +32,7 @@ viewSourcePreview :
 viewSourcePreview cfg body =
     let
         sourceIcon =
-            sourceIconChooser (.type_ (.recordType body.record))
+            sourceIconChooser (.type_ (.recordType body.sourceTypes))
 
         sourceIconView =
             el

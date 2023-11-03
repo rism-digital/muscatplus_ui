@@ -18,7 +18,7 @@ viewSourceItem : Language -> BasicSourceBody -> Element msg
 viewSourceItem language source =
     let
         sourceIcon =
-            sourceIconChooser (.type_ (.recordType source.record))
+            sourceIconChooser (.type_ (.recordType source.sourceTypes))
     in
     row
         (width fill :: sectionBorderStyles)

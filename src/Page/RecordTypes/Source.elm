@@ -35,7 +35,7 @@ type alias FullSourceBody =
     , label : LanguageMap
     , creator : Maybe RelationshipBody
     , typeLabel : LanguageMap
-    , record : SourceRecordDescriptors
+    , sourceTypes : SourceRecordDescriptors
     , partOf : Maybe PartOfSectionBody
     , contents : Maybe ContentsSectionBody
     , materialGroups : Maybe MaterialGroupsSectionBody
@@ -225,7 +225,7 @@ sourceBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (Decode.maybe relationshipBodyDecoder) Nothing
         |> required "typeLabel" languageMapLabelDecoder
-        |> required "record" sourceRecordDescriptorsDecoder
+        |> required "sourceTypes" sourceRecordDescriptorsDecoder
         |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
         |> optional "contents" (Decode.maybe contentsSectionBodyDecoder) Nothing
         |> optional "materialGroups" (Decode.maybe materialGroupsSectionBodyDecoder) Nothing

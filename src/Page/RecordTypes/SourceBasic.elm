@@ -11,7 +11,7 @@ type alias BasicSourceBody =
     { id : String
     , label : LanguageMap
     , typeLabel : LanguageMap
-    , record : SourceRecordDescriptors
+    , sourceTypes : SourceRecordDescriptors
     , summary : Maybe (List LabelValue)
     }
 
@@ -22,5 +22,5 @@ basicSourceBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
-        |> required "record" sourceRecordDescriptorsDecoder
+        |> required "sourceTypes" sourceRecordDescriptorsDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing

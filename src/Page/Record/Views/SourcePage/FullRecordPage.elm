@@ -48,7 +48,9 @@ viewFullSourcePage session model body =
                     viewSourceSearchTabBody session model
 
         sourceIcon =
-            sourceIconChooser (.type_ (.recordType body.record))
+            .recordType body.sourceTypes
+                |> .type_
+                |> sourceIconChooser
 
         sourceIconView =
             el
