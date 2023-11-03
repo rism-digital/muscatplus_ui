@@ -136,7 +136,7 @@ viewSourceSearchTab { language, model, recordId, searchUrl, tabLabel } =
             case model.searchResults of
                 Loading _ ->
                     row
-                        []
+                        [ spacing 10 ]
                         [ text localizedTabLabel
                         , animatedLoader
                             [ width (px 15)
