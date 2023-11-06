@@ -20,6 +20,7 @@ module Page.UI.Attributes exposing
     , linkColour
     , minimalDropShadow
     , pageBackground
+    , pageHeaderBackground
     , responsiveCheckboxColumns
     , resultsColumnWidth
     , sectionBorderStyles
@@ -188,6 +189,19 @@ minimalDropShadow =
 pageBackground : Attribute msg
 pageBackground =
     Background.color colourScheme.white
+
+
+pageHeaderBackground : Attribute msg
+pageHeaderBackground =
+    Background.gradient
+        { angle = 90
+        , steps =
+            [ colourScheme.white
+            , colourScheme.white
+            , colourScheme.white
+            , colourScheme.darkBlueTranslucent
+            ]
+        }
 
 
 {-| <https://spencermortensen.com/articles/typographic-scale/>

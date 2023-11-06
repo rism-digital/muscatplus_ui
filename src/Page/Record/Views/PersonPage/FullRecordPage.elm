@@ -1,6 +1,7 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
 
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
+import Element.Background as Background
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -9,7 +10,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
+import Page.UI.Attributes exposing (lineSpacing, pageHeaderBackground, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
@@ -20,7 +21,7 @@ import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, tabBarHeight)
 import Session exposing (Session)
 
 
@@ -84,17 +85,17 @@ viewFullPersonPage session model body =
             ]
             [ row
                 [ width fill
-                , height (px searchHeaderHeight)
+                , height (px (tabBarHeight + recordTitleHeight))
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.darkBlue
                 ]
                 [ column
-                    [ spacingXY 0 lineSpacing
-                    , width fill
+                    [ width fill
                     , height fill
                     , centerY
                     , alignLeft
                     , paddingXY 20 0
+                    , pageHeaderBackground
                     ]
                     [ pageHeaderTemplate session.language (Just icon) body
                     , viewRecordTopBarRouter session.language model body

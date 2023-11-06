@@ -20,7 +20,7 @@ import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
-import Page.UI.Style exposing (colourScheme, headerHeight, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, headerHeight, recordTitleHeight, tabBarHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
@@ -294,7 +294,7 @@ view session =
         ]
         [ row
             [ width fill
-            , height (px searchHeaderHeight)
+            , height (px (tabBarHeight + recordTitleHeight))
             , Background.color colourScheme.darkBlue
             ]
             [ column

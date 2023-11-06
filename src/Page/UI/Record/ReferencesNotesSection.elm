@@ -7,7 +7,7 @@ import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewParagraphField)
+import Page.UI.Components exposing (renderLabel, viewParagraphField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
@@ -24,19 +24,17 @@ viewLiturgicalFestival language festival =
 
 viewLiturgicalFestivalsSection : Language -> LiturgicalFestivalsSectionBody -> Element msg
 viewLiturgicalFestivalsSection language body =
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language body.label ]
-            , column
-                valueFieldColumnAttributes
-                (List.map (viewLiturgicalFestival language) body.items)
-            ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ renderLabel language body.label ]
+        , column
+            valueFieldColumnAttributes
+            (List.map (viewLiturgicalFestival language) body.items)
         ]
 
 
@@ -64,19 +62,17 @@ viewPerformanceLocation language location =
 
 viewPerformanceLocationsSection : Language -> PerformanceLocationsSectionBody -> Element msg
 viewPerformanceLocationsSection language body =
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language body.label ]
-            , column
-                valueFieldColumnAttributes
-                (List.map (viewPerformanceLocation language) body.items)
-            ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ renderLabel language body.label ]
+        , column
+            valueFieldColumnAttributes
+            (List.map (viewPerformanceLocation language) body.items)
         ]
 
 

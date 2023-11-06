@@ -3,7 +3,7 @@ module Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, Exte
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes.Relationship exposing (RelatedToBody, RoleBody, relatedToBodyDecoder, roleBodyDecoder)
+import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedToBody, RoleBody, qualifierBodyDecoder, relatedToBodyDecoder, roleBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 
 
@@ -61,6 +61,15 @@ type alias ExternalSourceReferencesNotesSection =
 type alias ExternalPersonRecord =
     { id : String
     , label : LanguageMap
+    , biographicalDetails : Maybe ExternalBiographicalDetailsSectionBody
+    , relationships : Maybe ExternalRelationshipsSection
+    }
+
+
+type alias ExternalBiographicalDetailsSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , summary : List LabelValue
     }
 
 
@@ -81,6 +90,7 @@ type alias ExternalRelationshipsSection =
 
 type alias ExternalRelationshipBody =
     { role : Maybe RoleBody
+    , qualifier : Maybe QualifierBody
     , relatedTo : Maybe RelatedToBody
     }
 
@@ -175,6 +185,7 @@ externalRelationshipBodyDecoder : Decoder ExternalRelationshipBody
 externalRelationshipBodyDecoder =
     Decode.succeed ExternalRelationshipBody
         |> optional "role" (Decode.maybe roleBodyDecoder) Nothing
+        |> optional "qualifier" (Decode.maybe qualifierBodyDecoder) Nothing
         |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
 
 
@@ -191,6 +202,8 @@ externalPersonBodyDecoder =
     Decode.succeed ExternalPersonRecord
         |> required "id" string
         |> required "label" languageMapLabelDecoder
+        |> optional "biographicalDetails" (Decode.maybe biographicalDetailsSectionBodyDecoder) Nothing
+        |> optional "relationships" (Decode.maybe externalRelationshipsSectionDecoder) Nothing
 
 
 externalSourceBodyDecoder : Decoder ExternalSourceRecord
@@ -249,3 +262,11 @@ externalSourceExternalResourceDecoder =
     Decode.succeed ExternalSourceExternalResource
         |> required "url" string
         |> required "label" languageMapLabelDecoder
+
+
+biographicalDetailsSectionBodyDecoder : Decoder ExternalBiographicalDetailsSectionBody
+biographicalDetailsSectionBodyDecoder =
+    Decode.succeed ExternalBiographicalDetailsSectionBody
+        |> hardcoded "external-person-biographical-details-section"
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "summary" (list labelValueDecoder)

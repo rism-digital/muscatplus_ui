@@ -5,7 +5,6 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper)
 import Page.UI.Record.PageTemplate exposing (externalLinkTemplate)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
@@ -29,16 +28,14 @@ viewExternalAuthoritiesSection language extSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ fieldValueWrapper []
-                    [ wrappedRow
-                        [ width fill
-                        , height fill
-                        , alignTop
-                        ]
-                        [ column
-                            (spacing lineSpacing :: valueFieldColumnAttributes)
-                            (List.map (viewExternalAuthority language) extSection.items)
-                        ]
+                [ wrappedRow
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    [ column
+                        (spacing lineSpacing :: valueFieldColumnAttributes)
+                        (List.map (viewExternalAuthority language) extSection.items)
                     ]
                 ]
             ]

@@ -135,7 +135,7 @@ viewModeItems selectedMode language typeFacet =
     row
         [ centerX
         , width fill
-        , height (px 40)
+        , height (px 30)
         , paddingXY 20 0
         , spacing 10
         , alignBottom

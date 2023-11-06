@@ -5,8 +5,11 @@ import Language exposing (Language)
 import Page.RecordTypes.ExternalRecord exposing (ExternalPersonRecord, ExternalProject(..))
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.DiammLogo exposing (diammLogo)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
+import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplateNoToc)
+import Page.UI.Record.Previews.ExternalShared exposing (viewExternalRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -19,7 +22,7 @@ viewExternalPersonPreview language project body =
                 , height (px 25)
                 , centerY
                 ]
-                (peopleSvg colourScheme.midGrey)
+                (peopleSvg colourScheme.darkBlue)
 
         pageBodyView =
             row
@@ -31,7 +34,9 @@ viewExternalPersonPreview language project body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    []
+                    [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
+                    , viewMaybe (viewExternalRelationshipsSection language) body.relationships
+                    ]
                 ]
 
         projectLogo =

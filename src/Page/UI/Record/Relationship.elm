@@ -6,7 +6,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (bodyRegular, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, renderLabel)
+import Page.UI.Components exposing (renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -107,26 +107,24 @@ viewRelationshipBody language body =
                 )
                 body.note
     in
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ roleLabel ]
-            , column
-                valueFieldColumnAttributes
-                [ textColumn
-                    [ bodyRegular ]
-                    [ row
-                        [ alignLeft
-                        ]
-                        [ relatedToView
-                        , qualifierLabel
-                        , note
-                        ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ roleLabel ]
+        , column
+            valueFieldColumnAttributes
+            [ textColumn
+                [ bodyRegular ]
+                [ row
+                    [ alignLeft
+                    ]
+                    [ relatedToView
+                    , qualifierLabel
+                    , note
                     ]
                 ]
             ]

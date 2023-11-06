@@ -1,8 +1,9 @@
 module Page.UI.Style exposing
     ( colourScheme
     , headerHeight
+    , recordTitleHeight
     , rgbaFloatToInt
-    , searchHeaderHeight
+    , tabBarHeight
     )
 
 import Element
@@ -258,6 +259,11 @@ headerHeight =
     60
 
 
-searchHeaderHeight : Int
-searchHeaderHeight =
-    95
+tabBarHeight : Int
+tabBarHeight =
+    50
+
+
+recordTitleHeight : Int
+recordTitleHeight =
+    50

@@ -5,7 +5,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, renderLabel, viewSummaryField)
+import Page.UI.Components exposing (renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -53,20 +53,18 @@ viewSubject language subject =
 
 viewSubjectsSection : Language -> SubjectsSectionBody -> Element msg
 viewSubjectsSection language subjectSection =
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language subjectSection.label ]
-            , column
-                valueFieldColumnAttributes
-                [ textColumn
-                    [ spacing lineSpacing ]
-                    (List.map (viewSubject language) subjectSection.items)
-                ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ renderLabel language subjectSection.label ]
+        , column
+            valueFieldColumnAttributes
+            [ textColumn
+                [ spacing lineSpacing ]
+                (List.map (viewSubject language) subjectSection.items)
             ]
         ]

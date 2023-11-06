@@ -10,7 +10,7 @@ import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (lineSpacing, pageHeaderBackground, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (sourcesSvg)
@@ -23,7 +23,7 @@ import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
-import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, tabBarHeight)
 import Session exposing (Session)
 import Set exposing (Set)
 
@@ -72,17 +72,17 @@ viewFullSourcePage session model body =
             ]
             [ row
                 [ width fill
-                , height (px searchHeaderHeight)
+                , height (px (tabBarHeight + recordTitleHeight))
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.darkBlue
                 ]
                 [ column
                     [ width fill
                     , height fill
-                    , paddingXY 20 0
                     , centerY
                     , alignLeft
-                    , spacingXY 0 lineSpacing
+                    , paddingXY 20 0
+                    , pageHeaderBackground
                     ]
                     [ pageHeaderTemplate session.language (Just sourceIconView) body
                     , viewRecordTopBarRouter session.language model body

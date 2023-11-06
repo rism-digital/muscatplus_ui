@@ -8,7 +8,7 @@ import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (h2, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, sourcesSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources)
@@ -88,34 +88,32 @@ viewBoundWithSection language boundWithSection =
                 tooltipStyle
                 (text (extractLabelFromLanguageMap language localTranslations.source))
     in
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language boundWithSection.sectionLabel ]
-            , column
-                valueFieldColumnAttributes
-                [ row
-                    [ width fill
-                    , spacing 5
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ renderLabel language boundWithSection.sectionLabel ]
+        , column
+            valueFieldColumnAttributes
+            [ row
+                [ width fill
+                , spacing 5
+                ]
+                [ el
+                    [ width (px 16)
+                    , height (px 16)
+                    , centerY
+                    , relationshipTooltip |> tooltip above
                     ]
-                    [ el
-                        [ width (px 16)
-                        , height (px 16)
-                        , centerY
-                        , relationshipTooltip |> tooltip above
-                        ]
-                        (sourcesSvg colourScheme.midGrey)
-                    , link
-                        [ linkColour ]
-                        { label = text (extractLabelFromLanguageMap language (.label boundWithSection.source))
-                        , url = .id boundWithSection.source
-                        }
-                    ]
+                    (sourcesSvg colourScheme.midGrey)
+                , link
+                    [ linkColour ]
+                    { label = text (extractLabelFromLanguageMap language (.label boundWithSection.source))
+                    , url = .id boundWithSection.source
+                    }
                 ]
             ]
         ]
@@ -156,19 +154,17 @@ viewHeldBy language body =
 
 viewExemplarExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
 viewExemplarExternalResourcesSection language extSection =
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language extSection.label ]
-            , column
-                valueFieldColumnAttributes
-                [ viewMaybe (viewExternalResources language) extSection.items
-                , viewMaybe (viewExternalRecords language) extSection.externalRecords
-                ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ renderLabel language extSection.label ]
+        , column
+            valueFieldColumnAttributes
+            [ viewMaybe (viewExternalResources language) extSection.items
+            , viewMaybe (viewExternalRecords language) extSection.externalRecords
             ]
         ]

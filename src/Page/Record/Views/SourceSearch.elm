@@ -220,7 +220,7 @@ viewRecordSourceSearchTabBar { language, model, recordId, body, tabLabel } =
     in
     row
         [ width (fill |> maximum 300)
-        , height (px 35)
+        , height (px 30)
         , alignBottom
         , spacing 10
         , alignLeft

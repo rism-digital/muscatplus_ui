@@ -5,29 +5,27 @@ import Language exposing (Language)
 import Page.RecordTypes.Institution exposing (LocationAddressSectionBody)
 import Page.RecordTypes.Shared exposing (LabelStringValue)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, viewSummaryField)
+import Page.UI.Components exposing (h2, renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
 
 viewEmailAddress : Language -> LabelStringValue -> Element msg
 viewEmailAddress language emailAddress =
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language emailAddress.label ]
-            , column
-                valueFieldColumnAttributes
-                [ link
-                    [ linkColour ]
-                    { label = text emailAddress.value
-                    , url = "mailto:" ++ emailAddress.value
-                    }
-                ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ renderLabel language emailAddress.label ]
+        , column
+            valueFieldColumnAttributes
+            [ link
+                [ linkColour ]
+                { label = text emailAddress.value
+                , url = "mailto:" ++ emailAddress.value
+                }
             ]
         ]
 
@@ -71,22 +69,20 @@ viewLocationAddressSection language body =
 
 viewWebsiteAddress : Language -> LabelStringValue -> Element msg
 viewWebsiteAddress language websiteAddress =
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language websiteAddress.label ]
-            , column
-                valueFieldColumnAttributes
-                [ link
-                    [ linkColour ]
-                    { label = text websiteAddress.value
-                    , url = websiteAddress.value
-                    }
-                ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ renderLabel language websiteAddress.label ]
+        , column
+            valueFieldColumnAttributes
+            [ link
+                [ linkColour ]
+                { label = text websiteAddress.value
+                , url = websiteAddress.value
+                }
             ]
         ]

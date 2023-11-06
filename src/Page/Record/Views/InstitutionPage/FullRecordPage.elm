@@ -1,17 +1,16 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, spacingXY, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, h2, mapViewer, renderLabel, viewSummaryField)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, pageHeaderBackground, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Components exposing (mapViewer, renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -21,7 +20,7 @@ import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetai
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
-import Page.UI.Style exposing (colourScheme, searchHeaderHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, tabBarHeight)
 import Session exposing (Session)
 import Url.Builder as QB exposing (absolute)
 
@@ -87,16 +86,17 @@ viewFullInstitutionPage session model body =
             ]
             [ row
                 [ width fill
-                , height (px searchHeaderHeight)
+                , height (px (tabBarHeight + recordTitleHeight))
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.darkBlue
                 ]
                 [ column
-                    [ spacingXY 0 lineSpacing
-                    , width fill
+                    [ width fill
                     , height fill
                     , centerY
+                    , alignLeft
                     , paddingXY 20 0
+                    , pageHeaderBackground
                     ]
                     [ pageHeaderTemplate session.language (Just icon) body
                     , viewRecordTopBar session.language model body
@@ -156,21 +156,19 @@ mapSection language coords =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ fieldValueWrapper []
-                    [ wrappedRow
-                        [ width fill
-                        , height fill
-                        , alignTop
-                        ]
-                        [ column
-                            labelFieldColumnAttributes
-                            [ renderLabel language coords.coordinatesLabel ]
-                        , column
-                            valueFieldColumnAttributes
-                            [ textColumn
-                                [ spacing lineSpacing ]
-                                [ text coordsValue ]
-                            ]
+                [ wrappedRow
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    [ column
+                        labelFieldColumnAttributes
+                        [ renderLabel language coords.coordinatesLabel ]
+                    , column
+                        valueFieldColumnAttributes
+                        [ textColumn
+                            [ spacing lineSpacing ]
+                            [ text coordsValue ]
                         ]
                     ]
                 , row

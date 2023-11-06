@@ -22,7 +22,7 @@ viewExternalInstitutionPreview language project body =
                 , height (px 25)
                 , centerY
                 ]
-                (institutionSvg colourScheme.midGrey)
+                (institutionSvg colourScheme.darkBlue)
 
         pageBodyView =
             row

@@ -7,7 +7,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (fieldValueWrapper, renderParagraph)
+import Page.UI.Components exposing (renderParagraph)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (iiifLogo)
 import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink)
@@ -125,39 +125,35 @@ viewExternalResource language body =
 
 viewExternalRecords : Language -> List ExternalRecordBody -> Element msg
 viewExternalRecords language itms =
-    fieldValueWrapper []
-        [ wrappedRow
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
             [ width fill
             , height fill
             , alignTop
+            , spacing lineSpacing
             ]
-            [ column
-                [ width fill
-                , height fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                (List.map (viewExternalRecord language) itms)
-            ]
+            (List.map (viewExternalRecord language) itms)
         ]
 
 
 viewExternalResources : Language -> List ExternalResourceBody -> Element msg
 viewExternalResources language itms =
-    fieldValueWrapper []
-        [ wrappedRow
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
             [ width fill
             , height fill
             , alignTop
+            , spacing lineSpacing
             ]
-            [ column
-                [ width fill
-                , height fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                (List.map (viewExternalResource language) itms)
-            ]
+            (List.map (viewExternalResource language) itms)
         ]
 
 

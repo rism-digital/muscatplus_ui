@@ -7,6 +7,7 @@ module Page.RecordTypes.Relationship exposing
     , RelationshipRole(..)
     , RelationshipsSectionBody
     , RoleBody
+    , qualifierBodyDecoder
     , relatedToBodyDecoder
     , relationshipBodyDecoder
     , relationshipsSectionBodyDecoder

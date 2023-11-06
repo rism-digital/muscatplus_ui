@@ -6,7 +6,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Components exposing (fieldValueWrapper, h2, renderLabel, renderParagraph, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (h2, renderLabel, renderParagraph, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (bookSvg, institutionSvg)
@@ -25,7 +25,7 @@ viewExternalSourcePreview language project body =
                 , height (px 25)
                 , centerY
                 ]
-                (bookSvg colourScheme.midGrey)
+                (bookSvg colourScheme.darkBlue)
 
         pageBodyView =
             row
@@ -224,21 +224,19 @@ viewExternalNotesSection language notes =
 
 viewExternalSourceExternalResourcesSection : Language -> ExternalSourceExternalResourcesSection -> Element msg
 viewExternalSourceExternalResourcesSection language linkSection =
-    fieldValueWrapper []
-        [ wrappedRow
-            [ width fill
-            , height fill
-            , alignTop
-            ]
-            [ column
-                labelFieldColumnAttributes
-                [ renderLabel language linkSection.label ]
-            , column
-                valueFieldColumnAttributes
-                [ textColumn
-                    [ spacing lineSpacing ]
-                    (List.map (viewExternalResource language) linkSection.items)
-                ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            labelFieldColumnAttributes
+            [ renderLabel language linkSection.label ]
+        , column
+            valueFieldColumnAttributes
+            [ textColumn
+                [ spacing lineSpacing ]
+                (List.map (viewExternalResource language) linkSection.items)
             ]
         ]
 

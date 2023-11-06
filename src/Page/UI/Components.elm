@@ -4,7 +4,6 @@ module Page.UI.Components exposing
     , contentTypeIconChooser
     , dividerWithText
     , dropdownSelect
-    , fieldValueWrapper
     , h1
     , h2
     , h2s
@@ -21,7 +20,7 @@ module Page.UI.Components exposing
     )
 
 import Css
-import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, clip, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -35,9 +34,9 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, ex
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, fileMusicSvg, folderGridSvg, graduationCapSvg, musicNotationSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (toLinkedHtml)
@@ -276,23 +275,22 @@ dropdownSelectStyles =
     ]
 
 
-fieldValueWrapper : List (Attribute msg) -> List (Element msg) -> Element msg
-fieldValueWrapper contentStyles content =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            (List.append
-                [ width fill
-                , height fill
-                , alignTop
-                ]
-                contentStyles
-            )
-            content
-        ]
+
+--wrappedRow
+--    [ width fill
+--    , height fill
+--    , alignTop
+--    ]
+--    [ column
+--        (List.append
+--            [ width fill
+--            , height fill
+--            , alignTop
+--            ]
+--            contentStyles
+--        )
+--        content
+--    ]
 
 
 h1 : Language -> LanguageMap -> Element msg
@@ -475,23 +473,35 @@ viewLabelValueField :
     -> List LabelValue
     -> Element msg
 viewLabelValueField wrapperStyles fmt language field =
-    fieldValueWrapper
-        wrapperStyles
-        (List.map
-            (\f ->
-                wrappedRow
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    [ column labelFieldColumnAttributes
-                        [ renderLabel language f.label ]
-                    , column valueFieldColumnAttributes
-                        [ fmt language f.value ]
-                    ]
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            (List.append
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                wrapperStyles
             )
-            field
-        )
+            (List.map
+                (\f ->
+                    wrappedRow
+                        [ width fill
+                        , height fill
+                        , alignTop
+                        ]
+                        [ column labelFieldColumnAttributes
+                            [ renderLabel language f.label ]
+                        , column valueFieldColumnAttributes
+                            [ fmt language f.value ]
+                        ]
+                )
+                field
+            )
+        ]
 
 
 viewParagraphField : Language -> List LabelValue -> Element msg

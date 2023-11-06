@@ -145,7 +145,7 @@ headerTmpl cfg =
         (width fill
             :: spacingXY 10 5
             :: centerY
-            :: clip
+            --:: clip
             :: cfg.extraAttrs
         )
         [ viewMaybe identity cfg.icon
