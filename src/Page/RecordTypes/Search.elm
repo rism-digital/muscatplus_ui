@@ -61,7 +61,15 @@ import Page.RecordTypes.Shared
         , languageMapLabelDecoder
         )
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
-import Page.RecordTypes.SourceShared exposing (SourceContentType, SourceContentTypeRecordBody, SourceRecordType, SourceRecordTypeRecordBody, SourceType, SourceTypeRecordBody, sourceContentTypeDecoder, sourceContentTypeRecordBodyDecoder, sourceRecordTypeDecoder, sourceRecordTypeRecordBodyDecoder, sourceTypeDecoder, sourceTypeRecordBodyDecoder)
+import Page.RecordTypes.SourceShared
+    exposing
+        ( SourceContentTypeRecordBody
+        , SourceRecordTypeRecordBody
+        , SourceTypeRecordBody
+        , sourceContentTypeRecordBodyDecoder
+        , sourceRecordTypeRecordBodyDecoder
+        , sourceTypeRecordBodyDecoder
+        )
 import Url exposing (percentDecode)
 import Utilities exposing (choose)
 

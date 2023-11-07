@@ -171,6 +171,9 @@ view session =
                     False
 
         -- only show the selected option if we're on the front page.
+        sideBarAnimation =
+            session.expandedSideBar
+
         incipitsInterfaceMenuOption =
             menuOption
                 { icon = musicNotationSvg
@@ -182,6 +185,9 @@ view session =
                 IncipitSearchOption
                 (checkHover IncipitSearchOption)
 
+        -- If a national collection is chosen this will return
+        -- false, indicating that the menu option should not
+        -- be shown when a national collection is selected.
         institutionInterfaceMenuOption =
             menuOption
                 { icon = institutionSvg
@@ -193,9 +199,6 @@ view session =
                 InstitutionSearchOption
                 (checkHover InstitutionSearchOption)
 
-        -- If a national collection is chosen this will return
-        -- false, indicating that the menu option should not
-        -- be shown when a national collection is selected.
         showWhenChoosingNationalCollection =
             ME.isNothing session.restrictedToNationalCollection
 
@@ -215,9 +218,6 @@ view session =
 
         showLabels =
             showSideBarLabels session.expandedSideBar
-
-        sideBarAnimation =
-            session.expandedSideBar
 
         sideAnimation =
             case sideBarAnimation of
@@ -290,7 +290,7 @@ view session =
         , Background.color colourScheme.white
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
-        , Border.shadow { offset = ( 2, 1 ), size = 1, blur = 4, color = colourScheme.darkBlueTranslucent }
+        , Border.shadow { blur = 4, color = colourScheme.darkBlueTranslucent, offset = ( 2, 1 ), size = 1 }
         ]
         [ row
             [ width fill

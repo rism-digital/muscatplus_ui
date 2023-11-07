@@ -1,6 +1,6 @@
 module Page.UI.Record.Relationship exposing (viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
 
-import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
@@ -117,15 +117,13 @@ viewRelationshipBody language body =
             [ roleLabel ]
         , column
             valueFieldColumnAttributes
-            [ textColumn
-                [ bodyRegular ]
-                [ row
-                    [ alignLeft
-                    ]
-                    [ relatedToView
-                    , qualifierLabel
-                    , note
-                    ]
+            [ paragraph
+                [ alignLeft
+                , bodyRegular
+                ]
+                [ relatedToView
+                , qualifierLabel
+                , note
                 ]
             ]
         ]

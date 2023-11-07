@@ -21,11 +21,11 @@ import Set exposing (Set)
 
 
 viewSourcePreview :
-    { language : Language
-    , itemsExpanded : Bool
-    , expandMsg : msg
+    { expandMsg : msg
     , incipitInfoExpanded : Set String
     , incipitInfoToggleMsg : String -> msg
+    , itemsExpanded : Bool
+    , language : Language
     }
     -> FullSourceBody
     -> Element msg

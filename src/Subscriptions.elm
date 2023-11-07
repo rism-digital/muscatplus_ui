@@ -7,6 +7,7 @@ import Json.Encode as Encode
 import KeyCodes exposing (ArrowDirection(..), keyDecoder)
 import Model exposing (Model(..))
 import Msg exposing (Msg)
+import Page.Record.Msg as RecordMsg
 import Page.Search.Msg as SearchMsg
 import Page.SideBar.Msg as SideBarMsg
 import Ports.Incoming exposing (IncomingMessage(..), decodeIncomingMessage, receiveIncomingMessageFromPort)
@@ -83,7 +84,24 @@ handleKeyboardNavigation model =
                     Msg.UserInteractedWithSearchPage SearchMsg.NothingHappened
 
                 _ ->
-                    SearchMsg.UserPressedAnArrowKey subm
-                        |> Msg.UserInteractedWithSearchPage
+                    case model of
+                        SearchPage _ _ ->
+                            SearchMsg.UserPressedAnArrowKey subm
+                                |> Msg.UserInteractedWithSearchPage
+
+                        SourcePage _ _ ->
+                            RecordMsg.UserPressedAnArrowKey subm
+                                |> Msg.UserInteractedWithRecordPage
+
+                        PersonPage _ _ ->
+                            RecordMsg.UserPressedAnArrowKey subm
+                                |> Msg.UserInteractedWithRecordPage
+
+                        InstitutionPage _ _ ->
+                            RecordMsg.UserPressedAnArrowKey subm
+                                |> Msg.UserInteractedWithRecordPage
+
+                        _ ->
+                            Msg.NothingHappened
         )
         (onKeyUp keyDecoder)

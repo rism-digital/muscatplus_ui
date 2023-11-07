@@ -2,13 +2,11 @@ module Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, height, mouseOver, none, onRight, padding, paddingEach, paragraph, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, mouseOver, none, onRight, padding, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
-import Element.Font as Font
 import Element.Input exposing (checkbox, labelRight)
-import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
@@ -16,11 +14,11 @@ import List.Extra as LE
 import Page.Query exposing (toFacetBehaviours, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.UI.Attributes exposing (bodyRegular, headingLG, headingMD, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (bodyRegular, lineSpacing, linkColour)
 import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h4)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme)
-import Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
+import Page.UI.Tooltip exposing (facetTooltip, tooltip, tooltipStyle)
 import Set
 import String.Extra as SE
 import Url exposing (percentDecode)
@@ -339,7 +337,7 @@ viewSelectFacetItem config fitem =
             extractLabelFromLanguageMap config.language label
 
         decodedValue =
-            Url.percentDecode value
+            percentDecode value
                 |> Maybe.withDefault value
 
         nextQuery =

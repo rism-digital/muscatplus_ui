@@ -1,17 +1,14 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
-import Element.Background as Background
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
-import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (lineSpacing, pageHeaderBackground, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (viewSummaryField)
+import Page.UI.Attributes exposing (pageHeaderBackground, sectionSpacing)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
@@ -86,7 +83,7 @@ viewFullPersonPage session model body =
             [ row
                 [ width fill
                 , height (px (tabBarHeight + recordTitleHeight))
-                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.darkBlue
                 ]
                 [ column
@@ -110,9 +107,9 @@ viewFullPersonPage session model body =
 viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> PersonBody -> Element RecordMsg
 viewRecordTopBarRouter language model body =
     viewRecordSourceSearchTabBar
-        { language = language
+        { body = body.sources
+        , language = language
         , model = model
         , recordId = body.id
-        , body = body.sources
         , tabLabel = localTranslations.sources
         }

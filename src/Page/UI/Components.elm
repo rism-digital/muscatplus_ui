@@ -2,7 +2,6 @@ module Page.UI.Components exposing
     ( DropdownSelectConfig
     , basicCheckbox
     , contentTypeIconChooser
-    , dividerWithText
     , dropdownSelect
     , h1
     , h2
@@ -534,7 +533,7 @@ mapViewer ( width, height ) iframeUrl =
         |> html
 
 
-sourceIconChooser : SourceRecordType -> (Element.Color -> Element msg)
+sourceIconChooser : SourceRecordType -> (Color -> Element msg)
 sourceIconChooser recordType =
     case recordType of
         SourceItemRecord ->
@@ -550,7 +549,7 @@ sourceIconChooser recordType =
             bookCopySvg
 
 
-sourceTypeIconChooser : SourceType -> (Element.Color -> Element msg)
+sourceTypeIconChooser : SourceType -> (Color -> Element msg)
 sourceTypeIconChooser sourceType =
     case sourceType of
         PrintedSource ->
@@ -566,17 +565,17 @@ sourceTypeIconChooser sourceType =
             \_ -> none
 
 
-contentTypeIconChooser : SourceContentType -> (Element.Color -> Element msg)
+contentTypeIconChooser : SourceContentType -> (Color -> Element msg)
 contentTypeIconChooser contentType =
     case contentType of
-        MusicalContent ->
-            fileMusicSvg
-
         LibrettoContent ->
             commentsSvg
 
         TreatiseContent ->
             graduationCapSvg
+
+        MusicalContent ->
+            fileMusicSvg
 
         MixedContent ->
             shapesSvg

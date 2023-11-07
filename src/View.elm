@@ -21,7 +21,7 @@ import Page.Record.Views.SourcePage
 import Page.Search.Views
 import Page.SideBar.Views
 import Page.UI.Animations exposing (progressBar)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, pageBackground)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 import Response exposing (Response(..), ServerData(..))
 
@@ -122,7 +122,8 @@ view model =
             , bodyFont
             , bodyFontColour
             , fontBaseSize
-            , pageBackground
+
+            --, pageBackground
             ]
             (row
                 [ width fill

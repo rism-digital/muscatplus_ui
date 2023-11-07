@@ -10,12 +10,9 @@ module Page.RecordTypes.SourceShared exposing
     , Subject
     , SubjectsSectionBody
     , contentsSectionBodyDecoder
-    , sourceContentTypeDecoder
     , sourceContentTypeRecordBodyDecoder
     , sourceRecordDescriptorsDecoder
-    , sourceRecordTypeDecoder
     , sourceRecordTypeRecordBodyDecoder
-    , sourceTypeDecoder
     , sourceTypeRecordBodyDecoder
     )
 

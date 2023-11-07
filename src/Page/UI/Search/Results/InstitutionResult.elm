@@ -1,16 +1,15 @@
 module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, alignRight, column, el, fill, height, maximum, onLeft, px, row, spacing, spacingXY, text, width)
+import Element exposing (Color, Element, alignRight, column, el, fill, maximum, onLeft, px, row, spacing, spacingXY, text, width)
 import Language exposing (Language)
-import Maybe.Extra as ME
 import Page.RecordTypes.Search exposing (InstitutionResultBody, InstitutionResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (linkSvg, mapMarkerSvg, penNibSvg, sourcesSvg)
+import Page.UI.Images exposing (linkSvg, mapMarkerSvg, sourcesSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)

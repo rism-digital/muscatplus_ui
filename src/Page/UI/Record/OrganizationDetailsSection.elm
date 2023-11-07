@@ -1,8 +1,7 @@
-module Page.UI.Record.OrganizationDetailsSection exposing (..)
+module Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language, LanguageMap)
-import Page.RecordTypes.Institution exposing (OrganizationDetailsSectionBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
 import Page.UI.Components exposing (viewSummaryField)
@@ -13,9 +12,9 @@ viewOrganizationDetailsSection :
     Language
     ->
         { a
-            | summary : List LabelValue
-            , label : LanguageMap
+            | label : LanguageMap
             , sectionToc : String
+            , summary : List LabelValue
         }
     -> Element msg
 viewOrganizationDetailsSection language organizationDetails =

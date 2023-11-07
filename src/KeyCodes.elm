@@ -14,6 +14,9 @@ type ArrowDirection
 toArrowDirection : String -> ArrowDirection
 toArrowDirection keyCode =
     case keyCode of
+        "ArrowDown" ->
+            ArrowDown
+
         "ArrowLeft" ->
             ArrowLeft
 
@@ -22,9 +25,6 @@ toArrowDirection keyCode =
 
         "ArrowUp" ->
             ArrowUp
-
-        "ArrowDown" ->
-            ArrowDown
 
         _ ->
             NotAnArrowKey

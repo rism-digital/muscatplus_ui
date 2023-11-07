@@ -3,7 +3,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, minimum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -114,10 +114,10 @@ viewSearchResultsSection cfg resultsLoading body =
 
                 Error errMsg ->
                     viewPreviewError
-                        { language = .language cfg.session
-                        , windowSize = .window cfg.session
-                        , closeMsg = cfg.userClosedPreviewWindowMsg
+                        { closeMsg = cfg.userClosedPreviewWindowMsg
                         , errorMessage = errMsg
+                        , language = .language cfg.session
+                        , windowSize = .window cfg.session
                         }
                         |> background
 
@@ -154,8 +154,8 @@ viewSearchResultsSection cfg resultsLoading body =
             [ width (px resultsColumnWidth)
             , height fill
             , alignTop
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color colourScheme.midGrey
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+            , Border.color colourScheme.darkBlue
             , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
             [ viewSearchPageSort
@@ -468,8 +468,8 @@ viewSearchResultRouter cfg =
         resultConfig =
             { clickForPreviewMsg = cfg.clickForPreviewMsg
             , language = cfg.language
-            , selectedResult = cfg.selectedResult
             , resultIdx = cfg.resultIdx
+            , selectedResult = cfg.selectedResult
             }
     in
     case cfg.searchResult of

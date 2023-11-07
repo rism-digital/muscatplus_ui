@@ -2,15 +2,13 @@ module Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Events as Events
-import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
-import Page.UI.Attributes exposing (emptyAttribute, headingLG, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
+import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (h2, sourceIconChooser, viewSummaryField)
-import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 
 

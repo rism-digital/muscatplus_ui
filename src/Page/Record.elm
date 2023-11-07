@@ -431,9 +431,6 @@ update session msg model =
         UserClickedClosePreviewWindow ->
             userClickedClosePreviewWindow session model
 
-        UserPressedAnArrowKey arrowDirection ->
-            userPressedArrowKeysInSearchResultsList arrowDirection session model
-
         UserClickedRecordViewTab recordTab ->
             let
                 cmd =
@@ -463,6 +460,9 @@ update session msg model =
               }
             , cmd
             )
+
+        UserPressedAnArrowKey arrowDirection ->
+            userPressedArrowKeysInSearchResultsList arrowDirection session model
 
         NothingHappened ->
             ( model, Cmd.none )

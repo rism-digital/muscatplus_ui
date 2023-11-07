@@ -1,21 +1,20 @@
 module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, link, paddingXY, px, row, scrollbarY, spacing, text, width)
-import Element.Font as Font
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
+import Language exposing (Language)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Images exposing (musicNotationSvg)
 import Page.UI.Record.Incipits exposing (viewIncipit)
-import Page.UI.Record.PageTemplate exposing (pageHeaderTemplateNoToc, pageLinkTemplate, subHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageLinkTemplate, subHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 
 
 viewIncipitPreview :
-    { language : Language
-    , incipitInfoExpanded : Set String
+    { incipitInfoExpanded : Set String
     , infoToggleMsg : String -> msg
+    , language : Language
     }
     -> IncipitBody
     -> Element msg

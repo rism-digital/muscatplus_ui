@@ -149,9 +149,9 @@ viewNationalCollectionChooser session =
             , Font.color colourScheme.black
             , onMouseEnter UserMouseEnteredCountryChooser
             , onMouseLeave UserMouseExitedCountryChooser
-            , Border.width 2
+            , Border.width 1
             , Border.color colourScheme.darkBlue
-            , Border.shadow { offset = ( 2, 1 ), size = 1, blur = 6, color = colourScheme.darkGrey }
+            , Border.shadow { blur = 6, color = colourScheme.darkGrey, offset = ( 2, 1 ), size = 1 }
             , htmlAttribute (HA.style "clip-path" "inset(-10px -15px -10px 0px)")
             ]
             [ column

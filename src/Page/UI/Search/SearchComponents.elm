@@ -127,7 +127,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         borderBottom =
             if isFrontPage then
                 [ Border.color colourScheme.darkBlue
-                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 ]
 
             else
@@ -150,14 +150,13 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 isFrontPage
     in
     row
-        ([ alignTop
-         , Background.color colourScheme.lightGrey
-         , width fill
-         , height (px 60)
-         , paddingXY 20 0
-         , centerY
-         ]
-            ++ borderBottom
+        (alignTop
+            :: Background.color colourScheme.lightGrey
+            :: width fill
+            :: height (px 60)
+            :: paddingXY 20 0
+            :: centerY
+            :: borderBottom
         )
         [ column
             [ width fill

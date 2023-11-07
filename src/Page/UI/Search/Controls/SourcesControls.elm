@@ -1,13 +1,11 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
-import Element exposing (Element, alignTop, column, none, paddingEach, row, spacingXY)
-import Element.Border as Border
+import Element exposing (Element, alignTop, column, none, paddingEach, row)
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 import Language.Tooltips exposing (tooltips)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
-import Page.UI.Style exposing (colourScheme)
 
 
 sourceFacetPanels :

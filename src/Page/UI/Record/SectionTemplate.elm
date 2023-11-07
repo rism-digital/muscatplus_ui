@@ -43,7 +43,7 @@ sectionTemplate language header sectionBody =
             [ row
                 [ width fill
                 , tocId
-                , paddingEach { bottom = lineSpacing, top = 0, left = 0, right = 0 }
+                , paddingEach { bottom = lineSpacing, left = 0, right = 0, top = 0 }
                 ]
                 [ h2 language header.label ]
             , row

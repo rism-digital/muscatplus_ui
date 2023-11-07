@@ -8,7 +8,7 @@ import Element.Font as Font
 import Language exposing (LanguageMap, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Search exposing (FacetData(..))
-import Page.UI.Attributes exposing (headingLG, lineSpacing)
+import Page.UI.Attributes exposing (headingLG)
 import Page.UI.Facets.FacetsConfig exposing (FacetConfig, FacetMsgConfig)
 import Page.UI.Facets.NotationFacet exposing (viewKeyboardControl)
 import Page.UI.Facets.QueryFacet exposing (viewQueryFacet)

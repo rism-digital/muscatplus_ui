@@ -1,4 +1,4 @@
-module Page.UI.Record.BiographicalDetailsSection exposing (..)
+module Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
 
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)

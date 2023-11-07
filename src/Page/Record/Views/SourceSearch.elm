@@ -15,11 +15,9 @@ import Page.Error.Views exposing (createErrorMessage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
-import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingXL)
+import Page.UI.Attributes exposing (headingXL, minimalDropShadow, tabShadowClip)
 import Page.UI.Components exposing (h3)
-import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
@@ -113,13 +111,6 @@ viewSourceSearchTab { language, model, recordId, searchUrl, tabLabel } =
         currentMode =
             model.currentTab
 
-        localizedTabLabel =
-            extractLabelFromLanguageMap language tabLabel
-
-        sourceCount searchData =
-            toFloat searchData.totalItems
-                |> formatNumberByLanguage language
-
         ( searchTabBackground, searchTabFontColour ) =
             case currentMode of
                 RelatedSourcesSearchTab _ ->
@@ -131,6 +122,13 @@ viewSourceSearchTab { language, model, recordId, searchUrl, tabLabel } =
                     ( colourScheme.white
                     , colourScheme.black
                     )
+
+        localizedTabLabel =
+            extractLabelFromLanguageMap language tabLabel
+
+        sourceCount searchData =
+            toFloat searchData.totalItems
+                |> formatNumberByLanguage language
 
         sourceLabel =
             case model.searchResults of
@@ -161,8 +159,9 @@ viewSourceSearchTab { language, model, recordId, searchUrl, tabLabel } =
     column
         [ height fill
         , pointer
-        , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
-        , Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 3, topRight = 3 }
+        , Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
+        , minimalDropShadow
+        , tabShadowClip
         , Border.color colourScheme.darkBlue
         , Background.color searchTabBackground
         , Font.color searchTabFontColour
@@ -180,18 +179,15 @@ viewSourceSearchTab { language, model, recordId, searchUrl, tabLabel } =
 
 
 viewRecordSourceSearchTabBar :
-    { language : Language
+    { body : Maybe { a | url : String }
+    , language : Language
     , model : RecordPageModel RecordMsg
     , recordId : String
-    , body : Maybe { a | url : String }
     , tabLabel : LanguageMap
     }
     -> Element RecordMsg
-viewRecordSourceSearchTabBar { language, model, recordId, body, tabLabel } =
+viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
     let
-        currentMode =
-            model.currentTab
-
         sourceSearchTab =
             case body of
                 Just s ->
@@ -205,6 +201,9 @@ viewRecordSourceSearchTabBar { language, model, recordId, body, tabLabel } =
 
                 Nothing ->
                     none
+
+        currentMode =
+            model.currentTab
 
         ( descriptionTabBackground, descriptionTabFontColour ) =
             case currentMode of
@@ -230,8 +229,9 @@ viewRecordSourceSearchTabBar { language, model, recordId, body, tabLabel } =
             , alignLeft
             , pointer
             , paddingXY 20 0
-            , Border.widthEach { bottom = 0, left = 2, right = 2, top = 2 }
-            , Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 3, topRight = 3 }
+            , Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
+            , minimalDropShadow
+            , tabShadowClip
             , Border.color colourScheme.darkBlue
             , Background.color descriptionTabBackground
             , Font.color descriptionTabFontColour

@@ -2,7 +2,7 @@ module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingEach, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)

@@ -10,7 +10,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, above, alignBottom, alignLeft, alignRight, centerY, clip, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Attribute, Element, above, alignBottom, alignLeft, alignRight, centerY, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
@@ -18,7 +18,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
-import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, minimalDropShadow)
 import Page.UI.Components exposing (h1, h2s)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (externalLinkSvg)
@@ -55,7 +55,8 @@ pageFooterTemplate session language footer =
         [ width fill
         , padding 20
         , alignBottom
-        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
+        , minimalDropShadow
         , Border.color colourScheme.darkBlue
         ]
         [ column

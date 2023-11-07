@@ -81,8 +81,8 @@ localTranslations :
     , sortByCount : LanguageMap
     , source : LanguageMap
     , sourceContents : LanguageMap
-    , sources : LanguageMap
     , sourceType : LanguageMap
+    , sources : LanguageMap
     , unknownError : LanguageMap
     , updateResults : LanguageMap
     , viewImages : LanguageMap
@@ -419,6 +419,8 @@ localTranslations =
         , LanguageValues Polish [ "Treść źródła" ]
         , LanguageValues Portugese [ "Conteúdo da fonte" ]
         ]
+    , sourceType =
+        [ LanguageValues English [ "Source type" ] ]
     , sources =
         [ LanguageValues English [ "Sources" ]
         , LanguageValues German [ "Quellen" ]
@@ -428,8 +430,6 @@ localTranslations =
         , LanguageValues Portugese [ "Fontes" ]
         , LanguageValues Polish [ "Źródła" ]
         ]
-    , sourceType =
-        [ LanguageValues English [ "Source type" ] ]
     , unknownError =
         [ LanguageValues English [ "An unknown error occurred." ] ]
     , updateResults =

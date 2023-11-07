@@ -92,7 +92,7 @@ viewFrontSearchControls cfg =
     row
         [ width fill
         , height fill
-        , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
         , Border.color colourScheme.darkBlue
         ]
         [ column

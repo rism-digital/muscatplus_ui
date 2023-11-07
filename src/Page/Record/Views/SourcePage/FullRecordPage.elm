@@ -1,19 +1,17 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, spacingXY, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
-import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (lineSpacing, pageHeaderBackground, sectionSpacing)
+import Page.UI.Attributes exposing (pageHeaderBackground, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
@@ -73,7 +71,7 @@ viewFullSourcePage session model body =
             [ row
                 [ width fill
                 , height (px (tabBarHeight + recordTitleHeight))
-                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.darkBlue
                 ]
                 [ column
@@ -135,9 +133,9 @@ viewRecordTopBarRouter :
     -> Element RecordMsg
 viewRecordTopBarRouter language model body =
     viewRecordSourceSearchTabBar
-        { language = language
+        { body = body.sourceItems
+        , language = language
         , model = model
         , recordId = body.id
-        , body = body.sourceItems
         , tabLabel = localTranslations.sourceContents
         }

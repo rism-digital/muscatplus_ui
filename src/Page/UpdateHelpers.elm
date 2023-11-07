@@ -728,8 +728,8 @@ correlateQueryValuesWithFacetLangMap qValues serverValues =
 userPressedArrowKeysInSearchResultsList :
     ArrowDirection
     -> Session
-    -> { a | response : Response ServerData, selectedResult : Maybe String, preview : Response ServerData }
-    -> ( { a | response : Response ServerData, preview : Response ServerData, selectedResult : Maybe String }, Cmd msg )
+    -> { a | preview : Response ServerData, response : Response ServerData, selectedResult : Maybe String }
+    -> ( { a | preview : Response ServerData, response : Response ServerData, selectedResult : Maybe String }, Cmd msg )
 userPressedArrowKeysInSearchResultsList arrowDirection session model =
     let
         ( listOfItems, numOfItems ) =
@@ -757,19 +757,19 @@ userPressedArrowKeysInSearchResultsList arrowDirection session model =
             -- Handles the case where the arrow key would produce a next index that
             -- is greater or less than the total number of items in the list.
             case arrowDirection of
-                ArrowDown ->
+                ArrowUp ->
                     Maybe.map2
                         (\cr li ->
-                            LE.getAt (min (numOfItems - 1) (cr + 1)) li
+                            LE.getAt (max 0 (cr - 1)) li
                         )
                         currentResultIdx
                         listOfItems
                         |> ME.join
 
-                ArrowUp ->
+                ArrowDown ->
                     Maybe.map2
                         (\cr li ->
-                            LE.getAt (max 0 (cr - 1)) li
+                            LE.getAt (min (numOfItems - 1) (cr + 1)) li
                         )
                         currentResultIdx
                         listOfItems

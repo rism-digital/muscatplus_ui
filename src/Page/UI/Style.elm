@@ -9,162 +9,127 @@ module Page.UI.Style exposing
 import Element
 
 
-type alias RGBA =
-    { red : Int
-    , green : Int
-    , blue : Int
-    , alpha : Float
-    }
-
-
-
---colourScheme :
---    { black : Element.Color
---    , cream : Element.Color
---    , darkBlue : Element.Color
---    , darkGrey : Element.Color
---    , darkOrange : Element.Color
---    , lightBlue : Element.Color
---    , lightGreen : Element.Color
---    , lightGrey : Element.Color
---    , lightOrange : Element.Color
---    , midGrey : Element.Color
---    , red : Element.Color
---    , midGrey : Element.Color
---    , translucentBlack : Element.Color
---    , translucentGrey : Element.Color
---    , turquoise : Element.Color
---    , white : Element.Color
---    , yellow : Element.Color
---    }
---colourScheme =
---    { black = convertRGBAToColor colours.black
---    , cream = convertRGBAToColor colours.cream
---    , darkBlue = convertRGBAToColor colours.darkBlue
---    , darkGrey = convertRGBAToColor colours.darkGrey
---    , darkOrange = convertRGBAToColor colours.darkOrange
---    , lightBlue = convertRGBAToColor colours.lightBlue
---    , lightGreen = convertRGBAToColor colours.lightGreen
---    , lightGrey = convertRGBAToColor colours.lightGrey
---    , lightOrange = convertRGBAToColor colours.lightOrange
---    , midGrey = convertRGBAToColor colours.midGrey
---    , red = convertRGBAToColor colours.red
---    , midGrey = convertRGBAToColor colours.midGrey
---    , translucentBlack = convertRGBAToColor colours.translucentBlack
---    , translucentGrey = convertRGBAToColor colours.translucentGrey
---    , turquoise = convertRGBAToColor colours.turquoise
---    , white = convertRGBAToColor colours.white
---    , yellow = convertRGBAToColor colours.yellow
---    }
-
-
 colourScheme :
     { black : Element.Color
     , darkBlue : Element.Color
     , darkBlueTranslucent : Element.Color
+    , darkGrey : Element.Color
     , darkOrange : Element.Color
     , lightBlue : Element.Color
-    , lightestBlue : Element.Color
-    , translucentBlue : Element.Color
     , lightGreen : Element.Color
-    , lightOrange : Element.Color
     , lightGrey : Element.Color
+    , lightOrange : Element.Color
+    , lightestBlue : Element.Color
     , midGrey : Element.Color
-    , darkGrey : Element.Color
+    , olive : Element.Color
+    , puce : Element.Color
     , red : Element.Color
     , translucentBlack : Element.Color
+    , translucentBlue : Element.Color
     , translucentGrey : Element.Color
+    , transparent : Element.Color
     , turquoise : Element.Color
     , white : Element.Color
     , yellow : Element.Color
-    , puce : Element.Color
-    , olive : Element.Color
-    , transparent : Element.Color
     }
 colourScheme =
     { black =
         Element.fromRgb255
-            { red = 52
-            , green = 62
+            { alpha = 1
             , blue = 61
-            , alpha = 1
+            , green = 62
+            , red = 52
             }
     , darkBlue =
         Element.fromRgb255
-            { red = 29
-            , green = 53
+            { alpha = 1
             , blue = 87
-            , alpha = 1
+            , green = 53
+            , red = 29
             }
     , darkBlueTranslucent =
         Element.fromRgb255
-            { red = 29
-            , green = 53
+            { alpha = 0.4
             , blue = 87
-            , alpha = 0.4
+            , green = 53
+            , red = 29
             }
     , darkGrey =
         Element.fromRgb255
-            { red = 143
-            , green = 143
+            { alpha = 1
             , blue = 143
-            , alpha = 1
+            , green = 143
+            , red = 143
             }
     , darkOrange =
         Element.fromRgb255
-            { red = 242
-            , green = 143
+            { alpha = 1
             , blue = 59
-            , alpha = 1
+            , green = 143
+            , red = 242
             }
     , lightBlue =
         Element.fromRgb255
-            { red = 0
-            , green = 103
+            { alpha = 1
             , blue = 163
-            , alpha = 1
-            }
-    , lightestBlue =
-        Element.fromRgb255
-            { red = 241
-            , green = 246
-            , blue = 249
-            , alpha = 1
+            , green = 103
+            , red = 0
             }
     , lightGreen =
         Element.fromRgb255
-            { red = 144
-            , green = 190
+            { alpha = 1
             , blue = 109
-            , alpha = 1
-            }
-    , lightOrange =
-        Element.fromRgb255
-            { red = 248
-            , green = 150
-            , blue = 30
-            , alpha = 1
+            , green = 190
+            , red = 144
             }
     , lightGrey =
         Element.fromRgb255
-            { red = 241
-            , green = 244
+            { alpha = 1
             , blue = 249
-            , alpha = 1
+            , green = 244
+            , red = 241
+            }
+    , lightOrange =
+        Element.fromRgb255
+            { alpha = 1
+            , blue = 30
+            , green = 150
+            , red = 248
+            }
+    , lightestBlue =
+        Element.fromRgb255
+            { alpha = 1
+            , blue = 249
+            , green = 246
+            , red = 241
             }
     , midGrey =
         Element.fromRgb255
-            { red = 170
-            , green = 170
+            { alpha = 1
             , blue = 170
-            , alpha = 1
+            , green = 170
+            , red = 170
+            }
+    , olive =
+        Element.fromRgb255
+            { alpha = 1
+            , blue = 36
+            , green = 147
+            , red = 132
+            }
+    , puce =
+        Element.fromRgb255
+            { alpha = 1
+            , blue = 158
+            , green = 140
+            , red = 184
             }
     , red =
         Element.fromRgb255
-            { red = 173
-            , green = 52
+            { alpha = 1
             , blue = 62
-            , alpha = 1
+            , green = 52
+            , red = 173
             }
 
     --, midGrey =
@@ -175,82 +140,68 @@ colourScheme =
     --    }
     , translucentBlack =
         Element.fromRgb255
-            { red = 34
-            , green = 38
+            { alpha = 0.8
             , blue = 42
-            , alpha = 0.8
-            }
-    , translucentGrey =
-        Element.fromRgb255
-            { red = 119
-            , green = 136
-            , blue = 153
-            , alpha = 0.5
+            , green = 38
+            , red = 34
             }
     , translucentBlue =
         Element.fromRgb255
-            { red = 0
-            , green = 115
+            { alpha = 0.3
             , blue = 181
-            , alpha = 0.3
+            , green = 115
+            , red = 0
             }
-    , turquoise =
+    , translucentGrey =
         Element.fromRgb255
-            { red = 67
-            , green = 154
-            , blue = 134
-            , alpha = 1
-            }
-    , white =
-        Element.fromRgb255
-            { red = 255
-            , green = 255
-            , blue = 255
-            , alpha = 255
-            }
-    , yellow =
-        Element.fromRgb255
-            { red = 224
-            , green = 153
-            , blue = 0
-            , alpha = 1
-            }
-    , puce =
-        Element.fromRgb255
-            { red = 184
-            , green = 140
-            , blue = 158
-            , alpha = 1
-            }
-    , olive =
-        Element.fromRgb255
-            { red = 132
-            , green = 147
-            , blue = 36
-            , alpha = 1
+            { alpha = 0.5
+            , blue = 153
+            , green = 136
+            , red = 119
             }
     , transparent =
         Element.fromRgb255
-            { red = 255
-            , green = 255
+            { alpha = 0
             , blue = 255
-            , alpha = 0
+            , green = 255
+            , red = 255
+            }
+    , turquoise =
+        Element.fromRgb255
+            { alpha = 1
+            , blue = 134
+            , green = 154
+            , red = 67
+            }
+    , white =
+        Element.fromRgb255
+            { alpha = 255
+            , blue = 255
+            , green = 255
+            , red = 255
+            }
+    , yellow =
+        Element.fromRgb255
+            { alpha = 1
+            , blue = 0
+            , green = 153
+            , red = 224
             }
     }
 
 
 {-| Converts a RGBA of Integers to a Color value.
 -}
-rgbaFloatToInt : Element.Color -> { red : Int, green : Int, blue : Int, alpha : Float }
+rgbaFloatToInt : Element.Color -> { alpha : Float, blue : Int, green : Int, red : Int }
 rgbaFloatToInt colour =
     let
-        { red, green, blue, alpha } =
+        { alpha, blue, green, red } =
             Element.toRgb colour
     in
-    { red = round (red * 255)
-    , green = round (green * 255)
+    { alpha = alpha
     , blue = round (blue * 255)
-    , alpha = alpha
+    , green = round (green * 255)
+    , red = round (red * 255)
     }
 
 

@@ -13,19 +13,18 @@ module Page.UI.Attributes exposing
     , headingMD
     , headingSM
     , headingXL
-    , headingXS
     , headingXXL
     , labelFieldColumnAttributes
     , lineSpacing
     , linkColour
     , minimalDropShadow
-    , pageBackground
     , pageHeaderBackground
     , responsiveCheckboxColumns
     , resultsColumnWidth
     , sectionBorderStyles
     , sectionSpacing
     , sidebarWidth
+    , tabShadowClip
     , valueFieldColumnAttributes
     )
 
@@ -178,12 +177,18 @@ linkColour =
 minimalDropShadow : Attribute msg
 minimalDropShadow =
     Border.shadow
-        { blur = 8
-        , color =
-            colourScheme.darkGrey
-        , offset = ( 0, 0 )
-        , size = 2
+        { blur = 2
+        , color = colourScheme.darkBlueTranslucent
+        , offset = ( 1, 1 )
+        , size = 1
         }
+
+
+tabShadowClip : Attribute msg
+tabShadowClip =
+    -- applied clipping to the shadow so that we don't get a bottom
+    -- shadow on tabs.
+    htmlAttribute (HA.style "clip-path" "inset(-5px -5px 0px -5px)")
 
 
 pageBackground : Attribute msg

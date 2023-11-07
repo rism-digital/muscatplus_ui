@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews exposing (PreviewConfig, viewPreviewError, viewPreviewRouter)
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -13,7 +13,7 @@ import Page.Error.Views exposing (createErrorMessage)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
-import Page.UI.Components exposing (h2, h3, h4)
+import Page.UI.Components exposing (h4)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
@@ -39,22 +39,22 @@ type alias PreviewConfig msg =
 
 
 viewPreviewError :
-    { language : Language
-    , windowSize : ( Int, Int )
-    , closeMsg : msg
+    { closeMsg : msg
     , errorMessage : Http.Detailed.Error String
+    , language : Language
+    , windowSize : ( Int, Int )
     }
     -> Element msg
 viewPreviewError cfg =
     let
+        ( _, windowHeight ) =
+            cfg.windowSize
+
         ( mainMessage, details ) =
             createErrorMessage cfg.language cfg.errorMessage
 
         messageDetails =
             Maybe.withDefault "" details
-
-        ( _, windowHeight ) =
-            cfg.windowSize
 
         previewHeight =
             round (toFloat windowHeight * 0.6)
@@ -150,11 +150,11 @@ viewPreviewRouter cfg previewData =
             case previewData of
                 Just (SourceData body) ->
                     viewSourcePreview
-                        { language = cfg.language
-                        , itemsExpanded = cfg.sourceItemsExpanded
-                        , expandMsg = cfg.sourceItemExpandMsg
+                        { expandMsg = cfg.sourceItemExpandMsg
                         , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
                         , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
+                        , itemsExpanded = cfg.sourceItemsExpanded
+                        , language = cfg.language
                         }
                         body
 
@@ -166,9 +166,9 @@ viewPreviewRouter cfg previewData =
 
                 Just (IncipitData body) ->
                     viewIncipitPreview
-                        { language = cfg.language
-                        , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
+                        { incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
                         , infoToggleMsg = cfg.incipitInfoToggleMsg
+                        , language = cfg.language
                         }
                         body
 

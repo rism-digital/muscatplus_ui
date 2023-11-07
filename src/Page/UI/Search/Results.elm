@@ -1,7 +1,7 @@
 module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -62,9 +62,6 @@ setResultColours resultIdx selectedResult thisId =
     let
         isSelected =
             ME.unwrap False ((==) thisId) selectedResult
-
-        isOdd =
-            modBy 2 resultIdx == 1
     in
     if isSelected then
         { backgroundColour = colourScheme.lightBlue
@@ -73,19 +70,24 @@ setResultColours resultIdx selectedResult thisId =
         , iconColour = colourScheme.white
         }
 
-    else if isOdd then
-        { backgroundColour = colourScheme.lightestBlue
-        , fontLinkColour = colourScheme.lightBlue
-        , textColour = colourScheme.black
-        , iconColour = colourScheme.midGrey
-        }
-
     else
-        { backgroundColour = colourScheme.white
-        , fontLinkColour = colourScheme.lightBlue
-        , textColour = colourScheme.black
-        , iconColour = colourScheme.midGrey
-        }
+        let
+            isOdd =
+                modBy 2 resultIdx == 1
+        in
+        if isOdd then
+            { backgroundColour = colourScheme.lightestBlue
+            , fontLinkColour = colourScheme.lightBlue
+            , textColour = colourScheme.black
+            , iconColour = colourScheme.midGrey
+            }
+
+        else
+            { backgroundColour = colourScheme.white
+            , fontLinkColour = colourScheme.lightBlue
+            , textColour = colourScheme.black
+            , iconColour = colourScheme.midGrey
+            }
 
 
 resultTemplate :

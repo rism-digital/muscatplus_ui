@@ -1,9 +1,8 @@
-module Page.UI.Record.Previews.ExternalShared exposing (..)
+module Page.UI.Record.Previews.ExternalShared exposing (viewExternalRelationshipsSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, paddingXY, paragraph, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRelationshipBody, ExternalRelationshipsSection)
-import Page.RecordTypes.Relationship exposing (RelatedTo(..))
 import Page.UI.Attributes exposing (bodyRegular, labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -50,6 +49,13 @@ viewExternalRelationshipBody language body =
 
         relatedToView =
             viewMaybe (viewRelatedToBody language) body.relatedTo
+
+        note =
+            viewMaybe
+                (\noteText ->
+                    el [ paddingXY 5 0 ] (text ("(" ++ extractLabelFromLanguageMap language noteText ++ ")"))
+                )
+                body.note
     in
     wrappedRow
         [ width fill
@@ -61,14 +67,13 @@ viewExternalRelationshipBody language body =
             [ roleLabel ]
         , column
             valueFieldColumnAttributes
-            [ textColumn
-                [ bodyRegular ]
-                [ row
-                    [ alignLeft
-                    ]
-                    [ relatedToView
-                    , qualifierLabel
-                    ]
+            [ paragraph
+                [ alignLeft
+                , bodyRegular
+                ]
+                [ relatedToView
+                , qualifierLabel
+                , note
                 ]
             ]
         ]

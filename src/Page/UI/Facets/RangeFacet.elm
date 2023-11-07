@@ -1,7 +1,7 @@
 module Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, onRight, padding, paddingEach, paragraph, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, onRight, padding, paragraph, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events

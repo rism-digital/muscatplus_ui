@@ -87,7 +87,7 @@ viewFullInstitutionPage session model body =
             [ row
                 [ width fill
                 , height (px (tabBarHeight + recordTitleHeight))
-                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.darkBlue
                 ]
                 [ column
@@ -115,10 +115,10 @@ viewRecordTopBar :
     -> Element RecordMsg
 viewRecordTopBar language model body =
     viewRecordSourceSearchTabBar
-        { language = language
+        { body = body.sources
+        , language = language
         , model = model
         , recordId = body.id
-        , body = body.sources
         , tabLabel = localTranslations.sources
         }
 
@@ -126,15 +126,15 @@ viewRecordTopBar language model body =
 mapSection : Language -> CoordinatesSection -> Element msg
 mapSection language coords =
     let
+        coordsValue =
+            List.map String.fromFloat coords.coordinates
+                |> String.join ", "
+
         coordsQ =
             List.map2 (\dim val -> QB.string dim (String.fromFloat val)) [ "lon", "lat" ] coords.coordinates
 
         geoJsonQ =
             QB.string "geo" coords.id
-
-        coordsValue =
-            List.map String.fromFloat coords.coordinates
-                |> String.join ", "
 
         mapsUrl =
             (geoJsonQ :: coordsQ)

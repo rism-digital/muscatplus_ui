@@ -1,8 +1,8 @@
 module Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources, viewExternalResourcesSection)
 
 import Config as C
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, none, paragraph, px, row, spacing, text, width, wrappedRow)
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, px, row, spacing, text, width, wrappedRow)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
@@ -19,49 +19,39 @@ viewExternalRecord : Language -> ExternalRecordBody -> Element msg
 viewExternalRecord language body =
     case body.record of
         ExternalSource sourceRecord ->
-            column
-                [ width fill
-                , spacing 5
-                ]
-                [ row
-                    [ width fill
-                    , alignLeft
-                    , spacing 5
-                    ]
-                    [ newTabLink
-                        [ linkColour
-                        , alignLeft
-                        ]
-                        { url = sourceRecord.id
-                        , label = text ("View " ++ extractLabelFromLanguageMap language sourceRecord.label ++ " on DIAMM")
-                        }
-                    , externalLinkTemplate sourceRecord.id
-                    ]
-                ]
+            viewExternalRecordOnDIAMMLink language sourceRecord
 
         ExternalPerson personRecord ->
-            none
+            viewExternalRecordOnDIAMMLink language personRecord
 
         ExternalInstitution institutionRecord ->
-            column
-                [ width fill
-                , spacing 5
+            viewExternalRecordOnDIAMMLink language institutionRecord
+
+
+viewExternalRecordOnDIAMMLink :
+    Language
+    -> { a | id : String, label : LanguageMap }
+    -> Element msg
+viewExternalRecordOnDIAMMLink language body =
+    column
+        [ width fill
+        , spacing 5
+        ]
+        [ row
+            [ width fill
+            , alignLeft
+            , spacing 5
+            ]
+            [ newTabLink
+                [ linkColour
+                , alignLeft
                 ]
-                [ row
-                    [ width fill
-                    , alignLeft
-                    , spacing 5
-                    ]
-                    [ newTabLink
-                        [ linkColour
-                        , alignLeft
-                        ]
-                        { url = institutionRecord.id
-                        , label = text ("View " ++ extractLabelFromLanguageMap language institutionRecord.label ++ " on DIAMM")
-                        }
-                    , externalLinkTemplate institutionRecord.id
-                    ]
-                ]
+                { url = body.id
+                , label = text ("View " ++ extractLabelFromLanguageMap language body.label ++ " on DIAMM")
+                }
+            , externalLinkTemplate body.id
+            ]
+        ]
 
 
 viewExternalResource : Language -> ExternalResourceBody -> Element msg
@@ -107,19 +97,15 @@ viewExternalResource language body =
             row
                 [ width fill
                 , alignLeft
+                , spacing 5
                 ]
-                [ paragraph
-                    [ width fill
-                    , alignLeft
+                [ resourceLink
+                    [ linkColour
                     ]
-                    [ resourceLink
-                        [ linkColour
-                        ]
-                        { url = body.url
-                        , label = renderParagraph language body.label
-                        }
-                    , externalLinkTemplate body.url
-                    ]
+                    { url = body.url
+                    , label = renderParagraph language body.label
+                    }
+                , externalLinkTemplate body.url
                 ]
 
 

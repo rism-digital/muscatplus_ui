@@ -1,4 +1,4 @@
-module Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalRelationshipBody, ExternalRelationshipsSection, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalRecordBodyDecoder)
+module Page.RecordTypes.ExternalRecord exposing (ExternalBiographicalDetailsSectionBody, ExternalInstitutionRecord, ExternalOrganizationDetailsSection, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalRelationshipBody, ExternalRelationshipsSection, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalRecordBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
@@ -92,6 +92,7 @@ type alias ExternalRelationshipBody =
     { role : Maybe RoleBody
     , qualifier : Maybe QualifierBody
     , relatedTo : Maybe RelatedToBody
+    , note : Maybe LanguageMap
     }
 
 
@@ -187,6 +188,7 @@ externalRelationshipBodyDecoder =
         |> optional "role" (Decode.maybe roleBodyDecoder) Nothing
         |> optional "qualifier" (Decode.maybe qualifierBodyDecoder) Nothing
         |> optional "relatedTo" (Decode.maybe relatedToBodyDecoder) Nothing
+        |> optional "note" (Decode.maybe languageMapLabelDecoder) Nothing
 
 
 externalOrganizationDetailsSectionDecoder : Decoder ExternalOrganizationDetailsSection
