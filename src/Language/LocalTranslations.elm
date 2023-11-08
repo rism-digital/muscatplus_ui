@@ -198,7 +198,7 @@ localTranslations =
         , LanguageValues Italian [ "Istituzioni" ]
         , LanguageValues Polish [ "Instytucje" ]
         , LanguageValues English [ "Institutions" ]
-        , LanguageValues French [ "Institution" ]
+        , LanguageValues French [ "Institutions" ]
         ]
     , keywordQuery =
         [ LanguageValues English [ "Keyword query" ]
