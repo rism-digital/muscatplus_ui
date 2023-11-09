@@ -87,46 +87,46 @@ tooltips =
 
 englishAnonymousCreatorTooltip : List String
 englishAnonymousCreatorTooltip =
-    [ """Limit your results to only source records that have no known named creator.""" ]
+    [ """Only return results that have no known named creator.""" ]
 
 
 englishHideDiammRecordsToggleTooltip : List String
 englishHideDiammRecordsToggleTooltip =
-    [ """Exclude search results that come from the DIAMM project.""" ]
+    [ """Exclude search results that come from the Digital Image Archive of Medieval Music (DIAMM) project.""" ]
 
 
 englishCompositeVolumeToggleTooltip : List String
 englishCompositeVolumeToggleTooltip =
-    [ """Limit your results to sources that are not composite volumes.""" ]
+    [ """Exclude composite volumes from your results. A composite volume consists of items that were created separately but later bound together.""" ]
 
 
 englishSourceCollectionsToggleTooltip : List String
 englishSourceCollectionsToggleTooltip =
-    [ """Limit your results to sources that are not collection records. This will return
+    [ """Exclude collection records from your results. This will return
          sources that represent items in a collection, or single-item source records.""" ]
 
 
 englishSourceContentsToggleTooltip : List String
 englishSourceContentsToggleTooltip =
-    [ """Limit your results to only source records that represent collection records or
+    [ """Only return source records that represent collection records or
          single-item sources. These are records that represent a physical volume in a library.""" ]
 
 
 englishHasDigitizationToggleTooltip : List String
 englishHasDigitizationToggleTooltip =
-    [ """Limit your results to sources that have a digital image representation available.""" ]
+    [ """Only return results that have a digital image representation available.""" ]
 
 
 englishHasIiifToggleTooltip : List String
 englishHasIiifToggleTooltip =
-    [ """Limit your results to sources that have a IIIF Manifest attached.""" ]
+    [ """Only return results that have a IIIF Manifest attached.""" ]
 
 
 englishHasIncipitsToggleTooltip : List String
 englishHasIncipitsToggleTooltip =
     [ """Limit your results to sources with incipit entries. Note that
          not all incipit entries have musical notation; some have minimal data or
-         are text incipit only.""" ]
+         are only text incipits.""" ]
 
 
 englishInstitutionSiglaTooltip : List String
@@ -165,7 +165,7 @@ englishOtherPeopleRelationshipsTooltip =
 
 englishSubjectsTooltip : List String
 englishSubjectsTooltip =
-    [ """Subjects used to classify or group a source.""" ]
+    [ """Subjects used to classify or group a source, e.g., by genre, form, or use.""" ]
 
 
 englishMaterialTypeTooltip : List String
@@ -200,7 +200,7 @@ englishScoringTooltip =
     [ """Terms drawn from the 'scoring' field for sources. The autocomplete will
          show the closest match to a known term, but wildcards are also supported.
          "vl*", for example, will show all sources with violin, regardless of the
-          number ("vl (2)", "vl (3)", etc.).""" ]
+          number (e.g., "vl (2)", "vl (3)").""" ]
 
 
 englishGenderTooltip : List String

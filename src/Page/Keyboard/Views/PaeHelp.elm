@@ -107,7 +107,7 @@ englishPaeHelpText =
          controls below.""" ]
     , paragraph
         [ width fill, spacing lineSpacing ]
-        [ text """The Query mode option how your query in interpreted. If "Intervals" is chosen (the default),
+        [ text """The Query mode option controls how your query in interpreted. If "Intervals" is chosen (the default),
          then the query will be interpreted as a sequence of chromatic intervals, and your query will match in any
          transposition. If you wish to match the pitches exactly, choose the "Exact pitches" option. This will match 
          the query in the exact transposition given. """
