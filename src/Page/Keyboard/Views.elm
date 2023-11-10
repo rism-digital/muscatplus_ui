@@ -109,7 +109,6 @@ view searchPreferences notationFacet language model =
                         [ width fill
                         , spacing lineSpacing
                         , alignLeft
-                        , paddingXY 0 10
                         ]
                         [ column
                             [ width fill

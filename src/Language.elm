@@ -13,6 +13,7 @@ module Language exposing
     , limitLength
     , parseLocaleToLanguage
     , toLanguageMap
+    , toLanguageMapWithLanguage
     )
 
 import DateFormat
@@ -63,7 +64,12 @@ type LanguageValues
 -}
 toLanguageMap : String -> LanguageMap
 toLanguageMap s =
-    [ LanguageValues None [ s ] ]
+    toLanguageMapWithLanguage None s
+
+
+toLanguageMapWithLanguage : Language -> String -> LanguageMap
+toLanguageMapWithLanguage language text =
+    [ LanguageValues language [ text ] ]
 
 
 limitLength : Int -> LanguageMap -> LanguageMap

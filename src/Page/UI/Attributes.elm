@@ -1,6 +1,7 @@
 module Page.UI.Attributes exposing
     ( bodyFont
     , bodyFontColour
+    , bodyMonospaceFont
     , bodyRegular
     , bodySM
     , bodySerifFont
@@ -28,7 +29,25 @@ module Page.UI.Attributes exposing
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, fillPortion, htmlAttribute, maximum, minimum, paddingEach, paddingXY, px, spacing, width)
+import Element
+    exposing
+        ( Attr
+        , Attribute
+        , Device
+        , DeviceClass(..)
+        , Orientation(..)
+        , alignTop
+        , fill
+        , fillPortion
+        , htmlAttribute
+        , maximum
+        , minimum
+        , paddingEach
+        , paddingXY
+        , px
+        , spacing
+        , width
+        )
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -55,6 +74,14 @@ bodySerifFont =
     Font.family
         [ Font.typeface "Noto Serif"
         , Font.sansSerif
+        ]
+
+
+bodyMonospaceFont : Attribute msg
+bodyMonospaceFont =
+    Font.family
+        [ Font.typeface "Noto Sans Mono"
+        , Font.monospace
         ]
 
 

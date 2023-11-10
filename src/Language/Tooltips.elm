@@ -132,7 +132,8 @@ englishHasIncipitsToggleTooltip =
 englishInstitutionSiglaTooltip : List String
 englishInstitutionSiglaTooltip =
     [ """Search for sources using a RISM siglum. Wildcard queries are
-         supported; for example "GB-O*". """ ]
+         supported; for example "CH-SO*" will show all the records for institutions
+         in Solothurn, Switzerland. """ ]
 
 
 englishInstitutionNumHoldingsToggle : List String
@@ -177,7 +178,7 @@ englishDateRangeTooltip : List String
 englishDateRangeTooltip =
     [ """A date range, in years. The date ranges are automatically extracted from 
          the date statement for a source or person, and represent the 
-         likely lower and upper bounds of particular statement. If the
+         likely lower and upper bounds. If the
          statement, for example, is "second half of the 15th century", then
          the range would be 1450-1500. In some cases a date range cannot be
          inferred from a statement, and so will not be available for date
