@@ -50,10 +50,16 @@
             of any rendered SVG incipit.
          */
         @supports (-webkit-backdrop-filter: blur(1px)) {
-            .search-results-rendered-incipit svg {
+            .svg-rendered-incipit svg {
                 height: 100%;
                 width: 100%;
             }
+        }
+
+        .result-selected .svg-rendered-incipit svg g {
+            fill: white;
+            stroke: white;
+            color: white;
         }
 
     </style>

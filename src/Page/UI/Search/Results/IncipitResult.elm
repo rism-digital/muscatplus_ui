@@ -1,13 +1,15 @@
 module Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, column, el, fill, maximum, row, spacing, width)
+import Element exposing (Color, Element, column, el, fill, htmlAttribute, maximum, row, spacing, width)
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language)
+import Maybe.Extra as ME
 import Page.RecordTypes.Incipit exposing (RenderedIncipit)
 import Page.RecordTypes.Search exposing (IncipitResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (bodySM)
+import Page.UI.Attributes exposing (bodySM, emptyAttribute)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (musicListSvg, peopleSvg, sourcesSvg, textIconSvg)
 import Page.UI.Record.Incipits exposing (viewRenderedIncipits)
@@ -20,9 +22,12 @@ viewIncipitSearchResult :
     -> Element msg
 viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
     let
+        isSelected =
+            ME.unwrap False ((==) body.id) selectedResult
+
         resultBody =
             [ viewMaybe (viewIncipitSummary language resultColours.iconColour) body.summary
-            , viewMaybe viewSearchResultIncipits body.renderedIncipits
+            , viewMaybe (viewSearchResultIncipits isSelected) body.renderedIncipits
             ]
 
         resultColours =
@@ -38,10 +43,16 @@ viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg, resultId
         }
 
 
-viewSearchResultIncipits : List RenderedIncipit -> Element msg
-viewSearchResultIncipits incipits =
+viewSearchResultIncipits : Bool -> List RenderedIncipit -> Element msg
+viewSearchResultIncipits isSelected incipits =
     el
-        [ width (fill |> maximum 800) ]
+        [ width (fill |> maximum 600)
+        , if isSelected then
+            htmlAttribute (HA.class "result-selected")
+
+          else
+            emptyAttribute
+        ]
         (viewRenderedIncipits incipits)
 
 

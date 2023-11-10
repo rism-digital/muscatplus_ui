@@ -17,12 +17,14 @@ tooltips :
     , hasIiif : LanguageMap
     , hasIncipits : LanguageMap
     , incipit : LanguageMap
+    , institutionHasSigla : LanguageMap
     , institutionNumHoldings : LanguageMap
+    , institutionRoles : LanguageMap
     , institutionSigla : LanguageMap
     , materialType : LanguageMap
     , otherPeople : LanguageMap
+    , personRoles : LanguageMap
     , profession : LanguageMap
-    , roles : LanguageMap
     , scoring : LanguageMap
     , sourceCollections : LanguageMap
     , sourceContents : LanguageMap
@@ -60,18 +62,22 @@ tooltips =
         [ LanguageValues English englishIncipitSearchTooltip
         , LanguageValues French frenchIncipitSearchTooltip
         ]
+    , institutionHasSigla =
+        [ LanguageValues English englishInstitutionHasSiglaTooltip ]
     , institutionNumHoldings =
         [ LanguageValues English englishInstitutionNumHoldingsToggle ]
+    , institutionRoles =
+        [ LanguageValues English englishInstitutionRolesTooltip ]
     , institutionSigla =
         [ LanguageValues English englishInstitutionSiglaTooltip ]
     , materialType =
         [ LanguageValues English englishMaterialTypeTooltip ]
     , otherPeople =
         [ LanguageValues English englishOtherPeopleRelationshipsTooltip ]
+    , personRoles =
+        [ LanguageValues English englishPersonRolesTooltip ]
     , profession =
         [ LanguageValues English englishProfessionTooltip ]
-    , roles =
-        [ LanguageValues English englishRolesTooltip ]
     , scoring =
         [ LanguageValues English englishScoringTooltip ]
     , sourceCollections =
@@ -131,9 +137,14 @@ englishHasIncipitsToggleTooltip =
 
 englishInstitutionSiglaTooltip : List String
 englishInstitutionSiglaTooltip =
-    [ """Search for sources using a RISM siglum. Wildcard queries are
-         supported; for example "CH-SO*" will show all the records for institutions
+    [ """Return results matching a RISM siglum. Wildcard queries are
+         supported; for example, "CH-SO*" will show all the records for institutions
          in Solothurn, Switzerland. """ ]
+
+
+englishInstitutionHasSiglaTooltip : List String
+englishInstitutionHasSiglaTooltip =
+    [ """Return only institutions that have been assigned a RISM siglum.""" ]
 
 
 englishInstitutionNumHoldingsToggle : List String
@@ -214,9 +225,16 @@ englishAssociatedPlaceTooltip =
     [ """A place that has some association with a person or institution.""" ]
 
 
-englishRolesTooltip : List String
-englishRolesTooltip =
+englishPersonRolesTooltip : List String
+englishPersonRolesTooltip =
     [ """The roles that a person has in relation to a source.
+         These are based on a subset of the MARC21 relator codes.
+         The values shown are translated from the underlying relator code value.""" ]
+
+
+englishInstitutionRolesTooltip : List String
+englishInstitutionRolesTooltip =
+    [ """The roles that a institution has in relation to a source.
          These are based on a subset of the MARC21 relator codes.
          The values shown are translated from the underlying relator code value.""" ]
 

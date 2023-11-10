@@ -42,7 +42,7 @@ viewFacetsForPeopleMode cfg =
             viewFacet (createFacetConfig cfg "associated-place" tooltips.associatedPlace) cfg.facetMsgConfig
 
         role =
-            viewFacet (createFacetConfig cfg "roles" tooltips.roles) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "roles" tooltips.personRoles) cfg.facetMsgConfig
 
         profession =
             viewFacet (createFacetConfig cfg "profession" tooltips.profession) cfg.facetMsgConfig

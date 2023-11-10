@@ -351,7 +351,6 @@ viewSearchControls cfg =
                 IncipitsMode ->
                     viewFacetsForIncipitsMode facetConfig
 
-                -- [ viewFacetsForIncipitsMode facetConfig ]
                 LiturgicalFestivalsMode ->
                     [ none ]
     in

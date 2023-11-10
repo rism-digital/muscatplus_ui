@@ -1,6 +1,6 @@
 module Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 
-import Element exposing (Element)
+import Element exposing (Element, alignTop, column, paddingEach, row, spacingXY)
 import Language.LocalTranslations exposing (facetPanelTitles)
 import Language.Tooltips exposing (tooltips)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
@@ -9,11 +9,16 @@ import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelCon
 
 
 institutionFacetPanels :
-    { locationPanel : PanelConfig
+    { institutionResultsPanel : PanelConfig
+    , locationPanel : PanelConfig
     , relationshipPanel : PanelConfig
     }
 institutionFacetPanels =
-    { locationPanel =
+    { institutionResultsPanel =
+        { alias = "institution-results-panel"
+        , label = facetPanelTitles.results
+        }
+    , locationPanel =
         { alias = "institution-location-panel"
         , label = facetPanelTitles.location
         }
@@ -34,15 +39,32 @@ viewFacetsForInstitutionsMode cfg =
             viewFacet (createFacetConfig cfg "sigla" tooltips.institutionSigla) cfg.facetMsgConfig
 
         hasSigla =
-            viewFacet (createFacetConfig cfg "has-siglum" tooltips.institutionSigla) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "has-siglum" tooltips.institutionHasSigla) cfg.facetMsgConfig
 
         roles =
-            viewFacet (createFacetConfig cfg "roles" tooltips.roles) cfg.facetMsgConfig
+            viewFacet (createFacetConfig cfg "roles" tooltips.institutionRoles) cfg.facetMsgConfig
 
         numberSources =
             viewFacet (createFacetConfig cfg "number-sources" tooltips.institutionNumHoldings) cfg.facetMsgConfig
+
+        diammRecordsToggle =
+            viewFacet (createFacetConfig cfg "hide-diamm-records" tooltips.diammProject) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
+        (.alias institutionFacetPanels.institutionResultsPanel)
+        (.label institutionFacetPanels.institutionResultsPanel)
+        cfg
+        [ row
+            [ paddingEach { bottom = 10, left = 0, right = 0, top = 0 }
+            , spacingXY 20 0
+            ]
+            [ column
+                [ alignTop ]
+                [ row [] [ diammRecordsToggle ]
+                ]
+            ]
+        ]
+    , viewFacetsControlPanel
         (.alias institutionFacetPanels.locationPanel)
         (.label institutionFacetPanels.locationPanel)
         cfg
