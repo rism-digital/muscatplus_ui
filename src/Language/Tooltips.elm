@@ -1,6 +1,6 @@
 module Language.Tooltips exposing (tooltips)
 
-import Language exposing (Language(..), LanguageMap, LanguageValues(..))
+import Language exposing (Language(..), LanguageMap, LanguageValue(..))
 
 
 tooltips :
@@ -33,61 +33,61 @@ tooltips :
     }
 tooltips =
     { anonymousCreator =
-        [ LanguageValues English englishAnonymousCreatorTooltip ]
+        [ LanguageValue English englishAnonymousCreatorTooltip ]
     , associatedPlace =
-        [ LanguageValues English englishAssociatedPlaceTooltip ]
+        [ LanguageValue English englishAssociatedPlaceTooltip ]
     , city =
-        [ LanguageValues English englishCityTooltip ]
+        [ LanguageValue English englishCityTooltip ]
     , composerAuthor =
-        [ LanguageValues English englishComposerRelationshipsTooltip
-        , LanguageValues French frenchComposerRelationshipsTooltip
+        [ LanguageValue English englishComposerRelationshipsTooltip
+        , LanguageValue French frenchComposerRelationshipsTooltip
         ]
     , compositeVolume =
-        [ LanguageValues English englishCompositeVolumeToggleTooltip ]
+        [ LanguageValue English englishCompositeVolumeToggleTooltip ]
     , dateRange =
-        [ LanguageValues English englishDateRangeTooltip ]
+        [ LanguageValue English englishDateRangeTooltip ]
     , diammProject =
-        [ LanguageValues English englishHideDiammRecordsToggleTooltip ]
+        [ LanguageValue English englishHideDiammRecordsToggleTooltip ]
     , formatExtent =
-        [ LanguageValues English englishFormatExtentTooltip ]
+        [ LanguageValue English englishFormatExtentTooltip ]
     , gender =
-        [ LanguageValues English englishGenderTooltip ]
+        [ LanguageValue English englishGenderTooltip ]
     , hasDigitization =
-        [ LanguageValues English englishHasDigitizationToggleTooltip ]
+        [ LanguageValue English englishHasDigitizationToggleTooltip ]
     , hasIiif =
-        [ LanguageValues English englishHasIiifToggleTooltip ]
+        [ LanguageValue English englishHasIiifToggleTooltip ]
     , hasIncipits =
-        [ LanguageValues English englishHasIncipitsToggleTooltip ]
+        [ LanguageValue English englishHasIncipitsToggleTooltip ]
     , incipit =
-        [ LanguageValues English englishIncipitSearchTooltip
-        , LanguageValues French frenchIncipitSearchTooltip
+        [ LanguageValue English englishIncipitSearchTooltip
+        , LanguageValue French frenchIncipitSearchTooltip
         ]
     , institutionHasSigla =
-        [ LanguageValues English englishInstitutionHasSiglaTooltip ]
+        [ LanguageValue English englishInstitutionHasSiglaTooltip ]
     , institutionNumHoldings =
-        [ LanguageValues English englishInstitutionNumHoldingsToggle ]
+        [ LanguageValue English englishInstitutionNumHoldingsToggle ]
     , institutionRoles =
-        [ LanguageValues English englishInstitutionRolesTooltip ]
+        [ LanguageValue English englishInstitutionRolesTooltip ]
     , institutionSigla =
-        [ LanguageValues English englishInstitutionSiglaTooltip ]
+        [ LanguageValue English englishInstitutionSiglaTooltip ]
     , materialType =
-        [ LanguageValues English englishMaterialTypeTooltip ]
+        [ LanguageValue English englishMaterialTypeTooltip ]
     , otherPeople =
-        [ LanguageValues English englishOtherPeopleRelationshipsTooltip ]
+        [ LanguageValue English englishOtherPeopleRelationshipsTooltip ]
     , personRoles =
-        [ LanguageValues English englishPersonRolesTooltip ]
+        [ LanguageValue English englishPersonRolesTooltip ]
     , profession =
-        [ LanguageValues English englishProfessionTooltip ]
+        [ LanguageValue English englishProfessionTooltip ]
     , scoring =
-        [ LanguageValues English englishScoringTooltip ]
+        [ LanguageValue English englishScoringTooltip ]
     , sourceCollections =
-        [ LanguageValues English englishSourceCollectionsToggleTooltip ]
+        [ LanguageValue English englishSourceCollectionsToggleTooltip ]
     , sourceContents =
-        [ LanguageValues English englishSourceContentsToggleTooltip ]
+        [ LanguageValue English englishSourceContentsToggleTooltip ]
     , subjects =
-        [ LanguageValues English englishSubjectsTooltip ]
+        [ LanguageValue English englishSubjectsTooltip ]
     , textLanguage =
-        [ LanguageValues English englishTextLanguageTooltip ]
+        [ LanguageValue English englishTextLanguageTooltip ]
     }
 
 
@@ -227,22 +227,17 @@ englishAssociatedPlaceTooltip =
 
 englishPersonRolesTooltip : List String
 englishPersonRolesTooltip =
-    [ """The roles that a person has in relation to a source.
-         These are based on a subset of the MARC21 relator codes.
-         The values shown are translated from the underlying relator code value.""" ]
+    [ """The roles that a person has in relation to a source.""" ]
 
 
 englishInstitutionRolesTooltip : List String
 englishInstitutionRolesTooltip =
-    [ """The roles that a institution has in relation to a source.
-         These are based on a subset of the MARC21 relator codes.
-         The values shown are translated from the underlying relator code value.""" ]
+    [ """The roles that a institution has in relation to a source.""" ]
 
 
 englishProfessionTooltip : List String
 englishProfessionTooltip =
-    [ """A known profession, job, or organizational membership.
-         These values come from the authority record for a person.""" ]
+    [ """A known profession, job, or organizational membership.""" ]
 
 
 englishCityTooltip : List String

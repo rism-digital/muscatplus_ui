@@ -1,10 +1,10 @@
-module Page.About.Views exposing (view)
+module Page.About.Views.About exposing (view)
 
 import Config as C
 import Element exposing (Element, clipY, column, el, fill, height, maximum, none, padding, paragraph, row, scrollbarY, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Font as Font
-import Language exposing (Language(..), LanguageMap, LanguageValues(..), toLanguageMapWithLanguage)
+import Language exposing (Language(..), LanguageMap, LanguageValue(..), toLanguageMapWithLanguage)
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.UI.Attributes exposing (headingXL, lineSpacing, sectionSpacing)
@@ -88,7 +88,7 @@ The URL of the current page is automatically added to the feedback form submissi
 
 aboutText : LanguageMap
 aboutText =
-    [ LanguageValues English [ aboutTextEnglish ] ]
+    [ LanguageValue English [ aboutTextEnglish ] ]
 
 
 view : Session -> AboutPageModel -> Element AboutMsg

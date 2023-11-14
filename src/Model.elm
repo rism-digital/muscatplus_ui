@@ -16,6 +16,7 @@ type Model
     | PersonPage Session Record.Model
     | InstitutionPage Session Record.Model
     | AboutPage Session About.Model
+    | HelpPage Session
     | PlacePage Session Record.Model
 
 
@@ -41,6 +42,9 @@ toSession model =
             session
 
         AboutPage session _ ->
+            session
+
+        HelpPage session ->
             session
 
         PlacePage session _ ->
@@ -70,6 +74,9 @@ updateSession newSession model =
 
         AboutPage _ aboutModel ->
             AboutPage newSession aboutModel
+
+        HelpPage _ ->
+            HelpPage newSession
 
         PlacePage _ pageModel ->
             PlacePage newSession pageModel

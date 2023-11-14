@@ -401,23 +401,11 @@ changePage url model =
             , Cmd.map Msg.UserInteractedWithAboutPage (AboutPage.initialCmd url)
             )
 
-        {-
-           Route.PlacePageRoute _ ->
-               let
-                   recordCfg =
-                       { incomingUrl = url
-                       , route = route
-                       , queryArgs = Nothing
-                       , nationalCollection = newSession.restrictedToNationalCollection
-                       }
+        Route.HelpPageRoute ->
+            ( HelpPage newSession
+            , Cmd.none
+            )
 
-                   placeModel =
-                       RecordPage.init recordCfg
-               in
-               ( PlacePage newSession placeModel
-               , Cmd.map Msg.UserInteractedWithRecordPage (RecordPage.recordPageRequest url)
-               )
-        -}
         Route.NotFoundPageRoute ->
             ( NotFoundPage newSession NotFoundPage.init
             , Cmd.none

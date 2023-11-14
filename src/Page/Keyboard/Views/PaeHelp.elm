@@ -1,15 +1,15 @@
 module Page.Keyboard.Views.PaeHelp exposing (viewPaeHelp)
 
-import Element exposing (Element, centerY, column, el, fill, height, link, padding, paddingXY, paragraph, pointer, px, row, spacing, text, textColumn, width)
+import Element exposing (Element, centerY, column, el, fill, height, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Language exposing (Language(..), LanguageMap, LanguageValues(..), extractLabelFromLanguageMap)
+import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
-import Page.UI.Attributes exposing (bodySM, headingLG, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (headingLG)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg)
 import Page.UI.Markdown as Markdown
@@ -95,7 +95,7 @@ viewHelpText language =
 
 paeHelpText : LanguageMap
 paeHelpText =
-    [ LanguageValues English [ paeHelpTextEnglish ] ]
+    [ LanguageValue English [ paeHelpTextEnglish ] ]
 
 
 paeHelpTextEnglish : String

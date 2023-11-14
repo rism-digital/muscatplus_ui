@@ -13,7 +13,7 @@ import Markdown.Block as Block exposing (ListItem(..), Task(..))
 import Markdown.Html
 import Markdown.Parser
 import Markdown.Renderer
-import Page.UI.Attributes exposing (bodyMonospaceFont, bodyRegular)
+import Page.UI.Attributes exposing (bodyMonospaceFont)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -224,11 +224,6 @@ codeBlock details =
         , Element.htmlAttribute (HA.style "overflow-wrap" "break-word")
         , Element.htmlAttribute (HA.style "word-break" "break-word")
         , Element.padding 20
-        , Font.family
-            [ Font.external
-                { name = "Source Code Pro"
-                , url = "https://fonts.googleapis.com/css?family=Source+Code+Pro"
-                }
-            ]
+        , bodyMonospaceFont
         ]
         [ Element.text details.body ]

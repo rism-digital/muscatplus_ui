@@ -2,7 +2,7 @@ module Language exposing
     ( Language(..)
     , LanguageMap
     , LanguageMapReplacementVariable(..)
-    , LanguageValues(..)
+    , LanguageValue(..)
     , dateFormatter
     , extractLabelFromLanguageMap
     , extractLabelFromLanguageMapWithVariables
@@ -39,7 +39,7 @@ type Language
 
 
 type alias LanguageMap =
-    List LanguageValues
+    List LanguageValue
 
 
 {-|
@@ -52,8 +52,8 @@ type LanguageMapReplacementVariable
     = LanguageMapReplacementVariable String String
 
 
-type LanguageValues
-    = LanguageValues Language (List String)
+type LanguageValue
+    = LanguageValue Language (List String)
 
 
 {-|
@@ -69,15 +69,15 @@ toLanguageMap s =
 
 toLanguageMapWithLanguage : Language -> String -> LanguageMap
 toLanguageMapWithLanguage language text =
-    [ LanguageValues language [ text ] ]
+    [ LanguageValue language [ text ] ]
 
 
 limitLength : Int -> LanguageMap -> LanguageMap
 limitLength len langMap =
     List.map
-        (\(LanguageValues langCode sVals) ->
+        (\(LanguageValue langCode sVals) ->
             List.map (\sv -> SE.softEllipsis len sv) sVals
-                |> LanguageValues langCode
+                |> LanguageValue langCode
         )
         langMap
 
@@ -139,12 +139,12 @@ extractTextFromLanguageMap lang langMap =
        it's not available in that language.
     -}
     ME.orListLazy
-        [ \() -> LE.find (\(LanguageValues l _) -> l == lang) langMap
-        , \() -> LE.find (\(LanguageValues l _) -> l == None) langMap
-        , \() -> LE.find (\(LanguageValues l _) -> l == English) langMap
+        [ \() -> LE.find (\(LanguageValue l _) -> l == lang) langMap
+        , \() -> LE.find (\(LanguageValue l _) -> l == None) langMap
+        , \() -> LE.find (\(LanguageValue l _) -> l == English) langMap
         ]
         |> Maybe.map
-            (\(LanguageValues _ v) ->
+            (\(LanguageValue _ v) ->
                 v
             )
         |> Maybe.withDefault [ "[No language value found]" ]
@@ -306,10 +306,10 @@ languageDecoder locale =
     Decode.succeed (parseLocaleToLanguage locale)
 
 
-languageValuesDecoder : ( String, List String ) -> Decoder LanguageValues
+languageValuesDecoder : ( String, List String ) -> Decoder LanguageValue
 languageValuesDecoder ( locale, translations ) =
     languageDecoder locale
-        |> Decode.map (\lang -> LanguageValues lang translations)
+        |> Decode.map (\lang -> LanguageValue lang translations)
 
 
 

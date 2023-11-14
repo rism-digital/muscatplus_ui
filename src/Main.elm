@@ -319,23 +319,6 @@ init flags initialUrl key =
                 ]
             )
 
-        {-
-           PlacePageRoute _ ->
-               let
-                   recordCfg =
-                       { incomingUrl = initialUrl
-                       , route = route
-                       , queryArgs = Nothing
-                       , nationalCollection = session.restrictedToNationalCollection
-                       }
-               in
-               ( PlacePage session <| Record.init recordCfg
-               , Cmd.batch
-                   [ Cmd.map Msg.UserInteractedWithRecordPage <| Record.recordPageRequest initialUrl
-                   , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
-                   ]
-               )
-        -}
         AboutPageRoute ->
             ( AboutPage session (About.init session)
             , Cmd.batch
@@ -343,6 +326,11 @@ init flags initialUrl key =
                     |> Cmd.map Msg.UserInteractedWithAboutPage
                 , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
                 ]
+            )
+
+        HelpPageRoute ->
+            ( HelpPage session
+            , Cmd.none
             )
 
         _ ->

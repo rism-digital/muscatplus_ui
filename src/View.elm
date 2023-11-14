@@ -11,7 +11,8 @@ import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
-import Page.About.Views
+import Page.About.Views.About
+import Page.About.Views.Help
 import Page.Error.Views
 import Page.Front.Views
 import Page.Record.Views.InstitutionPage
@@ -105,7 +106,10 @@ view model =
                     Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.InstitutionPage.view session pageModel)
 
                 AboutPage session pageModel ->
-                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.view session pageModel)
+                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.About.view session pageModel)
+
+                HelpPage session ->
+                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.Help.view session)
 
                 PlacePage session pageModel ->
                     Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PlacePage.view session pageModel)
