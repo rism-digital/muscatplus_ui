@@ -4,18 +4,18 @@ import Json.Decode as Decode exposing (Decoder)
 
 
 type ArrowDirection
-    = ArrowUp
-    | ArrowDown
+    = ArrowUp Bool
+    | ArrowDown Bool
     | ArrowLeft
     | ArrowRight
     | NotAnArrowKey
 
 
-toArrowDirection : String -> ArrowDirection
-toArrowDirection keyCode =
+toArrowDirection : String -> Bool -> ArrowDirection
+toArrowDirection keyCode shiftPressed =
     case keyCode of
         "ArrowDown" ->
-            ArrowDown
+            ArrowDown shiftPressed
 
         "ArrowLeft" ->
             ArrowLeft
@@ -24,7 +24,7 @@ toArrowDirection keyCode =
             ArrowRight
 
         "ArrowUp" ->
-            ArrowUp
+            ArrowUp shiftPressed
 
         _ ->
             NotAnArrowKey
@@ -32,5 +32,6 @@ toArrowDirection keyCode =
 
 keyDecoder : Decoder ArrowDirection
 keyDecoder =
-    Decode.field "key" Decode.string
-        |> Decode.map toArrowDirection
+    Decode.map2 toArrowDirection
+        (Decode.field "key" Decode.string)
+        (Decode.field "shiftKey" Decode.bool)

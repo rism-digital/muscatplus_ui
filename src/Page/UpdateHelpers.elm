@@ -757,7 +757,7 @@ userPressedArrowKeysInSearchResultsList arrowDirection session model =
             -- Handles the case where the arrow key would produce a next index that
             -- is greater or less than the total number of items in the list.
             case arrowDirection of
-                ArrowUp ->
+                ArrowUp True ->
                     Maybe.map2
                         (\cr li ->
                             LE.getAt (max 0 (cr - 1)) li
@@ -766,7 +766,7 @@ userPressedArrowKeysInSearchResultsList arrowDirection session model =
                         listOfItems
                         |> ME.join
 
-                ArrowDown ->
+                ArrowDown True ->
                     Maybe.map2
                         (\cr li ->
                             LE.getAt (min (numOfItems - 1) (cr + 1)) li
