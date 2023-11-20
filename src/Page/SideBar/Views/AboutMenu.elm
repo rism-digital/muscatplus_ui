@@ -1,4 +1,4 @@
-module Page.SideBar.Views.AboutMenu exposing (..)
+module Page.SideBar.Views.AboutMenu exposing (view)
 
 import Config
 import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, link, mouseOver, moveUp, none, onRight, paddingXY, pointer, px, row, shrink, spacing, text, width)

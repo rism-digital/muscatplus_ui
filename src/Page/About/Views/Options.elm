@@ -1,12 +1,12 @@
-module Page.About.Views.Options exposing (..)
+module Page.About.Views.Options exposing (view)
 
-import Element exposing (Element, clipY, column, el, fill, height, maximum, none, padding, paragraph, row, scrollbarY, spacing, text, textColumn, width)
+import Element exposing (Element, clipY, column, el, fill, height, maximum, padding, paragraph, row, scrollbarY, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Font as Font
 import Language exposing (Language(..), extractLabelFromLanguageMap, toLanguageMapWithLanguage)
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
-import Page.UI.Attributes exposing (headingXL, lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Markdown as Markdown
 import Page.UI.Style exposing (colourScheme)

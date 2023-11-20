@@ -1,14 +1,13 @@
 module Page.About.Views.About exposing (view)
 
 import Config as C
-import Element exposing (Element, clipY, column, el, fill, height, maximum, none, padding, paragraph, row, scrollbarY, spacing, text, textColumn, width)
+import Element exposing (Element, clipY, column, el, fill, height, maximum, none, padding, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
-import Language exposing (Language(..), LanguageMap, LanguageValue(..), toLanguageMapWithLanguage)
+import Language exposing (Language(..), LanguageMap, LanguageValue(..))
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.UI.Attributes exposing (headingXL, lineSpacing, sectionSpacing)
-import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Markdown as Markdown
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))

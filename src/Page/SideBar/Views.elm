@@ -1,12 +1,10 @@
 module Page.SideBar.Views exposing (view)
 
-import Config
 import Debouncer.Messages exposing (provideInput)
-import Element exposing (Attribute, Color, Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, moveUp, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, moveUp, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
-import Element.Font as Font
 import Element.Lazy exposing (lazy3)
 import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, parseLocaleToLanguage)
@@ -17,16 +15,15 @@ import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), Si
 import Page.SideBar.Views.AboutMenu as AboutMenu
 import Page.SideBar.Views.MenuOption exposing (menuOption, unlinkedMenuOption)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
-import Page.UI.Animations exposing (animatedColumn, animatedEl, animatedLabel)
+import Page.UI.Animations exposing (animatedColumn, animatedEl)
 import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (infoCircleSvg, institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
+import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, headerHeight, recordTitleHeight, tabBarHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
-import Utilities exposing (choose)
 
 
 dividingLine : Element msg

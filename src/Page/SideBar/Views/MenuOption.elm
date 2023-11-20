@@ -1,4 +1,4 @@
-module Page.SideBar.Views.MenuOption exposing (..)
+module Page.SideBar.Views.MenuOption exposing (menuOption, sidebarChooserAnimations, unlinkedMenuOption)
 
 import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerY, el, fill, paddingXY, pointer, px, row, spacing, width)
 import Element.Background as Background

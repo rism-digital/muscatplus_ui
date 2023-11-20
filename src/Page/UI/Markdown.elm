@@ -1,4 +1,4 @@
-module Page.UI.Markdown exposing (renderer, view)
+module Page.UI.Markdown exposing (view)
 
 import Element exposing (Attribute, Element)
 import Element.Background
