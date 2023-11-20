@@ -14,6 +14,8 @@ import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
+import Page.SideBar.Views.AboutMenu as AboutMenu
+import Page.SideBar.Views.MenuOption exposing (menuOption, unlinkedMenuOption)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedEl, animatedLabel)
 import Page.UI.Attributes exposing (sidebarWidth)
@@ -39,7 +41,7 @@ dividingLine =
         ]
         [ column
             [ width fill
-            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.widthEach { bottom = 1, left = 0, right = 0, top = 1 }
             , Border.color colourScheme.white
             ]
             []
@@ -49,105 +51,6 @@ dividingLine =
 isCurrentlyHovered : Maybe SideBarOption -> SideBarOption -> Bool
 isCurrentlyHovered hoveredOption thisOption =
     ME.unwrap False (\opt -> opt == thisOption) hoveredOption
-
-
-menuOption :
-    { icon : Color -> Element SideBarMsg
-    , isCurrent : Bool
-    , isHovered : Bool
-    , label : Element SideBarMsg
-    , showLabel : Bool
-    }
-    -> SideBarOption
-    -> Bool
-    -> Element SideBarMsg
-menuOption cfg option currentlyHovered =
-    let
-        fontColour =
-            if cfg.isCurrent && cfg.isHovered then
-                colourScheme.darkBlue
-
-            else if cfg.isCurrent || cfg.isHovered then
-                colourScheme.darkBlue
-
-            else
-                colourScheme.white
-
-        icon =
-            cfg.icon fontColour
-
-        newCfg =
-            { icon = icon
-            , isCurrent = cfg.isCurrent
-            , label = cfg.label
-            , showLabel = cfg.showLabel
-            }
-
-        hoverStyles =
-            choose currentlyHovered
-                (\() -> [ Background.color colourScheme.white ])
-                (\() -> [])
-
-        selectedStyle =
-            choose cfg.isCurrent
-                (\() -> [ Background.color colourScheme.white ])
-                (\() -> [])
-
-        additionalOptions =
-            List.concat
-                [ [ onClick (UserClickedSideBarOptionForFrontPage option)
-                  , onMouseEnter (UserMouseEnteredSideBarOption option)
-                  , onMouseLeave UserMouseExitedSideBarOption
-                  , Font.color fontColour
-                  ]
-                , hoverStyles
-                , selectedStyle
-                ]
-    in
-    menuOptionTemplate newCfg additionalOptions
-
-
-menuOptionTemplate :
-    { icon : Element SideBarMsg
-    , isCurrent : Bool
-    , label : Element SideBarMsg
-    , showLabel : Bool
-    }
-    -> List (Attribute SideBarMsg)
-    -> Element SideBarMsg
-menuOptionTemplate cfg additionalAttributes =
-    row
-        (width fill
-            :: alignTop
-            :: paddingXY 22 10
-            :: spacing 10
-            :: pointer
-            :: additionalAttributes
-        )
-        [ el
-            [ width (px 24)
-            , alignLeft
-            , centerY
-            ]
-            cfg.icon
-        , viewIf (animatedLabel cfg.label) cfg.showLabel
-        ]
-
-
-unlinkedMenuOption :
-    { icon : Color -> Element SideBarMsg
-    , label : Element SideBarMsg
-    , showLabel : Bool
-    }
-    -> Element SideBarMsg
-unlinkedMenuOption cfg =
-    menuOptionTemplate
-        { icon = cfg.icon colourScheme.white
-        , isCurrent = False
-        , label = cfg.label
-        , showLabel = cfg.showLabel
-        }
-        []
 
 
 view : Session -> Element SideBarMsg
@@ -422,39 +325,6 @@ view session =
                 , width fill
                 , paddingXY 0 10
                 ]
-                [ row
-                    [ width fill
-                    , height shrink
-                    , alignLeft
-                    , alignBottom
-                    ]
-                    [ column
-                        [ alignLeft
-                        , alignTop
-                        , spacing 10
-                        ]
-                        [ menuOptionTemplate
-                            { icon =
-                                link
-                                    []
-                                    { label =
-                                        el
-                                            [ width (px 20) ]
-                                            (infoCircleSvg colourScheme.white)
-                                    , url = Config.serverUrl ++ "/about"
-                                    }
-                            , isCurrent = session.route == AboutPageRoute
-                            , label =
-                                link
-                                    [ Font.color colourScheme.white ]
-                                    { label = text (extractLabelFromLanguageMap session.language localTranslations.about)
-                                    , url = Config.serverUrl ++ "/about"
-                                    }
-                            , showLabel = showLabels
-                            }
-                            []
-                        ]
-                    ]
-                ]
+                [ AboutMenu.view session ]
             ]
         ]

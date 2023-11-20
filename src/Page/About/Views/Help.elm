@@ -3,8 +3,8 @@ module Page.About.Views.Help exposing (..)
 import Element exposing (Color, Element, centerY, clipY, column, el, fill, height, maximum, padding, paragraph, px, row, scrollbarY, shrink, spacing, table, text, width)
 import Element.Background as Background
 import Element.Font as Font
-import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractLabelFromLanguageMap)
-import Page.UI.Attributes exposing (sectionSpacing)
+import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractLabelFromLanguageMap, toLanguageMapWithLanguage)
+import Page.UI.Attributes exposing (headingXL, headingXXL, sectionSpacing)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, fileMusicSvg, graduationCapSvg, iiifLogo, linkSvg, musicNotationSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
 import Page.UI.Markdown as Markdown
@@ -354,56 +354,64 @@ view session =
             , padding 20
             , Background.color colourScheme.white
             , spacing sectionSpacing
-            , width (fill |> maximum 900)
             , Font.size 16
             , scrollbarY
             ]
             [ row
-                [ width fill ]
+                [ width (fill |> maximum 900)
+                , Font.size 36
+                , Font.medium
+                ]
+                [ toLanguageMapWithLanguage English "RISM Online Help"
+                    |> extractLabelFromLanguageMap session.language
+                    |> text
+                ]
+            , row
+                [ width (fill |> maximum 900) ]
                 [ Markdown.view session.language helpTextRecordTypes
                 ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ iconDescriptionTable
                     { data = recordTypesEntries
                     , language = session.language
                     }
                 ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ Markdown.view session.language helpTextSourceTypes ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ iconDescriptionTable
                     { data = sourceTypesEntries
                     , language = session.language
                     }
                 ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ Markdown.view session.language helpTextContentTypes ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ iconDescriptionTable
                     { data = contentTypesEntries
                     , language = session.language
                     }
                 ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ Markdown.view session.language helpTextAdditionalIcons ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ iconDescriptionTable
                     { data = additionalIconsEntries
                     , language = session.language
                     }
                 ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ Markdown.view session.language helpTextSourceDatabases ]
             , row
-                [ width fill ]
+                [ width (fill |> maximum 900) ]
                 [ table
                     [ width fill
                     , spacing 10

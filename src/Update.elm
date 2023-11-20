@@ -406,6 +406,11 @@ changePage url model =
             , Cmd.none
             )
 
+        Route.OptionsPageRoute ->
+            ( OptionsPage newSession (AboutPage.init newSession)
+            , Cmd.none
+            )
+
         Route.NotFoundPageRoute ->
             ( NotFoundPage newSession NotFoundPage.init
             , Cmd.none

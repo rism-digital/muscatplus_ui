@@ -13,6 +13,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Maybe.Extra as ME
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
+import Page.SideBar.Views.MenuOption exposing (sidebarChooserAnimations)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
 import Page.UI.Attributes exposing (bodyRegular, emptyAttribute, sectionSpacing)
 import Page.UI.Components exposing (h2, h3)
@@ -20,8 +21,6 @@ import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
-import Simple.Animation as Animation exposing (Animation)
-import Simple.Animation.Property as P
 import String.Extra as SE
 import String.Normalize
 
@@ -41,16 +40,6 @@ imageForCountryCode countryCode =
         { description = countryCode
         , src = countryFlagPath
         }
-
-
-nationalCollectionChooserAnimations : Animation
-nationalCollectionChooserAnimations =
-    Animation.fromTo
-        { duration = 150
-        , options = [ Animation.delay 150 ]
-        }
-        [ P.opacity 0 ]
-        [ P.opacity 1 ]
 
 
 nationalCollectionPrefixToFlagMap : Dict String String
@@ -141,7 +130,7 @@ viewNationalCollectionChooser session =
         , moveLeft 250
         ]
         [ animatedRow
-            nationalCollectionChooserAnimations
+            sidebarChooserAnimations
             [ width (px 500)
             , alignRight
             , Background.color colourScheme.white

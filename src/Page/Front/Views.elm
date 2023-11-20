@@ -260,7 +260,7 @@ viewFrontSearchControlsLoading =
     row
         [ width fill
         , height fill
-        , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
         , Border.color colourScheme.darkBlue
         ]
         [ column
@@ -272,7 +272,7 @@ viewFrontSearchControlsLoading =
                 , height (px 95)
                 , Background.color colourScheme.lightGrey
                 , Border.color colourScheme.darkBlue
-                , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 ]
                 []
             , row

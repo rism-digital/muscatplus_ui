@@ -44,6 +44,8 @@ type alias Session =
     , currentlyHoveredOption : Maybe SideBarOption
     , currentlyHoveredNationalCollectionChooser : Bool
     , currentlyHoveredNationalCollectionSidebarOption : Bool
+    , currentlyHoveredAboutMenuSidebarOption : Bool
+    , currentlyHoveredAboutMenuChooser : Bool
     , currentlyInteractingWithLanguageChooser : Bool
     , restrictedToNationalCollection : Maybe CountryCode
     , allNationalCollections : Dict CountryCode LanguageMap
@@ -117,6 +119,8 @@ init flags url key =
     , currentlyHoveredOption = Nothing
     , currentlyHoveredNationalCollectionChooser = False
     , currentlyHoveredNationalCollectionSidebarOption = False
+    , currentlyHoveredAboutMenuSidebarOption = False
+    , currentlyHoveredAboutMenuChooser = False
     , currentlyInteractingWithLanguageChooser = False
     , restrictedToNationalCollection = nationalCollectionFilter
     , allNationalCollections = Dict.empty

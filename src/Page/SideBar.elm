@@ -141,6 +141,20 @@ update msg session =
             , Cmd.none
             )
 
+        UserMouseEnteredAboutMenuSidebarOption ->
+            ( { session
+                | currentlyHoveredAboutMenuSidebarOption = True
+              }
+            , Cmd.none
+            )
+
+        UserMouseExitedAboutMenuSidebarOption ->
+            ( { session
+                | currentlyHoveredAboutMenuSidebarOption = False
+              }
+            , Cmd.none
+            )
+
         UserMouseDownOnLanguageChooser ->
             ( { session
                 | currentlyInteractingWithLanguageChooser = True

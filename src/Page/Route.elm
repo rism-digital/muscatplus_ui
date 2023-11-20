@@ -19,6 +19,7 @@ type Route
       --| PlacePageRoute Int
     | AboutPageRoute
     | HelpPageRoute
+    | OptionsPageRoute
     | NotFoundPageRoute
 
 
@@ -50,7 +51,8 @@ routeParser =
         , P.map InstitutionPageRoute (s "institutions" </> P.int)
         , P.map InstitutionSourcePageRoute (s "institutions" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map AboutPageRoute (s "about")
-        , P.map HelpPageRoute (s "help")
+        , P.map HelpPageRoute (s "about") </> s "help"
+        , P.map OptionsPageRoute (s "about") </> s "options"
         ]
 
 

@@ -14,6 +14,7 @@ import Language exposing (Language(..), LanguageMap, LanguageValue(..))
 
 localTranslations :
     { about : LanguageMap
+    , aboutAndHelp : LanguageMap
     , addTermsToQuery : LanguageMap
     , additionalFilters : LanguageMap
     , applyFiltersToUpdateResults : LanguageMap
@@ -91,6 +92,8 @@ localTranslations :
 localTranslations =
     { about =
         [ LanguageValue English [ "About RISM Online" ] ]
+    , aboutAndHelp =
+        [ LanguageValue English [ "About and Help" ] ]
     , addTermsToQuery =
         [ LanguageValue English [ "Add terms to your query" ] ]
     , additionalFilters =

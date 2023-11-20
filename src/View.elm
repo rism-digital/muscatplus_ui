@@ -13,6 +13,7 @@ import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
 import Page.About.Views.About
 import Page.About.Views.Help
+import Page.About.Views.Options
 import Page.Error.Views
 import Page.Front.Views
 import Page.Record.Views.InstitutionPage
@@ -110,6 +111,9 @@ view model =
 
                 HelpPage session ->
                     Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.Help.view session)
+
+                OptionsPage session pageModel ->
+                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.Options.view session pageModel)
 
                 PlacePage session pageModel ->
                     Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PlacePage.view session pageModel)

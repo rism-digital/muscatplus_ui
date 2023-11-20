@@ -18,7 +18,7 @@ import Time exposing (Month(..), Posix)
 
 aboutTextEnglish : String
 aboutTextEnglish =
-    """## About RISM Online
+    """# About RISM Online
 
 The Répertoire International des Sources Musicales (RISM) - International Inventory
 of Musical Sources - is an international, non-profit organization that aims to comprehensively
@@ -142,36 +142,6 @@ view session model =
                 , Font.size 16
                 ]
                 [ renderedAboutText ]
-            , row
-                [ width fill ]
-                [ el
-                    [ headingXL ]
-                    (text "Viewing options")
-                ]
-            , row
-                [ width (fill |> maximum 900) ]
-                [ textColumn
-                    [ width fill
-                    , spacing lineSpacing
-                    ]
-                    [ toLanguageMapWithLanguage English """Activating this control will put links to the Muscat records in the footer
-                            of every record. Note that you will still need permissions to log in and edit the
-                            records in Muscat. """
-                        |> Markdown.view session.language
-                    , paragraph
-                        [ width fill
-                        , Font.bold
-                        ]
-                        [ text "Please refresh your browser after activating." ]
-                    , paragraph
-                        [ width fill ]
-                        [ Toggle.view isActive UserToggledEnableMuscatLinks
-                            |> Toggle.setLabel "Enable Muscat Links"
-                            |> Toggle.render
-                            |> el []
-                        ]
-                    ]
-                ]
             , row
                 [ width (fill |> maximum 900) ]
                 [ el

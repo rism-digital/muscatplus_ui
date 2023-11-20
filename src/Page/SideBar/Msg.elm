@@ -30,6 +30,8 @@ type SideBarMsg
     | UserMouseExitedCountryChooser
     | UserMouseEnteredNationalCollectionSidebarOption
     | UserMouseExitedNationalCollectionSidebarOption
+    | UserMouseEnteredAboutMenuSidebarOption
+    | UserMouseExitedAboutMenuSidebarOption
     | UserMouseDownOnLanguageChooser
     | UserMouseUpOnLanguageChooser
     | UserChoseNationalCollection (Maybe CountryCode)
