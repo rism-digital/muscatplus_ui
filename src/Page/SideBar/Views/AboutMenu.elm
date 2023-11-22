@@ -121,7 +121,7 @@ viewAboutMenuChooser session =
             ]
             [ column
                 [ width fill
-                , spacing 10
+                , spacing 5
                 ]
                 [ aboutMenuChooserOption
                     { session = session
