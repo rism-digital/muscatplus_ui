@@ -1,6 +1,6 @@
 module Page.UI.Record.Incipits exposing (IncipitDisplayConfig, IncipitSectionConfig, viewIncipit, viewIncipitsSection, viewRenderedIncipits)
 
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, link, minimum, none, padding, paddingEach, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, link, maximum, minimum, none, padding, paddingEach, paddingXY, paragraph, pointer, px, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -352,7 +352,7 @@ viewPAESearchLink language label data =
 viewRenderedIncipits : List RenderedIncipit -> Element msg
 viewRenderedIncipits incipits =
     row
-        [ width (fill |> minimum 500)
+        [ width (fill |> minimum 500 |> maximum 1000)
         , htmlAttribute (HA.class "svg-rendered-incipit")
         , Background.color colourScheme.transparent
         ]
