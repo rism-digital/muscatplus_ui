@@ -57,7 +57,7 @@ view session model =
                     , spacing lineSpacing
                     ]
                     [ toLanguageMapWithLanguage English """Activating this control will put links to the Muscat records in the footer
-                                         of every record. You will still need to a Muscat account and permissions to view or edit the
+                                         of every record. You will still need a Muscat account and permissions to view or edit the
                                          records. """
                         |> Markdown.view session.language
                     , paragraph

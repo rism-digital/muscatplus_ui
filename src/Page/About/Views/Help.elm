@@ -178,7 +178,7 @@ additionalIconsEntries =
     , { icon = linkSvg
       , bgColor = colourScheme.olive
       , description =
-            [ LanguageValue English [ """The record includes an link to mapped version of the record in another 
+            [ LanguageValue English [ """The record includes a link to a corresponding record in another
             database also included in RISM Online (e.g., DIAMM).""" ]
             , LanguageValue French [ """La notice comprend un lien vers une version correspondante de la notice dans 
             une autre base de données également incluse dans RISM Online (par exemple, DIAMM).""" ]
