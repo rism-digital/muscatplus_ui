@@ -148,9 +148,6 @@ viewPreviewRouter cfg previewData =
             (toFloat (windowWidth - (sidebarWidth + resultsColumnWidth)) * 0.02)
                 |> clamp 20 40
 
-        _ =
-            Debug.log "dims" ( moveRightAmount, moveDownAmount )
-
         preview =
             case previewData of
                 Just (SourceData body) ->
