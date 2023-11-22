@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews exposing (PreviewConfig, viewPreviewError, viewPreviewRouter)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -58,21 +58,15 @@ viewPreviewError cfg =
 
         previewHeight =
             round (toFloat windowHeight * 0.6)
-
-        moveDownAmount =
-            toFloat windowHeight * 0.08
     in
     row
         [ width (fill |> minimum 600 |> maximum 800)
         , height (fill |> maximum previewHeight)
         , clipY
-        , alignTop
-        , alignLeft
         , Background.color colourScheme.white
         , Border.color colourScheme.darkBlue
         , Border.width 3
         , htmlAttribute (HA.style "z-index" "10")
-        , moveDown moveDownAmount
         , minimalDropShadow
         ]
         [ column
@@ -146,6 +140,17 @@ viewPreviewRouter cfg previewData =
         previewWidth =
             round (toFloat (windowWidth - (sidebarWidth + resultsColumnWidth)) * 0.8)
 
+        moveDownAmount =
+            (toFloat windowHeight * 0.01)
+                |> clamp 10 20
+
+        moveRightAmount =
+            (toFloat (windowWidth - (sidebarWidth + resultsColumnWidth)) * 0.02)
+                |> clamp 20 40
+
+        _ =
+            Debug.log "dims" ( moveRightAmount, moveDownAmount )
+
         preview =
             case previewData of
                 Just (SourceData body) ->
@@ -190,15 +195,15 @@ viewPreviewRouter cfg previewData =
                     none
     in
     row
-        [ width (px previewWidth |> maximum 1100)
+        [ width (px previewWidth |> minimum 800 |> maximum 1100)
         , height (fill |> maximum previewHeight)
+        , moveDown moveDownAmount
+        , moveRight moveRightAmount
         , clipY
         , Background.color colourScheme.white
         , Border.color colourScheme.darkBlue
         , Border.width 3
         , htmlAttribute (HA.style "z-index" "10")
-        , centerY
-        , centerX
         , minimalDropShadow
         ]
         [ column
