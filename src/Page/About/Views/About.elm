@@ -7,7 +7,7 @@ import Element.Font as Font
 import Language exposing (Language(..), LanguageMap, LanguageValue(..))
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
-import Page.About.Views.AboutTexts exposing (aboutTextEnglish, aboutTextGerman, aboutTextItalian)
+import Page.About.Views.AboutTexts exposing (aboutTextEnglish, aboutTextFrench, aboutTextGerman, aboutTextItalian)
 import Page.UI.Attributes exposing (headingXL, lineSpacing, sectionSpacing)
 import Page.UI.Markdown as Markdown
 import Page.UI.Style exposing (colourScheme)
@@ -21,6 +21,7 @@ aboutText =
     [ LanguageValue English [ aboutTextEnglish ]
     , LanguageValue German [ aboutTextGerman ]
     , LanguageValue Italian [ aboutTextItalian ]
+    , LanguageValue French [ aboutTextFrench ]
     ]
 
 
