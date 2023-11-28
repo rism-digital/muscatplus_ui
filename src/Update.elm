@@ -495,6 +495,10 @@ update msg model =
             AboutPage.update session recordMsg pageModel
                 |> updateWith (AboutPage session) Msg.UserInteractedWithAboutPage model
 
+        ( Msg.UserInteractedWithAboutPage recordMsg, OptionsPage session pageModel ) ->
+            AboutPage.update session recordMsg pageModel
+                |> updateWith (OptionsPage session) Msg.UserInteractedWithAboutPage model
+
         ( Msg.UserInteractedWithSideBar sideBarMsg, _ ) ->
             let
                 newModel =

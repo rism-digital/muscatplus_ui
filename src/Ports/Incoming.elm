@@ -18,7 +18,8 @@ convertMsgStringToIncomingMessage : String -> Decoder IncomingMessage
 convertMsgStringToIncomingMessage msgString =
     case msgString of
         "muscat-links-set" ->
-            Decode.map (\v -> PortReceiveMuscatLinksSet v) Decode.bool
+            Decode.field "value" Decode.bool
+                |> Decode.map PortReceiveMuscatLinksSet
 
         "search-preferences-set" ->
             Decode.field "value" searchPreferencesDecoder

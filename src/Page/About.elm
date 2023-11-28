@@ -48,7 +48,9 @@ update session msg model =
             )
 
         UserToggledEnableMuscatLinks ->
-            ( { model | linksEnabled = not model.linksEnabled }
+            ( { model
+                | linksEnabled = not model.linksEnabled
+              }
             , PortSendEnableMuscatLinks (not model.linksEnabled)
                 |> encodeMessageForPortSend
                 |> sendOutgoingMessageOnPort
