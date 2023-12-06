@@ -48,7 +48,7 @@ pageFooterTemplate session language footer =
             newTabLink
                 [ linkColour ]
                 { label = text "API Viewer"
-                , url = "/apero/apero.html?url=" ++ currentUrl
+                , url = "/apero/?url=" ++ currentUrl
                 }
 
         muscatLinks =
