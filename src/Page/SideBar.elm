@@ -2,7 +2,6 @@ module Page.SideBar exposing (Msg, countryListRequest, update)
 
 import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer
-import Language exposing (parseLocaleToLanguage)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), sideBarOptionToModeString)
@@ -75,13 +74,9 @@ update msg session =
                 -- state to collapsed. This is to fix a bug in Firefox where the select dropdown
                 -- causes the sidebar to signal that it has lost mouse focus.
                 newSession =
-                    if session.currentlyInteractingWithLanguageChooser then
-                        session
-
-                    else
-                        { session
-                            | expandedSideBar = Collapsed
-                        }
+                    { session
+                        | expandedSideBar = Collapsed
+                    }
             in
             ( newSession
             , Cmd.none
@@ -101,7 +96,6 @@ update msg session =
         UserMouseEnteredSideBarOption button ->
             ( { session
                 | currentlyHoveredOption = Just button
-                , currentlyInteractingWithLanguageChooser = False -- This helps deal with a problem in detecting when a language is actually changed. This would prevent the sidebar from closing.
               }
             , Cmd.none
             )
@@ -155,16 +149,16 @@ update msg session =
             , Cmd.none
             )
 
-        UserMouseDownOnLanguageChooser ->
+        UserMouseEnteredLanguageChooserSidebarOption ->
             ( { session
-                | currentlyInteractingWithLanguageChooser = True
+                | currentlyHoveredLanguageChooserSidebarOption = True
               }
             , Cmd.none
             )
 
-        UserMouseUpOnLanguageChooser ->
+        UserMouseExitedLanguageChooserSidebarOption ->
             ( { session
-                | currentlyInteractingWithLanguageChooser = False
+                | currentlyHoveredLanguageChooserSidebarOption = False
               }
             , Cmd.none
             )
@@ -191,9 +185,9 @@ update msg session =
                 ]
             )
 
-        UserChangedLanguageSelect lang ->
+        UserChoseLanguage lang ->
             ( { session
-                | language = parseLocaleToLanguage lang
+                | language = lang
               }
             , PortSendSaveLanguagePreference lang
                 |> encodeMessageForPortSend

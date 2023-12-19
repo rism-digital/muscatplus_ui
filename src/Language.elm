@@ -9,8 +9,10 @@ module Language exposing
     , extractTextFromLanguageMap
     , formatNumberByLanguage
     , languageMapDecoder
-    , languageOptionsForDisplay
+    , languageOptions
     , limitLength
+    , parseLanguageToLabel
+    , parseLanguageToLocale
     , parseLocaleToLanguage
     , toLanguageMap
     , toLanguageMapWithLanguage
@@ -201,28 +203,6 @@ languageMapDecoder json =
 
 {-|
 
-    For display (e.g., the dropdown list) we just need
-    a list of the languages that removes the type and
-    filters out the 'none' value ('none' is used to indicate
-    no declared linguistic content in the server response, but it's
-    confusing if we show that to our users.)
-
--}
-languageOptionsForDisplay : List ( String, String )
-languageOptionsForDisplay =
-    List.filterMap
-        (\( l, n, _ ) ->
-            if l /= "none" then
-                Just ( l, n )
-
-            else
-                Nothing
-        )
-        languageOptions
-
-
-{-|
-
     Takes a string and returns the corresponding language type, e.g.,
     "en" -> English.
 
@@ -240,6 +220,34 @@ parseLocaleToLanguage locale =
         )
         languageOptions
         |> Maybe.withDefault English
+
+
+parseLanguageToLabel : Language -> String
+parseLanguageToLabel language =
+    LE.findMap
+        (\( _, h, s ) ->
+            if s == language then
+                Just h
+
+            else
+                Nothing
+        )
+        languageOptions
+        |> Maybe.withDefault "English"
+
+
+parseLanguageToLocale : Language -> String
+parseLanguageToLocale language =
+    LE.findMap
+        (\( l, _, s ) ->
+            if s == language then
+                Just l
+
+            else
+                Nothing
+        )
+        languageOptions
+        |> Maybe.withDefault "en"
 
 
 englishLocale : Locale

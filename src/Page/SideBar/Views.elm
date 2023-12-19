@@ -7,19 +7,19 @@ import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Lazy exposing (lazy3)
 import Html.Attributes as HA
-import Language exposing (extractLabelFromLanguageMap, languageOptionsForDisplay, parseLocaleToLanguage)
+import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
 import Page.SideBar.Views.AboutMenu as AboutMenu
-import Page.SideBar.Views.MenuOption exposing (menuOption, unlinkedMenuOption)
+import Page.SideBar.Views.LanguageChooser exposing (viewLanguageChooserMenuOption)
+import Page.SideBar.Views.MenuOption exposing (menuOption)
 import Page.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Page.UI.Animations exposing (animatedColumn, animatedEl)
 import Page.UI.Attributes exposing (sidebarWidth)
-import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (institutionSvg, languagesSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
+import Page.UI.Images exposing (institutionSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, headerHeight, recordTitleHeight, tabBarHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
@@ -247,45 +247,7 @@ view session =
                 [ viewNationalCollectionChooserMenuOption session ]
             ]
         , dividingLine
-        , row
-            [ width fill
-            , height shrink
-            , alignLeft
-            , paddingXY 0 10
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color colourScheme.darkBlue
-            , Background.color colourScheme.darkBlue
-            ]
-            [ column
-                [ width fill
-                , height fill
-                , centerX
-                , alignTop
-                , spacing 10
-                ]
-                [ unlinkedMenuOption
-                    { icon = languagesSvg
-                    , label =
-                        el
-                            [ width fill
-                            ]
-                            (dropdownSelect
-                                { selectedMsg = UserChangedLanguageSelect
-                                , mouseDownMsg = Just UserMouseDownOnLanguageChooser
-                                , mouseUpMsg = Just UserMouseUpOnLanguageChooser
-                                , choices = languageOptionsForDisplay
-                                , choiceFn = parseLocaleToLanguage
-                                , currentChoice = session.language
-                                , selectIdent = "site-language-select"
-                                , label = Nothing
-                                , language = session.language
-                                , inverted = True
-                                }
-                            )
-                    , showLabel = showLabels
-                    }
-                ]
-            ]
+        , viewLanguageChooserMenuOption session
         , dividingLine
         , row
             [ width fill

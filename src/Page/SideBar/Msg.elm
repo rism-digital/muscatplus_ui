@@ -4,7 +4,7 @@ import Debouncer.Messages as Debouncer
 import Dict exposing (Dict)
 import Http
 import Http.Detailed
-import Language exposing (LanguageMap)
+import Language exposing (Language, LanguageMap)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -32,10 +32,10 @@ type SideBarMsg
     | UserMouseExitedNationalCollectionSidebarOption
     | UserMouseEnteredAboutMenuSidebarOption
     | UserMouseExitedAboutMenuSidebarOption
-    | UserMouseDownOnLanguageChooser
-    | UserMouseUpOnLanguageChooser
+    | UserMouseEnteredLanguageChooserSidebarOption
+    | UserMouseExitedLanguageChooserSidebarOption
     | UserChoseNationalCollection (Maybe CountryCode)
-    | UserChangedLanguageSelect String
+    | UserChoseLanguage Language
     | ClientUpdatedMuscatLinks Bool
     | NothingHappened
 

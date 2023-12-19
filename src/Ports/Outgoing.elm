@@ -1,6 +1,7 @@
 port module Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 
 import Json.Encode as Encode
+import Language exposing (Language, parseLanguageToLocale)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import WebAudio
 
@@ -9,7 +10,7 @@ port sendOutgoingMessageOnPort : Encode.Value -> Cmd msg
 
 
 type OutgoingMessage
-    = PortSendSaveLanguagePreference String
+    = PortSendSaveLanguagePreference Language
     | PortSendSetNationalCollectionSelection (Maybe String)
     | PortSendSaveSearchPreference { key : String, value : SearchPreferenceVariant }
     | PortSendHeaderMetaInfo { description : String }
@@ -23,7 +24,7 @@ convertOutgoingMessageToJsonMsg msg =
     case msg of
         PortSendSaveLanguagePreference lang ->
             [ ( "msg", Encode.string "save-language-preference" )
-            , ( "value", Encode.string lang )
+            , ( "value", Encode.string (parseLanguageToLocale lang) )
             ]
 
         PortSendSetNationalCollectionSelection nationalCollection ->
