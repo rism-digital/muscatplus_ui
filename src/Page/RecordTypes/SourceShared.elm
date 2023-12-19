@@ -17,7 +17,7 @@ module Page.RecordTypes.SourceShared exposing
     )
 
 import Dict
-import Json.Decode as Decode exposing (Decoder, andThen, list, string)
+import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
@@ -103,10 +103,9 @@ contentsSectionBodyDecoder =
 sourceContentTypeDecoder : Decoder SourceContentType
 sourceContentTypeDecoder =
     string
-        |> andThen
+        |> Decode.map
             (\str ->
                 sourceContentTypeFromJsonType str
-                    |> Decode.succeed
             )
 
 
@@ -145,10 +144,9 @@ sourceRecordDescriptorsDecoder =
 sourceRecordTypeDecoder : Decoder SourceRecordType
 sourceRecordTypeDecoder =
     string
-        |> andThen
+        |> Decode.map
             (\str ->
                 sourceRecordTypeFromJsonType str
-                    |> Decode.succeed
             )
 
 
@@ -193,10 +191,9 @@ sourceSubjectsBodyDecoder =
 sourceTypeDecoder : Decoder SourceType
 sourceTypeDecoder =
     string
-        |> andThen
+        |> Decode.map
             (\str ->
                 sourceTypeFromJsonType str
-                    |> Decode.succeed
             )
 
 

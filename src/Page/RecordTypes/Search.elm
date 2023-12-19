@@ -369,8 +369,8 @@ facetBehaviourOptionsDecoder =
 facetBehavioursDecoder : Decoder FacetBehaviours
 facetBehavioursDecoder =
     string
-        |> andThen
-            (\str -> Decode.succeed (parseStringToFacetBehaviour str))
+        |> Decode.map
+            (\str -> parseStringToFacetBehaviour str)
 
 
 facetItemDecoder : Decoder FacetItem
@@ -384,11 +384,10 @@ facetItemDecoder =
 facetItemValueDecoder : Decoder String
 facetItemValueDecoder =
     string
-        |> andThen
+        |> Decode.map
             (\str ->
                 percentDecode str
                     |> Maybe.withDefault str
-                    |> Decode.succeed
             )
 
 

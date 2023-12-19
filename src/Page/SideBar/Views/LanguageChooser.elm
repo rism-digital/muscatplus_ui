@@ -1,9 +1,9 @@
-module Page.SideBar.Views.LanguageChooser exposing (..)
+module Page.SideBar.Views.LanguageChooser exposing (viewLanguageChooserMenuOption)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events as Events exposing (onMouseEnter, onMouseLeave)
+import Element.Events as Events
 import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language(..), languageOptions, parseLanguageToLabel)
@@ -28,11 +28,9 @@ viewLanguageChooser session =
             [ width (px 200)
             , alignRight
             , Background.color colourScheme.white
-
-            --, height (px 300)
             , Font.color colourScheme.black
-            , onMouseEnter UserMouseEnteredCountryChooser
-            , onMouseLeave UserMouseExitedCountryChooser
+            , Events.onMouseEnter UserMouseEnteredCountryChooser
+            , Events.onMouseLeave UserMouseExitedCountryChooser
             , Border.width 1
             , Border.color colourScheme.darkBlue
             , Border.shadow { blur = 6, color = colourScheme.darkGrey, offset = ( 2, 1 ), size = 1 }

@@ -1,4 +1,4 @@
-module Page.About.Views.AboutTexts exposing (..)
+module Page.About.Views.AboutTexts exposing (aboutTextEnglish, aboutTextFrench, aboutTextGerman, aboutTextItalian)
 
 
 aboutTextEnglish : String

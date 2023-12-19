@@ -1,4 +1,4 @@
-module Page.SideBar.Views.MenuOption exposing (menuOption, sidebarChooserAnimations, unlinkedMenuOption)
+module Page.SideBar.Views.MenuOption exposing (menuOption, sidebarChooserAnimations)
 
 import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerY, el, fill, paddingXY, pointer, px, row, spacing, width)
 import Element.Background as Background
@@ -104,19 +104,3 @@ menuOption cfg option currentlyHovered =
                 ]
     in
     menuOptionTemplate newCfg additionalOptions
-
-
-unlinkedMenuOption :
-    { icon : Color -> Element SideBarMsg
-    , label : Element SideBarMsg
-    , showLabel : Bool
-    }
-    -> Element SideBarMsg
-unlinkedMenuOption cfg =
-    menuOptionTemplate
-        { icon = cfg.icon colourScheme.white
-        , isCurrent = False
-        , label = cfg.label
-        , showLabel = cfg.showLabel
-        }
-        []

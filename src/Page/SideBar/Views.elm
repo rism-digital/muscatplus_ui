@@ -1,7 +1,7 @@
 module Page.SideBar.Views exposing (view)
 
 import Debouncer.Messages exposing (provideInput)
-import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, moveUp, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, moveUp, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)

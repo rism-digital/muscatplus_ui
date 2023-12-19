@@ -3,7 +3,7 @@ module Page.About.Views.Options exposing (view)
 import Element exposing (Element, clipY, column, el, fill, height, maximum, padding, paragraph, row, scrollbarY, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Font as Font
-import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractLabelFromLanguageMap, toLanguageMapWithLanguage)
+import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractLabelFromLanguageMap)
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)

@@ -124,18 +124,18 @@ viewAboutMenuChooser session =
                 , spacing 5
                 ]
                 [ aboutMenuChooserOption
-                    { session = session
-                    , label = localTranslations.about
+                    { label = localTranslations.about
+                    , session = session
                     , url = "/about"
                     }
                 , aboutMenuChooserOption
-                    { session = session
-                    , label = toLanguageMapWithLanguage English "Help"
+                    { label = toLanguageMapWithLanguage English "Help"
+                    , session = session
                     , url = "/about/help"
                     }
                 , aboutMenuChooserOption
-                    { session = session
-                    , label = toLanguageMapWithLanguage English "Viewing options"
+                    { label = toLanguageMapWithLanguage English "Viewing options"
+                    , session = session
                     , url = "/about/options"
                     }
                 ]
@@ -144,8 +144,8 @@ viewAboutMenuChooser session =
 
 
 aboutMenuChooserOption :
-    { session : Session
-    , label : LanguageMap
+    { label : LanguageMap
+    , session : Session
     , url : String
     }
     -> Element SideBarMsg

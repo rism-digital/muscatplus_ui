@@ -47,14 +47,14 @@ viewPreviewError :
     -> Element msg
 viewPreviewError cfg =
     let
-        ( _, windowHeight ) =
-            cfg.windowSize
-
         ( mainMessage, details ) =
             createErrorMessage cfg.language cfg.errorMessage
 
         messageDetails =
             Maybe.withDefault "" details
+
+        ( _, windowHeight ) =
+            cfg.windowSize
 
         previewHeight =
             round (toFloat windowHeight * 0.6)

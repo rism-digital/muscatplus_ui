@@ -104,20 +104,20 @@ incipitEncodingDataDecoder =
 incipitFormatDecoder : Decoder IncipitFormat
 incipitFormatDecoder =
     string
-        |> Decode.andThen
+        |> Decode.map
             (\mimetype ->
                 case mimetype of
                     "audio/midi" ->
-                        Decode.succeed RenderedMIDI
+                        RenderedMIDI
 
                     "image/png" ->
-                        Decode.succeed RenderedPNG
+                        RenderedPNG
 
                     "image/svg+xml" ->
-                        Decode.succeed RenderedSVG
+                        RenderedSVG
 
                     _ ->
-                        Decode.succeed UnknownFormat
+                        UnknownFormat
             )
 
 

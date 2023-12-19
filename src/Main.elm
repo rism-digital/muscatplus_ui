@@ -330,16 +330,12 @@ init flags initialUrl key =
 
         HelpPageRoute ->
             ( HelpPage session
-            , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
-                ]
+            , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
             )
 
         OptionsPageRoute ->
             ( OptionsPage session (About.init session)
-            , Cmd.batch
-                [ Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
-                ]
+            , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
             )
 
         _ ->
