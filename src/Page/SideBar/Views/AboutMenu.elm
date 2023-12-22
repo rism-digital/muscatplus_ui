@@ -1,7 +1,7 @@
 module Page.SideBar.Views.AboutMenu exposing (view)
 
 import Config
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, link, mouseOver, moveUp, none, onRight, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, link, mouseOver, moveUp, none, onRight, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onMouseEnter, onMouseLeave)
@@ -111,7 +111,8 @@ viewAboutMenuChooser session =
         [ animatedRow
             sidebarChooserAnimations
             [ width (px 250)
-            , height (px 150)
+
+            --, height (px 150)
             , alignRight
             , Background.color colourScheme.white
             , Border.width 1
@@ -151,19 +152,21 @@ aboutMenuChooserOption :
     -> Element SideBarMsg
 aboutMenuChooserOption cfg =
     link
-        [ width fill ]
+        [ width fill
+        ]
         { label =
             row
                 [ width fill
-                , paddingXY 30 10
+
+                --, paddingXY 30 10
                 , spacing 10
+                , paddingXY 10 15
                 , pointer
                 , Font.medium
                 , mouseOver
-                    [ Font.color colourScheme.white
-                    , Background.color colourScheme.darkBlue
+                    [ Background.color colourScheme.lightGrey
                     ]
-                , Font.color colourScheme.darkBlue
+                , Font.color colourScheme.black
                 , Background.color colourScheme.white
                 ]
                 [ text (extractLabelFromLanguageMap (.language cfg.session) cfg.label) ]

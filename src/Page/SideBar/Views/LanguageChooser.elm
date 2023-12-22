@@ -48,33 +48,31 @@ viewLanguageChooser session =
 languageCodeOptions : List (Element SideBarMsg)
 languageCodeOptions =
     List.map
-        (\( c, h, l ) ->
+        (\( c, _, l ) ->
             row
                 [ width fill
                 , spacing 10
                 , padding 10
                 , mouseOver
-                    [ Font.color colourScheme.white
-                    , Background.color colourScheme.darkBlue
+                    [ Background.color colourScheme.lightGrey
                     ]
-                , Font.color colourScheme.darkBlue
+                , Font.color colourScheme.black
                 , Background.color colourScheme.white
                 , Events.onClick (UserChoseLanguage l)
                 ]
                 [ el
                     [ Border.width 2
-                    , Border.color colourScheme.darkBlue
+                    , Border.color colourScheme.darkGrey
                     , width (px 30)
                     , centerX
                     , centerY
                     , Font.center
                     , Font.bold
-                    , Font.size 18
+                    , Font.size 16
                     ]
                     (text (String.toUpper c))
                 , el
-                    [ Font.semiBold
-                    , width fill
+                    [ width fill
                     ]
                     (text (parseLanguageToLabel l))
                 ]
