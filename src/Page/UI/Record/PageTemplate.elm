@@ -76,8 +76,8 @@ pageFooterTemplate session language footer =
                 , alignLeft
                 , spacing lineSpacing
                 ]
-                [ aperoLinks
-                , muscatLinks
+                -- TODO: Add apero links here when that feature goes live.
+                [ muscatLinks
                 , feedbackLink
                 ]
             ]
