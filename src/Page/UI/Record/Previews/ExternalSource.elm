@@ -1,16 +1,16 @@
 module Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, inFront, link, newTabLink, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, inFront, link, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Components exposing (h2, renderLabel, renderParagraph, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (externalLinkTemplate, h2, renderLabel, renderParagraph, resourceLink, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (bookSvg, institutionSvg)
-import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink, pageFullRecordTemplate, pageHeaderTemplateNoToc)
+import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplateNoToc)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -243,14 +243,6 @@ viewExternalSourceExternalResourcesSection language linkSection =
 
 viewExternalResource : Language -> ExternalSourceExternalResource -> Element msg
 viewExternalResource language body =
-    let
-        resourceLink =
-            if isExternalLink body.url then
-                newTabLink
-
-            else
-                link
-    in
     wrappedRow
         [ width fill
         , alignTop
@@ -271,7 +263,7 @@ viewExternalResource language body =
                         , alignLeft
                         , spacing 5
                         ]
-                        [ resourceLink
+                        [ resourceLink body.url
                             [ linkColour ]
                             { url = body.url
                             , label = renderParagraph language body.label

@@ -1,18 +1,16 @@
 module Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources, viewExternalResourcesSection)
 
 import Config as C
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, link, newTabLink, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, newTabLink, px, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (renderParagraph)
+import Page.UI.Components exposing (externalLinkTemplate, renderParagraph, resourceLink)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (iiifLogo)
-import Page.UI.Record.PageTemplate exposing (externalLinkTemplate, isExternalLink)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
-import Utilities exposing (choose)
 
 
 viewExternalRecord : Language -> ExternalRecordBody -> Element msg
@@ -90,16 +88,12 @@ viewExternalResource language body =
                 ]
 
         _ ->
-            let
-                resourceLink =
-                    choose (isExternalLink body.url) (always newTabLink) (always link)
-            in
             row
                 [ width fill
                 , alignLeft
                 , spacing 5
                 ]
-                [ resourceLink
+                [ resourceLink body.url
                     [ linkColour
                     ]
                     { url = body.url

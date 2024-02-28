@@ -5,7 +5,7 @@ import Language exposing (Language, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Record.PageTemplate exposing (externalLinkTemplate)
+import Page.UI.Components exposing (externalLinkTemplate)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
