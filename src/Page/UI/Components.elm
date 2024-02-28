@@ -21,7 +21,7 @@ module Page.UI.Components exposing
     )
 
 import Css
-import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, moveUp, newTabLink, none, onRight, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, moveUp, newTabLink, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -429,7 +429,7 @@ styledList textList =
         [ text (String.join "; " textList) ]
 
 
-resourceLink : String -> (List (Attribute msg) -> { url : String, label : Element msg } -> Element msg)
+resourceLink : String -> (List (Attribute msg) -> { label : Element msg, url : String } -> Element msg)
 resourceLink url =
     choose (isExternalLink url) (always newTabLink) (always link)
 
@@ -458,8 +458,8 @@ parsedHtml txt =
     if isHttpUrl txt then
         [ resourceLink txt
             [ linkColour ]
-            { url = txt
-            , label = text txt
+            { label = text txt
+            , url = txt
             }
         , externalLinkTemplate txt
         ]
@@ -467,8 +467,8 @@ parsedHtml txt =
     else if isMailtoUrl txt then
         [ newTabLink
             [ linkColour ]
-            { url = "mailto:" ++ txt
-            , label = text txt
+            { label = text txt
+            , url = "mailto:" ++ txt
             }
         , externalLinkTemplate txt
         ]

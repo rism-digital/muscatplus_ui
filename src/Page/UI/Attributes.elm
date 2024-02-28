@@ -38,7 +38,6 @@ import Element
         , Orientation(..)
         , alignTop
         , fill
-        , fillPortion
         , htmlAttribute
         , maximum
         , minimum
@@ -127,14 +126,6 @@ emptyHtmlAttribute =
     HA.classList []
 
 
-facetBorderBottom : List (Attribute msg)
-facetBorderBottom =
-    [ Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-    , Border.color colourScheme.lightGrey
-    , paddingXY 0 lineSpacing
-    ]
-
-
 fontBaseSize : Attr decorative msg
 fontBaseSize =
     Font.size 14
@@ -216,11 +207,6 @@ tabShadowClip =
     -- applied clipping to the shadow so that we don't get a bottom
     -- shadow on tabs.
     htmlAttribute (HA.style "clip-path" "inset(-5px -5px 0px -5px)")
-
-
-pageBackground : Attribute msg
-pageBackground =
-    Background.color colourScheme.white
 
 
 pageHeaderBackground : Attribute msg

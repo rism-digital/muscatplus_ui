@@ -5,7 +5,6 @@ import Element exposing (Element, none, text)
 import Maybe.Extra as ME
 import SvgParser
 import Utilities exposing (choose)
-import Validate exposing (isValidEmail)
 
 
 viewIf : Element msg -> Bool -> Element msg

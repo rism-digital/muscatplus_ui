@@ -1,7 +1,7 @@
 module Page.SideBar.Views.AboutMenu exposing (view)
 
 import Config
-import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, link, mouseOver, moveUp, none, onRight, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, link, mouseOver, moveUp, none, onRight, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onMouseEnter, onMouseLeave)

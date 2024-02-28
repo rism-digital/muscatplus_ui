@@ -32,19 +32,19 @@ pageFooterTemplate session language footer =
             Url.toString session.url
                 |> String.replace "#" "%23"
 
+        aperoLinks =
+            newTabLink
+                [ linkColour ]
+                { label = text "API Viewer"
+                , url = "/apero/?url=" ++ currentUrl
+                }
+
         feedbackLink =
             newTabLink
                 [ linkColour
                 ]
                 { label = text (extractLabelFromLanguageMap language localTranslations.reportAnIssue)
                 , url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
-                }
-
-        aperoLinks =
-            newTabLink
-                [ linkColour ]
-                { label = text "API Viewer"
-                , url = "/apero/?url=" ++ currentUrl
                 }
 
         muscatLinks =
