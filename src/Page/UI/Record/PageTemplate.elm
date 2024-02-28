@@ -1,7 +1,5 @@
 module Page.UI.Record.PageTemplate exposing
-    ( externalLinkTemplate
-    , isExternalLink
-    , pageFooterTemplate
+    ( pageFooterTemplate
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
@@ -10,7 +8,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, above, alignBottom, alignLeft, alignRight, centerY, column, el, fill, height, htmlAttribute, link, newTabLink, none, padding, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, row, shrink, spacing, spacingXY, text, width)
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
@@ -19,12 +17,10 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, minimalDropShadow)
-import Page.UI.Components exposing (h1, h2s)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (externalLinkSvg)
+import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, resourceLink)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
 import Page.UI.Style exposing (colourScheme)
-import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Session exposing (Session)
 import Url
 
@@ -162,22 +158,8 @@ headerTmpl cfg =
         ]
 
 
-isExternalLink : String -> Bool
-isExternalLink url =
-    String.startsWith C.serverUrl url
-        |> not
-
-
 pageLinkTemplate : Language -> LanguageMap -> { a | id : String } -> Element msg
 pageLinkTemplate language langMap body =
-    let
-        recordLink =
-            if isExternalLink body.id then
-                newTabLink
-
-            else
-                link
-    in
     row
         [ width fill
         , alignLeft
@@ -192,7 +174,7 @@ pageLinkTemplate language langMap body =
                     , Font.semiBold
                     ]
                     (text (extractLabelFromLanguageMap language langMap ++ ": "))
-                , recordLink
+                , resourceLink body.id
                     [ linkColour ]
                     { label =
                         el
@@ -204,23 +186,6 @@ pageLinkTemplate language langMap body =
             ]
         , externalLinkTemplate body.id
         ]
-
-
-externalLinkTemplate : String -> Element msg
-externalLinkTemplate url =
-    let
-        externalImg =
-            el
-                [ width (px 12)
-                , height (px 12)
-                , tooltip above
-                    -- TODO: Translate
-                    (el tooltipStyle (text "External link"))
-                ]
-                (externalLinkSvg colourScheme.midGrey)
-    in
-    isExternalLink url
-        |> viewIf externalImg
 
 
 pageFullRecordTemplate : Language -> { a | id : String } -> Element msg

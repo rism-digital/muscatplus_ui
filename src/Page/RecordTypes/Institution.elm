@@ -61,8 +61,8 @@ type alias LocationAddressSectionBody =
     { label : LanguageMap
     , mailingAddress : Maybe (List LabelValue)
     , coordinates : Maybe CoordinatesSection
-    , website : Maybe LabelStringValue
-    , email : Maybe LabelStringValue
+    , website : Maybe LabelValue
+    , email : Maybe LabelValue
     }
 
 
@@ -114,5 +114,5 @@ locationAddressSectionBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "mailingAddress" (Decode.maybe (list labelValueDecoder)) Nothing
         |> optional "coordinates" (Decode.maybe coordinatesSectionDecoder) Nothing
-        |> optional "website" (Decode.maybe labelStringValueDecoder) Nothing
-        |> optional "email" (Decode.maybe labelStringValueDecoder) Nothing
+        |> optional "website" (Decode.maybe labelValueDecoder) Nothing
+        |> optional "email" (Decode.maybe labelValueDecoder) Nothing

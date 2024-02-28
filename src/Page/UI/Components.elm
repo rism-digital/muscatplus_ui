@@ -3,6 +3,7 @@ module Page.UI.Components exposing
     , basicCheckbox
     , contentTypeIconChooser
     , dropdownSelect
+    , externalLinkTemplate
     , h1
     , h2
     , h2s
@@ -12,6 +13,7 @@ module Page.UI.Components exposing
     , mapViewer
     , renderLabel
     , renderParagraph
+    , resourceLink
     , sourceIconChooser
     , sourceTypeIconChooser
     , viewParagraphField
@@ -19,7 +21,7 @@ module Page.UI.Components exposing
     )
 
 import Css
-import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, moveUp, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, moveUp, newTabLink, none, onRight, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -33,12 +35,13 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, ex
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
+import Page.UI.Attributes exposing (bodyRegular, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
-import Utilities exposing (toLinkedHtml)
+import Utilities exposing (choose, toLinkedHtml)
+import Validate
 
 
 type alias DropdownSelectConfig a msg =
@@ -378,6 +381,7 @@ renderCloselySpacedValue : Language -> LanguageMap -> Element msg
 renderCloselySpacedValue language values =
     textColumn
         [ bodyRegular
+        , spacing 5
         ]
         (styledParagraphs (extractTextFromLanguageMap language values))
 
@@ -425,6 +429,76 @@ styledList textList =
         [ text (String.join "; " textList) ]
 
 
+resourceLink : String -> (List (Attribute msg) -> { url : String, label : Element msg } -> Element msg)
+resourceLink url =
+    choose (isExternalLink url) (always newTabLink) (always link)
+
+
+containsHtml : String -> Bool
+containsHtml txt =
+    -- If there is no open bracket, there is no HTML.
+    -- If there is an open bracket, there might be HTML
+    String.contains "<" txt
+
+
+isHttpUrl : String -> Bool
+isHttpUrl txt =
+    String.startsWith "http" txt
+
+
+isMailtoUrl : String -> Bool
+isMailtoUrl txt =
+    Validate.isValidEmail txt
+
+
+parsedHtml : String -> List (Element msg)
+parsedHtml txt =
+    -- Don't run the HTML Parser and escaping stuff
+    -- if there is no chance that the text contains HTML.
+    if isHttpUrl txt then
+        [ resourceLink txt
+            [ linkColour ]
+            { url = txt
+            , label = text txt
+            }
+        , externalLinkTemplate txt
+        ]
+
+    else if isMailtoUrl txt then
+        [ newTabLink
+            [ linkColour ]
+            { url = "mailto:" ++ txt
+            , label = text txt
+            }
+        , externalLinkTemplate txt
+        ]
+
+    else if not (containsHtml txt) then
+        [ paragraph
+            []
+            [ text txt ]
+        ]
+
+    else
+        -- fall back to processing the text as HTML by default.
+        case toLinkedHtml txt of
+            Ok elements ->
+                elements
+
+            Err errMsg ->
+                -- the original HTML string content is contained in the
+                -- error message, so we will show it verbatim.
+                [ text errMsg ]
+
+
+listRenderer : String -> Element msg
+listRenderer txt =
+    wrappedRow
+        [ spacing lineSpacing
+        ]
+        (parsedHtml txt)
+
+
 {-|
 
     Wraps a list of string values in paragraph markers so that they can be properly spaced, etc.
@@ -434,34 +508,6 @@ styledList textList =
 -}
 styledParagraphs : List String -> List (Element msg)
 styledParagraphs textList =
-    let
-        containsHtml txt =
-            -- If there is no open bracket, there is no HTML.
-            -- If there is an open bracket, there might be HTML,
-            -- so we would pass this through the slow path.
-            String.contains "<" txt
-
-        parsedHtml txt =
-            -- Don't run the HTML Parser and escaping stuff
-            -- if there is no chance that the text contains HTML.
-            if not (containsHtml txt) then
-                [ text txt ]
-
-            else
-                case toLinkedHtml txt of
-                    Ok elements ->
-                        elements
-
-                    Err errMsg ->
-                        -- the original HTML string content is contained in the
-                        -- error message, so we will show it verbatim.
-                        [ text errMsg ]
-
-        listRenderer txt =
-            paragraph
-                [ spacing lineSpacing ]
-                (parsedHtml txt)
-    in
     List.map listRenderer textList
 
 
@@ -582,3 +628,20 @@ contentTypeIconChooser contentType =
 
         OtherContent ->
             ellipsesSvg
+
+
+externalLinkTemplate : String -> Element msg
+externalLinkTemplate url =
+    let
+        externalImg =
+            el
+                [ width (px 12)
+                , height (px 12)
+                , tooltip above
+                    -- TODO: Translate
+                    (el tooltipStyle (text "External link"))
+                ]
+                (externalLinkSvg colourScheme.midGrey)
+    in
+    isExternalLink url
+        |> viewIf externalImg

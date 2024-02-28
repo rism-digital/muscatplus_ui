@@ -1,9 +1,11 @@
-module Page.UI.Helpers exposing (viewIf, viewMaybe, viewSVGRenderedIncipit)
+module Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe, viewSVGRenderedIncipit)
 
+import Config as C
 import Element exposing (Element, none, text)
 import Maybe.Extra as ME
 import SvgParser
 import Utilities exposing (choose)
+import Validate exposing (isValidEmail)
 
 
 viewIf : Element msg -> Bool -> Element msg
@@ -41,3 +43,9 @@ viewSVGRenderedIncipit incipitData =
 
         Err _ ->
             text "Could not parse SVG"
+
+
+isExternalLink : String -> Bool
+isExternalLink url =
+    String.startsWith C.serverUrl url
+        |> not

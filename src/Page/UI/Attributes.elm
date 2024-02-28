@@ -256,7 +256,7 @@ sectionSpacing =
 
 valueFieldColumnAttributes : List (Attribute msg)
 valueFieldColumnAttributes =
-    [ width (fillPortion 3)
+    [ width fill
     , alignTop
     ]
 
