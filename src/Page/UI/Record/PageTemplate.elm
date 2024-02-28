@@ -32,7 +32,7 @@ pageFooterTemplate session language footer =
             Url.toString session.url
                 |> String.replace "#" "%23"
 
-        aperoLinks =
+        aperoLink =
             newTabLink
                 [ linkColour ]
                 { label = text "API Viewer"
@@ -75,6 +75,7 @@ pageFooterTemplate session language footer =
                 -- TODO: Add apero links here when that feature goes live.
                 [ muscatLinks
                 , feedbackLink
+                , aperoLink
                 ]
             ]
         , column
