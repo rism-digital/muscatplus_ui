@@ -1,4 +1,4 @@
-module Page.UI.Images exposing (assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, externalLinkSvg, fileDownloadSvg, fileMusicSvg, globeSvg, graduationCapSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, linkSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, printingPressSvg, rectanglesMixedSvg, rismLogo, searchSvg, shapesSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, userCircleSvg)
+module Page.UI.Images exposing (altSvg, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, externalLinkSvg, fileDownloadSvg, fileMusicSvg, globeSvg, graduationCapSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, linkSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, printingPressSvg, rectanglesMixedSvg, rismLogo, searchSvg, shapesSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, userCircleSvg)
 
 import Color exposing (toCssString)
 import Element exposing (Element, html)
@@ -26,6 +26,14 @@ makeSvgIcon color details =
                 []
             ]
         )
+
+
+altSvg : Element.Color -> Element msg
+altSvg color =
+    makeSvgIcon color
+        { path = "M448 64c-9.7 0-18.9 4.4-25 12L176.6 384H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H192c9.7 0 18.9-4.4 25-12L463.4 128H608c17.7 0 32-14.3 32-32s-14.3-32-32-32H448zm0 320c-17.7 0-32 14.3-32 32s14.3 32 32 32H608c17.7 0 32-14.3 32-32s-14.3-32-32-32H448z"
+        , viewBox = "0 0 640 512"
+        }
 
 
 assistanceSvg : Element.Color -> Element msg

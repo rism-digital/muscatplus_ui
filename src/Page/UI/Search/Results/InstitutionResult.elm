@@ -9,7 +9,7 @@ import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Components exposing (makeFlagIcon)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Images exposing (linkSvg, mapMarkerSvg, sourcesSvg)
+import Page.UI.Images exposing (altSvg, linkSvg, mapMarkerSvg, sourcesSvg)
 import Page.UI.Search.Results exposing (SearchResultConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -70,6 +70,21 @@ viewInstitutionSummary language iconColour summary =
                     , displayStyles =
                         [ bodyRegular ]
                     , formatNumbers = True
+                    }
+                    summary
+                ]
+            , row
+                [ width fill
+                , spacing 20
+                ]
+                [ viewSearchResultSummaryField
+                    { language = language
+                    , icon = altSvg iconColour
+                    , iconSize = 20
+                    , includeLabelInValue = False
+                    , fieldName = "otherNames"
+                    , displayStyles = [ bodyRegular ]
+                    , formatNumbers = False
                     }
                     summary
                 ]
