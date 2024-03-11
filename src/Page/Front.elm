@@ -8,10 +8,10 @@ module Page.Front exposing
     )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
+import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
-import Flip exposing (flip)
 import Maybe.Extra as ME
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))

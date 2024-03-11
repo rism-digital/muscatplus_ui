@@ -8,11 +8,11 @@ module Page.Keyboard exposing
     , view
     )
 
+import Basics.Extra exposing (flip)
 import Char exposing (isAlpha, isUpper)
 import Config
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Element exposing (Element)
-import Flip exposing (flip)
 import Language exposing (Language)
 import Maybe.Extra as ME
 import Page.Keyboard.Audio exposing (generateNotes)

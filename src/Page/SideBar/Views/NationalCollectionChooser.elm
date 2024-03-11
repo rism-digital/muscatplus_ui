@@ -22,7 +22,6 @@ import Page.UI.Images exposing (globeSvg)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import String.Extra as SE
-import String.Normalize
 
 
 imageForCountryCode : String -> Element msg
@@ -107,7 +106,7 @@ sortedByLocalizedCountryName language countryList =
     List.sortBy
         (\( _, label ) ->
             extractLabelFromLanguageMap language label
-                |> String.Normalize.removeDiacritics
+                |> SE.removeDiacritics
         )
         countryList
 

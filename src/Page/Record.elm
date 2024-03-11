@@ -11,11 +11,11 @@ module Page.Record exposing
     )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setRangeFacetValues)
+import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
-import Flip exposing (flip)
 import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.Query exposing (QueryArgs, defaultQueryArgs, setFilters, setNationalCollection, setNextQuery, toNextQuery)

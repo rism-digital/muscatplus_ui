@@ -18,7 +18,7 @@ import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, minimalDropShadow)
 import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, resourceLink)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
@@ -48,11 +48,7 @@ pageFooterTemplate session language footer =
                 }
 
         muscatLinks =
-            if session.showMuscatLinks then
-                viewMuscatLinks session
-
-            else
-                none
+            viewIf (viewMuscatLinks session) session.showMuscatLinks
     in
     row
         [ width fill

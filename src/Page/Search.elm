@@ -10,11 +10,11 @@ module Page.Search exposing
     )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setKeyboard, setRangeFacetValues, toKeyboard)
+import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
-import Flip exposing (flip)
 import Maybe.Extra as ME
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)

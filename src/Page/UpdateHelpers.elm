@@ -30,10 +30,10 @@ module Page.UpdateHelpers exposing
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toExpandedFacets, toQueryFacetValues, toRangeFacetValues)
 import ActiveSearch.Model exposing (ActiveSearch)
+import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Config as C
 import Dict exposing (Dict)
-import Flip exposing (flip)
 import Http
 import Http.Detailed
 import KeyCodes exposing (ArrowDirection(..))

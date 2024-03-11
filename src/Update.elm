@@ -1,9 +1,9 @@
 module Update exposing (update)
 
+import Basics.Extra as BE
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (setDevice, setWindow)
-import Flip exposing (flip)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.About as AboutPage
@@ -459,7 +459,7 @@ update msg model =
                     toSession model
                         |> setDevice device
                         |> setWindow ( width, height )
-                        |> flip updateSession model
+                        |> BE.flip updateSession model
             in
             ( newModel, Cmd.none )
 

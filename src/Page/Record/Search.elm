@@ -1,8 +1,8 @@
 module Page.Record.Search exposing (searchSubmit)
 
 import ActiveSearch exposing (setActiveSearch)
+import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
-import Flip exposing (flip)
 import Page.Query exposing (buildQueryParameters, resetPage, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
