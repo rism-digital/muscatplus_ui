@@ -110,6 +110,8 @@ toLinkedHtml htmlString =
         toElementList htmlNodes =
             toVirtualDom htmlNodes
                 |> List.map Element.html
+                |> Element.paragraph []
+                |> List.singleton
     in
     case Html.Parser.run htmlString of
         Ok nodes ->
