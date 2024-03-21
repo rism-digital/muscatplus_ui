@@ -104,7 +104,7 @@ Uses hecrj/html-parser
 parsed an html string, transforms hrefs in links, and converts to vdom which can be used in views.
 
 -}
-toLinkedHtml : String -> Result String (List (Element msg))
+toLinkedHtml : String -> List (Element msg)
 toLinkedHtml htmlString =
     let
         toElementList htmlNodes =
@@ -116,7 +116,6 @@ toLinkedHtml htmlString =
     case Html.Parser.run htmlString of
         Ok nodes ->
             toElementList nodes
-                |> Ok
 
         Err _ ->
             let
@@ -129,8 +128,10 @@ toLinkedHtml htmlString =
             case Html.Parser.run escapedHtml of
                 Ok nodes ->
                     toElementList nodes
-                        |> Ok
 
                 Err _ ->
                     -- return the original string
-                    Err htmlString
+                    [ Element.paragraph
+                        []
+                        [ Element.text htmlString ]
+                    ]

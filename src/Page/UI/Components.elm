@@ -233,16 +233,9 @@ dropdownSelectOption :
     -> a
     -> Html msg
 dropdownSelectOption val name choiceFn currentChoice =
-    let
-        valToChoice =
-            choiceFn val
-
-        isSelected =
-            valToChoice == currentChoice
-    in
     HT.option
         [ HA.value val
-        , HA.selected isSelected
+        , HA.selected (choiceFn val == currentChoice)
         ]
         [ HT.text name ]
 
@@ -275,24 +268,6 @@ dropdownSelectStyles =
     , HA.style "position" "relative"
     , HA.style "background-position" "right 5px top 50%"
     ]
-
-
-
---wrappedRow
---    [ width fill
---    , height fill
---    , alignTop
---    ]
---    [ column
---        (List.append
---            [ width fill
---            , height fill
---            , alignTop
---            ]
---            contentStyles
---        )
---        content
---    ]
 
 
 h1 : Language -> LanguageMap -> Element msg
@@ -481,14 +456,7 @@ parsedHtml txt =
 
     else
         -- fall back to processing the text as HTML by default.
-        case toLinkedHtml txt of
-            Ok elements ->
-                elements
-
-            Err errMsg ->
-                -- the original HTML string content is contained in the
-                -- error message, so we will show it verbatim.
-                [ text errMsg ]
+        toLinkedHtml txt
 
 
 listRenderer : String -> Element msg
