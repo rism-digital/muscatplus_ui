@@ -33,15 +33,15 @@ linkWithMuscatLabel =
 
 muscatViewDescription : LanguageMap
 muscatViewDescription =
-    [ LanguageValue English [ """Activating this control will put links to the Muscat records in the footer
+    [ LanguageValue English [ """For RISM contributors, activating this control will put links to the Muscat records in the footer
     of every record. You will still need a Muscat account and permissions to view or edit the
-    records. """ ]
+    records.""" ]
     , LanguageValue French [ """En activant ce bouton, des liens vers les notices Muscat seront placés dans le pied de
     page de chaque notice. Vous aurez toujours besoin d'un compte Muscat et de permissions pour voir ou éditer
     les enregistrements.""" ]
-    , LanguageValue German [ """Wenn dieses Steuerelement aktiviert ist, werden Links zu den Muscat-Datensätzen in der 
-    Fusszeile jedes Datensatzes angezeigt. Sie benötigen einen Muscat-Account und die Berechtigung, Datensätze 
-    anzuzeigen oder zu bearbeiten.""" ]
+    , LanguageValue German [ """Für RISM-Mitarbeiter werden durch die Aktivierung dieses Steuerelements Links zu den
+    Muscat-Datensätzen in der Fußzeile jedes Datensatzes angezeigt. Sie benötigen einen Muscat-Account und die
+    Berechtigung, Datensätze anzuzeigen oder zu bearbeiten.""" ]
     , LanguageValue Italian [ """Attivando questo comando, verranno inseriti in basso alla pagina di ciascuna scheda 
     i collegamenti alle schede corrispondenti in Muscat. Sarà in ogni caso necessario un account Muscat e le relative 
     autorizzazioni per visualizzare o modificare le schede.""" ]
