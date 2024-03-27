@@ -11,7 +11,7 @@ module Utilities exposing
 import Dict exposing (Dict)
 import Element exposing (Element)
 import ElmEscapeHtml
-import Html.Parser
+import Html.Parser exposing (Node)
 import Html.Parser.Util exposing (toVirtualDom)
 import Maybe.Extra as ME
 import Regex
@@ -107,13 +107,13 @@ parsed an html string, transforms hrefs in links, and converts to vdom which can
 toLinkedHtml : String -> List (Element msg)
 toLinkedHtml htmlString =
     let
-        toElementList htmlNodes =
-            toVirtualDom htmlNodes
-                |> List.map Element.html
-                |> Element.paragraph []
-                |> List.singleton
+        wrappedUrlString =
+            Regex.replace
+                (regex "(?<!href=\")(https?:\\/\\/\\S+)")
+                (\match -> "<a href=\"" ++ match.match ++ "\">" ++ match.match ++ "</a>")
+                htmlString
     in
-    case Html.Parser.run htmlString of
+    case Html.Parser.run wrappedUrlString of
         Ok nodes ->
             toElementList nodes
 
@@ -123,7 +123,7 @@ toLinkedHtml htmlString =
                 -- masquerading as HTML, such as "<" or ">". This may make really bad
                 -- HTML show up in the notes, but it's better than showing nothing.
                 escapedHtml =
-                    ElmEscapeHtml.escape htmlString
+                    ElmEscapeHtml.escape wrappedUrlString
             in
             case Html.Parser.run escapedHtml of
                 Ok nodes ->
@@ -135,3 +135,11 @@ toLinkedHtml htmlString =
                         []
                         [ Element.text htmlString ]
                     ]
+
+
+toElementList : List Node -> List (Element msg)
+toElementList htmlNodes =
+    toVirtualDom htmlNodes
+        |> List.map Element.html
+        |> Element.paragraph []
+        |> List.singleton
