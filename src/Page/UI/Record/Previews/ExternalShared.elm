@@ -48,7 +48,7 @@ viewExternalRelationshipBody language body =
                 body.qualifier
 
         relatedToView =
-            viewMaybe (viewRelatedToBody language) body.relatedTo
+            viewMaybe (viewRelatedToBody language body.qualifier) body.relatedTo
 
         note =
             viewMaybe

@@ -1,32 +1,33 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, newTabLink, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Element.Border as Border
+import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
-import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Page.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, pageHeaderBackground, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (headingLG, headingMD, labelFieldColumnAttributes, lineSpacing, linkColour, pageHeaderBackground, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Components exposing (mapViewer, renderLabel)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
 import Url.Builder as QB exposing (absolute)
 
 
-viewDescriptionTab : Language -> InstitutionBody -> Element msg
-viewDescriptionTab language body =
+viewDescriptionTab : Language -> ( Int, Int ) -> InstitutionBody -> Element msg
+viewDescriptionTab language ( windowWidth, windowHeight ) body =
     row
         [ width fill
         , height fill
@@ -45,7 +46,7 @@ viewDescriptionTab language body =
             , viewMaybe (viewNotesSection language) body.notes
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
             , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-            , viewMaybe (viewLocationMapSection language) body.location
+            , viewMaybe (viewLocationMapSection language ( windowWidth, windowHeight )) body.location
             ]
         ]
 
@@ -60,7 +61,7 @@ viewFullInstitutionPage session model body =
         pageBodyView =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    viewDescriptionTab session.language body
+                    viewDescriptionTab session.language session.window body
 
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTabBody session model
@@ -73,6 +74,27 @@ viewFullInstitutionPage session model body =
                 , centerY
                 ]
                 (institutionSvg colourScheme.darkBlue)
+
+        headerHeight =
+            if session.isFramed then
+                px (recordTitleHeight + searchSourcesLinkHeight)
+
+            else
+                px (tabBarHeight + recordTitleHeight)
+
+        pageHeader =
+            if session.isFramed then
+                subHeaderTemplate session.language (Just icon) body
+
+            else
+                pageHeaderTemplate session.language (Just icon) body
+
+        tabBar =
+            if session.isFramed then
+                viewMaybe (viewRecordSearchSourcesLink session.language localTranslations.sources) body.sources
+
+            else
+                viewRecordTopBar session.language model body
     in
     row
         [ width fill
@@ -86,7 +108,7 @@ viewFullInstitutionPage session model body =
             ]
             [ row
                 [ width fill
-                , height (px (tabBarHeight + recordTitleHeight))
+                , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.darkBlue
                 ]
@@ -98,12 +120,12 @@ viewFullInstitutionPage session model body =
                     , paddingXY 20 0
                     , pageHeaderBackground
                     ]
-                    [ pageHeaderTemplate session.language (Just icon) body
-                    , viewRecordTopBar session.language model body
+                    [ pageHeader
+                    , tabBar
                     ]
                 ]
             , pageBodyView
-            , pageFooterTemplate session session.language body
+            , pageFooterTemplateRouter session session.language body
             ]
         ]
 
@@ -123,8 +145,8 @@ viewRecordTopBar language model body =
         }
 
 
-mapSection : Language -> CoordinatesSection -> Element msg
-mapSection language coords =
+mapSection : Language -> ( Int, Int ) -> CoordinatesSection -> Element msg
+mapSection language ( windowWidth, windowHeight ) coords =
     let
         coordsValue =
             List.map String.fromFloat coords.coordinates
@@ -173,7 +195,7 @@ mapSection language coords =
                     ]
                 , row
                     [ width fill ]
-                    [ mapViewer ( 900, 400 ) mapsUrl ]
+                    [ mapViewer ( min windowWidth 900, min windowHeight 400 ) mapsUrl ]
                 , row
                     [ width fill ]
                     [ column
@@ -201,6 +223,6 @@ mapSection language coords =
         ]
 
 
-viewLocationMapSection : Language -> LocationAddressSectionBody -> Element msg
-viewLocationMapSection language location =
-    viewMaybe (mapSection language) location.coordinates
+viewLocationMapSection : Language -> ( Int, Int ) -> LocationAddressSectionBody -> Element msg
+viewLocationMapSection language ( windowWidth, windowHeight ) location =
+    viewMaybe (mapSection language ( windowWidth, windowHeight )) location.coordinates

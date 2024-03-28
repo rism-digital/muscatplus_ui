@@ -86,6 +86,19 @@ view model =
                 _ ->
                     defaultTitle
 
+        sidebarView =
+            if pageSession.isFramed then
+                none
+
+            else
+                column
+                    [ width (px 70)
+                    , height fill
+                    , alignTop
+                    , inFront (Element.map Msg.UserInteractedWithSideBar (Page.SideBar.Views.view pageSession))
+                    ]
+                    []
+
         pageView =
             case model of
                 NotFoundPage session pageModel ->
@@ -137,13 +150,7 @@ view model =
                 [ width fill
                 , height fill
                 ]
-                [ column
-                    [ width (px 70)
-                    , height fill
-                    , alignTop
-                    , inFront (Element.map Msg.UserInteractedWithSideBar (Page.SideBar.Views.view pageSession))
-                    ]
-                    []
+                [ sidebarView
                 , column
                     [ centerX
                     , width fill

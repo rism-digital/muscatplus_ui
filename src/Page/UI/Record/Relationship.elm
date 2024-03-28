@@ -1,10 +1,10 @@
 module Page.UI.Record.Relationship exposing (viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
 
-import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
-import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
+import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
 import Page.UI.Attributes exposing (bodyRegular, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -15,8 +15,8 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (choose)
 
 
-viewRelatedToBody : Language -> RelatedToBody -> Element msg
-viewRelatedToBody language body =
+viewRelatedToBody : Language -> Maybe QualifierBody -> RelatedToBody -> Element msg
+viewRelatedToBody language qualifier body =
     let
         ( relIcon, relationshipTooltip ) =
             case body.type_ of
@@ -31,7 +31,7 @@ viewRelatedToBody language body =
                     ( institutionSvg colourScheme.midGrey
                     , el
                         tooltipStyle
-                        (text (extractLabelFromLanguageMap language localTranslations.person))
+                        (text (extractLabelFromLanguageMap language localTranslations.institution))
                     )
 
                 PlaceRelationship ->
@@ -50,6 +50,13 @@ viewRelatedToBody language body =
 
                 UnknownRelationship ->
                     ( none, none )
+
+        qualifierLabel =
+            viewMaybe
+                (\qual ->
+                    el [] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
+                )
+                qualifier
     in
     row
         [ width fill
@@ -67,19 +74,13 @@ viewRelatedToBody language body =
             { label = text (extractLabelFromLanguageMap language body.label)
             , url = body.id
             }
+        , qualifierLabel
         ]
 
 
 viewRelationshipBody : Language -> RelationshipBody -> Element msg
 viewRelationshipBody language body =
     let
-        qualifierLabel =
-            viewMaybe
-                (\qual ->
-                    el [] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
-                )
-                body.qualifier
-
         relatedToView =
             -- if there is a related-to relationship, display that.
             -- if all we have is a name, display that.
@@ -91,7 +92,7 @@ viewRelationshipBody language body =
                 (\rel ->
                     choose (rel.type_ == PlaceRelationship)
                         (\() -> el [] (text (extractLabelFromLanguageMap language rel.label)))
-                        (\() -> viewRelatedToBody language rel)
+                        (\() -> viewRelatedToBody language body.qualifier rel)
                 )
                 body.relatedTo
 
@@ -117,12 +118,11 @@ viewRelationshipBody language body =
             [ roleLabel ]
         , column
             valueFieldColumnAttributes
-            [ paragraph
+            [ textColumn
                 [ alignLeft
                 , bodyRegular
                 ]
                 [ relatedToView
-                , qualifierLabel
                 , note
                 ]
             ]

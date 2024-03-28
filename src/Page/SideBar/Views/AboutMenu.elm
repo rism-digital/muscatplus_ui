@@ -106,7 +106,7 @@ viewAboutMenuChooser session =
     row
         [ width (px 80)
         , height (px 80)
-        , moveUp 105
+        , moveUp 99
         ]
         [ animatedRow
             sidebarChooserAnimations

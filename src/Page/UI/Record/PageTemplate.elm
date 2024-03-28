@@ -1,5 +1,6 @@
 module Page.UI.Record.PageTemplate exposing
     ( pageFooterTemplate
+    , pageFooterTemplateRouter
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
@@ -9,6 +10,7 @@ module Page.UI.Record.PageTemplate exposing
 
 import Config as C
 import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, row, shrink, spacing, spacingXY, text, width)
+import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes as HA
@@ -19,10 +21,61 @@ import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, minimalDropShadow)
 import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
+import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Url
+
+
+pageFooterTemplateRouter : Session -> Language -> { a | id : String, recordHistory : RecordHistory } -> Element msg
+pageFooterTemplateRouter session language footer =
+    if session.isFramed then
+        pageFooterTemplateFramed session language footer
+
+    else
+        pageFooterTemplate session language footer
+
+
+pageFooterTemplateFramed : Session -> Language -> { a | id : String, recordHistory : RecordHistory } -> Element msg
+pageFooterTemplateFramed session language footer =
+    row
+        [ width fill
+        , alignBottom
+        , padding 10
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
+        , Border.color colourScheme.darkBlue
+        , minimalDropShadow
+        , Background.color colourScheme.darkBlue
+        ]
+        [ column
+            [ width fill
+            , spacing lineSpacing
+            , alignLeft
+            ]
+            [ row
+                [ width fill
+                , spacing 10
+                ]
+                [ newTabLink
+                    []
+                    { url = footer.id
+                    , label =
+                        el
+                            []
+                            (rismLogo colourScheme.white 50)
+                    }
+                , newTabLink
+                    []
+                    { url = footer.id
+                    , label =
+                        el
+                            [ Font.color colourScheme.white ]
+                            (text "View full record in RISM Online")
+                    }
+                ]
+            ]
+        ]
 
 
 pageFooterTemplate : Session -> Language -> { a | id : String, recordHistory : RecordHistory } -> Element msg
@@ -62,13 +115,12 @@ pageFooterTemplate session language footer =
             [ width fill
             , spacing lineSpacing
             ]
-            [ pageUriTemplate language footer
+            [ pageUriTemplate language headingLG footer
             , row
                 [ width fill
                 , alignLeft
                 , spacing lineSpacing
                 ]
-                -- TODO: Add apero links here when that feature goes live.
                 [ muscatLinks
                 , feedbackLink
                 , aperoLink
@@ -155,8 +207,8 @@ headerTmpl cfg =
         ]
 
 
-pageLinkTemplate : Language -> LanguageMap -> { a | id : String } -> Element msg
-pageLinkTemplate language langMap body =
+pageLinkTemplate : Language -> LanguageMap -> Attribute msg -> { a | id : String } -> Element msg
+pageLinkTemplate language langMap fontSize body =
     row
         [ width fill
         , alignLeft
@@ -167,7 +219,7 @@ pageLinkTemplate language langMap body =
             [ row
                 [ width fill ]
                 [ el
-                    [ headingLG
+                    [ fontSize
                     , Font.semiBold
                     ]
                     (text (extractLabelFromLanguageMap language langMap ++ ": "))
@@ -175,7 +227,7 @@ pageLinkTemplate language langMap body =
                     [ linkColour ]
                     { label =
                         el
-                            [ headingLG ]
+                            [ fontSize ]
                             (text body.id)
                     , url = body.id
                     }
@@ -187,12 +239,12 @@ pageLinkTemplate language langMap body =
 
 pageFullRecordTemplate : Language -> { a | id : String } -> Element msg
 pageFullRecordTemplate language body =
-    pageLinkTemplate language localTranslations.fullRecord body
+    pageLinkTemplate language localTranslations.fullRecord headingLG body
 
 
-pageUriTemplate : Language -> { a | id : String } -> Element msg
-pageUriTemplate language body =
-    pageLinkTemplate language localTranslations.recordURI body
+pageUriTemplate : Language -> Attribute msg -> { a | id : String } -> Element msg
+pageUriTemplate language fontSize body =
+    pageLinkTemplate language localTranslations.recordURI fontSize body
 
 
 viewMuscatLinks : Session -> Element msg

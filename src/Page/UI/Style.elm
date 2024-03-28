@@ -3,6 +3,7 @@ module Page.UI.Style exposing
     , headerHeight
     , recordTitleHeight
     , rgbaFloatToInt
+    , searchSourcesLinkHeight
     , tabBarHeight
     )
 
@@ -213,6 +214,11 @@ headerHeight =
 tabBarHeight : Int
 tabBarHeight =
     50
+
+
+searchSourcesLinkHeight : Int
+searchSourcesLinkHeight =
+    20
 
 
 recordTitleHeight : Int

@@ -1,9 +1,10 @@
 module Page.Record.Views.SourceSearch exposing
-    ( viewRecordSourceSearchTabBar
+    ( viewRecordSearchSourcesLink
+    , viewRecordSourceSearchTabBar
     , viewSourceSearchTabBody
     )
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, clipY, column, el, fill, height, maximum, none, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, clipY, column, el, fill, height, maximum, newTabLink, none, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -16,8 +17,9 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.Record.Views.Facets exposing (facetRecordMsgConfig)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingXL, minimalDropShadow, tabShadowClip)
+import Page.UI.Attributes exposing (headingMD, headingXL, linkColour, minimalDropShadow, tabShadowClip)
 import Page.UI.Components exposing (h3)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
@@ -178,6 +180,29 @@ viewSourceSearchTab { language, model, recordId, searchUrl, tabLabel } =
         ]
 
 
+viewRecordSearchSourcesLink : Language -> LanguageMap -> { a | url : String } -> Element RecordMsg
+viewRecordSearchSourcesLink language label body =
+    row
+        [ width fill
+        , height (px 20)
+        ]
+        [ column
+            [ height fill ]
+            [ el
+                []
+                (newTabLink
+                    [ headingMD
+                    , Font.semiBold
+                    , linkColour
+                    ]
+                    { url = body.url
+                    , label = text ("Search " ++ extractLabelFromLanguageMap language label ++ " on RISM Online")
+                    }
+                )
+            ]
+        ]
+
+
 viewRecordSourceSearchTabBar :
     { body : Maybe { a | url : String }
     , language : Language
@@ -189,8 +214,8 @@ viewRecordSourceSearchTabBar :
 viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
     let
         sourceSearchTab =
-            case body of
-                Just s ->
+            viewMaybe
+                (\s ->
                     viewSourceSearchTab
                         { language = language
                         , model = model
@@ -198,9 +223,8 @@ viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
                         , searchUrl = s.url
                         , tabLabel = tabLabel
                         }
-
-                Nothing ->
-                    none
+                )
+                body
 
         currentMode =
             model.currentTab

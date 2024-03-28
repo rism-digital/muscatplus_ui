@@ -1,24 +1,24 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.Record.Views.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Page.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (pageHeaderBackground, sectionSpacing)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplate, pageHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
 
 
@@ -69,6 +69,27 @@ viewFullPersonPage session model body =
                 , centerY
                 ]
                 (peopleSvg colourScheme.darkBlue)
+
+        headerHeight =
+            if session.isFramed then
+                px (recordTitleHeight + searchSourcesLinkHeight)
+
+            else
+                px (tabBarHeight + recordTitleHeight)
+
+        pageHeader =
+            if session.isFramed then
+                subHeaderTemplate session.language (Just icon) body
+
+            else
+                pageHeaderTemplate session.language (Just icon) body
+
+        tabBar =
+            if session.isFramed then
+                viewMaybe (viewRecordSearchSourcesLink session.language localTranslations.sources) body.sources
+
+            else
+                viewRecordTopBarRouter session.language model body
     in
     row
         [ width fill
@@ -82,7 +103,7 @@ viewFullPersonPage session model body =
             ]
             [ row
                 [ width fill
-                , height (px (tabBarHeight + recordTitleHeight))
+                , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.darkBlue
                 ]
@@ -94,12 +115,12 @@ viewFullPersonPage session model body =
                     , paddingXY 20 0
                     , pageHeaderBackground
                     ]
-                    [ pageHeaderTemplate session.language (Just icon) body
-                    , viewRecordTopBarRouter session.language model body
+                    [ pageHeader
+                    , tabBar
                     ]
                 ]
             , pageBodyView
-            , pageFooterTemplate session session.language body
+            , pageFooterTemplateRouter session session.language body
             ]
         ]
 

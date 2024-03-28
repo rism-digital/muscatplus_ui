@@ -289,6 +289,12 @@
             return {...currentPrefs, [key]: value}
         }
 
+        const detectIsInFrame = () =>
+        {
+            return window.self !== window.top;
+        }
+
+
         // define these to be global, but only initialize if we have a
         // page interaction that requires the audio context to initialize
         let audioCtx = null;
@@ -304,7 +310,8 @@
                     windowHeight: window.innerHeight,
                     showMuscatLinks: detectMuscatLinks(),
                     nationalCollection: getNationalCollectionSelection(),
-                    searchPreferences: getSearchPreferences()
+                    searchPreferences: getSearchPreferences(),
+                    isFramed: detectIsInFrame()
                 }
             });
 

@@ -37,6 +37,7 @@ type alias Session =
     , url : Url
     , route : Route
     , showMuscatLinks : Bool
+    , isFramed : Bool
     , expandedSideBar : SideBarAnimationStatus
     , sideBarExpansionDebouncer : Debouncer SideBarMsg
     , nationalCollectionChooserDebouncer : Debouncer SideBarMsg
@@ -114,6 +115,7 @@ init flags url key =
     , route = route
     , showMuscatLinks = flags.showMuscatLinks
     , expandedSideBar = NoAnimation
+    , isFramed = flags.isFramed
     , sideBarExpansionDebouncer = Debouncer.debounce sideBarExpandDelay |> Debouncer.toDebouncer
     , nationalCollectionChooserDebouncer = Debouncer.debounce (fromSeconds 0.8) |> Debouncer.toDebouncer
     , showFrontSearchInterface = initialMode

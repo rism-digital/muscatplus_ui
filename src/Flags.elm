@@ -10,4 +10,5 @@ type alias Flags =
     , showMuscatLinks : Bool
     , nationalCollection : Maybe String
     , searchPreferences : Maybe Value
+    , isFramed : Bool
     }
