@@ -85,6 +85,7 @@ init cfg =
     , probeResponse = NoResponseToShow
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
+    , digitizedCopiesCalloutExpanded = False
     }
 
 
@@ -492,6 +493,13 @@ update session msg model =
             in
             ( { model
                 | incipitInfoExpanded = newExpandedSet
+              }
+            , Cmd.none
+            )
+
+        UserClickedExpandDigitalCopiesCallout ->
+            ( { model
+                | digitizedCopiesCalloutExpanded = not model.digitizedCopiesCalloutExpanded
               }
             , Cmd.none
             )

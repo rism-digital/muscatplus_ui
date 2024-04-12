@@ -70,6 +70,8 @@ type alias SearchResultsSectionConfig a msg =
     , userToggledIncipitInfo : String -> msg
     , panelToggleMsg : String -> Set String -> msg
     , facetMsgConfig : FacetMsgConfig msg
+    , expandedDigitizedCopiesMsg : msg
+    , expandedDigitizedCopiesCallout : Bool
     }
 
 
@@ -95,6 +97,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
                         , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
                         , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
+                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
+                        , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
                         }
                         oldData
                         |> background
@@ -108,6 +112,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
                         , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
                         , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
+                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
+                        , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
                         }
                         (Just resp)
                         |> background

@@ -1,7 +1,8 @@
-module Page.UI.Record.ExternalResources exposing (viewDigitizedCopiesCalloutSection, viewExternalRecords, viewExternalResources, viewExternalResourcesSection)
+module Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalRecords, viewExternalResources, viewExternalResourcesSection)
 
 import Config as C
 import Dict exposing (Dict)
+import Dict.Extra as DE
 import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, minimum, newTabLink, padding, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
@@ -11,6 +12,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
+import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (externalLinkTemplate, renderParagraph, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
@@ -188,6 +190,72 @@ viewExternalResourcesSection language extSection =
             ]
     in
     sectionTemplate language extSection sectionBody
+
+
+filtTypes : ExternalResourceType -> Bool
+filtTypes rtype =
+    case rtype of
+        IIIFManifestResourceType ->
+            True
+
+        DigitizationResourceType ->
+            True
+
+        _ ->
+            False
+
+
+gatherExternalResourcesFromSection :
+    Language
+    ->
+        List
+            { a
+                | externalResources : Maybe ExternalResourcesSectionBody
+                , label : LanguageMap
+            }
+    -> Dict String (List ExternalResourceBody)
+gatherExternalResourcesFromSection language extResources =
+    List.map (\{ label, externalResources } -> ( externalResources, label )) extResources
+        |> List.filterMap
+            (\( f, l ) ->
+                Maybe.map
+                    (\v ->
+                        Maybe.map
+                            (\exR ->
+                                List.filter (\r -> filtTypes r.type_) exR
+                                    |> List.map (\exRb -> ( extractLabelFromLanguageMap language l, [ exRb ] ))
+                            )
+                            v.items
+                    )
+                    f
+            )
+        |> List.filterMap identity
+        |> List.foldr (++) []
+        |> DE.fromListCombining (++)
+
+
+gatherAllDigitizationLinksForCallout : Language -> FullSourceBody -> Dict String (List ExternalResourceBody)
+gatherAllDigitizationLinksForCallout language body =
+    let
+        gatherExternalResources =
+            Maybe.map (\{ items } -> Maybe.withDefault [] items) body.externalResources
+                |> Maybe.withDefault []
+                |> List.filter (\r -> filtTypes r.type_)
+                |> List.map (\v -> ( extractLabelFromLanguageMap language body.label, [ v ] ))
+                |> DE.fromListCombining (++)
+
+        gatherExternalResourcesFromExemplars =
+            Maybe.map .items body.exemplars
+                |> Maybe.withDefault []
+                |> gatherExternalResourcesFromSection language
+
+        gatherExternalResourcesFromMaterialGroups =
+            Maybe.map .items body.materialGroups
+                |> Maybe.withDefault []
+                |> gatherExternalResourcesFromSection language
+    in
+    DE.unionWith (\_ v1 v2 -> v1 ++ v2) gatherExternalResources gatherExternalResourcesFromExemplars
+        |> DE.unionWith (\_ v3 v4 -> v3 ++ v4) gatherExternalResourcesFromMaterialGroups
 
 
 viewDigitizedCopiesCalloutSection :

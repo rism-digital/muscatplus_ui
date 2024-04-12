@@ -23,4 +23,5 @@ type alias SearchPageModel msg =
     , probeResponse : Response ProbeData
     , probeDebouncer : Debouncer msg
     , applyFilterPrompt : Bool
+    , digitizedCopiesCalloutExpanded : Bool
     }

@@ -1,14 +1,15 @@
 module Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 
+import Dict
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
-import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, subHeaderTemplate)
@@ -26,6 +27,8 @@ viewSourcePreview :
     , incipitInfoToggleMsg : String -> msg
     , itemsExpanded : Bool
     , language : Language
+    , expandedDigitizedCopiesMsg : msg
+    , expandedDigitizedCopiesCallout : Bool
     }
     -> FullSourceBody
     -> Element msg
@@ -42,6 +45,9 @@ viewSourcePreview cfg body =
                 ]
                 (sourceIcon colourScheme.darkBlue)
 
+        allExternals =
+            gatherAllDigitizationLinksForCallout cfg.language body
+
         pageBodyView =
             row
                 [ width fill
@@ -53,6 +59,15 @@ viewSourcePreview cfg body =
                     , spacing sectionSpacing
                     ]
                     [ viewMaybe (viewPartOfSection cfg.language) body.partOf
+                    , viewIf
+                        (viewDigitizedCopiesCalloutSection
+                            { expandMsg = cfg.expandedDigitizedCopiesMsg
+                            , expanded = cfg.expandedDigitizedCopiesCallout
+                            , language = cfg.language
+                            }
+                            allExternals
+                        )
+                        (Dict.size allExternals > 0)
                     , viewMaybe (viewContentsSection cfg.language body.creator) body.contents
                     , viewMaybe
                         (viewIncipitsSection

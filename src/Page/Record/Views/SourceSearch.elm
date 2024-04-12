@@ -73,6 +73,8 @@ searchResultsViewRouter session model =
             , userToggledIncipitInfo = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
             , panelToggleMsg = RecordMsg.UserClickedFacetPanelToggle
             , facetMsgConfig = facetRecordMsgConfig
+            , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
+            , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
             }
     in
     case model.searchResults of

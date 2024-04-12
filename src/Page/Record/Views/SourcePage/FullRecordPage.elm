@@ -1,16 +1,14 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 
 import Dict exposing (Dict)
-import Dict.Extra as DE
 import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Border as Border
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..))
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (pageHeaderBackground, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
@@ -18,7 +16,7 @@ import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
-import Page.UI.Record.ExternalResources exposing (viewDigitizedCopiesCalloutSection, viewExternalResourcesSection)
+import Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
@@ -130,51 +128,8 @@ viewDescriptionTab :
     -> Element msg
 viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg, expandedIncipits, incipitInfoToggleMsg, language } body =
     let
-        filtTypes : ExternalResourceType -> Bool
-        filtTypes rtype =
-            case rtype of
-                IIIFManifestResourceType ->
-                    True
-
-                DigitizationResourceType ->
-                    True
-
-                _ ->
-                    False
-
-        gatherExternalResources : Dict String (List ExternalResourceBody)
-        gatherExternalResources =
-            Maybe.map (\{ items } -> Maybe.withDefault [] items) body.externalResources
-                |> Maybe.withDefault []
-                |> List.filter (\r -> filtTypes r.type_)
-                |> List.map (\v -> ( extractLabelFromLanguageMap language body.label, [ v ] ))
-                |> DE.fromListCombining (++)
-
-        gatherExternalResourcesFromExemplars : Dict String (List ExternalResourceBody)
-        gatherExternalResourcesFromExemplars =
-            Maybe.map .items body.exemplars
-                |> Maybe.withDefault []
-                |> List.map (\{ label, externalResources } -> ( externalResources, label ))
-                |> List.filterMap
-                    (\( f, l ) ->
-                        Maybe.map
-                            (\v ->
-                                Maybe.map
-                                    (\exR ->
-                                        List.filter (\r -> filtTypes r.type_) exR
-                                            |> List.map (\exRb -> ( extractLabelFromLanguageMap language l, [ exRb ] ))
-                                    )
-                                    v.items
-                            )
-                            f
-                    )
-                |> List.filterMap identity
-                |> List.foldr (++) []
-                |> DE.fromListCombining (++)
-
-        allExternals : Dict String (List ExternalResourceBody)
         allExternals =
-            DE.unionWith (\_ v1 v2 -> v1 ++ v2) gatherExternalResources gatherExternalResourcesFromExemplars
+            gatherAllDigitizationLinksForCallout language body
     in
     row
         [ width fill

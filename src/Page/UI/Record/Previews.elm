@@ -35,6 +35,8 @@ type alias PreviewConfig msg =
     , sourceItemsExpanded : Bool
     , incipitInfoSectionsExpanded : Set String
     , incipitInfoToggleMsg : String -> msg
+    , expandedDigitizedCopiesMsg : msg
+    , expandedDigitizedCopiesCallout : Bool
     }
 
 
@@ -157,6 +159,8 @@ viewPreviewRouter cfg previewData =
                         , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
                         , itemsExpanded = cfg.sourceItemsExpanded
                         , language = cfg.language
+                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
+                        , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
                         }
                         body
 

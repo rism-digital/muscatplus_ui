@@ -49,6 +49,7 @@ type SearchMsg
     | UserClickedSearchResultForPreview String
     | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedExpandIncipitInfoSectionInPreview String
+    | UserClickedExpandDigitalCopiesCallout
     | UserClickedClosePreviewWindow
     | UserPressedAnArrowKey ArrowDirection
     | NothingHappened
