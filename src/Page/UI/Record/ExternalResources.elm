@@ -199,7 +199,7 @@ viewDigitizedCopiesCalloutSection :
     -> Element msg
 viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalResourceLinks =
     row
-        [ Border.color colourScheme.darkOrange
+        [ Border.color colourScheme.puce
         , Border.width 1
         , width (shrink |> minimum 800)
         ]
@@ -211,7 +211,7 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalReso
             [ row
                 [ width fill
                 , spacing 10
-                , Background.color colourScheme.darkOrange
+                , Background.color colourScheme.puce
                 , padding 10
                 ]
                 [ el
