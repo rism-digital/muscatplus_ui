@@ -291,10 +291,8 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalReso
                     ]
                     (text (extractLabelFromLanguageMap language localTranslations.hasDigitization))
                 , el
-                    [ Events.onClick expandMsg
-                    , alignRight
+                    [ alignRight
                     , Font.color colourScheme.white
-                    , pointer
                     ]
                     (if expanded then
                         text "Hide"
