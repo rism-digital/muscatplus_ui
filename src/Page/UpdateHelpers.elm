@@ -368,8 +368,8 @@ userChangedSelectFacetSort alias facetSort model =
 
 userClickedClosePreviewWindow :
     Session
-    -> { a | preview : Response ServerData, selectedResult : Maybe String }
-    -> ( { a | preview : Response ServerData, selectedResult : Maybe String }, Cmd msg )
+    -> { a | preview : Response ServerData, selectedResult : Maybe String, digitizedCopiesCalloutExpanded : Bool }
+    -> ( { a | preview : Response ServerData, selectedResult : Maybe String, digitizedCopiesCalloutExpanded : Bool }, Cmd msg )
 userClickedClosePreviewWindow session model =
     let
         currentUrl =
@@ -384,6 +384,7 @@ userClickedClosePreviewWindow session model =
     ( { model
         | preview = NoResponseToShow
         , selectedResult = Nothing
+        , digitizedCopiesCalloutExpanded = False
       }
     , Nav.pushUrl session.key newUrlStr
     )
