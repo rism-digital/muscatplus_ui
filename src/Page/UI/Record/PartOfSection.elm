@@ -1,7 +1,9 @@
 module Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 
-import Element exposing (Element, column, el, fill, height, link, paddingXY, row, shrink, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, link, minimum, padding, paddingXY, row, shrink, spacing, text, width)
+import Element.Background as Background
 import Element.Border as Border
+import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
@@ -13,21 +15,31 @@ viewPartOfSection : Language -> PartOfSectionBody -> Element msg
 viewPartOfSection language partOf =
     row
         [ width shrink
-        , Border.widthEach { bottom = 1, left = 1, right = 1, top = 5 }
-        , Border.color colourScheme.darkBlue
-        , paddingXY 10 20
+        , Border.color colourScheme.olive
+        , Border.width 1
+        , width (shrink |> minimum 800)
         ]
         [ column
             [ width fill
             , height fill
-            , spacing lineSpacing
             ]
             [ row
-                [ width fill ]
+                [ width fill
+                , Background.color colourScheme.olive
+                , padding 10
+                ]
                 [ el
-                    [ headingLG ]
-                    (text (extractLabelFromLanguageMap language localTranslations.partOfCollection ++ ": "))
-                , link
+                    [ headingLG
+                    , Font.semiBold
+                    , Font.color colourScheme.white
+                    ]
+                    (text (extractLabelFromLanguageMap language localTranslations.partOfCollection))
+                ]
+            , row
+                [ width fill
+                , padding 10
+                ]
+                [ link
                     [ linkColour
                     , headingLG
                     ]

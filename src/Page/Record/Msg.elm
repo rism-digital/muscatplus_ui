@@ -48,6 +48,7 @@ type RecordMsg
     | UserClickedSearchResultForPreview String
     | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedExpandIncipitInfoSectionInPreview String
+    | UserClickedExpandDigitalCopiesCallout
     | UserClickedClosePreviewWindow
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserPressedAnArrowKey ArrowDirection

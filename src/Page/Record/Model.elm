@@ -20,6 +20,7 @@ type alias RecordPageModel msg =
     , preview : Response ServerData
     , sourceItemsExpanded : Bool
     , incipitInfoExpanded : Set String
+    , digitizedCopiesCalloutExpanded : Bool
     , selectedResult : Maybe String
     , activeSearch : ActiveSearch msg
     , probeResponse : Response ProbeData

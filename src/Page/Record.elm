@@ -87,6 +87,7 @@ init cfg =
     , preview = NoResponseToShow
     , sourceItemsExpanded = False
     , incipitInfoExpanded = Set.empty
+    , digitizedCopiesCalloutExpanded = False
     , selectedResult = selectedResult
     , activeSearch = activeSearch
     , probeResponse = Loading Nothing
@@ -424,6 +425,13 @@ update session msg model =
             in
             ( { model
                 | incipitInfoExpanded = newExpandedSet
+              }
+            , Cmd.none
+            )
+
+        UserClickedExpandDigitalCopiesCallout ->
+            ( { model
+                | digitizedCopiesCalloutExpanded = not model.digitizedCopiesCalloutExpanded
               }
             , Cmd.none
             )
