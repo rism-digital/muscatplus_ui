@@ -15,7 +15,7 @@ viewPartOfSection : Language -> PartOfSectionBody -> Element msg
 viewPartOfSection language partOf =
     row
         [ width shrink
-        , Border.color colourScheme.olive
+        , Border.color colourScheme.darkGrey
         , Border.width 1
         , width (shrink |> minimum 800)
         ]
@@ -25,7 +25,7 @@ viewPartOfSection language partOf =
             ]
             [ row
                 [ width fill
-                , Background.color colourScheme.olive
+                , Background.color colourScheme.darkGrey
                 , padding 10
                 ]
                 [ el

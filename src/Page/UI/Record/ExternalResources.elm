@@ -268,7 +268,13 @@ viewDigitizedCopiesCalloutSection :
 viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalResourceLinks =
     row
         [ Border.color colourScheme.puce
-        , Border.width 1
+        , Border.width
+            (if expanded then
+                1
+
+             else
+                0
+            )
         , width (shrink |> minimum 800)
         ]
         [ column
@@ -288,6 +294,7 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalReso
                     [ headingLG
                     , Font.semiBold
                     , Font.color colourScheme.white
+                    , alignTop
                     ]
                     (text (extractLabelFromLanguageMap language localTranslations.hasDigitization))
                 , el
