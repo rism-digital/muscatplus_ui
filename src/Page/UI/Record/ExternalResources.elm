@@ -281,6 +281,8 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalReso
                 , spacing 10
                 , Background.color colourScheme.puce
                 , padding 10
+                , Events.onClick expandMsg
+                , pointer
                 ]
                 [ el
                     [ headingLG
