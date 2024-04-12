@@ -14,7 +14,6 @@ module Page.UI.Attributes exposing
     , headingMD
     , headingSM
     , headingXL
-    , headingXS
     , headingXXL
     , labelFieldColumnAttributes
     , lineSpacing

@@ -1,6 +1,6 @@
 module Page.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -9,7 +9,7 @@ import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (pageHeaderBackground, sectionSpacing)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -61,6 +61,13 @@ viewFullPersonPage session model body =
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTabBody session model
 
+        headerHeight =
+            if session.isFramed then
+                px (recordTitleHeight + searchSourcesLinkHeight)
+
+            else
+                px (tabBarHeight + recordTitleHeight)
+
         icon =
             el
                 [ width (px 25)
@@ -69,13 +76,6 @@ viewFullPersonPage session model body =
                 , centerY
                 ]
                 (peopleSvg colourScheme.darkBlue)
-
-        headerHeight =
-            if session.isFramed then
-                px (recordTitleHeight + searchSourcesLinkHeight)
-
-            else
-                px (tabBarHeight + recordTitleHeight)
 
         pageHeader =
             if session.isFramed then

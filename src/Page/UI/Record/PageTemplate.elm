@@ -1,6 +1,5 @@
 module Page.UI.Record.PageTemplate exposing
-    ( pageFooterTemplate
-    , pageFooterTemplateRouter
+    ( pageFooterTemplateRouter
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
@@ -59,19 +58,19 @@ pageFooterTemplateFramed session language footer =
                 ]
                 [ newTabLink
                     []
-                    { url = footer.id
-                    , label =
+                    { label =
                         el
                             []
                             (rismLogo colourScheme.white 50)
+                    , url = footer.id
                     }
                 , newTabLink
                     []
-                    { url = footer.id
-                    , label =
+                    { label =
                         el
                             [ Font.color colourScheme.white ]
                             (text "View full record in RISM Online")
+                    , url = footer.id
                     }
                 ]
             ]

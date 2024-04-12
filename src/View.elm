@@ -40,9 +40,6 @@ view model =
             in
             [ Css.color (Css.rgb red green blue) ]
 
-        pageSession =
-            toSession model
-
         defaultTitle =
             "RISM Online"
 
@@ -85,6 +82,9 @@ view model =
 
                 _ ->
                     defaultTitle
+
+        pageSession =
+            toSession model
 
         sidebarView =
             if pageSession.isFramed then

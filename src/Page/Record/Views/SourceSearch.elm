@@ -195,8 +195,8 @@ viewRecordSearchSourcesLink language label body =
                     , Font.semiBold
                     , linkColour
                     ]
-                    { url = body.url
-                    , label = text ("Search " ++ extractLabelFromLanguageMap language label ++ " on RISM Online")
+                    { label = text ("Search " ++ extractLabelFromLanguageMap language label ++ " on RISM Online")
+                    , url = body.url
                     }
                 )
             ]

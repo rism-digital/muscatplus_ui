@@ -1,8 +1,7 @@
 module Page.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, newTabLink, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Element.Border as Border
-import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
@@ -10,9 +9,9 @@ import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
-import Page.UI.Attributes exposing (headingLG, headingMD, labelFieldColumnAttributes, lineSpacing, linkColour, pageHeaderBackground, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, pageHeaderBackground, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Components exposing (mapViewer, renderLabel)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
@@ -66,6 +65,13 @@ viewFullInstitutionPage session model body =
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTabBody session model
 
+        headerHeight =
+            if session.isFramed then
+                px (recordTitleHeight + searchSourcesLinkHeight)
+
+            else
+                px (tabBarHeight + recordTitleHeight)
+
         icon =
             el
                 [ width (px 25)
@@ -74,13 +80,6 @@ viewFullInstitutionPage session model body =
                 , centerY
                 ]
                 (institutionSvg colourScheme.darkBlue)
-
-        headerHeight =
-            if session.isFramed then
-                px (recordTitleHeight + searchSourcesLinkHeight)
-
-            else
-                px (tabBarHeight + recordTitleHeight)
 
         pageHeader =
             if session.isFramed then
