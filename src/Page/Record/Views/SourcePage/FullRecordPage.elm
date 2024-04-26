@@ -1,5 +1,6 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 
+import Dict
 import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Border as Border
 import Language exposing (Language)
