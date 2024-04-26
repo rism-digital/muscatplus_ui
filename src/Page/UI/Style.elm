@@ -100,7 +100,7 @@ colourScheme =
     , lightestBlue =
         Element.fromRgb255
             { alpha = 1
-            , blue = 249
+            , blue = 255
             , green = 246
             , red = 241
             }

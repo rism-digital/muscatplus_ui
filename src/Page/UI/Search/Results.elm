@@ -76,7 +76,7 @@ setResultColours resultIdx selectedResult thisId =
                 modBy 2 resultIdx == 1
         in
         if isOdd then
-            { backgroundColour = colourScheme.lightGrey
+            { backgroundColour = colourScheme.lightestBlue
             , fontLinkColour = colourScheme.lightBlue
             , textColour = colourScheme.black
             , iconColour = colourScheme.midGrey
