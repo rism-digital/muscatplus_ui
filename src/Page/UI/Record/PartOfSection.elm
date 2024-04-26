@@ -1,13 +1,13 @@
 module Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 
-import Element exposing (Element, column, el, fill, height, link, minimum, padding, paddingXY, row, shrink, spacing, text, width)
+import Element exposing (Element, column, el, fill, height, link, minimum, padding, row, shrink, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
-import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour)
+import Page.UI.Attributes exposing (headingLG, linkColour)
 import Page.UI.Style exposing (colourScheme)
 
 

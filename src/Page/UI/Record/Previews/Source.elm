@@ -23,12 +23,12 @@ import Set exposing (Set)
 
 viewSourcePreview :
     { expandMsg : msg
+    , expandedDigitizedCopiesCallout : Bool
+    , expandedDigitizedCopiesMsg : msg
     , incipitInfoExpanded : Set String
     , incipitInfoToggleMsg : String -> msg
     , itemsExpanded : Bool
     , language : Language
-    , expandedDigitizedCopiesMsg : msg
-    , expandedDigitizedCopiesCallout : Bool
     }
     -> FullSourceBody
     -> Element msg

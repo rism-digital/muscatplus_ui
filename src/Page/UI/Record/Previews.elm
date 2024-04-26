@@ -155,12 +155,12 @@ viewPreviewRouter cfg previewData =
                 Just (SourceData body) ->
                     viewSourcePreview
                         { expandMsg = cfg.sourceItemExpandMsg
+                        , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
+                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
                         , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
                         , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
                         , itemsExpanded = cfg.sourceItemsExpanded
                         , language = cfg.language
-                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
-                        , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
                         }
                         body
 

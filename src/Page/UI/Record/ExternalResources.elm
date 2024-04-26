@@ -210,8 +210,8 @@ gatherExternalResourcesFromSection :
     ->
         List
             { a
-                | externalResources : Maybe ExternalResourcesSectionBody
-                , label : LanguageMap
+                | label : LanguageMap
+                , externalResources : Maybe ExternalResourcesSectionBody
             }
     -> Dict String (List ExternalResourceBody)
 gatherExternalResourcesFromSection language extResources =
