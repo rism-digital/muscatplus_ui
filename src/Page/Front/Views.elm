@@ -269,7 +269,7 @@ viewFrontSearchControlsLoading =
             ]
             [ row
                 [ width fill
-                , height (px 95)
+                , height (px 85)
                 , Background.color colourScheme.lightGrey
                 , Border.color colourScheme.darkBlue
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
