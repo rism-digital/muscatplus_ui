@@ -56,10 +56,10 @@ viewRowSelectAndSortSelector cfg =
     row
         [ alignTop
         , Background.color colourScheme.lightGrey
-        , Border.color colourScheme.midGrey
+        , Border.color colourScheme.darkBlue
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , width fill
-        , height (px 60)
+        , height (px 50)
         , paddingXY 20 0
         , centerY
         , htmlAttribute (HA.style "z-index" "1")

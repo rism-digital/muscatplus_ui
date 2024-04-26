@@ -21,6 +21,7 @@ colourScheme :
     , lightGrey : Element.Color
     , lightOrange : Element.Color
     , lightestBlue : Element.Color
+    , lightestBlueAlt : Element.Color
     , midGrey : Element.Color
     , olive : Element.Color
     , puce : Element.Color
@@ -103,6 +104,13 @@ colourScheme =
             , blue = 255
             , green = 246
             , red = 241
+            }
+    , lightestBlueAlt =
+        Element.fromRgb255
+            { alpha = 1
+            , blue = 240
+            , green = 235
+            , red = 235
             }
     , midGrey =
         Element.fromRgb255

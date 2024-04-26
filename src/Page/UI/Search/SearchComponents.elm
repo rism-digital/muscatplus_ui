@@ -124,17 +124,6 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 , htmlAttribute (HA.style "cursor" "not-allowed")
                 )
 
-        borderBottom =
-            if isFrontPage then
-                [ Border.color colourScheme.darkBlue
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                ]
-
-            else
-                [ Border.color colourScheme.midGrey
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                ]
-
         submitButtonLabel =
             if isFrontPage then
                 extractLabelFromLanguageMap language localTranslations.showAllRecords
@@ -153,10 +142,12 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         (alignTop
             :: Background.color colourScheme.lightGrey
             :: width fill
-            :: height (px 60)
+            :: height (px 50)
             :: paddingXY 20 0
             :: centerY
-            :: borderBottom
+            :: Border.color colourScheme.darkBlue
+            :: Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+            :: []
         )
         [ column
             [ width fill
@@ -174,13 +165,14 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                     [ Input.button
                         [ Border.color submitButtonColours
                         , Background.color submitButtonColours
-                        , paddingXY 10 10
-                        , height (px 40)
+                        , padding 10
+                        , height (px 35)
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color colourScheme.white
                         , headingLG
                         , submitPointerStyle
+                        , centerY
                         ]
                         { label = text submitButtonLabel
                         , onPress = submitButtonMsg
@@ -192,10 +184,11 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                         [ Border.color colourScheme.turquoise
                         , Background.color colourScheme.turquoise
                         , padding 10
-                        , height (px 40)
+                        , height (px 35)
                         , width (shrink |> minimum 120)
                         , Font.center
                         , Font.color colourScheme.white
+                        , centerY
                         , headingLG
                         ]
                         { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)

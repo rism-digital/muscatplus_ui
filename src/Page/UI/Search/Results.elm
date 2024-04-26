@@ -112,7 +112,7 @@ resultTemplate cfg =
         , Background.color (.backgroundColour cfg.colours)
         , Font.color (.textColour cfg.colours)
         , onClick (cfg.clickMsg cfg.id)
-        , Border.color colourScheme.midGrey
+        , Border.color colourScheme.lightestBlueAlt
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , pointer
         , paddingXY 20 12
