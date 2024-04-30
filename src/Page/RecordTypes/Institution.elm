@@ -1,6 +1,7 @@
 module Page.RecordTypes.Institution exposing
     ( BasicInstitutionBody
     , CoordinatesSection
+    , InstitutionAddressBody
     , InstitutionBody
     , LocationAddressSectionBody
     , OrganizationDetailsSectionBody
@@ -59,10 +60,20 @@ type alias InstitutionBody =
 
 type alias LocationAddressSectionBody =
     { label : LanguageMap
-    , mailingAddress : Maybe (List LabelValue)
+    , addresses : Maybe (List InstitutionAddressBody)
     , coordinates : Maybe CoordinatesSection
     , website : Maybe LabelValue
     , email : Maybe LabelValue
+    }
+
+
+type alias InstitutionAddressBody =
+    { street : Maybe LabelValue
+    , city : Maybe LabelValue
+    , county : Maybe LabelValue
+    , country : Maybe LabelValue
+    , postcode : Maybe LabelValue
+    , note : Maybe LabelValue
     }
 
 
@@ -112,7 +123,18 @@ locationAddressSectionBodyDecoder : Decoder LocationAddressSectionBody
 locationAddressSectionBodyDecoder =
     Decode.succeed LocationAddressSectionBody
         |> required "label" languageMapLabelDecoder
-        |> optional "mailingAddress" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "addresses" (Decode.maybe (list institutionAddressBodyDecoder)) Nothing
         |> optional "coordinates" (Decode.maybe coordinatesSectionDecoder) Nothing
         |> optional "website" (Decode.maybe labelValueDecoder) Nothing
         |> optional "email" (Decode.maybe labelValueDecoder) Nothing
+
+
+institutionAddressBodyDecoder : Decoder InstitutionAddressBody
+institutionAddressBodyDecoder =
+    Decode.succeed InstitutionAddressBody
+        |> optional "street" (Decode.maybe labelValueDecoder) Nothing
+        |> optional "city" (Decode.maybe labelValueDecoder) Nothing
+        |> optional "county" (Decode.maybe labelValueDecoder) Nothing
+        |> optional "country" (Decode.maybe labelValueDecoder) Nothing
+        |> optional "postcode" (Decode.maybe labelValueDecoder) Nothing
+        |> optional "note" (Decode.maybe labelValueDecoder) Nothing

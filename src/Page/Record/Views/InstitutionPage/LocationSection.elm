@@ -2,8 +2,8 @@ module Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationA
 
 import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, spacing, width)
 import Language exposing (Language)
-import Page.RecordTypes.Institution exposing (LocationAddressSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
+import Page.RecordTypes.Institution exposing (InstitutionAddressBody, LocationAddressSectionBody)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (h2, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 
@@ -36,10 +36,40 @@ viewLocationAddressSection language body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ viewMaybe (viewSummaryField language) body.mailingAddress
+                    [ viewMaybe (viewAddressSection language) body.addresses
                     , viewMaybe (viewSummaryField language) (Maybe.map List.singleton body.website)
                     , viewMaybe (viewSummaryField language) (Maybe.map List.singleton body.email)
                     ]
                 ]
+            ]
+        ]
+
+
+viewAddressSection : Language -> List InstitutionAddressBody -> Element msg
+viewAddressSection language body =
+    row
+        [ width fill ]
+        [ column
+            [ width fill
+            , spacing sectionSpacing
+            ]
+            (List.map (viewSingleAddress language) body)
+        ]
+
+
+viewSingleAddress : Language -> InstitutionAddressBody -> Element msg
+viewSingleAddress language body =
+    row
+        [ width fill ]
+        [ column
+            [ width fill
+            , spacing lineSpacing
+            ]
+            [ viewMaybe (viewSummaryField language) (Maybe.map List.singleton body.street)
+            , viewMaybe (viewSummaryField language) (Maybe.map List.singleton body.city)
+            , viewMaybe (viewSummaryField language) (Maybe.map List.singleton body.county)
+            , viewMaybe (viewSummaryField language) (Maybe.map List.singleton body.country)
+            , viewMaybe (viewSummaryField language) (Maybe.map List.singleton body.postcode)
+            , viewMaybe (viewSummaryField language) (Maybe.map List.singleton body.note)
             ]
         ]
