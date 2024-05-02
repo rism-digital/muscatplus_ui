@@ -132,9 +132,23 @@ recordPagePreviewRequest previewUrl =
     createRequestWithDecoder ServerRespondedWithRecordPreview previewUrl
 
 
-recordPageRequest : Url -> Cmd RecordMsg
-recordPageRequest initialUrl =
-    createRequestWithDecoder ServerRespondedWithRecordData (Url.toString initialUrl)
+recordPageRequest : Bool -> Url -> Cmd RecordMsg
+recordPageRequest applyCacheBuster initialUrl =
+    let
+        requestUrl =
+            if applyCacheBuster then
+                { initialUrl
+                    | query =
+                        ME.unpack
+                            (\() -> Just "hash=deadbeef")
+                            (\q -> Just (q ++ "&hash=deadbeef"))
+                            initialUrl.query
+                }
+
+            else
+                initialUrl
+    in
+    createRequestWithDecoder ServerRespondedWithRecordData (Url.toString requestUrl)
 
 
 recordSearchRequest : Url -> Cmd RecordMsg

@@ -52,6 +52,7 @@ type alias Session =
     , restrictedToNationalCollection : Maybe CountryCode
     , allNationalCollections : Dict CountryCode LanguageMap
     , searchPreferences : Maybe SearchPreferences
+    , cacheBuster : Bool
     }
 
 
@@ -129,4 +130,5 @@ init flags url key =
     , restrictedToNationalCollection = nationalCollectionFilter
     , allNationalCollections = Dict.empty
     , searchPreferences = searchPreferences
+    , cacheBuster = flags.cacheBuster
     }

@@ -11,4 +11,5 @@ type alias Flags =
     , nationalCollection : Maybe String
     , searchPreferences : Maybe Value
     , isFramed : Bool
+    , cacheBuster : Bool
     }

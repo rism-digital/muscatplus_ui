@@ -146,7 +146,7 @@ changePage url model =
                                 }
                         in
                         Cmd.batch
-                            [ RecordPage.recordPageRequest url
+                            [ RecordPage.recordPageRequest newSession.cacheBuster url
                             , RecordPage.recordSearchRequest sourcesUrl
                             ]
                             |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -194,7 +194,7 @@ changePage url model =
 
                 refreshCmds =
                     Cmd.batch
-                        [ RecordPage.recordPageRequest recordUrl
+                        [ RecordPage.recordPageRequest newSession.cacheBuster recordUrl
                         , RecordPage.recordSearchRequest sourceUrl
                         , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
                         ]
@@ -242,7 +242,7 @@ changePage url model =
                                 { url | path = url.path ++ "/sources", query = Just sourceQuery }
                         in
                         Cmd.batch
-                            [ RecordPage.recordPageRequest url
+                            [ RecordPage.recordPageRequest newSession.cacheBuster url
                             , RecordPage.recordSearchRequest sourcesUrl
                             ]
                             |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -290,7 +290,7 @@ changePage url model =
 
                 refreshCmds =
                     Cmd.batch
-                        [ RecordPage.recordPageRequest recordUrl
+                        [ RecordPage.recordPageRequest newSession.cacheBuster recordUrl
                         , RecordPage.recordSearchRequest sourceUrl
                         , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
                         ]
@@ -338,7 +338,7 @@ changePage url model =
                                 { url | path = url.path ++ "/sources", query = Just sourceQuery }
                         in
                         Cmd.batch
-                            [ RecordPage.recordPageRequest url
+                            [ RecordPage.recordPageRequest newSession.cacheBuster url
                             , RecordPage.recordSearchRequest sourcesUrl
                             ]
                             |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -386,7 +386,7 @@ changePage url model =
 
                 refreshCmds =
                     Cmd.batch
-                        [ RecordPage.recordPageRequest recordUrl
+                        [ RecordPage.recordPageRequest newSession.cacheBuster recordUrl
                         , RecordPage.recordSearchRequest sourceUrl
                         , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
                         ]

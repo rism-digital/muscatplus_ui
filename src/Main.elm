@@ -130,12 +130,15 @@ init flags initialUrl key =
                         initialUrl.path ++ "/contents"
 
                 sourcesUrl =
-                    { initialUrl | path = sourceContentsPath, query = ncQueryParam }
+                    { initialUrl
+                        | path = sourceContentsPath
+                        , query = ncQueryParam
+                    }
             in
             ( SourcePage session initialBody
             , Cmd.batch
                 [ Cmd.batch
-                    [ Record.recordPageRequest initialUrl
+                    [ Record.recordPageRequest session.cacheBuster initialUrl
                     , Record.recordSearchRequest sourcesUrl
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -172,7 +175,7 @@ init flags initialUrl key =
             ( SourcePage session initialBody
             , Cmd.batch
                 [ Cmd.batch
-                    [ Record.recordPageRequest recordUrl
+                    [ Record.recordPageRequest session.cacheBuster recordUrl
                     , Record.recordSearchRequest sourcesUrl
                     , Record.requestPreviewIfSelected initialBody.selectedResult
                     ]
@@ -204,7 +207,7 @@ init flags initialUrl key =
             ( PersonPage session initialBody
             , Cmd.batch
                 [ Cmd.batch
-                    [ Record.recordPageRequest initialUrl
+                    [ Record.recordPageRequest session.cacheBuster initialUrl
                     , Record.recordSearchRequest sourcesUrl
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -241,7 +244,7 @@ init flags initialUrl key =
             ( PersonPage session initialBody
             , Cmd.batch
                 [ Cmd.batch
-                    [ Record.recordPageRequest recordUrl
+                    [ Record.recordPageRequest session.cacheBuster recordUrl
                     , Record.recordSearchRequest sourcesUrl
                     , Record.requestPreviewIfSelected initialBody.selectedResult
                     ]
@@ -273,7 +276,7 @@ init flags initialUrl key =
             ( InstitutionPage session initialBody
             , Cmd.batch
                 [ Cmd.batch
-                    [ Record.recordPageRequest initialUrl
+                    [ Record.recordPageRequest session.cacheBuster initialUrl
                     , Record.recordSearchRequest sourcesUrl
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -310,7 +313,7 @@ init flags initialUrl key =
             ( InstitutionPage session initialBody
             , Cmd.batch
                 [ Cmd.batch
-                    [ Record.recordPageRequest recordUrl
+                    [ Record.recordPageRequest session.cacheBuster recordUrl
                     , Record.recordSearchRequest sourcesUrl
                     , Record.requestPreviewIfSelected initialBody.selectedResult
                     ]
