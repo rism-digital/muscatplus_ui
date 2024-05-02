@@ -18,6 +18,7 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Dict
 import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Maybe.Extra as ME
+import Murmur3
 import Page.Query exposing (QueryArgs, defaultQueryArgs, setFilters, setNationalCollection, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
@@ -137,11 +138,15 @@ recordPageRequest applyCacheBuster initialUrl =
     let
         requestUrl =
             if applyCacheBuster then
+                let
+                    hash =
+                        Murmur3.hashString 3006 initialUrl.path
+                in
                 { initialUrl
                     | query =
                         ME.unpack
-                            (\() -> Just "hash=deadbeef")
-                            (\q -> Just (q ++ "&hash=deadbeef"))
+                            (\() -> Just ("hash=" ++ String.fromInt hash))
+                            (\q -> Just (q ++ ("&hash=" ++ String.fromInt hash)))
                             initialUrl.query
                 }
 

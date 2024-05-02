@@ -31,6 +31,7 @@
             "jzxhuang/http-extras": "2.1.0",
             "marcosh/elm-html-to-unicode": "1.0.4",
             "mdgriffith/elm-ui": "1.1.8",
+            "robinheghan/murmur3": "1.0.0",
             "rtfeldman/elm-css": "18.0.0",
             "rtfeldman/elm-iso8601-date-strings": "1.1.4",
             "rtfeldman/elm-validate": "4.0.2",
@@ -43,7 +44,6 @@
             "elm-community/list-extra": "8.7.0",
             "myrho/elm-round": "1.0.5",
             "pilatch/flip": "1.0.0",
-            "robinheghan/murmur3": "1.0.0",
             "rtfeldman/elm-hex": "1.0.0"
         }
     },
