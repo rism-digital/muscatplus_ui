@@ -69,16 +69,12 @@ update msg session =
             )
 
         UserMouseExitedSideBar ->
-            let
-                -- If the user is interacting with the language chooser, then do not set the
-                -- state to collapsed. This is to fix a bug in Firefox where the select dropdown
-                -- causes the sidebar to signal that it has lost mouse focus.
-                newSession =
-                    { session
-                        | expandedSideBar = Collapsed
-                    }
-            in
-            ( newSession
+            -- If the user is interacting with the language chooser, then do not set the
+            -- state to collapsed. This is to fix a bug in Firefox where the select dropdown
+            -- causes the sidebar to signal that it has lost mouse focus.
+            ( { session
+                | expandedSideBar = Collapsed
+              }
             , Cmd.none
             )
 
