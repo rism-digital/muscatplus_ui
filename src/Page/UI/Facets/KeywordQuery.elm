@@ -117,7 +117,9 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
                     [ Input.text
                         [ width fill
                         , centerY
+                        , htmlAttribute (HA.id "ro-keyword-input")
                         , htmlAttribute (HA.autocomplete False)
+                        , htmlAttribute (HA.autofocus True)
                         , Border.rounded 0
                         , onEnter submitMsg
                         , headingXXL
