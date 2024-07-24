@@ -4,6 +4,7 @@ import Element exposing (Element, alignRight, alignTop, centerY, column, el, fil
 import Language exposing (Language)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..))
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
+import Page.UI.CantusLogo exposing (cantusLogo)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
@@ -46,6 +47,11 @@ viewExternalInstitutionPreview language project body =
                         [ width (px 175)
                         ]
                         diammLogo
+
+                Cantus ->
+                    el
+                        [ width (px 175) ]
+                        cantusLogo
 
                 _ ->
                     none

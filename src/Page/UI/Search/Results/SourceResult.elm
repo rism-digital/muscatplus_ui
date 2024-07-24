@@ -10,6 +10,7 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
 import Page.RecordTypes.SourceShared exposing (SourceContentTypeRecordBody)
 import Page.UI.Attributes exposing (bodyRegular, bodySM)
+import Page.UI.CantusLogo exposing (cantusLogo)
 import Page.UI.Components exposing (contentTypeIconChooser, makeFlagIcon, sourceIconChooser, sourceTypeIconChooser)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
@@ -65,6 +66,18 @@ viewSourceFlags language flags =
                 )
                 flags.isDIAMMRecord
 
+        isCantusFlag =
+            viewIf
+                (el
+                    [ width (px 60)
+                    , alignRight
+                    , el tooltipStyle (text "Source: Cantus")
+                        |> tooltip onLeft
+                    ]
+                    cantusLogo
+                )
+                flags.isCantusRecord
+
         linkedWithExternalRecordFlag =
             viewIf
                 (makeFlagIcon
@@ -118,6 +131,7 @@ viewSourceFlags language flags =
         , iiifFlag
         , linkedWithExternalRecordFlag
         , isDIAMMFlag
+        , isCantusFlag
         ]
 
 

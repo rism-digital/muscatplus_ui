@@ -1,4 +1,4 @@
-module Page.RecordTypes.ExternalRecord exposing (ExternalBiographicalDetailsSectionBody, ExternalInstitutionRecord, ExternalOrganizationDetailsSection, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalRelationshipBody, ExternalRelationshipsSection, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalRecordBodyDecoder)
+module Page.RecordTypes.ExternalRecord exposing (ExternalBiographicalDetailsSectionBody, ExternalInstitutionRecord, ExternalOrganizationDetailsSection, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalRelationshipBody, ExternalRelationshipsSection, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalProjectToString, externalRecordBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
@@ -272,3 +272,16 @@ biographicalDetailsSectionBodyDecoder =
         |> hardcoded "external-person-biographical-details-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "summary" (list labelValueDecoder)
+
+
+externalProjectToString : ExternalProject -> String
+externalProjectToString proj =
+    case proj of
+        DIAMM ->
+            "DIAMM"
+
+        Cantus ->
+            "Cantus"
+
+        RISM ->
+            "RISM"

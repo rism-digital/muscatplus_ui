@@ -11,6 +11,7 @@ tooltips :
     , compositeVolume : LanguageMap
     , dateRange : LanguageMap
     , diammProject : LanguageMap
+    , cantusProject : LanguageMap
     , formatExtent : LanguageMap
     , gender : LanguageMap
     , hasDigitization : LanguageMap
@@ -48,6 +49,8 @@ tooltips =
         [ LanguageValue English englishDateRangeTooltip ]
     , diammProject =
         [ LanguageValue English englishHideDiammRecordsToggleTooltip ]
+    , cantusProject =
+        [ LanguageValue English englishHideCantusRecordsToggleTooltip ]
     , formatExtent =
         [ LanguageValue English englishFormatExtentTooltip ]
     , gender =
@@ -99,6 +102,11 @@ englishAnonymousCreatorTooltip =
 englishHideDiammRecordsToggleTooltip : List String
 englishHideDiammRecordsToggleTooltip =
     [ """Exclude search results that come from the Digital Image Archive of Medieval Music (DIAMM) project.""" ]
+
+
+englishHideCantusRecordsToggleTooltip : List String
+englishHideCantusRecordsToggleTooltip =
+    [ """Exclude search results that come from the Cantus project.""" ]
 
 
 englishCompositeVolumeToggleTooltip : List String

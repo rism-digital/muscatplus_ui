@@ -108,6 +108,9 @@ viewFacetsForSourcesMode cfg =
                 diammRecordsToggle =
                     viewFacet (createFacetConfig cfg "hide-diamm-records" tooltips.diammProject) cfg.facetMsgConfig
 
+                cantusRecordsToggle =
+                    viewFacet (createFacetConfig cfg "hide-cantus-records" tooltips.cantusProject) cfg.facetMsgConfig
+
                 allAreEmpty =
                     List.all
                         (\a -> a == none)
@@ -118,6 +121,7 @@ viewFacetsForSourcesMode cfg =
                         , materialSourceType
                         , materialContentType
                         , diammRecordsToggle
+                        , cantusRecordsToggle
                         ]
             in
             if allAreEmpty then
@@ -140,6 +144,7 @@ viewFacetsForSourcesMode cfg =
                         , column
                             [ alignTop ]
                             [ row [] [ diammRecordsToggle ]
+                            , row [] [ cantusRecordsToggle ]
                             ]
                         ]
                     , sourceType

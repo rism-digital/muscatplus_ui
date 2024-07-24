@@ -49,6 +49,9 @@ viewFacetsForInstitutionsMode cfg =
 
         diammRecordsToggle =
             viewFacet (createFacetConfig cfg "hide-diamm-records" tooltips.diammProject) cfg.facetMsgConfig
+
+        cantusRecordsToggle =
+            viewFacet (createFacetConfig cfg "hide-cantus-records" tooltips.cantusProject) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias institutionFacetPanels.institutionResultsPanel)
@@ -61,6 +64,7 @@ viewFacetsForInstitutionsMode cfg =
             [ column
                 [ alignTop ]
                 [ row [] [ diammRecordsToggle ]
+                , row [] [ cantusRecordsToggle ]
                 ]
             ]
         ]

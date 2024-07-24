@@ -10,7 +10,7 @@ import Element.Events as Events
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..), ExternalRecordBody)
+import Page.RecordTypes.ExternalRecord exposing (ExternalProject, ExternalRecord(..), ExternalRecordBody, externalProjectToString)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
@@ -25,20 +25,25 @@ viewExternalRecord : Language -> ExternalRecordBody -> Element msg
 viewExternalRecord language body =
     case body.record of
         ExternalSource sourceRecord ->
-            viewExternalRecordOnDIAMMLink language sourceRecord
+            viewExternalRecordOnSiteLink language body.project sourceRecord
 
         ExternalPerson personRecord ->
-            viewExternalRecordOnDIAMMLink language personRecord
+            viewExternalRecordOnSiteLink language body.project personRecord
 
         ExternalInstitution institutionRecord ->
-            viewExternalRecordOnDIAMMLink language institutionRecord
+            viewExternalRecordOnSiteLink language body.project institutionRecord
 
 
-viewExternalRecordOnDIAMMLink :
+viewExternalRecordOnSiteLink :
     Language
+    -> ExternalProject
     -> { a | id : String, label : LanguageMap }
     -> Element msg
-viewExternalRecordOnDIAMMLink language body =
+viewExternalRecordOnSiteLink language project body =
+    let
+        projectLabel =
+            externalProjectToString project
+    in
     column
         [ width fill
         , spacing 5
@@ -53,7 +58,7 @@ viewExternalRecordOnDIAMMLink language body =
                 , alignLeft
                 ]
                 { url = body.id
-                , label = text ("View " ++ extractLabelFromLanguageMap language body.label ++ " on DIAMM")
+                , label = text ("View " ++ extractLabelFromLanguageMap language body.label ++ " on " ++ projectLabel)
                 }
             , externalLinkTemplate body.id
             ]
@@ -291,6 +296,9 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalReso
                 , pointer
                 ]
                 [ el
+                    []
+                    (text "")
+                , el
                     [ headingLG
                     , Font.semiBold
                     , Font.color colourScheme.white

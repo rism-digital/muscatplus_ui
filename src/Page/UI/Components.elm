@@ -343,7 +343,9 @@ renderValue language value =
         [ bodyRegular
         , spacing lineSpacing
         ]
-        (styledParagraphs (extractTextFromLanguageMap language value))
+        (extractTextFromLanguageMap language value
+            |> styledParagraphs
+        )
 
 
 {-|

@@ -6,6 +6,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.CantusLogo exposing (cantusLogo)
 import Page.UI.Components exposing (externalLinkTemplate, h2, renderLabel, renderParagraph, resourceLink, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -50,6 +51,11 @@ viewExternalSourcePreview language project body =
                         [ width (px 175)
                         ]
                         diammLogo
+
+                Cantus ->
+                    el
+                        [ width (px 175) ]
+                        cantusLogo
 
                 _ ->
                     none

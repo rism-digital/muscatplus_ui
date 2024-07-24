@@ -187,6 +187,7 @@ type alias InstitutionResultBody =
 type alias InstitutionResultFlags =
     { linkedWithExternalRecord : Bool
     , isDIAMMRecord : Bool
+    , isCantusRecord : Bool
     }
 
 
@@ -321,6 +322,7 @@ type alias SourceResultFlags =
     , hasIncipits : Bool
     , linkedWithExternalRecord : Bool
     , isDIAMMRecord : Bool
+    , isCantusRecord : Bool
     , sourceType : SourceTypeRecordBody
     , contentTypes : List SourceContentTypeRecordBody
     , recordType : SourceRecordTypeRecordBody
@@ -700,6 +702,7 @@ sourceResultFlagsDecoder =
         |> optional "hasIncipits" bool False
         |> optional "linkedWithExternalRecord" bool False
         |> optional "isDIAMMRecord" bool False
+        |> optional "isCantusRecord" bool False
         |> required "sourceType" sourceTypeRecordBodyDecoder
         |> required "contentTypes" (list sourceContentTypeRecordBodyDecoder)
         |> required "recordType" sourceRecordTypeRecordBodyDecoder
@@ -740,3 +743,4 @@ institutionResultFlagsDecoder =
     Decode.succeed InstitutionResultFlags
         |> optional "linkedWithExternalRecord" bool False
         |> optional "isDIAMMRecord" bool False
+        |> optional "isCantusRecord" bool False
