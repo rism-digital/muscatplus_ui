@@ -57,7 +57,7 @@ viewSourceFlags language flags =
         isDIAMMFlag =
             viewIf
                 (el
-                    [ width (px 60)
+                    [ width (px 90)
                     , alignRight
                     , el tooltipStyle (text "Source: DIAMM")
                         |> tooltip onLeft
@@ -69,7 +69,7 @@ viewSourceFlags language flags =
         isCantusFlag =
             viewIf
                 (el
-                    [ width (px 60)
+                    [ width (px 100)
                     , alignRight
                     , el tooltipStyle (text "Source: Cantus")
                         |> tooltip onLeft
