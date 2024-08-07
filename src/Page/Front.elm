@@ -54,15 +54,13 @@ frontProbeSubmit session model =
     let
         resultMode =
             sideBarOptionToResultMode session.showFrontSearchInterface
-
-        newModel =
-            toNextQuery model.activeSearch
-                |> setMode resultMode
-                |> flip setNextQuery model.activeSearch
-                |> flip setActiveSearch model
-                |> setProbeResponse (Loading Nothing)
     in
-    probeSubmit ServerRespondedWithProbeData session newModel
+    toNextQuery model.activeSearch
+        |> setMode resultMode
+        |> flip setNextQuery model.activeSearch
+        |> flip setActiveSearch model
+        |> setProbeResponse (Loading Nothing)
+        |> probeSubmit ServerRespondedWithProbeData session
 
 
 init : FrontConfig -> FrontPageModel FrontMsg
@@ -243,12 +241,10 @@ update session msg model =
                 newQueryArgs =
                     toNextQuery model.activeSearch
                         |> setKeywordQuery newText
-
-                newModel =
-                    setNextQuery newQueryArgs model.activeSearch
-                        |> flip setActiveSearch model
             in
-            update session debounceMsg newModel
+            setNextQuery newQueryArgs model.activeSearch
+                |> flip setActiveSearch model
+                |> update session debounceMsg
 
         UserClickedToggleFacet facetAlias ->
             userClickedToggleFacet facetAlias model
@@ -269,11 +265,9 @@ update session msg model =
                         |> DebouncerSettledToSendQueryFacetSuggestionRequest
                         |> provideInput
                         |> DebouncerCapturedQueryFacetSuggestionRequest
-
-                newModel =
-                    userEnteredTextInQueryFacet alias query model
             in
-            update session debounceMsg newModel
+            userEnteredTextInQueryFacet alias query model
+                |> update session debounceMsg
 
         UserChoseOptionFromQueryFacetSuggest alias selectedValue currentBehaviour ->
             updateQueryFacetFilters alias selectedValue currentBehaviour model

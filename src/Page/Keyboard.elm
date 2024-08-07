@@ -199,14 +199,10 @@ update msg model =
                     ( { model | notesPlaying = [] }, Cmd.none )
 
         UserToggledAudioMuted newValue ->
-            let
-                storeMutePref =
-                    PortSendSaveSearchPreference { key = "audioMuted", value = BoolPreference newValue }
-                        |> encodeMessageForPortSend
-                        |> sendOutgoingMessageOnPort
-            in
             ( model
-            , storeMutePref
+            , PortSendSaveSearchPreference { key = "audioMuted", value = BoolPreference newValue }
+                |> encodeMessageForPortSend
+                |> sendOutgoingMessageOnPort
             )
 
         UserInteractedWithPAEText text ->

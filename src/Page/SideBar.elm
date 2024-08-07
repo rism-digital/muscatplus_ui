@@ -22,10 +22,10 @@ buildFrontPageUrl sidebarOption countryCode =
             sideBarOptionToModeString sidebarOption
                 |> Url.Builder.string "mode"
 
-        -- Omits the parameter if the country code is Nothing by filtering it from a list.
+        -- Omits the parameter if the country code is Nothing.
         ncParameter =
-            List.filterMap identity [ countryCode ]
-                |> List.map (Url.Builder.string "nc")
+            Maybe.map (\ccode -> List.singleton (Url.Builder.string "nc" ccode)) countryCode
+                |> Maybe.withDefault []
     in
     serverUrl [ "/" ] (modeParameter :: ncParameter)
 

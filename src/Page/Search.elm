@@ -234,7 +234,10 @@ update session msg model =
                 totalItems =
                     case response of
                         SearchData body ->
-                            Response { modes = body.modes, totalItems = body.totalItems }
+                            Response
+                                { modes = body.modes
+                                , totalItems = body.totalItems
+                                }
 
                         _ ->
                             NoResponseToShow
@@ -323,12 +326,9 @@ update session msg model =
 
         UserClickedModeItem item ->
             let
-                newMode =
-                    convertFacetToResultMode item
-
                 newQuery =
                     toNextQuery model.activeSearch
-                        |> setMode newMode
+                        |> setMode (convertFacetToResultMode item)
             in
             setNextQuery newQuery model.activeSearch
                 |> flip setActiveSearch model
