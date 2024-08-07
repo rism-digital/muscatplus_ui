@@ -426,7 +426,11 @@ isHttpUrl txt =
 
 isMailtoUrl : String -> Bool
 isMailtoUrl txt =
-    Validate.isValidEmail txt
+    if String.contains "@" txt then
+        Validate.isValidEmail txt
+
+    else
+        False
 
 
 parsedHtml : String -> List (Element msg)

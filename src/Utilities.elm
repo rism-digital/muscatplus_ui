@@ -16,6 +16,7 @@ import Html.Parser.Util exposing (toVirtualDom)
 import Maybe.Extra as ME
 import Regex
 import Set exposing (Set)
+import String.Extra exposing (stripTags)
 
 
 toggle : comparable -> Set comparable -> Set comparable
@@ -107,10 +108,14 @@ parsed an html string, transforms hrefs in links, and converts to vdom which can
 toLinkedHtml : String -> List (Element msg)
 toLinkedHtml htmlString =
     let
+        -- if the note contains a "raw" URL that is not wrapped in an anchor tag,
+        -- then wrap it in an anchor tag prior to passing it to the HTML parser.
         wrappedUrlString =
             Regex.replace
-                (regex "(?<!href=\")(https?:\\/\\/\\S+)")
-                (\match -> "<a href=\"" ++ match.match ++ "\">" ++ match.match ++ "</a>")
+                (regex "(?<!href=[\"'])(https?:\\/\\/[^<]*)")
+                (\match ->
+                    "<a href=\"" ++ match.match ++ "\">" ++ match.match ++ "</a>"
+                )
                 htmlString
     in
     case Html.Parser.run wrappedUrlString of
@@ -118,23 +123,14 @@ toLinkedHtml htmlString =
             toElementList nodes
 
         Err _ ->
-            let
-                -- try again but first aggressively escape any characters that may be
-                -- masquerading as HTML, such as "<" or ">". This may make really bad
-                -- HTML show up in the notes, but it's better than showing nothing.
-                escapedHtml =
-                    ElmEscapeHtml.escape wrappedUrlString
-            in
-            case Html.Parser.run escapedHtml of
-                Ok nodes ->
-                    toElementList nodes
-
-                Err _ ->
-                    -- return the original string
-                    [ Element.paragraph
-                        []
-                        [ Element.text htmlString ]
-                    ]
+            -- If we can't parse the text to HTML nodes for some reason, then
+            -- strip any tags out of the text and then show the bare text.
+            [ Element.paragraph
+                []
+                [ stripTags htmlString
+                    |> Element.text
+                ]
+            ]
 
 
 toElementList : List Node -> List (Element msg)
