@@ -16,7 +16,7 @@ import Page.UI.Components exposing (h2)
 -}
 sectionTemplate :
     Language
-    -> { a | label : LanguageMap, sectionToc : String }
+    -> { a | sectionToc : String, label : LanguageMap }
     -> List (Element msg)
     -> Element msg
 sectionTemplate language header sectionBody =

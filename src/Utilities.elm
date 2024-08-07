@@ -10,7 +10,6 @@ module Utilities exposing
 
 import Dict exposing (Dict)
 import Element exposing (Element)
-import ElmEscapeHtml
 import Html.Parser exposing (Node)
 import Html.Parser.Util exposing (toVirtualDom)
 import Maybe.Extra as ME

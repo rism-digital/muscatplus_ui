@@ -12,8 +12,8 @@ viewOrganizationDetailsSection :
     Language
     ->
         { a
-            | label : LanguageMap
-            , sectionToc : String
+            | sectionToc : String
+            , label : LanguageMap
             , summary : List LabelValue
         }
     -> Element msg

@@ -139,16 +139,15 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 isFrontPage
     in
     row
-        (alignTop
-            :: Background.color colourScheme.lightGrey
-            :: width fill
-            :: height (px 50)
-            :: paddingXY 20 0
-            :: centerY
-            :: Border.color colourScheme.darkBlue
-            :: Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-            :: []
-        )
+        [ alignTop
+        , Background.color colourScheme.lightGrey
+        , width fill
+        , height (px 50)
+        , paddingXY 20 0
+        , centerY
+        , Border.color colourScheme.darkBlue
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        ]
         [ column
             [ width fill
             , height fill

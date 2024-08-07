@@ -6,12 +6,12 @@ import Language exposing (Language(..), LanguageMap, LanguageValue(..))
 tooltips :
     { anonymousCreator : LanguageMap
     , associatedPlace : LanguageMap
+    , cantusProject : LanguageMap
     , city : LanguageMap
     , composerAuthor : LanguageMap
     , compositeVolume : LanguageMap
     , dateRange : LanguageMap
     , diammProject : LanguageMap
-    , cantusProject : LanguageMap
     , formatExtent : LanguageMap
     , gender : LanguageMap
     , hasDigitization : LanguageMap
@@ -37,6 +37,8 @@ tooltips =
         [ LanguageValue English englishAnonymousCreatorTooltip ]
     , associatedPlace =
         [ LanguageValue English englishAssociatedPlaceTooltip ]
+    , cantusProject =
+        [ LanguageValue English englishHideCantusRecordsToggleTooltip ]
     , city =
         [ LanguageValue English englishCityTooltip ]
     , composerAuthor =
@@ -49,8 +51,6 @@ tooltips =
         [ LanguageValue English englishDateRangeTooltip ]
     , diammProject =
         [ LanguageValue English englishHideDiammRecordsToggleTooltip ]
-    , cantusProject =
-        [ LanguageValue English englishHideCantusRecordsToggleTooltip ]
     , formatExtent =
         [ LanguageValue English englishFormatExtentTooltip ]
     , gender =

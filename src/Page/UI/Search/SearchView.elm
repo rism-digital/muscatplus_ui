@@ -471,10 +471,10 @@ viewSearchResultRouter : SearchResultRouterConfig msg -> Element msg
 viewSearchResultRouter cfg =
     let
         resultConfig =
-            { clickForPreviewMsg = cfg.clickForPreviewMsg
-            , language = cfg.language
-            , resultIdx = cfg.resultIdx
+            { language = cfg.language
             , selectedResult = cfg.selectedResult
+            , clickForPreviewMsg = cfg.clickForPreviewMsg
+            , resultIdx = cfg.resultIdx
             }
     in
     case cfg.searchResult of

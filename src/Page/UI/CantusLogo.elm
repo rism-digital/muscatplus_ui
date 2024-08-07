@@ -1,4 +1,4 @@
-module Page.UI.CantusLogo exposing (..)
+module Page.UI.CantusLogo exposing (cantusLogo)
 
 import Element exposing (Element, html)
 import Svg
