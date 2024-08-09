@@ -2,6 +2,8 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
+import Device exposing (detectDevice)
+import Element exposing (Device)
 import Flags exposing (Flags)
 import Model exposing (Model(..))
 import Msg exposing (Msg)

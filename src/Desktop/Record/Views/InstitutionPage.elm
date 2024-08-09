@@ -1,0 +1,44 @@
+module Desktop.Record.Views.InstitutionPage exposing (view)
+
+import Desktop.Error.Views
+import Desktop.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
+import Element exposing (Element, alignTop, clipY, column, fill, height, none, row, width)
+import Element.Background as Background
+import Page.Record.Model exposing (RecordPageModel)
+import Page.Record.Msg exposing (RecordMsg)
+import Page.UI.Style exposing (colourScheme)
+import Response exposing (Response(..), ServerData(..))
+import Session exposing (Session)
+
+
+view : Session -> RecordPageModel RecordMsg -> Element RecordMsg
+view session model =
+    let
+        pageView =
+            case model.response of
+                Loading (Just (InstitutionData oldData)) ->
+                    viewFullInstitutionPage session model oldData
+
+                Response (InstitutionData body) ->
+                    viewFullInstitutionPage session model body
+
+                Error _ ->
+                    Desktop.Error.Views.view session model
+
+                _ ->
+                    none
+    in
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , alignTop
+            , clipY
+            , Background.color colourScheme.white
+            ]
+            [ pageView ]
+        ]

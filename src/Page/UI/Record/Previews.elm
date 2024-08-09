@@ -9,11 +9,11 @@ import Html.Attributes as HA
 import Http.Detailed
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Error.Views exposing (createErrorMessage)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
 import Page.UI.Components exposing (h4)
+import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)

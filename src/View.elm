@@ -3,33 +3,51 @@ module View exposing (view)
 import Browser
 import Css
 import Css.Global
-import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, layout, none, px, row, width)
-import Element.Keyed as Keyed
-import Html.Attributes as HA
+import Desktop.About.Views.About
+import Desktop.About.Views.Help
+import Desktop.About.Views.Options
+import Desktop.Error.Views
+import Desktop.Front.Views
+import Desktop.Record.Views.InstitutionPage
+import Desktop.Record.Views.PersonPage
+import Desktop.Record.Views.PlacePage
+import Desktop.Record.Views.SourcePage
+import Desktop.Search.Views
+import Desktop.SideBar.Views
+import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, inFront, layout, px, row, width)
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Loading exposing (loadingIndicator)
+import Mobile
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
-import Page.About.Views.About
-import Page.About.Views.Help
-import Page.About.Views.Options
-import Page.Error.Views
-import Page.Front.Views
-import Page.Record.Views.InstitutionPage
-import Page.Record.Views.PersonPage
-import Page.Record.Views.PlacePage
-import Page.Record.Views.SourcePage
-import Page.Search.Views
-import Page.SideBar.Views
-import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize)
+import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 import Response exposing (Response(..), ServerData(..))
 
 
 view : Model -> Browser.Document Msg
 view model =
+    let
+        { class, orientation } =
+            toSession model
+                |> .device
+    in
+    case ( class, orientation ) of
+        ( Phone, _ ) ->
+            Mobile.view model
+
+        ( Tablet, Portrait ) ->
+            Mobile.view model
+
+        ( _, _ ) ->
+            viewMain model
+
+
+viewMain : Model -> Browser.Document Msg
+viewMain model =
     let
         -- set the colour for links (a tags) globally.
         globalLinkColor =
@@ -87,49 +105,48 @@ view model =
             toSession model
 
         sidebarView =
-            if pageSession.isFramed then
-                none
-
-            else
-                column
+            viewIf
+                (column
                     [ width (px 70)
                     , height fill
                     , alignTop
-                    , inFront (Element.map Msg.UserInteractedWithSideBar (Page.SideBar.Views.view pageSession))
+                    , inFront (Element.map Msg.UserInteractedWithSideBar (Desktop.SideBar.Views.view pageSession))
                     ]
                     []
+                )
+                pageSession.isFramed
 
         pageView =
             case model of
                 NotFoundPage session pageModel ->
-                    Element.map Msg.UserInteractedWithNotFoundPage (Page.Error.Views.view session pageModel)
+                    Element.map Msg.UserInteractedWithNotFoundPage (Desktop.Error.Views.view session pageModel)
 
                 SearchPage session pageModel ->
-                    Element.map Msg.UserInteractedWithSearchPage (Page.Search.Views.view session pageModel)
+                    Element.map Msg.UserInteractedWithSearchPage (Desktop.Search.Views.view session pageModel)
 
                 FrontPage session pageModel ->
-                    Element.map Msg.UserInteractedWithFrontPage (Page.Front.Views.view session pageModel)
+                    Element.map Msg.UserInteractedWithFrontPage (Desktop.Front.Views.view session pageModel)
 
                 SourcePage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.SourcePage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.SourcePage.view session pageModel)
 
                 PersonPage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PersonPage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.PersonPage.view session pageModel)
 
                 InstitutionPage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.InstitutionPage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.InstitutionPage.view session pageModel)
 
                 AboutPage session pageModel ->
-                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.About.view session pageModel)
+                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.About.view session pageModel)
 
                 HelpPage session ->
-                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.Help.view session)
+                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.Help.view session)
 
                 OptionsPage session pageModel ->
-                    Element.map Msg.UserInteractedWithAboutPage (Page.About.Views.Options.view session pageModel)
+                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.Options.view session pageModel)
 
                 PlacePage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Page.Record.Views.PlacePage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.PlacePage.view session pageModel)
     in
     { title = pageTitle
     , body =
@@ -163,61 +180,3 @@ view model =
             )
         ]
     }
-
-
-loadingIndicator : Model -> Element Msg
-loadingIndicator model =
-    let
-        chooseView resp =
-            case resp of
-                Loading _ ->
-                    loadingView
-
-                _ ->
-                    Keyed.el [] ( "progress-bar-none", none )
-
-        isLoading resp =
-            case resp of
-                Loading _ ->
-                    True
-
-                _ ->
-                    False
-
-        loadingView =
-            row
-                [ width fill
-                , htmlAttribute (HA.style "z-index" "1")
-                ]
-                [ progressBar ]
-    in
-    case model of
-        SearchPage _ pageModel ->
-            if isLoading pageModel.response || isLoading pageModel.preview then
-                loadingView
-
-            else
-                Keyed.el [] ( "progress-bar-none", none )
-
-        FrontPage _ pageModel ->
-            chooseView pageModel.response
-
-        SourcePage _ pageModel ->
-            chooseView pageModel.response
-
-        PersonPage _ pageModel ->
-            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
-                loadingView
-
-            else
-                Keyed.el [] ( "progress-bar-none", none )
-
-        InstitutionPage _ pageModel ->
-            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
-                loadingView
-
-            else
-                Keyed.el [] ( "progress-bar-none", none )
-
-        _ ->
-            none
