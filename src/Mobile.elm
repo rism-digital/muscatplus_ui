@@ -3,12 +3,14 @@ module Mobile exposing (..)
 import Browser
 import Css
 import Css.Global
-import Element exposing (centerX, column, fill, height, layout, none, row, width)
+import Element exposing (above, alignRight, centerX, centerY, column, el, fill, height, inFront, layout, none, padding, paddingXY, px, row, spacing, text, width)
+import Element.Background as Background
 import Html.Styled exposing (toUnstyled)
 import Loading exposing (loadingIndicator)
 import Mobile.About.Views.About
 import Mobile.About.Views.Help
 import Mobile.About.Views.Options
+import Mobile.BottomBar.Views
 import Mobile.Error.Views
 import Mobile.Front.Views
 import Mobile.Record.Views.InstitutionPage
@@ -18,7 +20,8 @@ import Mobile.Record.Views.SourcePage
 import Mobile.Search.Views
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, minimalDropShadow)
+import Page.UI.Images exposing (onlineTextSvg, rismLogo)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 
 
@@ -35,6 +38,19 @@ view model =
 
         defaultTitle =
             "RISM Online"
+
+        logoView =
+            row
+                [ height (px 60)
+                , Background.color colourScheme.darkBlue
+                , spacing 5
+                , paddingXY 8 5
+                , minimalDropShadow
+                , alignRight
+                ]
+                [ el [ centerX, centerY ] (rismLogo colourScheme.white 50)
+                , el [ centerX, centerY, width (px 100) ] (onlineTextSvg colourScheme.white)
+                ]
 
         pageSession =
             toSession model
@@ -88,9 +104,11 @@ view model =
                     [ centerX
                     , width fill
                     , height fill
+                    , inFront logoView
                     ]
                     [ loadingIndicator model
                     , pageView
+                    , Mobile.BottomBar.Views.view pageSession
                     ]
                 ]
             )
