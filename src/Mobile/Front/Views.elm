@@ -1,6 +1,6 @@
 module Mobile.Front.Views exposing (view)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, fillPortion, height, none, padding, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, px, row, scrollbarY, text, width)
 import Element.Background as Background
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
