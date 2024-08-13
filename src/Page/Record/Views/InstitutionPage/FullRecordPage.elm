@@ -4,13 +4,14 @@ import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column,
 import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, pageHeaderBackground, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Components exposing (mapViewer, renderLabel)
+import Page.UI.Components exposing (mapViewer, pageBodyOrEmpty, renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -27,6 +28,28 @@ import Url.Builder as QB exposing (absolute)
 
 viewDescriptionTab : Language -> ( Int, Int ) -> InstitutionBody -> Element msg
 viewDescriptionTab language ( windowWidth, windowHeight ) body =
+    let
+        isEmpty =
+            ME.isNothing body.organizationDetails
+                && ME.isNothing body.location
+                && ME.isNothing body.relationships
+                && ME.isNothing body.notes
+                && ME.isNothing body.externalResources
+                && ME.isNothing body.externalAuthorities
+                && ME.isNothing body.location
+
+        pageBody =
+            pageBodyOrEmpty language
+                isEmpty
+                [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
+                , viewMaybe (viewLocationAddressSection language) body.location
+                , viewMaybe (viewRelationshipsSection language) body.relationships
+                , viewMaybe (viewNotesSection language) body.notes
+                , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
+                , viewMaybe (viewLocationMapSection language ( windowWidth, windowHeight )) body.location
+                ]
+    in
     row
         [ width fill
         , height fill
@@ -39,14 +62,7 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
             , spacing sectionSpacing
             , padding 20
             ]
-            [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
-            , viewMaybe (viewLocationAddressSection language) body.location
-            , viewMaybe (viewRelationshipsSection language) body.relationships
-            , viewMaybe (viewNotesSection language) body.notes
-            , viewMaybe (viewExternalResourcesSection language) body.externalResources
-            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-            , viewMaybe (viewLocationMapSection language ( windowWidth, windowHeight )) body.location
-            ]
+            pageBody
         ]
 
 
