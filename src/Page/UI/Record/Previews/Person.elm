@@ -2,8 +2,10 @@ module Page.UI.Record.Previews.Person exposing (viewPersonPreview)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
+import Maybe.Extra as ME
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
+import Page.UI.Components exposing (pageBodyOrEmpty)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
@@ -18,6 +20,23 @@ import Page.UI.Style exposing (colourScheme)
 viewPersonPreview : Language -> PersonBody -> Element msg
 viewPersonPreview language body =
     let
+        isEmpty =
+            ME.isNothing body.biographicalDetails
+                && ME.isNothing body.nameVariants
+                && ME.isNothing body.relationships
+                && ME.isNothing body.notes
+                && ME.isNothing body.externalResources
+
+        previewBody =
+            pageBodyOrEmpty language
+                isEmpty
+                [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
+                , viewMaybe (viewNameVariantsSection language) body.nameVariants
+                , viewMaybe (viewRelationshipsSection language) body.relationships
+                , viewMaybe (viewNotesSection language) body.notes
+                , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                ]
+
         recordIcon =
             el
                 [ width (px 25)
@@ -62,12 +81,7 @@ viewPersonPreview language body =
                     , alignTop
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
-                    , viewMaybe (viewNameVariantsSection language) body.nameVariants
-                    , viewMaybe (viewRelationshipsSection language) body.relationships
-                    , viewMaybe (viewNotesSection language) body.notes
-                    , viewMaybe (viewExternalResourcesSection language) body.externalResources
-                    ]
+                    previewBody
                 ]
             ]
         ]

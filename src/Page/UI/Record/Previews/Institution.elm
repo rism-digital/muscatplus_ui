@@ -2,8 +2,11 @@ module Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
+import Maybe.Extra as ME
+import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
+import Page.UI.Components exposing (pageBodyOrEmpty)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -19,6 +22,25 @@ import Page.UI.Style exposing (colourScheme)
 viewInstitutionPreview : Language -> InstitutionBody -> Element msg
 viewInstitutionPreview language body =
     let
+        isEmpty =
+            ME.isNothing body.organizationDetails
+                && ME.isNothing body.location
+                && ME.isNothing body.relationships
+                && ME.isNothing body.notes
+                && ME.isNothing body.externalResources
+                && ME.isNothing body.externalAuthorities
+
+        previewBody =
+            pageBodyOrEmpty language
+                isEmpty
+                [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
+                , viewMaybe (viewLocationAddressSection language) body.location
+                , viewMaybe (viewRelationshipsSection language) body.relationships
+                , viewMaybe (viewNotesSection language) body.notes
+                , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
+                ]
+
         recordIcon =
             el
                 [ width (px 25)
@@ -63,13 +85,7 @@ viewInstitutionPreview language body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
-                    , viewMaybe (viewLocationAddressSection language) body.location
-                    , viewMaybe (viewRelationshipsSection language) body.relationships
-                    , viewMaybe (viewNotesSection language) body.notes
-                    , viewMaybe (viewExternalResourcesSection language) body.externalResources
-                    , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-                    ]
+                    previewBody
                 ]
             ]
         ]

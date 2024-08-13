@@ -47,6 +47,7 @@ localTranslations :
     , nearbyInstitutions : LanguageMap
     , newSearchWithIncipit : LanguageMap
     , next : LanguageMap
+    , noAdditionalDetails : LanguageMap
     , noResultsBody : LanguageMap
     , noResultsHeader : LanguageMap
     , noResultsWouldBeFound : LanguageMap
@@ -255,6 +256,8 @@ localTranslations =
         , LanguageValue Portugese [ "Próximo" ]
         , LanguageValue Polish [ "Następny" ]
         ]
+    , noAdditionalDetails =
+        [ LanguageValue English [ "No additional details available." ] ]
     , noResultsBody =
         [ LanguageValue English [ "Adjust your query options, or reset all filters, to see results." ]
         , LanguageValue German [ "Passen Sie Ihre Abfrageoptionen an oder setzen Sie alle Filter zurück, um Ergebnisse zu sehen." ]

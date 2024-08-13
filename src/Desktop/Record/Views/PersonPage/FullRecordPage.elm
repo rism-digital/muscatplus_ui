@@ -5,10 +5,12 @@ import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column,
 import Element.Border as Border
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (pageHeaderBackground, sectionSpacing)
+import Page.UI.Components exposing (pageBodyOrEmpty)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
@@ -24,6 +26,28 @@ import Session exposing (Session)
 
 viewDescriptionTab : Language -> PersonBody -> Element msg
 viewDescriptionTab language body =
+    let
+        isEmpty =
+            ME.isNothing body.biographicalDetails
+                && ME.isNothing body.nameVariants
+                && ME.isNothing body.relationships
+                && ME.isNothing body.relationships
+                && ME.isNothing body.notes
+                && ME.isNothing body.externalResources
+                && ME.isNothing body.externalAuthorities
+
+        pageBody =
+            pageBodyOrEmpty
+                language
+                isEmpty
+                [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
+                , viewMaybe (viewNameVariantsSection language) body.nameVariants
+                , viewMaybe (viewRelationshipsSection language) body.relationships
+                , viewMaybe (viewNotesSection language) body.notes
+                , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
+                ]
+    in
     row
         [ width fill
         , height fill
@@ -36,13 +60,7 @@ viewDescriptionTab language body =
             , alignTop
             , padding 20
             ]
-            [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
-            , viewMaybe (viewNameVariantsSection language) body.nameVariants
-            , viewMaybe (viewRelationshipsSection language) body.relationships
-            , viewMaybe (viewNotesSection language) body.notes
-            , viewMaybe (viewExternalResourcesSection language) body.externalResources
-            , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-            ]
+            pageBody
         ]
 
 

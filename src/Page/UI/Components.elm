@@ -11,6 +11,7 @@ module Page.UI.Components exposing
     , h4
     , makeFlagIcon
     , mapViewer
+    , pageBodyOrEmpty
     , renderLabel
     , renderParagraph
     , resourceLink
@@ -32,6 +33,7 @@ import Html.Events as HE
 import Html.Styled as HS exposing (toUnstyled)
 import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, limitLength)
+import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
@@ -620,3 +622,19 @@ externalLinkTemplate url =
     in
     isExternalLink url
         |> viewIf externalImg
+
+
+pageBodyOrEmpty : Language -> Bool -> List (Element msg) -> List (Element msg)
+pageBodyOrEmpty language isEmpty nonEmptyBody =
+    if isEmpty then
+        [ el
+            [ Font.italic
+            , headingXL
+            ]
+            (extractLabelFromLanguageMap language localTranslations.noAdditionalDetails
+                |> text
+            )
+        ]
+
+    else
+        nonEmptyBody
