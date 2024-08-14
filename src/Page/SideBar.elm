@@ -2,32 +2,16 @@ module Page.SideBar exposing (Msg, countryListRequest, update)
 
 import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer
-import Page.RecordTypes.Countries exposing (CountryCode)
+import Page.Query exposing (buildFrontPageUrl)
+import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
-import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), sideBarOptionToModeString)
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..))
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
-import Request exposing (serverUrl)
 import Session exposing (Session)
-import Url.Builder
 
 
 type alias Msg =
     SideBarMsg
-
-
-buildFrontPageUrl : SideBarOption -> Maybe CountryCode -> String
-buildFrontPageUrl sidebarOption countryCode =
-    let
-        modeParameter =
-            sideBarOptionToModeString sidebarOption
-                |> Url.Builder.string "mode"
-
-        -- Omits the parameter if the country code is Nothing.
-        ncParameter =
-            Maybe.map (\ccode -> List.singleton (Url.Builder.string "nc" ccode)) countryCode
-                |> Maybe.withDefault []
-    in
-    serverUrl [ "/" ] (modeParameter :: ncParameter)
 
 
 countryListRequest : Cmd SideBarMsg
@@ -79,14 +63,11 @@ update msg session =
             )
 
         UserClickedSideBarOptionForFrontPage sidebarOption ->
-            let
-                requestUrl =
-                    buildFrontPageUrl sidebarOption session.restrictedToNationalCollection
-            in
             ( { session
                 | showFrontSearchInterface = sidebarOption
               }
-            , Nav.pushUrl session.key requestUrl
+            , buildFrontPageUrl sidebarOption session.restrictedToNationalCollection
+                |> Nav.pushUrl session.key
             )
 
         UserMouseEnteredSideBarOption button ->
@@ -160,13 +141,6 @@ update msg session =
             )
 
         UserChoseNationalCollection countryCode ->
-            let
-                outMsg =
-                    PortSendSetNationalCollectionSelection countryCode
-
-                requestUrl =
-                    buildFrontPageUrl session.showFrontSearchInterface countryCode
-            in
             ( { session
                 | showFrontSearchInterface = SourceSearchOption
                 , restrictedToNationalCollection = countryCode
@@ -175,9 +149,11 @@ update msg session =
                 -- people or incipits interface when a national collection is chosen.
               }
             , Cmd.batch
-                [ encodeMessageForPortSend outMsg
+                [ PortSendSetNationalCollectionSelection countryCode
+                    |> encodeMessageForPortSend
                     |> sendOutgoingMessageOnPort
-                , Nav.pushUrl session.key requestUrl
+                , buildFrontPageUrl session.showFrontSearchInterface countryCode
+                    |> Nav.pushUrl session.key
                 ]
             )
 

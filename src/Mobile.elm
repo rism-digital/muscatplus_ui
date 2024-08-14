@@ -3,8 +3,9 @@ module Mobile exposing (..)
 import Browser
 import Css
 import Css.Global
-import Element exposing (above, alignRight, centerX, centerY, column, el, fill, height, inFront, layout, none, padding, paddingXY, px, row, spacing, text, width)
+import Element exposing (above, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, layout, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background
+import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
 import Loading exposing (loadingIndicator)
 import Mobile.About.Views.About
@@ -86,6 +87,9 @@ view model =
 
                 PlacePage session pageModel ->
                     Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.PlacePage.view session pageModel)
+
+        bottomBarView =
+            Element.map Msg.UserInteractedWithBottomBar (Mobile.BottomBar.Views.view pageSession)
     in
     { title = defaultTitle
     , body =
@@ -99,6 +103,7 @@ view model =
             (row
                 [ width fill
                 , height fill
+                , htmlAttribute (HA.style "height" "100vh")
                 ]
                 [ column
                     [ centerX
@@ -108,7 +113,7 @@ view model =
                     ]
                     [ loadingIndicator model
                     , pageView
-                    , Mobile.BottomBar.Views.view pageSession
+                    , bottomBarView
                     ]
                 ]
             )

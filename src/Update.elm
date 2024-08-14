@@ -7,6 +7,7 @@ import Device exposing (setDevice, setWindow)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.About as AboutPage
+import Page.BottomBar as BottomBar
 import Page.Error as NotFoundPage
 import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
@@ -501,15 +502,22 @@ update msg model =
 
         ( Msg.UserInteractedWithSideBar sideBarMsg, _ ) ->
             let
-                newModel =
-                    updateSession newSession model
-
                 ( newSession, sidebarCmd ) =
                     toSession model
                         |> SideBar.update sideBarMsg
             in
-            ( newModel
+            ( updateSession newSession model
             , Cmd.map Msg.UserInteractedWithSideBar sidebarCmd
+            )
+
+        ( Msg.UserInteractedWithBottomBar bottomBarMsg, _ ) ->
+            let
+                ( newSession, bottomBarCmd ) =
+                    toSession model
+                        |> BottomBar.update bottomBarMsg
+            in
+            ( updateSession newSession model
+            , Cmd.map Msg.UserInteractedWithBottomBar bottomBarCmd
             )
 
         ( Msg.NothingHappened, _ ) ->

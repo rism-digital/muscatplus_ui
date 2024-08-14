@@ -3,7 +3,6 @@ module Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Maybe.Extra as ME
-import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty)

@@ -1,6 +1,7 @@
 module Page.Query exposing
     ( FrontQueryArgs
     , QueryArgs
+    , buildFrontPageUrl
     , buildQueryParameters
     , defaultQueryArgs
     , frontQueryArgsToQueryArgs
@@ -28,6 +29,8 @@ import Config as C
 import Dict exposing (Dict)
 import Language exposing (LanguageMap, toLanguageMap)
 import Maybe.Extra as ME
+import Page.RecordTypes.Countries exposing (CountryCode)
+import Page.RecordTypes.Navigation exposing (NavigationBarOption, navigationBarOptionToModeString)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
 import Page.RecordTypes.Search
     exposing
@@ -39,7 +42,7 @@ import Page.RecordTypes.Search
         , parseStringToFacetSort
         )
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Request exposing (apply)
+import Request exposing (apply, serverUrl)
 import Url exposing (percentDecode)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
@@ -395,3 +398,18 @@ stringSplitToList str =
 
         _ ->
             Nothing
+
+
+buildFrontPageUrl : NavigationBarOption -> Maybe CountryCode -> String
+buildFrontPageUrl sidebarOption countryCode =
+    let
+        modeParameter =
+            navigationBarOptionToModeString sidebarOption
+                |> Url.Builder.string "mode"
+
+        -- Omits the parameter if the country code is Nothing.
+        ncParameter =
+            Maybe.map (\ccode -> List.singleton (Url.Builder.string "nc" ccode)) countryCode
+                |> Maybe.withDefault []
+    in
+    serverUrl [ "/" ] (modeParameter :: ncParameter)

@@ -2,10 +2,11 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Device exposing (detectDevice)
-import Element exposing (Device)
+import Desktop
+import Element exposing (DeviceClass(..), Orientation(..))
 import Flags exposing (Flags)
-import Model exposing (Model(..))
+import Mobile
+import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
 import Page.About as About
 import Page.Error as NotFound
@@ -16,12 +17,11 @@ import Page.Route as Route exposing (Route(..))
 import Page.Search as Search
 import Page.SideBar as Sidebar
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, addNationalCollectionQueryParameter)
-import Session
+import Session exposing (Session)
 import Subscriptions
 import Update
 import Url exposing (Url)
 import Url.Builder exposing (toQuery)
-import View
 
 
 main : Program Flags Model Msg
@@ -32,8 +32,34 @@ main =
         , onUrlRequest = Msg.UserRequestedUrlChange
         , subscriptions = Subscriptions.subscriptions
         , update = Update.update
-        , view = View.view
+        , view = view
         }
+
+
+isMobileView : Session -> Bool
+isMobileView session =
+    let
+        { class, orientation } =
+            session.device
+    in
+    case ( class, orientation ) of
+        ( Phone, _ ) ->
+            True
+
+        ( Tablet, Portrait ) ->
+            True
+
+        ( _, _ ) ->
+            False
+
+
+view : Model -> Browser.Document Msg
+view model =
+    if isMobileView (toSession model) then
+        Mobile.view model
+
+    else
+        Desktop.view model
 
 
 {-|
@@ -49,6 +75,13 @@ init flags initialUrl key =
 
         session =
             Session.init flags initialUrl key
+
+        countryListRequest =
+            if isMobileView session then
+                Cmd.none
+
+            else
+                Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
     in
     case route of
         FrontPageRoute qargs ->
@@ -64,7 +97,7 @@ init flags initialUrl key =
             , Cmd.batch
                 [ Front.frontPageRequest initialUrl
                     |> Cmd.map Msg.UserInteractedWithFrontPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
@@ -103,7 +136,7 @@ init flags initialUrl key =
                     , Search.requestPreviewIfSelected initialBody.selectedResult
                     ]
                     |> Cmd.map Msg.UserInteractedWithSearchPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
@@ -144,7 +177,7 @@ init flags initialUrl key =
                     , Record.recordSearchRequest sourcesUrl
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
@@ -182,7 +215,7 @@ init flags initialUrl key =
                     , Record.requestPreviewIfSelected initialBody.selectedResult
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
@@ -213,7 +246,7 @@ init flags initialUrl key =
                     , Record.recordSearchRequest sourcesUrl
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
@@ -251,7 +284,7 @@ init flags initialUrl key =
                     , Record.requestPreviewIfSelected initialBody.selectedResult
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
@@ -282,7 +315,7 @@ init flags initialUrl key =
                     , Record.recordSearchRequest sourcesUrl
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
@@ -320,7 +353,7 @@ init flags initialUrl key =
                     , Record.requestPreviewIfSelected initialBody.selectedResult
                     ]
                     |> Cmd.map Msg.UserInteractedWithRecordPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
@@ -329,18 +362,18 @@ init flags initialUrl key =
             , Cmd.batch
                 [ About.initialCmd initialUrl
                     |> Cmd.map Msg.UserInteractedWithAboutPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )
 
         HelpPageRoute ->
             ( HelpPage session
-            , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+            , countryListRequest
             )
 
         OptionsPageRoute ->
             ( OptionsPage session (About.init session)
-            , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+            , countryListRequest
             )
 
         _ ->
@@ -348,6 +381,6 @@ init flags initialUrl key =
             , Cmd.batch
                 [ NotFound.initialCmd initialUrl
                     |> Cmd.map Msg.UserInteractedWithNotFoundPage
-                , Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
+                , countryListRequest
                 ]
             )

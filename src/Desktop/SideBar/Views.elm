@@ -14,8 +14,9 @@ import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
+import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.Route exposing (Route(..))
-import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), SideBarOption(..), showSideBarLabels)
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.UI.Animations exposing (animatedColumn, animatedEl)
 import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Helpers exposing (viewIf)
@@ -45,7 +46,7 @@ dividingLine =
         ]
 
 
-isCurrentlyHovered : Maybe SideBarOption -> SideBarOption -> Bool
+isCurrentlyHovered : Maybe NavigationBarOption -> NavigationBarOption -> Bool
 isCurrentlyHovered hoveredOption thisOption =
     ME.unwrap False (\opt -> opt == thisOption) hoveredOption
 

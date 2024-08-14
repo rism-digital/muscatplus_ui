@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon-16x16.png">
@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-title" content="RISM Online">
     <meta name="application-name" content="RISM Online">
     <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#000000">
 
     <title>RISM Online</title>
     <meta name="description" content="RISM Online provides access to millions of musical records from a global collection of music libraries, archives, and cultural centres.">
@@ -62,6 +62,11 @@
             color: white;
         }
 
+        html {
+            text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+        }
     </style>
     <script defer src="/static/app.js"></script>
     <script defer src="/static/web-audio.min.js"></script>

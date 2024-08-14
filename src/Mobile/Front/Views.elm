@@ -1,15 +1,22 @@
 module Mobile.Front.Views exposing (view)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, padding, px, row, scrollbarY, text, width)
+import Desktop.Front.Views.Facets exposing (facetFrontMsgConfig)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, none, padding, paddingXY, paragraph, px, row, scrollbarY, text, width)
 import Element.Background as Background
+import Element.Font as Font
+import Html.Attributes as HA
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
-import Page.SideBar.Msg exposing (SideBarOption(..))
+import Page.Query exposing (toKeywordQuery, toNextQuery)
+import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow)
+import Page.UI.Attributes exposing (emptyAttribute, headingHero, minimalDropShadow)
+import Page.UI.Components exposing (h1)
 import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse)
+import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewSearchButtons)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -43,7 +50,7 @@ view session model =
         ]
         [ column
             [ width fill
-            , padding 10
+            , htmlAttribute (HA.style "height" "60vh")
             , Background.color colourScheme.white
             , minimalDropShadow
             ]
@@ -58,10 +65,19 @@ frontBodyViewRouter session model =
             viewFrontSearchControlsLoading
 
         Response (FrontData body) ->
-            viewFacetPanels session model
+            viewFrontSearchControls
+                { session = session
+                , model = model
+                , body = body
+                , checkboxColumns = 1
+                , facetMsgConfig = facetFrontMsgConfig
+                , panelToggleMsg = \_ _ -> FrontMsg.NothingHappened
+                , userTriggeredSearchSubmitMsg = FrontMsg.UserTriggeredSearchSubmit
+                , userEnteredTextInKeywordQueryBoxMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                }
 
         _ ->
-            text "Problem"
+            el [ Font.size 92 ] (text "Problem")
 
 
 viewFrontSearchControlsLoading : Element msg
@@ -85,11 +101,60 @@ viewFrontSearchControlsLoading =
         ]
 
 
-viewFacetPanels : Session -> FrontPageModel FrontMsg -> Element FrontMsg
-viewFacetPanels session model =
+viewFrontSearchControls : SearchControlsConfig a b FrontMsg -> Element FrontMsg
+viewFrontSearchControls cfg =
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width fill
+            , height fill
+            ]
+            --[ viewSearchButtons
+            --    { language = .language cfg.session
+            --    , model = cfg.model
+            --    , isFrontPage = True
+            --    , submitLabel = localTranslations.showResults
+            --    , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+            --    , resetMsg = FrontMsg.UserResetAllFilters
+            --    }
+            [ viewFacetPanels cfg
+            ]
+        ]
+
+
+viewFacetPanels : SearchControlsConfig a b FrontMsg -> Element FrontMsg
+viewFacetPanels cfg =
     let
+        language =
+            .language cfg.session
+
+        headingHeroText =
+            case .showFrontSearchInterface cfg.session of
+                SourceSearchOption ->
+                    localTranslations.sources
+
+                PeopleSearchOption ->
+                    localTranslations.people
+
+                InstitutionSearchOption ->
+                    localTranslations.institutions
+
+                IncipitSearchOption ->
+                    localTranslations.incipits
+
+                -- Show a blank page if this is ever the choice; it shouldn't be!
+                LiturgicalFestivalsOption ->
+                    []
+
+        qText =
+            toNextQuery (.activeSearch cfg.model)
+                |> toKeywordQuery
+                |> Maybe.withDefault ""
+
         submitMsg =
-            if hasActionableProbeResponse (.probeResponse model) then
+            if hasActionableProbeResponse (.probeResponse cfg.model) then
                 FrontMsg.UserTriggeredSearchSubmit
 
             else
@@ -100,16 +165,33 @@ viewFacetPanels session model =
         , height fill
         , alignTop
         , scrollbarY
+        , padding 10
         ]
         [ column
             [ width fill
+            , height fill
             , alignTop
             ]
-            [ viewFrontKeywordQueryInput
-                { language = session.language
-                , submitMsg = submitMsg
-                , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
-                , queryText = "foo"
-                }
+            [ row
+                [ width fill ]
+                [ column
+                    [ width fill
+                    , alignTop
+                    , padding 10
+                    ]
+                    [ paragraph
+                        [ headingHero
+                        , Font.semiBold
+                        , paddingXY 0 10
+                        ]
+                        [ h1 language headingHeroText ]
+                    , viewFrontKeywordQueryInput
+                        { language = language
+                        , submitMsg = submitMsg
+                        , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        }
+                    ]
+                ]
             ]
         ]

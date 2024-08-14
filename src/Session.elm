@@ -23,8 +23,9 @@ import Json.Decode as Decode
 import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
 import Maybe.Extra as ME
 import Page.RecordTypes.Countries exposing (CountryCode)
+import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), resultModeToNavigationBarOption)
 import Page.Route exposing (Route(..), parseUrl)
-import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg, SideBarOption(..), resultModeToSideBarOption, sideBarExpandDelay)
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg, sideBarExpandDelay)
 import SearchPreferences exposing (SearchPreferences, searchPreferencesDecoder)
 import Url exposing (Url)
 
@@ -41,8 +42,8 @@ type alias Session =
     , expandedSideBar : SideBarAnimationStatus
     , sideBarExpansionDebouncer : Debouncer SideBarMsg
     , nationalCollectionChooserDebouncer : Debouncer SideBarMsg
-    , showFrontSearchInterface : SideBarOption
-    , currentlyHoveredOption : Maybe SideBarOption
+    , showFrontSearchInterface : NavigationBarOption
+    , currentlyHoveredOption : Maybe NavigationBarOption
     , currentlyHoveredNationalCollectionChooser : Bool
     , currentlyHoveredNationalCollectionSidebarOption : Bool
     , currentlyHoveredAboutMenuSidebarOption : Bool
@@ -65,7 +66,7 @@ init flags url key =
         initialMode =
             case route of
                 FrontPageRoute qargs ->
-                    resultModeToSideBarOption qargs.mode
+                    resultModeToNavigationBarOption qargs.mode
 
                 _ ->
                     SourceSearchOption

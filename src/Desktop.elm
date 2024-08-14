@@ -1,4 +1,4 @@
-module View exposing (view)
+module Desktop exposing (view)
 
 import Browser
 import Css
@@ -19,7 +19,6 @@ import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Loading exposing (loadingIndicator)
-import Mobile
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize)
@@ -30,24 +29,6 @@ import Response exposing (Response(..), ServerData(..))
 
 view : Model -> Browser.Document Msg
 view model =
-    let
-        { class, orientation } =
-            toSession model
-                |> .device
-    in
-    case ( class, orientation ) of
-        ( Phone, _ ) ->
-            Mobile.view model
-
-        ( Tablet, Portrait ) ->
-            Mobile.view model
-
-        ( _, _ ) ->
-            viewMain model
-
-
-viewMain : Model -> Browser.Document Msg
-viewMain model =
     let
         -- set the colour for links (a tags) globally.
         globalLinkColor =

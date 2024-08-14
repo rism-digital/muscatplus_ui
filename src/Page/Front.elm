@@ -19,9 +19,9 @@ import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
+import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToResultMode)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
-import Page.SideBar.Msg exposing (SideBarOption(..), sideBarOptionToResultMode)
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
@@ -53,7 +53,7 @@ frontProbeSubmit : Session -> FrontPageModel FrontMsg -> ( FrontPageModel FrontM
 frontProbeSubmit session model =
     let
         resultMode =
-            sideBarOptionToResultMode session.showFrontSearchInterface
+            navigationBarOptionToResultMode session.showFrontSearchInterface
     in
     toNextQuery model.activeSearch
         |> setMode resultMode
@@ -112,7 +112,7 @@ searchSubmit session model =
                 (toKeyboard pageResetModel.activeSearch)
 
         resultMode =
-            sideBarOptionToResultMode session.showFrontSearchInterface
+            navigationBarOptionToResultMode session.showFrontSearchInterface
 
         textQueryParameters =
             toNextQuery newModel.activeSearch
@@ -323,7 +323,7 @@ update session msg model =
                             if keyboardModel.needsProbe then
                                 let
                                     resultMode =
-                                        sideBarOptionToResultMode session.showFrontSearchInterface
+                                        navigationBarOptionToResultMode session.showFrontSearchInterface
 
                                     probeUrl =
                                         toNextQuery probeModel.activeSearch

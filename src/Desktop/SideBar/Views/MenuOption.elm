@@ -4,7 +4,8 @@ import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerY
 import Element.Background as Background
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
-import Page.SideBar.Msg exposing (SideBarMsg(..), SideBarOption)
+import Page.RecordTypes.Navigation exposing (NavigationBarOption)
+import Page.SideBar.Msg exposing (SideBarMsg(..))
 import Page.UI.Animations exposing (animatedLabel)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Style exposing (colourScheme)
@@ -57,7 +58,7 @@ menuOption :
     , label : Element SideBarMsg
     , showLabel : Bool
     }
-    -> SideBarOption
+    -> NavigationBarOption
     -> Bool
     -> Element SideBarMsg
 menuOption cfg option currentlyHovered =
