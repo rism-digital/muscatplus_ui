@@ -3,7 +3,7 @@ module Mobile exposing (..)
 import Browser
 import Css
 import Css.Global
-import Element exposing (above, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, layout, none, padding, paddingXY, px, row, spacing, text, width)
+import Element exposing (above, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, layout, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background
 import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
@@ -42,15 +42,15 @@ view model =
 
         logoView =
             row
-                [ height (px 60)
+                [ height (px 40)
+                , width fill
                 , Background.color colourScheme.darkBlue
                 , spacing 5
                 , paddingXY 8 5
                 , minimalDropShadow
-                , alignRight
                 ]
-                [ el [ centerX, centerY ] (rismLogo colourScheme.white 50)
-                , el [ centerX, centerY, width (px 100) ] (onlineTextSvg colourScheme.white)
+                [ el [ alignLeft, centerY ] (rismLogo colourScheme.white 28)
+                , el [ alignLeft, centerY, width (px 72) ] (onlineTextSvg colourScheme.white)
                 ]
 
         pageSession =
@@ -99,11 +99,15 @@ view model =
             , bodyFont
             , bodyFontColour
             , fontBaseSize
+            , htmlAttribute (HA.style "position" "fixed")
+            , htmlAttribute (HA.style "height" "100%")
+            , htmlAttribute (HA.style "top" "0")
+            , htmlAttribute (HA.style "left" "0")
             ]
             (row
                 [ width fill
                 , height fill
-                , htmlAttribute (HA.style "height" "100vh")
+                , htmlAttribute (HA.style "height" "100dvh")
                 ]
                 [ column
                     [ centerX

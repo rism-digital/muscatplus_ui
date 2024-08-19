@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews exposing (PreviewConfig, viewPreviewError, viewPreviewRouter)
+module Page.UI.Record.Previews exposing (PreviewConfig, viewMobileRecordPreviewTitleBar, viewPreviewError, viewPreviewRouter, viewRecordPreviewTitleBar)
 
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
@@ -237,6 +237,36 @@ viewRecordPreviewTitleBar language closeMsg =
             , onClick closeMsg
             , width (px 18)
             , height (px 18)
+            , pointer
+            ]
+            (closeWindowSvg colourScheme.white)
+        , el
+            [ alignLeft
+            , centerY
+            , Font.color colourScheme.white
+            , width fill
+            ]
+            (h4 language localTranslations.recordPreview)
+        ]
+
+
+viewMobileRecordPreviewTitleBar : Language -> msg -> Element msg
+viewMobileRecordPreviewTitleBar language closeMsg =
+    row
+        [ width fill
+        , height (px 50)
+        , spacing 10
+        , paddingXY 10 0
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.darkBlue
+        , Background.color colourScheme.darkBlue
+        ]
+        [ el
+            [ alignLeft
+            , centerY
+            , onClick closeMsg
+            , width (px 24)
+            , height (px 24)
             , pointer
             ]
             (closeWindowSvg colourScheme.white)

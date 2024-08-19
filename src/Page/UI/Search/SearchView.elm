@@ -1,4 +1,4 @@
-module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResultsListPanelConfig, SearchResultsSectionConfig, viewSearchResultsSection)
+module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResultsListPanelConfig, SearchResultsSectionConfig, viewSearchResultRouter, viewSearchResultsSection)
 
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
@@ -17,6 +17,7 @@ import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
+import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Page.UI.Attributes exposing (bodyRegular, controlsColumnWidth, lineSpacing, responsiveCheckboxColumns, resultsColumnWidth)
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
@@ -49,6 +50,7 @@ type alias SearchResultsSectionConfig a msg =
     , model :
         { a
             | preview : Response ServerData
+            , previewAnimationStatus : PreviewAnimationStatus
             , sourceItemsExpanded : Bool
             , activeSearch : ActiveSearch msg
             , selectedResult : Maybe String
@@ -72,6 +74,8 @@ type alias SearchResultsSectionConfig a msg =
     , facetMsgConfig : FacetMsgConfig msg
     , expandedDigitizedCopiesMsg : msg
     , expandedDigitizedCopiesCallout : Bool
+    , clientStartedAnimatingPreviewWindowClose : msg
+    , nothingHappened : msg
     }
 
 

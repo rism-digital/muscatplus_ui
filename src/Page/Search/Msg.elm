@@ -21,6 +21,7 @@ type SearchMsg
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
     | ClientCompletedViewportReset
     | ClientCompletedViewportJump
+    | ClientStartedAnimatingPreviewWindowClose
     | DebouncerCapturedProbeRequest (Debouncer.Msg SearchMsg)
     | DebouncerSettledToSendProbeRequest
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg SearchMsg)

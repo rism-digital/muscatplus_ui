@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Desktop
-import Element exposing (DeviceClass(..), Orientation(..))
+import Device exposing (isMobileView)
 import Flags exposing (Flags)
 import Mobile
 import Model exposing (Model(..), toSession)
@@ -36,26 +36,9 @@ main =
         }
 
 
-isMobileView : Session -> Bool
-isMobileView session =
-    let
-        { class, orientation } =
-            session.device
-    in
-    case ( class, orientation ) of
-        ( Phone, _ ) ->
-            True
-
-        ( Tablet, Portrait ) ->
-            True
-
-        ( _, _ ) ->
-            False
-
-
 view : Model -> Browser.Document Msg
 view model =
-    if isMobileView (toSession model) then
+    if isMobileView (.device (toSession model)) then
         Mobile.view model
 
     else
@@ -77,7 +60,7 @@ init flags initialUrl key =
             Session.init flags initialUrl key
 
         countryListRequest =
-            if isMobileView session then
+            if isMobileView session.device then
                 Cmd.none
 
             else

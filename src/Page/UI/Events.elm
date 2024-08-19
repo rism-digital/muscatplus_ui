@@ -1,4 +1,4 @@
-module Page.UI.Events exposing (onEnter)
+module Page.UI.Events exposing (onComplete, onEnter)
 
 import Element
 import Html.Events
@@ -20,3 +20,10 @@ onEnter msg =
                     )
             )
         )
+
+
+onComplete : msg -> Element.Attribute msg
+onComplete msg =
+    Decode.succeed msg
+        |> Html.Events.on "animationend"
+        |> Element.htmlAttribute

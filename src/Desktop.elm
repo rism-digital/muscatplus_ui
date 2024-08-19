@@ -14,7 +14,7 @@ import Desktop.Record.Views.PlacePage
 import Desktop.Record.Views.SourcePage
 import Desktop.Search.Views
 import Desktop.SideBar.Views
-import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, inFront, layout, px, row, width)
+import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, inFront, layout, px, row, text, width)
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -91,11 +91,11 @@ view model =
                     [ width (px 70)
                     , height fill
                     , alignTop
-                    , inFront (Element.map Msg.UserInteractedWithSideBar (Desktop.SideBar.Views.view pageSession))
+                    , inFront (Element.map Msg.UserInteractedWithSideBar (Desktop.SideBar.Views.viewRouter pageSession))
                     ]
                     []
                 )
-                pageSession.isFramed
+                (not pageSession.isFramed)
 
         pageView =
             case model of

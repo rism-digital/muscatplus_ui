@@ -1,4 +1,4 @@
-module Session exposing (Session, init)
+module Session exposing (Session, init, updateBottomBarOptions, updateSideBarOptions)
 
 {-|
 
@@ -14,18 +14,19 @@ module Session exposing (Session, init)
 -}
 
 import Browser.Navigation as Nav
-import Debouncer.Messages as Debouncer exposing (Debouncer, fromSeconds)
-import Device exposing (detectDevice)
+import Device exposing (detectDevice, isMobileView)
 import Dict exposing (Dict)
 import Element exposing (Device)
 import Flags exposing (Flags)
 import Json.Decode as Decode
 import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
 import Maybe.Extra as ME
+import Page.BottomBar.Options as BottomBarOptions
+import Page.NavigationBar exposing (NavigationBar(..))
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), resultModeToNavigationBarOption)
 import Page.Route exposing (Route(..), parseUrl)
-import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg, sideBarExpandDelay)
+import Page.SideBar.Options as SideBarOptions
 import SearchPreferences exposing (SearchPreferences, searchPreferencesDecoder)
 import Url exposing (Url)
 
@@ -39,22 +40,33 @@ type alias Session =
     , route : Route
     , showMuscatLinks : Bool
     , isFramed : Bool
-    , expandedSideBar : SideBarAnimationStatus
-    , sideBarExpansionDebouncer : Debouncer SideBarMsg
-    , nationalCollectionChooserDebouncer : Debouncer SideBarMsg
-    , showFrontSearchInterface : NavigationBarOption
-    , currentlyHoveredOption : Maybe NavigationBarOption
-    , currentlyHoveredNationalCollectionChooser : Bool
-    , currentlyHoveredNationalCollectionSidebarOption : Bool
-    , currentlyHoveredAboutMenuSidebarOption : Bool
-    , currentlyHoveredAboutMenuChooser : Bool
-    , currentlyHoveredLanguageChooser : Bool
-    , currentlyHoveredLanguageChooserSidebarOption : Bool
+    , navigationBar : NavigationBar
     , restrictedToNationalCollection : Maybe CountryCode
     , allNationalCollections : Dict CountryCode LanguageMap
     , searchPreferences : Maybe SearchPreferences
     , cacheBuster : Bool
+    , showFrontSearchInterface : NavigationBarOption
     }
+
+
+updateSideBarOptions : Session -> (SideBarOptions.SideBarOptions -> SideBarOptions.SideBarOptions) -> Session
+updateSideBarOptions session updateFn =
+    case session.navigationBar of
+        SideBar options ->
+            { session | navigationBar = SideBar (updateFn options) }
+
+        BottomBar _ ->
+            session
+
+
+updateBottomBarOptions : Session -> (BottomBarOptions.BottomBarOptions -> BottomBarOptions.BottomBarOptions) -> Session
+updateBottomBarOptions session updateFn =
+    case session.navigationBar of
+        BottomBar options ->
+            { session | navigationBar = BottomBar (updateFn options) }
+
+        SideBar _ ->
+            session
 
 
 init : Flags -> Url -> Nav.Key -> Session
@@ -62,6 +74,13 @@ init flags url key =
     let
         initialDevice =
             detectDevice flags.windowWidth flags.windowHeight
+
+        navigationBar =
+            if isMobileView initialDevice then
+                BottomBar BottomBarOptions.init
+
+            else
+                SideBar SideBarOptions.init
 
         initialMode =
             case route of
@@ -116,18 +135,9 @@ init flags url key =
     , url = url
     , route = route
     , showMuscatLinks = flags.showMuscatLinks
-    , isFramed = flags.isFramed
-    , expandedSideBar = NoAnimation
-    , sideBarExpansionDebouncer = Debouncer.debounce sideBarExpandDelay |> Debouncer.toDebouncer
-    , nationalCollectionChooserDebouncer = Debouncer.debounce (fromSeconds 0.8) |> Debouncer.toDebouncer
     , showFrontSearchInterface = initialMode
-    , currentlyHoveredOption = Nothing
-    , currentlyHoveredNationalCollectionChooser = False
-    , currentlyHoveredNationalCollectionSidebarOption = False
-    , currentlyHoveredAboutMenuSidebarOption = False
-    , currentlyHoveredAboutMenuChooser = False
-    , currentlyHoveredLanguageChooser = False
-    , currentlyHoveredLanguageChooserSidebarOption = False
+    , isFramed = flags.isFramed
+    , navigationBar = navigationBar
     , restrictedToNationalCollection = nationalCollectionFilter
     , allNationalCollections = Dict.empty
     , searchPreferences = searchPreferences

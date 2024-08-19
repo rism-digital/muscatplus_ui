@@ -1,13 +1,15 @@
 module Page.SideBar exposing (Msg, countryListRequest, update)
 
 import Browser.Navigation as Nav
-import Debouncer.Messages as Debouncer
+import Debouncer.Messages as Debouncer exposing (Debouncer, UpdateConfig)
+import Page.NavigationBar exposing (NavigationBar(..))
 import Page.Query exposing (buildFrontPageUrl)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..))
+import Page.SideBar.Options exposing (SideBarOptions, updateCurrentlyHoveredAboutMenuSidebarOption, updateCurrentlyHoveredLanguageChooserSidebarOption, updateCurrentlyHoveredNationalCollectionSidebarOption, updateCurrentlyHoveredNationalCollectionStatus, updateCurrentlyHoveredStatus, updateExpansionStatus, updateNationalCollectionChooserDebouncer, updateSideBarExpansionDebouncer)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
-import Session exposing (Session)
+import Session exposing (Session, updateSideBarOptions)
 
 
 type alias Msg =
@@ -17,6 +19,10 @@ type alias Msg =
 countryListRequest : Cmd SideBarMsg
 countryListRequest =
     createCountryCodeRequestWithDecoder ServerRespondedWithCountryCodeList
+
+
+
+--update : (msg -> model -> ( model, Cmd msg )) -> UpdateConfig msg model -> Msg msg -> model -> ( model, Cmd msg )
 
 
 update : SideBarMsg -> Session -> ( Session, Cmd SideBarMsg )
@@ -33,10 +39,21 @@ update msg session =
             ( session, Cmd.none )
 
         ClientDebouncedSideBarMessages subMsg ->
-            Debouncer.update update updateDebouncer subMsg session
+            --( session, Cmd.none )
+            case session.navigationBar of
+                SideBar options ->
+                    Debouncer.update update (updateDebouncer options) subMsg session
+
+                BottomBar _ ->
+                    ( session, Cmd.none )
 
         ClientDebouncedNationalCollectionChooserMessages subMsg ->
-            Debouncer.update update ncDebouncer subMsg session
+            case session.navigationBar of
+                SideBar options ->
+                    Debouncer.update update (ncDebouncer options) subMsg session
+
+                BottomBar _ ->
+                    ( session, Cmd.none )
 
         ClientSetSearchPreferencesThroughPort preferences ->
             ( { session
@@ -46,19 +63,14 @@ update msg session =
             )
 
         UserMouseEnteredSideBar ->
-            ( { session
-                | expandedSideBar = Expanded
-              }
+            ( updateExpansionStatus Expanded
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseExitedSideBar ->
-            -- If the user is interacting with the language chooser, then do not set the
-            -- state to collapsed. This is to fix a bug in Firefox where the select dropdown
-            -- causes the sidebar to signal that it has lost mouse focus.
-            ( { session
-                | expandedSideBar = Collapsed
-              }
+            ( updateExpansionStatus Collapsed
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
@@ -71,72 +83,62 @@ update msg session =
             )
 
         UserMouseEnteredSideBarOption button ->
-            ( { session
-                | currentlyHoveredOption = Just button
-              }
+            ( updateCurrentlyHoveredStatus (Just button)
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseExitedSideBarOption ->
-            ( { session
-                | currentlyHoveredOption = Nothing
-              }
+            ( updateCurrentlyHoveredStatus Nothing
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseEnteredCountryChooser ->
-            ( { session
-                | currentlyHoveredNationalCollectionChooser = True
-              }
+            ( updateCurrentlyHoveredNationalCollectionStatus True
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseExitedCountryChooser ->
-            ( { session
-                | currentlyHoveredNationalCollectionChooser = False
-              }
+            ( updateCurrentlyHoveredNationalCollectionStatus False
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseEnteredNationalCollectionSidebarOption ->
-            ( { session
-                | currentlyHoveredNationalCollectionSidebarOption = True
-              }
+            ( updateCurrentlyHoveredNationalCollectionSidebarOption True
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseExitedNationalCollectionSidebarOption ->
-            ( { session
-                | currentlyHoveredNationalCollectionSidebarOption = False
-              }
+            ( updateCurrentlyHoveredNationalCollectionSidebarOption False
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseEnteredAboutMenuSidebarOption ->
-            ( { session
-                | currentlyHoveredAboutMenuSidebarOption = True
-              }
+            ( updateCurrentlyHoveredAboutMenuSidebarOption True
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseExitedAboutMenuSidebarOption ->
-            ( { session
-                | currentlyHoveredAboutMenuSidebarOption = False
-              }
+            ( updateCurrentlyHoveredAboutMenuSidebarOption False
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseEnteredLanguageChooserSidebarOption ->
-            ( { session
-                | currentlyHoveredLanguageChooserSidebarOption = True
-              }
+            ( updateCurrentlyHoveredLanguageChooserSidebarOption True
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
         UserMouseExitedLanguageChooserSidebarOption ->
-            ( { session
-                | currentlyHoveredLanguageChooserSidebarOption = False
-              }
+            ( updateCurrentlyHoveredLanguageChooserSidebarOption False
+                |> updateSideBarOptions session
             , Cmd.none
             )
 
@@ -177,17 +179,32 @@ update msg session =
             ( session, Cmd.none )
 
 
-updateDebouncer : Debouncer.UpdateConfig SideBarMsg Session
-updateDebouncer =
+setSideBarNavOptions : Session -> SideBarOptions -> Session
+setSideBarNavOptions session options =
+    { session | navigationBar = SideBar options }
+
+
+updateDebouncer : SideBarOptions -> Debouncer.UpdateConfig SideBarMsg Session
+updateDebouncer options =
+    let
+        setter debounceMsg model =
+            updateSideBarExpansionDebouncer debounceMsg
+                |> updateSideBarOptions model
+    in
     { mapMsg = ClientDebouncedSideBarMessages
-    , getDebouncer = .sideBarExpansionDebouncer
-    , setDebouncer = \debouncer s -> { s | sideBarExpansionDebouncer = debouncer }
+    , getDebouncer = \_ -> options.sideBarExpansionDebouncer
+    , setDebouncer = setter
     }
 
 
-ncDebouncer : Debouncer.UpdateConfig SideBarMsg Session
-ncDebouncer =
+ncDebouncer : SideBarOptions -> Debouncer.UpdateConfig SideBarMsg Session
+ncDebouncer options =
+    let
+        setter debounceMsg model =
+            updateNationalCollectionChooserDebouncer debounceMsg
+                |> updateSideBarOptions model
+    in
     { mapMsg = ClientDebouncedNationalCollectionChooserMessages
-    , getDebouncer = .nationalCollectionChooserDebouncer
-    , setDebouncer = \debouncer s -> { s | nationalCollectionChooserDebouncer = debouncer }
+    , getDebouncer = \_ -> options.nationalCollectionChooserDebouncer
+    , setDebouncer = setter
     }

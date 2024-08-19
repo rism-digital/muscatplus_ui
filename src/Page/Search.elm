@@ -26,6 +26,7 @@ import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDe
 import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
+import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
@@ -86,6 +87,7 @@ init cfg =
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     , digitizedCopiesCalloutExpanded = False
+    , previewAnimationStatus = NoAnimation
     }
 
 
@@ -309,6 +311,11 @@ update session msg model =
 
         ClientCompletedViewportJump ->
             ( model, Cmd.none )
+
+        ClientStartedAnimatingPreviewWindowClose ->
+            ( { model | previewAnimationStatus = MovingOut }
+            , Cmd.none
+            )
 
         DebouncerCapturedProbeRequest searchMsg ->
             Debouncer.update (update session) updateDebouncerProbeConfig searchMsg model

@@ -1,5 +1,6 @@
 module Page.UI.Animations exposing
-    ( animatedColumn
+    ( PreviewAnimationStatus(..)
+    , animatedColumn
     , animatedEl
     , animatedLabel
     , animatedLoader
@@ -16,6 +17,12 @@ import Page.UI.Style exposing (colourScheme)
 import Simple.Animation as Animation exposing (Animation)
 import Simple.Animation.Animated as Animated
 import Simple.Animation.Property as P
+
+
+type PreviewAnimationStatus
+    = MovingIn
+    | MovingOut
+    | NoAnimation
 
 
 animatedColumn : Animation -> List (Attribute msg) -> List (Element msg) -> Element msg

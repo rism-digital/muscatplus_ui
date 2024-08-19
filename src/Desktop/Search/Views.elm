@@ -80,6 +80,8 @@ searchResultsViewRouter session model =
             , facetMsgConfig = facetSearchMsgConfig
             , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
             , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+            , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
+            , nothingHappened = SearchMsg.NothingHappened
             }
     in
     case model.response of

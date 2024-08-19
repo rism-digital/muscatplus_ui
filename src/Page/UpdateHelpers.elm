@@ -49,6 +49,7 @@ import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Route exposing (Route(..))
+import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Parser as P exposing ((|.), (|=), Parser)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
@@ -368,8 +369,22 @@ userChangedSelectFacetSort alias facetSort model =
 
 userClickedClosePreviewWindow :
     Session
-    -> { a | digitizedCopiesCalloutExpanded : Bool, preview : Response ServerData, selectedResult : Maybe String }
-    -> ( { a | digitizedCopiesCalloutExpanded : Bool, preview : Response ServerData, selectedResult : Maybe String }, Cmd msg )
+    ->
+        { a
+            | digitizedCopiesCalloutExpanded : Bool
+            , preview : Response ServerData
+            , selectedResult : Maybe String
+            , previewAnimationStatus : PreviewAnimationStatus
+        }
+    ->
+        ( { a
+            | digitizedCopiesCalloutExpanded : Bool
+            , preview : Response ServerData
+            , selectedResult : Maybe String
+            , previewAnimationStatus : PreviewAnimationStatus
+          }
+        , Cmd msg
+        )
 userClickedClosePreviewWindow session model =
     let
         currentUrl =
@@ -377,24 +392,35 @@ userClickedClosePreviewWindow session model =
 
         newUrl =
             { currentUrl | fragment = Nothing }
-
-        newUrlStr =
-            Url.toString newUrl
+                |> Url.toString
     in
     ( { model
         | digitizedCopiesCalloutExpanded = False
         , preview = NoResponseToShow
         , selectedResult = Nothing
+        , previewAnimationStatus = MovingOut
       }
-    , Nav.pushUrl session.key newUrlStr
+    , Nav.pushUrl session.key newUrl
     )
 
 
 userClickedResultForPreview :
     String
     -> Session
-    -> { a | preview : Response ServerData, selectedResult : Maybe String }
-    -> ( { a | preview : Response ServerData, selectedResult : Maybe String }, Cmd msg )
+    ->
+        { a
+            | preview : Response ServerData
+            , selectedResult : Maybe String
+            , previewAnimationStatus : PreviewAnimationStatus
+        }
+    ->
+        ( { a
+            | preview : Response ServerData
+            , selectedResult : Maybe String
+            , previewAnimationStatus : PreviewAnimationStatus
+          }
+        , Cmd msg
+        )
 userClickedResultForPreview result session model =
     let
         currentUrl =
@@ -411,15 +437,14 @@ userClickedResultForPreview result session model =
                 )
                 resultUrl
 
-        newUrl =
-            { currentUrl | fragment = resPath }
-
         newUrlStr =
-            Url.toString newUrl
+            { currentUrl | fragment = resPath }
+                |> Url.toString
     in
     ( { model
         | preview = Loading Nothing
         , selectedResult = Just result
+        , previewAnimationStatus = MovingIn
       }
     , Nav.pushUrl session.key newUrlStr
     )
@@ -729,8 +754,22 @@ correlateQueryValuesWithFacetLangMap qValues serverValues =
 userPressedArrowKeysInSearchResultsList :
     ArrowDirection
     -> Session
-    -> { a | preview : Response ServerData, response : Response ServerData, selectedResult : Maybe String }
-    -> ( { a | preview : Response ServerData, response : Response ServerData, selectedResult : Maybe String }, Cmd msg )
+    ->
+        { a
+            | preview : Response ServerData
+            , response : Response ServerData
+            , selectedResult : Maybe String
+            , previewAnimationStatus : PreviewAnimationStatus
+        }
+    ->
+        ( { a
+            | preview : Response ServerData
+            , response : Response ServerData
+            , selectedResult : Maybe String
+            , previewAnimationStatus : PreviewAnimationStatus
+          }
+        , Cmd msg
+        )
 userPressedArrowKeysInSearchResultsList arrowDirection session model =
     let
         ( listOfItems, numOfItems ) =

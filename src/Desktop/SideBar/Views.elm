@@ -1,11 +1,11 @@
-module Desktop.SideBar.Views exposing (view)
+module Desktop.SideBar.Views exposing (view, viewRouter)
 
 import Debouncer.Messages exposing (provideInput)
 import Desktop.SideBar.Views.AboutMenu as AboutMenu
 import Desktop.SideBar.Views.LanguageChooser exposing (viewLanguageChooserMenuOption)
 import Desktop.SideBar.Views.MenuOption exposing (menuOption)
 import Desktop.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, moveUp, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, moveUp, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
@@ -14,9 +14,11 @@ import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
+import Page.NavigationBar exposing (NavigationBar(..))
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
+import Page.SideBar.Options exposing (SideBarOptions)
 import Page.UI.Animations exposing (animatedColumn, animatedEl)
 import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Helpers exposing (viewIf)
@@ -51,11 +53,21 @@ isCurrentlyHovered hoveredOption thisOption =
     ME.unwrap False (\opt -> opt == thisOption) hoveredOption
 
 
-view : Session -> Element SideBarMsg
-view session =
+viewRouter : Session -> Element SideBarMsg
+viewRouter session =
+    case session.navigationBar of
+        SideBar options ->
+            view session options
+
+        BottomBar _ ->
+            none
+
+
+view : Session -> SideBarOptions -> Element SideBarMsg
+view session options =
     let
         currentlyHoveredOption =
-            session.currentlyHoveredOption
+            options.currentlyHoveredOption
 
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
@@ -73,7 +85,7 @@ view session =
 
         -- only show the selected option if we're on the front page.
         sideBarAnimation =
-            session.expandedSideBar
+            options.expandedSideBar
 
         incipitsInterfaceMenuOption =
             menuOption
@@ -118,7 +130,7 @@ view session =
                 showWhenChoosingNationalCollection
 
         showLabels =
-            showSideBarLabels session.expandedSideBar
+            showSideBarLabels options.expandedSideBar
 
         sideAnimation =
             case sideBarAnimation of
@@ -245,10 +257,10 @@ view session =
                 , alignTop
                 , spacing 10
                 ]
-                [ viewNationalCollectionChooserMenuOption session ]
+                [ viewNationalCollectionChooserMenuOption session options ]
             ]
         , dividingLine
-        , viewLanguageChooserMenuOption session
+        , viewLanguageChooserMenuOption session options
         , dividingLine
         , row
             [ width fill
@@ -285,6 +297,6 @@ view session =
                 , width fill
                 , paddingXY 0 10
                 ]
-                [ AboutMenu.view session ]
+                [ AboutMenu.view session.language options ]
             ]
         ]

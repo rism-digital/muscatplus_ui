@@ -1,6 +1,6 @@
-module Device exposing (detectDevice, setDevice, setWindow)
+module Device exposing (detectDevice, isMobileView, setDevice, setWindow)
 
-import Element exposing (Device, classifyDevice)
+import Element exposing (Device, DeviceClass(..), Orientation(..), classifyDevice)
 
 
 detectDevice : Int -> Int -> Device
@@ -16,3 +16,16 @@ setDevice newDevice oldRecord =
 setWindow : ( Int, Int ) -> { a | window : ( Int, Int ) } -> { a | window : ( Int, Int ) }
 setWindow newWindow oldRecord =
     { oldRecord | window = newWindow }
+
+
+isMobileView : Device -> Bool
+isMobileView { class, orientation } =
+    case ( class, orientation ) of
+        ( Phone, _ ) ->
+            True
+
+        ( Tablet, Portrait ) ->
+            True
+
+        ( _, _ ) ->
+            False

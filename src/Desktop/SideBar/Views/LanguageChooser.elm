@@ -9,6 +9,7 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language(..), languageOptions, parseLanguageToLabel)
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
+import Page.SideBar.Options exposing (SideBarOptions)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
 import Page.UI.Attributes exposing (bodyRegular, emptyAttribute)
 import Page.UI.Helpers exposing (viewIf)
@@ -80,28 +81,28 @@ languageCodeOptions =
         (List.filter (\( _, _, c ) -> c /= None) languageOptions)
 
 
-viewLanguageChooserMenuOption : Session -> Element SideBarMsg
-viewLanguageChooserMenuOption session =
+viewLanguageChooserMenuOption : Session -> SideBarOptions -> Element SideBarMsg
+viewLanguageChooserMenuOption session options =
     let
         viewChooser =
-            if session.currentlyHoveredLanguageChooserSidebarOption && session.expandedSideBar == Expanded then
+            if options.currentlyHoveredLanguageChooserSidebarOption && options.expandedSideBar == Expanded then
                 viewLanguageChooser session
 
             else
                 none
 
         showLabels =
-            showSideBarLabels session.expandedSideBar
+            showSideBarLabels options.expandedSideBar
 
         hoverSyles =
-            if session.currentlyHoveredLanguageChooserSidebarOption then
+            if options.currentlyHoveredLanguageChooserSidebarOption then
                 Background.color colourScheme.white
 
             else
                 emptyAttribute
 
         hoveredColour =
-            if session.currentlyHoveredLanguageChooserSidebarOption then
+            if options.currentlyHoveredLanguageChooserSidebarOption then
                 colourScheme.darkBlue
 
             else

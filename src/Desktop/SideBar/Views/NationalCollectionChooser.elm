@@ -14,6 +14,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Maybe.Extra as ME
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
+import Page.SideBar.Options exposing (SideBarOptions)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
 import Page.UI.Attributes exposing (bodyRegular, emptyAttribute, sectionSpacing)
 import Page.UI.Components exposing (h2, h3)
@@ -203,21 +204,21 @@ viewNationalCollectionChooser session =
         ]
 
 
-viewNationalCollectionChooserMenuOption : Session -> Element SideBarMsg
-viewNationalCollectionChooserMenuOption session =
+viewNationalCollectionChooserMenuOption : Session -> SideBarOptions -> Element SideBarMsg
+viewNationalCollectionChooserMenuOption session options =
     let
         isRestrictedToNationalCollection =
             ME.isJust session.restrictedToNationalCollection
 
         labelFontColour =
-            if isRestrictedToNationalCollection || session.currentlyHoveredNationalCollectionSidebarOption then
+            if isRestrictedToNationalCollection || options.currentlyHoveredNationalCollectionSidebarOption then
                 colourScheme.darkBlue
 
             else
                 colourScheme.white
 
         hoverStyles =
-            if session.currentlyHoveredNationalCollectionSidebarOption then
+            if options.currentlyHoveredNationalCollectionSidebarOption then
                 Background.color colourScheme.white
 
             else
@@ -252,7 +253,7 @@ viewNationalCollectionChooserMenuOption session =
                 (text (SE.softEllipsis 20 iconLabel))
 
         showLabels =
-            showSideBarLabels session.expandedSideBar
+            showSideBarLabels options.expandedSideBar
 
         sidebarIcon =
             case session.restrictedToNationalCollection of
@@ -298,14 +299,14 @@ viewNationalCollectionChooserMenuOption session =
                         ]
 
         viewChooser =
-            if session.currentlyHoveredNationalCollectionSidebarOption && session.expandedSideBar == Expanded then
+            if options.currentlyHoveredNationalCollectionSidebarOption && options.expandedSideBar == Expanded then
                 viewNationalCollectionChooser session
 
             else
                 none
 
         ( iconCentering, iconAlignment ) =
-            if session.expandedSideBar /= Expanded then
+            if options.expandedSideBar /= Expanded then
                 ( centerX, 0 )
 
             else

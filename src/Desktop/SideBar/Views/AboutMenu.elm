@@ -11,6 +11,7 @@ import Html.Attributes as HA
 import Language exposing (Language(..), LanguageMap, extractLabelFromLanguageMap, toLanguageMapWithLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
+import Page.SideBar.Options exposing (SideBarOptions)
 import Page.UI.Animations exposing (animatedLabel, animatedRow)
 import Page.UI.Attributes exposing (bodyRegular, emptyAttribute)
 import Page.UI.Helpers exposing (viewIf)
@@ -19,28 +20,28 @@ import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
 
-view : Session -> Element SideBarMsg
-view session =
+view : Language -> SideBarOptions -> Element SideBarMsg
+view language options =
     let
         viewChooser =
-            if session.currentlyHoveredAboutMenuSidebarOption && session.expandedSideBar == Expanded then
-                viewAboutMenuChooser session
+            if options.currentlyHoveredAboutMenuSidebarOption && options.expandedSideBar == Expanded then
+                viewAboutMenuChooser language
 
             else
                 none
 
         showLabels =
-            showSideBarLabels session.expandedSideBar
+            showSideBarLabels options.expandedSideBar
 
         hoverSyles =
-            if session.currentlyHoveredAboutMenuSidebarOption then
+            if options.currentlyHoveredAboutMenuSidebarOption then
                 Background.color colourScheme.white
 
             else
                 emptyAttribute
 
         hoveredColour =
-            if session.currentlyHoveredAboutMenuSidebarOption then
+            if options.currentlyHoveredAboutMenuSidebarOption then
                 colourScheme.darkBlue
 
             else
@@ -53,7 +54,7 @@ view session =
                 , bodyRegular
                 , alignLeft
                 ]
-                (text (extractLabelFromLanguageMap session.language localTranslations.aboutAndHelp))
+                (text (extractLabelFromLanguageMap language localTranslations.aboutAndHelp))
     in
     row
         [ width fill
@@ -101,8 +102,8 @@ view session =
         ]
 
 
-viewAboutMenuChooser : Session -> Element SideBarMsg
-viewAboutMenuChooser session =
+viewAboutMenuChooser : Language -> Element SideBarMsg
+viewAboutMenuChooser language =
     row
         [ width (px 80)
         , height (px 80)
@@ -126,17 +127,17 @@ viewAboutMenuChooser session =
                 ]
                 [ aboutMenuChooserOption
                     { label = localTranslations.about
-                    , session = session
+                    , language = language
                     , url = "/about"
                     }
                 , aboutMenuChooserOption
                     { label = toLanguageMapWithLanguage English "Help"
-                    , session = session
+                    , language = language
                     , url = "/about/help"
                     }
                 , aboutMenuChooserOption
                     { label = toLanguageMapWithLanguage English "Viewing options"
-                    , session = session
+                    , language = language
                     , url = "/about/options"
                     }
                 ]
@@ -146,7 +147,7 @@ viewAboutMenuChooser session =
 
 aboutMenuChooserOption :
     { label : LanguageMap
-    , session : Session
+    , language : Language
     , url : String
     }
     -> Element SideBarMsg
@@ -169,6 +170,6 @@ aboutMenuChooserOption cfg =
                 , Font.color colourScheme.black
                 , Background.color colourScheme.white
                 ]
-                [ text (extractLabelFromLanguageMap (.language cfg.session) cfg.label) ]
+                [ text (extractLabelFromLanguageMap cfg.language cfg.label) ]
         , url = Config.serverUrl ++ cfg.url
         }

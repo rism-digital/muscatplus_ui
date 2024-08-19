@@ -75,6 +75,8 @@ searchResultsViewRouter session model =
             , facetMsgConfig = facetRecordMsgConfig
             , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
             , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+            , clientStartedAnimatingPreviewWindowClose = RecordMsg.ClientStartedAnimatingPreviewWindowClose
+            , nothingHappened = RecordMsg.NothingHappened
             }
     in
     case model.searchResults of

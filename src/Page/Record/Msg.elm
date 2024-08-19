@@ -22,6 +22,7 @@ type RecordMsg
     | ServerRespondedWithSuggestionData (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ))
     | ClientCompletedViewportJump
     | ClientCompletedViewportReset
+    | ClientStartedAnimatingPreviewWindowClose
     | DebouncerCapturedProbeRequest (Debouncer.Msg RecordMsg)
     | DebouncerSettledToSendProbeRequest
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg RecordMsg)

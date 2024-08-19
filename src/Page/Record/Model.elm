@@ -4,6 +4,7 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.Route exposing (Route(..))
+import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Response exposing (Response, ServerData)
 import Set exposing (Set)
 
@@ -27,6 +28,7 @@ type alias RecordPageModel msg =
     , probeResponse : Response ProbeData
     , probeDebouncer : Debouncer msg
     , applyFilterPrompt : Bool
+    , previewAnimationStatus : PreviewAnimationStatus
     }
 
 
