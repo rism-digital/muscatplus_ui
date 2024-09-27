@@ -22,6 +22,7 @@ import Simple.Animation.Property as P
 type PreviewAnimationStatus
     = MovingIn
     | MovingOut
+    | ShownAndNotMoving
     | NoAnimation
 
 

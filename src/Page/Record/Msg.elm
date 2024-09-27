@@ -23,6 +23,7 @@ type RecordMsg
     | ClientCompletedViewportJump
     | ClientCompletedViewportReset
     | ClientStartedAnimatingPreviewWindowClose
+    | ClientFinishedAnimatingPreviewWindowShow
     | DebouncerCapturedProbeRequest (Debouncer.Msg RecordMsg)
     | DebouncerSettledToSendProbeRequest
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg RecordMsg)

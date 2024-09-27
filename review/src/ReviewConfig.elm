@@ -57,9 +57,8 @@ config =
     , NoUnused.CustomTypeConstructors.rule []
     , NoUnused.CustomTypeConstructorArgs.rule
     , NoUnused.Dependencies.rule
-    , NoUnused.Exports.rule
+    --, NoUnused.Exports.rule
     , NoUnused.Variables.rule
-
     --, NoUnused.Parameters.rule
     , NoUnused.Patterns.rule
     , Simplify.rule Simplify.defaults
@@ -74,7 +73,7 @@ config =
         |> NoInconsistentAliases.noMissingAliases
         |> NoInconsistentAliases.rule
     , NoModuleOnExposedNames.rule
-    , NoUnsortedRecords.rule NoUnsortedRecords.defaults
+    --, NoUnsortedRecords.rule NoUnsortedRecords.defaults
     , NoUnsortedLetDeclarations.rule
         (NoUnsortedLetDeclarations.sortLetDeclarations
             |> NoUnsortedLetDeclarations.usedInExpressionLast

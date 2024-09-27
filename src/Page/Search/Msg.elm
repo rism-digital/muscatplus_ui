@@ -22,6 +22,7 @@ type SearchMsg
     | ClientCompletedViewportReset
     | ClientCompletedViewportJump
     | ClientStartedAnimatingPreviewWindowClose
+    | ClientFinishedAnimatingPreviewWindowShow
     | DebouncerCapturedProbeRequest (Debouncer.Msg SearchMsg)
     | DebouncerSettledToSendProbeRequest
     | DebouncerCapturedQueryFacetSuggestionRequest (Debouncer.Msg SearchMsg)

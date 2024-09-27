@@ -38,8 +38,12 @@ viewIncipitPreview cfg body =
             .source body.partOf
                 |> .id
 
+        sourceLabel =
+            .source body.partOf
+                |> .label
+
         incipitLink =
-            pageLinkTemplate cfg.language labelLanguageMap headingLG { id = sourceUrl }
+            incipitLinkTemplate cfg.language labelLanguageMap headingLG { id = sourceUrl, label = sourceLabel }
     in
     row
         [ width fill
@@ -87,4 +91,34 @@ viewIncipitPreview cfg body =
                     ]
                 ]
             ]
+        ]
+
+
+incipitLinkTemplate : Language -> LanguageMap -> Attribute msg -> { a | id : String, label : LanguageMap } -> Element msg
+incipitLinkTemplate language langMap fontSize body =
+    row
+        [ width fill
+        , alignLeft
+        , spacing 5
+        ]
+        [ column
+            [ width shrink ]
+            [ row
+                [ width fill ]
+                [ el
+                    [ fontSize
+                    , Font.semiBold
+                    ]
+                    (text (extractLabelFromLanguageMap language langMap ++ ": "))
+                , resourceLink body.id
+                    [ linkColour ]
+                    { label =
+                        paragraph
+                            [ fontSize ]
+                            [ text (extractLabelFromLanguageMap language body.label) ]
+                    , url = body.id
+                    }
+                ]
+            ]
+        , externalLinkTemplate body.id
         ]

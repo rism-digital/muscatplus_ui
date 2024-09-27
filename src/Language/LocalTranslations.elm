@@ -105,7 +105,7 @@ localTranslations =
         , LanguageValue French [ "Appliquer les filtres" ]
         , LanguageValue Italian [ "Applica filtri" ]
         , LanguageValue Spanish [ "Aplicar filtros" ]
-        , LanguageValue Portugese [ "Aplicar filtros" ]
+        , LanguageValue Portuguese [ "Aplicar filtros" ]
         , LanguageValue Polish [ "Zastosuj filtry" ]
         ]
     , chooseCollection =
@@ -120,7 +120,7 @@ localTranslations =
         , LanguageValue French [ "Description" ]
         , LanguageValue Italian [ "Descrizione" ]
         , LanguageValue Spanish [ "Decripción" ]
-        , LanguageValue Portugese [ "Descrição" ]
+        , LanguageValue Portuguese [ "Descrição" ]
         , LanguageValue Polish [ "Opis" ]
         ]
     , downloadMEI =
@@ -133,7 +133,7 @@ localTranslations =
         , LanguageValue French [ "Erreur lors du chargement des résultats" ]
         , LanguageValue Italian [ "Errore durante il caricamento dei risultati" ]
         , LanguageValue Spanish [ "Error al cargar resultados" ]
-        , LanguageValue Portugese [ "Erro ao carregar os resultados" ]
+        , LanguageValue Portuguese [ "Erro ao carregar os resultados" ]
         , LanguageValue Polish [ "Błąd podczas ładowania wyników" ]
         ]
     , first =
@@ -142,7 +142,7 @@ localTranslations =
         , LanguageValue French [ "Première" ]
         , LanguageValue Italian [ "Primo" ]
         , LanguageValue Spanish [ "Primero" ]
-        , LanguageValue Portugese [ "Primeiro" ]
+        , LanguageValue Portuguese [ "Primeiro" ]
         , LanguageValue Polish [ "Pierwszy" ]
         ]
     , fullRecord =
@@ -151,7 +151,7 @@ localTranslations =
         , LanguageValue French [ "Enregistrement complet" ]
         , LanguageValue Italian [ "Scheda completa" ]
         , LanguageValue Spanish [ "Registro completo" ]
-        , LanguageValue Portugese [ "Registro completo" ]
+        , LanguageValue Portuguese [ "Registro completo" ]
         , LanguageValue Polish [ "Globalna kolekcja" ]
         ]
     , globalCollection =
@@ -160,7 +160,7 @@ localTranslations =
         , LanguageValue French [ "Collecte mondiale" ]
         , LanguageValue Italian [ "Collezione globale" ]
         , LanguageValue Spanish [ "Colección mundial" ]
-        , LanguageValue Portugese [ "Coleção global" ]
+        , LanguageValue Portuguese [ "Coleção global" ]
         , LanguageValue Polish [ "Pełny widok rekordu" ]
         ]
     , hasDigitization =
@@ -177,7 +177,7 @@ localTranslations =
         , LanguageValue French [ "Accueil" ]
         , LanguageValue Italian [ "Home" ]
         , LanguageValue Spanish [ "Página principal" ]
-        , LanguageValue Portugese [ "Início" ]
+        , LanguageValue Portuguese [ "Início" ]
         , LanguageValue Polish [ "Strona główna" ]
         ]
     , incipitSearchHelpHide =
@@ -186,7 +186,7 @@ localTranslations =
         [ LanguageValue English [ "Show Incipit Search Help" ] ]
     , incipits =
         [ LanguageValue Spanish [ "Íncipits" ]
-        , LanguageValue Portugese [ "Incipit" ]
+        , LanguageValue Portuguese [ "Incipit" ]
         , LanguageValue German [ "Incipits" ]
         , LanguageValue Italian [ "Incipit" ]
         , LanguageValue Polish [ "Incipity" ]
@@ -197,7 +197,7 @@ localTranslations =
         [ LanguageValue English [ "Institution" ] ]
     , institutions =
         [ LanguageValue Spanish [ "Instituciones" ]
-        , LanguageValue Portugese [ "Instituições" ]
+        , LanguageValue Portuguese [ "Instituições" ]
         , LanguageValue German [ "Körperschaften" ]
         , LanguageValue Italian [ "Istituzioni" ]
         , LanguageValue Polish [ "Instytucje" ]
@@ -206,7 +206,7 @@ localTranslations =
         ]
     , keywordQuery =
         [ LanguageValue English [ "Keyword query" ]
-        , LanguageValue Portugese [ "Consulta por palavra-chave" ]
+        , LanguageValue Portuguese [ "Consulta por palavra-chave" ]
         , LanguageValue German [ "Stichwortsuche" ]
         , LanguageValue Italian [ "Ricerca per parola chiave" ]
         , LanguageValue Polish [ "Zapytanie o słowo kluczowe" ]
@@ -219,7 +219,7 @@ localTranslations =
         , LanguageValue French [ "Dernière" ]
         , LanguageValue Italian [ "Ultimo" ]
         , LanguageValue Spanish [ "Último" ]
-        , LanguageValue Portugese [ "Último" ]
+        , LanguageValue Portuguese [ "Último" ]
         , LanguageValue Polish [ "Ostatni" ]
         ]
     , liturgicalFeasts = []
@@ -229,7 +229,7 @@ localTranslations =
         , LanguageValue French [ "Lieu" ]
         , LanguageValue Italian [ "Luogo" ]
         , LanguageValue Spanish [ "Lugar" ]
-        , LanguageValue Portugese [ "Local" ]
+        , LanguageValue Portuguese [ "Local" ]
         , LanguageValue Polish [ "Lokalizacja" ]
         ]
     , muscatEdit =
@@ -242,7 +242,7 @@ localTranslations =
         , LanguageValue French [ "Institutions proches" ]
         , LanguageValue Italian [ "Istituzioni vicine" ]
         , LanguageValue Spanish [ "Instituciones cercanas" ]
-        , LanguageValue Portugese [ "Instituições próximas" ]
+        , LanguageValue Portuguese [ "Instituições próximas" ]
         , LanguageValue Polish [ "Pobliskie instytucje" ]
         ]
     , newSearchWithIncipit =
@@ -253,7 +253,7 @@ localTranslations =
         , LanguageValue French [ "Suivante" ]
         , LanguageValue Italian [ "Prossimo" ]
         , LanguageValue Spanish [ "Siguiente" ]
-        , LanguageValue Portugese [ "Próximo" ]
+        , LanguageValue Portuguese [ "Próximo" ]
         , LanguageValue Polish [ "Następny" ]
         ]
     , noAdditionalDetails =
@@ -264,7 +264,7 @@ localTranslations =
         , LanguageValue French [ "Ajustez vos options de requête, ou réinitialisez tous les filtres, pour voir les résultats." ]
         , LanguageValue Italian [ "Modifica le opzioni di ricerca o ripristina tutti i filtri per visualizzare nuovi risultati." ]
         , LanguageValue Spanish [ "Ajuste las opciones de consulta, o reinicie todos los filtros, para ver resultados." ]
-        , LanguageValue Portugese [ "Ajuste as opções de sua consulta ou redefina todos os filtros para ver os resultados." ]
+        , LanguageValue Portuguese [ "Ajuste as opções de sua consulta ou redefina todos os filtros para ver os resultados." ]
         , LanguageValue Polish [ "Dostosuj opcje zapytania lub zresetuj wszystkie filtry, aby zobaczyć wyniki." ]
         ]
     , noResultsHeader =
@@ -273,7 +273,7 @@ localTranslations =
         , LanguageValue French [ "Aucun résultat trouvé" ]
         , LanguageValue Italian [ "Questa ricerca non produce alcun risultato" ]
         , LanguageValue Spanish [ "No se encontraron resultados con esta búsqueda" ]
-        , LanguageValue Portugese [ "Nenhum resultado será encontrado para esta pesquisa" ]
+        , LanguageValue Portuguese [ "Nenhum resultado será encontrado para esta pesquisa" ]
         , LanguageValue Polish [ "Nie znaleziono wyników dla Twojego wyszukiwania" ]
         ]
     , noResultsWouldBeFound =
@@ -282,7 +282,7 @@ localTranslations =
         , LanguageValue French [ "Aucun résultat pour cette recherche" ]
         , LanguageValue Italian [ "Nessun risultato verrebbe trovato con questa ricerca" ]
         , LanguageValue Spanish [ "No se encontrarían resultados con esta búsqueda" ]
-        , LanguageValue Portugese [ "Nenhum resultado seria encontrado com esta pesquisa" ]
+        , LanguageValue Portuguese [ "Nenhum resultado seria encontrado com esta pesquisa" ]
         , LanguageValue Polish [ "Nie znaleziono żadnych wyników dla tego wyszukiwania" ]
         ]
     , notationQueryLength =
@@ -293,7 +293,7 @@ localTranslations =
         , LanguageValue French [ "Résultats avec filtres appliqués" ]
         , LanguageValue Italian [ "Risultati con filtri applicati" ]
         , LanguageValue Spanish [ "Resultados con filtros aplicados" ]
-        , LanguageValue Portugese [ "Resultados com filtros aplicados" ]
+        , LanguageValue Portuguese [ "Resultados com filtros aplicados" ]
         , LanguageValue Polish [ "Wyniki z zastosowanymi filtrami" ]
         ]
     , optionsWithAnd =
@@ -310,7 +310,7 @@ localTranslations =
         , LanguageValue French [ "Page" ]
         , LanguageValue Italian [ "Pagina" ]
         , LanguageValue Spanish [ "Página" ]
-        , LanguageValue Portugese [ "Página" ]
+        , LanguageValue Portuguese [ "Página" ]
         , LanguageValue Polish [ "Strona" ]
         ]
     , partOf =
@@ -319,7 +319,7 @@ localTranslations =
         [ LanguageValue English [ "This record is part of a collection" ] ]
     , people =
         [ LanguageValue Spanish [ "Personas" ]
-        , LanguageValue Portugese [ "Pessoas" ]
+        , LanguageValue Portuguese [ "Pessoas" ]
         , LanguageValue German [ "Personen" ]
         , LanguageValue Italian [ "Persone" ]
         , LanguageValue Polish [ "Osoby" ]
@@ -336,7 +336,7 @@ localTranslations =
         , LanguageValue French [ "Précédent" ]
         , LanguageValue Italian [ "Precedente" ]
         , LanguageValue Spanish [ "Anterior" ]
-        , LanguageValue Portugese [ "Anterior" ]
+        , LanguageValue Portuguese [ "Anterior" ]
         , LanguageValue Polish [ "Poprzedni" ]
         ]
     , queryTerms =
@@ -347,7 +347,7 @@ localTranslations =
         , LanguageValue French [ "Aperçu de la notice" ]
         , LanguageValue Italian [ "Anteprima la scheda" ]
         , LanguageValue Spanish [ "Vista previa del registro" ]
-        , LanguageValue Portugese [ "Visualizar do registro" ]
+        , LanguageValue Portuguese [ "Visualizar do registro" ]
         , LanguageValue Polish [ "Zapowiedź rekordu" ]
         ]
     , recordTop =
@@ -360,7 +360,7 @@ localTranslations =
         , LanguageValue French [ "Record URI (Permalink)" ]
         , LanguageValue Italian [ "Link alla scheda (permalink)" ]
         , LanguageValue Spanish [ "Record URI (Permalink)" ]
-        , LanguageValue Portugese [ "Record URI (Permalink)" ]
+        , LanguageValue Portuguese [ "Record URI (Permalink)" ]
         , LanguageValue Polish [ "URI rekordu (Odnośnik bezpośredni)" ]
         ]
     , reportAnIssue =
@@ -371,7 +371,7 @@ localTranslations =
         , LanguageValue French [ "Effacer tout" ]
         , LanguageValue Italian [ "Resetta tutto" ]
         , LanguageValue Spanish [ "Resetear todo" ]
-        , LanguageValue Portugese [ "Reiniciar tudo" ]
+        , LanguageValue Portuguese [ "Reiniciar tudo" ]
         , LanguageValue Polish [ "Zresetować wszystko" ]
         ]
     , rowsPerPage =
@@ -382,7 +382,7 @@ localTranslations =
         , LanguageValue French [ "Chercher" ]
         , LanguageValue Italian [ "Cerca" ]
         , LanguageValue Spanish [ "Búsqueda" ]
-        , LanguageValue Portugese [ "Busca" ]
+        , LanguageValue Portuguese [ "Busca" ]
         , LanguageValue Polish [ "Wyszukiwanie" ]
         ]
     , searchNumberOfRecords =
@@ -395,7 +395,7 @@ localTranslations =
         , LanguageValue French [ "Afficher tous les résultats" ]
         , LanguageValue Italian [ "Mostra tutti i risultati" ]
         , LanguageValue Spanish [ "Mostrar todos los resultados" ]
-        , LanguageValue Portugese [ "Mostrar todos os resultados" ]
+        , LanguageValue Portuguese [ "Mostrar todos os resultados" ]
         , LanguageValue Polish [ "Wyświetl wszystkie wyniki" ]
         ]
     , showNumItems =
@@ -406,7 +406,7 @@ localTranslations =
         , LanguageValue French [ "Appliquer des filtres" ]
         , LanguageValue Italian [ "Applicare filtri" ]
         , LanguageValue Spanish [ "Aplicar filtros" ]
-        , LanguageValue Portugese [ "Aplicar filtros" ]
+        , LanguageValue Portuguese [ "Aplicar filtros" ]
         , LanguageValue Polish [ "Zastosuj filtry" ]
         ]
     , sortAlphabetically =
@@ -423,7 +423,7 @@ localTranslations =
         , LanguageValue French [ "Contenu de la source" ]
         , LanguageValue Italian [ "Contenuto delle fonti" ]
         , LanguageValue Polish [ "Treść źródła" ]
-        , LanguageValue Portugese [ "Conteúdo da fonte" ]
+        , LanguageValue Portuguese [ "Conteúdo da fonte" ]
         ]
     , sourceType =
         [ LanguageValue English [ "Source type" ] ]
@@ -433,7 +433,7 @@ localTranslations =
         , LanguageValue French [ "Sources" ]
         , LanguageValue Italian [ "Fonti" ]
         , LanguageValue Spanish [ "Fuentes" ]
-        , LanguageValue Portugese [ "Fontes" ]
+        , LanguageValue Portuguese [ "Fontes" ]
         , LanguageValue Polish [ "Źródła" ]
         ]
     , unknownError =
@@ -444,7 +444,7 @@ localTranslations =
         , LanguageValue French [ "Appliquer des filtres" ]
         , LanguageValue Italian [ "Applicare filtri" ]
         , LanguageValue Spanish [ "Aplicar filtros" ]
-        , LanguageValue Portugese [ "Aplicar filtros" ]
+        , LanguageValue Portuguese [ "Aplicar filtros" ]
         , LanguageValue Polish [ "Zastosuj filtry" ]
         ]
     , viewImages =
@@ -455,7 +455,7 @@ localTranslations =
         , LanguageValue French [ "Entrez votre requête" ]
         , LanguageValue Italian [ "Inserisci la tua richiesta" ]
         , LanguageValue Spanish [ "Introduzca su consulta" ]
-        , LanguageValue Portugese [ "Introduza a sua consulta" ]
+        , LanguageValue Portuguese [ "Introduza a sua consulta" ]
         , LanguageValue Polish [ "Wprowadź swoje zapytanie" ]
         ]
     }
@@ -481,7 +481,7 @@ facetPanelTitles =
         , LanguageValue French [ "Détails biographiques" ]
         , LanguageValue Italian [ "Dati biografici" ]
         , LanguageValue Spanish [ "Detalles biográficos" ]
-        , LanguageValue Portugese [ "Detalhes biográficos" ]
+        , LanguageValue Portuguese [ "Detalhes biográficos" ]
         , LanguageValue Polish [ "Szczegóły bibliograficzne" ]
         ]
     , clefKeyTime =
@@ -494,7 +494,7 @@ facetPanelTitles =
         , LanguageValue French [ "Fac-similés numériques" ]
         , LanguageValue Italian [ "Facsimili digitali" ]
         , LanguageValue Spanish [ "Facsímiles digitales" ]
-        , LanguageValue Portugese [ "Facsimiles digitais" ]
+        , LanguageValue Portuguese [ "Facsimiles digitais" ]
         , LanguageValue Polish [ "Cyfrowe faksymile" ]
         ]
     , holdingInstitutions =
@@ -503,7 +503,7 @@ facetPanelTitles =
         , LanguageValue French [ "Institution" ]
         , LanguageValue Italian [ "Dove trovarlo" ]
         , LanguageValue Spanish [ "Instituciones participantes" ]
-        , LanguageValue Portugese [ "Responsabilidade das Instituições" ]
+        , LanguageValue Portuguese [ "Responsabilidade das Instituições" ]
         , LanguageValue Polish [ "Instytucje przechowujące" ]
         ]
     , location =
@@ -513,7 +513,7 @@ facetPanelTitles =
         , LanguageValue French [ "Lieu" ]
         , LanguageValue Italian [ "Luogo" ]
         , LanguageValue Polish [ "Lokalizacja" ]
-        , LanguageValue Portugese [ "Local" ]
+        , LanguageValue Portuguese [ "Local" ]
         ]
     , publicationDetails =
         [ LanguageValue English [ "Publication details" ]
@@ -521,7 +521,7 @@ facetPanelTitles =
         , LanguageValue French [ "Détails de publication" ]
         , LanguageValue Italian [ "Pubblicazione" ]
         , LanguageValue Spanish [ "Detalles de publicación" ]
-        , LanguageValue Portugese [ "Detalhes de Publicação" ]
+        , LanguageValue Portuguese [ "Detalhes de Publicação" ]
         , LanguageValue Polish [ "Szczegóły publikacji" ]
         ]
     , results =
@@ -530,7 +530,7 @@ facetPanelTitles =
         , LanguageValue French [ "Type du résultat" ]
         , LanguageValue Italian [ "Tipo di risultato" ]
         , LanguageValue Spanish [ "Tipo de resultado" ]
-        , LanguageValue Portugese [ "Tipos de resultado" ]
+        , LanguageValue Portuguese [ "Tipos de resultado" ]
         , LanguageValue Polish [ "Rodzaje wyników wyszukiwania" ]
         ]
     , roleAndProfession =
@@ -539,7 +539,7 @@ facetPanelTitles =
         , LanguageValue French [ "Rôle et profession" ]
         , LanguageValue Italian [ "Ruolo e professione" ]
         , LanguageValue Spanish [ "Función y profesión" ]
-        , LanguageValue Portugese [ "Cargo e profissão" ]
+        , LanguageValue Portuguese [ "Cargo e profissão" ]
         , LanguageValue Polish [ "Funkcja i zawód" ]
         ]
     , sourceContents =
@@ -548,7 +548,7 @@ facetPanelTitles =
         , LanguageValue French [ "Contenu de la source" ]
         , LanguageValue Italian [ "Contenuto delle fonti" ]
         , LanguageValue Spanish [ "Contenido de la fuente" ]
-        , LanguageValue Portugese [ "Facsimiles digitais" ]
+        , LanguageValue Portuguese [ "Facsimiles digitais" ]
         , LanguageValue Polish [ "Conteúdo da fonte" ]
         ]
     , sourceRelationships =
@@ -557,7 +557,7 @@ facetPanelTitles =
         , LanguageValue French [ "Relation" ]
         , LanguageValue Italian [ "Relazioni tra fonti" ]
         , LanguageValue Spanish [ "Relaciones de resultado" ]
-        , LanguageValue Portugese [ "Relações da fonte" ]
+        , LanguageValue Portuguese [ "Relações da fonte" ]
         , LanguageValue Polish [ "Relacje do źródła" ]
         ]
     }
@@ -575,7 +575,7 @@ errorMessages =
         , LanguageValue French [ "Il y a eu un problème avec la requête" ]
         , LanguageValue Italian [ "C'è stato un problema nella ricerca" ]
         , LanguageValue Polish [ "Wystąpił problem z zapytaniem" ]
-        , LanguageValue Portugese [ "Houve um problema com a consulta" ]
+        , LanguageValue Portuguese [ "Houve um problema com a consulta" ]
         ]
     , notFound =
         [ LanguageValue English [ "The page was not found" ]
@@ -584,6 +584,6 @@ errorMessages =
         , LanguageValue French [ "Page non trouvée" ]
         , LanguageValue Italian [ "Pagina non trovata" ]
         , LanguageValue Polish [ "Strona nie została znaleziona" ]
-        , LanguageValue Portugese [ "A página não foi encontrada" ]
+        , LanguageValue Portuguese [ "A página não foi encontrada" ]
         ]
     }

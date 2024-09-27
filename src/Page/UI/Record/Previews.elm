@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews exposing (PreviewConfig, viewMobileRecordPreviewTitleBar, viewPreviewError, viewPreviewRouter, viewRecordPreviewTitleBar)
+module Page.UI.Record.Previews exposing (PreviewConfig, viewMobilePreviewRouter, viewMobileRecordPreviewTitleBar, viewPreviewError, viewPreviewRouter, viewRecordPreviewTitleBar)
 
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
@@ -10,10 +10,11 @@ import Http.Detailed
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
-import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
+import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
+import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
 import Page.UI.Components exposing (h4)
 import Page.UI.Errors exposing (createErrorMessage)
+import Page.UI.Events exposing (onComplete)
 import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
@@ -21,16 +22,21 @@ import Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePrevie
 import Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 import Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Page.UI.Record.Previews.Person exposing (viewPersonPreview)
-import Page.UI.Record.Previews.Source exposing (viewSourcePreview)
+import Page.UI.Record.Previews.Source exposing (viewMobileSourcePreview, viewSourcePreview)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (ServerData(..))
 import Set exposing (Set)
+import Simple.Animation as Animation
+import Simple.Animation.Property as P
 
 
 type alias PreviewConfig msg =
     { language : Language
     , windowSize : ( Int, Int )
     , closeMsg : msg
+    , hideAnimationStartedMsg : msg
+    , showAnimationFinishedMsg : msg
+    , animationStatus : PreviewAnimationStatus
     , sourceItemExpandMsg : msg
     , sourceItemsExpanded : Bool
     , incipitInfoSectionsExpanded : Set String
@@ -220,6 +226,122 @@ viewPreviewRouter cfg previewData =
         ]
 
 
+viewMobilePreviewRouter : PreviewConfig msg -> Maybe ServerData -> Element msg
+viewMobilePreviewRouter cfg previewData =
+    let
+        windowWidth =
+            cfg.windowSize
+                |> Tuple.first
+                |> toFloat
+
+        previewAnimation =
+            case cfg.animationStatus of
+                MovingIn ->
+                    Animation.fromTo
+                        { duration = 200
+                        , options = [ Animation.easeInOutSine ]
+                        }
+                        [ P.x windowWidth ]
+                        [ P.x 0 ]
+
+                MovingOut ->
+                    Animation.fromTo
+                        { duration = 200
+                        , options = [ Animation.easeInOutSine ]
+                        }
+                        [ P.x 0 ]
+                        [ P.x windowWidth ]
+
+                ShownAndNotMoving ->
+                    Animation.fromTo
+                        { duration = 0
+                        , options = []
+                        }
+                        [ P.x windowWidth ]
+                        [ P.x windowWidth ]
+
+                NoAnimation ->
+                    Animation.empty
+
+        onCompleteMsg =
+            case cfg.animationStatus of
+                MovingIn ->
+                    onComplete cfg.showAnimationFinishedMsg
+
+                MovingOut ->
+                    onComplete cfg.closeMsg
+
+                ShownAndNotMoving ->
+                    emptyAttribute
+
+                NoAnimation ->
+                    emptyAttribute
+
+        preview =
+            case previewData of
+                Just (SourceData sourceBody) ->
+                    viewMobileSourcePreview
+                        { expandMsg = cfg.sourceItemExpandMsg
+                        , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
+                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
+                        , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
+                        , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
+                        , itemsExpanded = cfg.sourceItemsExpanded
+                        , language = cfg.language
+                        }
+                        sourceBody
+
+                Just (PersonData personBody) ->
+                    none
+
+                Just (InstitutionData institutionBody) ->
+                    none
+
+                Just (IncipitData incipitBody) ->
+                    none
+
+                Just (ExternalData body) ->
+                    case body.record of
+                        ExternalSource sourceBody ->
+                            none
+
+                        ExternalPerson personBody ->
+                            none
+
+                        ExternalInstitution institutionBody ->
+                            none
+
+                Nothing ->
+                    none
+
+                _ ->
+                    none
+
+        _ =
+            cfg.windowSize
+    in
+    animatedRow
+        previewAnimation
+        [ width (fill |> maximum (Tuple.first cfg.windowSize))
+        , height fill
+        , Background.color colourScheme.white
+        , htmlAttribute (HA.style "z-index" "10")
+        , minimalDropShadow
+        , onCompleteMsg
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , alignTop
+            , Background.color colourScheme.white
+            , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
+            ]
+            [ viewMobileRecordPreviewTitleBar cfg.language cfg.hideAnimationStartedMsg
+            , preview
+            ]
+        ]
+
+
 viewRecordPreviewTitleBar : Language -> msg -> Element msg
 viewRecordPreviewTitleBar language closeMsg =
     row
@@ -254,7 +376,7 @@ viewMobileRecordPreviewTitleBar : Language -> msg -> Element msg
 viewMobileRecordPreviewTitleBar language closeMsg =
     row
         [ width fill
-        , height (px 50)
+        , height (px 60)
         , spacing 10
         , paddingXY 10 0
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
@@ -265,8 +387,8 @@ viewMobileRecordPreviewTitleBar language closeMsg =
             [ alignLeft
             , centerY
             , onClick closeMsg
-            , width (px 24)
-            , height (px 24)
+            , width (px 32)
+            , height (px 32)
             , pointer
             ]
             (closeWindowSvg colourScheme.white)

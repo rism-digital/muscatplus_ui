@@ -17,7 +17,7 @@ viewPartOfSection language partOf =
         [ width shrink
         , Border.color colourScheme.darkGrey
         , Border.width 1
-        , width (shrink |> minimum 800)
+        , width fill
         ]
         [ column
             [ width fill

@@ -1,4 +1,4 @@
-module Mobile.BottomBar.Views exposing (..)
+module Mobile.BottomBar.Views exposing (ResponsiveSizes, view)
 
 import Element exposing (DeviceClass(..), Element, alignBottom, alignLeft, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingEach, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background

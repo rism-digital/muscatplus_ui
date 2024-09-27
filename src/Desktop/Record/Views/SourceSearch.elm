@@ -76,7 +76,7 @@ searchResultsViewRouter session model =
             , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
             , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
             , clientStartedAnimatingPreviewWindowClose = RecordMsg.ClientStartedAnimatingPreviewWindowClose
-            , nothingHappened = RecordMsg.NothingHappened
+            , clientFinishedAnimatingPreviewWindowShow = RecordMsg.ClientFinishedAnimatingPreviewWindowShow
             }
     in
     case model.searchResults of

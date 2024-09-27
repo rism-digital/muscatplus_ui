@@ -1,93 +1,60 @@
 module Mobile.Search.Views exposing (view)
 
 import Desktop.Search.Views.Facets exposing (facetSearchMsgConfig)
-import Element exposing (Element, alignTop, centerX, centerY, column, fill, height, htmlAttribute, inFront, none, px, row, scrollbarY, text, width)
-import Element.Background as Background
-import Html.Attributes as HA
+import Element exposing (Element, alignTop, centerX, column, fill, height, inFront, none, px, row, scrollbarY, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Mobile.Error.Views
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedRow)
-import Page.UI.Attributes exposing (minimalDropShadow)
-import Page.UI.Events exposing (onComplete)
-import Page.UI.Record.Previews exposing (viewMobileRecordPreviewTitleBar, viewRecordPreviewTitleBar)
+import Page.UI.Record.Previews exposing (viewMobilePreviewRouter)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultRouter)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
-import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
-import Simple.Animation as Animation
-import Simple.Animation.Property as P
 
 
 view : Session -> SearchPageModel SearchMsg -> Element SearchMsg
 view session model =
     let
-        windowWidth =
-            session.window
-                |> Tuple.first
-                |> toFloat
-
-        previewAnimation =
-            case .previewAnimationStatus model of
-                MovingIn ->
-                    Animation.fromTo
-                        { duration = 200
-                        , options = [ Animation.easeInOutSine ]
-                        }
-                        [ P.x windowWidth ]
-                        [ P.x 0 ]
-
-                MovingOut ->
-                    Animation.fromTo
-                        { duration = 200
-                        , options = [ Animation.easeInOutSine ]
-                        }
-                        [ P.x 0 ]
-                        [ P.x windowWidth ]
-
-                NoAnimation ->
-                    Animation.empty
-
-        onCompleteMsg =
-            case model.previewAnimationStatus of
-                MovingIn ->
-                    SearchMsg.NothingHappened
-
-                _ ->
-                    SearchMsg.UserClickedClosePreviewWindow
-
         renderedPreview =
             case .preview model of
                 Loading oldData ->
-                    none
+                    viewMobilePreviewRouter
+                        { language = session.language
+                        , windowSize = session.window
+                        , closeMsg = SearchMsg.UserClickedClosePreviewWindow
+                        , showAnimationFinishedMsg = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
+                        , hideAnimationStartedMsg = SearchMsg.ClientStartedAnimatingPreviewWindowClose
+                        , animationStatus = model.previewAnimationStatus
+                        , sourceItemExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
+                        , sourceItemsExpanded = model.sourceItemsExpanded
+                        , incipitInfoSectionsExpanded = model.incipitInfoExpanded
+                        , incipitInfoToggleMsg = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
+                        , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
+                        , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                        }
+                        oldData
 
                 Response resp ->
-                    animatedRow
-                        previewAnimation
-                        [ width fill
-                        , height fill
-                        , Background.color colourScheme.white
-                        , htmlAttribute (HA.style "z-index" "10")
-                        , minimalDropShadow
-                        , onComplete onCompleteMsg
-                        ]
-                        [ column
-                            [ width fill
-                            , height fill
-                            , alignTop
-                            , Background.color colourScheme.white
-                            , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
-                            ]
-                            [ viewMobileRecordPreviewTitleBar session.language SearchMsg.ClientStartedAnimatingPreviewWindowClose
-                            , text "Preview"
-                            ]
-                        ]
+                    viewMobilePreviewRouter
+                        { language = session.language
+                        , windowSize = session.window
+                        , closeMsg = SearchMsg.UserClickedClosePreviewWindow
+                        , showAnimationFinishedMsg = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
+                        , hideAnimationStartedMsg = SearchMsg.ClientStartedAnimatingPreviewWindowClose
+                        , animationStatus = model.previewAnimationStatus
+                        , sourceItemExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
+                        , sourceItemsExpanded = model.sourceItemsExpanded
+                        , incipitInfoSectionsExpanded = model.incipitInfoExpanded
+                        , incipitInfoToggleMsg = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
+                        , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
+                        , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                        }
+                        (Just resp)
 
-                Error errMsg ->
+                Error _ ->
                     none
 
                 NoResponseToShow ->
@@ -103,6 +70,10 @@ view session model =
             [ width fill
             , height fill
             , alignTop
+
+            -- placing the preview at this level means that it is always in view.
+            -- otherwise, it gets rendered at the top of a scrolling list, which
+            -- can result in it being invisible.
             , inFront renderedPreview
             ]
             [ searchPageTopBar
@@ -144,7 +115,7 @@ searchResultsViewRouter session model =
             , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
             , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
             , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
-            , nothingHappened = SearchMsg.NothingHappened
+            , clientFinishedAnimatingPreviewWindowShow = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
             }
     in
     case model.response of

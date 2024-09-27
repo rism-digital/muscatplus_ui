@@ -1,4 +1,4 @@
-module Mobile.Record.Views.InstitutionPage exposing (..)
+module Mobile.Record.Views.InstitutionPage exposing (view)
 
 import Element exposing (Element, none)
 import Page.Record.Model exposing (RecordPageModel)

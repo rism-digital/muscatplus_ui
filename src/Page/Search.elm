@@ -317,6 +317,11 @@ update session msg model =
             , Cmd.none
             )
 
+        ClientFinishedAnimatingPreviewWindowShow ->
+            ( { model | previewAnimationStatus = ShownAndNotMoving }
+            , Cmd.none
+            )
+
         DebouncerCapturedProbeRequest searchMsg ->
             Debouncer.update (update session) updateDebouncerProbeConfig searchMsg model
 

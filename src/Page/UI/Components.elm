@@ -8,6 +8,7 @@ module Page.UI.Components exposing
     , h2
     , h2s
     , h3
+    , h3s
     , h4
     , makeFlagIcon
     , mapViewer
@@ -22,7 +23,7 @@ module Page.UI.Components exposing
     )
 
 import Css
-import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, moveUp, newTabLink, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, textColumn, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paragraph, px, rgb, rgba, rotate, row, shrink, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -301,6 +302,11 @@ h3 language heading =
     renderLanguageHelper [ headingXL, Region.heading 3, Font.medium ] language heading
 
 
+h3s : Language -> LanguageMap -> Element msg
+h3s language heading =
+    renderLanguageHelper [ headingXL, Region.heading 3, Font.medium, bodySerifFont ] language heading
+
+
 h4 : Language -> LanguageMap -> Element msg
 h4 language heading =
     renderLanguageHelper [ headingLG, Region.heading 4, Font.medium ] language heading
@@ -337,6 +343,15 @@ makeFlagIcon colours iconImage iconLabel =
             ]
             iconImage
         ]
+
+
+textColumn : List (Attribute msg) -> List (Element msg) -> Element msg
+textColumn attrs children =
+    column
+        (width (fill |> minimum 320 |> maximum 350)
+            :: attrs
+        )
+        children
 
 
 renderValue : Language -> LanguageMap -> Element msg

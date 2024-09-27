@@ -75,7 +75,7 @@ type alias SearchResultsSectionConfig a msg =
     , expandedDigitizedCopiesMsg : msg
     , expandedDigitizedCopiesCallout : Bool
     , clientStartedAnimatingPreviewWindowClose : msg
-    , nothingHappened : msg
+    , clientFinishedAnimatingPreviewWindowShow : msg
     }
 
 
@@ -97,6 +97,9 @@ viewSearchResultsSection cfg resultsLoading body =
                         { language = .language cfg.session
                         , windowSize = .window cfg.session
                         , closeMsg = cfg.userClosedPreviewWindowMsg
+                        , showAnimationFinishedMsg = cfg.clientFinishedAnimatingPreviewWindowShow
+                        , hideAnimationStartedMsg = cfg.clientStartedAnimatingPreviewWindowClose
+                        , animationStatus = .previewAnimationStatus cfg.model
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
                         , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections
@@ -112,6 +115,9 @@ viewSearchResultsSection cfg resultsLoading body =
                         { language = .language cfg.session
                         , windowSize = .window cfg.session
                         , closeMsg = cfg.userClosedPreviewWindowMsg
+                        , showAnimationFinishedMsg = cfg.clientFinishedAnimatingPreviewWindowShow
+                        , hideAnimationStartedMsg = cfg.clientStartedAnimatingPreviewWindowClose
+                        , animationStatus = .previewAnimationStatus cfg.model
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
                         , incipitInfoSectionsExpanded = cfg.expandedIncipitInfoSections

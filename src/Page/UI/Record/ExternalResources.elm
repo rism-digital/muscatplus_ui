@@ -280,7 +280,7 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalReso
              else
                 0
             )
-        , width (shrink |> minimum 800)
+        , width fill
         ]
         [ column
             [ width fill

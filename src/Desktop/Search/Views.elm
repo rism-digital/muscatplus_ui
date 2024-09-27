@@ -81,7 +81,7 @@ searchResultsViewRouter session model =
             , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
             , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
             , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
-            , nothingHappened = SearchMsg.NothingHappened
+            , clientFinishedAnimatingPreviewWindowShow = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
             }
     in
     case model.response of

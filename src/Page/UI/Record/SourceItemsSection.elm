@@ -1,4 +1,4 @@
-module Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
+module Page.UI.Record.SourceItemsSection exposing (viewSourceItem, viewSourceItemsSection)
 
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Events as Events
@@ -8,7 +8,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h2, sourceIconChooser, viewSummaryField)
+import Page.UI.Components exposing (h2, h3, sourceIconChooser, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -33,7 +33,7 @@ viewSourceItem language source =
                 [ el
                     [ width (px 25)
                     , height (px 25)
-                    , centerY
+                    , alignTop
                     ]
                     (sourceIcon colourScheme.midGrey)
                 , paragraph
@@ -41,7 +41,7 @@ viewSourceItem language source =
                     [ link
                         [ linkColour
                         ]
-                        { label = h2 language source.label
+                        { label = h3 language source.label
                         , url = source.id
                         }
                     ]
