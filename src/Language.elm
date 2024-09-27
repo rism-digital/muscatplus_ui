@@ -34,7 +34,7 @@ type Language
     | French
     | German
     | Italian
-    | Portugese
+    | Portuguese
     | Spanish
     | Polish
     | None
@@ -96,7 +96,7 @@ languageOptions =
     , ( "fr", "Français", French )
     , ( "it", "Italiano", Italian )
     , ( "es", "Español", Spanish )
-    , ( "pt", "Português", Portugese )
+    , ( "pt", "Português", Portuguese )
     , ( "pl", "Polskie", Polish )
     , ( "none", "None", None )
     ]
@@ -173,7 +173,7 @@ formatNumberByLanguage lang num =
         Italian ->
             format italianLocale num
 
-        Portugese ->
+        Portuguese ->
             format portugeseLocale num
 
         Spanish ->
