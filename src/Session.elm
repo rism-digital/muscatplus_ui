@@ -62,11 +62,11 @@ updateSideBarOptions session updateFn =
 updateBottomBarOptions : Session -> (BottomBarOptions.BottomBarOptions -> BottomBarOptions.BottomBarOptions) -> Session
 updateBottomBarOptions session updateFn =
     case session.navigationBar of
-        BottomBar options ->
-            { session | navigationBar = BottomBar (updateFn options) }
-
         SideBar _ ->
             session
+
+        BottomBar options ->
+            { session | navigationBar = BottomBar (updateFn options) }
 
 
 init : Flags -> Url -> Nav.Key -> Session

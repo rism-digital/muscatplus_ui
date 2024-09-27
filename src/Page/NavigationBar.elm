@@ -1,4 +1,4 @@
-module Page.NavigationBar exposing (..)
+module Page.NavigationBar exposing (NavigationBar(..))
 
 import Page.BottomBar.Options exposing (BottomBarOptions)
 import Page.SideBar.Options exposing (SideBarOptions)

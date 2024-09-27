@@ -1,4 +1,4 @@
-module Page.RecordTypes.Navigation exposing (..)
+module Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToModeString, navigationBarOptionToResultMode, resultModeToNavigationBarOption)
 
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 

@@ -389,10 +389,6 @@ userClickedClosePreviewWindow session model =
     let
         currentUrl =
             session.url
-
-        newUrl =
-            { currentUrl | fragment = Nothing }
-                |> Url.toString
     in
     ( { model
         | digitizedCopiesCalloutExpanded = False
@@ -400,7 +396,9 @@ userClickedClosePreviewWindow session model =
         , selectedResult = Nothing
         , previewAnimationStatus = MovingOut
       }
-    , Nav.pushUrl session.key newUrl
+    , { currentUrl | fragment = Nothing }
+        |> Url.toString
+        |> Nav.pushUrl session.key
     )
 
 
@@ -436,17 +434,15 @@ userClickedResultForPreview result session model =
                         |> convertPathToNodeId
                 )
                 resultUrl
-
-        newUrlStr =
-            { currentUrl | fragment = resPath }
-                |> Url.toString
     in
     ( { model
         | preview = Loading Nothing
         , selectedResult = Just result
         , previewAnimationStatus = MovingIn
       }
-    , Nav.pushUrl session.key newUrlStr
+    , { currentUrl | fragment = resPath }
+        |> Url.toString
+        |> Nav.pushUrl session.key
     )
 
 

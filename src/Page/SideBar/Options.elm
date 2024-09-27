@@ -1,8 +1,8 @@
-module Page.SideBar.Options exposing (..)
+module Page.SideBar.Options exposing (SideBarOptions, init, updateCurrentlyHoveredAboutMenuSidebarOption, updateCurrentlyHoveredLanguageChooserSidebarOption, updateCurrentlyHoveredNationalCollectionSidebarOption, updateCurrentlyHoveredNationalCollectionStatus, updateCurrentlyHoveredStatus, updateExpansionStatus, updateNationalCollectionChooserDebouncer, updateSideBarExpansionDebouncer)
 
 import Debouncer.Messages as Debouncer exposing (Debouncer, fromSeconds)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption)
-import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), sideBarExpandDelay)
+import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg, sideBarExpandDelay)
 
 
 type alias SideBarOptions =

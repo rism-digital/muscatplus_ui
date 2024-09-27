@@ -1,10 +1,11 @@
-module Mobile exposing (..)
+module Mobile exposing (view)
 
 import Browser
 import Css
 import Css.Global
 import Element exposing (above, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, layout, none, padding, paddingXY, px, row, spacing, text, width)
 import Element.Background as Background
+import Element.Border as Border
 import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
 import Loading exposing (loadingIndicator)
@@ -47,7 +48,9 @@ view model =
                 , Background.color colourScheme.darkBlue
                 , spacing 5
                 , paddingXY 8 5
-                , minimalDropShadow
+                , Background.color colourScheme.darkBlue
+                , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+                , Border.color colourScheme.darkGrey
                 ]
                 [ el [ alignLeft, centerY ] (rismLogo colourScheme.white 28)
                 , el [ alignLeft, centerY, width (px 72) ] (onlineTextSvg colourScheme.white)
@@ -58,14 +61,14 @@ view model =
 
         pageView =
             case model of
-                FrontPage session pageModel ->
-                    Element.map Msg.UserInteractedWithFrontPage (Mobile.Front.Views.view session pageModel)
-
                 NotFoundPage session pageModel ->
                     Element.map Msg.UserInteractedWithNotFoundPage (Mobile.Error.Views.view session pageModel)
 
                 SearchPage session pageModel ->
                     Element.map Msg.UserInteractedWithSearchPage (Mobile.Search.Views.view session pageModel)
+
+                FrontPage session pageModel ->
+                    Element.map Msg.UserInteractedWithFrontPage (Mobile.Front.Views.view session pageModel)
 
                 SourcePage session pageModel ->
                     Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.SourcePage.view session pageModel)
@@ -93,21 +96,25 @@ view model =
     in
     { title = defaultTitle
     , body =
-        [ toUnstyled (Css.Global.global [ Css.Global.a globalLinkColour ])
+        [ toUnstyled
+            (Css.Global.global
+                [ Css.Global.a globalLinkColour
+                , Css.Global.html
+                    [ Css.property "text-size-adjust" "100%"
+                    , Css.property "-webkit-text-size-adjust" "100%"
+                    , Css.property "-moz-text-size-adjust" "100%"
+                    ]
+                ]
+            )
         , layout
             [ width fill
             , bodyFont
             , bodyFontColour
             , fontBaseSize
-            , htmlAttribute (HA.style "position" "fixed")
-            , htmlAttribute (HA.style "height" "100%")
-            , htmlAttribute (HA.style "top" "0")
-            , htmlAttribute (HA.style "left" "0")
             ]
             (row
                 [ width fill
                 , height fill
-                , htmlAttribute (HA.style "height" "100dvh")
                 ]
                 [ column
                     [ centerX

@@ -184,7 +184,7 @@ setSideBarNavOptions session options =
     { session | navigationBar = SideBar options }
 
 
-updateDebouncer : SideBarOptions -> Debouncer.UpdateConfig SideBarMsg Session
+updateDebouncer : SideBarOptions -> UpdateConfig SideBarMsg Session
 updateDebouncer options =
     let
         setter debounceMsg model =
@@ -197,7 +197,7 @@ updateDebouncer options =
     }
 
 
-ncDebouncer : SideBarOptions -> Debouncer.UpdateConfig SideBarMsg Session
+ncDebouncer : SideBarOptions -> UpdateConfig SideBarMsg Session
 ncDebouncer options =
     let
         setter debounceMsg model =

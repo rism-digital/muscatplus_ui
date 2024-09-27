@@ -1,4 +1,4 @@
-module Page.BottomBar exposing (..)
+module Page.BottomBar exposing (Msg, update)
 
 import Browser.Navigation as Nav
 import Page.BottomBar.Msg exposing (BottomBarMsg(..))

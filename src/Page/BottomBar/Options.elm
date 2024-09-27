@@ -1,4 +1,4 @@
-module Page.BottomBar.Options exposing (..)
+module Page.BottomBar.Options exposing (BottomBarOptions, init)
 
 
 type alias BottomBarOptions =

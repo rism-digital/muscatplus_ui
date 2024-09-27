@@ -29,24 +29,7 @@ module Page.UI.Attributes exposing
     , valueFieldColumnAttributes
     )
 
-import Element
-    exposing
-        ( Attr
-        , Attribute
-        , Device
-        , DeviceClass(..)
-        , Orientation(..)
-        , alignTop
-        , fill
-        , htmlAttribute
-        , maximum
-        , minimum
-        , paddingEach
-        , paddingXY
-        , px
-        , spacing
-        , width
-        )
+import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, htmlAttribute, maximum, minimum, paddingEach, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font

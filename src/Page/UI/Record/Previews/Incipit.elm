@@ -1,12 +1,15 @@
 module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
-import Language exposing (Language)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
+import Element.Font as Font
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
-import Page.UI.Attributes exposing (headingLG, lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, sectionSpacing)
+import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
 import Page.UI.Images exposing (musicNotationSvg)
 import Page.UI.Record.Incipits exposing (viewIncipit)
 import Page.UI.Record.PageTemplate exposing (pageLinkTemplate, subHeaderTemplate)
+import Page.UI.Record.SourceItemsSection exposing (viewSourceItem)
 import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 

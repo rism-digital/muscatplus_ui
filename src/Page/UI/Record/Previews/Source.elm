@@ -1,7 +1,7 @@
-module Page.UI.Record.Previews.Source exposing (viewSourcePreview)
+module Page.UI.Record.Previews.Source exposing (viewMobileSourcePreview, viewSourcePreview)
 
 import Dict
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, maximum, none, paddingXY, px, row, scrollbarY, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
