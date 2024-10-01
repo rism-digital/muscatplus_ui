@@ -5,6 +5,7 @@ import Desktop.About.Views.AboutTexts exposing (aboutTextEnglish, aboutTextFrenc
 import Element exposing (Element, clipY, column, el, fill, height, maximum, none, padding, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language(..), LanguageMap, LanguageValue(..))
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg)
@@ -67,6 +68,7 @@ view session model =
             , Background.color colourScheme.white
             , spacing sectionSpacing
             , scrollbarY
+            , htmlAttribute (HA.style "min-height" "unset")
             ]
             [ row
                 [ width (fill |> maximum 900)

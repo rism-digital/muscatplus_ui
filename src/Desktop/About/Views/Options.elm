@@ -1,8 +1,9 @@
 module Desktop.About.Views.Options exposing (view)
 
-import Element exposing (Element, clipY, column, el, fill, height, maximum, padding, paragraph, row, scrollbarY, spacing, text, textColumn, width)
+import Element exposing (Element, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paragraph, row, scrollbarY, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractLabelFromLanguageMap)
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
@@ -80,6 +81,7 @@ view session model =
             , Background.color colourScheme.white
             , spacing sectionSpacing
             , scrollbarY
+            , htmlAttribute (HA.style "min-height" "unset")
             ]
             [ row
                 [ width fill ]

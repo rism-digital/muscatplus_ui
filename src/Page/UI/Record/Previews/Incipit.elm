@@ -51,6 +51,7 @@ viewIncipitPreview cfg body =
         , alignTop
         , paddingXY 20 10
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ spacing sectionSpacing

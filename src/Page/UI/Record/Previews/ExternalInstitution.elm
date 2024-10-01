@@ -1,6 +1,7 @@
 module Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 
-import Element exposing (Element, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, inFront, none, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, inFront, none, paddingXY, px, row, scrollbarY, spacing, width)
+import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..))
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
@@ -62,6 +63,7 @@ viewExternalInstitutionPreview language project body =
         , alignTop
         , paddingXY 20 10
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill

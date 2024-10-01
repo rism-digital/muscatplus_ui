@@ -375,6 +375,7 @@ viewSearchControls cfg =
         , height fill
         , alignTop
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width (fill |> maximum 1100)
@@ -425,6 +426,7 @@ viewSearchResultsListPanel cfg =
             , height fill
             , alignTop
             , scrollbarY
+            , htmlAttribute (HA.style "min-height" "unset")
             , htmlAttribute (HA.id "search-results-list")
             ]
             [ column
