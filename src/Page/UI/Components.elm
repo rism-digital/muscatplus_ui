@@ -18,12 +18,13 @@ module Page.UI.Components exposing
     , resourceLink
     , sourceIconChooser
     , sourceTypeIconChooser
+    , viewLabelValueField
     , viewParagraphField
     , viewSummaryField
     )
 
 import Css
-import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paragraph, px, rgb, rgba, rotate, row, shrink, spacing, text, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paddingXY, paragraph, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -348,7 +349,7 @@ makeFlagIcon colours iconImage iconLabel =
 textColumn : List (Attribute msg) -> List (Element msg) -> Element msg
 textColumn attrs children =
     column
-        (width (fill |> minimum 320 |> maximum 350)
+        (width (fill |> minimum 320 |> maximum 700)
             :: attrs
         )
         children
@@ -356,13 +357,7 @@ textColumn attrs children =
 
 renderValue : Language -> LanguageMap -> Element msg
 renderValue language value =
-    textColumn
-        [ bodyRegular
-        , spacing lineSpacing
-        ]
-        (extractTextFromLanguageMap language value
-            |> styledParagraphs
-        )
+    renderValueHelper language value (spacing lineSpacing)
 
 
 {-|
@@ -373,16 +368,26 @@ renderValue language value =
 -}
 renderCloselySpacedValue : Language -> LanguageMap -> Element msg
 renderCloselySpacedValue language values =
+    renderValueHelper language values (spacing 5)
+
+
+renderValueHelper : Language -> LanguageMap -> Attribute msg -> Element msg
+renderValueHelper language values colspace =
     textColumn
         [ bodyRegular
-        , spacing 5
+        , colspace
         ]
-        (styledParagraphs (extractTextFromLanguageMap language values))
+        (extractTextFromLanguageMap language values
+            |> styledParagraphs
+        )
 
 
 renderLabel : Language -> LanguageMap -> Element msg
 renderLabel language langmap =
-    renderLanguageHelper [ Font.semiBold, bodyRegular ] language langmap
+    renderLanguageHelper
+        [ Font.semiBold, bodyRegular ]
+        language
+        langmap
 
 
 {-|
@@ -515,7 +520,7 @@ viewLabelValueField wrapperStyles fmt language field =
         , height fill
         , alignTop
         ]
-        [ column
+        [ textColumn
             (List.append
                 [ width fill
                 , height fill

@@ -1,18 +1,105 @@
-module Page.UI.Record.Relationship exposing (viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
+module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
 
-import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Dict
+import Dict.Extra as DE
+import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (bodyRegular, labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (renderLabel)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Components exposing (renderLabel, viewLabelValueField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
-import Utilities exposing (choose)
+
+
+viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
+viewRelationshipsSection language relSection =
+    let
+        sectionTmpl =
+            sectionTemplate language relSection
+    in
+    sectionTmpl
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing 15
+                ]
+                (gatherRelationshipItems relSection.items
+                    |> List.map (\( label, items ) -> viewRelationshipBody language label items)
+                )
+            ]
+        ]
+
+
+viewRelationshipBody : Language -> LanguageMap -> List RelationshipBody -> Element msg
+viewRelationshipBody language label relationships =
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ textColumn
+            (List.append
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                [ spacing sectionSpacing ]
+            )
+            [ wrappedRow
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                [ column labelFieldColumnAttributes
+                    [ renderLabel language label ]
+                , List.map (viewRelationshipValue language) relationships
+                    |> column valueFieldColumnAttributes
+                ]
+            ]
+        ]
+
+
+viewRelationshipValue : Language -> RelationshipBody -> Element msg
+viewRelationshipValue language body =
+    let
+        relatedToView =
+            -- if there is a related-to relationship, display that.
+            -- if all we have is a name, display that.
+            -- if neither, don't show anything because we can't!
+            ME.unpack
+                (\() ->
+                    viewMaybe (\nm -> el [] (text (extractLabelFromLanguageMap language nm))) body.name
+                )
+                (viewRelatedToBody language body.qualifier)
+                body.relatedTo
+
+        note =
+            viewMaybe
+                (\noteText ->
+                    row
+                        [ width fill ]
+                        [ paragraph [] [ text (extractLabelFromLanguageMap language noteText) ] ]
+                )
+                body.note
+    in
+    row
+        [ alignLeft
+        ]
+        [ relatedToView
+        , note
+        ]
 
 
 viewRelatedToBody : Language -> Maybe QualifierBody -> RelatedToBody -> Element msg
@@ -51,6 +138,33 @@ viewRelatedToBody language qualifier body =
                 UnknownRelationship ->
                     ( none, none )
 
+        linkRelated : LanguageMap -> Element msg
+        linkRelated label =
+            link
+                [ linkColour
+                , centerY
+                ]
+                { label = text (extractLabelFromLanguageMap language label)
+                , url = body.id
+                }
+
+        relatedEntity =
+            case body.type_ of
+                PersonRelationship ->
+                    linkRelated body.label
+
+                SourceRelationship ->
+                    linkRelated body.label
+
+                InstitutionRelationship ->
+                    linkRelated body.label
+
+                PlaceRelationship ->
+                    text (extractLabelFromLanguageMap language body.label)
+
+                UnknownRelationship ->
+                    none
+
         qualifierLabel =
             viewMaybe
                 (\qual ->
@@ -66,88 +180,30 @@ viewRelatedToBody language qualifier body =
             [ width (px 16)
             , height (px 16)
             , centerY
-            , relationshipTooltip |> tooltip above
+            , relationshipTooltip |> tooltip below
             ]
             relIcon
-        , link
-            [ linkColour ]
-            { label = text (extractLabelFromLanguageMap language body.label)
-            , url = body.id
-            }
+        , relatedEntity
         , qualifierLabel
         ]
 
 
-viewRelationshipBody : Language -> RelationshipBody -> Element msg
-viewRelationshipBody language body =
+
+-- Takes a list of relationships and gathers them by their relationship type, ("rtype", [list of relationships]).
+-- It then substitutes the label LanguageMap for the first value in the Tuple, so that all
+-- the relationships can be displayed
+
+
+gatherRelationshipItems : List RelationshipBody -> List ( LanguageMap, List RelationshipBody )
+gatherRelationshipItems rels =
     let
-        relatedToView =
-            -- if there is a related-to relationship, display that.
-            -- if all we have is a name, display that.
-            -- if neither, don't show anything because we can't!
-            ME.unpack
-                (\() ->
-                    viewMaybe (\nm -> el [] (text (extractLabelFromLanguageMap language nm))) body.name
-                )
-                (\rel ->
-                    choose (rel.type_ == PlaceRelationship)
-                        (\() -> el [] (text (extractLabelFromLanguageMap language rel.label)))
-                        (\() -> viewRelatedToBody language body.qualifier rel)
-                )
-                body.relatedTo
-
-        roleLabel =
-            viewMaybe (\role -> renderLabel language role.label) body.role
-
-        note =
-            viewMaybe
-                (\noteText ->
-                    row
-                        [ width fill ]
-                        [ paragraph [] [ text (extractLabelFromLanguageMap language noteText) ] ]
-                )
-                body.note
+        helper : List RelationshipBody -> LanguageMap
+        helper lrels =
+            List.head lrels
+                |> Maybe.andThen (\a -> a.role)
+                |> Maybe.map (\b -> b.label)
+                |> Maybe.withDefault (toLanguageMap "[No Role]")
     in
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            labelFieldColumnAttributes
-            [ roleLabel ]
-        , column
-            valueFieldColumnAttributes
-            [ textColumn
-                [ alignLeft
-                , bodyRegular
-                ]
-                [ relatedToView
-                , note
-                ]
-            ]
-        ]
-
-
-viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
-viewRelationshipsSection language relSection =
-    let
-        sectionTmpl =
-            sectionTemplate language relSection
-    in
-    sectionTmpl
-        [ row
-            (width fill
-                :: height fill
-                :: alignTop
-                :: sectionBorderStyles
-            )
-            [ column
-                [ width fill
-                , height fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                (List.map (viewRelationshipBody language) relSection.items)
-            ]
-        ]
+    DE.groupBy (\i -> Maybe.map (\j -> j.value) i.role |> Maybe.withDefault "") rels
+        |> Dict.toList
+        |> List.map (\( _, rl ) -> ( helper rl, rl ))

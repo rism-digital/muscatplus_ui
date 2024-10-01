@@ -1,6 +1,5 @@
 module Desktop.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 
-import Desktop.Record.Views.SourcePage.RelationshipsSection exposing (viewRelationshipsSection)
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Dict
 import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
@@ -22,6 +21,7 @@ import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
 import Set exposing (Set)

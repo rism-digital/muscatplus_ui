@@ -65,7 +65,7 @@ tooltipStyle =
     [ Background.color colourScheme.black
     , Font.color colourScheme.white
     , width (shrink |> minimum 140)
-    , padding 12
+    , padding 4
     , spacing 5
     , bodyRegular
     ]
@@ -76,7 +76,7 @@ tooltipStyle2 =
     [ Background.color colourScheme.black
     , Font.color colourScheme.white
     , width (shrink |> minimum 120)
-    , padding 12
+    , padding 4
     , spacing 5
     , bodyRegular
     ]

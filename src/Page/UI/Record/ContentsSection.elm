@@ -30,8 +30,8 @@ viewContentsSection language creator contents =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewRelationshipBody language) creator
-                , Maybe.withDefault [] contents.summary
+                --[ viewMaybe (viewRelationshipBody language) creator
+                [ Maybe.withDefault [] contents.summary
                     |> viewSummaryField language
                 , viewMaybe (viewSubjectsSection language) contents.subjects
                 ]

@@ -60,7 +60,9 @@ viewMaterialGroupRelationships language relSection =
             , alignTop
             , spacing lineSpacing
             ]
-            (List.map (viewRelationshipBody language) relSection.items)
+            []
+
+        --(List.map (viewRelationshipBody language) relSection.items)
         ]
 
 

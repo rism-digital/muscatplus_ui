@@ -69,7 +69,9 @@ viewExemplarRelationships language body =
             , alignTop
             , spacing lineSpacing
             ]
-            (List.map (viewRelationshipBody language) body.items)
+            []
+
+        --(List.map (viewRelationshipBody language) body.items)
         ]
 
 

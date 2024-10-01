@@ -227,6 +227,7 @@ valueFieldColumnAttributes : List (Attribute msg)
 valueFieldColumnAttributes =
     [ width fill
     , alignTop
+    , spacing lineSpacing
     ]
 
 
