@@ -1,8 +1,9 @@
 module Page.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Border as Border
+import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
@@ -136,6 +137,7 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
         , height fill
         , alignTop
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill

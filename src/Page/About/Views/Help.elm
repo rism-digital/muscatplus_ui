@@ -1,8 +1,9 @@
 module Page.About.Views.Help exposing (IconDescriptionData, view)
 
-import Element exposing (Color, Element, centerY, clipY, column, el, fill, height, maximum, padding, paragraph, px, row, scrollbarY, shrink, spacing, table, text, width)
+import Element exposing (Color, Element, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paragraph, px, row, scrollbarY, shrink, spacing, table, text, width)
 import Element.Background as Background
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractLabelFromLanguageMap, toLanguageMapWithLanguage)
 import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.DiammLogo exposing (diammLogo)
@@ -498,6 +499,7 @@ view session =
             , spacing sectionSpacing
             , Font.size 16
             , scrollbarY
+            , htmlAttribute (HA.style "min-height" "unset")
             ]
             [ row
                 [ width (fill |> maximum 900)

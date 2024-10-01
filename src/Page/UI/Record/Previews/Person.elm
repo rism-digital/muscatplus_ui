@@ -1,6 +1,7 @@
 module Page.UI.Record.Previews.Person exposing (viewPersonPreview)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, scrollbarY, spacing, width)
+import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
@@ -32,6 +33,7 @@ viewPersonPreview language body =
         , alignTop
         , paddingXY 20 10
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill

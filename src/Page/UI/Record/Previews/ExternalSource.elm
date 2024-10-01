@@ -1,6 +1,7 @@
 module Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, inFront, link, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, inFront, link, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
@@ -60,6 +61,7 @@ viewExternalSourcePreview language project body =
         , alignTop
         , paddingXY 20 10
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill
