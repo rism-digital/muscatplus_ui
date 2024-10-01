@@ -148,6 +148,7 @@ viewNationalCollectionChooser session =
                 , spacing sectionSpacing
                 , padding 30
                 , scrollbarY
+                , htmlAttribute (HA.style "min-height" "unset")
                 ]
                 [ row
                     [ width fill ]

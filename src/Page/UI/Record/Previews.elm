@@ -83,6 +83,7 @@ viewPreviewError cfg =
                 [ width fill
                 , height fill
                 , scrollbarY
+                , htmlAttribute (HA.style "min-height" "unset")
                 ]
                 [ paragraph
                     [ centerX

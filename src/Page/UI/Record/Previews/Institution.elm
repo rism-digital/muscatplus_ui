@@ -1,6 +1,7 @@
 module Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, scrollbarY, spacing, width)
+import Html.Attributes as HA
 import Language exposing (Language)
 import Page.Record.Views.InstitutionPage.LocationSection exposing (viewLocationAddressSection)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
@@ -33,6 +34,7 @@ viewInstitutionPreview language body =
         , alignTop
         , paddingXY 20 10
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill

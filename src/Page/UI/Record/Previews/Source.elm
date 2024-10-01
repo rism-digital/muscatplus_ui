@@ -1,7 +1,8 @@
 module Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 
 import Dict
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, scrollbarY, spacing, width)
+import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
@@ -92,6 +93,7 @@ viewSourcePreview cfg body =
         , alignTop
         , paddingXY 20 10
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill

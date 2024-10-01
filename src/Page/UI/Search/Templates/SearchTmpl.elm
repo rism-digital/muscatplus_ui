@@ -49,6 +49,7 @@ viewSearchResultsLoadingTmpl language =
             , height fill
             , Background.color colourScheme.white
             , scrollbarY
+            , htmlAttribute (HA.style "min-height" "unset")
             , alignTop
             ]
             []
