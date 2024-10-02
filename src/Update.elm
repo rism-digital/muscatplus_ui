@@ -4,7 +4,7 @@ import Basics.Extra as BE
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (setDevice, setWindow)
-import Model exposing (Model(..), isSourcePage, toSession, updateSession)
+import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.About as AboutPage
 import Page.BottomBar as BottomBar
@@ -15,7 +15,7 @@ import Page.Query exposing (QueryArgs, buildQueryParameters, toNextQuery)
 import Page.Record as RecordPage
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.Route as Route exposing (Route, isMEIDownloadRoute, isPNGDownloadRoute, parseUrl, setRoute, setUrl)
+import Page.Route as Route exposing (Route, isMEIDownloadRoute, isPNGDownloadRoute, isSourcePageRoute, parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Session exposing (Session)
@@ -42,7 +42,7 @@ changeRecordPageHelper { model, previousUrl, url, newSession, route } =
             }
 
         contentsUrlSuffix =
-            if isSourcePage model then
+            if isSourcePageRoute url then
                 "/contents"
 
             else
@@ -114,7 +114,7 @@ changeRecordContentsPageHelper :
 changeRecordContentsPageHelper { model, previousUrl, url, newSession, route, qargs } =
     let
         contentsUrlSuffix =
-            if isSourcePage model then
+            if isSourcePageRoute url then
                 "/contents"
 
             else

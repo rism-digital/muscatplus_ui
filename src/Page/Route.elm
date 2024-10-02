@@ -80,5 +80,11 @@ isPNGDownloadRoute url =
 
 isSourcePageRoute : Url -> Bool
 isSourcePageRoute url =
-    P.parse (P.map (\_ -> True) (s "sources" </> P.int)) url
+    P.parse
+        (P.oneOf
+            [ P.map (\_ -> True) (s "sources" </> P.int)
+            , P.map (\_ _ -> True) (s "sources" </> P.int </> s "contents" <?> queryParamsParser)
+            ]
+        )
+        url
         |> Maybe.withDefault False
