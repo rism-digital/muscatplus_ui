@@ -2,7 +2,7 @@ module Desktop.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePa
 
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language)

@@ -1,4 +1,4 @@
-module Model exposing (Model(..), toSession, updateSession)
+module Model exposing (Model(..), isSourcePage, toSession, updateSession)
 
 import Page.About as About
 import Page.Error as NotFound
@@ -87,3 +87,13 @@ updateSession newSession model =
 
         PlacePage _ pageModel ->
             PlacePage newSession pageModel
+
+
+isSourcePage : Model -> Bool
+isSourcePage model =
+    case model of
+        SourcePage _ _ ->
+            True
+
+        _ ->
+            False

@@ -1,7 +1,7 @@
 module Desktop.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
 
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)

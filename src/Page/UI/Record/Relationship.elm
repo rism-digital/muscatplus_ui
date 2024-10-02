@@ -2,12 +2,12 @@ module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelate
 
 import Dict
 import Dict.Extra as DE
-import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Components exposing (renderLabel, viewLabelValueField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
@@ -24,16 +24,16 @@ viewRelationshipsSection language relSection =
     in
     sectionTmpl
         [ row
-            (width fill
-                :: height fill
-                :: alignTop
-                :: sectionBorderStyles
-            )
+            [ width fill
+            , height fill
+            , alignTop
+            , paddingXY lineSpacing 0
+            ]
             [ column
                 [ width fill
                 , height fill
                 , alignTop
-                , spacing 15
+                , spacing lineSpacing
                 ]
                 (gatherRelationshipItems relSection.items
                     |> List.map (\( label, items ) -> viewRelationshipBody language label items)
@@ -80,7 +80,7 @@ viewRelationshipValue language body =
             -- if neither, don't show anything because we can't!
             ME.unpack
                 (\() ->
-                    viewMaybe (\nm -> el [] (text (extractLabelFromLanguageMap language nm))) body.name
+                    viewMaybe (\nm -> row [ width fill ] [ text (extractLabelFromLanguageMap language nm) ]) body.name
                 )
                 (viewRelatedToBody language body.qualifier)
                 body.relatedTo
@@ -160,7 +160,7 @@ viewRelatedToBody language qualifier body =
                     linkRelated body.label
 
                 PlaceRelationship ->
-                    text (extractLabelFromLanguageMap language body.label)
+                    el [ centerY ] (text (extractLabelFromLanguageMap language body.label))
 
                 UnknownRelationship ->
                     none
@@ -168,7 +168,7 @@ viewRelatedToBody language qualifier body =
         qualifierLabel =
             viewMaybe
                 (\qual ->
-                    el [] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
+                    el [ centerY ] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
                 )
                 qualifier
     in

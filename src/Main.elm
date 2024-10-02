@@ -13,7 +13,9 @@ import Page.Error as NotFound
 import Page.Front as Front
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Record as Record
-import Page.Route as Route exposing (Route(..))
+import Page.Record.Model exposing (RecordPageModel)
+import Page.Record.Msg exposing (RecordMsg)
+import Page.Route as Route exposing (Route(..), isSourcePageRoute)
 import Page.Search as Search
 import Page.SideBar as Sidebar
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, addNationalCollectionQueryParameter)
@@ -43,6 +45,58 @@ view model =
 
     else
         Desktop.view model
+
+
+recordRouteHelper :
+    { initialUrl : Url
+    , route : Route
+    , session : Session
+    }
+    -> ( RecordPageModel RecordMsg, Cmd Msg )
+recordRouteHelper { initialUrl, route, session } =
+    let
+        contentsUrlSuffix =
+            if isSourcePageRoute initialUrl then
+                "/contents"
+
+            else
+                "/sources"
+
+        recordCfg =
+            { incomingUrl = initialUrl
+            , route = route
+            , queryArgs = Nothing
+            , nationalCollection = session.restrictedToNationalCollection
+            , searchPreferences = session.searchPreferences
+            }
+
+        initialBody =
+            Record.init recordCfg
+                |> addNationalCollectionFilter session.restrictedToNationalCollection
+
+        ncQueryParam =
+            Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
+
+        sourceContentsPath =
+            if String.endsWith "/" initialUrl.path then
+                initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
+
+            else
+                initialUrl.path ++ contentsUrlSuffix
+
+        sourcesUrl =
+            { initialUrl
+                | path = sourceContentsPath
+                , query = ncQueryParam
+            }
+    in
+    ( initialBody
+    , Cmd.batch
+        [ Record.recordPageRequest session.cacheBuster initialUrl
+        , Record.recordSearchRequest sourcesUrl
+        ]
+        |> Cmd.map Msg.UserInteractedWithRecordPage
+    )
 
 
 {-|
@@ -125,41 +179,16 @@ init flags initialUrl key =
 
         SourcePageRoute _ ->
             let
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = session.restrictedToNationalCollection
-                    , searchPreferences = session.searchPreferences
-                    }
-
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                ncQueryParam =
-                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
-
-                sourceContentsPath =
-                    if String.endsWith "/" initialUrl.path then
-                        initialUrl.path ++ "contents"
-
-                    else
-                        initialUrl.path ++ "/contents"
-
-                sourcesUrl =
-                    { initialUrl
-                        | path = sourceContentsPath
-                        , query = ncQueryParam
-                    }
+                ( initialBody, initialCmds ) =
+                    recordRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        }
             in
             ( SourcePage session initialBody
             , Cmd.batch
-                [ Cmd.batch
-                    [ Record.recordPageRequest session.cacheBuster initialUrl
-                    , Record.recordSearchRequest sourcesUrl
-                    ]
-                    |> Cmd.map Msg.UserInteractedWithRecordPage
+                [ initialCmds
                 , countryListRequest
                 ]
             )
@@ -204,31 +233,16 @@ init flags initialUrl key =
 
         PersonPageRoute _ ->
             let
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = session.restrictedToNationalCollection
-                    , searchPreferences = session.searchPreferences
-                    }
-
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                ncQueryParam =
-                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
-
-                sourcesUrl =
-                    { initialUrl | path = initialUrl.path ++ "/sources", query = ncQueryParam }
+                ( initialBody, initialCmds ) =
+                    recordRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        }
             in
             ( PersonPage session initialBody
             , Cmd.batch
-                [ Cmd.batch
-                    [ Record.recordPageRequest session.cacheBuster initialUrl
-                    , Record.recordSearchRequest sourcesUrl
-                    ]
-                    |> Cmd.map Msg.UserInteractedWithRecordPage
+                [ initialCmds
                 , countryListRequest
                 ]
             )
@@ -273,31 +287,16 @@ init flags initialUrl key =
 
         InstitutionPageRoute _ ->
             let
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Nothing
-                    , nationalCollection = session.restrictedToNationalCollection
-                    , searchPreferences = session.searchPreferences
-                    }
-
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                ncQueryParam =
-                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
-
-                sourcesUrl =
-                    { initialUrl | path = initialUrl.path ++ "/sources", query = ncQueryParam }
+                ( initialBody, initialCmds ) =
+                    recordRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        }
             in
             ( InstitutionPage session initialBody
             , Cmd.batch
-                [ Cmd.batch
-                    [ Record.recordPageRequest session.cacheBuster initialUrl
-                    , Record.recordSearchRequest sourcesUrl
-                    ]
-                    |> Cmd.map Msg.UserInteractedWithRecordPage
+                [ initialCmds
                 , countryListRequest
                 ]
             )

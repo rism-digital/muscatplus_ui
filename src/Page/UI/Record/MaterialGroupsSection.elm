@@ -8,7 +8,7 @@ import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
 import Page.UI.Components exposing (h3, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
-import Page.UI.Record.Relationship exposing (viewRelationshipBody)
+import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
@@ -60,9 +60,9 @@ viewMaterialGroupRelationships language relSection =
             , alignTop
             , spacing lineSpacing
             ]
-            []
-
-        --(List.map (viewRelationshipBody language) relSection.items)
+            (gatherRelationshipItems relSection.items
+                |> List.map (\( label, items ) -> viewRelationshipBody language label items)
+            )
         ]
 
 

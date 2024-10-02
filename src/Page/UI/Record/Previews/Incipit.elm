@@ -1,7 +1,8 @@
 module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, sectionSpacing)

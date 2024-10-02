@@ -2,7 +2,7 @@ module Desktop.About.Views.About exposing (view)
 
 import Config as C
 import Desktop.About.Views.AboutTexts exposing (aboutTextEnglish, aboutTextFrench, aboutTextGerman, aboutTextItalian)
-import Element exposing (Element, clipY, column, el, fill, height, maximum, none, padding, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, clipY, column, el, fill, height, htmlAttribute, maximum, none, padding, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
