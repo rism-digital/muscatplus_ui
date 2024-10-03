@@ -1,6 +1,9 @@
-module Desktop.Record.Views.SourcePage exposing (view)
+module Desktop.Record.Views exposing (..)
 
 import Desktop.Error.Views
+import Desktop.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
+import Desktop.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
+import Desktop.Record.Views.PlacePage.FullRecordPage exposing (viewFullPlacePage)
 import Desktop.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
 import Element exposing (Element, alignTop, clipY, column, fill, height, none, row, width)
 import Element.Background as Background
@@ -11,16 +14,35 @@ import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
+viewChooser : Session -> RecordPageModel RecordMsg -> ServerData -> Element RecordMsg
+viewChooser session model dataType =
+    case dataType of
+        SourceData body ->
+            viewFullSourcePage session model body
+
+        PersonData body ->
+            viewFullPersonPage session model body
+
+        InstitutionData body ->
+            viewFullInstitutionPage session model body
+
+        PlaceData body ->
+            viewFullPlacePage session model body
+
+        _ ->
+            none
+
+
 view : Session -> RecordPageModel RecordMsg -> Element RecordMsg
 view session model =
     let
         pageView =
             case model.response of
-                Loading (Just (SourceData oldData)) ->
-                    viewFullSourcePage session model oldData
+                Loading (Just dataType) ->
+                    viewChooser session model dataType
 
-                Response (SourceData body) ->
-                    viewFullSourcePage session model body
+                Response dataType ->
+                    viewChooser session model dataType
 
                 Error _ ->
                     Desktop.Error.Views.view session model
@@ -31,7 +53,6 @@ view session model =
     row
         [ width fill
         , height fill
-        , alignTop
         ]
         [ column
             [ width fill

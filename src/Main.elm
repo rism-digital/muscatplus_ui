@@ -12,6 +12,7 @@ import Page.About as About
 import Page.Error as NotFound
 import Page.Front as Front
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
+import Page.Query exposing (QueryArgs)
 import Page.Record as Record
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
@@ -45,58 +46,6 @@ view model =
 
     else
         Desktop.view model
-
-
-recordRouteHelper :
-    { initialUrl : Url
-    , route : Route
-    , session : Session
-    }
-    -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordRouteHelper { initialUrl, route, session } =
-    let
-        contentsUrlSuffix =
-            if isSourcePageRoute initialUrl then
-                "/contents"
-
-            else
-                "/sources"
-
-        recordCfg =
-            { incomingUrl = initialUrl
-            , route = route
-            , queryArgs = Nothing
-            , nationalCollection = session.restrictedToNationalCollection
-            , searchPreferences = session.searchPreferences
-            }
-
-        initialBody =
-            Record.init recordCfg
-                |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-        ncQueryParam =
-            Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
-
-        sourceContentsPath =
-            if String.endsWith "/" initialUrl.path then
-                initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
-
-            else
-                initialUrl.path ++ contentsUrlSuffix
-
-        sourcesUrl =
-            { initialUrl
-                | path = sourceContentsPath
-                , query = ncQueryParam
-            }
-    in
-    ( initialBody
-    , Cmd.batch
-        [ Record.recordPageRequest session.cacheBuster initialUrl
-        , Record.recordSearchRequest sourcesUrl
-        ]
-        |> Cmd.map Msg.UserInteractedWithRecordPage
-    )
 
 
 {-|
@@ -195,38 +144,17 @@ init flags initialUrl key =
 
         SourceContentsPageRoute _ qargs ->
             let
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Just qargs
-                    , nationalCollection = session.restrictedToNationalCollection
-                    , searchPreferences = session.searchPreferences
-                    }
-
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                recordPath =
-                    String.replace "/contents" "" initialUrl.path
-
-                recordUrl =
-                    { initialUrl | path = recordPath }
-
-                newQparams =
-                    addNationalCollectionQueryParameter session qargs
-
-                sourcesUrl =
-                    { initialUrl | query = Just newQparams }
+                ( initialBody, initialCmds ) =
+                    recordContentsRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        , qargs = qargs
+                        }
             in
             ( SourcePage session initialBody
             , Cmd.batch
-                [ Cmd.batch
-                    [ Record.recordPageRequest session.cacheBuster recordUrl
-                    , Record.recordSearchRequest sourcesUrl
-                    , Record.requestPreviewIfSelected initialBody.selectedResult
-                    ]
-                    |> Cmd.map Msg.UserInteractedWithRecordPage
+                [ initialCmds
                 , countryListRequest
                 ]
             )
@@ -249,38 +177,17 @@ init flags initialUrl key =
 
         PersonSourcePageRoute _ qargs ->
             let
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Just qargs
-                    , nationalCollection = session.restrictedToNationalCollection
-                    , searchPreferences = session.searchPreferences
-                    }
-
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                recordPath =
-                    String.replace "/sources" "" initialUrl.path
-
-                recordUrl =
-                    { initialUrl | path = recordPath }
-
-                newQparams =
-                    addNationalCollectionQueryParameter session qargs
-
-                sourcesUrl =
-                    { initialUrl | query = Just newQparams }
+                ( initialBody, initialCmds ) =
+                    recordContentsRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        , qargs = qargs
+                        }
             in
             ( PersonPage session initialBody
             , Cmd.batch
-                [ Cmd.batch
-                    [ Record.recordPageRequest session.cacheBuster recordUrl
-                    , Record.recordSearchRequest sourcesUrl
-                    , Record.requestPreviewIfSelected initialBody.selectedResult
-                    ]
-                    |> Cmd.map Msg.UserInteractedWithRecordPage
+                [ initialCmds
                 , countryListRequest
                 ]
             )
@@ -303,38 +210,17 @@ init flags initialUrl key =
 
         InstitutionSourcePageRoute _ qargs ->
             let
-                recordCfg =
-                    { incomingUrl = initialUrl
-                    , route = route
-                    , queryArgs = Just qargs
-                    , nationalCollection = session.restrictedToNationalCollection
-                    , searchPreferences = session.searchPreferences
-                    }
-
-                initialBody =
-                    Record.init recordCfg
-                        |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-                recordPath =
-                    String.replace "/sources" "" initialUrl.path
-
-                recordUrl =
-                    { initialUrl | path = recordPath }
-
-                newQparams =
-                    addNationalCollectionQueryParameter session qargs
-
-                sourcesUrl =
-                    { initialUrl | query = Just newQparams }
+                ( initialBody, initialCmds ) =
+                    recordContentsRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        , qargs = qargs
+                        }
             in
             ( InstitutionPage session initialBody
             , Cmd.batch
-                [ Cmd.batch
-                    [ Record.recordPageRequest session.cacheBuster recordUrl
-                    , Record.recordSearchRequest sourcesUrl
-                    , Record.requestPreviewIfSelected initialBody.selectedResult
-                    ]
-                    |> Cmd.map Msg.UserInteractedWithRecordPage
+                [ initialCmds
                 , countryListRequest
                 ]
             )
@@ -366,3 +252,105 @@ init flags initialUrl key =
                 , countryListRequest
                 ]
             )
+
+
+recordRouteHelper :
+    { initialUrl : Url
+    , route : Route
+    , session : Session
+    }
+    -> ( RecordPageModel RecordMsg, Cmd Msg )
+recordRouteHelper { initialUrl, route, session } =
+    let
+        contentsUrlSuffix =
+            if isSourcePageRoute initialUrl then
+                "/contents"
+
+            else
+                "/sources"
+
+        recordCfg =
+            { incomingUrl = initialUrl
+            , route = route
+            , queryArgs = Nothing
+            , nationalCollection = session.restrictedToNationalCollection
+            , searchPreferences = session.searchPreferences
+            }
+
+        initialBody =
+            Record.init recordCfg
+                |> addNationalCollectionFilter session.restrictedToNationalCollection
+
+        ncQueryParam =
+            Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
+
+        sourceContentsPath =
+            if String.endsWith "/" initialUrl.path then
+                initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
+
+            else
+                initialUrl.path ++ contentsUrlSuffix
+
+        sourcesUrl =
+            { initialUrl
+                | path = sourceContentsPath
+                , query = ncQueryParam
+            }
+    in
+    ( initialBody
+    , Cmd.batch
+        [ Record.recordPageRequest session.cacheBuster initialUrl
+        , Record.recordSearchRequest sourcesUrl
+        ]
+        |> Cmd.map Msg.UserInteractedWithRecordPage
+    )
+
+
+recordContentsRouteHelper :
+    { initialUrl : Url
+    , route : Route
+    , session : Session
+    , qargs : QueryArgs
+    }
+    -> ( RecordPageModel RecordMsg, Cmd Msg )
+recordContentsRouteHelper { initialUrl, route, session, qargs } =
+    let
+        contentsUrlSuffix =
+            if isSourcePageRoute initialUrl then
+                "/contents"
+
+            else
+                "/sources"
+
+        recordCfg =
+            { incomingUrl = initialUrl
+            , route = route
+            , queryArgs = Just qargs
+            , nationalCollection = session.restrictedToNationalCollection
+            , searchPreferences = session.searchPreferences
+            }
+
+        initialBody =
+            Record.init recordCfg
+                |> addNationalCollectionFilter session.restrictedToNationalCollection
+
+        recordPath =
+            String.replace contentsUrlSuffix "" initialUrl.path
+
+        recordUrl =
+            { initialUrl | path = recordPath }
+
+        newQparams =
+            addNationalCollectionQueryParameter session qargs
+
+        sourcesUrl =
+            { initialUrl | query = Just newQparams }
+    in
+    ( initialBody
+    , Cmd.batch
+        [ Record.recordPageRequest session.cacheBuster recordUrl
+        , Record.recordSearchRequest sourcesUrl
+        , Record.requestPreviewIfSelected initialBody.selectedResult
+        ]
+        |> Cmd.map Msg.UserInteractedWithRecordPage
+    )

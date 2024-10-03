@@ -3,14 +3,16 @@ module Update exposing (update)
 import Basics.Extra as BE
 import Browser
 import Browser.Navigation as Nav
-import Device exposing (setDevice, setWindow)
+import Device exposing (isMobileView, setDevice, setWindow)
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.About as AboutPage
 import Page.BottomBar as BottomBar
+import Page.BottomBar.Options as BottomBarOptions
 import Page.Error as NotFoundPage
 import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
+import Page.NavigationBar exposing (NavigationBar(..), setNavigationBar)
 import Page.Query exposing (QueryArgs, buildQueryParameters, toNextQuery)
 import Page.Record as RecordPage
 import Page.Record.Model exposing (RecordPageModel)
@@ -18,160 +20,10 @@ import Page.Record.Msg exposing (RecordMsg)
 import Page.Route as Route exposing (Route, isMEIDownloadRoute, isPNGDownloadRoute, isSourcePageRoute, parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
+import Page.SideBar.Options as SideBarOptions
 import Session exposing (Session)
 import Url exposing (Url)
 import Url.Builder exposing (toQuery)
-
-
-changeRecordPageHelper :
-    { model : Model
-    , previousUrl : Url
-    , url : Url
-    , newSession : Session
-    , route : Route
-    }
-    -> ( RecordPageModel RecordMsg, Cmd Msg )
-changeRecordPageHelper { model, previousUrl, url, newSession, route } =
-    let
-        recordCfg =
-            { incomingUrl = url
-            , route = route
-            , queryArgs = Nothing
-            , nationalCollection = newSession.restrictedToNationalCollection
-            , searchPreferences = newSession.searchPreferences
-            }
-
-        contentsUrlSuffix =
-            if isSourcePageRoute url then
-                "/contents"
-
-            else
-                "/sources"
-
-        samePage oldBody =
-            if url.path == previousUrl.path || url.path == String.replace contentsUrlSuffix "" previousUrl.path then
-                ( RecordPage.load recordCfg oldBody, True )
-
-            else
-                ( RecordPage.init recordCfg, False )
-
-        ( newPageBody, isSameRecordPage ) =
-            case ( route, model ) of
-                ( Route.SourcePageRoute _, SourcePage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.PersonPageRoute _, PersonPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.InstitutionPageRoute _, InstitutionPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                _ ->
-                    ( RecordPage.init recordCfg, False )
-    in
-    if isSameRecordPage then
-        ( newPageBody, Cmd.none )
-
-    else
-        let
-            sourceQuery =
-                toNextQuery newPageBody.activeSearch
-                    |> buildQueryParameters
-                    |> toQuery
-                    |> String.dropLeft 1
-
-            sourceContentsPath =
-                if String.endsWith "/" url.path then
-                    url.path ++ String.dropLeft 1 contentsUrlSuffix
-
-                else
-                    url.path ++ contentsUrlSuffix
-
-            sourcesUrl =
-                { url
-                    | path = sourceContentsPath
-                    , query = Just sourceQuery
-                }
-        in
-        ( newPageBody
-        , Cmd.batch
-            [ RecordPage.recordPageRequest newSession.cacheBuster url
-            , RecordPage.recordSearchRequest sourcesUrl
-            ]
-            |> Cmd.map Msg.UserInteractedWithRecordPage
-        )
-
-
-changeRecordContentsPageHelper :
-    { model : Model
-    , previousUrl : Url
-    , url : Url
-    , newSession : Session
-    , route : Route
-    , qargs : QueryArgs
-    }
-    -> ( RecordPageModel RecordMsg, Cmd Msg )
-changeRecordContentsPageHelper { model, previousUrl, url, newSession, route, qargs } =
-    let
-        contentsUrlSuffix =
-            if isSourcePageRoute url then
-                "/contents"
-
-            else
-                "/sources"
-
-        recordPath =
-            String.replace contentsUrlSuffix "" url.path
-
-        recordCfg =
-            { incomingUrl = url
-            , route = route
-            , queryArgs = Just qargs
-            , nationalCollection = newSession.restrictedToNationalCollection
-            , searchPreferences = newSession.searchPreferences
-            }
-
-        samePage oldBody =
-            if url.path == previousUrl.path || previousUrl.path == recordPath then
-                RecordPage.load recordCfg oldBody
-
-            else
-                RecordPage.init recordCfg
-
-        newPageBody =
-            case ( route, model ) of
-                ( Route.PersonSourcePageRoute _ _, PersonPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.SourceContentsPageRoute _ _, SourcePage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.InstitutionSourcePageRoute _ _, InstitutionPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                _ ->
-                    RecordPage.init recordCfg
-
-        recordUrl =
-            { url | path = recordPath }
-
-        newQparams =
-            toNextQuery newPageBody.activeSearch
-                |> buildQueryParameters
-                |> toQuery
-                |> String.dropLeft 1
-
-        sourceUrl =
-            { url | query = Just newQparams }
-    in
-    ( newPageBody
-    , Cmd.batch
-        [ RecordPage.recordPageRequest newSession.cacheBuster recordUrl
-        , RecordPage.recordSearchRequest sourceUrl
-        , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
-        ]
-        |> Cmd.map Msg.UserInteractedWithRecordPage
-    )
 
 
 changePage : Url -> Model -> ( Model, Cmd Msg )
@@ -389,24 +241,38 @@ update msg model =
                 Browser.Internal url ->
                     -- if the app is loading the viewer, treat it as an external link.
                     if treatUrlAsExternal url then
-                        ( model, Nav.load (Url.toString url) )
+                        ( model
+                        , Url.toString url
+                            |> Nav.load
+                        )
 
                     else
                         let
                             session =
                                 toSession model
                         in
-                        ( model, Nav.pushUrl session.key (Url.toString url) )
+                        ( model
+                        , Url.toString url
+                            |> Nav.pushUrl session.key
+                        )
 
                 Browser.External href ->
                     ( model, Nav.load href )
 
         ( Msg.UserResizedWindow device width height, _ ) ->
             let
+                navBar =
+                    if isMobileView device then
+                        BottomBar BottomBarOptions.init
+
+                    else
+                        SideBar SideBarOptions.init
+
                 newModel =
                     toSession model
                         |> setDevice device
                         |> setWindow ( width, height )
+                        |> setNavigationBar navBar
                         |> BE.flip updateSession model
             in
             ( newModel, Cmd.none )
@@ -478,4 +344,155 @@ updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd 
 updateWith toModel toMsg _ ( subModel, subCmd ) =
     ( toModel subModel
     , Cmd.map toMsg subCmd
+    )
+
+
+changeRecordPageHelper :
+    { model : Model
+    , previousUrl : Url
+    , url : Url
+    , newSession : Session
+    , route : Route
+    }
+    -> ( RecordPageModel RecordMsg, Cmd Msg )
+changeRecordPageHelper { model, previousUrl, url, newSession, route } =
+    let
+        recordCfg =
+            { incomingUrl = url
+            , route = route
+            , queryArgs = Nothing
+            , nationalCollection = newSession.restrictedToNationalCollection
+            , searchPreferences = newSession.searchPreferences
+            }
+
+        contentsUrlSuffix =
+            if isSourcePageRoute url then
+                "/contents"
+
+            else
+                "/sources"
+
+        samePage oldBody =
+            if url.path == previousUrl.path || url.path == String.replace contentsUrlSuffix "" previousUrl.path then
+                ( RecordPage.load recordCfg oldBody, True )
+
+            else
+                ( RecordPage.init recordCfg, False )
+
+        ( newPageBody, isSameRecordPage ) =
+            case ( route, model ) of
+                ( Route.SourcePageRoute _, SourcePage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                ( Route.PersonPageRoute _, PersonPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                ( Route.InstitutionPageRoute _, InstitutionPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                _ ->
+                    ( RecordPage.init recordCfg, False )
+    in
+    if isSameRecordPage then
+        ( newPageBody, Cmd.none )
+
+    else
+        let
+            sourceQuery =
+                toNextQuery newPageBody.activeSearch
+                    |> buildQueryParameters
+                    |> toQuery
+                    |> String.dropLeft 1
+
+            sourceContentsPath =
+                if String.endsWith "/" url.path then
+                    url.path ++ String.dropLeft 1 contentsUrlSuffix
+
+                else
+                    url.path ++ contentsUrlSuffix
+
+            sourcesUrl =
+                { url
+                    | path = sourceContentsPath
+                    , query = Just sourceQuery
+                }
+        in
+        ( newPageBody
+        , Cmd.batch
+            [ RecordPage.recordPageRequest newSession.cacheBuster url
+            , RecordPage.recordSearchRequest sourcesUrl
+            ]
+            |> Cmd.map Msg.UserInteractedWithRecordPage
+        )
+
+
+changeRecordContentsPageHelper :
+    { model : Model
+    , previousUrl : Url
+    , url : Url
+    , newSession : Session
+    , route : Route
+    , qargs : QueryArgs
+    }
+    -> ( RecordPageModel RecordMsg, Cmd Msg )
+changeRecordContentsPageHelper { model, previousUrl, url, newSession, route, qargs } =
+    let
+        contentsUrlSuffix =
+            if isSourcePageRoute url then
+                "/contents"
+
+            else
+                "/sources"
+
+        recordPath =
+            String.replace contentsUrlSuffix "" url.path
+
+        recordCfg =
+            { incomingUrl = url
+            , route = route
+            , queryArgs = Just qargs
+            , nationalCollection = newSession.restrictedToNationalCollection
+            , searchPreferences = newSession.searchPreferences
+            }
+
+        samePage oldBody =
+            if url.path == previousUrl.path || previousUrl.path == recordPath then
+                RecordPage.load recordCfg oldBody
+
+            else
+                RecordPage.init recordCfg
+
+        newPageBody =
+            case ( route, model ) of
+                ( Route.PersonSourcePageRoute _ _, PersonPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                ( Route.SourceContentsPageRoute _ _, SourcePage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                ( Route.InstitutionSourcePageRoute _ _, InstitutionPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                _ ->
+                    RecordPage.init recordCfg
+
+        recordUrl =
+            { url | path = recordPath }
+
+        newQparams =
+            toNextQuery newPageBody.activeSearch
+                |> buildQueryParameters
+                |> toQuery
+                |> String.dropLeft 1
+
+        sourceUrl =
+            { url | query = Just newQparams }
+    in
+    ( newPageBody
+    , Cmd.batch
+        [ RecordPage.recordPageRequest newSession.cacheBuster recordUrl
+        , RecordPage.recordSearchRequest sourceUrl
+        , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
+        ]
+        |> Cmd.map Msg.UserInteractedWithRecordPage
     )

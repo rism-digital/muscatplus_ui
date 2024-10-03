@@ -3,10 +3,9 @@ module Mobile exposing (view)
 import Browser
 import Css
 import Css.Global
-import Element exposing (above, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, layout, none, padding, paddingXY, px, row, spacing, text, width)
+import Element exposing (alignLeft, centerX, centerY, column, el, fill, height, layout, paddingXY, px, row, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
-import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
 import Loading exposing (loadingIndicator)
 import Mobile.About.Views.About
@@ -15,14 +14,12 @@ import Mobile.About.Views.Options
 import Mobile.BottomBar.Views
 import Mobile.Error.Views
 import Mobile.Front.Views
-import Mobile.Record.Views.InstitutionPage
-import Mobile.Record.Views.PersonPage
+import Mobile.Record.Views
 import Mobile.Record.Views.PlacePage
-import Mobile.Record.Views.SourcePage
 import Mobile.Search.Views
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
-import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize, minimalDropShadow)
+import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
 
@@ -71,13 +68,13 @@ view model =
                     Element.map Msg.UserInteractedWithFrontPage (Mobile.Front.Views.view session pageModel)
 
                 SourcePage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.SourcePage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.view session pageModel)
 
                 PersonPage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.PersonPage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.view session pageModel)
 
                 InstitutionPage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.InstitutionPage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.view session pageModel)
 
                 AboutPage session pageModel ->
                     Element.map Msg.UserInteractedWithAboutPage (Mobile.About.Views.About.view session pageModel)
@@ -120,9 +117,9 @@ view model =
                     [ centerX
                     , width fill
                     , height fill
-                    , inFront logoView
                     ]
-                    [ loadingIndicator model
+                    [ logoView
+                    , loadingIndicator model
                     , pageView
                     , bottomBarView
                     ]

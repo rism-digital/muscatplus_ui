@@ -8,10 +8,7 @@ import Desktop.About.Views.Help
 import Desktop.About.Views.Options
 import Desktop.Error.Views
 import Desktop.Front.Views
-import Desktop.Record.Views.InstitutionPage
-import Desktop.Record.Views.PersonPage
-import Desktop.Record.Views.PlacePage
-import Desktop.Record.Views.SourcePage
+import Desktop.Record.Views
 import Desktop.Search.Views
 import Desktop.SideBar.Views
 import Element exposing (DeviceClass(..), Element, Orientation(..), alignTop, centerX, column, fill, height, inFront, layout, px, row, text, width)
@@ -109,13 +106,13 @@ view model =
                     Element.map Msg.UserInteractedWithFrontPage (Desktop.Front.Views.view session pageModel)
 
                 SourcePage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.SourcePage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
 
                 PersonPage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.PersonPage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
 
                 InstitutionPage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.InstitutionPage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
 
                 AboutPage session pageModel ->
                     Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.About.view session pageModel)
@@ -127,7 +124,7 @@ view model =
                     Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.Options.view session pageModel)
 
                 PlacePage session pageModel ->
-                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.PlacePage.view session pageModel)
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
     in
     { title = pageTitle
     , body =

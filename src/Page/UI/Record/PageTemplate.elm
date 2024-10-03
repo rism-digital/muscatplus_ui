@@ -1,5 +1,6 @@
 module Page.UI.Record.PageTemplate exposing
-    ( mobileSubHeaderTemplate
+    ( mobilePageHeaderTemplate
+    , mobileSubHeaderTemplate
     , pageFooterTemplateRouter
     , pageFullMobileRecordTemplate
     , pageFullRecordTemplate
@@ -20,7 +21,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, minimalDropShadow)
-import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, h3s, resourceLink)
+import Page.UI.Components exposing (externalLinkTemplate, h1, h2, h2s, h3s, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
@@ -153,6 +154,20 @@ pageHeaderTemplate language icon header =
             [ htmlAttribute (HA.id header.sectionToc)
             ]
         , hLevel = h1 language
+        , icon = icon
+        }
+
+
+mobilePageHeaderTemplate :
+    Language
+    -> Maybe (Element msg)
+    -> { a | label : LanguageMap }
+    -> Element msg
+mobilePageHeaderTemplate language icon header =
+    headerTmpl
+        { body = header
+        , extraAttrs = []
+        , hLevel = h2s language
         , icon = icon
         }
 
