@@ -7,8 +7,8 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, to
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Components exposing (renderLabel, viewLabelValueField)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Components exposing (renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -50,13 +50,11 @@ viewRelationshipBody language label relationships =
         , alignTop
         ]
         [ textColumn
-            (List.append
-                [ width fill
-                , height fill
-                , alignTop
-                ]
-                [ spacing sectionSpacing ]
-            )
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing sectionSpacing
+            ]
             [ wrappedRow
                 [ width fill
                 , height fill
@@ -153,14 +151,14 @@ viewRelatedToBody language qualifier body =
                 PersonRelationship ->
                     linkRelated body.label
 
-                SourceRelationship ->
-                    linkRelated body.label
-
                 InstitutionRelationship ->
                     linkRelated body.label
 
                 PlaceRelationship ->
                     el [ centerY ] (text (extractLabelFromLanguageMap language body.label))
+
+                SourceRelationship ->
+                    linkRelated body.label
 
                 UnknownRelationship ->
                     none

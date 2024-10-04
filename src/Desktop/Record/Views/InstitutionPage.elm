@@ -1,7 +1,8 @@
-module Desktop.Record.Views.InstitutionPage.FullRecordPage exposing (viewFullInstitutionPage)
+module Desktop.Record.Views.InstitutionPage exposing (viewFullInstitutionPage)
 
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
@@ -37,7 +38,6 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
                 && ME.isNothing body.notes
                 && ME.isNothing body.externalResources
                 && ME.isNothing body.externalAuthorities
-                && ME.isNothing body.location
 
         pageBody =
             pageBodyOrEmpty language
@@ -83,9 +83,6 @@ viewFullInstitutionPage session model body =
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTabBody session model
 
-                PrintHoldingsTab _ ->
-                    none
-
         headerHeight =
             if session.isFramed then
                 px (recordTitleHeight + searchSourcesLinkHeight)
@@ -119,12 +116,13 @@ viewFullInstitutionPage session model body =
     row
         [ width fill
         , height fill
-        , alignTop
         ]
         [ column
             [ width fill
             , height fill
             , alignTop
+            , clipY
+            , Background.color colourScheme.white
             ]
             [ row
                 [ width fill

@@ -67,7 +67,7 @@ renderer =
     , strikethrough = \content -> Element.paragraph [ Font.strike ] content
     , hardLineBreak = Html.br [] [] |> Element.html
     , link =
-        \{ title, destination } body ->
+        \{ destination } body ->
             Element.newTabLink []
                 { label =
                     Element.paragraph
@@ -145,12 +145,12 @@ renderer =
             , Element.width Element.fill
             ]
     , tableCell =
-        \maybeAlignment children ->
+        \_ children ->
             Element.paragraph
                 tableBorder
                 children
     , tableHeaderCell =
-        \maybeAlignment children ->
+        \_ children ->
             Element.paragraph
                 tableBorder
                 children

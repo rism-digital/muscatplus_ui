@@ -18,7 +18,6 @@ type Model
     | AboutPage Session About.Model
     | HelpPage Session
     | OptionsPage Session About.Model
-    | PlacePage Session Record.Model
 
 
 toSession : Model -> Session
@@ -51,9 +50,6 @@ toSession model =
         OptionsPage session _ ->
             session
 
-        PlacePage session _ ->
-            session
-
 
 updateSession : Session -> Model -> Model
 updateSession newSession model =
@@ -84,6 +80,3 @@ updateSession newSession model =
 
         OptionsPage _ aboutModel ->
             OptionsPage newSession aboutModel
-
-        PlacePage _ pageModel ->
-            PlacePage newSession pageModel

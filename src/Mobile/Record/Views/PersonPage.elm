@@ -1,6 +1,7 @@
-module Mobile.Record.Views.PersonPage.FullRecordPage exposing (..)
+module Mobile.Record.Views.PersonPage exposing (viewFullMobilePersonPage)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
+import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
+import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Page.Record.Model exposing (RecordPageModel)
@@ -17,7 +18,7 @@ viewFullMobilePersonPage :
     -> RecordPageModel RecordMsg
     -> PersonBody
     -> Element RecordMsg
-viewFullMobilePersonPage session model body =
+viewFullMobilePersonPage session _ body =
     let
         icon =
             el
@@ -31,18 +32,19 @@ viewFullMobilePersonPage session model body =
     row
         [ width fill
         , height fill
-        , alignTop
         ]
         [ column
             [ width fill
             , height fill
             , alignTop
+            , clipY
+            , Background.color colourScheme.white
             ]
             [ row
                 [ width fill
                 , paddingXY 10 10
                 , Border.widthEach { bottom = 4, left = 0, right = 0, top = 0 }
-                , htmlAttribute <| HA.style "border-bottom-style" "double"
+                , htmlAttribute (HA.style "border-bottom-style" "double")
                 , Border.color colourScheme.midGrey
                 ]
                 [ mobilePageHeaderTemplate session.language (Just icon) body ]

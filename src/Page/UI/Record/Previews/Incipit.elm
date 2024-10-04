@@ -9,8 +9,7 @@ import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, sectionS
 import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
 import Page.UI.Images exposing (musicNotationSvg)
 import Page.UI.Record.Incipits exposing (viewIncipit)
-import Page.UI.Record.PageTemplate exposing (pageLinkTemplate, subHeaderTemplate)
-import Page.UI.Record.SourceItemsSection exposing (viewSourceItem)
+import Page.UI.Record.PageTemplate exposing (subHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 

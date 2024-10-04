@@ -1,7 +1,7 @@
 module Page.SideBar exposing (Msg, countryListRequest, update)
 
 import Browser.Navigation as Nav
-import Debouncer.Messages as Debouncer exposing (Debouncer, UpdateConfig)
+import Debouncer.Messages as Debouncer exposing (UpdateConfig)
 import Page.NavigationBar exposing (NavigationBar(..))
 import Page.Query exposing (buildFrontPageUrl)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
@@ -174,14 +174,6 @@ update msg session =
               }
             , Cmd.none
             )
-
-        NothingHappened ->
-            ( session, Cmd.none )
-
-
-setSideBarNavOptions : Session -> SideBarOptions -> Session
-setSideBarNavOptions session options =
-    { session | navigationBar = SideBar options }
 
 
 updateDebouncer : SideBarOptions -> UpdateConfig SideBarMsg Session

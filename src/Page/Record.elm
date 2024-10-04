@@ -493,9 +493,6 @@ update session msg model =
                                         [ searchRequest
                                         , Nav.pushUrl session.key searchUrl
                                         ]
-
-                        PrintHoldingsTab holdingsUrl ->
-                            Nav.pushUrl session.key holdingsUrl
             in
             ( { model
                 | currentTab = recordTab

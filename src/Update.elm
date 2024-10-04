@@ -267,15 +267,14 @@ update msg model =
 
                     else
                         SideBar SideBarOptions.init
-
-                newModel =
-                    toSession model
-                        |> setDevice device
-                        |> setWindow ( width, height )
-                        |> setNavigationBar navBar
-                        |> BE.flip updateSession model
             in
-            ( newModel, Cmd.none )
+            ( toSession model
+                |> setDevice device
+                |> setWindow ( width, height )
+                |> setNavigationBar navBar
+                |> BE.flip updateSession model
+            , Cmd.none
+            )
 
         ( Msg.UserInteractedWithFrontPage frontMsg, FrontPage session pageModel ) ->
             FrontPage.update session frontMsg pageModel
@@ -296,10 +295,6 @@ update msg model =
         ( Msg.UserInteractedWithRecordPage recordMsg, InstitutionPage session pageModel ) ->
             RecordPage.update session recordMsg pageModel
                 |> updateWith (InstitutionPage session) Msg.UserInteractedWithRecordPage model
-
-        ( Msg.UserInteractedWithRecordPage recordMsg, PlacePage session pageModel ) ->
-            RecordPage.update session recordMsg pageModel
-                |> updateWith (PlacePage session) Msg.UserInteractedWithRecordPage model
 
         ( Msg.UserInteractedWithNotFoundPage notFoundMsg, NotFoundPage session pageModel ) ->
             NotFoundPage.update session notFoundMsg pageModel
@@ -464,10 +459,10 @@ changeRecordContentsPageHelper { model, previousUrl, url, newSession, route, qar
 
         newPageBody =
             case ( route, model ) of
-                ( Route.PersonSourcePageRoute _ _, PersonPage _ oldPageBody ) ->
+                ( Route.SourceContentsPageRoute _ _, SourcePage _ oldPageBody ) ->
                     samePage oldPageBody
 
-                ( Route.SourceContentsPageRoute _ _, SourcePage _ oldPageBody ) ->
+                ( Route.PersonSourcePageRoute _ _, PersonPage _ oldPageBody ) ->
                     samePage oldPageBody
 
                 ( Route.InstitutionSourcePageRoute _ _, InstitutionPage _ oldPageBody ) ->

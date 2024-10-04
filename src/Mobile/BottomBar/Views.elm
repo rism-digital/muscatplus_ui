@@ -1,6 +1,6 @@
-module Mobile.BottomBar.Views exposing (ResponsiveSizes, view)
+module Mobile.BottomBar.Views exposing (view)
 
-import Element exposing (DeviceClass(..), Element, alignBottom, alignLeft, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingEach, paddingXY, px, row, spacing, text, width)
+import Element exposing (DeviceClass(..), Element, alignBottom, alignLeft, centerX, centerY, column, el, fill, height, htmlAttribute, paddingEach, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -8,7 +8,7 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Page.BottomBar.Msg exposing (BottomBarMsg(..))
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
-import Page.UI.Images exposing (globeSvg, institutionSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
+import Page.UI.Images exposing (globeSvg, institutionSvg, musicNotationSvg, peopleSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 

@@ -6,7 +6,6 @@ module Page.UI.Record.PageTemplate exposing
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
-    , pageLinkTemplate
     , subHeaderTemplate
     )
 
@@ -21,7 +20,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, minimalDropShadow)
-import Page.UI.Components exposing (externalLinkTemplate, h1, h2, h2s, h3s, resourceLink)
+import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, h3s, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
@@ -40,7 +39,7 @@ pageFooterTemplateRouter session language footer =
 
 
 pageFooterTemplateFramed : Session -> Language -> { a | id : String, recordHistory : RecordHistory } -> Element msg
-pageFooterTemplateFramed session language footer =
+pageFooterTemplateFramed _ _ footer =
     row
         [ width fill
         , alignBottom

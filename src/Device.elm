@@ -1,6 +1,11 @@
-module Device exposing (detectDevice, isMobileView, setDevice, setWindow)
+module Device exposing (DeviceView(..), detectDevice, detectView, isMobileView, setDevice, setWindow)
 
 import Element exposing (Device, DeviceClass(..), Orientation(..), classifyDevice)
+
+
+type DeviceView
+    = MobileView
+    | DesktopView
 
 
 detectDevice : Int -> Int -> Device
@@ -18,6 +23,15 @@ setWindow newWindow oldRecord =
     { oldRecord | window = newWindow }
 
 
+detectView : Device -> DeviceView
+detectView device =
+    if isMobileView device then
+        MobileView
+
+    else
+        DesktopView
+
+
 isMobileView : Device -> Bool
 isMobileView { class, orientation } =
     case ( class, orientation ) of
@@ -27,5 +41,5 @@ isMobileView { class, orientation } =
         ( Tablet, Portrait ) ->
             True
 
-        ( _, _ ) ->
+        _ ->
             False

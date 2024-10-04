@@ -93,20 +93,6 @@ labelContainer =
         ]
 
 
-{-| Display as disabled, removing the click Msg
--}
-setIsDisabled : Bool -> Toggle msg -> Toggle msg
-setIsDisabled isDisabled_ (Toggle config) =
-    Toggle { config | isDisabled = isDisabled_ }
-
-
-{-| Display as loading, removing the click Msg
--}
-setIsError : Bool -> Toggle msg -> Toggle msg
-setIsError isError_ (Toggle config) =
-    Toggle { config | isError = isError_ }
-
-
 toggle : Bool -> Bool -> Bool -> HS.Attribute msg
 toggle toggle_ isDisabled isError =
     css

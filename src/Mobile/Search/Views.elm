@@ -1,7 +1,8 @@
 module Mobile.Search.Views exposing (view)
 
 import Desktop.Search.Views.Facets exposing (facetSearchMsgConfig)
-import Element exposing (Element, alignTop, centerX, column, fill, height, inFront, none, px, row, scrollbarY, width)
+import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, none, px, row, scrollbarY, width)
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Mobile.Error.Views
@@ -82,6 +83,7 @@ view session model =
         ]
 
 
+searchPageTopBar : Element SearchMsg
 searchPageTopBar =
     row
         [ width fill
@@ -140,12 +142,13 @@ searchResultsViewRouter session model =
 
 
 viewMobileSearchResultsSection : SearchResultsSectionConfig a msg -> Bool -> SearchBody -> Element msg
-viewMobileSearchResultsSection cfg resultsLoading body =
+viewMobileSearchResultsSection cfg _ body =
     row
         [ width fill
         , height fill
         , alignTop
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill

@@ -2,9 +2,6 @@ module SearchPreferences exposing (SearchPreferences, searchPreferencesDecoder)
 
 import Json.Decode as Decode exposing (Decoder, bool, list, string)
 import Json.Decode.Pipeline exposing (optional, required)
-import Json.Encode as Encode
-import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
-import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant)
 import Set exposing (Set)
 
 
@@ -31,26 +28,6 @@ type alias SearchPreferences =
     { expandedFacetPanels : Set String
     , audioMuted : Bool
     }
-
-
-defaultPreferences : SearchPreferences
-defaultPreferences =
-    { expandedFacetPanels = Set.empty
-    , audioMuted = True
-    }
-
-
-encodeSearchPreferences : SearchPreferences -> Encode.Value
-encodeSearchPreferences prefs =
-    Encode.object
-        [ ( "expandedFacetPanels", Encode.list (\a -> Encode.string a) (Set.toList prefs.expandedFacetPanels) )
-        ]
-
-
-saveSearchPreference : { key : String, value : SearchPreferenceVariant } -> Cmd msg
-saveSearchPreference pref =
-    encodeMessageForPortSend (PortSendSaveSearchPreference pref)
-        |> sendOutgoingMessageOnPort
 
 
 searchPreferencesDecoder : Decoder SearchPreferences

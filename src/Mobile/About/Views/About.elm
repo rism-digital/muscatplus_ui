@@ -7,5 +7,5 @@ import Session exposing (Session)
 
 
 view : Session -> AboutPageModel -> Element AboutMsg
-view session model =
+view _ _ =
     none

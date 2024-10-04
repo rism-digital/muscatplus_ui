@@ -12,7 +12,6 @@ import Page.RecordTypes.Front exposing (frontBodyDecoder)
 import Page.RecordTypes.Incipit exposing (incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)
 import Page.RecordTypes.Person exposing (personBodyDecoder)
-import Page.RecordTypes.Place exposing (placeBodyDecoder)
 import Page.RecordTypes.Search exposing (searchBodyDecoder)
 import Page.RecordTypes.Source exposing (sourceBodyDecoder)
 import Response exposing (ServerData(..))
@@ -49,11 +48,6 @@ personResponseDecoder =
     Decode.map PersonData personBodyDecoder
 
 
-placeResponseDecoder : Decoder ServerData
-placeResponseDecoder =
-    Decode.map PlaceData placeBodyDecoder
-
-
 externalRecordResponseDecoder : Decoder ServerData
 externalRecordResponseDecoder =
     Decode.map ExternalData externalRecordBodyDecoder
@@ -70,9 +64,6 @@ recordResponseConverter typevalue =
 
         Institution ->
             institutionResponseDecoder
-
-        Place ->
-            placeResponseDecoder
 
         Incipit ->
             incipitResponseDecoder

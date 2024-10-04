@@ -172,10 +172,6 @@ type alias IncipitResultBody =
     }
 
 
-type alias IncipitResultFlags =
-    {}
-
-
 type alias InstitutionResultBody =
     { id : String
     , label : LanguageMap

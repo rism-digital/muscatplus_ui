@@ -288,9 +288,6 @@ update msg model =
             , Cmd.none
             )
 
-        NothingHappenedWithTheKeyboard ->
-            ( model, Cmd.none )
-
 
 updateDebouncerPAESearchConfig : Debouncer.UpdateConfig KeyboardMsg (KeyboardModel KeyboardMsg)
 updateDebouncerPAESearchConfig =

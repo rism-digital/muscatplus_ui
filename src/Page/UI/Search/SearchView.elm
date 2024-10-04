@@ -221,7 +221,7 @@ viewSearchResultsSection cfg resultsLoading body =
 
 
 viewActiveFilters : ActiveFiltersCfg a b msg -> Element msg
-viewActiveFilters { session, model, body, userRemovedActiveFilterMsg } =
+viewActiveFilters { session, model, userRemovedActiveFilterMsg } =
     let
         nextQuery =
             .nextQuery model.activeSearch

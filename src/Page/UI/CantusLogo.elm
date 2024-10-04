@@ -2,7 +2,7 @@ module Page.UI.CantusLogo exposing (cantusLogo)
 
 import Element exposing (Element, html)
 import Svg
-import VirtualDom exposing (Attribute, attribute)
+import VirtualDom exposing (attribute)
 
 
 cantusLogo : Element msg

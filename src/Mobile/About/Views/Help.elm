@@ -5,5 +5,5 @@ import Session exposing (Session)
 
 
 view : Session -> Element msg
-view session =
+view _ =
     none

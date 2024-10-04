@@ -1,8 +1,9 @@
-module Desktop.Record.Views.SourcePage.FullRecordPage exposing (viewFullSourcePage)
+module Desktop.Record.Views.SourcePage exposing (viewFullSourcePage)
 
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language)
@@ -50,9 +51,6 @@ viewFullSourcePage session model body =
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTabBody session model
 
-                PrintHoldingsTab _ ->
-                    none
-
         headerHeight =
             if session.isFramed then
                 px (recordTitleHeight + searchSourcesLinkHeight)
@@ -90,12 +88,13 @@ viewFullSourcePage session model body =
     row
         [ width fill
         , height fill
-        , alignTop
         ]
         [ column
             [ width fill
             , height fill
             , alignTop
+            , clipY
+            , Background.color colourScheme.white
             ]
             [ row
                 [ width fill

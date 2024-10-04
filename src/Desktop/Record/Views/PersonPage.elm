@@ -1,8 +1,10 @@
-module Desktop.Record.Views.PersonPage.FullRecordPage exposing (viewFullPersonPage)
+module Desktop.Record.Views.PersonPage exposing (viewFullPersonPage)
 
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element.Background as Background
 import Element.Border as Border
+import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
@@ -31,7 +33,6 @@ viewDescriptionTab language body =
             ME.isNothing body.biographicalDetails
                 && ME.isNothing body.nameVariants
                 && ME.isNothing body.relationships
-                && ME.isNothing body.relationships
                 && ME.isNothing body.notes
                 && ME.isNothing body.externalResources
                 && ME.isNothing body.externalAuthorities
@@ -53,6 +54,7 @@ viewDescriptionTab language body =
         , height fill
         , alignTop
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill
@@ -78,9 +80,6 @@ viewFullPersonPage session model body =
 
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTabBody session model
-
-                PrintHoldingsTab _ ->
-                    none
 
         headerHeight =
             if session.isFramed then
@@ -115,12 +114,13 @@ viewFullPersonPage session model body =
     row
         [ width fill
         , height fill
-        , alignTop
         ]
         [ column
             [ width fill
             , height fill
             , alignTop
+            , clipY
+            , Background.color colourScheme.white
             ]
             [ row
                 [ width fill

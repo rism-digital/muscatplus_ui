@@ -18,13 +18,11 @@ module Page.UI.Components exposing
     , resourceLink
     , sourceIconChooser
     , sourceTypeIconChooser
-    , viewLabelValueField
     , viewParagraphField
     , viewSummaryField
     )
 
-import Css
-import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paddingXY, paragraph, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -32,17 +30,15 @@ import Element.Region as Region
 import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
-import Html.Styled as HS exposing (toUnstyled)
-import Html.Styled.Attributes as HSA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, limitLength)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
 import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
-import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
+import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (choose, toLinkedHtml)
 import Validate
@@ -131,43 +127,6 @@ basicCheckbox checked =
             )
         ]
         none
-
-
-dividerWithText : String -> Element msg
-dividerWithText dividerText =
-    let
-        { blue, green, red } =
-            colourScheme.midGrey
-                |> rgbaFloatToInt
-
-        beforeAndAfterStyles =
-            [ Css.property "content" "\"\""
-            , Css.flexGrow (Css.num 1)
-            , Css.height (Css.px 1)
-            , Css.lineHeight (Css.px 0)
-            , Css.fontSize (Css.px 0)
-            , Css.margin2 (Css.px 0) (Css.px 8)
-            , Css.backgroundColor (Css.rgba red green blue 0.32)
-            ]
-
-        finalEl =
-            HS.div
-                [ HSA.css
-                    [ Css.before beforeAndAfterStyles
-                    , Css.after beforeAndAfterStyles
-                    , Css.displayFlex
-                    , Css.flexBasis (Css.pct 100)
-                    , Css.alignItems Css.center
-                    , Css.color (Css.rgba red green blue 1)
-                    , Css.margin2 (Css.px 8) (Css.px 0)
-                    , Css.textTransform Css.uppercase
-                    , Css.fontWeight (Css.int 500)
-                    ]
-                ]
-                [ HS.text dividerText ]
-    in
-    toUnstyled finalEl
-        |> html
 
 
 dropdownSelect :
@@ -313,16 +272,6 @@ h4 language heading =
     renderLanguageHelper [ headingLG, Region.heading 4, Font.medium ] language heading
 
 
-h5 : Language -> LanguageMap -> Element msg
-h5 language heading =
-    renderLanguageHelper [ headingMD, Region.heading 5, Font.medium ] language heading
-
-
-h6 : Language -> LanguageMap -> Element msg
-h6 language heading =
-    renderLanguageHelper [ headingSM, Region.heading 6, Font.medium ] language heading
-
-
 makeFlagIcon :
     { background : Color
     }
@@ -413,19 +362,6 @@ renderParagraph language langmap =
         ]
         language
         langmap
-
-
-{-|
-
-    Concatenate lists into a single line with a semicolon separator. Useful for rendering lists of smaller values,
-    like instrumentation.
-
--}
-styledList : List String -> Element msg
-styledList textList =
-    paragraph
-        []
-        [ text (String.join "; " textList) ]
 
 
 resourceLink : String -> (List (Attribute msg) -> { label : Element msg, url : String } -> Element msg)

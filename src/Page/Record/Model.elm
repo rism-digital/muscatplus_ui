@@ -9,10 +9,13 @@ import Response exposing (Response, ServerData)
 import Set exposing (Set)
 
 
+
+{- | PrintHoldingsTab String -}
+
+
 type CurrentRecordViewTab
     = DefaultRecordViewTab String
     | RelatedSourcesSearchTab String
-    | PrintHoldingsTab String
 
 
 type alias RecordPageModel msg =

@@ -300,7 +300,7 @@ linkTmpl cfg =
 
 
 viewMEIDownloadLink : Language -> LanguageMap -> String -> Element msg
-viewMEIDownloadLink language label url =
+viewMEIDownloadLink language _ url =
     linkTmpl
         { icon = fileDownloadSvg colourScheme.lightBlue
         , label = localTranslations.downloadMEI
@@ -310,7 +310,7 @@ viewMEIDownloadLink language label url =
 
 
 viewPAESearchLink : Language -> LanguageMap -> PAEEncodedData -> Element msg
-viewPAESearchLink language label data =
+viewPAESearchLink language _ data =
     let
         clefQueryParam =
             ME.unwrap [] (\cl -> [ Url.Builder.string "ic" cl ]) data.clef

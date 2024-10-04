@@ -31,7 +31,7 @@ initialCmd initialUrl =
 
 
 update : Session -> Msg -> Model -> ( Model, Cmd Msg )
-update session msg model =
+update _ msg model =
     case msg of
         ServerRespondedWithAboutData (Ok ( _, response )) ->
             ( { model
@@ -55,6 +55,3 @@ update session msg model =
                 |> encodeMessageForPortSend
                 |> sendOutgoingMessageOnPort
             )
-
-        NothingHappened ->
-            ( model, Cmd.none )

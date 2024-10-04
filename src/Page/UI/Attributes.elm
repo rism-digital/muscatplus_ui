@@ -82,16 +82,6 @@ bodySM =
     Font.size 13
 
 
-bodyXS : Attr decorative msg
-bodyXS =
-    Font.size 11
-
-
-bodyXXS : Attr decorative msg
-bodyXXS =
-    Font.size 10
-
-
 {-|
 
     The attribute equivalent of Element.none.
@@ -141,12 +131,6 @@ headingXL : Attr decorative msg
 headingXL =
     -- 14*(2^(4/6))
     Font.size (ratioCalc 4.0)
-
-
-headingXS : Attr decorative msg
-headingXS =
-    -- 14*(2^(0/6))
-    Font.size (ratioCalc 0.0)
 
 
 headingXXL : Attr decorative msg

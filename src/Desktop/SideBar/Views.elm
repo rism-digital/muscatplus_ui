@@ -1,4 +1,4 @@
-module Desktop.SideBar.Views exposing (view, viewRouter)
+module Desktop.SideBar.Views exposing (viewRouter)
 
 import Debouncer.Messages exposing (provideInput)
 import Desktop.SideBar.Views.AboutMenu as AboutMenu

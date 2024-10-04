@@ -40,7 +40,7 @@ viewPersonSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx
 
 
 viewPersonFlags : Language -> PersonResultFlags -> Element msg
-viewPersonFlags language flags =
+viewPersonFlags _ flags =
     let
         isDIAMMFlag =
             viewIf

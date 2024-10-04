@@ -112,7 +112,7 @@ viewSourceSearchTab :
     , tabLabel : LanguageMap
     }
     -> Element RecordMsg
-viewSourceSearchTab { language, model, recordId, searchUrl, tabLabel } =
+viewSourceSearchTab { language, model, searchUrl, tabLabel } =
     let
         currentMode =
             model.currentTab

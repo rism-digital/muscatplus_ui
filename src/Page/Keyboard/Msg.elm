@@ -19,4 +19,3 @@ type KeyboardMsg
     | UserClickedPianoKeyboardChangeTimeSignature TimeSignature
     | UserClickedPianoKeyboardChangeKeySignature KeySignature
     | UserToggledPAEHelpText
-    | NothingHappenedWithTheKeyboard

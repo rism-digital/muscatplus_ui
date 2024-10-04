@@ -1,4 +1,4 @@
-module Session exposing (Session, init, updateBottomBarOptions, updateSideBarOptions)
+module Session exposing (Session, init, updateSideBarOptions)
 
 {-|
 
@@ -57,16 +57,6 @@ updateSideBarOptions session updateFn =
 
         BottomBar _ ->
             session
-
-
-updateBottomBarOptions : Session -> (BottomBarOptions.BottomBarOptions -> BottomBarOptions.BottomBarOptions) -> Session
-updateBottomBarOptions session updateFn =
-    case session.navigationBar of
-        SideBar _ ->
-            session
-
-        BottomBar options ->
-            { session | navigationBar = BottomBar (updateFn options) }
 
 
 init : Flags -> Url -> Nav.Key -> Session

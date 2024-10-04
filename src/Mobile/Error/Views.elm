@@ -9,5 +9,5 @@ view :
     Session
     -> { a | response : Response data }
     -> Element msg
-view session model =
+view _ _ =
     none

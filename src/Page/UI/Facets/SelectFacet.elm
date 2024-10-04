@@ -37,15 +37,6 @@ type alias SelectFacetConfig msg =
     }
 
 
-selectFacetHelp : String
-selectFacetHelp =
-    """
-    Select from the list of values. You can order the values alphabetically or numerically (the count of the number of
-    results) using the sort control below. You can also change the behaviour of how multiple values are combined, selecting
-    either "AND" (all values must be present in a document) and "OR" (only one of the values must be present in a document).
-    """
-
-
 sortFacetItemList : Language -> FacetSorts -> List FacetItem -> List FacetItem
 sortFacetItemList language sortBy facetItems =
     case sortBy of

@@ -1,7 +1,7 @@
 module Mobile.Front.Views exposing (view)
 
 import Desktop.Front.Views.Facets exposing (facetFrontMsgConfig)
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, none, padding, paddingXY, paragraph, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, px, row, scrollbarY, text, width)
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
@@ -16,7 +16,7 @@ import Page.UI.Components exposing (h1)
 import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewSearchButtons)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -165,6 +165,7 @@ viewFacetPanels cfg =
         , height fill
         , alignTop
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         , padding 10
         ]
         [ column

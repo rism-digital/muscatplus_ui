@@ -16,7 +16,6 @@ type OutgoingMessage
     | PortSendHeaderMetaInfo { description : String }
     | PortSendKeyboardAudioNote (List WebAudio.Node)
     | PortSendEnableMuscatLinks Bool
-    | PortSendUnknownMessage
 
 
 convertOutgoingMessageToJsonMsg : OutgoingMessage -> List ( String, Encode.Value )
@@ -45,9 +44,6 @@ convertOutgoingMessageToJsonMsg msg =
             let
                 prefValue =
                     case pref.value of
-                        StringPreference stringPref ->
-                            Encode.string stringPref
-
                         ListPreference listPref ->
                             Encode.list (\a -> Encode.string a) listPref
 
@@ -79,11 +75,6 @@ convertOutgoingMessageToJsonMsg msg =
         PortSendEnableMuscatLinks isEnabled ->
             [ ( "msg", Encode.string "enable-muscat-links" )
             , ( "value", Encode.bool isEnabled )
-            ]
-
-        PortSendUnknownMessage ->
-            [ ( "msg", Encode.string "unknown-message" )
-            , ( "value", Encode.null )
             ]
 
 

@@ -6,7 +6,7 @@ import Language.LocalTranslations exposing (errorMessages)
 
 
 createProbeErrorMessage : Http.Detailed.Error String -> String
-createProbeErrorMessage error =
+createProbeErrorMessage _ =
     ""
 
 

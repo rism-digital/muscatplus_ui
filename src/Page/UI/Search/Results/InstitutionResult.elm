@@ -94,7 +94,7 @@ viewInstitutionSummary language iconColour summary =
 
 
 viewInstitutionFlags : Language -> InstitutionResultFlags -> Element msg
-viewInstitutionFlags language flags =
+viewInstitutionFlags _ flags =
     let
         isDIAMMFlag =
             viewIf

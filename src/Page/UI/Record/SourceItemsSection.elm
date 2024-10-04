@@ -1,6 +1,6 @@
-module Page.UI.Record.SourceItemsSection exposing (viewSourceItem, viewSourceItemsSection)
+module Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, link, paragraph, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, column, el, fill, height, htmlAttribute, link, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Events as Events
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables)

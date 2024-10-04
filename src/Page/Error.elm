@@ -27,7 +27,7 @@ initialCmd initialUrl =
 
 
 update : Session -> NotFoundMsg -> ErrorPageModel -> ( ErrorPageModel, Cmd NotFoundMsg )
-update session msg model =
+update _ msg model =
     case msg of
         ServerRespondedWithNotFoundData (Ok _) ->
             ( { model
@@ -42,6 +42,3 @@ update session msg model =
               }
             , Cmd.none
             )
-
-        NothingHappened ->
-            ( model, Cmd.none )

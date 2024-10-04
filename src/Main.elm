@@ -2,11 +2,9 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Desktop
 import Device exposing (isMobileView)
 import Flags exposing (Flags)
-import Mobile
-import Model exposing (Model(..), toSession)
+import Model exposing (Model(..))
 import Msg exposing (Msg)
 import Page.About as About
 import Page.Error as NotFound
@@ -25,6 +23,7 @@ import Subscriptions
 import Update
 import Url exposing (Url)
 import Url.Builder exposing (toQuery)
+import Views
 
 
 main : Program Flags Model Msg
@@ -35,17 +34,8 @@ main =
         , onUrlRequest = Msg.UserRequestedUrlChange
         , subscriptions = Subscriptions.subscriptions
         , update = Update.update
-        , view = view
+        , view = Views.view
         }
-
-
-view : Model -> Browser.Document Msg
-view model =
-    if isMobileView (.device (toSession model)) then
-        Mobile.view model
-
-    else
-        Desktop.view model
 
 
 {-|
@@ -262,13 +252,6 @@ recordRouteHelper :
     -> ( RecordPageModel RecordMsg, Cmd Msg )
 recordRouteHelper { initialUrl, route, session } =
     let
-        contentsUrlSuffix =
-            if isSourcePageRoute initialUrl then
-                "/contents"
-
-            else
-                "/sources"
-
         recordCfg =
             { incomingUrl = initialUrl
             , route = route
@@ -283,6 +266,13 @@ recordRouteHelper { initialUrl, route, session } =
 
         ncQueryParam =
             Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
+
+        contentsUrlSuffix =
+            if isSourcePageRoute initialUrl then
+                "/contents"
+
+            else
+                "/sources"
 
         sourceContentsPath =
             if String.endsWith "/" initialUrl.path then
@@ -315,13 +305,6 @@ recordContentsRouteHelper :
     -> ( RecordPageModel RecordMsg, Cmd Msg )
 recordContentsRouteHelper { initialUrl, route, session, qargs } =
     let
-        contentsUrlSuffix =
-            if isSourcePageRoute initialUrl then
-                "/contents"
-
-            else
-                "/sources"
-
         recordCfg =
             { incomingUrl = initialUrl
             , route = route
@@ -333,6 +316,13 @@ recordContentsRouteHelper { initialUrl, route, session, qargs } =
         initialBody =
             Record.init recordCfg
                 |> addNationalCollectionFilter session.restrictedToNationalCollection
+
+        contentsUrlSuffix =
+            if isSourcePageRoute initialUrl then
+                "/contents"
+
+            else
+                "/sources"
 
         recordPath =
             String.replace contentsUrlSuffix "" initialUrl.path

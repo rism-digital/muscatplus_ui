@@ -35,12 +35,12 @@ viewResultsListLoadingScreenTmpl isLoading =
 
 
 viewSearchResultsErrorTmpl : Language -> String -> Element msg
-viewSearchResultsErrorTmpl language err =
+viewSearchResultsErrorTmpl _ err =
     text err
 
 
 viewSearchResultsLoadingTmpl : Language -> Element msg
-viewSearchResultsLoadingTmpl language =
+viewSearchResultsLoadingTmpl _ =
     row
         [ width fill
         ]

@@ -19,7 +19,7 @@ import Session exposing (Session)
 
 
 viewLanguageChooser : Session -> Element SideBarMsg
-viewLanguageChooser session =
+viewLanguageChooser _ =
     row
         [ width (px 80)
         , height (px 80)

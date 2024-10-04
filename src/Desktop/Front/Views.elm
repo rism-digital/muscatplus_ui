@@ -2,10 +2,11 @@ module Desktop.Front.Views exposing (view)
 
 import Desktop.Error.Views
 import Desktop.Front.Views.Facets exposing (facetFrontMsgConfig)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, maximum, minimum, none, paddingXY, paragraph, px, row, scrollbarY, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, maximum, minimum, none, paddingXY, paragraph, px, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Html.Attributes as HA
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
@@ -226,6 +227,7 @@ viewFacetPanels cfg =
         , height fill
         , alignTop
         , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill

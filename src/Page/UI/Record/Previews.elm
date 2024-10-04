@@ -1,4 +1,4 @@
-module Page.UI.Record.Previews exposing (PreviewConfig, viewMobilePreviewRouter, viewMobileRecordPreviewTitleBar, viewPreviewError, viewPreviewRouter, viewRecordPreviewTitleBar)
+module Page.UI.Record.Previews exposing (PreviewConfig, viewMobilePreviewRouter, viewPreviewError, viewPreviewRouter)
 
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
@@ -292,24 +292,24 @@ viewMobilePreviewRouter cfg previewData =
                         }
                         sourceBody
 
-                Just (PersonData personBody) ->
+                Just (PersonData _) ->
                     none
 
-                Just (InstitutionData institutionBody) ->
+                Just (InstitutionData _) ->
                     none
 
-                Just (IncipitData incipitBody) ->
+                Just (IncipitData _) ->
                     none
 
                 Just (ExternalData body) ->
                     case body.record of
-                        ExternalSource sourceBody ->
+                        ExternalSource _ ->
                             none
 
-                        ExternalPerson personBody ->
+                        ExternalPerson _ ->
                             none
 
-                        ExternalInstitution institutionBody ->
+                        ExternalInstitution _ ->
                             none
 
                 Nothing ->
@@ -317,9 +317,6 @@ viewMobilePreviewRouter cfg previewData =
 
                 _ ->
                     none
-
-        _ =
-            cfg.windowSize
     in
     animatedRow
         previewAnimation

@@ -17,7 +17,6 @@ import Page.UI.Attributes exposing (bodyRegular, emptyAttribute)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (infoCircleSvg)
 import Page.UI.Style exposing (colourScheme)
-import Session exposing (Session)
 
 
 view : Language -> SideBarOptions -> Element SideBarMsg

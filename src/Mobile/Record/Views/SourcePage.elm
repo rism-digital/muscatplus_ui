@@ -1,6 +1,7 @@
-module Mobile.Record.Views.SourcePage.FullRecordPage exposing (..)
+module Mobile.Record.Views.SourcePage exposing (viewFullMobileSourcePage)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, px, row, text, width)
+import Element exposing (Element, alignTop, clipY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
+import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Page.Record.Model exposing (RecordPageModel)
@@ -17,7 +18,7 @@ viewFullMobileSourcePage :
     -> RecordPageModel RecordMsg
     -> FullSourceBody
     -> Element RecordMsg
-viewFullMobileSourcePage session model body =
+viewFullMobileSourcePage session _ body =
     let
         sourceIcon =
             .recordType body.sourceTypes
@@ -35,18 +36,19 @@ viewFullMobileSourcePage session model body =
     row
         [ width fill
         , height fill
-        , alignTop
         ]
         [ column
             [ width fill
             , height fill
             , alignTop
+            , clipY
+            , Background.color colourScheme.white
             ]
             [ row
                 [ width fill
                 , paddingXY 10 10
                 , Border.widthEach { bottom = 4, left = 0, right = 0, top = 0 }
-                , htmlAttribute <| HA.style "border-bottom-style" "double"
+                , htmlAttribute (HA.style "border-bottom-style" "double")
                 , Border.color colourScheme.midGrey
                 ]
                 [ mobilePageHeaderTemplate session.language (Just sourceIconView) body ]

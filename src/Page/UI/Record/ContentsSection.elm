@@ -7,12 +7,11 @@ import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, Subject, Sub
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (renderLabel, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
 viewContentsSection : Language -> Maybe RelationshipBody -> ContentsSectionBody -> Element msg
-viewContentsSection language creator contents =
+viewContentsSection language _ contents =
     let
         sectionTmpl =
             sectionTemplate language contents

@@ -1,13 +1,12 @@
-module Mobile.Record.Views exposing (..)
+module Mobile.Record.Views exposing (view)
 
-import Element exposing (Element, alignTop, clipY, column, fill, height, none, row, width)
-import Element.Background as Background
+import Element exposing (Element, none)
 import Mobile.Error.Views
-import Mobile.Record.Views.PersonPage.FullRecordPage exposing (viewFullMobilePersonPage)
-import Mobile.Record.Views.SourcePage.FullRecordPage exposing (viewFullMobileSourcePage)
+import Mobile.Record.Views.InstitutionPage exposing (viewFullMobileInstitutionPage)
+import Mobile.Record.Views.PersonPage exposing (viewFullMobilePersonPage)
+import Mobile.Record.Views.SourcePage exposing (viewFullMobileSourcePage)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -22,7 +21,7 @@ viewChooser session model dataType =
             viewFullMobilePersonPage session model body
 
         InstitutionData body ->
-            none
+            viewFullMobileInstitutionPage session model body
 
         _ ->
             none
@@ -30,31 +29,15 @@ viewChooser session model dataType =
 
 view : Session -> RecordPageModel RecordMsg -> Element RecordMsg
 view session model =
-    let
-        pageView =
-            case model.response of
-                Loading (Just dataType) ->
-                    viewChooser session model dataType
+    case model.response of
+        Loading (Just dataType) ->
+            viewChooser session model dataType
 
-                Response dataType ->
-                    viewChooser session model dataType
+        Response dataType ->
+            viewChooser session model dataType
 
-                Error _ ->
-                    Mobile.Error.Views.view session model
+        Error _ ->
+            Mobile.Error.Views.view session model
 
-                _ ->
-                    none
-    in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , clipY
-            , Background.color colourScheme.white
-            ]
-            [ pageView ]
-        ]
+        _ ->
+            none

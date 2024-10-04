@@ -6,7 +6,7 @@ import Http
 import Http.Detailed
 import Language exposing (Language, LanguageMap)
 import Page.RecordTypes.Countries exposing (CountryCode)
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
+import Page.RecordTypes.Navigation exposing (NavigationBarOption)
 import SearchPreferences exposing (SearchPreferences)
 
 
@@ -37,7 +37,6 @@ type SideBarMsg
     | UserChoseNationalCollection (Maybe CountryCode)
     | UserChoseLanguage Language
     | ClientUpdatedMuscatLinks Bool
-    | NothingHappened
 
 
 showSideBarLabels : SideBarAnimationStatus -> Bool

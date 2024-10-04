@@ -7,4 +7,3 @@ import Response exposing (ServerData)
 
 type NotFoundMsg
     = ServerRespondedWithNotFoundData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
-    | NothingHappened
