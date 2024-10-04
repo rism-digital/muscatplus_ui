@@ -11,7 +11,7 @@ import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, pageHeaderBackground, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Components exposing (mapViewer, pageBodyOrEmpty, renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
@@ -136,7 +136,6 @@ viewFullInstitutionPage session model body =
                     , centerY
                     , alignLeft
                     , paddingXY 20 0
-                    , pageHeaderBackground
                     ]
                     [ pageHeader
                     , tabBar

@@ -1,6 +1,6 @@
 module Mobile.Record.Views.InstitutionPage exposing (viewFullMobileInstitutionPage)
 
-import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, paddingXY, px, row, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA

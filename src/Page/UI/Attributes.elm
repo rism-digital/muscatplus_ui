@@ -19,7 +19,6 @@ module Page.UI.Attributes exposing
     , lineSpacing
     , linkColour
     , minimalDropShadow
-    , pageHeaderBackground
     , responsiveCheckboxColumns
     , resultsColumnWidth
     , sectionBorderStyles
@@ -30,7 +29,6 @@ module Page.UI.Attributes exposing
     )
 
 import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, htmlAttribute, maximum, minimum, paddingEach, paddingXY, px, spacing, width)
-import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html as HT
@@ -174,19 +172,6 @@ tabShadowClip =
     -- applied clipping to the shadow so that we don't get a bottom
     -- shadow on tabs.
     htmlAttribute (HA.style "clip-path" "inset(-5px -5px 0px -5px)")
-
-
-pageHeaderBackground : Attribute msg
-pageHeaderBackground =
-    Background.gradient
-        { angle = 90
-        , steps =
-            [ colourScheme.white
-            , colourScheme.white
-            , colourScheme.white
-            , colourScheme.darkBlueTranslucent
-            ]
-        }
 
 
 {-| <https://spencermortensen.com/articles/typographic-scale/>

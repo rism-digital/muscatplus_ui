@@ -11,7 +11,7 @@ import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (pageHeaderBackground, sectionSpacing)
+import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
@@ -134,7 +134,6 @@ viewFullPersonPage session model body =
                     , centerY
                     , alignLeft
                     , paddingXY 20 0
-                    , pageHeaderBackground
                     ]
                     [ pageHeader
                     , tabBar

@@ -1,6 +1,6 @@
 module Mobile.Record.Views.PersonPage exposing (viewFullMobilePersonPage)
 
-import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA

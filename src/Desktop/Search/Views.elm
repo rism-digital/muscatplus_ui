@@ -11,7 +11,6 @@ import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Search exposing (ModeFacet)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
-import Page.UI.Attributes exposing (pageHeaderBackground)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
@@ -157,7 +156,6 @@ viewTopBar lang model =
             , height fill
             , alignTop
             , height fill
-            , pageHeaderBackground
             ]
             [ searchModeSelectorRouter lang model
             ]

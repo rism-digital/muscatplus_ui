@@ -11,7 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (pageHeaderBackground, sectionSpacing)
+import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
@@ -108,7 +108,6 @@ viewFullSourcePage session model body =
                     , centerY
                     , alignLeft
                     , paddingXY 20 0
-                    , pageHeaderBackground
                     ]
                     [ pageHeader
                     , tabBar
