@@ -25,7 +25,7 @@ viewFullMobilePersonPage session _ body =
                 [ width (px 25)
                 , height (px 25)
                 , centerX
-                , centerY
+                , alignTop
                 ]
                 (peopleSvg colourScheme.darkBlue)
     in
