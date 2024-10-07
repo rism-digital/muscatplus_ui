@@ -136,6 +136,9 @@ viewMobileSourcePreview cfg body =
         sourceIcon =
             sourceIconChooser (.type_ (.recordType body.sourceTypes))
 
+        allExternals =
+            gatherAllDigitizationLinksForCallout cfg.language body
+
         sourceIconView =
             el
                 [ width (px 25)
@@ -156,16 +159,15 @@ viewMobileSourcePreview cfg body =
                     , spacing sectionSpacing
                     ]
                     [ viewMaybe (viewPartOfSection cfg.language) body.partOf
-
-                    --, viewIf
-                    --    (viewDigitizedCopiesCalloutSection
-                    --        { expandMsg = cfg.expandedDigitizedCopiesMsg
-                    --        , expanded = cfg.expandedDigitizedCopiesCallout
-                    --        , language = cfg.language
-                    --        }
-                    --        allExternals
-                    --    )
-                    --    (Dict.size allExternals > 0)
+                    , viewIf
+                        (viewDigitizedCopiesCalloutSection
+                            { expandMsg = cfg.expandedDigitizedCopiesMsg
+                            , expanded = cfg.expandedDigitizedCopiesCallout
+                            , language = cfg.language
+                            }
+                            allExternals
+                        )
+                        (Dict.size allExternals > 0)
                     , viewMaybe (viewContentsSection cfg.language body.creator) body.contents
                     , viewMaybe
                         (viewIncipitsSection

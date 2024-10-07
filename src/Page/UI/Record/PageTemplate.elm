@@ -268,7 +268,7 @@ pageLinkTemplate language langMap fontSize body =
 
 pageFullRecordTemplate : Language -> { a | id : String } -> Element msg
 pageFullRecordTemplate language body =
-    pageLinkTemplate language localTranslations.fullRecord headingLG body
+    pageLinkTemplate language localTranslations.fullRecord headingMD body
 
 
 pageFullMobileRecordTemplate : Language -> { a | id : String } -> Element msg

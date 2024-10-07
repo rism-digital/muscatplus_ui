@@ -10,7 +10,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, fo
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG, lineSpacing)
+import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing)
 import Page.UI.Errors exposing (createProbeErrorMessage)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
@@ -164,14 +164,14 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                     [ Input.button
                         [ Border.color submitButtonColours
                         , Background.color submitButtonColours
-                        , padding 10
                         , height (px 35)
-                        , width (shrink |> minimum 120)
+                        , width shrink
                         , Font.center
                         , Font.color colourScheme.white
-                        , headingLG
+                        , headingMD
                         , submitPointerStyle
                         , centerY
+                        , paddingXY 10 0
                         ]
                         { label = text submitButtonLabel
                         , onPress = submitButtonMsg
@@ -182,13 +182,13 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                     [ Input.button
                         [ Border.color colourScheme.turquoise
                         , Background.color colourScheme.turquoise
-                        , padding 10
                         , height (px 35)
-                        , width (shrink |> minimum 120)
+                        , width shrink
                         , Font.center
                         , Font.color colourScheme.white
                         , centerY
-                        , headingLG
+                        , headingMD
+                        , paddingXY 10 0
                         ]
                         { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
                         , onPress = Just resetMsg

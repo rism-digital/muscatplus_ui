@@ -8,7 +8,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h2, h3, sourceIconChooser, viewSummaryField)
+import Page.UI.Components exposing (h2, h2s, h3, h3s, sourceIconChooser, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -41,7 +41,7 @@ viewSourceItem language source =
                     [ link
                         [ linkColour
                         ]
-                        { label = h3 language source.label
+                        { label = h3s language source.label
                         , url = source.id
                         }
                     ]
@@ -97,7 +97,7 @@ viewSourceItemsSection language expanded expandMsg siSection =
                 , spacing 5
                 , tocId
                 ]
-                [ h2 language siSection.label
+                [ h2s language siSection.label
                 , el
                     [ linkColour
                     , pointer

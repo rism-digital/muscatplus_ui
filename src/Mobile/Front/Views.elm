@@ -108,14 +108,6 @@ viewFrontSearchControls cfg =
             [ width fill
             , height fill
             ]
-            --[ viewSearchButtons
-            --    { language = .language cfg.session
-            --    , model = cfg.model
-            --    , isFrontPage = True
-            --    , submitLabel = localTranslations.showResults
-            --    , submitMsg = FrontMsg.UserTriggeredSearchSubmit
-            --    , resetMsg = FrontMsg.UserResetAllFilters
-            --    }
             [ viewFacetPanels cfg
             ]
         ]
