@@ -197,7 +197,7 @@ viewPageBody deviceView model =
                         , spacing 5
                         , paddingXY 8 5
                         , Background.color colourScheme.darkBlue
-                        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+                        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                         , Border.color colourScheme.darkGrey
                         ]
                         [ el [ alignLeft, centerY ] (rismLogo colourScheme.white 28)

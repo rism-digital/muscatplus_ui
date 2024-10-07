@@ -35,9 +35,9 @@ view session =
         [ width fill
         , htmlAttribute (HA.style "height" "8vh")
         , Background.color colourScheme.darkBlue
-        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , Border.color colourScheme.darkGrey
-        , paddingEach { top = 12, bottom = 20, left = 20, right = 20 }
+        , paddingEach { bottom = 20, left = 20, right = 20, top = 12 }
         , alignBottom
         ]
         [ column

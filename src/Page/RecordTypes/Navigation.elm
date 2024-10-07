@@ -8,7 +8,6 @@ type NavigationBarOption
     | PeopleSearchOption
     | InstitutionSearchOption
     | IncipitSearchOption
-    | LiturgicalFestivalsOption
 
 
 resultModeToNavigationBarOption : ResultMode -> NavigationBarOption
@@ -26,9 +25,6 @@ resultModeToNavigationBarOption mode =
         IncipitsMode ->
             IncipitSearchOption
 
-        LiturgicalFestivalsMode ->
-            LiturgicalFestivalsOption
-
 
 navigationBarOptionToModeString : NavigationBarOption -> String
 navigationBarOptionToModeString option =
@@ -45,9 +41,6 @@ navigationBarOptionToModeString option =
         IncipitSearchOption ->
             "incipits"
 
-        LiturgicalFestivalsOption ->
-            "festivals"
-
 
 navigationBarOptionToResultMode : NavigationBarOption -> ResultMode
 navigationBarOptionToResultMode option =
@@ -63,6 +56,3 @@ navigationBarOptionToResultMode option =
 
         IncipitSearchOption ->
             IncipitsMode
-
-        LiturgicalFestivalsOption ->
-            LiturgicalFestivalsMode

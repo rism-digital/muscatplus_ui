@@ -62,7 +62,7 @@ view session model =
         , clipY
         ]
         [ column
-            [ width fill
+            [ width (fill |> maximum 900)
             , height fill
             , padding 20
             , Background.color colourScheme.white
@@ -71,12 +71,11 @@ view session model =
             , htmlAttribute (HA.style "min-height" "unset")
             ]
             [ row
-                [ width (fill |> maximum 900)
-                , Font.size 16
+                [ Font.size 16
                 ]
                 [ renderedAboutText ]
             , row
-                [ width (fill |> maximum 900) ]
+                []
                 [ el
                     [ headingXL ]
                     (text "Current version")

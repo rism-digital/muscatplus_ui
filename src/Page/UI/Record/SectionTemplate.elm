@@ -4,7 +4,7 @@ import Element exposing (Element, alignTop, column, fill, height, htmlAttribute,
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (h2)
+import Page.UI.Components exposing (h2s)
 
 
 {-|
@@ -16,7 +16,7 @@ import Page.UI.Components exposing (h2)
 -}
 sectionTemplate :
     Language
-    -> { a | sectionToc : String, label : LanguageMap }
+    -> { a | label : LanguageMap, sectionToc : String }
     -> List (Element msg)
     -> Element msg
 sectionTemplate language header sectionBody =
@@ -45,7 +45,7 @@ sectionTemplate language header sectionBody =
                 , tocId
                 , paddingEach { bottom = lineSpacing, left = 0, right = 0, top = 0 }
                 ]
-                [ h2 language header.label ]
+                [ h2s language header.label ]
             , row
                 [ width fill ]
                 [ column

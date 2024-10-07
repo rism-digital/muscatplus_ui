@@ -125,11 +125,11 @@ init flags url key =
     , url = url
     , route = route
     , showMuscatLinks = flags.showMuscatLinks
-    , showFrontSearchInterface = initialMode
     , isFramed = flags.isFramed
     , navigationBar = navigationBar
     , restrictedToNationalCollection = nationalCollectionFilter
     , allNationalCollections = Dict.empty
     , searchPreferences = searchPreferences
     , cacheBuster = flags.cacheBuster
+    , showFrontSearchInterface = initialMode
     }

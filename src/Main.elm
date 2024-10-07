@@ -137,9 +137,9 @@ init flags initialUrl key =
                 ( initialBody, initialCmds ) =
                     recordContentsRouteHelper
                         { initialUrl = initialUrl
+                        , qargs = qargs
                         , route = route
                         , session = session
-                        , qargs = qargs
                         }
             in
             ( SourcePage session initialBody
@@ -170,9 +170,9 @@ init flags initialUrl key =
                 ( initialBody, initialCmds ) =
                     recordContentsRouteHelper
                         { initialUrl = initialUrl
+                        , qargs = qargs
                         , route = route
                         , session = session
-                        , qargs = qargs
                         }
             in
             ( PersonPage session initialBody
@@ -203,9 +203,9 @@ init flags initialUrl key =
                 ( initialBody, initialCmds ) =
                     recordContentsRouteHelper
                         { initialUrl = initialUrl
+                        , qargs = qargs
                         , route = route
                         , session = session
-                        , qargs = qargs
                         }
             in
             ( InstitutionPage session initialBody
@@ -298,12 +298,12 @@ recordRouteHelper { initialUrl, route, session } =
 
 recordContentsRouteHelper :
     { initialUrl : Url
+    , qargs : QueryArgs
     , route : Route
     , session : Session
-    , qargs : QueryArgs
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordContentsRouteHelper { initialUrl, route, session, qargs } =
+recordContentsRouteHelper { initialUrl, qargs, route, session } =
     let
         recordCfg =
             { incomingUrl = initialUrl

@@ -1,5 +1,6 @@
 module Page.UI.Components exposing
     ( DropdownSelectConfig
+    , Tab(..)
     , basicCheckbox
     , contentTypeIconChooser
     , dropdownSelect
@@ -10,6 +11,7 @@ module Page.UI.Components exposing
     , h3
     , h3s
     , h4
+    , h5
     , makeFlagIcon
     , mapViewer
     , pageBodyOrEmpty
@@ -18,26 +20,29 @@ module Page.UI.Components exposing
     , resourceLink
     , sourceIconChooser
     , sourceTypeIconChooser
+    , tabView
     , viewParagraphField
     , viewSummaryField
     )
 
-import Element exposing (Attribute, Color, Element, above, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paragraph, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Region as Region
 import Html as HT exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, limitLength)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, formatNumberByLanguage, limitLength)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
-import Page.UI.Attributes exposing (bodyRegular, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Animations exposing (animatedLoader)
+import Page.UI.Attributes exposing (bodyRegular, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
-import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (choose, toLinkedHtml)
@@ -272,6 +277,11 @@ h4 language heading =
     renderLanguageHelper [ headingLG, Region.heading 4, Font.medium ] language heading
 
 
+h5 : Language -> LanguageMap -> Element msg
+h5 language heading =
+    renderLanguageHelper [ headingMD, Region.heading 5, Font.medium ] language heading
+
+
 makeFlagIcon :
     { background : Color
     }
@@ -280,16 +290,18 @@ makeFlagIcon :
     -> Element msg
 makeFlagIcon colours iconImage iconLabel =
     column
-        [ padding 4
+        [ width (px 25)
+        , height (px 25)
+        , padding 2
         , Background.color colours.background
         , el tooltipStyle (text iconLabel)
             |> tooltip above
         ]
         [ el
-            [ width (px 18)
-            , height (px 18)
-            , alignLeft
-            , alignTop
+            [ width (px 16)
+            , height (px 16)
+            , centerY
+            , centerX
             ]
             iconImage
         ]
@@ -594,3 +606,103 @@ pageBodyOrEmpty language isEmpty nonEmptyBody =
 
     else
         nonEmptyBody
+
+
+type Tab
+    = CountTab LanguageMap (Maybe Int)
+    | BareTab LanguageMap
+
+
+tabView :
+    { clickMsg : msg
+    , icon : Element msg
+    , isSelected : Bool
+    , language : Language
+    , tab : Tab
+    }
+    -> Element msg
+tabView cfg =
+    let
+        ( backgroundColour, fontColour ) =
+            if cfg.isSelected then
+                ( Background.color colourScheme.darkBlue
+                , Font.color colourScheme.white
+                )
+
+            else
+                ( Background.color colourScheme.white
+                , Font.color colourScheme.black
+                )
+
+        tabLabel =
+            case cfg.tab of
+                CountTab label count ->
+                    let
+                        tabIcon =
+                            el
+                                []
+                                cfg.icon
+                    in
+                    case count of
+                        Just num ->
+                            let
+                                searchCount =
+                                    toFloat num
+                                        |> formatNumberByLanguage cfg.language
+                            in
+                            row
+                                [ width fill
+                                , Font.center
+                                , alignLeft
+                                , centerY
+                                ]
+                                [ tabIcon
+                                , el [] (text (extractLabelFromLanguageMap cfg.language label))
+                                , el [] (text (" (" ++ searchCount ++ ")"))
+                                ]
+
+                        Nothing ->
+                            row
+                                [ width fill
+                                , Font.center
+                                , alignLeft
+                                , centerY
+                                ]
+                                [ tabIcon
+                                , el [] (text (extractLabelFromLanguageMap cfg.language label))
+                                , el []
+                                    (animatedLoader
+                                        [ width (px 15)
+                                        , height (px 15)
+                                        ]
+                                        (spinnerSvg colourScheme.midGrey)
+                                    )
+                                ]
+
+                BareTab label ->
+                    row
+                        [ width fill
+                        , Font.center
+                        , alignLeft
+                        , centerY
+                        ]
+                        [ el [] (text (extractLabelFromLanguageMap cfg.language label)) ]
+    in
+    column
+        [ alignLeft
+        , alignBottom
+        , Font.center
+        , Font.medium
+        , height fill
+        , paddingXY 20 2
+        , Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
+        , minimalDropShadow
+        , htmlAttribute (HA.style "clip-path" "inset(-5px -5px 0px -5px)")
+        , onClick cfg.clickMsg
+        , Border.color colourScheme.darkBlue
+        , backgroundColour
+        , fontColour
+        , pointer
+        ]
+        [ tabLabel
+        ]

@@ -6,6 +6,7 @@ module Page.UI.Attributes exposing
     , bodySM
     , bodySerifFont
     , controlsColumnWidth
+    , desktopDisplayWidth
     , emptyAttribute
     , emptyHtmlAttribute
     , fontBaseSize
@@ -24,11 +25,10 @@ module Page.UI.Attributes exposing
     , sectionBorderStyles
     , sectionSpacing
     , sidebarWidth
-    , tabShadowClip
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, htmlAttribute, maximum, minimum, paddingEach, paddingXY, px, spacing, width)
+import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, htmlAttribute, maximum, modular, paddingEach, paddingXY, px, spacing, width)
 import Element.Border as Border
 import Element.Font as Font
 import Html as HT
@@ -38,7 +38,7 @@ import Page.UI.Style exposing (colourScheme)
 
 baseSize : Float
 baseSize =
-    12.0
+    16.0
 
 
 bodyFont : Attribute msg
@@ -70,6 +70,11 @@ bodyFontColour =
     Font.color colourScheme.black
 
 
+scaled : Int -> Float
+scaled =
+    modular baseSize 1.12
+
+
 bodyRegular : Attr decorative msg
 bodyRegular =
     fontBaseSize
@@ -77,7 +82,9 @@ bodyRegular =
 
 bodySM : Attr decorative msg
 bodySM =
-    Font.size 13
+    scaled -1
+        |> round
+        |> Font.size
 
 
 {-|
@@ -99,50 +106,64 @@ emptyHtmlAttribute =
 
 fontBaseSize : Attr decorative msg
 fontBaseSize =
-    Font.size 14
+    scaled 1
+        |> round
+        |> Font.size
 
 
 headingHero : Attr decorative msg
 headingHero =
-    Font.size (ratioCalc 8.0)
+    scaled 6
+        |> round
+        |> Font.size
 
 
 headingLG : Attr decorative msg
 headingLG =
     -- 14*(2^(3/6))
-    Font.size (ratioCalc 3.0)
+    scaled 3
+        |> round
+        |> Font.size
 
 
 headingMD : Attr decorative msg
 headingMD =
     -- 14*(2^(2/6))
-    Font.size (ratioCalc 2.0)
+    scaled 2
+        |> round
+        |> Font.size
 
 
 headingSM : Attr decorative msg
 headingSM =
     -- 14*(2^(1/6))
-    Font.size (ratioCalc 1.0)
+    scaled 1
+        |> round
+        |> Font.size
 
 
 headingXL : Attr decorative msg
 headingXL =
     -- 14*(2^(4/6))
-    Font.size (ratioCalc 4.0)
+    scaled 4
+        |> round
+        |> Font.size
 
 
 headingXXL : Attr decorative msg
 headingXXL =
     -- 14*(2^(5/6))
-    Font.size (ratioCalc 5.0)
+    scaled 5
+        |> round
+        |> Font.size
 
 
 labelFieldColumnAttributes : List (Attribute msg)
 labelFieldColumnAttributes =
-    [ width (fill |> maximum 250 |> minimum 200)
+    [ width (fill |> maximum 180)
     , alignTop
     , spacing lineSpacing
-    , paddingEach { bottom = 5, left = 0, right = 0, top = 0 }
+    , paddingEach { bottom = 5, left = 0, right = 5, top = 0 }
     ]
 
 
@@ -165,20 +186,6 @@ minimalDropShadow =
         , offset = ( 1, 1 )
         , size = 1
         }
-
-
-tabShadowClip : Attribute msg
-tabShadowClip =
-    -- applied clipping to the shadow so that we don't get a bottom
-    -- shadow on tabs.
-    htmlAttribute (HA.style "clip-path" "inset(-5px -5px 0px -5px)")
-
-
-{-| <https://spencermortensen.com/articles/typographic-scale/>
--}
-ratioCalc : Float -> Int
-ratioCalc size =
-    round (baseSize * (2.0 ^ (size / 6.0)))
 
 
 sectionBorderStyles : List (Attribute msg)
@@ -240,3 +247,8 @@ sidebarWidth =
 resultsColumnWidth : Int
 resultsColumnWidth =
     600
+
+
+desktopDisplayWidth : Int
+desktopDisplayWidth =
+    1000

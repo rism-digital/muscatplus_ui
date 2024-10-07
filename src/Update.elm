@@ -108,10 +108,10 @@ changePage url model =
                 ( newPageBody, refreshCmds ) =
                     changeRecordPageHelper
                         { model = model
-                        , previousUrl = previousUrl
-                        , url = url
                         , newSession = newSession
+                        , previousUrl = previousUrl
                         , route = route
+                        , url = url
                         }
             in
             ( SourcePage newSession newPageBody
@@ -123,11 +123,11 @@ changePage url model =
                 ( newPageBody, refreshCmds ) =
                     changeRecordContentsPageHelper
                         { model = model
-                        , url = url
+                        , newSession = newSession
                         , previousUrl = previousUrl
                         , qargs = qargs
-                        , newSession = newSession
                         , route = route
+                        , url = url
                         }
             in
             ( SourcePage newSession newPageBody
@@ -139,10 +139,10 @@ changePage url model =
                 ( newPageBody, refreshCmds ) =
                     changeRecordPageHelper
                         { model = model
-                        , previousUrl = previousUrl
-                        , url = url
                         , newSession = newSession
+                        , previousUrl = previousUrl
                         , route = route
+                        , url = url
                         }
             in
             ( PersonPage newSession newPageBody
@@ -154,11 +154,11 @@ changePage url model =
                 ( newPageBody, refreshCmds ) =
                     changeRecordContentsPageHelper
                         { model = model
-                        , url = url
+                        , newSession = newSession
                         , previousUrl = previousUrl
                         , qargs = qargs
-                        , newSession = newSession
                         , route = route
+                        , url = url
                         }
             in
             ( PersonPage newSession newPageBody
@@ -170,10 +170,10 @@ changePage url model =
                 ( newPageBody, refreshCmds ) =
                     changeRecordPageHelper
                         { model = model
-                        , previousUrl = previousUrl
-                        , url = url
                         , newSession = newSession
+                        , previousUrl = previousUrl
                         , route = route
+                        , url = url
                         }
             in
             ( InstitutionPage newSession newPageBody
@@ -185,11 +185,11 @@ changePage url model =
                 ( newPageBody, refreshCmds ) =
                     changeRecordContentsPageHelper
                         { model = model
-                        , url = url
+                        , newSession = newSession
                         , previousUrl = previousUrl
                         , qargs = qargs
-                        , newSession = newSession
                         , route = route
+                        , url = url
                         }
             in
             ( InstitutionPage newSession newPageBody
@@ -344,13 +344,13 @@ updateWith toModel toMsg _ ( subModel, subCmd ) =
 
 changeRecordPageHelper :
     { model : Model
-    , previousUrl : Url
-    , url : Url
     , newSession : Session
+    , previousUrl : Url
     , route : Route
+    , url : Url
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-changeRecordPageHelper { model, previousUrl, url, newSession, route } =
+changeRecordPageHelper { model, newSession, previousUrl, route, url } =
     let
         recordCfg =
             { incomingUrl = url
@@ -423,14 +423,14 @@ changeRecordPageHelper { model, previousUrl, url, newSession, route } =
 
 changeRecordContentsPageHelper :
     { model : Model
-    , previousUrl : Url
-    , url : Url
     , newSession : Session
-    , route : Route
+    , previousUrl : Url
     , qargs : QueryArgs
+    , route : Route
+    , url : Url
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-changeRecordContentsPageHelper { model, previousUrl, url, newSession, route, qargs } =
+changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, url } =
     let
         contentsUrlSuffix =
             if isSourcePageRoute url then

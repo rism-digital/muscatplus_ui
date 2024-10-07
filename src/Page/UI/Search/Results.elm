@@ -11,7 +11,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, ex
 import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
-import Page.UI.Components exposing (h3)
+import Page.UI.Components exposing (h5)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -133,7 +133,7 @@ resultTemplate cfg =
                     , width fill
                     , alignTop
                     ]
-                    [ h3 cfg.language cfg.resultTitle ]
+                    [ h5 cfg.language cfg.resultTitle ]
                 ]
             , row
                 [ width fill

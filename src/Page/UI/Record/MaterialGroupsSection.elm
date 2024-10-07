@@ -5,7 +5,7 @@ import Language exposing (Language)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
-import Page.UI.Components exposing (h3, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (h3s, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody)
@@ -26,7 +26,7 @@ viewMaterialGroup language mg =
                 [ width fill
                 , spacing 5
                 ]
-                [ h3 language mg.label
+                [ h3s language mg.label
                 ]
             , row
                 [ width fill ]

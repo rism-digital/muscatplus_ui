@@ -186,8 +186,8 @@ viewExternalHeldBy language body =
         , link
             [ linkColour
             ]
-            { label = h2 language body.label
-            , url = body.id
+            { url = body.id
+            , label = h2 language body.label
             }
         ]
 
@@ -273,8 +273,8 @@ viewExternalResource language body =
                         ]
                         [ resourceLink body.url
                             [ linkColour ]
-                            { label = renderParagraph language body.label
-                            , url = body.url
+                            { url = body.url
+                            , label = renderParagraph language body.label
                             }
                         , externalLinkTemplate body.url
                         ]

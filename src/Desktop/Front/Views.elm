@@ -13,7 +13,7 @@ import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (emptyAttribute, headingHero)
+import Page.UI.Attributes exposing (headingHero)
 import Page.UI.Components exposing (h1)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput, viewFrontKeywordQueryInput)
@@ -46,9 +46,6 @@ view session model =
 
                 IncipitSearchOption ->
                     Background.image "/static/images/incipits.jpg"
-
-                _ ->
-                    emptyAttribute
     in
     row
         [ width fill
@@ -139,10 +136,6 @@ viewFacetPanels cfg =
                 IncipitSearchOption ->
                     localTranslations.incipits
 
-                -- Show a blank page if this is ever the choice; it shouldn't be!
-                LiturgicalFestivalsOption ->
-                    []
-
         submitMsg =
             if hasActionableProbeResponse (.probeResponse cfg.model) then
                 FrontMsg.UserTriggeredSearchSubmit
@@ -159,13 +152,13 @@ viewFacetPanels cfg =
             case .showFrontSearchInterface cfg.session of
                 IncipitSearchOption ->
                     ( viewFacet
-                        { alias = "notation"
-                        , language = .language cfg.session
-                        , activeSearch = .activeSearch cfg.model
-                        , selectColumns = cfg.checkboxColumns
+                        { activeSearch = .activeSearch cfg.model
+                        , alias = "notation"
                         , body = cfg.body
-                        , tooltip = []
+                        , language = .language cfg.session
                         , searchPreferences = .searchPreferences cfg.session
+                        , selectColumns = cfg.checkboxColumns
+                        , tooltip = []
                         }
                         cfg.facetMsgConfig
                     , searchKeywordInput
@@ -217,10 +210,6 @@ viewFacetPanels cfg =
 
                 IncipitSearchOption ->
                     viewFacetsForIncipitsMode facetConfig
-
-                -- Show a blank page if this is ever the choice; it shouldn't be!
-                LiturgicalFestivalsOption ->
-                    [ none ]
     in
     row
         [ width fill

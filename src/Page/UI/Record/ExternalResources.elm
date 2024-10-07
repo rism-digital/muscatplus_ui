@@ -57,8 +57,8 @@ viewExternalRecordOnSiteLink language project body =
                 [ linkColour
                 , alignLeft
                 ]
-                { label = text ("View " ++ extractLabelFromLanguageMap language body.label ++ " on " ++ projectLabel)
-                , url = body.id
+                { url = body.id
+                , label = text ("View " ++ extractLabelFromLanguageMap language body.label ++ " on " ++ projectLabel)
                 }
             , externalLinkTemplate body.id
             ]
@@ -82,18 +82,18 @@ viewExternalResourceIiifManifest language body =
             [ linkColour
             , alignLeft
             ]
-            { label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
-            , url = C.serverUrl ++ "/viewer.html#?manifest=" ++ body.url
+            { url = C.serverUrl ++ "/viewer.html#?manifest=" ++ body.url
+            , label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
             }
         , text "|"
         , newTabLink
             [ linkColour
             , alignLeft
             ]
-            { label = text "Manifest"
+            { url = body.url
 
             -- TODO: Translate
-            , url = body.url
+            , label = text "Manifest"
             }
         , externalLinkTemplate body.url
         ]
@@ -109,8 +109,8 @@ viewExternalResourcePlainLink language body =
         [ resourceLink body.url
             [ linkColour
             ]
-            { label = renderParagraph language body.label
-            , url = body.url
+            { url = body.url
+            , label = renderParagraph language body.label
             }
         , externalLinkTemplate body.url
         ]

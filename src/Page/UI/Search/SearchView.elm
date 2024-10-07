@@ -97,8 +97,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         { language = .language cfg.session
                         , windowSize = .window cfg.session
                         , closeMsg = cfg.userClosedPreviewWindowMsg
-                        , showAnimationFinishedMsg = cfg.clientFinishedAnimatingPreviewWindowShow
                         , hideAnimationStartedMsg = cfg.clientStartedAnimatingPreviewWindowClose
+                        , showAnimationFinishedMsg = cfg.clientFinishedAnimatingPreviewWindowShow
                         , animationStatus = .previewAnimationStatus cfg.model
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
@@ -115,8 +115,8 @@ viewSearchResultsSection cfg resultsLoading body =
                         { language = .language cfg.session
                         , windowSize = .window cfg.session
                         , closeMsg = cfg.userClosedPreviewWindowMsg
-                        , showAnimationFinishedMsg = cfg.clientFinishedAnimatingPreviewWindowShow
                         , hideAnimationStartedMsg = cfg.clientStartedAnimatingPreviewWindowClose
+                        , showAnimationFinishedMsg = cfg.clientFinishedAnimatingPreviewWindowShow
                         , animationStatus = .previewAnimationStatus cfg.model
                         , sourceItemExpandMsg = cfg.userClickedSourceItemsExpandMsg
                         , sourceItemsExpanded = .sourceItemsExpanded cfg.model
@@ -366,9 +366,6 @@ viewSearchControls cfg =
 
                 IncipitsMode ->
                     viewFacetsForIncipitsMode facetConfig
-
-                LiturgicalFestivalsMode ->
-                    [ none ]
     in
     row
         [ width fill
@@ -483,10 +480,10 @@ viewSearchResultRouter : SearchResultRouterConfig msg -> Element msg
 viewSearchResultRouter cfg =
     let
         resultConfig =
-            { language = cfg.language
-            , selectedResult = cfg.selectedResult
-            , clickForPreviewMsg = cfg.clickForPreviewMsg
+            { clickForPreviewMsg = cfg.clickForPreviewMsg
+            , language = cfg.language
             , resultIdx = cfg.resultIdx
+            , selectedResult = cfg.selectedResult
             }
     in
     case cfg.searchResult of

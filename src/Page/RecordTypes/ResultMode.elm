@@ -12,7 +12,6 @@ type ResultMode
     | PeopleMode
     | InstitutionsMode
     | IncipitsMode
-    | LiturgicalFestivalsMode
 
 
 parseResultModeToString : ResultMode -> String
@@ -42,5 +41,4 @@ resultModeOptions =
     , ( "people", PeopleMode )
     , ( "institutions", InstitutionsMode )
     , ( "incipits", IncipitsMode )
-    , ( "festivals", LiturgicalFestivalsMode )
     ]

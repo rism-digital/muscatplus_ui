@@ -1,4 +1,4 @@
-module Page.UI.Images exposing (altSvg, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, externalLinkSvg, fileDownloadSvg, fileMusicSvg, globeSvg, graduationCapSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, linkSvg, liturgicalFestivalSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, printingPressSvg, rectanglesMixedSvg, rismLogo, searchSvg, shapesSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, userCircleSvg)
+module Page.UI.Images exposing (altSvg, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, externalLinkSvg, fileDownloadSvg, fileMusicSvg, globeSvg, graduationCapSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, linkSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, printingPressSvg, rectanglesMixedSvg, rismLogo, searchSvg, shapesSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, userCircleSvg)
 
 import Color exposing (toCssString)
 import Element exposing (Element, html)
@@ -306,14 +306,6 @@ linkSvg color =
     makeSvgIcon color
         { path = "M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z"
         , viewBox = "0 0 640 512"
-        }
-
-
-liturgicalFestivalSvg : Element.Color -> Element msg
-liturgicalFestivalSvg color =
-    makeSvgIcon color
-        { path = "M288 167.2v-28.1c-28.2-36.3-47.1-79.3-54.1-125.2-2.1-13.5-19-18.8-27.8-8.3-21.1 24.9-37.7 54.1-48.9 86.5 34.2 38.3 80 64.6 130.8 75.1zM400 64c-44.2 0-80 35.9-80 80.1v59.4C215.6 197.3 127 133 87 41.8c-5.5-12.5-23.2-13.2-29-.9C41.4 76 32 115.2 32 156.6c0 70.8 34.1 136.9 85.1 185.9 13.2 12.7 26.1 23.2 38.9 32.8l-143.9 36C1.4 414-3.4 426.4 2.6 435.7 20 462.6 63 508.2 155.8 512c8 .3 16-2.6 22.1-7.9l65.2-56.1H320c88.4 0 160-71.5 160-159.9V128l32-64H400zm0 96.1c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16z"
-        , viewBox = "0 0 512 512"
         }
 
 

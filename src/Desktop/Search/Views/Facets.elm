@@ -1,19 +1,13 @@
 module Desktop.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)
 
-import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Events exposing (onClick)
-import Element.Font as Font
-import Element.Region as Region
-import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, padding, paddingXY, px, row, spacing, width)
+import Language exposing (Language)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), ModeFacet)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg(..))
-import Page.UI.Attributes exposing (headingXL, minimalDropShadow)
+import Page.UI.Components exposing (Tab(..), tabView)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
-import Page.UI.Images exposing (institutionSvg, liturgicalFestivalSvg, musicNotationSvg, peopleSvg, sourcesSvg)
+import Page.UI.Images exposing (institutionSvg, musicNotationSvg, peopleSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -49,12 +43,9 @@ viewModeItem selectedMode language fitem =
         currentModeIsSelected =
             selectedMode == rowMode
 
-        fullLabel =
-            extractLabelFromLanguageMap language label
-
         iconTmpl svg =
             el
-                [ width (px 30)
+                [ width (px 25)
                 , height fill
                 , padding 4
                 , centerX
@@ -83,65 +74,26 @@ viewModeItem selectedMode language fitem =
                 IncipitsMode ->
                     iconTmpl (musicNotationSvg iconColour)
 
-                LiturgicalFestivalsMode ->
-                    iconTmpl (liturgicalFestivalSvg iconColour)
-
-        itemCount =
-            formatNumberByLanguage language count
-
-        ( backgroundColour, fontColour ) =
-            if currentModeIsSelected then
-                ( Background.color colourScheme.darkBlue
-                , Font.color colourScheme.white
-                )
-
-            else
-                ( Background.color colourScheme.white
-                , Font.color colourScheme.black
-                )
-
-        rowStyle =
-            [ alignLeft
-            , alignBottom
-            , Font.center
-            , height fill
-            , paddingXY 20 5
-            , spacingXY 5 0
-            , Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
-            , minimalDropShadow
-            , htmlAttribute (HA.style "clip-path" "inset(-5px -5px 0px -5px)")
-
-            --, Border.roundEach { bottomLeft = 0, bottomRight = 0, topLeft = 3, topRight = 3 }
-            , onClick (UserClickedModeItem fitem)
-            , Border.color colourScheme.darkBlue
-            , backgroundColour
-            , fontColour
-            , pointer
-            ]
+        thisTab =
+            CountTab label (truncate count |> Just)
     in
-    row
-        rowStyle
-        [ el
-            [ paddingXY 5 0 ]
-            icon
-        , el
-            [ headingXL
-            , Region.heading 3
-            , Font.medium
-            , centerY
-            ]
-            (text (fullLabel ++ " (" ++ itemCount ++ ")"))
-        ]
+    tabView
+        { clickMsg = UserClickedModeItem fitem
+        , icon = icon
+        , isSelected = currentModeIsSelected
+        , language = language
+        , tab = thisTab
+        }
 
 
 viewModeItems : ResultMode -> Language -> ModeFacet -> Element SearchMsg
 viewModeItems selectedMode language typeFacet =
     row
-        [ centerX
-        , width fill
+        [ width fill
         , height (px 30)
-        , paddingXY 20 0
-        , spacing 10
+        , paddingXY 10 0
+        , alignLeft
         , alignBottom
+        , spacing 10
         ]
         (List.map (viewModeItem selectedMode language) typeFacet.items)

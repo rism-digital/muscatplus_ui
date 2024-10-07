@@ -373,15 +373,15 @@ userClickedClosePreviewWindow :
         { a
             | digitizedCopiesCalloutExpanded : Bool
             , preview : Response ServerData
-            , selectedResult : Maybe String
             , previewAnimationStatus : PreviewAnimationStatus
+            , selectedResult : Maybe String
         }
     ->
         ( { a
             | digitizedCopiesCalloutExpanded : Bool
             , preview : Response ServerData
-            , selectedResult : Maybe String
             , previewAnimationStatus : PreviewAnimationStatus
+            , selectedResult : Maybe String
           }
         , Cmd msg
         )
@@ -393,8 +393,8 @@ userClickedClosePreviewWindow session model =
     ( { model
         | digitizedCopiesCalloutExpanded = False
         , preview = NoResponseToShow
-        , selectedResult = Nothing
         , previewAnimationStatus = MovingOut
+        , selectedResult = Nothing
       }
     , { currentUrl | fragment = Nothing }
         |> Url.toString
@@ -408,14 +408,14 @@ userClickedResultForPreview :
     ->
         { a
             | preview : Response ServerData
-            , selectedResult : Maybe String
             , previewAnimationStatus : PreviewAnimationStatus
+            , selectedResult : Maybe String
         }
     ->
         ( { a
             | preview : Response ServerData
-            , selectedResult : Maybe String
             , previewAnimationStatus : PreviewAnimationStatus
+            , selectedResult : Maybe String
           }
         , Cmd msg
         )
@@ -437,8 +437,8 @@ userClickedResultForPreview result session model =
     in
     ( { model
         | preview = Loading Nothing
-        , selectedResult = Just result
         , previewAnimationStatus = MovingIn
+        , selectedResult = Just result
       }
     , { currentUrl | fragment = resPath }
         |> Url.toString
@@ -753,16 +753,16 @@ userPressedArrowKeysInSearchResultsList :
     ->
         { a
             | preview : Response ServerData
+            , previewAnimationStatus : PreviewAnimationStatus
             , response : Response ServerData
             , selectedResult : Maybe String
-            , previewAnimationStatus : PreviewAnimationStatus
         }
     ->
         ( { a
             | preview : Response ServerData
+            , previewAnimationStatus : PreviewAnimationStatus
             , response : Response ServerData
             , selectedResult : Maybe String
-            , previewAnimationStatus : PreviewAnimationStatus
           }
         , Cmd msg
         )

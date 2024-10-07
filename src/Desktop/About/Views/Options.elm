@@ -70,7 +70,7 @@ toggleLabel =
 view : Session -> AboutPageModel -> Element AboutMsg
 view session model =
     row
-        [ width fill
+        [ width (fill |> maximum 900)
         , height fill
         , clipY
         ]
@@ -106,7 +106,7 @@ view session model =
                     )
                 ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ textColumn
                     [ width fill
                     , spacing lineSpacing

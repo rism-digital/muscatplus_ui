@@ -144,11 +144,11 @@ update msg session =
 
         UserChoseNationalCollection countryCode ->
             ( { session
-                | showFrontSearchInterface = SourceSearchOption
-                , restrictedToNationalCollection = countryCode
+                | restrictedToNationalCollection = countryCode
 
                 -- reset the user interface to the source search option to avoid getting stuck on the
                 -- people or incipits interface when a national collection is chosen.
+                , showFrontSearchInterface = SourceSearchOption
               }
             , Cmd.batch
                 [ PortSendSetNationalCollectionSelection countryCode

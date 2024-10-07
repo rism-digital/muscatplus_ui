@@ -1,7 +1,7 @@
 module Desktop.Record.Views.PersonPage exposing (viewFullPersonPage)
 
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -11,7 +11,7 @@ import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (sectionSpacing)
+import Page.UI.Attributes exposing (desktopDisplayWidth, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
@@ -57,7 +57,7 @@ viewDescriptionTab language body =
         , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
-            [ width fill
+            [ width (fill |> maximum desktopDisplayWidth)
             , spacing sectionSpacing
             , alignTop
             , padding 20

@@ -11,7 +11,7 @@ import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (emptyAttribute, headingHero, minimalDropShadow)
+import Page.UI.Attributes exposing (headingHero, minimalDropShadow)
 import Page.UI.Components exposing (h1)
 import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
@@ -38,9 +38,6 @@ view session model =
 
                 IncipitSearchOption ->
                     Background.image "/static/images/incipits.jpg"
-
-                _ ->
-                    emptyAttribute
     in
     row
         [ width fill
@@ -143,10 +140,6 @@ viewFacetPanels cfg =
 
                 IncipitSearchOption ->
                     localTranslations.incipits
-
-                -- Show a blank page if this is ever the choice; it shouldn't be!
-                LiturgicalFestivalsOption ->
-                    []
 
         qText =
             toNextQuery (.activeSearch cfg.model)

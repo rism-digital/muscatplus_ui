@@ -7,7 +7,7 @@ import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (externalLinkTemplate, h2, renderLabel, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (externalLinkTemplate, h3s, renderLabel, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, sourcesSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources)
@@ -110,8 +110,8 @@ viewHeldBy language body =
             , spacingXY 10 5
             ]
             [ el
-                [ width (px 25)
-                , height (px 25)
+                [ width (px 20)
+                , height (px 20)
                 , alignTop
                 , tooltip above
                     (el
@@ -125,7 +125,7 @@ viewHeldBy language body =
                 [ link
                     [ linkColour
                     ]
-                    { label = h2 language body.label
+                    { label = h3s language body.label
                     , url = body.id
                     }
                 ]

@@ -2,7 +2,7 @@ module Desktop.Record.Views.SourcePage exposing (viewFullSourcePage)
 
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -11,7 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (sectionSpacing)
+import Page.UI.Attributes exposing (desktopDisplayWidth, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
@@ -141,7 +141,7 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
         , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
-            [ width fill
+            [ width (fill |> maximum desktopDisplayWidth)
             , spacing sectionSpacing
             , alignTop
             , padding 20

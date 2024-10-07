@@ -1,7 +1,7 @@
 module Desktop.Record.Views.InstitutionPage exposing (viewFullInstitutionPage)
 
 import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -11,7 +11,7 @@ import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (desktopDisplayWidth, labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Components exposing (mapViewer, pageBodyOrEmpty, renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
@@ -59,7 +59,7 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
         , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
-            [ width fill
+            [ width (fill |> maximum desktopDisplayWidth)
             , alignTop
             , spacing sectionSpacing
             , padding 20

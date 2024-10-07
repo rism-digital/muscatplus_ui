@@ -142,8 +142,8 @@ pageHeaderTemplate :
     -> Maybe (Element msg)
     ->
         { a
-            | sectionToc : String
-            , label : LanguageMap
+            | label : LanguageMap
+            , sectionToc : String
         }
     -> Element msg
 pageHeaderTemplate language icon header =

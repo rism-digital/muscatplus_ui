@@ -352,7 +352,7 @@ viewPAESearchLink language _ data =
 viewRenderedIncipits : List RenderedIncipit -> Element msg
 viewRenderedIncipits incipits =
     row
-        [ width (fill |> minimum 500 |> maximum 1000)
+        [ width (fill |> minimum 500 |> maximum 800)
         , htmlAttribute (HA.class "svg-rendered-incipit")
         , Background.color colourScheme.transparent
         ]

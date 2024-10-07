@@ -492,7 +492,7 @@ view session =
         , clipY
         ]
         [ column
-            [ width fill
+            [ width (fill |> maximum 900)
             , height fill
             , padding 20
             , Background.color colourScheme.white
@@ -502,7 +502,7 @@ view session =
             , htmlAttribute (HA.style "min-height" "unset")
             ]
             [ row
-                [ width (fill |> maximum 900)
+                [ width fill
                 , Font.size 36
                 , Font.medium
                 ]
@@ -511,51 +511,51 @@ view session =
                     |> text
                 ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ Markdown.view session.language helpTextRecordTypes
                 ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ iconDescriptionTable
                     { data = recordTypesEntries
                     , language = session.language
                     }
                 ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ Markdown.view session.language helpTextSourceTypes ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ iconDescriptionTable
                     { data = sourceTypesEntries
                     , language = session.language
                     }
                 ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ Markdown.view session.language helpTextContentTypes ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ iconDescriptionTable
                     { data = contentTypesEntries
                     , language = session.language
                     }
                 ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ Markdown.view session.language helpTextAdditionalIcons ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ iconDescriptionTable
                     { data = additionalIconsEntries
                     , language = session.language
                     }
                 ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ Markdown.view session.language helpTextSourceDatabases ]
             , row
-                [ width (fill |> maximum 900) ]
+                [ width fill ]
                 [ table
                     [ width fill
                     , spacing 10
