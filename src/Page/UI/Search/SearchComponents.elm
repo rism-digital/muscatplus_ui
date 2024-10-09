@@ -1,6 +1,6 @@
 module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, viewSearchButtons)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -10,7 +10,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, fo
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing)
+import Page.UI.Attributes exposing (headingLG, headingMD)
 import Page.UI.Errors exposing (createProbeErrorMessage)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
@@ -141,69 +141,63 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
     row
         [ alignTop
         , Background.color colourScheme.lightGrey
-        , width fill
-        , height (px 50)
-        , paddingXY 20 0
-        , centerY
-        , Border.color colourScheme.darkBlue
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , width fill
+        , height
+            (if isFrontPage then
+                px 85
+
+             else
+                px 50
+            )
+        , spacing 12
+        , centerY
+        , paddingXY 20 0
         ]
         [ column
-            [ width fill
-            , height fill
-            , centerY
+            [ width shrink
             ]
+            [ Input.button
+                [ Border.color submitButtonColours
+                , Background.color submitButtonColours
+                , height (px 35)
+                , width shrink
+                , Font.center
+                , Font.color colourScheme.white
+                , headingMD
+                , submitPointerStyle
+                , centerY
+                , paddingXY 10 0
+                ]
+                { label = text submitButtonLabel
+                , onPress = submitButtonMsg
+                }
+            ]
+        , column
+            [ width shrink ]
+            [ Input.button
+                [ Border.color colourScheme.turquoise
+                , Background.color colourScheme.turquoise
+                , height (px 35)
+                , width shrink
+                , Font.center
+                , Font.color colourScheme.white
+                , centerY
+                , headingMD
+                , paddingXY 10 0
+                ]
+                { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
+                , onPress = Just resetMsg
+                }
+            ]
+        , column
+            [ width fill ]
             [ row
                 [ width fill
-                , height fill
-                , spacing lineSpacing
-                , centerY
+                , spacing 5
                 ]
-                [ column
-                    [ width shrink ]
-                    [ Input.button
-                        [ Border.color submitButtonColours
-                        , Background.color submitButtonColours
-                        , height (px 35)
-                        , width shrink
-                        , Font.center
-                        , Font.color colourScheme.white
-                        , headingMD
-                        , submitPointerStyle
-                        , centerY
-                        , paddingXY 10 0
-                        ]
-                        { label = text submitButtonLabel
-                        , onPress = submitButtonMsg
-                        }
-                    ]
-                , column
-                    [ width shrink ]
-                    [ Input.button
-                        [ Border.color colourScheme.turquoise
-                        , Background.color colourScheme.turquoise
-                        , height (px 35)
-                        , width shrink
-                        , Font.center
-                        , Font.color colourScheme.white
-                        , centerY
-                        , headingMD
-                        , paddingXY 10 0
-                        ]
-                        { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
-                        , onPress = Just resetMsg
-                        }
-                    ]
-                , column
-                    [ width fill ]
-                    [ row
-                        [ width fill
-                        , spacing 5
-                        ]
-                        [ viewProbeResponseNumbers language model.probeResponse
-                        , updateMessage
-                        ]
-                    ]
+                [ viewProbeResponseNumbers language model.probeResponse
+                , updateMessage
                 ]
             ]
         ]

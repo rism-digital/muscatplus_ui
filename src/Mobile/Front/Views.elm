@@ -1,6 +1,5 @@
 module Mobile.Front.Views exposing (view)
 
-import Desktop.Front.Views.Facets exposing (facetFrontMsgConfig)
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, px, row, scrollbarY, text, width)
 import Element.Background as Background
 import Element.Font as Font
@@ -13,13 +12,33 @@ import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingHero, minimalDropShadow)
 import Page.UI.Components exposing (h1)
+import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewSearchButtons)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
+
+
+facetFrontMsgConfig : FacetMsgConfig FrontMsg
+facetFrontMsgConfig =
+    { userClickedToggleMsg = FrontMsg.UserClickedToggleFacet
+    , userLostFocusRangeMsg = FrontMsg.UserLostFocusRangeFacet
+    , userFocusedRangeMsg = FrontMsg.UserFocusedRangeFacet
+    , userEnteredTextRangeMsg = FrontMsg.UserEnteredTextInRangeFacet
+    , userClickedFacetExpandSelectMsg = FrontMsg.UserClickedSelectFacetExpand
+    , userChangedFacetBehaviourSelectMsg = FrontMsg.UserChangedFacetBehaviour
+    , userChangedSelectFacetSortSelectMsg = FrontMsg.UserChangedSelectFacetSort
+    , userSelectedFacetItemSelectMsg = FrontMsg.UserClickedSelectFacetItem
+    , userInteractedWithPianoKeyboard = FrontMsg.UserInteractedWithPianoKeyboard
+    , userRemovedQueryMsg = FrontMsg.UserRemovedItemFromQueryFacet
+    , userEnteredTextQueryMsg = FrontMsg.UserEnteredTextInQueryFacet
+    , userChangedBehaviourQueryMsg = FrontMsg.UserChangedFacetBehaviour
+    , userChoseOptionQueryMsg = FrontMsg.UserChoseOptionFromQueryFacetSuggest
+    , nothingHappenedMsg = FrontMsg.NothingHappened
+    }
 
 
 view : Session -> FrontPageModel FrontMsg -> Element FrontMsg
@@ -66,7 +85,6 @@ frontBodyViewRouter session model =
                 { session = session
                 , model = model
                 , body = body
-                , checkboxColumns = 1
                 , facetMsgConfig = facetFrontMsgConfig
                 , panelToggleMsg = \_ _ -> FrontMsg.NothingHappened
                 , userTriggeredSearchSubmitMsg = FrontMsg.UserTriggeredSearchSubmit
@@ -176,6 +194,14 @@ viewFacetPanels cfg =
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
+                        }
+                    , viewSearchButtons
+                        { language = language
+                        , model = cfg.model
+                        , isFrontPage = True
+                        , submitLabel = localTranslations.showResults
+                        , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                        , resetMsg = FrontMsg.UserResetAllFilters
                         }
                     ]
                 ]

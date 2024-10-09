@@ -1,4 +1,4 @@
-module Desktop.About.Views.Help exposing (IconDescriptionData, view)
+module Desktop.About.Help exposing (IconDescriptionData, view)
 
 import Element exposing (Color, Element, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paragraph, px, row, scrollbarY, shrink, spacing, table, text, width)
 import Element.Background as Background

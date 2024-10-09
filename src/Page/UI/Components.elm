@@ -12,6 +12,8 @@ module Page.UI.Components exposing
     , h3s
     , h4
     , h5
+    , h6
+    , h6e
     , makeFlagIcon
     , mapViewer
     , pageBodyOrEmpty
@@ -21,6 +23,7 @@ module Page.UI.Components exposing
     , sourceIconChooser
     , sourceTypeIconChooser
     , tabView
+    , verticalLine
     , viewParagraphField
     , viewSummaryField
     )
@@ -40,7 +43,7 @@ import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (bodyRegular, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
 import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -164,6 +167,7 @@ dropdownSelect cfg =
     row
         [ width fill
         , spacing lineSpacing
+        , bodySM
         ]
         [ label
         , column
@@ -280,6 +284,16 @@ h4 language heading =
 h5 : Language -> LanguageMap -> Element msg
 h5 language heading =
     renderLanguageHelper [ headingMD, Region.heading 5, Font.medium ] language heading
+
+
+h6 : Language -> LanguageMap -> Element msg
+h6 language heading =
+    renderLanguageHelper [ headingSM, Region.heading 6, Font.medium ] language heading
+
+
+h6e : Language -> LanguageMap -> Element msg
+h6e language heading =
+    el [ headingSM, Region.heading 6, Font.medium ] (text (extractLabelFromLanguageMap language heading))
 
 
 makeFlagIcon :
@@ -706,3 +720,13 @@ tabView cfg =
         ]
         [ tabLabel
         ]
+
+
+verticalLine : Element msg
+verticalLine =
+    el
+        [ height fill
+        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+        , Border.color colourScheme.midGrey
+        ]
+        none

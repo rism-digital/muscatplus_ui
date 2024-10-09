@@ -1,8 +1,7 @@
 module Desktop.Front.Views exposing (view)
 
 import Desktop.Error.Views
-import Desktop.Front.Views.Facets exposing (facetFrontMsgConfig)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, maximum, minimum, none, paddingXY, paragraph, px, row, scrollbarY, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipX, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, paragraph, px, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -16,6 +15,7 @@ import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingHero)
 import Page.UI.Components exposing (h1)
 import Page.UI.Facets.Facets exposing (viewFacet)
+import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput, viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
@@ -28,6 +28,25 @@ import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Set
+
+
+facetFrontMsgConfig : FacetMsgConfig FrontMsg
+facetFrontMsgConfig =
+    { userClickedToggleMsg = FrontMsg.UserClickedToggleFacet
+    , userLostFocusRangeMsg = FrontMsg.UserLostFocusRangeFacet
+    , userFocusedRangeMsg = FrontMsg.UserFocusedRangeFacet
+    , userEnteredTextRangeMsg = FrontMsg.UserEnteredTextInRangeFacet
+    , userClickedFacetExpandSelectMsg = FrontMsg.UserClickedSelectFacetExpand
+    , userChangedFacetBehaviourSelectMsg = FrontMsg.UserChangedFacetBehaviour
+    , userChangedSelectFacetSortSelectMsg = FrontMsg.UserChangedSelectFacetSort
+    , userSelectedFacetItemSelectMsg = FrontMsg.UserClickedSelectFacetItem
+    , userInteractedWithPianoKeyboard = FrontMsg.UserInteractedWithPianoKeyboard
+    , userRemovedQueryMsg = FrontMsg.UserRemovedItemFromQueryFacet
+    , userEnteredTextQueryMsg = FrontMsg.UserEnteredTextInQueryFacet
+    , userChangedBehaviourQueryMsg = FrontMsg.UserChangedFacetBehaviour
+    , userChoseOptionQueryMsg = FrontMsg.UserChoseOptionFromQueryFacetSuggest
+    , nothingHappenedMsg = FrontMsg.NothingHappened
+    }
 
 
 view : Session -> FrontPageModel FrontMsg -> Element FrontMsg
@@ -50,13 +69,14 @@ view session model =
     row
         [ width fill
         , height fill
+        , alignTop
+        , alignLeft
         , backgroundImage
+        , htmlAttribute (HA.style "background-position" "top left")
         ]
         [ column
-            [ width (fill |> minimum 800 |> maximum 1100)
+            [ width (px 1100)
             , height fill
-            , alignLeft
-            , alignTop
             , Background.color colourScheme.white
             ]
             [ frontBodyViewRouter session model ]
@@ -74,7 +94,6 @@ frontBodyViewRouter session model =
                 { session = session
                 , model = model
                 , body = body
-                , checkboxColumns = 4 -- TODO: Make responsive
                 , facetMsgConfig = facetFrontMsgConfig
                 , panelToggleMsg = FrontMsg.UserClickedFacetPanelToggle
                 , userTriggeredSearchSubmitMsg = FrontMsg.UserTriggeredSearchSubmit
@@ -90,20 +109,14 @@ viewFrontSearchControls cfg =
     row
         [ width fill
         , height fill
-        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-        , Border.color colourScheme.darkBlue
         ]
         [ column
             [ width fill
+            , Border.widthEach { right = 1, top = 0, left = 0, bottom = 0 }
             , height fill
+            , alignTop
             ]
-            [ row
-                [ width fill
-                , height (px 35)
-                , Background.color colourScheme.lightGrey
-                ]
-                []
-            , viewSearchButtons
+            [ viewSearchButtons
                 { language = .language cfg.session
                 , model = cfg.model
                 , isFrontPage = True
@@ -111,7 +124,58 @@ viewFrontSearchControls cfg =
                 , submitMsg = FrontMsg.UserTriggeredSearchSubmit
                 , resetMsg = FrontMsg.UserResetAllFilters
                 }
-            , viewFacetPanels cfg
+            , row
+                [ width fill
+                , height fill
+                , scrollbarY
+                , htmlAttribute (HA.style "min-height" "unset")
+                ]
+                [ column
+                    [ width fill
+                    , height fill
+                    ]
+                    [ viewFacetPanels cfg ]
+                ]
+            ]
+        ]
+
+
+viewFrontSearchControlsLoading : Element FrontMsg
+viewFrontSearchControlsLoading =
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , Border.widthEach { right = 1, top = 0, left = 0, bottom = 0 }
+            ]
+            [ row
+                [ width fill
+                , height (px 85)
+                , Background.color colourScheme.lightGrey
+                , Border.color colourScheme.darkBlue
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+                ]
+                []
+            , row
+                [ width fill
+                , height fill
+                ]
+                [ el
+                    [ width (px 50)
+                    , height (px 50)
+                    , centerX
+                    , centerY
+                    ]
+                    (animatedLoader
+                        [ width (px 50)
+                        , height (px 50)
+                        ]
+                        (spinnerSvg colourScheme.midGrey)
+                    )
+                ]
             ]
         ]
 
@@ -152,13 +216,12 @@ viewFacetPanels cfg =
             case .showFrontSearchInterface cfg.session of
                 IncipitSearchOption ->
                     ( viewFacet
-                        { activeSearch = .activeSearch cfg.model
-                        , alias = "notation"
-                        , body = cfg.body
+                        { alias = "notation"
                         , language = .language cfg.session
-                        , searchPreferences = .searchPreferences cfg.session
-                        , selectColumns = cfg.checkboxColumns
+                        , activeSearch = .activeSearch cfg.model
+                        , body = cfg.body
                         , tooltip = []
+                        , searchPreferences = .searchPreferences cfg.session
                         }
                         cfg.facetMsgConfig
                     , searchKeywordInput
@@ -191,7 +254,6 @@ viewFacetPanels cfg =
             { language = .language cfg.session
             , activeSearch = .activeSearch cfg.model
             , body = cfg.body
-            , numberOfSelectColumns = cfg.checkboxColumns
             , expandedFacetPanels = expandedFacetPanels
             , panelToggleMsg = cfg.panelToggleMsg
             , facetMsgConfig = cfg.facetMsgConfig
@@ -214,9 +276,7 @@ viewFacetPanels cfg =
     row
         [ width fill
         , height fill
-        , alignTop
-        , scrollbarY
-        , htmlAttribute (HA.style "min-height" "unset")
+        , padding 20
         ]
         [ column
             [ width fill
@@ -225,63 +285,23 @@ viewFacetPanels cfg =
             [ row
                 [ width fill
                 , alignTop
+                , headingHero
+                , Font.semiBold
+                , paddingXY 0 10
+                ]
+                [ h1 language headingHeroText
+                ]
+            , mainSearchField
+            , secondaryQueryField
+            , row
+                [ alignTop
+                , width fill
                 ]
                 [ column
                     [ width fill
-                    , alignTop
-                    , paddingXY 20 10
+                    , height fill
                     ]
-                    (paragraph
-                        [ headingHero
-                        , Font.semiBold
-                        , paddingXY 0 10
-                        ]
-                        [ h1 language headingHeroText ]
-                        :: mainSearchField
-                        :: secondaryQueryField
-                        :: facetLayout
-                    )
-                ]
-            ]
-        ]
-
-
-viewFrontSearchControlsLoading : Element FrontMsg
-viewFrontSearchControlsLoading =
-    row
-        [ width fill
-        , height fill
-        , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-        , Border.color colourScheme.darkBlue
-        ]
-        [ column
-            [ width fill
-            , height fill
-            ]
-            [ row
-                [ width fill
-                , height (px 85)
-                , Background.color colourScheme.lightGrey
-                , Border.color colourScheme.darkBlue
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                ]
-                []
-            , row
-                [ width fill
-                , height fill
-                ]
-                [ el
-                    [ width (px 50)
-                    , height (px 50)
-                    , centerX
-                    , centerY
-                    ]
-                    (animatedLoader
-                        [ width (px 50)
-                        , height (px 50)
-                        ]
-                        (spinnerSvg colourScheme.midGrey)
-                    )
+                    facetLayout
                 ]
             ]
         ]

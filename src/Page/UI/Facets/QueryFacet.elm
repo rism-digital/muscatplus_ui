@@ -2,7 +2,7 @@ module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, below, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -16,7 +16,7 @@ import Page.RecordTypes.Search exposing (FacetBehaviours(..), QueryFacet, parseF
 import Page.RecordTypes.Shared exposing (FacetAlias, LabelValue)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion, toAlias, toSuggestionList)
 import Page.UI.Attributes exposing (bodyRegular, headingSM, lineSpacing)
-import Page.UI.Components exposing (dropdownSelect, h4)
+import Page.UI.Components exposing (dropdownSelect, h6)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
@@ -69,12 +69,12 @@ viewQueryFacet config =
         ( behaviourIcon, behaviourText ) =
             case currentBehaviourOption of
                 FacetBehaviourIntersection ->
-                    ( intersectionSvg colourScheme.midGrey
+                    ( intersectionSvg colourScheme.black
                     , extractLabelFromLanguageMap config.language localTranslations.optionsWithAnd
                     )
 
                 FacetBehaviourUnion ->
-                    ( unionSvg colourScheme.midGrey
+                    ( unionSvg colourScheme.black
                     , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
                     )
 
@@ -169,55 +169,52 @@ viewQueryFacet config =
                 [ column
                     [ width shrink
                     , height shrink
-                    , centerX
+                    , alignLeft
                     , centerY
                     ]
                     [ facetTooltip onRight (extractLabelFromLanguageMap config.language config.tooltip) ]
                 , column
-                    [ width fill
-                    , alignLeft
+                    [ alignLeft
+                    , width fill
                     , centerY
                     ]
+                    [ h6 config.language facetLabel
+                    ]
+                , column
+                    [ alignLeft ]
                     [ row
-                        [ spacing 10 ]
-                        [ h4 config.language facetLabel
-                        , column
-                            [ alignLeft ]
-                            [ row
-                                [ height (px 25)
-                                , spacing 2
-                                , padding 3
-                                , Border.rounded 3
-                                , Border.width 1
-                                , Border.color colourScheme.midGrey
-                                , Background.color colourScheme.white
-                                ]
-                                [ el
-                                    [ width (px 25)
-                                    , height (px 10)
-                                    , el tooltipStyle (text behaviourText)
-                                        |> tooltip above
-                                    ]
-                                    behaviourIcon
-                                , el
-                                    [ alignLeft
-                                    , width (px 50)
-                                    ]
-                                    (dropdownSelect
-                                        { selectedMsg = \inp -> config.userChangedBehaviourMsg facetAlias (parseStringToFacetBehaviour inp)
-                                        , mouseDownMsg = Nothing
-                                        , mouseUpMsg = Nothing
-                                        , choices = listOfBehavioursForDropdown
-                                        , choiceFn = \inp -> parseStringToFacetBehaviour inp
-                                        , currentChoice = currentBehaviourOption
-                                        , selectIdent = facetAlias ++ "-query-behaviour-select"
-                                        , label = Nothing
-                                        , language = config.language
-                                        , inverted = False
-                                        }
-                                    )
-                                ]
+                        [ height (px 25)
+                        , spacing 2
+                        , padding 3
+                        , Border.rounded 3
+                        , Border.width 1
+                        , Border.color colourScheme.midGrey
+                        , Background.color colourScheme.white
+                        ]
+                        [ el
+                            [ width (px 25)
+                            , height (px 10)
+                            , el tooltipStyle (text behaviourText)
+                                |> tooltip above
                             ]
+                            behaviourIcon
+                        , el
+                            [ alignLeft
+                            , width (px 60)
+                            ]
+                            (dropdownSelect
+                                { selectedMsg = \inp -> config.userChangedBehaviourMsg facetAlias (parseStringToFacetBehaviour inp)
+                                , mouseDownMsg = Nothing
+                                , mouseUpMsg = Nothing
+                                , choices = listOfBehavioursForDropdown
+                                , choiceFn = \inp -> parseStringToFacetBehaviour inp
+                                , currentChoice = currentBehaviourOption
+                                , selectIdent = facetAlias ++ "-query-behaviour-select"
+                                , label = Nothing
+                                , language = config.language
+                                , inverted = False
+                                }
+                            )
                         ]
                     ]
                 ]

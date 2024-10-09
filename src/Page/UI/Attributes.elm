@@ -5,7 +5,6 @@ module Page.UI.Attributes exposing
     , bodyRegular
     , bodySM
     , bodySerifFont
-    , controlsColumnWidth
     , desktopDisplayWidth
     , emptyAttribute
     , emptyHtmlAttribute
@@ -20,7 +19,6 @@ module Page.UI.Attributes exposing
     , lineSpacing
     , linkColour
     , minimalDropShadow
-    , responsiveCheckboxColumns
     , resultsColumnWidth
     , sectionBorderStyles
     , sectionSpacing
@@ -205,38 +203,6 @@ valueFieldColumnAttributes =
     , alignTop
     , spacing lineSpacing
     ]
-
-
-controlsColumnWidth : Device -> Attribute msg
-controlsColumnWidth { class, orientation } =
-    case ( class, orientation ) of
-        ( Phone, Portrait ) ->
-            width (px 0)
-
-        ( Desktop, Landscape ) ->
-            width fill
-
-        ( BigDesktop, Landscape ) ->
-            width fill
-
-        _ ->
-            width fill
-
-
-responsiveCheckboxColumns : Device -> Int
-responsiveCheckboxColumns { class, orientation } =
-    case ( class, orientation ) of
-        ( Phone, Portrait ) ->
-            3
-
-        ( Desktop, Landscape ) ->
-            3
-
-        ( BigDesktop, Landscape ) ->
-            4
-
-        _ ->
-            3
 
 
 sidebarWidth : Int

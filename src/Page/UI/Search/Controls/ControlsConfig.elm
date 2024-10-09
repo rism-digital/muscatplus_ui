@@ -14,7 +14,6 @@ type alias ControlsConfig body msg =
     { language : Language
     , activeSearch : ActiveSearch msg
     , body : { body | facets : Facets }
-    , numberOfSelectColumns : Int
     , expandedFacetPanels : Set String
     , panelToggleMsg : String -> Set String -> msg
     , facetMsgConfig : FacetMsgConfig msg
@@ -30,7 +29,6 @@ type alias SearchControlsConfig a b msg =
             , applyFilterPrompt : Bool
         }
     , body : { b | facets : Facets }
-    , checkboxColumns : Int
     , facetMsgConfig : FacetMsgConfig msg
     , panelToggleMsg : String -> Set String -> msg
     , userTriggeredSearchSubmitMsg : msg

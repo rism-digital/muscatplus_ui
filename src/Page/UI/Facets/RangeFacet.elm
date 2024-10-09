@@ -11,7 +11,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
-import Page.UI.Components exposing (h4)
+import Page.UI.Components exposing (h6)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp, facetTooltip)
@@ -157,10 +157,7 @@ viewRangeFacet config =
                     , alignLeft
                     , centerY
                     ]
-                    [ row
-                        [ spacing 10 ]
-                        [ h4 config.language (.label config.rangeFacet) ]
-                    ]
+                    [ h6 config.language (.label config.rangeFacet) ]
                 ]
             , row
                 [ width fill

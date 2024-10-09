@@ -2,7 +2,7 @@ module Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, mouseOver, none, onRight, padding, paragraph, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, explain, fill, height, mouseOver, none, onLeft, onRight, padding, paragraph, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -14,8 +14,8 @@ import List.Extra as LE
 import Page.Query exposing (toFacetBehaviours, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.UI.Attributes exposing (bodyRegular, lineSpacing, linkColour)
-import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h4)
+import Page.UI.Attributes exposing (bodySM, lineSpacing, linkColour)
+import Page.UI.Components exposing (basicCheckbox, dropdownSelect, h6, h6e, verticalLine)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetTooltip, tooltip, tooltipStyle)
@@ -29,7 +29,6 @@ type alias SelectFacetConfig msg =
     , tooltip : LanguageMap
     , selectFacet : SelectFacet
     , activeSearch : ActiveSearch msg
-    , numberOfColumns : Int
     , userClickedFacetExpandMsg : String -> msg
     , userChangedFacetBehaviourMsg : FacetAlias -> FacetBehaviours -> msg
     , userChangedSelectFacetSortMsg : FacetAlias -> FacetSorts -> msg
@@ -42,23 +41,13 @@ sortFacetItemList language sortBy facetItems =
     case sortBy of
         FacetSortCount ->
             List.sortBy
-                (\i ->
-                    let
-                        (FacetItem _ _ count) =
-                            i
-                    in
-                    count
-                )
+                (\(FacetItem _ _ count) -> count)
                 facetItems
                 |> List.reverse
 
         FacetSortAlpha ->
             List.sortBy
-                (\i ->
-                    let
-                        (FacetItem _ langmap _) =
-                            i
-                    in
+                (\(FacetItem _ langmap _) ->
                     extractLabelFromLanguageMap language langmap
                         |> String.toLower
                 )
@@ -72,10 +61,10 @@ sortIcon : FacetSorts -> Element msg
 sortIcon sortType =
     case sortType of
         FacetSortCount ->
-            sortAlphaDescSvg colourScheme.midGrey
+            sortAlphaDescSvg colourScheme.black
 
         FacetSortAlpha ->
-            sortNumericDescSvg colourScheme.midGrey
+            sortNumericDescSvg colourScheme.black
 
 
 toggledSortType : FacetSorts -> FacetSorts
@@ -124,7 +113,7 @@ viewSelectFacet config =
                     sortedItems
 
                 else
-                    List.take 12 sortedItems
+                    List.take 20 sortedItems
 
             query =
                 toNextQuery activeSearch
@@ -147,31 +136,47 @@ viewSelectFacet config =
             ( behaviourIcon, behaviourText ) =
                 case currentBehaviourOption of
                     FacetBehaviourIntersection ->
-                        ( intersectionSvg colourScheme.midGrey
+                        ( intersectionSvg colourScheme.black
                         , extractLabelFromLanguageMap config.language localTranslations.optionsWithAnd
                         )
 
                     FacetBehaviourUnion ->
-                        ( unionSvg colourScheme.midGrey
+                        ( unionSvg colourScheme.black
                         , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
                         )
 
             facetAlias =
                 .alias config.selectFacet
 
+            numItems =
+                List.length sortedItems
+
+            numColumns =
+                if numItems <= 4 then
+                    1
+
+                else if numItems <= 8 then
+                    2
+
+                else if numItems <= 16 then
+                    3
+
+                else
+                    4
+
             numItemsPerGroup =
-                (toFloat (List.length facetItems) / toFloat config.numberOfColumns)
+                (toFloat (List.length facetItems) / toFloat numColumns)
                     |> ceiling
 
             groupedFacetItems =
                 LE.greedyGroupsOf numItemsPerGroup facetItems
 
             showLink =
-                if List.length sortedItems > 12 then
+                if List.length sortedItems > 20 then
                     let
                         showMoreText =
                             if isExpanded then
-                                "Collapse options list"
+                                "Collapse values list"
 
                             else
                                 let
@@ -200,15 +205,15 @@ viewSelectFacet config =
 
             listOfBehavioursForDropdown =
                 List.map
-                    (\v ->
-                        ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )
+                    (\{ label, value } ->
+                        ( parseFacetBehaviourToString value, extractLabelFromLanguageMap config.language label )
                     )
                     behaviourOptions.items
 
             behaviourDropdown =
                 el
                     [ alignLeft
-                    , width (px 50)
+                    , width (px 60)
                     ]
                     (dropdownSelect
                         { selectedMsg = \inp -> config.userChangedFacetBehaviourMsg facetAlias (parseStringToFacetBehaviour inp)
@@ -232,82 +237,78 @@ viewSelectFacet config =
             [ column
                 [ width fill
                 , alignTop
-                , spacing lineSpacing
+                , spacing 8
                 ]
                 [ row
                     [ width fill
                     , alignTop
                     , spacing lineSpacing
-                    , padding 10
+                    , padding 8
                     , Background.color colourScheme.lightGrey
-                    , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
+                    , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
                     , Border.color colourScheme.midGrey
                     ]
-                    [ column
+                    [ el
                         [ width shrink
                         , height shrink
-                        , centerX
                         , centerY
                         ]
-                        [ facetTooltip onRight (extractLabelFromLanguageMap config.language config.tooltip) ]
-                    , column
-                        [ width fill
-                        , alignLeft
+                        (facetTooltip onRight (extractLabelFromLanguageMap config.language config.tooltip))
+                    , el
+                        [ alignLeft
                         , centerY
+                        , width fill
                         ]
-                        [ row
-                            [ spacing 10
-                            ]
-                            [ h4 config.language (.label config.selectFacet)
-                            , column
-                                [ alignLeft ]
-                                [ row
-                                    [ height (px 25)
-                                    , spacing 2
-                                    , padding 3
-                                    , Border.rounded 3
-                                    , Border.width 1
-                                    , Border.color colourScheme.midGrey
-                                    , Background.color colourScheme.white
-                                    ]
-                                    [ el
-                                        [ width (px 25)
-                                        , height (px 10)
-                                        , el tooltipStyle (text behaviourText)
-                                            |> tooltip above
-                                        ]
-                                        behaviourIcon
-                                    , behaviourDropdown
-                                    ]
-                                ]
-                            , column
-                                []
-                                [ el
-                                    [ width (px 25)
-                                    , height (px 25)
-                                    , onClick (config.userChangedSelectFacetSortMsg facetAlias (toggledSortType chosenSort))
-                                    , el tooltipStyle (text chosenSortMessage)
-                                        |> tooltip above
-                                    , padding 3
-                                    , Border.rounded 3
-                                    , Border.width 1
-                                    , Border.color colourScheme.midGrey
-                                    , Background.color colourScheme.white
-                                    ]
-                                    (sortIcon chosenSort)
-                                ]
-                            ]
+                        (h6e config.language (.label config.selectFacet))
+                    , el
+                        [ width (px 25)
+                        , height (px 25)
                         ]
+                        (row
+                            [ height (px 25)
+                            , spacing 2
+                            , padding 3
+                            , Border.rounded 3
+                            , Border.width 1
+                            , Border.color colourScheme.midGrey
+                            , Background.color colourScheme.white
+                            , alignRight
+                            ]
+                            [ el
+                                [ width (px 25)
+                                , height (px 10)
+                                , el tooltipStyle (text behaviourText)
+                                    |> tooltip onLeft
+                                ]
+                                behaviourIcon
+                            , behaviourDropdown
+                            ]
+                        )
+                    , el
+                        [ width (px 25)
+                        , height (px 25)
+                        , onClick (config.userChangedSelectFacetSortMsg facetAlias (toggledSortType chosenSort))
+                        , el tooltipStyle (text chosenSortMessage)
+                            |> tooltip onLeft
+                        , padding 3
+                        , Border.rounded 3
+                        , Border.width 1
+                        , Border.color colourScheme.midGrey
+                        , Background.color colourScheme.white
+                        , alignRight
+                        ]
+                        (sortIcon chosenSort)
+                    , el
+                        [ alignRight ]
+                        showLink
                     ]
                 , row
                     [ width fill
-                    , spacing lineSpacing
+                    , spacing 8
                     ]
-                    (List.map (viewSelectFacetItemColumn config) groupedFacetItems)
-                , row
-                    [ alignRight ]
-                    [ showLink
-                    ]
+                    (List.map (viewSelectFacetItemColumn config) groupedFacetItems
+                        |> List.intersperse verticalLine
+                    )
                 ]
             ]
 
@@ -349,8 +350,8 @@ viewSelectFacetItem config fitem =
     row
         [ width fill
         , alignLeft
-        , padding 5
-        , mouseOver [ Background.color colourScheme.lightGrey ]
+        , padding 2
+        , mouseOver [ Background.color colourScheme.lightestBlue ]
         ]
         [ checkbox
             [ Element.htmlAttribute (HA.alt fullLabel)
@@ -362,7 +363,7 @@ viewSelectFacetItem config fitem =
             , icon = basicCheckbox
             , label =
                 labelRight
-                    [ bodyRegular
+                    [ bodySM
                     , width fill
                     ]
                     (paragraph [ width fill ] [ text (SE.softEllipsis 50 fullLabel) ])
@@ -370,7 +371,7 @@ viewSelectFacetItem config fitem =
             }
         , el
             [ alignRight
-            , bodyRegular
+            , bodySM
             , alignTop
             ]
             (text (formatNumberByLanguage config.language count))
@@ -381,7 +382,8 @@ viewSelectFacetItemColumn : SelectFacetConfig msg -> List FacetItem -> Element m
 viewSelectFacetItemColumn config facetRow =
     column
         [ width (px 250)
+        , height fill
         , alignTop
-        , spacing 4
+        , spacing 8
         ]
         (List.map (viewSelectFacetItem config) facetRow)

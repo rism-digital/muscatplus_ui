@@ -1,4 +1,4 @@
-module Desktop.About.Views.Options exposing (view)
+module Desktop.About.Options exposing (view)
 
 import Element exposing (Element, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paragraph, row, scrollbarY, spacing, text, textColumn, width)
 import Element.Background as Background

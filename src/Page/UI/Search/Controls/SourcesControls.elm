@@ -1,8 +1,9 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
-import Element exposing (Element, alignTop, column, none, paddingEach, row)
+import Element exposing (Element, alignTop, column, none, row, spacing)
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 import Language.Tooltips exposing (tooltips)
+import Page.UI.Components exposing (verticalLine)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
@@ -133,7 +134,7 @@ viewFacetsForSourcesMode cfg =
                     (.label sourceFacetPanels.sourceResultsPanel)
                     cfg
                     [ row
-                        [ paddingEach { bottom = 0, left = 0, right = 0, top = 0 }
+                        [ spacing 8
                         ]
                         [ column
                             []
@@ -141,6 +142,7 @@ viewFacetsForSourcesMode cfg =
                             , row [] [ sourceCollectionsToggle ]
                             , row [] [ compositeVolumesToggle ]
                             ]
+                        , verticalLine
                         , column
                             [ alignTop ]
                             [ row [] [ diammRecordsToggle ]
@@ -174,8 +176,9 @@ viewFacetsForSourcesMode cfg =
                     (.label sourceFacetPanels.digitizationPanel)
                     cfg
                     [ row
-                        []
+                        [ spacing 8 ]
                         [ hasDigitizationToggle
+                        , verticalLine
                         , hasIiifToggle
                         ]
                     ]

@@ -8,7 +8,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h2, h2s, h3, h3s, sourceIconChooser, viewSummaryField)
+import Page.UI.Components exposing (h2s, h3s, sourceIconChooser, viewSummaryField)
 import Page.UI.Style exposing (colourScheme)
 
 

@@ -1,4 +1,4 @@
-module Desktop.About.Views.AboutTexts exposing
+module Desktop.About.AboutTexts exposing
     ( aboutTextEnglish
     , aboutTextFrench
     , aboutTextGerman

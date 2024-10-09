@@ -18,7 +18,7 @@ import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus)
-import Page.UI.Attributes exposing (bodyRegular, controlsColumnWidth, lineSpacing, responsiveCheckboxColumns, resultsColumnWidth)
+import Page.UI.Attributes exposing (bodyRegular, lineSpacing, resultsColumnWidth)
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -192,7 +192,7 @@ viewSearchResultsSection cfg resultsLoading body =
             , viewPagination language body.pagination cfg.userClickedResultsPaginationMsg
             ]
         , column
-            [ controlsColumnWidth (.device cfg.session)
+            [ width fill
             , height fill
             , alignTop
             , inFront renderedPreview
@@ -210,7 +210,6 @@ viewSearchResultsSection cfg resultsLoading body =
                 { session = cfg.session
                 , model = cfg.model
                 , body = body
-                , checkboxColumns = responsiveCheckboxColumns (.device cfg.session)
                 , facetMsgConfig = cfg.facetMsgConfig
                 , panelToggleMsg = cfg.panelToggleMsg
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
@@ -327,7 +326,6 @@ viewSearchControls cfg =
                         { alias = "notation"
                         , language = language
                         , activeSearch = .activeSearch cfg.model
-                        , selectColumns = cfg.checkboxColumns
                         , body = cfg.body
                         , tooltip = []
                         , searchPreferences = .searchPreferences cfg.session
@@ -347,7 +345,6 @@ viewSearchControls cfg =
             { language = language
             , activeSearch = .activeSearch cfg.model
             , body = cfg.body
-            , numberOfSelectColumns = cfg.checkboxColumns
             , expandedFacetPanels = expandedFacetPanels
             , panelToggleMsg = cfg.panelToggleMsg
             , facetMsgConfig = cfg.facetMsgConfig

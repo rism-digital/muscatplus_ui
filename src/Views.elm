@@ -3,16 +3,16 @@ module Views exposing (view)
 import Browser
 import Css
 import Css.Global
-import Desktop.About.Views.About
-import Desktop.About.Views.Help
-import Desktop.About.Views.Options
+import Desktop.About.About
+import Desktop.About.Help
+import Desktop.About.Options
 import Desktop.Error.Views
 import Desktop.Front.Views
 import Desktop.Record.Views
 import Desktop.Search.Views
 import Desktop.SideBar.Views
 import Device exposing (DeviceView(..), detectView)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, inFront, layout, paddingXY, px, row, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, inFront, layout, none, paddingXY, px, row, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Styled exposing (toUnstyled)
@@ -172,19 +172,19 @@ viewPageBody deviceView model =
                     Element.map Msg.UserInteractedWithAboutPage (Mobile.About.Views.About.view session pageModel)
 
                 ( AboutPage session pageModel, DesktopView ) ->
-                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.About.view session pageModel)
+                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.About.view session pageModel)
 
                 ( HelpPage session, MobileView ) ->
-                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.Help.view session)
+                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Help.view session)
 
                 ( HelpPage session, DesktopView ) ->
-                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.Help.view session)
+                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Help.view session)
 
                 ( OptionsPage session pageModel, MobileView ) ->
                     Element.map Msg.UserInteractedWithAboutPage (Mobile.About.Views.Options.view session pageModel)
 
                 ( OptionsPage session pageModel, DesktopView ) ->
-                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Views.Options.view session pageModel)
+                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Options.view session pageModel)
     in
     case deviceView of
         MobileView ->
@@ -227,8 +227,7 @@ viewPageBody deviceView model =
                 ]
                 [ navbarView
                 , column
-                    [ centerX
-                    , width fill
+                    [ width fill
                     , height fill
                     ]
                     [ loadingIndicator model

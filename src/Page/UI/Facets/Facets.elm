@@ -1,14 +1,15 @@
 module Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 
 import Dict
-import Element exposing (Element, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, centerY, column, el, fill, height, none, paddingXY, pointer, px, row, spacing, spacingXY, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Language exposing (LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (LanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Search exposing (FacetData(..))
-import Page.UI.Attributes exposing (headingLG)
+import Page.UI.Attributes exposing (headingMD)
+import Page.UI.Components exposing (h5)
 import Page.UI.Facets.FacetsConfig exposing (FacetConfig, FacetMsgConfig)
 import Page.UI.Facets.NotationFacet exposing (viewKeyboardControl)
 import Page.UI.Facets.QueryFacet exposing (viewQueryFacet)
@@ -54,7 +55,6 @@ viewFacet cfg msg =
                 , tooltip = cfg.tooltip
                 , selectFacet = facet
                 , activeSearch = cfg.activeSearch
-                , numberOfColumns = cfg.selectColumns
                 , userClickedFacetExpandMsg = msg.userClickedFacetExpandSelectMsg
                 , userChangedFacetBehaviourMsg = msg.userChangedFacetBehaviourSelectMsg
                 , userChangedSelectFacetSortMsg = msg.userChangedSelectFacetSortSelectMsg
@@ -131,7 +131,7 @@ viewFacetsControlPanel alias header cfg body =
         in
         row
             [ width fill
-            , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+            , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
             , Border.color colourScheme.lightGrey
             , paddingXY 0 10
             ]
@@ -144,8 +144,7 @@ viewFacetsControlPanel alias header cfg body =
                     , Border.dotted
                     , paddingXY 0 8
                     , spacing 5
-                    , Font.medium
-                    , headingLG
+                    , headingMD
                     ]
                     [ el
                         [ width (px 16)
@@ -158,9 +157,10 @@ viewFacetsControlPanel alias header cfg body =
                     , el
                         [ centerY
                         , pointer
+                        , width fill
                         , onClick (cfg.panelToggleMsg alias cfg.expandedFacetPanels)
                         ]
-                        (text (extractLabelFromLanguageMap cfg.language header))
+                        (h5 cfg.language header)
                     ]
                 , panelBody
                 ]

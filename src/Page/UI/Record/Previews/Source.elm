@@ -136,9 +136,6 @@ viewMobileSourcePreview cfg body =
         sourceIcon =
             sourceIconChooser (.type_ (.recordType body.sourceTypes))
 
-        allExternals =
-            gatherAllDigitizationLinksForCallout cfg.language body
-
         sourceIconView =
             el
                 [ width (px 25)
@@ -147,6 +144,9 @@ viewMobileSourcePreview cfg body =
                 , alignTop
                 ]
                 (sourceIcon colourScheme.darkBlue)
+
+        allExternals =
+            gatherAllDigitizationLinksForCallout cfg.language body
 
         pageBodyView =
             row

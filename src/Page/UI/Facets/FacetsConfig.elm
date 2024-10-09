@@ -12,7 +12,6 @@ type alias FacetConfig a msg =
     { alias : FacetAlias
     , language : Language
     , activeSearch : ActiveSearch msg
-    , selectColumns : Int
     , body : { a | facets : Facets }
     , tooltip : LanguageMap
     , searchPreferences : Maybe SearchPreferences
@@ -39,10 +38,9 @@ type alias FacetMsgConfig msg =
 
 createFacetConfig :
     { c
-        | activeSearch : ActiveSearch msg
+        | language : Language
+        , activeSearch : ActiveSearch msg
         , body : { a | facets : Facets }
-        , language : Language
-        , numberOfSelectColumns : Int
     }
     -> String
     -> LanguageMap
@@ -51,7 +49,6 @@ createFacetConfig cfg alias tooltip =
     { alias = alias
     , language = cfg.language
     , activeSearch = cfg.activeSearch
-    , selectColumns = cfg.numberOfSelectColumns
     , body = cfg.body
     , tooltip = tooltip
     , searchPreferences = Nothing
