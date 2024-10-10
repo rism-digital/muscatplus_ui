@@ -98,7 +98,7 @@ viewFacetsControlPanel alias header cfg body =
     let
         -- if all of the body values are empty, skip showing this panel altogether.
         allAreEmpty =
-            List.all (\a -> a == none) body
+            List.all ((==) none) body
     in
     if allAreEmpty then
         none

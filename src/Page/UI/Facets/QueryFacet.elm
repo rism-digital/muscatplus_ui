@@ -2,7 +2,7 @@ module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignTop, below, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignTop, below, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -16,12 +16,13 @@ import Page.RecordTypes.Search exposing (FacetBehaviours(..), QueryFacet, parseF
 import Page.RecordTypes.Shared exposing (FacetAlias, LabelValue)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion, toAlias, toSuggestionList)
 import Page.UI.Attributes exposing (bodyRegular, headingSM, lineSpacing)
-import Page.UI.Components exposing (dropdownSelect, h6)
+import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Events exposing (onEnter)
+import Page.UI.Facets.Shared exposing (facetTitleBar)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg, intersectionSvg, unionSvg)
 import Page.UI.Style exposing (colourScheme)
-import Page.UI.Tooltip exposing (facetHelp, facetTooltip, tooltip, tooltipStyle)
+import Page.UI.Tooltip exposing (facetHelp, tooltip, tooltipStyle)
 
 
 type alias QueryFacetConfig msg =
@@ -49,13 +50,6 @@ queryFacetHelp =
 viewQueryFacet : QueryFacetConfig msg -> Element msg
 viewQueryFacet config =
     let
-        activeSuggestion =
-            viewMaybe
-                (\suggestions ->
-                    viewIf (viewSuggestionDropdown config currentBehaviourOption suggestions) (toAlias suggestions == facetAlias)
-                )
-                (.activeSuggestion config.activeSearch)
-
         serverBehaviourOption =
             toBehaviours config.queryFacet
                 |> toCurrentBehaviour
@@ -66,17 +60,12 @@ viewQueryFacet config =
                 |> Dict.get facetAlias
                 |> Maybe.withDefault serverBehaviourOption
 
-        ( behaviourIcon, behaviourText ) =
-            case currentBehaviourOption of
-                FacetBehaviourIntersection ->
-                    ( intersectionSvg colourScheme.black
-                    , extractLabelFromLanguageMap config.language localTranslations.optionsWithAnd
-                    )
-
-                FacetBehaviourUnion ->
-                    ( unionSvg colourScheme.black
-                    , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
-                    )
+        activeSuggestion =
+            viewMaybe
+                (\suggestions ->
+                    viewIf (viewSuggestionDropdown config currentBehaviourOption suggestions) (toAlias suggestions == facetAlias)
+                )
+                (.activeSuggestion config.activeSearch)
 
         facetAlias =
             .alias config.queryFacet
@@ -84,24 +73,16 @@ viewQueryFacet config =
         facetLabel =
             .label config.queryFacet
 
-        facetBehaviours =
-            toBehaviours config.queryFacet
-                |> toBehaviourItems
-
-        -- if an override hasn't been set in the facetBehaviours
-        -- then choose the behaviour that came from the server.
-        listOfBehavioursForDropdown =
-            List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )) facetBehaviours
-
         suggestionUrl =
             .suggestions config.queryFacet
 
-        -- TODO: Translate
         textValue =
             .queryFacetValues config.activeSearch
                 |> Dict.get facetAlias
                 |> Maybe.withDefault ""
 
+        -- if an override hasn't been set in the facetBehaviours
+        -- then choose the behaviour that came from the server.
         onEnterMsg =
             if String.isEmpty textValue then
                 config.nothingHappenedMsg
@@ -116,6 +97,7 @@ viewQueryFacet config =
                 |> Dict.get facetAlias
                 |> Maybe.withDefault []
 
+        -- TODO: Translate
         enteredOptions =
             List.map
                 (\( value, label ) ->
@@ -146,6 +128,69 @@ viewQueryFacet config =
             List.isEmpty enteredOptions
                 |> not
                 |> viewIf (queryTermView config.language enteredOptions currentBehaviourOption)
+
+        ( behaviourIcon, behaviourText ) =
+            case currentBehaviourOption of
+                FacetBehaviourIntersection ->
+                    ( intersectionSvg colourScheme.black
+                    , extractLabelFromLanguageMap config.language localTranslations.optionsWithAnd
+                    )
+
+                FacetBehaviourUnion ->
+                    ( unionSvg colourScheme.black
+                    , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
+                    )
+
+        facetBehaviours =
+            toBehaviours config.queryFacet
+                |> toBehaviourItems
+
+        listOfBehavioursForDropdown =
+            List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )) facetBehaviours
+
+        behaviourControl =
+            row
+                [ height (px 25)
+                , spacing 2
+                , padding 3
+                , Border.rounded 3
+                , Border.width 1
+                , Border.color colourScheme.midGrey
+                , Background.color colourScheme.white
+                ]
+                [ el
+                    [ width (px 25)
+                    , height (px 10)
+                    , el tooltipStyle (text behaviourText)
+                        |> tooltip above
+                    ]
+                    behaviourIcon
+                , el
+                    [ alignLeft
+                    , width (px 60)
+                    ]
+                    (dropdownSelect
+                        { selectedMsg = \inp -> config.userChangedBehaviourMsg facetAlias (parseStringToFacetBehaviour inp)
+                        , mouseDownMsg = Nothing
+                        , mouseUpMsg = Nothing
+                        , choices = listOfBehavioursForDropdown
+                        , choiceFn = \inp -> parseStringToFacetBehaviour inp
+                        , currentChoice = currentBehaviourOption
+                        , selectIdent = facetAlias ++ "-query-behaviour-select"
+                        , label = Nothing
+                        , language = config.language
+                        , inverted = False
+                        }
+                    )
+                ]
+
+        titleBar =
+            facetTitleBar
+                { extraControls = [ behaviourControl ]
+                , language = config.language
+                , title = .label config.queryFacet
+                , tooltip = config.tooltip
+                }
     in
     row
         [ width fill
@@ -157,67 +202,7 @@ viewQueryFacet config =
             , alignTop
             , spacing lineSpacing
             ]
-            [ row
-                [ width fill
-                , alignTop
-                , spacing lineSpacing
-                , padding 10
-                , Background.color colourScheme.lightGrey
-                , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
-                , Border.color colourScheme.midGrey
-                ]
-                [ column
-                    [ width shrink
-                    , height shrink
-                    , alignLeft
-                    , centerY
-                    ]
-                    [ facetTooltip onRight (extractLabelFromLanguageMap config.language config.tooltip) ]
-                , column
-                    [ alignLeft
-                    , width fill
-                    , centerY
-                    ]
-                    [ h6 config.language facetLabel
-                    ]
-                , column
-                    [ alignLeft ]
-                    [ row
-                        [ height (px 25)
-                        , spacing 2
-                        , padding 3
-                        , Border.rounded 3
-                        , Border.width 1
-                        , Border.color colourScheme.midGrey
-                        , Background.color colourScheme.white
-                        ]
-                        [ el
-                            [ width (px 25)
-                            , height (px 10)
-                            , el tooltipStyle (text behaviourText)
-                                |> tooltip above
-                            ]
-                            behaviourIcon
-                        , el
-                            [ alignLeft
-                            , width (px 60)
-                            ]
-                            (dropdownSelect
-                                { selectedMsg = \inp -> config.userChangedBehaviourMsg facetAlias (parseStringToFacetBehaviour inp)
-                                , mouseDownMsg = Nothing
-                                , mouseUpMsg = Nothing
-                                , choices = listOfBehavioursForDropdown
-                                , choiceFn = \inp -> parseStringToFacetBehaviour inp
-                                , currentChoice = currentBehaviourOption
-                                , selectIdent = facetAlias ++ "-query-behaviour-select"
-                                , label = Nothing
-                                , language = config.language
-                                , inverted = False
-                                }
-                            )
-                        ]
-                    ]
-                ]
+            [ titleBar
             , row
                 [ width fill
                 , spacing 10

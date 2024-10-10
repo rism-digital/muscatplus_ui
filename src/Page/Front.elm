@@ -65,14 +65,10 @@ frontProbeSubmit session model =
 
 init : FrontConfig -> FrontPageModel FrontMsg
 init cfg =
-    let
-        convertedQueryArgs =
-            frontQueryArgsToQueryArgs cfg.queryArgs
-    in
     { response = Loading Nothing
     , activeSearch =
         ActiveSearch.init
-            { queryArgs = convertedQueryArgs
+            { queryArgs = frontQueryArgsToQueryArgs cfg.queryArgs
             , keyboardQueryArgs = Just Keyboard.defaultKeyboardQuery
             , searchPreferences = cfg.searchPreferences
             }
@@ -120,7 +116,8 @@ searchSubmit session model =
                 |> buildQueryParameters
 
         searchUrl =
-            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
+            List.append textQueryParameters notationQueryParameters
+                |> serverUrl [ "search" ]
     in
     ( newModel
     , Nav.pushUrl session.key searchUrl

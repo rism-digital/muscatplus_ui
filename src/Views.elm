@@ -12,7 +12,7 @@ import Desktop.Record.Views
 import Desktop.Search.Views
 import Desktop.SideBar.Views
 import Device exposing (DeviceView(..), detectView)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, inFront, layout, none, paddingXY, px, row, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, inFront, layout, paddingXY, px, row, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Styled exposing (toUnstyled)

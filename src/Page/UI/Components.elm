@@ -12,7 +12,6 @@ module Page.UI.Components exposing
     , h3s
     , h4
     , h5
-    , h6
     , h6e
     , makeFlagIcon
     , mapViewer
@@ -284,11 +283,6 @@ h4 language heading =
 h5 : Language -> LanguageMap -> Element msg
 h5 language heading =
     renderLanguageHelper [ headingMD, Region.heading 5, Font.medium ] language heading
-
-
-h6 : Language -> LanguageMap -> Element msg
-h6 language heading =
-    renderLanguageHelper [ headingSM, Region.heading 6, Font.medium ] language heading
 
 
 h6e : Language -> LanguageMap -> Element msg

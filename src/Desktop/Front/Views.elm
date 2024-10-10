@@ -1,7 +1,7 @@
 module Desktop.Front.Views exposing (view)
 
 import Desktop.Error.Views
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipX, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, paragraph, px, row, scrollbarY, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -112,7 +112,7 @@ viewFrontSearchControls cfg =
         ]
         [ column
             [ width fill
-            , Border.widthEach { right = 1, top = 0, left = 0, bottom = 0 }
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
             , height fill
             , alignTop
             ]
@@ -149,7 +149,7 @@ viewFrontSearchControlsLoading =
         [ column
             [ width fill
             , height fill
-            , Border.widthEach { right = 1, top = 0, left = 0, bottom = 0 }
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
             ]
             [ row
                 [ width fill

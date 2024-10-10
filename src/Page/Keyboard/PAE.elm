@@ -166,14 +166,10 @@ clefSymToClefQueryString clefSym =
 
 createPAENote : KeyNoteName -> Octave -> String
 createPAENote noteName octave =
-    let
-        noteString =
-            keyNoteNameToNoteString noteName
-
-        octaveModifier =
-            octaveShift octave
-    in
-    String.concat [ octaveModifier, noteString ]
+    String.concat
+        [ octaveShift octave
+        , keyNoteNameToNoteString noteName
+        ]
 
 
 keyNoteNameToNoteString : KeyNoteName -> String

@@ -31,105 +31,95 @@ view searchPreferences notationFacet language model =
     in
     row
         [ width fill
+        , height fill
+        , spacing lineSpacing
         , alignTop
         , alignLeft
         ]
         [ column
             [ width fill
             , height fill
-            , alignLeft
+            , spacing lineSpacing
             ]
             [ row
                 [ width fill
-                , height fill
+                , paddingXY 0 10
+                ]
+                [ column
+                    [ width (fillPortion 1)
+                    , centerY
+                    ]
+                    [ viewRenderControls language notationFacet model ]
+                , column
+                    [ width (fillPortion 4)
+                    , centerY
+                    ]
+                    [ el
+                        [ width fill
+                        ]
+                        (viewMaybe viewSVGRenderedIncipit model.notation)
+                    ]
+                ]
+            , row
+                [ width fill
+                , paddingXY 0 20
+                ]
+                [ column
+                    [ centerX ]
+                    [ row
+                        [ width fill ]
+                        [ fullKeyboard isMuted []
+                        ]
+                    , row
+                        [ width fill
+                        , height (px 20)
+                        , paddingXY 0 10
+                        ]
+                        [ el
+                            [ width (px 18)
+                            , height (px 18)
+                            , alignLeft
+                            , onClick (UserToggledAudioMuted (not isMuted))
+                            , pointer
+                            ]
+                            (if isMuted then
+                                audioMutedSvg colourScheme.red
+
+                             else
+                                audioUnmutedSvg colourScheme.lightBlue
+                            )
+                        ]
+                    ]
+                ]
+            , row
+                [ width fill
                 , spacing lineSpacing
+                ]
+                [ viewPaeInput language model
+                ]
+            , row
+                [ width fill
+                , spacing lineSpacing
+                , alignLeft
                 ]
                 [ column
                     [ width fill
-                    , height fill
-                    , spacing lineSpacing
+                    , alignLeft
                     ]
-                    [ row
-                        [ width fill
-                        , paddingXY 0 10
-                        ]
-                        [ column
-                            [ width (fillPortion 1)
-                            , centerY
-                            ]
-                            [ viewRenderControls language notationFacet model ]
-                        , column
-                            [ width (fillPortion 4)
-                            , centerY
-                            ]
-                            [ el
-                                [ width fill
-                                ]
-                                (viewMaybe viewSVGRenderedIncipit model.notation)
-                            ]
-                        ]
-                    , row
-                        [ width fill
-                        , paddingXY 0 20
-                        ]
-                        [ column
-                            [ centerX ]
-                            [ row
-                                [ width fill ]
-                                [ fullKeyboard isMuted []
-                                ]
-                            , row
-                                [ width fill
-                                , height (px 20)
-                                , paddingXY 0 10
-                                ]
-                                [ el
-                                    [ width (px 18)
-                                    , height (px 18)
-                                    , alignLeft
-                                    , onClick (UserToggledAudioMuted (not isMuted))
-                                    , pointer
-                                    ]
-                                    (if isMuted then
-                                        audioMutedSvg colourScheme.red
-
-                                     else
-                                        audioUnmutedSvg colourScheme.lightBlue
-                                    )
-                                ]
-                            ]
-                        ]
-                    , row
-                        [ width fill
-                        , spacing lineSpacing
-                        ]
-                        [ viewPaeInput language model
-                        ]
-                    , row
-                        [ width fill
-                        , spacing lineSpacing
-                        , alignLeft
-                        ]
-                        [ column
-                            [ width fill
-                            , alignLeft
-                            ]
-                            [ dropdownSelect
-                                { selectedMsg = \s -> UserChangedQueryMode (queryModeStrToQueryMode s)
-                                , mouseDownMsg = Nothing
-                                , mouseUpMsg = Nothing
-                                , choices = queryModeOptions
-                                , choiceFn = \selected -> queryModeStrToQueryMode selected
-                                , currentChoice = .queryMode model.query
-                                , selectIdent = "keyboard-query-mode-select"
-                                , label = Just (.label notationFacet.queryModes)
-                                , language = language
-                                , inverted = False
-                                }
-                            ]
-                        ]
-                    , viewPaeHelp language model
+                    [ dropdownSelect
+                        { selectedMsg = \s -> UserChangedQueryMode (queryModeStrToQueryMode s)
+                        , mouseDownMsg = Nothing
+                        , mouseUpMsg = Nothing
+                        , choices = queryModeOptions
+                        , choiceFn = \selected -> queryModeStrToQueryMode selected
+                        , currentChoice = .queryMode model.query
+                        , selectIdent = "keyboard-query-mode-select"
+                        , label = Just (.label notationFacet.queryModes)
+                        , language = language
+                        , inverted = False
+                        }
                     ]
                 ]
+            , viewPaeHelp language model
             ]
         ]

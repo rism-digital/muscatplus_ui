@@ -26,7 +26,7 @@ module Page.UI.Attributes exposing
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, Device, DeviceClass(..), Orientation(..), alignTop, fill, htmlAttribute, maximum, modular, paddingEach, paddingXY, px, spacing, width)
+import Element exposing (Attr, Attribute, alignTop, fill, htmlAttribute, maximum, modular, paddingEach, paddingXY, spacing, width)
 import Element.Border as Border
 import Element.Font as Font
 import Html as HT

@@ -16,41 +16,35 @@ import Page.UI.Components exposing (dropdownSelect)
 viewPaeInput : Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
 viewPaeInput language model =
     row
-        [ width fill ]
-        [ column
+        [ width fill
+        , height fill
+        ]
+        [ Input.text
             [ width fill ]
-            [ row
-                [ width fill
-                , height fill
-                ]
-                [ Input.text
-                    [ width fill ]
-                    { label =
-                        Input.labelAbove
-                            [ Font.semiBold
-                            , headingMD
-                            ]
-                            (row
-                                [ spacing lineSpacing ]
-                                [ column
-                                    []
-                                    [ text (extractLabelFromLanguageMap language localTranslations.paeInput) ]
-                                , column
-                                    []
-                                    [ el
-                                        [ bodySM
-                                        , Font.regular
-                                        ]
-                                        (text (extractLabelFromLanguageMap language localTranslations.notationQueryLength))
-                                    ]
+            { label =
+                Input.labelAbove
+                    [ Font.semiBold
+                    , headingMD
+                    ]
+                    (row
+                        [ spacing lineSpacing ]
+                        [ column
+                            []
+                            [ text (extractLabelFromLanguageMap language localTranslations.paeInput) ]
+                        , column
+                            []
+                            [ el
+                                [ bodySM
+                                , Font.regular
                                 ]
-                            )
-                    , onChange = UserInteractedWithPAEText
-                    , placeholder = Nothing
-                    , text = Maybe.withDefault "" (.noteData model.query)
-                    }
-                ]
-            ]
+                                (text (extractLabelFromLanguageMap language localTranslations.notationQueryLength))
+                            ]
+                        ]
+                    )
+            , onChange = UserInteractedWithPAEText
+            , placeholder = Nothing
+            , text = Maybe.withDefault "" (.noteData model.query)
+            }
         ]
 
 

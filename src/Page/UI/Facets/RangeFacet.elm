@@ -1,20 +1,20 @@
 module Page.UI.Facets.RangeFacet exposing (RangeFacetConfig, viewRangeFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, above, alignLeft, alignTop, centerX, centerY, column, fill, height, onRight, padding, paragraph, px, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, column, fill, height, padding, paragraph, px, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input exposing (labelHidden)
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap)
 import Page.RecordTypes.Search exposing (RangeFacet, RangeFacetValue(..))
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
-import Page.UI.Components exposing (h6)
+import Page.UI.Facets.Shared exposing (facetTitleBar)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme)
-import Page.UI.Tooltip exposing (facetHelp, facetTooltip)
+import Page.UI.Tooltip exposing (facetHelp)
 import Page.UpdateHelpers exposing (selectAppropriateRangeFacetValues)
 
 
@@ -125,6 +125,14 @@ viewRangeFacet config =
 
             else
                 emptyAttribute
+
+        titleBar =
+            facetTitleBar
+                { extraControls = []
+                , language = config.language
+                , title = .label config.rangeFacet
+                , tooltip = config.tooltip
+                }
     in
     row
         [ width fill
@@ -136,29 +144,7 @@ viewRangeFacet config =
             , alignTop
             , spacing lineSpacing
             ]
-            [ row
-                [ width fill
-                , alignTop
-                , spacing lineSpacing
-                , padding 10
-                , Background.color colourScheme.lightGrey
-                , Border.widthEach { bottom = 0, left = 0, right = 0, top = 2 }
-                , Border.color colourScheme.midGrey
-                ]
-                [ column
-                    [ width shrink
-                    , height shrink
-                    , centerX
-                    , centerY
-                    ]
-                    [ facetTooltip onRight (extractLabelFromLanguageMap config.language config.tooltip) ]
-                , column
-                    [ width fill
-                    , alignLeft
-                    , centerY
-                    ]
-                    [ h6 config.language (.label config.rangeFacet) ]
-                ]
+            [ titleBar
             , row
                 [ width fill
                 , spacingXY 10 0

@@ -115,13 +115,10 @@ generateNotes noteList =
 
 generateNote : ( KeyNoteName, Octave ) -> WebAudio.Node
 generateNote ( note, octave ) =
-    let
-        freq =
-            calculateSteps note octave
-                |> calculateFrequency
-    in
     WebAudio.oscillator
-        [ WebAudio.Property.frequency freq
+        [ calculateSteps note octave
+            |> calculateFrequency
+            |> WebAudio.Property.frequency
         ]
         [ WebAudio.ref "dac"
         ]
