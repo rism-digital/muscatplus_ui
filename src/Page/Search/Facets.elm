@@ -1,4 +1,4 @@
-module Desktop.Search.Views.Facets exposing (facetSearchMsgConfig, viewModeItems)
+module Page.Search.Facets exposing (facetSearchMsgConfig, viewModeItems)
 
 import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, padding, paddingXY, px, row, spacing, width)
 import Language exposing (Language)

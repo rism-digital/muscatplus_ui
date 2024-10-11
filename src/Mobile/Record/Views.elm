@@ -2,9 +2,9 @@ module Mobile.Record.Views exposing (view)
 
 import Element exposing (Element, none)
 import Mobile.Error.Views
-import Mobile.Record.Views.InstitutionPage exposing (viewFullMobileInstitutionPage)
-import Mobile.Record.Views.PersonPage exposing (viewFullMobilePersonPage)
-import Mobile.Record.Views.SourcePage exposing (viewFullMobileSourcePage)
+import Mobile.Record.InstitutionPage exposing (viewFullMobileInstitutionPage)
+import Mobile.Record.PersonPage exposing (viewFullMobilePersonPage)
+import Mobile.Record.SourcePage exposing (viewFullMobileSourcePage)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Response exposing (Response(..), ServerData(..))

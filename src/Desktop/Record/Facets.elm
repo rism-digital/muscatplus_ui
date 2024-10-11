@@ -1,4 +1,4 @@
-module Desktop.Record.Views.Facets exposing (facetRecordMsgConfig)
+module Desktop.Record.Facets exposing (facetRecordMsgConfig)
 
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)

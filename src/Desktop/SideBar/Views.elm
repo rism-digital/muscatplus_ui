@@ -1,10 +1,10 @@
 module Desktop.SideBar.Views exposing (viewRouter)
 
 import Debouncer.Messages exposing (provideInput)
-import Desktop.SideBar.Views.AboutMenu as AboutMenu
-import Desktop.SideBar.Views.LanguageChooser exposing (viewLanguageChooserMenuOption)
-import Desktop.SideBar.Views.MenuOption exposing (menuOption)
-import Desktop.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
+import Desktop.SideBar.AboutMenu as AboutMenu
+import Desktop.SideBar.LanguageChooser exposing (viewLanguageChooserMenuOption)
+import Desktop.SideBar.MenuOption exposing (menuOption)
+import Desktop.SideBar.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, moveUp, none, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border

@@ -1,6 +1,6 @@
-module Desktop.Record.Views.PersonPage exposing (viewFullPersonPage)
+module Desktop.Record.PersonPage exposing (viewFullPersonPage)
 
-import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Desktop.Record.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border

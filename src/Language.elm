@@ -123,7 +123,8 @@ extractLabelFromLanguageMap lang langMap =
        Returns a single string from a language map. Multiple values for a single language are
        concatenated together with a semicolon.
     -}
-    String.join "; " (extractTextFromLanguageMap lang langMap)
+    extractTextFromLanguageMap lang langMap
+        |> String.join "; "
 
 
 extractTextFromLanguageMap : Language -> LanguageMap -> List String
@@ -137,8 +138,7 @@ extractTextFromLanguageMap lang langMap =
 
        The 'orListLazy' method will return the first non-Nothing result and then pass that along. If the selected language
        is not English, but the English value was the first non-Nothing result, it means that we're using this as a
-       fallback when no other values are available, so append an '<Untranslated>' string to the value to signify that
-       it's not available in that language.
+       fallback when no other values are available.
     -}
     ME.orListLazy
         [ \() -> LE.find (\(LanguageValue l _) -> l == lang) langMap
@@ -269,11 +269,7 @@ extractTextFromLanguageMapWithVariables lang replacements langMap =
     List.map
         (\inputString ->
             List.foldl
-                (\replacementPattern currString ->
-                    let
-                        (LanguageMapReplacementVariable var val) =
-                            replacementPattern
-                    in
+                (\(LanguageMapReplacementVariable var val) currString ->
                     namedValue var val currString
                 )
                 inputString

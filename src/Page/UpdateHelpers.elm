@@ -57,9 +57,10 @@ import Response exposing (Response(..), ServerData(..))
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
 import Set exposing (Set)
+import Set.Extra as SE
 import Url exposing (percentDecode)
 import Url.Builder exposing (toQuery)
-import Utilities exposing (choose, convertPathToNodeId, toggle)
+import Utilities exposing (choose, convertPathToNodeId)
 
 
 chooseResponse : Response a -> Maybe a
@@ -451,7 +452,7 @@ userClickedSelectFacetExpand alias model =
     let
         newExpandedFacets =
             toExpandedFacets model.activeSearch
-                |> toggle alias
+                |> SE.toggle alias
     in
     setExpandedFacets newExpandedFacets model.activeSearch
         |> flip setActiveSearch model
@@ -675,12 +676,13 @@ userClickedFacetPanelToggle : String -> Set String -> a -> ( a, Cmd msg )
 userClickedFacetPanelToggle panelAlias expandedPanels model =
     let
         newPanels =
-            toggle panelAlias expandedPanels
+            SE.toggle panelAlias expandedPanels
+                |> Set.toList
     in
     ( model
     , PortSendSaveSearchPreference
         { key = "expandedFacetPanels"
-        , value = ListPreference (Set.toList newPanels)
+        , value = ListPreference newPanels
         }
         |> encodeMessageForPortSend
         |> sendOutgoingMessageOnPort
@@ -703,27 +705,27 @@ hasNonZeroSourcesAttached recordBody =
             False
 
 
+filterUpdater : Dict FacetAlias FacetData -> FacetAlias -> List ( String, LanguageMap ) -> List ( String, LanguageMap )
+filterUpdater newValues alias values =
+    Dict.get alias newValues
+        |> ME.unpack
+            (always [])
+            (\facetFromServer ->
+                case facetFromServer of
+                    SelectFacetData sdata ->
+                        correlateQueryValuesWithFacetLangMap values sdata.items
+
+                    _ ->
+                        values
+            )
+
+
 updateActiveFiltersWithLangMapResultsFromServer :
     Dict FacetAlias (List ( String, LanguageMap ))
     -> Dict FacetAlias FacetData
     -> Dict FacetAlias (List ( String, LanguageMap ))
 updateActiveFiltersWithLangMapResultsFromServer oldFilters fromServer =
-    let
-        filterUpdater : FacetAlias -> List ( String, LanguageMap ) -> List ( String, LanguageMap )
-        filterUpdater alias values =
-            Dict.get alias fromServer
-                |> ME.unpack
-                    (always [])
-                    (\facetFromServer ->
-                        case facetFromServer of
-                            SelectFacetData sdata ->
-                                correlateQueryValuesWithFacetLangMap values sdata.items
-
-                            _ ->
-                                values
-                    )
-    in
-    Dict.map filterUpdater oldFilters
+    Dict.map (filterUpdater fromServer) oldFilters
 
 
 correlateQueryValuesWithFacetLangMap : List ( String, LanguageMap ) -> List FacetItem -> List ( String, LanguageMap )

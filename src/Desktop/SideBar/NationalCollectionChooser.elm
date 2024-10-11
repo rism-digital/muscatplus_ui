@@ -1,7 +1,7 @@
-module Desktop.SideBar.Views.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
+module Desktop.SideBar.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 
 import Config
-import Desktop.SideBar.Views.MenuOption exposing (sidebarChooserAnimations)
+import Desktop.SideBar.MenuOption exposing (sidebarChooserAnimations)
 import Dict exposing (Dict)
 import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background

@@ -1,4 +1,4 @@
-module Desktop.SideBar.Views.MenuOption exposing (menuOption, sidebarChooserAnimations)
+module Desktop.SideBar.MenuOption exposing (menuOption, sidebarChooserAnimations)
 
 import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerY, el, fill, paddingXY, pointer, px, row, spacing, width)
 import Element.Background as Background

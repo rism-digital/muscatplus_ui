@@ -12,15 +12,16 @@ import Desktop.Record.Views
 import Desktop.Search.Views
 import Desktop.SideBar.Views
 import Device exposing (DeviceView(..), detectView)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, inFront, layout, paddingXY, px, row, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, layout, none, paddingXY, px, row, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Keyed as Keyed
+import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Loading exposing (loadingIndicator)
-import Mobile.About.Views.About
-import Mobile.About.Views.Options
+import Mobile.About.About
+import Mobile.About.Options
 import Mobile.BottomBar.Views
 import Mobile.Error.Views
 import Mobile.Front.Views
@@ -28,6 +29,7 @@ import Mobile.Record.Views
 import Mobile.Search.Views
 import Model exposing (Model(..), toSession)
 import Msg exposing (Msg)
+import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
@@ -169,7 +171,7 @@ viewPageBody deviceView model =
                     Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
 
                 ( AboutPage session pageModel, MobileView ) ->
-                    Element.map Msg.UserInteractedWithAboutPage (Mobile.About.Views.About.view session pageModel)
+                    Element.map Msg.UserInteractedWithAboutPage (Mobile.About.About.view session pageModel)
 
                 ( AboutPage session pageModel, DesktopView ) ->
                     Element.map Msg.UserInteractedWithAboutPage (Desktop.About.About.view session pageModel)
@@ -181,7 +183,7 @@ viewPageBody deviceView model =
                     Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Help.view session)
 
                 ( OptionsPage session pageModel, MobileView ) ->
-                    Element.map Msg.UserInteractedWithAboutPage (Mobile.About.Views.Options.view session pageModel)
+                    Element.map Msg.UserInteractedWithAboutPage (Mobile.About.Options.view session pageModel)
 
                 ( OptionsPage session pageModel, DesktopView ) ->
                     Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Options.view session pageModel)
@@ -234,3 +236,61 @@ viewPageBody deviceView model =
                     , pageView
                     ]
                 ]
+
+
+loadingIndicator : Model -> Element Msg
+loadingIndicator model =
+    let
+        chooseView resp =
+            case resp of
+                Loading _ ->
+                    loadingView
+
+                _ ->
+                    Keyed.el [] ( "progress-bar-none", none )
+
+        isLoading resp =
+            case resp of
+                Loading _ ->
+                    True
+
+                _ ->
+                    False
+
+        loadingView =
+            row
+                [ width fill
+                , htmlAttribute (HA.style "z-index" "1")
+                ]
+                [ progressBar ]
+    in
+    case model of
+        SearchPage _ pageModel ->
+            if isLoading pageModel.response || isLoading pageModel.preview then
+                loadingView
+
+            else
+                Keyed.el [] ( "progress-bar-none", none )
+
+        FrontPage _ pageModel ->
+            chooseView pageModel.response
+
+        SourcePage _ pageModel ->
+            chooseView pageModel.response
+
+        PersonPage _ pageModel ->
+            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
+                loadingView
+
+            else
+                Keyed.el [] ( "progress-bar-none", none )
+
+        InstitutionPage _ pageModel ->
+            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
+                loadingView
+
+            else
+                Keyed.el [] ( "progress-bar-none", none )
+
+        _ ->
+            none

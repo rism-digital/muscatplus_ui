@@ -5,7 +5,6 @@ module Utilities exposing
     , fromListDedupe
     , namedValue
     , toLinkedHtml
-    , toggle
     )
 
 import Dict exposing (Dict)
@@ -16,15 +15,6 @@ import Maybe.Extra as ME
 import Regex
 import Set exposing (Set)
 import String.Extra exposing (stripTags)
-
-
-toggle : comparable -> Set comparable -> Set comparable
-toggle needle haystack =
-    if Set.member needle haystack then
-        Set.remove needle haystack
-
-    else
-        Set.insert needle haystack
 
 
 choose : Bool -> (() -> a) -> (() -> a) -> a

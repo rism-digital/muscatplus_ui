@@ -1,10 +1,10 @@
-module Desktop.Record.Views.SourceSearch exposing
+module Desktop.Record.SourceSearch exposing
     ( viewRecordSearchSourcesLink
     , viewRecordSourceSearchTabBar
     , viewSourceSearchTabBody
     )
 
-import Desktop.Record.Views.Facets exposing (facetRecordMsgConfig)
+import Desktop.Record.Facets exposing (facetRecordMsgConfig)
 import Element exposing (Element, alignBottom, alignLeft, alignTop, clipY, column, el, fill, height, newTabLink, none, px, row, spacing, text, width)
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)

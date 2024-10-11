@@ -1,9 +1,9 @@
 module Desktop.Record.Views exposing (view)
 
 import Desktop.Error.Views
-import Desktop.Record.Views.InstitutionPage exposing (viewFullInstitutionPage)
-import Desktop.Record.Views.PersonPage exposing (viewFullPersonPage)
-import Desktop.Record.Views.SourcePage exposing (viewFullSourcePage)
+import Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
+import Desktop.Record.PersonPage exposing (viewFullPersonPage)
+import Desktop.Record.SourcePage exposing (viewFullSourcePage)
 import Element exposing (Element, none)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)

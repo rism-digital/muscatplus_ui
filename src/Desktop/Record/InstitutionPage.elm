@@ -1,6 +1,6 @@
-module Desktop.Record.Views.InstitutionPage exposing (viewFullInstitutionPage)
+module Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 
-import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Desktop.Record.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border

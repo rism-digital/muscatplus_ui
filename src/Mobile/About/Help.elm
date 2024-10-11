@@ -1,4 +1,4 @@
-module Mobile.About.Views.Help exposing (view)
+module Mobile.About.Help exposing (view)
 
 import Element exposing (Element, none)
 import Session exposing (Session)

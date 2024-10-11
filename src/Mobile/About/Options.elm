@@ -1,4 +1,4 @@
-module Mobile.About.Views.Options exposing (view)
+module Mobile.About.Options exposing (view)
 
 import Element exposing (Element, none)
 import Page.About.Model exposing (AboutPageModel)

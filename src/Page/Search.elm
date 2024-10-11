@@ -33,8 +33,9 @@ import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
 import Session exposing (Session)
 import Set
+import Set.Extra as SE
 import Url exposing (Url)
-import Utilities exposing (convertNodeIdToPath, toggle)
+import Utilities exposing (convertNodeIdToPath)
 import Viewport exposing (jumpToIdIfNotVisible, resetViewportOf)
 
 
@@ -501,7 +502,7 @@ update session msg model =
         UserClickedExpandIncipitInfoSectionInPreview incipitIdent ->
             let
                 newExpandedSet =
-                    toggle incipitIdent model.incipitInfoExpanded
+                    SE.toggle incipitIdent model.incipitInfoExpanded
             in
             ( { model
                 | incipitInfoExpanded = newExpandedSet

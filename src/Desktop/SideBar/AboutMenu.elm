@@ -1,7 +1,7 @@
-module Desktop.SideBar.Views.AboutMenu exposing (view)
+module Desktop.SideBar.AboutMenu exposing (view)
 
 import Config
-import Desktop.SideBar.Views.MenuOption exposing (sidebarChooserAnimations)
+import Desktop.SideBar.MenuOption exposing (sidebarChooserAnimations)
 import Element exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, link, mouseOver, moveUp, none, onRight, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
@@ -23,11 +23,8 @@ view : Language -> SideBarOptions -> Element SideBarMsg
 view language options =
     let
         viewChooser =
-            if options.currentlyHoveredAboutMenuSidebarOption && options.expandedSideBar == Expanded then
-                viewAboutMenuChooser language
-
-            else
-                none
+            (options.currentlyHoveredAboutMenuSidebarOption && options.expandedSideBar == Expanded)
+                |> viewIf (viewAboutMenuChooser language)
 
         showLabels =
             showSideBarLabels options.expandedSideBar

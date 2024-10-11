@@ -1,33 +1,37 @@
-module Mobile.Record.Views.InstitutionPage exposing (viewFullMobileInstitutionPage)
+module Mobile.Record.SourcePage exposing (viewFullMobileSourcePage)
 
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
+import Element exposing (Element, alignTop, clipY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Images exposing (institutionSvg)
+import Page.RecordTypes.Source exposing (FullSourceBody)
+import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Record.PageTemplate exposing (mobilePageHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
 
-viewFullMobileInstitutionPage :
+viewFullMobileSourcePage :
     Session
     -> RecordPageModel RecordMsg
-    -> InstitutionBody
+    -> FullSourceBody
     -> Element RecordMsg
-viewFullMobileInstitutionPage session _ body =
+viewFullMobileSourcePage session _ body =
     let
-        icon =
+        sourceIcon =
+            .recordType body.sourceTypes
+                |> .type_
+                |> sourceIconChooser
+
+        sourceIconView =
             el
                 [ width (px 25)
                 , height (px 25)
-                , centerX
                 , alignTop
                 ]
-                (institutionSvg colourScheme.darkBlue)
+                (sourceIcon colourScheme.darkBlue)
     in
     row
         [ width fill
@@ -47,6 +51,6 @@ viewFullMobileInstitutionPage session _ body =
                 , htmlAttribute (HA.style "border-bottom-style" "double")
                 , Border.color colourScheme.midGrey
                 ]
-                [ mobilePageHeaderTemplate session.language (Just icon) body ]
+                [ mobilePageHeaderTemplate session.language (Just sourceIconView) body ]
             ]
         ]

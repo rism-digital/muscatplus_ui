@@ -1,12 +1,12 @@
 module Mobile.Search.Views exposing (view)
 
-import Desktop.Search.Views.Facets exposing (facetSearchMsgConfig)
 import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, none, px, row, scrollbarY, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Mobile.Error.Views
 import Page.RecordTypes.Search exposing (SearchBody)
+import Page.Search.Facets exposing (facetSearchMsgConfig)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.UI.Record.Previews exposing (viewMobilePreviewRouter)

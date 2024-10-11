@@ -51,7 +51,8 @@ changePage url model =
                         }
             in
             ( FrontPage newSession initialPageBody
-            , Cmd.map Msg.UserInteractedWithFrontPage (FrontPage.frontPageRequest url)
+            , FrontPage.frontPageRequest url
+                |> Cmd.map Msg.UserInteractedWithFrontPage
             )
 
         Route.SearchPageRoute qargs kqargs ->
@@ -198,7 +199,8 @@ changePage url model =
 
         Route.AboutPageRoute ->
             ( AboutPage newSession (AboutPage.init newSession)
-            , Cmd.map Msg.UserInteractedWithAboutPage (AboutPage.initialCmd url)
+            , AboutPage.initialCmd url
+                |> Cmd.map Msg.UserInteractedWithAboutPage
             )
 
         Route.HelpPageRoute ->

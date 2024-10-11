@@ -1,6 +1,6 @@
-module Desktop.Record.Views.SourcePage exposing (viewFullSourcePage)
+module Desktop.Record.SourcePage exposing (viewFullSourcePage)
 
-import Desktop.Record.Views.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Desktop.Record.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Dict
 import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background

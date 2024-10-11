@@ -49,15 +49,15 @@ viewIncipit : IncipitDisplayConfig msg -> IncipitBody -> Element msg
 viewIncipit cfg incipit =
     let
         title =
-            viewIf
-                (row
-                    [ width fill
-                    , spacing 5
-                    ]
-                    [ h2 cfg.language incipit.label
-                    ]
-                )
-                (not cfg.suppressTitle)
+            not cfg.suppressTitle
+                |> viewIf
+                    (row
+                        [ width fill
+                        , spacing 5
+                        ]
+                        [ h2 cfg.language incipit.label
+                        ]
+                    )
     in
     row
         (width fill :: sectionBorderStyles)
@@ -108,8 +108,6 @@ viewIncipit cfg incipit =
                                     }
                                 )
                                 incipit.encodings
-
-                            --, viewMaybe (viewLaunchNewIncipitSearch cfg.language) incipit.encodings
                             ]
                         ]
                     ]
@@ -232,8 +230,8 @@ viewIncipitToolLinks language rendered incipits =
 
 viewRenderedIncipitToolLinks : Language -> Maybe (List RenderedIncipit) -> List (Element msg)
 viewRenderedIncipitToolLinks language renderings =
-    case renderings of
-        Just renderedList ->
+    Maybe.map
+        (\renderedList ->
             List.map
                 (\r ->
                     case r of
@@ -249,9 +247,9 @@ viewRenderedIncipitToolLinks language renderings =
                             none
                 )
                 renderedList
-
-        Nothing ->
-            []
+        )
+        renderings
+        |> Maybe.withDefault []
 
 
 viewPAECodeBlock : Language -> List EncodedIncipit -> List (Element msg)

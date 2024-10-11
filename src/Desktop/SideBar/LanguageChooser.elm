@@ -1,6 +1,6 @@
-module Desktop.SideBar.Views.LanguageChooser exposing (viewLanguageChooserMenuOption)
+module Desktop.SideBar.LanguageChooser exposing (viewLanguageChooserMenuOption)
 
-import Desktop.SideBar.Views.MenuOption exposing (sidebarChooserAnimations)
+import Desktop.SideBar.MenuOption exposing (sidebarChooserAnimations)
 import Element exposing (Element, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
