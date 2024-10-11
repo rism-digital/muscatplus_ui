@@ -21,6 +21,7 @@ import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Mobile.About.About
+import Mobile.About.Help
 import Mobile.About.Options
 import Mobile.BottomBar.Views
 import Mobile.Error.Views
@@ -177,7 +178,7 @@ viewPageBody deviceView model =
                     Element.map Msg.UserInteractedWithAboutPage (Desktop.About.About.view session pageModel)
 
                 ( HelpPage session, MobileView ) ->
-                    Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Help.view session)
+                    Element.map Msg.UserInteractedWithAboutPage (Mobile.About.Help.view session)
 
                 ( HelpPage session, DesktopView ) ->
                     Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Help.view session)

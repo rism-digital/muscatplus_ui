@@ -13,7 +13,6 @@ import Html.Parser exposing (Node)
 import Html.Parser.Util exposing (toVirtualDom)
 import Maybe.Extra as ME
 import Regex
-import Set exposing (Set)
 import String.Extra exposing (stripTags)
 
 
