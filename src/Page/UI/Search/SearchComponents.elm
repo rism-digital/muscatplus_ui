@@ -144,6 +144,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , Border.color colourScheme.midGrey
         , minimalDropShadow
+        , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
         , htmlAttribute (HA.style "z-index" "10")
         , width fill
         , height

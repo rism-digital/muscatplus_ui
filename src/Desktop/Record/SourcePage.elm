@@ -11,7 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (desktopDisplayWidth, sectionSpacing)
+import Page.UI.Attributes exposing (desktopDisplayWidth, minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
@@ -100,7 +100,7 @@ viewFullSourcePage session model body =
                 [ width fill
                 , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                , Border.color colourScheme.darkBlue
+                , Border.color colourScheme.midGrey
                 ]
                 [ column
                     [ width fill
@@ -108,6 +108,7 @@ viewFullSourcePage session model body =
                     , centerY
                     , alignLeft
                     , paddingXY 20 0
+                    , minimalDropShadow
                     ]
                     [ pageHeader
                     , tabBar

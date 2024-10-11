@@ -60,6 +60,7 @@ viewRowSelectAndSortSelector cfg =
         , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , minimalDropShadow
+        , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
         , width fill
         , height (px 50)
         , paddingXY 20 0
