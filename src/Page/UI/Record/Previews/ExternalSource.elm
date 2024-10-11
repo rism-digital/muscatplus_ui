@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, inFront, link, none, paddingXY, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, inFront, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -8,7 +8,7 @@ import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, Exte
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.CantusLogo exposing (cantusLogo)
-import Page.UI.Components exposing (externalLinkTemplate, h2, renderLabel, renderParagraph, resourceLink, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (externalLinkTemplate, h2, renderLabel, resourceLink, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (bookSvg, institutionSvg)
@@ -274,7 +274,7 @@ viewExternalResource language body =
                         [ resourceLink body.url
                             [ linkColour ]
                             { url = body.url
-                            , label = renderParagraph language body.label
+                            , label = paragraph [] [ text (extractLabelFromLanguageMap language body.label) ]
                             }
                         , externalLinkTemplate body.url
                         ]

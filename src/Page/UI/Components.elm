@@ -17,17 +17,17 @@ module Page.UI.Components exposing
     , mapViewer
     , pageBodyOrEmpty
     , renderLabel
-    , renderParagraph
     , resourceLink
     , sourceIconChooser
     , sourceTypeIconChooser
     , tabView
     , verticalLine
+    , viewMobileSummaryField
     , viewParagraphField
     , viewSummaryField
     )
 
-import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -42,7 +42,7 @@ import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyAttribute, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
 import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -243,7 +243,7 @@ dropdownSelectStyles =
 
 h1 : Language -> LanguageMap -> Element msg
 h1 language heading =
-    renderLanguageHelper
+    paragraph
         [ headingHero
         , Region.heading 1
         , Font.medium
@@ -251,38 +251,40 @@ h1 language heading =
         , htmlAttribute (HA.style "font-size" "calc(24px + 0.2vw)")
         , htmlAttribute (HA.style "line-height" "2rem")
         ]
-        language
-        (limitLength 140 heading)
+        [ limitLength 140 heading
+            |> extractLabelFromLanguageMap language
+            |> text
+        ]
 
 
 h2 : Language -> LanguageMap -> Element msg
 h2 language heading =
-    renderLanguageHelper [ headingXXL, Region.heading 2, Font.medium ] language heading
+    paragraph [ headingXXL, Region.heading 2, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
 
 
 h2s : Language -> LanguageMap -> Element msg
 h2s language heading =
-    renderLanguageHelper [ headingXXL, Region.heading 2, Font.medium, bodySerifFont ] language heading
+    paragraph [ headingXXL, Region.heading 2, Font.medium, bodySerifFont ] [ extractLabelFromLanguageMap language heading |> text ]
 
 
 h3 : Language -> LanguageMap -> Element msg
 h3 language heading =
-    renderLanguageHelper [ headingXL, Region.heading 3, Font.medium ] language heading
+    paragraph [ headingXL, Region.heading 3, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
 
 
 h3s : Language -> LanguageMap -> Element msg
 h3s language heading =
-    renderLanguageHelper [ headingXL, Region.heading 3, Font.medium, bodySerifFont ] language heading
+    paragraph [ headingXL, Region.heading 3, Font.medium, bodySerifFont ] [ extractLabelFromLanguageMap language heading |> text ]
 
 
 h4 : Language -> LanguageMap -> Element msg
 h4 language heading =
-    renderLanguageHelper [ headingLG, Region.heading 4, Font.medium ] language heading
+    paragraph [ headingLG, Region.heading 4, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
 
 
 h5 : Language -> LanguageMap -> Element msg
 h5 language heading =
-    renderLanguageHelper [ headingMD, Region.heading 5, Font.medium ] language heading
+    paragraph [ headingMD, Region.heading 5, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
 
 
 h6e : Language -> LanguageMap -> Element msg
@@ -324,64 +326,11 @@ textColumn attrs children =
         children
 
 
-renderValue : Language -> LanguageMap -> Element msg
-renderValue language value =
-    renderValueHelper language value (spacing lineSpacing)
-
-
-{-|
-
-    Similar to 'renderValue' but does not insert extra line spacing
-    between the values.
-
--}
-renderCloselySpacedValue : Language -> LanguageMap -> Element msg
-renderCloselySpacedValue language values =
-    renderValueHelper language values (spacing 5)
-
-
-renderValueHelper : Language -> LanguageMap -> Attribute msg -> Element msg
-renderValueHelper language values colspace =
-    textColumn
-        [ bodyRegular
-        , colspace
-        ]
-        (extractTextFromLanguageMap language values
-            |> styledParagraphs
-        )
-
-
 renderLabel : Language -> LanguageMap -> Element msg
 renderLabel language langmap =
-    renderLanguageHelper
-        [ Font.semiBold, bodyRegular ]
-        language
-        langmap
-
-
-{-|
-
-    Implements headings with the 'paragraph' tag to ensure that they wrap if the
-    lines are too long.
-
--}
-renderLanguageHelper : List (Attribute msg) -> Language -> LanguageMap -> Element msg
-renderLanguageHelper attrib language heading =
     paragraph
-        attrib
-        [ extractLabelFromLanguageMap language heading
-            |> text
-        ]
-
-
-renderParagraph : Language -> LanguageMap -> Element msg
-renderParagraph language langmap =
-    renderLanguageHelper
-        [ bodyRegular
-        , spacing lineSpacing
-        ]
-        language
-        langmap
+        [ Font.semiBold, bodyRegular ]
+        [ text (extractLabelFromLanguageMap language langmap) ]
 
 
 resourceLink : String -> (List (Attribute msg) -> { label : Element msg, url : String } -> Element msg)
@@ -447,7 +396,7 @@ parsedHtml txt =
 listRenderer : String -> Element msg
 listRenderer txt =
     wrappedRow
-        [ spacing lineSpacing
+        [ spacing 4
         ]
         (parsedHtml txt)
 
@@ -466,17 +415,16 @@ styledParagraphs textList =
 
 viewLabelValueField :
     List (Attribute msg)
-    -> (Language -> LanguageMap -> Element msg)
     -> Language
     -> List LabelValue
     -> Element msg
-viewLabelValueField wrapperStyles fmt language field =
+viewLabelValueField wrapperStyles language field =
     wrappedRow
         [ width fill
         , height fill
         , alignTop
         ]
-        [ textColumn
+        [ column
             (List.append
                 [ width fill
                 , height fill
@@ -485,17 +433,57 @@ viewLabelValueField wrapperStyles fmt language field =
                 wrapperStyles
             )
             (List.map
-                (\f ->
+                (\{ label, value } ->
                     wrappedRow
                         [ width fill
                         , height fill
                         , alignTop
                         ]
                         [ column labelFieldColumnAttributes
-                            [ renderLabel language f.label ]
+                            [ renderLabel language label ]
                         , column valueFieldColumnAttributes
-                            [ fmt language f.value ]
+                            (extractTextFromLanguageMap language value
+                                |> styledParagraphs
+                            )
                         ]
+                )
+                field
+            )
+        ]
+
+
+viewMobileLabelValueField :
+    List (Attribute msg)
+    -> Language
+    -> List LabelValue
+    -> Element msg
+viewMobileLabelValueField wrapperStyles language field =
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            (List.append
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                wrapperStyles
+            )
+            (List.concatMap
+                (\{ label, value } ->
+                    [ row
+                        [ width fill, paddingEach { bottom = 4, left = 0, right = 0, top = 0 } ]
+                        [ renderLabel language label ]
+                    , row
+                        [ width fill, paddingEach { bottom = 8, left = 10, right = 0, top = 0 } ]
+                        [ paragraph []
+                            (extractTextFromLanguageMap language value
+                                |> styledParagraphs
+                            )
+                        ]
+                    ]
                 )
                 field
             )
@@ -506,7 +494,6 @@ viewParagraphField : Language -> List LabelValue -> Element msg
 viewParagraphField language fieldValues =
     viewLabelValueField
         [ spacing sectionSpacing ]
-        renderValue
         language
         fieldValues
 
@@ -515,7 +502,14 @@ viewSummaryField : Language -> List LabelValue -> Element msg
 viewSummaryField language fieldValues =
     viewLabelValueField
         [ spacing lineSpacing ]
-        renderCloselySpacedValue
+        language
+        fieldValues
+
+
+viewMobileSummaryField : Language -> List LabelValue -> Element msg
+viewMobileSummaryField language fieldValues =
+    viewMobileLabelValueField
+        [ spacing 4 ]
         language
         fieldValues
 
@@ -700,14 +694,18 @@ tabView cfg =
         [ alignLeft
         , alignBottom
         , Font.center
-        , Font.medium
+        , if cfg.isSelected then
+            Font.semiBold
+
+          else
+            Font.medium
         , height fill
         , paddingXY 20 2
         , Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
+        , Border.color colourScheme.darkGrey
         , minimalDropShadow
         , htmlAttribute (HA.style "clip-path" "inset(-5px -5px 0px -5px)")
         , onClick cfg.clickMsg
-        , Border.color colourScheme.darkBlue
         , backgroundColour
         , fontColour
         , pointer

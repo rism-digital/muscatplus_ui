@@ -10,11 +10,9 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 viewNameVariantsSection : Language -> NameVariantsSectionBody -> Element msg
 viewNameVariantsSection language variantsSection =
-    let
-        sectionTmpl =
-            sectionTemplate language variantsSection
-    in
-    sectionTmpl
+    sectionTemplate
+        language
+        variantsSection
         [ row
             (width fill
                 :: height fill

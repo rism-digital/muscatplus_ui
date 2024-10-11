@@ -10,7 +10,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, fo
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG, headingMD)
+import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
 import Page.UI.Errors exposing (createProbeErrorMessage)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
@@ -142,6 +142,9 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         [ alignTop
         , Background.color colourScheme.lightGrey
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.midGrey
+        , minimalDropShadow
+        , htmlAttribute (HA.style "z-index" "10")
         , width fill
         , height
             (if isFrontPage then

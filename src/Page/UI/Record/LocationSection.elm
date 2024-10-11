@@ -1,6 +1,7 @@
 module Page.UI.Record.LocationSection exposing (viewLocationAddressSection)
 
 import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, spacing, width)
+import Element.Border as Border
 import Language exposing (Language)
 import Page.RecordTypes.Institution exposing (InstitutionAddressBody, LocationAddressSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)

@@ -1,13 +1,13 @@
-module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
+module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewMobileRelationshipBody, viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
 
 import Dict
 import Dict.Extra as DE
-import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, valueFieldColumnAttributes)
 import Page.UI.Components exposing (renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
@@ -49,23 +49,27 @@ viewRelationshipBody language label relationships =
         , height fill
         , alignTop
         ]
-        [ textColumn
+        [ column labelFieldColumnAttributes
+            [ renderLabel language label ]
+        , List.map (viewRelationshipValue language) relationships
+            |> column valueFieldColumnAttributes
+        ]
+
+
+viewMobileRelationshipBody : Language -> LanguageMap -> List RelationshipBody -> Element msg
+viewMobileRelationshipBody language label relationships =
+    wrappedRow
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
             [ width fill
-            , height fill
-            , alignTop
-            , spacing sectionSpacing
+            , spacing 4
             ]
-            [ wrappedRow
-                [ width fill
-                , height fill
-                , alignTop
-                ]
-                [ column labelFieldColumnAttributes
-                    [ renderLabel language label ]
-                , List.map (viewRelationshipValue language) relationships
-                    |> column valueFieldColumnAttributes
-                ]
-            ]
+            (row [ width fill ] [ renderLabel language label ]
+                :: List.map (viewRelationshipValue language) relationships
+            )
         ]
 
 

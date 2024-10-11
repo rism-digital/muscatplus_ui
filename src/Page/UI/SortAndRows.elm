@@ -8,6 +8,7 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchBody)
+import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
@@ -56,13 +57,14 @@ viewRowSelectAndSortSelector cfg =
     row
         [ alignTop
         , Background.color colourScheme.lightGrey
-        , Border.color colourScheme.darkBlue
+        , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , minimalDropShadow
         , width fill
         , height (px 50)
         , paddingXY 20 0
         , centerY
-        , htmlAttribute (HA.style "z-index" "1")
+        , htmlAttribute (HA.style "z-index" "10")
         ]
         [ column
             [ width fill

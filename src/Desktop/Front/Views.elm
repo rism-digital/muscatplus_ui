@@ -12,7 +12,7 @@ import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingHero)
+import Page.UI.Attributes exposing (headingHero, minimalDropShadow)
 import Page.UI.Components exposing (h1)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -113,6 +113,7 @@ viewFrontSearchControls cfg =
         [ column
             [ width fill
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+            , Border.color colourScheme.midGrey
             , height fill
             , alignTop
             ]
@@ -155,8 +156,9 @@ viewFrontSearchControlsLoading =
                 [ width fill
                 , height (px 85)
                 , Background.color colourScheme.lightGrey
-                , Border.color colourScheme.darkBlue
+                , Border.color colourScheme.midGrey
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+                , minimalDropShadow
                 ]
                 []
             , row

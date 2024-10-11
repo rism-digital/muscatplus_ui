@@ -3,7 +3,7 @@ module Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForC
 import Config as C
 import Dict exposing (Dict)
 import Dict.Extra as DE
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, newTabLink, padding, paddingXY, pointer, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, newTabLink, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
@@ -14,7 +14,7 @@ import Page.RecordTypes.ExternalRecord exposing (ExternalProject, ExternalRecord
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (externalLinkTemplate, renderParagraph, resourceLink)
+import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (iiifLogo)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -110,7 +110,7 @@ viewExternalResourcePlainLink language body =
             [ linkColour
             ]
             { url = body.url
-            , label = renderParagraph language body.label
+            , label = paragraph [] [ text (extractLabelFromLanguageMap language body.label) ]
             }
         , externalLinkTemplate body.url
         ]

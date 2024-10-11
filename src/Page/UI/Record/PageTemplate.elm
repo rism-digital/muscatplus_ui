@@ -110,7 +110,8 @@ pageFooterTemplate session language footer =
         , alignBottom
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , minimalDropShadow
-        , Border.color colourScheme.darkBlue
+        , Border.color colourScheme.midGrey
+        , htmlAttribute (HA.style "z-index" "10")
         ]
         [ column
             [ width fill

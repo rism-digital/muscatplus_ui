@@ -2,7 +2,7 @@ module Page.UI.Facets.QueryFacet exposing (QueryFacetConfig, viewQueryFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, above, alignLeft, alignTop, below, column, el, fill, height, htmlAttribute, mouseOver, none, onRight, padding, paddingXY, pointer, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, below, column, el, fill, height, htmlAttribute, mouseOver, none, onLeft, onRight, padding, paddingXY, pointer, px, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -141,12 +141,10 @@ viewQueryFacet config =
                     , extractLabelFromLanguageMap config.language localTranslations.optionsWithOr
                     )
 
-        facetBehaviours =
+        listOfBehavioursForDropdown =
             toBehaviours config.queryFacet
                 |> toBehaviourItems
-
-        listOfBehavioursForDropdown =
-            List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label )) facetBehaviours
+                |> List.map (\v -> ( parseFacetBehaviourToString v.value, extractLabelFromLanguageMap config.language v.label ))
 
         behaviourControl =
             row
@@ -162,7 +160,7 @@ viewQueryFacet config =
                     [ width (px 25)
                     , height (px 10)
                     , el tooltipStyle (text behaviourText)
-                        |> tooltip above
+                        |> tooltip onLeft
                     ]
                     behaviourIcon
                 , el
@@ -200,7 +198,7 @@ viewQueryFacet config =
         [ column
             [ width fill
             , alignTop
-            , spacing lineSpacing
+            , spacing 8
             ]
             [ titleBar
             , row
@@ -232,12 +230,6 @@ viewQueryFacet config =
                     [ facetHelp onRight queryFacetHelp ]
                 ]
             , queryTermsDisplay
-            , row
-                [ alignLeft
-                , spacing 12
-                , bodyRegular
-                ]
-                []
             ]
         ]
 

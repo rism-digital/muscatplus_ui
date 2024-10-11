@@ -1,13 +1,13 @@
 module Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Html.Attributes as HA
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (lineSpacing)
-import Page.UI.Components exposing (h3, renderParagraph)
+import Page.UI.Components exposing (h3)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
 
@@ -74,6 +74,9 @@ viewSearchResultsNotFoundTmpl language =
                 [ h3 language localTranslations.noResultsHeader ]
             , row
                 [ width fill ]
-                [ renderParagraph language localTranslations.noResultsBody ]
+                [ paragraph
+                    []
+                    [ text (extractLabelFromLanguageMap language localTranslations.noResultsBody) ]
+                ]
             ]
         ]

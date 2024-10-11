@@ -1,14 +1,15 @@
 module Page.UI.Pagination exposing (viewPagination)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, padding, pointer, px, row, shrink, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, padding, pointer, px, row, shrink, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
-import Page.UI.Attributes exposing (headingLG)
+import Page.UI.Attributes exposing (headingLG, minimalDropShadow)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -46,8 +47,10 @@ viewPagination language pagination clickMsg =
         , alignBottom
         , height (px 50)
         , Background.color colourScheme.lightGrey
-        , Border.color colourScheme.darkBlue
+        , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
+        , minimalDropShadow
+        , htmlAttribute (HA.style "z-index" "10")
         ]
         [ column
             [ alignLeft

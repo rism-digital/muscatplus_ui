@@ -1,10 +1,10 @@
-module Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+module Page.UI.Record.SectionTemplate exposing (mobileSectionTemplate, sectionTemplate)
 
 import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, paddingEach, row, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (h2s)
+import Page.UI.Components exposing (h2s, h3s)
 
 
 {-|
@@ -46,6 +46,52 @@ sectionTemplate language header sectionBody =
                 , paddingEach { bottom = lineSpacing, left = 0, right = 0, top = 0 }
                 ]
                 [ h2s language header.label ]
+            , row
+                [ width fill ]
+                [ column
+                    [ spacing sectionSpacing
+                    , width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    sectionBody
+                ]
+            ]
+        ]
+
+
+mobileSectionTemplate :
+    Language
+    -> { a | label : LanguageMap, sectionToc : String }
+    -> List (Element msg)
+    -> Element msg
+mobileSectionTemplate language header sectionBody =
+    let
+        -- don't emit an anchor ID if the TOC value is an empty string
+        tocId =
+            if String.isEmpty header.sectionToc then
+                emptyAttribute
+
+            else
+                htmlAttribute (HA.id header.sectionToc)
+    in
+    row
+        [ width fill
+        , height fill
+        , alignTop
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , alignTop
+            , spacing 8
+            ]
+            [ row
+                [ width fill
+                , tocId
+                , paddingEach { bottom = 8, left = 0, right = 0, top = 0 }
+                ]
+                [ h3s language header.label ]
             , row
                 [ width fill ]
                 [ column

@@ -35,8 +35,6 @@ dividingLine =
         [ width fill
         , height shrink
         , paddingXY 15 0
-        , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-        , Border.color colourScheme.darkBlue
         , Background.color colourScheme.darkBlue
         ]
         [ column

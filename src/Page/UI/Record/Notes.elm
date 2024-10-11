@@ -10,11 +10,9 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 viewNotesSection : Language -> NotesSectionBody -> Element msg
 viewNotesSection language notesSection =
-    let
-        sectionTmpl =
-            sectionTemplate language notesSection
-    in
-    sectionTmpl
+    sectionTemplate
+        language
+        notesSection
         [ row
             (width fill
                 :: height fill

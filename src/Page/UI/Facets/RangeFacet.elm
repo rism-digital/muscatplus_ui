@@ -158,13 +158,13 @@ viewRangeFacet config =
                         , lowerValueBorder
                         ]
                         { label = labelHidden ""
-                        , onChange = \c -> config.userEnteredTextMsg facetAlias LowerRangeValue c
+                        , onChange = config.userEnteredTextMsg facetAlias LowerRangeValue
                         , placeholder = Nothing
                         , text = lowerValue
                         }
                     ]
                 , column
-                    []
+                    [ Font.semiBold ]
                     [ text "TO" ]
                 , column
                     [ spacing lineSpacing ]
@@ -175,7 +175,7 @@ viewRangeFacet config =
                         , upperValueBorder
                         ]
                         { label = labelHidden ""
-                        , onChange = \c -> config.userEnteredTextMsg facetAlias UpperRangeValue c
+                        , onChange = config.userEnteredTextMsg facetAlias UpperRangeValue
                         , placeholder = Nothing
                         , text = upperValue
                         }

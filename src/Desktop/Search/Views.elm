@@ -149,7 +149,7 @@ viewTopBar lang model =
         [ width fill
         , height (px tabBarHeight)
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.color colourScheme.darkBlue
+        , Border.color colourScheme.midGrey
         ]
         [ column
             [ width fill

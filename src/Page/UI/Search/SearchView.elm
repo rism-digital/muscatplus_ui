@@ -171,7 +171,7 @@ viewSearchResultsSection cfg resultsLoading body =
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.darkBlue
+            , Border.color colourScheme.midGrey
             , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
             [ viewSearchPageSort
@@ -266,8 +266,8 @@ viewActiveFilters { session, model, userRemovedActiveFilterMsg } =
         , height shrink
         , paddingXY 20 10
         , Background.color colourScheme.lightestBlue
-        , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
-        , Border.color colourScheme.darkGrey
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.midGrey
         ]
         [ column
             [ width fill

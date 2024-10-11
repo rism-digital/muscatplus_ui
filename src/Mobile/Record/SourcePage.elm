@@ -1,6 +1,6 @@
 module Mobile.Record.SourcePage exposing (viewFullMobileSourcePage)
 
-import Element exposing (Element, alignTop, clipY, column, el, fill, height, htmlAttribute, paddingXY, px, row, width)
+import Element exposing (Element, alignTop, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -8,6 +8,8 @@ import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Components exposing (sourceIconChooser)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.ContentsSection exposing (viewMobileContentsSection)
 import Page.UI.Record.PageTemplate exposing (mobilePageHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
@@ -52,5 +54,19 @@ viewFullMobileSourcePage session _ body =
                 , Border.color colourScheme.midGrey
                 ]
                 [ mobilePageHeaderTemplate session.language (Just sourceIconView) body ]
+            , row
+                [ width fill
+                , height fill
+                , scrollbarY
+                , htmlAttribute (HA.style "min-height" "unset")
+                ]
+                [ column
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , padding 20
+                    ]
+                    [ viewMaybe (viewMobileContentsSection session.language body.creator) body.contents ]
+                ]
             ]
         ]

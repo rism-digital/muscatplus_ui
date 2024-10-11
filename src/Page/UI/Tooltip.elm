@@ -4,7 +4,7 @@ import Element exposing (Attribute, Element, el, fill, height, htmlAttribute, in
 import Element.Background as Background
 import Element.Font as Font
 import Html.Attributes as HA
-import Page.UI.Attributes exposing (bodyRegular)
+import Page.UI.Attributes exposing (bodyRegular, bodySM)
 import Page.UI.Images exposing (assistanceSvg, infoCircleSvg)
 import Page.UI.Style exposing (colourScheme)
 
@@ -52,7 +52,9 @@ tooltip position tooltip_ =
             , transparent True
             , mouseOver [ transparent False ]
             , (position << Element.map never)
-                (el [ htmlAttribute (HA.style "pointerEvents" "none") ]
+                (el
+                    [ htmlAttribute (HA.style "pointerEvents" "none")
+                    ]
                     tooltip_
                 )
             ]
@@ -67,7 +69,7 @@ tooltipStyle =
     , width (shrink |> minimum 140)
     , padding 4
     , spacing 5
-    , bodyRegular
+    , bodySM
     ]
 
 

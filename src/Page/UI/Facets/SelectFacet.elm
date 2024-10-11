@@ -183,7 +183,6 @@ viewSelectFacet config =
                     , Border.width 1
                     , Border.color colourScheme.midGrey
                     , Background.color colourScheme.white
-                    , alignRight
                     ]
                     [ el
                         [ width (px 25)

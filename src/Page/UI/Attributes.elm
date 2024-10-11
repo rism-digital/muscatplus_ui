@@ -161,7 +161,7 @@ labelFieldColumnAttributes =
     [ width (fill |> maximum 180)
     , alignTop
     , spacing lineSpacing
-    , paddingEach { bottom = 5, left = 0, right = 5, top = 0 }
+    , paddingEach { bottom = 5, left = 0, right = 8, top = 0 }
     ]
 
 
@@ -179,9 +179,9 @@ linkColour =
 minimalDropShadow : Attribute msg
 minimalDropShadow =
     Border.shadow
-        { blur = 2
+        { blur = 4
         , color = colourScheme.darkBlueTranslucent
-        , offset = ( 1, 1 )
+        , offset = ( -1, 1 )
         , size = 1
         }
 
@@ -217,4 +217,4 @@ resultsColumnWidth =
 
 desktopDisplayWidth : Int
 desktopDisplayWidth =
-    1000
+    1100
