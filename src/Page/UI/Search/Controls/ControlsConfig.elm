@@ -2,7 +2,7 @@ module Page.UI.Search.Controls.ControlsConfig exposing (ActiveFiltersCfg, Contro
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Language exposing (Language, LanguageMap)
-import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
 import Page.RecordTypes.Search exposing (Facets)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Response exposing (Response)
@@ -25,7 +25,7 @@ type alias SearchControlsConfig a b msg =
     , model :
         { a
             | activeSearch : ActiveSearch msg
-            , probeResponse : Response ProbeData
+            , probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
         }
     , body : { b | facets : Facets }
@@ -33,6 +33,7 @@ type alias SearchControlsConfig a b msg =
     , panelToggleMsg : String -> Set String -> msg
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
+    , userClickedOpenQueryBuilderMsg : msg
     }
 
 

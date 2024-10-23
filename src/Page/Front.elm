@@ -20,9 +20,9 @@ import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToResultMode)
-import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..))
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -59,7 +59,7 @@ frontProbeSubmit session model =
         |> setMode resultMode
         |> flip setNextQuery model.activeSearch
         |> flip setActiveSearch model
-        |> setProbeResponse (Loading Nothing)
+        |> setProbeResponse Probing
         |> probeSubmit ServerRespondedWithProbeData session
 
 
@@ -72,7 +72,7 @@ init cfg =
             , keyboardQueryArgs = Just Keyboard.defaultKeyboardQuery
             , searchPreferences = cfg.searchPreferences
             }
-    , probeResponse = NoResponseToShow
+    , probeResponse = NotChecked
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     }
@@ -124,11 +124,6 @@ searchSubmit session model =
     )
 
 
-setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
-setProbeResponse newResponse oldModel =
-    { oldModel | probeResponse = newResponse }
-
-
 update : Session -> FrontMsg -> FrontPageModel FrontMsg -> ( FrontPageModel FrontMsg, Cmd FrontMsg )
 update session msg model =
     case msg of
@@ -151,7 +146,7 @@ update session msg model =
                 newModel =
                     { model
                         | response = Response response
-                        , probeResponse = Loading Nothing
+                        , probeResponse = Probing
                     }
 
                 probeUrl =
@@ -180,14 +175,14 @@ update session msg model =
             in
             ( { model
                 | activeSearch = newActiveSearch
-                , probeResponse = Response response
+                , probeResponse = ProbeSuccess response
               }
             , Cmd.none
             )
 
         ServerRespondedWithProbeData (Err err) ->
             ( { model
-                | probeResponse = Error err
+                | probeResponse = ProbeError err
               }
             , Cmd.none
             )
@@ -310,7 +305,7 @@ update session msg model =
                         probeModel =
                             if keyboardModel.needsProbe then
                                 { newModel
-                                    | probeResponse = Loading Nothing
+                                    | probeResponse = Probing
                                 }
 
                             else

@@ -6,6 +6,7 @@ module Page.UpdateHelpers exposing
     , hasNonZeroSourcesAttached
     , probeSubmit
     , selectAppropriateRangeFacetValues
+    , setProbeResponse
     , textQuerySuggestionSubmit
     , updateActiveFiltersWithLangMapResultsFromServer
     , updateQueryFacetFilters
@@ -43,7 +44,7 @@ import Maybe.Extra as ME
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setRows, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
-import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..))
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts, RangeFacetValue(..), extractIdFromSearchResult)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
@@ -145,13 +146,13 @@ createRangeString lower upper =
 probeSubmit :
     (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ) -> msg)
     -> Session
-    -> { a | activeSearch : ActiveSearch msg, probeResponse : Response ProbeData }
-    -> ( { a | activeSearch : ActiveSearch msg, probeResponse : Response ProbeData }, Cmd msg )
+    -> { a | activeSearch : ActiveSearch msg, probeResponse : ProbeStatus }
+    -> ( { a | activeSearch : ActiveSearch msg, probeResponse : ProbeStatus }, Cmd msg )
 probeSubmit probeMsg session model =
     let
         newModel =
             addNationalCollectionFilter session.restrictedToNationalCollection model
-                |> setProbeResponse (Loading Nothing)
+                |> setProbeResponse Probing
 
         probeUrl =
             createProbeUrl session newModel.activeSearch
@@ -226,7 +227,7 @@ selectAppropriateRangeFacetValues facetAlias activeSearch =
                     Nothing
 
 
-setProbeResponse : Response ProbeData -> { a | probeResponse : Response ProbeData } -> { a | probeResponse : Response ProbeData }
+setProbeResponse : ProbeStatus -> { a | probeResponse : ProbeStatus } -> { a | probeResponse : ProbeStatus }
 setProbeResponse newResponse oldModel =
     { oldModel | probeResponse = newResponse }
 

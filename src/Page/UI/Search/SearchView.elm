@@ -3,7 +3,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -14,7 +14,8 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Maybe.Extra as ME
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
-import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.QueryBuilder.View exposing (viewQueryBuilder)
+import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus)
@@ -23,7 +24,7 @@ import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
-import Page.UI.Helpers exposing (viewIf)
+import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Pagination exposing (viewPagination)
 import Page.UI.Record.Previews exposing (viewPreviewError, viewPreviewRouter)
@@ -36,7 +37,7 @@ import Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
-import Page.UI.Search.SearchComponents exposing (viewSearchButtons)
+import Page.UI.Search.SearchComponents exposing (queryValidationState, viewSearchButtons)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Style exposing (colourScheme)
@@ -54,11 +55,13 @@ type alias SearchResultsSectionConfig a msg =
             , sourceItemsExpanded : Bool
             , activeSearch : ActiveSearch msg
             , selectedResult : Maybe String
-            , probeResponse : Response ProbeData
+            , probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
         }
     , searchResponse : Response ServerData
     , expandedIncipitInfoSections : Set String
+    , userClickedOpenQueryBuilderMsg : msg
+    , userClickedCloseQueryBuilderMsg : msg
     , userClosedPreviewWindowMsg : msg
     , userClickedSourceItemsExpandMsg : msg
     , userClickedResultForPreviewMsg : String -> msg
@@ -160,11 +163,26 @@ viewSearchResultsSection cfg resultsLoading body =
                     }
                 )
                 hasActiveFilters
+
+        queryBuilderWindow =
+            .activeSearch cfg.model
+                |> .queryBuilder
+                |> viewMaybe
+                    (\_ ->
+                        viewQueryBuilder
+                            { language = language
+                            , closeMsg = cfg.userClickedCloseQueryBuilderMsg
+                            , model = cfg.model
+                            , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
+                            , searchResponse = cfg.searchResponse
+                            }
+                    )
     in
     row
         [ width fill
         , height fill
         , Background.color colourScheme.white
+        , inFront queryBuilderWindow
         ]
         [ column
             [ width (px resultsColumnWidth)
@@ -214,6 +232,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 , panelToggleMsg = cfg.panelToggleMsg
                 , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
                 , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
+                , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
                 }
             ]
         ]
@@ -301,6 +320,10 @@ viewSearchControls cfg =
         language =
             .language cfg.session
 
+        queryValidation =
+            .probeResponse cfg.model
+                |> queryValidationState
+
         qText =
             toNextQuery (.activeSearch cfg.model)
                 |> toKeywordQuery
@@ -316,6 +339,8 @@ viewSearchControls cfg =
                     , submitMsg = cfg.userTriggeredSearchSubmitMsg
                     , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                     , queryText = qText
+                    , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
+                    , queryIsValid = queryValidation
                     }
                 ]
 

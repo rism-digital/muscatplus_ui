@@ -2,7 +2,7 @@ module Page.Search.Model exposing (SearchPageModel)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
-import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Response exposing (Response, ServerData)
 import Set exposing (Set)
@@ -21,7 +21,7 @@ type alias SearchPageModel msg =
     , incipitInfoExpanded : Set String
     , selectedResult : Maybe String
     , showFacetPanel : Bool
-    , probeResponse : Response ProbeData
+    , probeResponse : ProbeStatus
     , probeDebouncer : Debouncer msg
     , applyFilterPrompt : Bool
     , digitizedCopiesCalloutExpanded : Bool

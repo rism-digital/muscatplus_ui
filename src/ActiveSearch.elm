@@ -9,6 +9,7 @@ module ActiveSearch exposing
     , setAliasLabelMap
     , setExpandedFacets
     , setKeyboard
+    , setQueryBuilder
     , setQueryFacetValues
     , setRangeFacetValues
     , toActiveSearch
@@ -26,6 +27,8 @@ import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
+import Page.QueryBuilder as QueryBuilder
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import SearchPreferences exposing (SearchPreferences)
@@ -49,6 +52,7 @@ empty =
     , keyboard = Just Keyboard.initModel
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
+    , queryBuilder = Nothing
     }
 
 
@@ -71,6 +75,7 @@ init cfg =
     , keyboard = keyboardQuery
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
+    , queryBuilder = Nothing
     }
 
 
@@ -111,6 +116,11 @@ setExpandedFacets newFacets oldRecord =
 setKeyboard : Maybe (Keyboard.Model KeyboardMsg) -> { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) } -> { a | keyboard : Maybe (Keyboard.Model KeyboardMsg) }
 setKeyboard newKeyboard oldRecord =
     { oldRecord | keyboard = newKeyboard }
+
+
+setQueryBuilder : Maybe QueryBuilder.Model -> { a | queryBuilder : Maybe QueryBuilder.Model } -> { a | queryBuilder : Maybe QueryBuilder.Model }
+setQueryBuilder newQueryBuilder oldRecord =
+    { oldRecord | queryBuilder = newQueryBuilder }
 
 
 setQueryFacetValues : Dict FacetAlias String -> { a | queryFacetValues : Dict FacetAlias String } -> { a | queryFacetValues : Dict FacetAlias String }

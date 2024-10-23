@@ -9,7 +9,7 @@ module Page.Search exposing
     , update
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setKeyboard, setRangeFacetValues, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setKeyboard, setQueryBuilder, setRangeFacetValues, toKeyboard)
 import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Config as C
@@ -20,6 +20,8 @@ import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setFilters, setMode, setNextQuery, toMode, toNextQuery)
+import Page.QueryBuilder as QueryBuilder
+import Page.RecordTypes.Probe exposing (ProbeStatus(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), toFacetLabel)
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
@@ -84,7 +86,7 @@ init cfg =
     , incipitInfoExpanded = Set.empty
     , selectedResult = selectedResult
     , showFacetPanel = False
-    , probeResponse = NoResponseToShow
+    , probeResponse = NotChecked
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     , digitizedCopiesCalloutExpanded = False
@@ -237,13 +239,13 @@ update session msg model =
                 totalItems =
                     case response of
                         SearchData body ->
-                            Response
-                                { modes = body.modes
-                                , totalItems = body.totalItems
+                            ProbeSuccess
+                                { totalItems = body.totalItems
+                                , validQuery = True
                                 }
 
                         _ ->
-                            NoResponseToShow
+                            NotChecked
             in
             ( { model
                 | response = Response response
@@ -273,7 +275,7 @@ update session msg model =
             in
             ( { model
                 | activeSearch = newActiveSearch
-                , probeResponse = Response response
+                , probeResponse = ProbeSuccess response
                 , applyFilterPrompt = True
               }
             , Cmd.none
@@ -475,12 +477,8 @@ update session msg model =
                 |> searchSubmit session
 
         UserClickedSearchResultsPagination url ->
-            let
-                oldData =
-                    chooseResponse model.response
-            in
             ( { model
-                | response = Loading oldData
+                | response = Loading (chooseResponse model.response)
                 , preview = NoResponseToShow
               }
             , Cmd.batch
@@ -500,12 +498,8 @@ update session msg model =
             )
 
         UserClickedExpandIncipitInfoSectionInPreview incipitIdent ->
-            let
-                newExpandedSet =
-                    SE.toggle incipitIdent model.incipitInfoExpanded
-            in
             ( { model
-                | incipitInfoExpanded = newExpandedSet
+                | incipitInfoExpanded = SE.toggle incipitIdent model.incipitInfoExpanded
               }
             , Cmd.none
             )
@@ -522,6 +516,36 @@ update session msg model =
 
         UserPressedAnArrowKey arrowDirection ->
             userPressedArrowKeysInSearchResultsList arrowDirection session model
+
+        UserClickedOpenQueryBuilder ->
+            let
+                queryFields =
+                    case model.response of
+                        Response (SearchData body) ->
+                            body.queryFields
+
+                        _ ->
+                            []
+
+                newActiveSearch =
+                    setQueryBuilder (Just QueryBuilder.init) model.activeSearch
+            in
+            ( { model
+                | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
+
+        UserClickedCloseQueryBuilder ->
+            let
+                newActiveSearch =
+                    setQueryBuilder Nothing model.activeSearch
+            in
+            ( { model
+                | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
 
         NothingHappened ->
             ( model, Cmd.none )

@@ -16,7 +16,7 @@ import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewSearchButtons)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, queryValidationState, viewSearchButtons)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -89,6 +89,7 @@ frontBodyViewRouter session model =
                 , panelToggleMsg = \_ _ -> FrontMsg.NothingHappened
                 , userTriggeredSearchSubmitMsg = FrontMsg.UserTriggeredSearchSubmit
                 , userEnteredTextInKeywordQueryBoxMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
                 }
 
         _ ->
@@ -156,6 +157,10 @@ viewFacetPanels cfg =
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
 
+        queryValidation =
+            .probeResponse cfg.model
+                |> queryValidationState
+
         submitMsg =
             if hasActionableProbeResponse (.probeResponse cfg.model) then
                 FrontMsg.UserTriggeredSearchSubmit
@@ -194,6 +199,8 @@ viewFacetPanels cfg =
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
+                        , queryIsValid = queryValidation
                         }
                     , viewSearchButtons
                         { language = language

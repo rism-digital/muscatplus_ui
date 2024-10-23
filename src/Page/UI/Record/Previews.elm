@@ -1,10 +1,8 @@
 module Page.UI.Record.Previews exposing (PreviewConfig, viewMobilePreviewRouter, viewPreviewError, viewPreviewRouter)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Events exposing (onClick)
-import Element.Font as Font
 import Html.Attributes as HA
 import Http.Detailed
 import Language exposing (Language)
@@ -12,10 +10,10 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
 import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
-import Page.UI.Components exposing (h4)
+import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowTitleBar)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Events exposing (onComplete)
-import Page.UI.Images exposing (closeWindowSvg, spinnerSvg)
+import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
 import Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
@@ -84,7 +82,7 @@ viewPreviewError cfg =
             , Background.color colourScheme.white
             , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
-            [ viewRecordPreviewTitleBar cfg.language cfg.closeMsg
+            [ viewWindowTitleBar cfg.language localTranslations.recordPreview cfg.closeMsg
             , row
                 [ width fill
                 , height fill
@@ -221,7 +219,7 @@ viewPreviewRouter cfg previewData =
             , Background.color colourScheme.white
             , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
-            [ viewRecordPreviewTitleBar cfg.language cfg.closeMsg
+            [ viewWindowTitleBar cfg.language localTranslations.recordPreview cfg.closeMsg
             , preview
             ]
         ]
@@ -334,67 +332,7 @@ viewMobilePreviewRouter cfg previewData =
             , Background.color colourScheme.white
             , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
             ]
-            [ viewMobileRecordPreviewTitleBar cfg.language cfg.hideAnimationStartedMsg
+            [ viewMobileWindowTitleBar cfg.language cfg.hideAnimationStartedMsg
             , preview
             ]
-        ]
-
-
-viewRecordPreviewTitleBar : Language -> msg -> Element msg
-viewRecordPreviewTitleBar language closeMsg =
-    row
-        [ width fill
-        , height (px 30)
-        , spacing 10
-        , paddingXY 10 0
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.color colourScheme.darkBlue
-        , Background.color colourScheme.darkBlue
-        ]
-        [ el
-            [ alignLeft
-            , centerY
-            , onClick closeMsg
-            , width (px 18)
-            , height (px 18)
-            , pointer
-            ]
-            (closeWindowSvg colourScheme.white)
-        , el
-            [ alignLeft
-            , centerY
-            , Font.color colourScheme.white
-            , width fill
-            ]
-            (h4 language localTranslations.recordPreview)
-        ]
-
-
-viewMobileRecordPreviewTitleBar : Language -> msg -> Element msg
-viewMobileRecordPreviewTitleBar language closeMsg =
-    row
-        [ width fill
-        , height (px 60)
-        , spacing 10
-        , paddingXY 10 0
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.color colourScheme.darkBlue
-        , Background.color colourScheme.darkBlue
-        ]
-        [ el
-            [ alignLeft
-            , centerY
-            , onClick closeMsg
-            , width (px 32)
-            , height (px 32)
-            , pointer
-            ]
-            (closeWindowSvg colourScheme.white)
-        , el
-            [ alignLeft
-            , centerY
-            , Font.color colourScheme.white
-            , width fill
-            ]
-            (h4 language localTranslations.recordPreview)
         ]

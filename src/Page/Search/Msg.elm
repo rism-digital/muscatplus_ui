@@ -54,4 +54,6 @@ type SearchMsg
     | UserClickedExpandDigitalCopiesCallout
     | UserClickedClosePreviewWindow
     | UserPressedAnArrowKey ArrowDirection
+    | UserClickedOpenQueryBuilder
+    | UserClickedCloseQueryBuilder
     | NothingHappened

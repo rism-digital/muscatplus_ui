@@ -10,7 +10,7 @@ module Page.Record exposing
     , update
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setRangeFacetValues)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setQueryBuilder, setRangeFacetValues)
 import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Config as C
@@ -20,10 +20,12 @@ import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Murmur3
 import Page.Query exposing (QueryArgs, defaultQueryArgs, setFilters, setNationalCollection, setNextQuery, toNextQuery)
+import Page.QueryBuilder as QueryBuilder
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
+import Page.RecordTypes.Probe exposing (ProbeStatus(..))
 import Page.RecordTypes.Search exposing (toFacetLabel)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route)
@@ -93,7 +95,7 @@ init cfg =
     , digitizedCopiesCalloutExpanded = False
     , selectedResult = selectedResult
     , activeSearch = activeSearch
-    , probeResponse = Loading Nothing
+    , probeResponse = NotChecked
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     , previewAnimationStatus = NoAnimation
@@ -210,14 +212,10 @@ update session msg model =
                 probeState =
                     case response of
                         SearchData body ->
-                            if body.totalItems == 0 then
-                                NoResponseToShow
-
-                            else
-                                Response { modes = body.modes, totalItems = body.totalItems }
+                            ProbeSuccess { totalItems = body.totalItems, validQuery = True }
 
                         _ ->
-                            NoResponseToShow
+                            NotChecked
 
                 searchResults =
                     case response of
@@ -245,7 +243,7 @@ update session msg model =
 
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             ( { model
-                | probeResponse = Response response
+                | probeResponse = ProbeSuccess response
                 , applyFilterPrompt = True
               }
             , Cmd.none
@@ -503,6 +501,24 @@ update session msg model =
 
         UserPressedAnArrowKey arrowDirection ->
             userPressedArrowKeysInSearchResultsList arrowDirection session model
+
+        UserClickedOpenQueryBuilder ->
+            let
+                newActiveSearch =
+                    setQueryBuilder (Just QueryBuilder.init) model.activeSearch
+            in
+            ( { model
+                | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
+
+        UserClickedCloseQueryBuilder ->
+            let
+                newActiveSearch =
+                    setQueryBuilder Nothing model.activeSearch
+            in
+            ( { model | activeSearch = newActiveSearch }, Cmd.none )
 
         NothingHappened ->
             ( model, Cmd.none )

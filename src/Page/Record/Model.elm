@@ -2,7 +2,7 @@ module Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, ro
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
-import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
 import Page.Route exposing (Route(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Response exposing (Response, ServerData)
@@ -28,7 +28,7 @@ type alias RecordPageModel msg =
     , digitizedCopiesCalloutExpanded : Bool
     , selectedResult : Maybe String
     , activeSearch : ActiveSearch msg
-    , probeResponse : Response ProbeData
+    , probeResponse : ProbeStatus
     , probeDebouncer : Debouncer msg
     , applyFilterPrompt : Bool
     , previewAnimationStatus : PreviewAnimationStatus

@@ -6,16 +6,20 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, searchKeywordIn
 
 -}
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.UI.Attributes exposing (headingXXL, lineSpacing, sectionSpacing)
+import Page.RecordTypes.Probe exposing (QueryValidation(..))
+import Page.UI.Attributes exposing (bodySM, headingXXL, lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (h2s)
 import Page.UI.Events exposing (onEnter)
+import Page.UI.Images exposing (circleSvg)
+import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp)
 
 
@@ -24,6 +28,8 @@ type alias KeywordInputConfig msg =
     , submitMsg : msg
     , changeMsg : String -> msg
     , queryText : String
+    , queryIsValid : QueryValidation
+    , userClickedOpenQueryBuilderMsg : msg
     }
 
 
@@ -37,7 +43,31 @@ keywordInputHelp =
 searchKeywordInput :
     KeywordInputConfig msg
     -> Element msg
-searchKeywordInput { language, submitMsg, changeMsg, queryText } =
+searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg } =
+    let
+        ( statusColor, statusMessage ) =
+            case queryIsValid of
+                ValidQuery ->
+                    ( colourScheme.lightGreen, "Query is valid" )
+
+                InvalidQuery ->
+                    ( colourScheme.red, "Query is not valid" )
+
+                CheckingQuery ->
+                    ( colourScheme.yellow, "Checking query ..." )
+
+                NotCheckedQuery ->
+                    ( colourScheme.midGrey, "" )
+
+        status =
+            row
+                [ width fill
+                , spacing 4
+                ]
+                [ el [ alignLeft, width (px 10), height (px 10) ] (circleSvg statusColor)
+                , el [ alignLeft, bodySM ] (text statusMessage)
+                ]
+    in
     row
         [ width fill
         , alignTop
@@ -89,6 +119,16 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText } =
                             )
                     , text = queryText
                     }
+                ]
+            , row
+                [ width fill ]
+                [ status
+                , el
+                    [ alignRight
+                    , onClick userClickedOpenQueryBuilderMsg
+                    , pointer
+                    ]
+                    (text "Query Builder")
                 ]
             ]
         ]

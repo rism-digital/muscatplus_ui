@@ -1,6 +1,6 @@
-module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, viewSearchButtons)
+module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, queryValidationState, viewSearchButtons)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -8,21 +8,19 @@ import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.Probe exposing (ProbeData)
+import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
-import Page.UI.Errors exposing (createProbeErrorMessage)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
-import Response exposing (Response(..))
 
 
 type alias SearchButtonConfig a msg =
     { language : Language
     , model :
         { a
-            | probeResponse : Response ProbeData
+            | probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
         }
     , isFrontPage : Bool
@@ -32,49 +30,56 @@ type alias SearchButtonConfig a msg =
     }
 
 
-hasActionableProbeResponse : Response ProbeData -> Bool
+queryValidationState : ProbeStatus -> QueryValidation
+queryValidationState probeResponse =
+    case probeResponse of
+        ProbeSuccess d ->
+            if d.validQuery then
+                ValidQuery
+
+            else
+                InvalidQuery
+
+        _ ->
+            NotCheckedQuery
+
+
+hasActionableProbeResponse : ProbeStatus -> Bool
 hasActionableProbeResponse probeResponse =
     case probeResponse of
-        Loading _ ->
-            True
-
-        -- We set this to true if the probe data is loading so that we do not falsely
-        -- state that no results were available.
-        Response d ->
+        ProbeSuccess d ->
             d.totalItems > 0
-
-        -- If it hasn't been asked, then we don't know, so we assume it's actionable.
-        NoResponseToShow ->
-            True
 
         _ ->
             False
 
 
-viewProbeResponseNumbers : Language -> Response ProbeData -> Element msg
+viewProbeResponseNumbers : Language -> ProbeStatus -> Element msg
 viewProbeResponseNumbers language probeResponse =
     case probeResponse of
-        Loading _ ->
+        Probing ->
             el
                 [ width (px 25)
                 , height (px 25)
                 ]
                 (animatedLoader [ width (px 25), height (px 25) ] (spinnerSvg colourScheme.midGrey))
 
-        Response data ->
+        ProbeSuccess data ->
             let
-                formattedNumber =
-                    toFloat data.totalItems
-                        |> formatNumberByLanguage language
-
                 textMsg =
-                    if formattedNumber == "0" then
+                    if data.totalItems == 0 then
                         extractLabelFromLanguageMap language localTranslations.noResultsWouldBeFound
 
                     else
-                        extractLabelFromLanguageMap language localTranslations.numberOfResults
-                            ++ ": "
-                            ++ formattedNumber
+                        let
+                            probeLabel number =
+                                extractLabelFromLanguageMap language localTranslations.numberOfResults
+                                    ++ ": "
+                                    ++ number
+                        in
+                        toFloat data.totalItems
+                            |> formatNumberByLanguage language
+                            |> probeLabel
             in
             el
                 [ Font.medium
@@ -82,18 +87,7 @@ viewProbeResponseNumbers language probeResponse =
                 ]
                 (text textMsg)
 
-        Error errMsg ->
-            paragraph
-                [ Font.medium
-                , headingLG
-                ]
-                [ extractLabelFromLanguageMap language localTranslations.errorLoadingProbeResults
-                    ++ ": "
-                    ++ createProbeErrorMessage errMsg
-                    |> text
-                ]
-
-        NoResponseToShow ->
+        _ ->
             none
 
 

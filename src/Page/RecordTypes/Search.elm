@@ -17,6 +17,7 @@ module Page.RecordTypes.Search exposing
     , PersonResultBody
     , PersonResultFlags
     , QueryFacet
+    , QueryField
     , RangeFacet
     , RangeFacetValue(..)
     , RangeMinMaxValues
@@ -259,6 +260,7 @@ type alias SearchBody =
     , facets : Facets
     , modes : Maybe ModeFacet
     , sorts : SortBlock
+    , queryFields : List QueryField
     , pageSizes : List String
     }
 
@@ -296,6 +298,12 @@ type alias SortBlock =
 
 
 type alias SortData =
+    { alias : String
+    , label : LanguageMap
+    }
+
+
+type alias QueryField =
     { alias : String
     , label : LanguageMap
     }
@@ -615,6 +623,7 @@ searchBodyDecoder =
         |> optional "facets" facetsDecoder Dict.empty
         |> optional "modes" (Decode.maybe modeFacetDecoder) Nothing
         |> required "sorts" searchSortBlockDecoder
+        |> optional "queryFields" (list (aliasLabelDecoder QueryField)) []
         |> required "pageSizes" (list string)
 
 
@@ -658,12 +667,12 @@ searchSortBlockDecoder : Decoder SortBlock
 searchSortBlockDecoder =
     Decode.succeed SortBlock
         |> required "default" string
-        |> required "options" (list searchSortsDecoder)
+        |> required "options" (list (aliasLabelDecoder SortData))
 
 
-searchSortsDecoder : Decoder SortData
-searchSortsDecoder =
-    Decode.succeed SortData
+aliasLabelDecoder : (String -> LanguageMap -> a) -> Decoder a
+aliasLabelDecoder a =
+    Decode.succeed a
         |> required "alias" string
         |> required "label" languageMapLabelDecoder
 

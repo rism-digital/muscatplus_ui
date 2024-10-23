@@ -54,4 +54,6 @@ type RecordMsg
     | UserClickedClosePreviewWindow
     | UserClickedRecordViewTab CurrentRecordViewTab
     | UserPressedAnArrowKey ArrowDirection
+    | UserClickedOpenQueryBuilder
+    | UserClickedCloseQueryBuilder
     | NothingHappened

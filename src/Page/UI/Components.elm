@@ -19,12 +19,15 @@ module Page.UI.Components exposing
     , renderLabel
     , resourceLink
     , sourceIconChooser
+    , sourceIconView
     , sourceTypeIconChooser
     , tabView
     , verticalLine
     , viewMobileSummaryField
+    , viewMobileWindowTitleBar
     , viewParagraphField
     , viewSummaryField
+    , viewWindowTitleBar
     )
 
 import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
@@ -44,7 +47,7 @@ import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceReco
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyAttribute, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
-import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, closeWindowSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (choose, toLinkedHtml)
@@ -526,6 +529,21 @@ mapViewer ( width, height ) iframeUrl =
         |> html
 
 
+sourceIconView : SourceRecordType -> Element msg
+sourceIconView recordType =
+    let
+        sourceIcon =
+            sourceIconChooser recordType
+    in
+    el
+        [ width (px 25)
+        , height (px 25)
+        , centerX
+        , alignTop
+        ]
+        (sourceIcon colourScheme.darkBlue)
+
+
 sourceIconChooser : SourceRecordType -> (Color -> Element msg)
 sourceIconChooser recordType =
     case recordType of
@@ -722,3 +740,63 @@ verticalLine =
         , Border.color colourScheme.midGrey
         ]
         none
+
+
+viewWindowTitleBar : Language -> LanguageMap -> msg -> Element msg
+viewWindowTitleBar language title closeMsg =
+    row
+        [ width fill
+        , height (px 30)
+        , spacing 10
+        , paddingXY 10 0
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.darkBlue
+        , Background.color colourScheme.darkBlue
+        ]
+        [ el
+            [ alignLeft
+            , centerY
+            , onClick closeMsg
+            , width (px 18)
+            , height (px 18)
+            , pointer
+            ]
+            (closeWindowSvg colourScheme.white)
+        , el
+            [ alignLeft
+            , centerY
+            , Font.color colourScheme.white
+            , width fill
+            ]
+            (h4 language title)
+        ]
+
+
+viewMobileWindowTitleBar : Language -> msg -> Element msg
+viewMobileWindowTitleBar language closeMsg =
+    row
+        [ width fill
+        , height (px 60)
+        , spacing 10
+        , paddingXY 10 0
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.darkBlue
+        , Background.color colourScheme.darkBlue
+        ]
+        [ el
+            [ alignLeft
+            , centerY
+            , onClick closeMsg
+            , width (px 32)
+            , height (px 32)
+            , pointer
+            ]
+            (closeWindowSvg colourScheme.white)
+        , el
+            [ alignLeft
+            , centerY
+            , Font.color colourScheme.white
+            , width fill
+            ]
+            (h4 language localTranslations.recordPreview)
+        ]

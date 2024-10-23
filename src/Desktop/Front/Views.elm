@@ -23,7 +23,7 @@ import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsM
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, viewSearchButtons)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, queryValidationState, viewSearchButtons)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -98,6 +98,7 @@ frontBodyViewRouter session model =
                 , panelToggleMsg = FrontMsg.UserClickedFacetPanelToggle
                 , userTriggeredSearchSubmitMsg = FrontMsg.UserTriggeredSearchSubmit
                 , userEnteredTextInKeywordQueryBoxMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
                 }
 
         _ ->
@@ -202,6 +203,10 @@ viewFacetPanels cfg =
                 IncipitSearchOption ->
                     localTranslations.incipits
 
+        queryValidation =
+            .probeResponse cfg.model
+                |> queryValidationState
+
         submitMsg =
             if hasActionableProbeResponse (.probeResponse cfg.model) then
                 FrontMsg.UserTriggeredSearchSubmit
@@ -231,6 +236,8 @@ viewFacetPanels cfg =
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
+                        , queryIsValid = queryValidation
                         }
                     )
 
@@ -240,6 +247,8 @@ viewFacetPanels cfg =
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
+                        , queryIsValid = queryValidation
                         }
                     , none
                     )

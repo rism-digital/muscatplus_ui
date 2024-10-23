@@ -10,7 +10,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -229,6 +229,7 @@ headerTmpl cfg =
         (width fill
             :: spacingXY 10 5
             :: centerY
+            :: alignTop
             --:: clip
             :: cfg.extraAttrs
         )

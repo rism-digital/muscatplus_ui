@@ -1,12 +1,12 @@
 module Page.UI.Record.Previews.Source exposing (viewMobileSourcePreview, viewSourcePreview)
 
 import Dict
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (sourceIconChooser)
+import Page.UI.Components exposing (sourceIconChooser, sourceIconView)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
@@ -36,15 +36,9 @@ viewSourcePreview :
 viewSourcePreview cfg body =
     let
         sourceIcon =
-            sourceIconChooser (.type_ (.recordType body.sourceTypes))
-
-        sourceIconView =
-            el
-                [ width (px 25)
-                , height (px 25)
-                , centerY
-                ]
-                (sourceIcon colourScheme.darkBlue)
+            .recordType body.sourceTypes
+                |> .type_
+                |> sourceIconView
 
         allExternals =
             gatherAllDigitizationLinksForCallout cfg.language body
@@ -111,7 +105,7 @@ viewSourcePreview cfg body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ subHeaderTemplate cfg.language (Just sourceIconView) body
+                    [ subHeaderTemplate cfg.language (Just sourceIcon) body
                     , pageFullRecordTemplate cfg.language body
                     ]
                 ]
@@ -134,16 +128,9 @@ viewMobileSourcePreview :
 viewMobileSourcePreview cfg body =
     let
         sourceIcon =
-            sourceIconChooser (.type_ (.recordType body.sourceTypes))
-
-        sourceIconView =
-            el
-                [ width (px 25)
-                , height (px 25)
-                , centerX
-                , alignTop
-                ]
-                (sourceIcon colourScheme.darkBlue)
+            .recordType body.sourceTypes
+                |> .type_
+                |> sourceIconView
 
         allExternals =
             gatherAllDigitizationLinksForCallout cfg.language body
@@ -210,7 +197,7 @@ viewMobileSourcePreview cfg body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ mobileSubHeaderTemplate cfg.language (Just sourceIconView) body
+                    [ mobileSubHeaderTemplate cfg.language (Just sourceIcon) body
                     , pageFullMobileRecordTemplate cfg.language body
                     ]
                 ]

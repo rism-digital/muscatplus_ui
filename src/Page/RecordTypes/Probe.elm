@@ -1,18 +1,32 @@
-module Page.RecordTypes.Probe exposing (ProbeData, probeResponseDecoder)
+module Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..), QueryValidation(..), probeResponseDecoder)
 
-import Json.Decode as Decode exposing (Decoder, int)
-import Json.Decode.Pipeline exposing (optional, required)
-import Page.RecordTypes.Search exposing (ModeFacet, modeFacetDecoder)
+import Http.Detailed
+import Json.Decode as Decode exposing (Decoder, bool, int)
+import Json.Decode.Pipeline exposing (required, requiredAt)
 
 
 type alias ProbeData =
     { totalItems : Int
-    , modes : Maybe ModeFacet
+    , validQuery : Bool
     }
+
+
+type ProbeStatus
+    = Probing
+    | ProbeSuccess ProbeData
+    | ProbeError (Http.Detailed.Error String)
+    | NotChecked
+
+
+type QueryValidation
+    = ValidQuery
+    | InvalidQuery
+    | CheckingQuery
+    | NotCheckedQuery
 
 
 probeResponseDecoder : Decoder ProbeData
 probeResponseDecoder =
     Decode.succeed ProbeData
         |> required "totalItems" int
-        |> optional "modes" (Decode.maybe modeFacetDecoder) Nothing
+        |> requiredAt [ "queryValidation", "valid" ] bool
