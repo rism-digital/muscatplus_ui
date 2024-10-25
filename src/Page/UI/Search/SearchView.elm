@@ -14,7 +14,8 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Maybe.Extra as ME
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
-import Page.QueryBuilder.View exposing (viewQueryBuilder)
+import Page.QueryBuilder
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
@@ -60,6 +61,7 @@ type alias SearchResultsSectionConfig a msg =
         }
     , searchResponse : Response ServerData
     , expandedIncipitInfoSections : Set String
+    , userInteractedWithQueryBuilderMsg : QueryBuilderMsg -> msg
     , userClickedOpenQueryBuilderMsg : msg
     , userClickedCloseQueryBuilderMsg : msg
     , userClosedPreviewWindowMsg : msg
@@ -169,12 +171,12 @@ viewSearchResultsSection cfg resultsLoading body =
                 |> .queryBuilder
                 |> viewMaybe
                     (\_ ->
-                        viewQueryBuilder
+                        Page.QueryBuilder.view
                             { language = language
-                            , closeMsg = cfg.userClickedCloseQueryBuilderMsg
                             , model = cfg.model
-                            , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                             , searchResponse = cfg.searchResponse
+                            , closeMsg = cfg.userClickedCloseQueryBuilderMsg
+                            , userInteractedWithQueryBuilderMsg = cfg.userInteractedWithQueryBuilderMsg
                             }
                     )
     in

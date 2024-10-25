@@ -45,13 +45,23 @@ searchKeywordInput :
     -> Element msg
 searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg } =
     let
+        queryValidationWithEmptyCheck =
+            if String.isEmpty queryText then
+                EmptyQuery
+
+            else
+                queryIsValid
+
         ( statusColor, statusMessage ) =
-            case queryIsValid of
+            case queryValidationWithEmptyCheck of
                 ValidQuery ->
                     ( colourScheme.lightGreen, "Query is valid" )
 
                 InvalidQuery ->
                     ( colourScheme.red, "Query is not valid" )
+
+                EmptyQuery ->
+                    ( colourScheme.midGrey, "" )
 
                 CheckingQuery ->
                     ( colourScheme.yellow, "Checking query ..." )

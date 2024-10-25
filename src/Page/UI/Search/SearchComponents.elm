@@ -34,11 +34,10 @@ queryValidationState : ProbeStatus -> QueryValidation
 queryValidationState probeResponse =
     case probeResponse of
         ProbeSuccess d ->
-            if d.validQuery then
-                ValidQuery
+            d.queryStatus
 
-            else
-                InvalidQuery
+        Probing ->
+            CheckingQuery
 
         _ ->
             NotCheckedQuery

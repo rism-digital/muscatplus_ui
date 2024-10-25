@@ -21,7 +21,8 @@ import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setFilters, setMode, setNextQuery, toMode, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
-import Page.RecordTypes.Probe exposing (ProbeStatus(..))
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
+import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), toFacetLabel)
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
@@ -241,7 +242,7 @@ update session msg model =
                         SearchData body ->
                             ProbeSuccess
                                 { totalItems = body.totalItems
-                                , validQuery = True
+                                , queryStatus = NotCheckedQuery
                                 }
 
                         _ ->
@@ -447,6 +448,26 @@ update session msg model =
                 Nothing ->
                     ( model, Cmd.none )
 
+        UserInteractedWithQueryBuilder (UserEnteredTextInQueryBuilder queryText) ->
+            let
+                -- This is the same code as when the user enters text in the
+                -- non querybuilder box. The idea is that we update the "main"
+                -- query, instead of tracking a specific querybuilder-only state.
+                debounceMsg =
+                    provideInput DebouncerSettledToSendProbeRequest
+                        |> DebouncerCapturedProbeRequest
+            in
+            userEnteredTextInKeywordQueryBox queryText model
+                |> update session debounceMsg
+
+        UserInteractedWithQueryBuilder queryBuilderMsg ->
+            let
+                -- all other interactions can go here
+                ( qbModel, qbCmd ) =
+                    QueryBuilder.update queryBuilderMsg {}
+            in
+            ( model, Cmd.map UserInteractedWithQueryBuilder qbCmd )
+
         UserTriggeredSearchSubmit ->
             searchSubmit session model
 
@@ -519,14 +540,6 @@ update session msg model =
 
         UserClickedOpenQueryBuilder ->
             let
-                queryFields =
-                    case model.response of
-                        Response (SearchData body) ->
-                            body.queryFields
-
-                        _ ->
-                            []
-
                 newActiveSearch =
                     setQueryBuilder (Just QueryBuilder.init) model.activeSearch
             in

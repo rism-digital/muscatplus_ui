@@ -5,6 +5,7 @@ import Http
 import Http.Detailed
 import KeyCodes exposing (ArrowDirection)
 import Language exposing (LanguageMap)
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.Record.Model exposing (CurrentRecordViewTab)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue)
@@ -56,4 +57,5 @@ type RecordMsg
     | UserPressedAnArrowKey ArrowDirection
     | UserClickedOpenQueryBuilder
     | UserClickedCloseQueryBuilder
+    | UserInteractedWithQueryBuilder QueryBuilderMsg
     | NothingHappened

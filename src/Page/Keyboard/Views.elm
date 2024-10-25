@@ -23,7 +23,7 @@ view : Maybe SearchPreferences -> NotationFacet -> Language -> KeyboardModel Key
 view searchPreferences notationFacet language model =
     let
         isMuted =
-            ME.unwrap True (\prefs -> prefs.audioMuted) searchPreferences
+            ME.unwrap True .audioMuted searchPreferences
 
         queryModeOptions =
             .options notationFacet.queryModes

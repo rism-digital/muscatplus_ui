@@ -6,8 +6,7 @@ import Language exposing (LanguageMap)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
-import Page.QueryBuilder as QueryBuilder
-import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
+import Page.QueryBuilder.Model exposing (QueryBuilderModel)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Set exposing (Set)
@@ -32,5 +31,5 @@ type alias ActiveSearch msg =
     , keyboard : Maybe (Keyboard.Model KeyboardMsg)
     , activeSuggestion : Maybe ActiveSuggestion
     , activeSuggestionDebouncer : Debouncer msg
-    , queryBuilder : Maybe QueryBuilder.Model
+    , queryBuilder : Maybe QueryBuilderModel
     }

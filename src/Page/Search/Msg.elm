@@ -6,6 +6,7 @@ import Http.Detailed
 import KeyCodes exposing (ArrowDirection)
 import Language exposing (LanguageMap)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetItem, FacetSorts, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -43,6 +44,7 @@ type SearchMsg
     | UserClickedSelectFacetItem FacetAlias String LanguageMap
     | UserRemovedActiveFilter FacetAlias String
     | UserInteractedWithPianoKeyboard KeyboardMsg
+    | UserInteractedWithQueryBuilder QueryBuilderMsg
     | UserTriggeredSearchSubmit
     | UserResetAllFilters
     | UserChangedResultSorting String

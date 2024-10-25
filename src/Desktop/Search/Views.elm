@@ -64,6 +64,7 @@ searchResultsViewRouter session model =
             , model = model
             , searchResponse = model.response
             , expandedIncipitInfoSections = model.incipitInfoExpanded
+            , userInteractedWithQueryBuilderMsg = SearchMsg.UserInteractedWithQueryBuilder
             , userClickedOpenQueryBuilderMsg = SearchMsg.UserClickedOpenQueryBuilder
             , userClickedCloseQueryBuilderMsg = SearchMsg.UserClickedCloseQueryBuilder
             , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow

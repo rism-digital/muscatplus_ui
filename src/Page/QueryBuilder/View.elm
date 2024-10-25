@@ -1,69 +1,52 @@
 module Page.QueryBuilder.View exposing (..)
 
-import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, spacing, text, width)
+import Element as Event exposing (Element, alignBottom, alignLeft, alignTop, column, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Query exposing (toKeywordQuery, toNextQuery)
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation(..))
 import Page.RecordTypes.Search exposing (QueryField)
-import Page.UI.Attributes exposing (bodySM, headingXXL, minimalDropShadow)
-import Page.UI.Components exposing (viewWindowTitleBar)
+import Page.UI.Attributes exposing (bodySM, headingXXL)
 import Page.UI.Images exposing (circleSvg)
 import Page.UI.Search.SearchComponents exposing (queryValidationState)
 import Page.UI.Style exposing (colourScheme)
-import Response exposing (Response(..), ServerData(..))
 
 
-viewQueryBuilder :
+view :
     { language : Language
-    , model :
-        { a
-            | probeResponse : ProbeStatus
-            , activeSearch : ActiveSearch msg
-        }
-    , changeMsg : String -> msg
-    , searchResponse : Response ServerData
-
-    --, queryText : String
-    --, queryIsValid : QueryValidation
-    , closeMsg : msg
+    , probeResponse : ProbeStatus
+    , qText : String
+    , queryFields : List QueryField
     }
-    -> Element msg
-viewQueryBuilder cfg =
+    -> Element QueryBuilderMsg
+view cfg =
     let
-        title =
-            toLanguageMap "Query Builder"
-
         queryValidation =
-            .probeResponse cfg.model
-                |> queryValidationState
+            queryValidationState cfg.probeResponse
 
-        qText =
-            toNextQuery (.activeSearch cfg.model)
-                |> toKeywordQuery
-                |> Maybe.withDefault ""
+        queryValidationWithEmptyCheck =
+            if String.isEmpty cfg.qText then
+                EmptyQuery
 
-        queryFields =
-            case cfg.searchResponse of
-                Response (SearchData body) ->
-                    body.queryFields
-
-                _ ->
-                    []
+            else
+                queryValidation
 
         ( statusColor, statusMessage ) =
-            case queryValidation of
+            case queryValidationWithEmptyCheck of
                 ValidQuery ->
                     ( colourScheme.lightGreen, "Query is valid" )
 
                 InvalidQuery ->
                     ( colourScheme.red, "Query is not valid" )
+
+                EmptyQuery ->
+                    ( colourScheme.midGrey, "" )
 
                 CheckingQuery ->
                     ( colourScheme.yellow, "Checking query ..." )
@@ -83,70 +66,52 @@ viewQueryBuilder cfg =
     row
         [ width fill
         , height fill
-        , Background.color colourScheme.translucentGrey
-        , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
         ]
         [ column
-            [ centerX
-            , centerY
-            , width (px 900)
-            , height (px 600)
-            , Background.color colourScheme.white
-            , Border.color colourScheme.darkBlue
-            , Border.width 3
-            , htmlAttribute (HA.style "z-index" "10")
-            , minimalDropShadow
+            [ width fill
+            , height fill
+            , padding 10
+            , spacing 6
             ]
-            [ viewWindowTitleBar cfg.language title cfg.closeMsg
-            , row
-                [ width fill
-                , height fill
-                ]
-                [ column
+            [ row
+                [ width fill ]
+                [ Input.text
                     [ width fill
-                    , height fill
-                    , padding 10
-                    , spacing 6
-                    ]
-                    [ row
-                        [ width fill ]
-                        [ Input.text
-                            [ width fill
-                            , htmlAttribute (HA.autocomplete False)
-                            , Border.rounded 0
+                    , htmlAttribute (HA.autocomplete False)
+                    , Border.rounded 0
 
-                            --, onEnter cfg.submitMsg
-                            , headingXXL
-                            , Font.medium
-                            , paddingXY 10 12
-                            ]
-                            { label = Input.labelHidden (extractLabelFromLanguageMap cfg.language localTranslations.search)
-                            , onChange = \inp -> cfg.changeMsg inp
-                            , placeholder =
-                                Just
-                                    (Input.placeholder
-                                        []
-                                        (text (extractLabelFromLanguageMap cfg.language localTranslations.wordsAnywhere))
-                                    )
-                            , text = qText
-                            }
-                        ]
-                    , row
-                        [ width fill ]
-                        [ status ]
-                    , viewQueryFields cfg.language queryFields
-                    , row
-                        [ alignBottom
-                        ]
-                        [ text "search"
-                        ]
+                    --, onEnter cfg.submitMsg
+                    , headingXXL
+                    , Font.medium
+                    , paddingXY 10 12
                     ]
+                    { label = Input.labelHidden (extractLabelFromLanguageMap cfg.language localTranslations.search)
+                    , onChange = UserEnteredTextInQueryBuilder
+
+                    --, onChange = \inp -> cfg.changeMsg inp
+                    , placeholder =
+                        Just
+                            (Input.placeholder
+                                []
+                                (text (extractLabelFromLanguageMap cfg.language localTranslations.wordsAnywhere))
+                            )
+                    , text = cfg.qText
+                    }
+                ]
+            , row
+                [ width fill ]
+                [ status ]
+            , viewQueryFields cfg.language cfg.queryFields
+            , row
+                [ alignBottom
+                ]
+                [ text "search"
                 ]
             ]
         ]
 
 
-viewQueryFields : Language -> List QueryField -> Element msg
+viewQueryFields : Language -> List QueryField -> Element QueryBuilderMsg
 viewQueryFields language qFields =
     row
         [ width fill
@@ -155,18 +120,28 @@ viewQueryFields language qFields =
         ]
         [ column
             [ alignTop
-            , width fill
+            , width (px 300)
+            , Border.color colourScheme.darkBlue
+            , Border.width 1
+            , spacing 4
+            , padding 6
             ]
             (List.map (\qf -> viewQueryField language qf) qFields)
         ]
 
 
-viewQueryField : Language -> QueryField -> Element msg
+viewQueryField : Language -> QueryField -> Element QueryBuilderMsg
 viewQueryField language qField =
     row
         [ spacing 8
+        , padding 4
+        , width fill
         , alignTop
+        , onClick (UserClickedOnFieldName qField.alias)
+        , pointer
+        , Event.mouseOver [ Background.color colourScheme.lightestBlue ]
         ]
-        [ el [] (text (extractLabelFromLanguageMap language qField.label))
-        , el [] (text qField.alias)
+        [ el
+            []
+            (text (extractLabelFromLanguageMap language qField.label))
         ]

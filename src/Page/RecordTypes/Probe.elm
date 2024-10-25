@@ -7,7 +7,7 @@ import Json.Decode.Pipeline exposing (required, requiredAt)
 
 type alias ProbeData =
     { totalItems : Int
-    , validQuery : Bool
+    , queryStatus : QueryValidation
     }
 
 
@@ -21,6 +21,7 @@ type ProbeStatus
 type QueryValidation
     = ValidQuery
     | InvalidQuery
+    | EmptyQuery
     | CheckingQuery
     | NotCheckedQuery
 
@@ -29,4 +30,16 @@ probeResponseDecoder : Decoder ProbeData
 probeResponseDecoder =
     Decode.succeed ProbeData
         |> required "totalItems" int
-        |> requiredAt [ "queryValidation", "valid" ] bool
+        |> requiredAt [ "queryValidation", "valid" ]
+            (bool
+                |> Decode.andThen queryValidationDecoder
+            )
+
+
+queryValidationDecoder : Bool -> Decoder QueryValidation
+queryValidationDecoder qstatus =
+    if qstatus then
+        Decode.succeed ValidQuery
+
+    else
+        Decode.succeed InvalidQuery

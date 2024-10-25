@@ -101,6 +101,7 @@ searchResultsViewRouter session model =
             , model = model
             , searchResponse = model.response
             , expandedIncipitInfoSections = model.incipitInfoExpanded
+            , userInteractedWithQueryBuilderMsg = SearchMsg.UserInteractedWithQueryBuilder
             , userClickedOpenQueryBuilderMsg = SearchMsg.NothingHappened
             , userClickedCloseQueryBuilderMsg = SearchMsg.NothingHappened
             , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow

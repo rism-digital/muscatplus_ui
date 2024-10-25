@@ -197,7 +197,7 @@ view session options =
         , height fill
         , alignTop
         , alignLeft
-        , htmlAttribute (HA.style "z-index" "20")
+        , htmlAttribute (HA.style "z-index" "300")
         , Background.color colourScheme.white
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)

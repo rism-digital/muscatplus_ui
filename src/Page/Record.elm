@@ -25,7 +25,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, ro
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.Countries exposing (CountryCode)
-import Page.RecordTypes.Probe exposing (ProbeStatus(..))
+import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.Search exposing (toFacetLabel)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route)
@@ -212,7 +212,7 @@ update session msg model =
                 probeState =
                     case response of
                         SearchData body ->
-                            ProbeSuccess { totalItems = body.totalItems, validQuery = True }
+                            ProbeSuccess { totalItems = body.totalItems, queryStatus = NotCheckedQuery }
 
                         _ ->
                             NotChecked
@@ -519,6 +519,9 @@ update session msg model =
                     setQueryBuilder Nothing model.activeSearch
             in
             ( { model | activeSearch = newActiveSearch }, Cmd.none )
+
+        UserInteractedWithQueryBuilder _ ->
+            ( model, Cmd.none )
 
         NothingHappened ->
             ( model, Cmd.none )
