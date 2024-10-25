@@ -1,14 +1,15 @@
-module Page.QueryBuilder exposing (..)
+module Page.QueryBuilder exposing (Model, init, update, view)
 
 import ActiveSearch.Model exposing (ActiveSearch)
+import Cmd.Extra as CE
 import Element exposing (Element, centerX, centerY, column, fill, height, htmlAttribute, px, row, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, toLanguageMap)
-import Page.Query exposing (toKeywordQuery, toNextQuery)
+import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.QueryBuilder.Model exposing (QueryBuilderModel)
-import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.QueryBuilder.View
 import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.UI.Attributes exposing (minimalDropShadow)
@@ -28,18 +29,23 @@ init =
 
 update : QueryBuilderMsg -> QueryBuilderModel -> ( QueryBuilderModel, Cmd QueryBuilderMsg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        UserClickedOnFieldName alias qt ->
+            ( model, Cmd.none )
+
+        UserEnteredTextInQueryBuilder qt ->
+            ( model, Cmd.none )
 
 
 view :
-    { language : Language
+    { closeMsg : msg
+    , language : Language
     , model :
         { a
             | activeSearch : ActiveSearch msg
             , probeResponse : ProbeStatus
         }
     , searchResponse : Response ServerData
-    , closeMsg : msg
     , userInteractedWithQueryBuilderMsg : QueryBuilderMsg -> msg
     }
     -> Element msg
@@ -48,10 +54,15 @@ view cfg =
         title =
             toLanguageMap "Query Builder"
 
-        qText =
+        nextQuery =
             toNextQuery (.activeSearch cfg.model)
-                |> toKeywordQuery
+
+        qText =
+            toKeywordQuery nextQuery
                 |> Maybe.withDefault ""
+
+        currentMode =
+            toMode nextQuery
 
         queryFields =
             case cfg.searchResponse of
@@ -81,9 +92,10 @@ view cfg =
             [ viewWindowTitleBar cfg.language title cfg.closeMsg
             , Page.QueryBuilder.View.view
                 { language = cfg.language
-                , qText = qText
                 , probeResponse = .probeResponse cfg.model
+                , qText = qText
                 , queryFields = queryFields
+                , currentMode = currentMode
                 }
                 |> Element.map cfg.userInteractedWithQueryBuilderMsg
             ]

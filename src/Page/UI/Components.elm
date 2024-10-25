@@ -30,7 +30,7 @@ module Page.UI.Components exposing
     , viewWindowTitleBar
     )
 
-import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, minimum, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -45,7 +45,7 @@ import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyAttribute, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
 import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, closeWindowSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -318,15 +318,6 @@ makeFlagIcon colours iconImage iconLabel =
             ]
             iconImage
         ]
-
-
-textColumn : List (Attribute msg) -> List (Element msg) -> Element msg
-textColumn attrs children =
-    column
-        (width (fill |> minimum 320 |> maximum 700)
-            :: attrs
-        )
-        children
 
 
 renderLabel : Language -> LanguageMap -> Element msg

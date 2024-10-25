@@ -2,7 +2,7 @@ module Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, ro
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
-import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
+import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.Route exposing (Route(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Response exposing (Response, ServerData)

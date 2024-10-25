@@ -463,7 +463,7 @@ update session msg model =
         UserInteractedWithQueryBuilder queryBuilderMsg ->
             let
                 -- all other interactions can go here
-                ( qbModel, qbCmd ) =
+                ( _, qbCmd ) =
                     QueryBuilder.update queryBuilderMsg {}
             in
             ( model, Cmd.map UserInteractedWithQueryBuilder qbCmd )

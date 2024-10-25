@@ -236,8 +236,8 @@ viewFacetPanels cfg =
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
-                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
                         , queryIsValid = queryValidation
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
                         }
                     )
 
@@ -247,8 +247,8 @@ viewFacetPanels cfg =
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
-                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
                         , queryIsValid = queryValidation
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
                         }
                     , none
                     )

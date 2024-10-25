@@ -1,13 +1,8 @@
-module Page.UI.Errors exposing (createErrorMessage, createProbeErrorMessage)
+module Page.UI.Errors exposing (createErrorMessage)
 
 import Http.Detailed
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (errorMessages)
-
-
-createProbeErrorMessage : Http.Detailed.Error String -> String
-createProbeErrorMessage _ =
-    ""
 
 
 createErrorMessage : Language -> Http.Detailed.Error String -> ( String, Maybe String )

@@ -28,7 +28,6 @@ import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
 import Page.QueryBuilder as QueryBuilder
-import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import SearchPreferences exposing (SearchPreferences)

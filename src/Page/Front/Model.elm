@@ -2,7 +2,7 @@ module Page.Front.Model exposing (FrontPageModel)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
-import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
+import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Response exposing (Response, ServerData)
 
 

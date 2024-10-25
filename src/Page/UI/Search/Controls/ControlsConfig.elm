@@ -2,10 +2,9 @@ module Page.UI.Search.Controls.ControlsConfig exposing (ActiveFiltersCfg, Contro
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Language exposing (Language, LanguageMap)
-import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
+import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.RecordTypes.Search exposing (Facets)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
-import Response exposing (Response)
 import Session exposing (Session)
 import Set exposing (Set)
 

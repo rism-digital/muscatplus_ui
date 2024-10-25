@@ -8,6 +8,7 @@ module Language exposing
     , extractLabelFromLanguageMapWithVariables
     , extractTextFromLanguageMap
     , formatNumberByLanguage
+    , joinLanguageMaps
     , languageMapDecoder
     , languageOptions
     , limitLength
@@ -72,6 +73,17 @@ toLanguageMap s =
 toLanguageMapWithLanguage : Language -> String -> LanguageMap
 toLanguageMapWithLanguage language text =
     [ LanguageValue language [ text ] ]
+
+
+joinLanguageMaps : String -> LanguageMap -> LanguageMap -> LanguageMap
+joinLanguageMaps joinStr lmap1 lmap2 =
+    List.map
+        (\(LanguageValue lang1 txt1) ->
+            LE.find (\(LanguageValue lang2 _) -> lang1 == lang2) lmap2
+                |> Maybe.map (\(LanguageValue _ t2) -> LanguageValue lang1 (List.map2 (\ta tb -> ta ++ joinStr ++ tb) txt1 t2))
+                |> Maybe.withDefault (LanguageValue lang1 txt1)
+        )
+        lmap1
 
 
 limitLength : Int -> LanguageMap -> LanguageMap

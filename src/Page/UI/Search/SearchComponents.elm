@@ -8,7 +8,7 @@ import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..), QueryValidation(..))
+import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
 import Page.UI.Helpers exposing (viewIf)
@@ -33,11 +33,11 @@ type alias SearchButtonConfig a msg =
 queryValidationState : ProbeStatus -> QueryValidation
 queryValidationState probeResponse =
     case probeResponse of
-        ProbeSuccess d ->
-            d.queryStatus
-
         Probing ->
             CheckingQuery
+
+        ProbeSuccess d ->
+            d.queryStatus
 
         _ ->
             NotCheckedQuery

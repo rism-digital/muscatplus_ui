@@ -1,18 +1,20 @@
-module Page.QueryBuilder.View exposing (..)
+module Page.QueryBuilder.View exposing (view)
 
-import Element as Event exposing (Element, alignBottom, alignLeft, alignTop, column, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, spacing, text, width)
+import Element as Event exposing (Element, alignBottom, alignLeft, alignTop, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap, joinLanguageMaps, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation(..))
+import Page.RecordTypes.ResultMode exposing (ResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (QueryField)
-import Page.UI.Attributes exposing (bodySM, headingXXL)
+import Page.UI.Attributes exposing (bodySM, headingMD, headingXXL, minimalDropShadow, minimalInsetShadow)
+import Page.UI.Components exposing (h3s, h4)
 import Page.UI.Images exposing (circleSvg)
 import Page.UI.Search.SearchComponents exposing (queryValidationState)
 import Page.UI.Style exposing (colourScheme)
@@ -23,19 +25,20 @@ view :
     , probeResponse : ProbeStatus
     , qText : String
     , queryFields : List QueryField
+    , currentMode : ResultMode
     }
     -> Element QueryBuilderMsg
 view cfg =
     let
-        queryValidation =
-            queryValidationState cfg.probeResponse
+        header =
+            resultModeHeader cfg.currentMode
 
         queryValidationWithEmptyCheck =
             if String.isEmpty cfg.qText then
                 EmptyQuery
 
             else
-                queryValidation
+                queryValidationState cfg.probeResponse
 
         ( statusColor, statusMessage ) =
             case queryValidationWithEmptyCheck of
@@ -74,6 +77,13 @@ view cfg =
             , spacing 6
             ]
             [ row
+                [ width fill
+                , alignLeft
+                ]
+                [ joinLanguageMaps ": " localTranslations.keywordQuery header
+                    |> h3s cfg.language
+                ]
+            , row
                 [ width fill ]
                 [ Input.text
                     [ width fill
@@ -101,7 +111,28 @@ view cfg =
             , row
                 [ width fill ]
                 [ status ]
-            , viewQueryFields cfg.language cfg.queryFields
+            , row
+                [ width fill
+                , height fill
+                , padding 8
+                ]
+                [ column
+                    [ width fill
+                    , height fill
+                    , spacing 8
+                    ]
+                    [ row
+                        [ width fill
+                        ]
+                        [ h4 cfg.language (toLanguageMap "Available fields") ]
+                    , row
+                        [ width fill
+                        , height fill
+                        , alignTop
+                        ]
+                        [ viewQueryFields cfg.language cfg.qText cfg.queryFields ]
+                    ]
+                ]
             , row
                 [ alignBottom
                 ]
@@ -111,8 +142,8 @@ view cfg =
         ]
 
 
-viewQueryFields : Language -> List QueryField -> Element QueryBuilderMsg
-viewQueryFields language qFields =
+viewQueryFields : Language -> String -> List QueryField -> Element QueryBuilderMsg
+viewQueryFields language qText qFields =
     row
         [ width fill
         , height fill
@@ -121,27 +152,40 @@ viewQueryFields language qFields =
         [ column
             [ alignTop
             , width (px 300)
+            , height fill
             , Border.color colourScheme.darkBlue
             , Border.width 1
             , spacing 4
             , padding 6
+            , minimalInsetShadow
             ]
-            (List.map (\qf -> viewQueryField language qf) qFields)
+            [ row
+                [ width fill
+                , height fill
+                , scrollbarY
+                , htmlAttribute (HA.style "min-height" "unset")
+                ]
+                [ column
+                    [ width fill
+                    , alignTop
+                    ]
+                    (List.map (viewQueryField language qText) qFields)
+                ]
+            ]
         ]
 
 
-viewQueryField : Language -> QueryField -> Element QueryBuilderMsg
-viewQueryField language qField =
+viewQueryField : Language -> String -> QueryField -> Element QueryBuilderMsg
+viewQueryField language qText qField =
     row
-        [ spacing 8
-        , padding 4
-        , width fill
+        [ padding 4
         , alignTop
-        , onClick (UserClickedOnFieldName qField.alias)
+        , width fill
+        , onClick (UserClickedOnFieldName qField.alias qText)
         , pointer
         , Event.mouseOver [ Background.color colourScheme.lightestBlue ]
         ]
         [ el
-            []
+            [ alignTop ]
             (text (extractLabelFromLanguageMap language qField.label))
         ]

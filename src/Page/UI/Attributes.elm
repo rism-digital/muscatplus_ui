@@ -19,6 +19,7 @@ module Page.UI.Attributes exposing
     , lineSpacing
     , linkColour
     , minimalDropShadow
+    , minimalInsetShadow
     , resultsColumnWidth
     , sectionBorderStyles
     , sectionSpacing
@@ -179,6 +180,16 @@ linkColour =
 minimalDropShadow : Attribute msg
 minimalDropShadow =
     Border.shadow
+        { blur = 4
+        , color = colourScheme.darkBlueTranslucent
+        , offset = ( -1, 1 )
+        , size = 1
+        }
+
+
+minimalInsetShadow : Attribute msg
+minimalInsetShadow =
+    Border.innerShadow
         { blur = 4
         , color = colourScheme.darkBlueTranslucent
         , offset = ( -1, 1 )

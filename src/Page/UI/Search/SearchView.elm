@@ -3,7 +3,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -16,7 +16,7 @@ import Maybe.Extra as ME
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.QueryBuilder
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
-import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus)
+import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus)
@@ -172,10 +172,10 @@ viewSearchResultsSection cfg resultsLoading body =
                 |> viewMaybe
                     (\_ ->
                         Page.QueryBuilder.view
-                            { language = language
+                            { closeMsg = cfg.userClickedCloseQueryBuilderMsg
+                            , language = language
                             , model = cfg.model
                             , searchResponse = cfg.searchResponse
-                            , closeMsg = cfg.userClickedCloseQueryBuilderMsg
                             , userInteractedWithQueryBuilderMsg = cfg.userInteractedWithQueryBuilderMsg
                             }
                     )
@@ -341,8 +341,8 @@ viewSearchControls cfg =
                     , submitMsg = cfg.userTriggeredSearchSubmitMsg
                     , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                     , queryText = qText
-                    , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
                     , queryIsValid = queryValidation
+                    , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
                     }
                 ]
 

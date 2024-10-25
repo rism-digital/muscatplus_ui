@@ -1,7 +1,6 @@
-module Page.QueryBuilder.Msg exposing (..)
+module Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 
 
 type QueryBuilderMsg
-    = NothingHappenedWithTheQueryBuilder
-    | UserEnteredTextInQueryBuilder String
-    | UserClickedOnFieldName String
+    = UserEnteredTextInQueryBuilder String
+    | UserClickedOnFieldName String String

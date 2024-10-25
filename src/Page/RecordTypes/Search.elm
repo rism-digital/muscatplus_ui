@@ -32,7 +32,6 @@ module Page.RecordTypes.Search exposing
     , ToggleFacet
     , extractIdFromSearchResult
     , facetsDecoder
-    , modeFacetDecoder
     , parseFacetBehaviourToString
     , parseFacetSortToString
     , parseStringToFacetBehaviour

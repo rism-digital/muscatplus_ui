@@ -1,12 +1,12 @@
 module Page.UI.Record.Previews.Source exposing (viewMobileSourcePreview, viewSourcePreview)
 
 import Dict
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, paddingXY, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (sourceIconChooser, sourceIconView)
+import Page.UI.Components exposing (sourceIconView)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
@@ -18,7 +18,6 @@ import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
-import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 
 
