@@ -10,6 +10,8 @@ type alias AboutBody =
     { serverVersion : String
     , indexerVersion : String
     , lastIndexed : Posix
+    , latestFromDIAMM : Posix
+    , latestFromCantus : Posix
     }
 
 
@@ -19,3 +21,5 @@ aboutBodyDecoder =
         |> required "serverVersion" string
         |> required "indexerVersion" string
         |> required "lastIndexed" Iso8601.decoder
+        |> required "latestFromDIAMM" Iso8601.decoder
+        |> required "latestFromCantus" Iso8601.decoder

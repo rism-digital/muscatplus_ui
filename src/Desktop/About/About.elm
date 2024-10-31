@@ -29,29 +29,23 @@ aboutText =
 view : Session -> AboutPageModel -> Element AboutMsg
 view session model =
     let
-        indexedTimestamp =
+        responseData =
             case model.response of
                 Response (AboutData body) ->
-                    viewLastIndexed body.lastIndexed
+                    { indexedTimestamp = viewTimestamp "Last indexed: " body.lastIndexed
+                    , indexerVersion = text ("Indexer Version: " ++ body.indexerVersion)
+                    , serverVersion = text ("Server Version: " ++ body.serverVersion)
+                    , diammLatest = viewTimestamp "Latest DIAMM records: " body.latestFromDIAMM
+                    , cantusLatest = viewTimestamp "Latest Cantus records: " body.latestFromCantus
+                    }
 
                 _ ->
-                    none
-
-        indexerVersion =
-            case model.response of
-                Response (AboutData body) ->
-                    text ("Indexer Version: " ++ body.indexerVersion)
-
-                _ ->
-                    none
-
-        serverVersion =
-            case model.response of
-                Response (AboutData body) ->
-                    text ("Server Version: " ++ body.serverVersion)
-
-                _ ->
-                    none
+                    { indexedTimestamp = none
+                    , indexerVersion = none
+                    , serverVersion = none
+                    , diammLatest = none
+                    , cantusLatest = none
+                    }
 
         renderedAboutText =
             Markdown.view session.language aboutText
@@ -85,17 +79,19 @@ view session model =
                 [ column
                     [ spacing lineSpacing ]
                     [ text ("UI Version: " ++ C.uiVersion)
-                    , serverVersion
-                    , indexerVersion
-                    , indexedTimestamp
+                    , responseData.serverVersion
+                    , responseData.indexerVersion
+                    , responseData.indexedTimestamp
+                    , responseData.diammLatest
+                    , responseData.cantusLatest
                     ]
                 ]
             ]
         ]
 
 
-viewLastIndexed : Posix -> Element msg
-viewLastIndexed timestamp =
+viewTimestamp : String -> Posix -> Element msg
+viewTimestamp label timestamp =
     let
         day =
             Time.toDay Time.utc timestamp
@@ -153,4 +149,4 @@ viewLastIndexed timestamp =
         year =
             String.fromInt (Time.toYear Time.utc timestamp)
     in
-    text ("Last indexed: " ++ year ++ "-" ++ month ++ "-" ++ day ++ " " ++ hour ++ ":" ++ minute)
+    text (label ++ year ++ "-" ++ month ++ "-" ++ day ++ " " ++ hour ++ ":" ++ minute)
