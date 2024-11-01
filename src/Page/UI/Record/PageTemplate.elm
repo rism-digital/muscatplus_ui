@@ -152,6 +152,7 @@ pageHeaderTemplate language icon header =
         { body = header
         , extraAttrs =
             [ htmlAttribute (HA.id header.sectionToc)
+            , centerY
             ]
         , hLevel = h1 language
         , icon = icon
