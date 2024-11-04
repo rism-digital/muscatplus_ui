@@ -167,7 +167,8 @@ mapSection : Language -> ( Int, Int ) -> CoordinatesSection -> Element msg
 mapSection language ( windowWidth, windowHeight ) coords =
     let
         coordsValue =
-            List.map String.fromFloat coords.coordinates
+            List.reverse coords.coordinates
+                |> List.map String.fromFloat
                 |> String.join ", "
 
         coordsQ =
