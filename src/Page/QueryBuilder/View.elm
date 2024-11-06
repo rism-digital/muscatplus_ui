@@ -197,7 +197,10 @@ view cfg =
                             , paragraph
                                 [ alignTop ]
                                 [ text """More information and examples may be found """
-                                , newTabLink [ linkColour ] { url = C.serverUrl ++ "/docs/", label = text "in the documentation." }
+                                , newTabLink [ linkColour ]
+                                    { url = C.serverUrl ++ "/docs/query-builder/introduction/"
+                                    , label = text "in the documentation."
+                                    }
                                 ]
                             ]
                         ]
