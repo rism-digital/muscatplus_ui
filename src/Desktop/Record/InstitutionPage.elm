@@ -166,13 +166,16 @@ viewRecordTopBar language model body =
 mapSection : Language -> ( Int, Int ) -> CoordinatesSection -> Element msg
 mapSection language ( windowWidth, windowHeight ) coords =
     let
+        strCoords =
+            List.map String.fromFloat coords.coordinates
+
         coordsValue =
-            List.reverse coords.coordinates
-                |> List.map String.fromFloat
+            List.reverse strCoords
                 |> String.join ", "
+                |> text
 
         coordsQ =
-            List.map2 (\dim val -> QB.string dim (String.fromFloat val)) [ "lon", "lat" ] coords.coordinates
+            List.map2 (\dim val -> QB.string dim val) [ "lon", "lat" ] strCoords
 
         geoJsonQ =
             QB.string "geo" coords.id
@@ -180,11 +183,9 @@ mapSection language ( windowWidth, windowHeight ) coords =
         mapsUrl =
             (geoJsonQ :: coordsQ)
                 |> absolute [ "maps.html" ]
-
-        sectionTmpl =
-            sectionTemplate language coords
     in
-    sectionTmpl
+    sectionTemplate language
+        coords
         [ row
             (width fill
                 :: height fill
@@ -209,7 +210,7 @@ mapSection language ( windowWidth, windowHeight ) coords =
                         valueFieldColumnAttributes
                         [ textColumn
                             [ spacing lineSpacing ]
-                            [ text coordsValue ]
+                            [ coordsValue ]
                         ]
                     ]
                 , row
