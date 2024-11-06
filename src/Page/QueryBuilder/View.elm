@@ -1,6 +1,6 @@
 module Page.QueryBuilder.View exposing (view)
 
-import Element as Event exposing (Element, alignBottom, alignLeft, alignTop, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, scrollbarY, spacing, text, width)
+import Element as Event exposing (Element, alignBottom, alignLeft, alignRight, alignTop, clipY, column, el, fill, height, htmlAttribute, link, newTabLink, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -9,14 +9,15 @@ import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, joinLanguageMaps, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.QueryBuilder.Model exposing (QueryBuilderOperator(..), queryBuilderOperatorToLabel)
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (QueryField)
-import Page.UI.Attributes exposing (bodySM, headingMD, headingXXL, minimalDropShadow, minimalInsetShadow)
+import Page.UI.Attributes exposing (bodySM, headingMD, headingXXL, linkColour, minimalDropShadow, minimalInsetShadow)
 import Page.UI.Components exposing (h3s, h4)
 import Page.UI.Images exposing (circleSvg)
-import Page.UI.Search.SearchComponents exposing (queryValidationState)
+import Page.UI.Search.SearchComponents exposing (queryValidationState, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -65,6 +66,9 @@ view cfg =
                 [ el [ alignLeft, width (px 10), height (px 10) ] (circleSvg statusColor)
                 , el [ alignLeft, bodySM ] (text statusMessage)
                 ]
+
+        probeResponse =
+            viewProbeResponseNumbers cfg.language cfg.probeResponse
     in
     row
         [ width fill
@@ -109,16 +113,26 @@ view cfg =
                     }
                 ]
             , row
-                [ width fill ]
-                [ status ]
+                [ width fill
+                , height (px 25)
+                ]
+                [ column
+                    [ alignLeft ]
+                    [ status ]
+                , column
+                    [ alignRight
+                    , bodySM
+                    ]
+                    [ probeResponse ]
+                ]
             , row
                 [ width fill
                 , height fill
                 , padding 8
+                , spacing 8
                 ]
                 [ column
-                    [ width fill
-                    , height fill
+                    [ height fill
                     , spacing 8
                     ]
                     [ row
@@ -131,15 +145,90 @@ view cfg =
                         , alignTop
                         ]
                         [ viewQueryFields cfg.language cfg.qText cfg.queryFields ]
+                    , row
+                        [ width fill ]
+                        [ h4 cfg.language (toLanguageMap "Available operators")
+                        ]
+                    , row
+                        [ width fill
+                        , alignTop
+                        , spacing 8
+                        ]
+                        [ viewOperator AndOperator cfg.qText
+                        , viewOperator OrOperator cfg.qText
+                        , viewOperator NotOperator cfg.qText
+                        , viewOperator PlusOperator cfg.qText
+                        , viewOperator MinusOperator cfg.qText
+                        , viewOperator FuzzyOperator cfg.qText
+                        ]
+                    ]
+                , column
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    ]
+                    [ row
+                        [ width fill
+                        , alignTop
+                        ]
+                        [ h4 cfg.language (toLanguageMap "How to search")
+                        ]
+                    , row
+                        [ width fill
+                        , height fill
+                        , alignTop
+                        ]
+                        [ textColumn
+                            [ width fill
+                            , alignTop
+                            ]
+                            [ paragraph
+                                [ alignTop ]
+                                [ text "Use the query builder to create specific queries on the available search fields."
+                                ]
+                            , paragraph
+                                [ alignTop ]
+                                [ text """The search fields available for each record type (Sources, People, Institutions, Incipits) are 
+                                shown in the available fields list. This allows for searching on specific record fields.""" ]
+                            , paragraph
+                                [ alignTop ]
+                                [ text """Several query operators are also available to help broaden or restrict your searches further.""" ]
+                            , paragraph
+                                [ alignTop ]
+                                [ text """More information and examples may be found """
+                                , newTabLink [ linkColour ] { url = "https://rism.online/docs/", label = text "in the documentation." }
+                                ]
+                            ]
+                        ]
                     ]
                 ]
             , row
                 [ alignBottom
+                , alignRight
                 ]
                 [ text "search"
                 ]
             ]
         ]
+
+
+viewOperator : QueryBuilderOperator -> String -> Element QueryBuilderMsg
+viewOperator operator qText =
+    el
+        [ Border.rounded 5
+        , Border.width 1
+        , Border.color colourScheme.darkBlue
+        , Background.color colourScheme.lightBlue
+        , padding 4
+        , Font.color colourScheme.white
+        , alignTop
+        , alignLeft
+        , pointer
+        , onClick (UserClickedOnOperator operator qText)
+        ]
+        (queryBuilderOperatorToLabel operator
+            |> text
+        )
 
 
 viewQueryFields : Language -> String -> List QueryField -> Element QueryBuilderMsg

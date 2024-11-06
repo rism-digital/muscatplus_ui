@@ -206,25 +206,20 @@ rangeStringParser rString =
 
 selectAppropriateRangeFacetValues : FacetAlias -> ActiveSearch msg -> Maybe ( String, String )
 selectAppropriateRangeFacetValues facetAlias activeSearch =
-    let
-        setRangeValues =
-            Dict.get facetAlias activeSearch.rangeFacetValues
-    in
-    case setRangeValues of
-        Just ( l, v ) ->
-            Just ( l, v )
+    Dict.get facetAlias activeSearch.rangeFacetValues
+        |> Maybe.andThen (\v -> Just v)
+        |> ME.orElse
+            (Dict.get facetAlias (.filters activeSearch.nextQuery)
+                |> Maybe.andThen
+                    (\v ->
+                        case v of
+                            ( a, _ ) :: [] ->
+                                rangeStringParser a
 
-        Nothing ->
-            let
-                queryRangeValues =
-                    Dict.get facetAlias (.filters activeSearch.nextQuery)
-            in
-            case queryRangeValues of
-                Just (( a, _ ) :: []) ->
-                    rangeStringParser a
-
-                _ ->
-                    Nothing
+                            _ ->
+                                Nothing
+                    )
+            )
 
 
 setProbeResponse : ProbeStatus -> { a | probeResponse : ProbeStatus } -> { a | probeResponse : ProbeStatus }

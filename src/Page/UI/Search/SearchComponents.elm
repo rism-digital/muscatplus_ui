@@ -1,4 +1,4 @@
-module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, queryValidationState, viewSearchButtons)
+module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, queryValidationState, viewProbeResponseNumbers, viewSearchButtons)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
@@ -81,9 +81,7 @@ viewProbeResponseNumbers language probeResponse =
                             |> probeLabel
             in
             el
-                [ Font.medium
-                , headingLG
-                ]
+                []
                 (text textMsg)
 
         _ ->
@@ -193,7 +191,11 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 [ width fill
                 , spacing 5
                 ]
-                [ viewProbeResponseNumbers language model.probeResponse
+                [ el
+                    [ Font.medium
+                    , headingLG
+                    ]
+                    (viewProbeResponseNumbers language model.probeResponse)
                 , updateMessage
                 ]
             ]

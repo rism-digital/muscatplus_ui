@@ -12,7 +12,7 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (QueryValidation(..))
 import Page.UI.Attributes exposing (bodySM, headingXXL, lineSpacing, sectionSpacing)
@@ -138,7 +138,10 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, us
                     , onClick userClickedOpenQueryBuilderMsg
                     , pointer
                     ]
-                    (text "Query Builder")
+                    (toLanguageMap "Create a query"
+                        |> extractLabelFromLanguageMap language
+                        |> text
+                    )
                 ]
             ]
         ]

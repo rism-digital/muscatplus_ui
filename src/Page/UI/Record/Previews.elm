@@ -142,7 +142,7 @@ viewPreviewRouter cfg previewData =
             cfg.windowSize
 
         previewHeight =
-            round (toFloat windowHeight * 0.8)
+            round (toFloat windowHeight * 0.75)
 
         previewWidth =
             round (toFloat (windowWidth - (sidebarWidth + resultsColumnWidth)) * 0.8)

@@ -9,7 +9,7 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
-import Page.UI.Attributes exposing (headingLG, minimalDropShadow)
+import Page.UI.Attributes exposing (headingLG, headingSM, minimalDropShadow)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -19,8 +19,8 @@ paginationLink : Element a -> (String -> a) -> String -> Element a
 paginationLink icon clickFn url =
     el
         [ padding 5
-        , height (px 40)
-        , width (px 40)
+        , height (px 30)
+        , width (px 30)
         , onClick (clickFn url)
         , pointer
         ]
@@ -45,7 +45,7 @@ viewPagination language pagination clickMsg =
     row
         [ width fill
         , alignBottom
-        , height (px 50)
+        , height (px 30)
         , Background.color colourScheme.lightGrey
         , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
@@ -75,7 +75,7 @@ viewPagination language pagination clickMsg =
                 , centerY
                 ]
                 [ el
-                    [ headingLG
+                    [ headingSM
                     , Font.medium
                     ]
                     (text pageInfo)
