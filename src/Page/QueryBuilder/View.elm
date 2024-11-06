@@ -1,5 +1,6 @@
 module Page.QueryBuilder.View exposing (view)
 
+import Config as C
 import Element as Event exposing (Element, alignBottom, alignLeft, alignRight, alignTop, clipY, column, el, fill, height, htmlAttribute, link, newTabLink, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
@@ -196,7 +197,7 @@ view cfg =
                             , paragraph
                                 [ alignTop ]
                                 [ text """More information and examples may be found """
-                                , newTabLink [ linkColour ] { url = "https://rism.online/docs/", label = text "in the documentation." }
+                                , newTabLink [ linkColour ] { url = C.serverUrl ++ "/docs/", label = text "in the documentation." }
                                 ]
                             ]
                         ]
