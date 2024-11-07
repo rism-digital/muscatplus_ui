@@ -24,10 +24,9 @@ import Page.UI.Style exposing (colourScheme)
 view : Language -> LanguageMap -> Element msg
 view language markdown =
     case
-        markdown
-            |> extractLabelFromLanguageMap language
+        extractLabelFromLanguageMap language markdown
             |> Markdown.Parser.parse
-            |> Result.mapError (\error -> error |> List.map Markdown.Parser.deadEndToString |> String.join "\n")
+            |> Result.mapError (\error -> List.map Markdown.Parser.deadEndToString error |> String.join "\n")
             |> Result.andThen (Markdown.Renderer.render renderer)
     of
         Ok rendered ->

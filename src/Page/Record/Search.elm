@@ -6,7 +6,7 @@ import Browser.Navigation as Nav
 import Page.Query exposing (buildQueryParameters, resetPage, setNextQuery, toNextQuery)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
@@ -27,20 +27,10 @@ searchSubmit session model =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
 
         oldData =
-            case model.response of
-                Response d ->
-                    Just d
-
-                _ ->
-                    Nothing
+            chooseResponse model.response
 
         oldSearchData =
-            case model.searchResults of
-                Response d ->
-                    Just d
-
-                _ ->
-                    Nothing
+            chooseResponse model.searchResults
 
         newModel =
             { nationalCollectionSetModel

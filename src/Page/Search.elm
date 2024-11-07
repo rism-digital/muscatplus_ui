@@ -460,6 +460,10 @@ update session msg model =
             userEnteredTextInKeywordQueryBox queryText model
                 |> update session debounceMsg
 
+        UserInteractedWithQueryBuilder UserClickedSearchButton ->
+            -- submit the search and close the query builder
+            searchSubmit session { model | activeSearch = setQueryBuilder Nothing model.activeSearch }
+
         UserInteractedWithQueryBuilder queryBuilderMsg ->
             let
                 -- all other interactions can go here

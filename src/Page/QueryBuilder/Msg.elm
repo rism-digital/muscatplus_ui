@@ -7,3 +7,4 @@ type QueryBuilderMsg
     = UserEnteredTextInQueryBuilder String
     | UserClickedOnFieldName String String
     | UserClickedOnOperator QueryBuilderOperator String
+    | UserClickedSearchButton

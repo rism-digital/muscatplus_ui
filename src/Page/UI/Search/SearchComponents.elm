@@ -1,4 +1,4 @@
-module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, queryValidationState, viewProbeResponseNumbers, viewSearchButtons)
+module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, hasActionableQueryValidation, queryValidationState, viewProbeResponseNumbers, viewSearchButtons)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
@@ -41,6 +41,26 @@ queryValidationState probeResponse =
 
         _ ->
             NotCheckedQuery
+
+
+hasActionableQueryValidation : ProbeStatus -> Bool
+hasActionableQueryValidation probeResponse =
+    let
+        qvState =
+            queryValidationState probeResponse
+    in
+    case qvState of
+        ValidQuery ->
+            True
+
+        NotCheckedQuery ->
+            True
+
+        EmptyQuery ->
+            True
+
+        _ ->
+            False
 
 
 hasActionableProbeResponse : ProbeStatus -> Bool

@@ -47,6 +47,10 @@ update msg model =
             -- no-op here because it's handled in the parent.
             ( model, Cmd.none )
 
+        UserClickedSearchButton ->
+            -- no-op here because it's handled in the parent.
+            ( model, Cmd.none )
+
         UserClickedOnOperator operator qt ->
             let
                 newQtext =
