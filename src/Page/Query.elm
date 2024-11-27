@@ -46,7 +46,7 @@ import Request exposing (apply, serverUrl)
 import Url exposing (percentDecode)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
-import Utilities exposing (fromListDedupe)
+import Utilities exposing (fromListDedupe, splitTimes)
 
 
 {-|
@@ -384,20 +384,6 @@ setPage pageNum oldRecord =
 
     else
         { oldRecord | page = pageNum }
-
-
-splitTimes : Int -> String -> String -> List String
-splitTimes numTimes delimiter inp =
-    let
-        splitInput =
-            String.split delimiter inp
-
-        ( head, tail ) =
-            ( List.take numTimes splitInput, List.drop numTimes splitInput )
-    in
-    String.join delimiter tail
-        |> List.singleton
-        |> List.append head
 
 
 stringSplitToList : String -> Maybe ( String, List String )

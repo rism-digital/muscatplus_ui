@@ -4,6 +4,7 @@ module Utilities exposing
     , convertPathToNodeId
     , fromListDedupe
     , namedValue
+    , splitTimes
     , toLinkedHtml
     )
 
@@ -127,3 +128,19 @@ toElementList htmlNodes =
         |> List.map Element.html
         |> Element.paragraph []
         |> List.singleton
+
+
+splitTimes : Int -> String -> String -> List String
+splitTimes numTimes delimiter inp =
+    let
+        splitInput =
+            String.split delimiter inp
+
+        ( head, tail ) =
+            ( List.take numTimes splitInput
+            , List.drop numTimes splitInput
+            )
+    in
+    String.join delimiter tail
+        |> List.singleton
+        |> List.append head
