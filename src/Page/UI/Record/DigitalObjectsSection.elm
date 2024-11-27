@@ -141,11 +141,9 @@ viewDigitalObjectsSection language doSection =
                         )
                 )
                 groupedItems
-
-        sectionTmpl =
-            sectionTemplate language doSection
     in
-    sectionTmpl
+    sectionTemplate language
+        doSection
         [ row
             [ width fill ]
             [ column

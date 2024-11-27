@@ -78,11 +78,8 @@ viewPerformanceLocationsSection language body =
 
 viewReferencesNotesSection : Language -> ReferencesNotesSectionBody -> Element msg
 viewReferencesNotesSection language refNotesSection =
-    let
-        sectionTmpl =
-            sectionTemplate language refNotesSection
-    in
-    sectionTmpl
+    sectionTemplate language
+        refNotesSection
         [ row
             (List.append
                 [ width fill

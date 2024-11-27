@@ -18,11 +18,8 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
 viewRelationshipsSection language relSection =
-    let
-        sectionTmpl =
-            sectionTemplate language relSection
-    in
-    sectionTmpl
+    sectionTemplate language
+        relSection
         [ row
             [ width fill
             , height fill
@@ -82,7 +79,13 @@ viewRelationshipValue language body =
             -- if neither, don't show anything because we can't!
             ME.unpack
                 (\() ->
-                    viewMaybe (\nm -> row [ width fill ] [ text (extractLabelFromLanguageMap language nm) ]) body.name
+                    viewMaybe
+                        (\nm ->
+                            row
+                                [ width fill ]
+                                [ text (extractLabelFromLanguageMap language nm) ]
+                        )
+                        body.name
                 )
                 (viewRelatedToBody language body.qualifier)
                 body.relatedTo
