@@ -6,7 +6,7 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, searchKeywordIn
 
 -}
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Color, Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
@@ -40,10 +40,8 @@ keywordInputHelp =
     """
 
 
-searchKeywordInput :
-    KeywordInputConfig msg
-    -> Element msg
-searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg } =
+status : String -> QueryValidation -> Element msg
+status queryText queryIsValid =
     let
         queryValidationWithEmptyCheck =
             if String.isEmpty queryText then
@@ -68,16 +66,29 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, us
 
                 NotCheckedQuery ->
                     ( colourScheme.midGrey, "" )
-
-        status =
-            row
-                [ width fill
-                , spacing 4
-                ]
-                [ el [ alignLeft, width (px 10), height (px 10) ] (circleSvg statusColor)
-                , el [ alignLeft, bodySM ] (text statusMessage)
-                ]
     in
+    row
+        [ width fill
+        , spacing 4
+        ]
+        [ el
+            [ alignLeft
+            , width (px 10)
+            , height (px 10)
+            ]
+            (circleSvg statusColor)
+        , el
+            [ alignLeft
+            , bodySM
+            ]
+            (text statusMessage)
+        ]
+
+
+searchKeywordInput :
+    KeywordInputConfig msg
+    -> Element msg
+searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg } =
     row
         [ width fill
         , alignTop
@@ -132,7 +143,7 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, us
                 ]
             , row
                 [ width fill ]
-                [ status
+                [ status queryText queryIsValid
                 , el
                     [ alignRight
                     , onClick userClickedOpenQueryBuilderMsg
@@ -150,7 +161,7 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, us
 viewFrontKeywordQueryInput :
     KeywordInputConfig msg
     -> Element msg
-viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
+viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg } =
     row
         [ width fill
         , alignTop
@@ -159,7 +170,7 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
         [ column
             [ width fill
             , alignRight
-            , spacing sectionSpacing
+            , spacing lineSpacing
             ]
             [ row
                 [ width fill
@@ -193,6 +204,19 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText } =
                         , text = queryText
                         }
                     ]
+                ]
+            , row
+                [ width fill ]
+                [ status queryText queryIsValid
+                , el
+                    [ alignRight
+                    , onClick userClickedOpenQueryBuilderMsg
+                    , pointer
+                    ]
+                    (toLanguageMap "Create a query"
+                        |> extractLabelFromLanguageMap language
+                        |> text
+                    )
                 ]
             ]
         ]
