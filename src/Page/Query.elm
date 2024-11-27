@@ -173,11 +173,7 @@ defaultQueryArgs =
 
 frontQueryArgsToQueryArgs : FrontQueryArgs -> QueryArgs
 frontQueryArgsToQueryArgs frontQuery =
-    let
-        initialQueryArgs =
-            defaultQueryArgs
-    in
-    { initialQueryArgs
+    { defaultQueryArgs
         | mode = frontQuery.mode
         , nationalCollection = frontQuery.nationalCollection
     }
@@ -390,9 +386,23 @@ setPage pageNum oldRecord =
         { oldRecord | page = pageNum }
 
 
+splitTimes : Int -> String -> String -> List String
+splitTimes numTimes delimiter inp =
+    let
+        splitInput =
+            String.split delimiter inp
+
+        ( head, tail ) =
+            ( List.take numTimes splitInput, List.drop numTimes splitInput )
+    in
+    String.join delimiter tail
+        |> List.singleton
+        |> List.append head
+
+
 stringSplitToList : String -> Maybe ( String, List String )
 stringSplitToList str =
-    case String.split ":" str of
+    case splitTimes 1 ":" str of
         alias :: values ->
             Just ( alias, values )
 
