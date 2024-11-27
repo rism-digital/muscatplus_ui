@@ -89,6 +89,9 @@ viewFacet cfg msg =
                 , nothingHappenedMsg = msg.nothingHappenedMsg
                 }
 
+        Just (ParameterFacetData _) ->
+            none
+
         Nothing ->
             none
 

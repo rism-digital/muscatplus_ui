@@ -93,6 +93,7 @@ type FacetData
     | SelectFacetData SelectFacet
     | NotationFacetData NotationFacet
     | QueryFacetData QueryFacet
+    | ParameterFacetData ParameterFacet
 
 
 toFacetLabel : FacetData -> LanguageMap
@@ -112,6 +113,9 @@ toFacetLabel facet =
 
         QueryFacetData q ->
             q.label
+
+        ParameterFacetData p ->
+            p.label
 
 
 {-|
@@ -157,6 +161,7 @@ type FacetType
     | Select
     | Notation
     | Query_
+    | Parameter
     | UnknownFacetType
 
 
@@ -248,6 +253,12 @@ type alias RangeMinMaxValues =
     , upper : LabelNumericValue
     , min : LabelNumericValue
     , max : LabelNumericValue
+    }
+
+
+type alias ParameterFacet =
+    { alias : String
+    , label : LanguageMap
     }
 
 
@@ -429,6 +440,9 @@ facetResponseConverter typeValue =
         Query_ ->
             Decode.map QueryFacetData queryFacetDecoder
 
+        Parameter ->
+            Decode.map ParameterFacetData parameterFacetDecoder
+
         UnknownFacetType ->
             Decode.fail ("Unknown facet type " ++ typeValue)
 
@@ -480,6 +494,9 @@ facetTypeFromJsonType facetType =
 
         "rism:ToggleFacet" ->
             Toggle
+
+        "rism:ParameterFacet" ->
+            Parameter
 
         _ ->
             UnknownFacetType
@@ -610,6 +627,13 @@ rangeFacetMinMaxDecoder =
         |> required "upper" labelNumericValueDecoder
         |> required "min" labelNumericValueDecoder
         |> required "max" labelNumericValueDecoder
+
+
+parameterFacetDecoder : Decoder ParameterFacet
+parameterFacetDecoder =
+    Decode.succeed ParameterFacet
+        |> required "alias" string
+        |> required "label" languageMapLabelDecoder
 
 
 searchBodyDecoder : Decoder SearchBody
