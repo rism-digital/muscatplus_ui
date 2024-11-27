@@ -27,6 +27,7 @@ import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSe
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
+import Page.RecordTypes.Works exposing (WorksSectionBody, worksSectionBodyDecoder)
 
 
 type alias FullSourceBody =
@@ -46,6 +47,7 @@ type alias FullSourceBody =
     , sourceItems : Maybe SourceItemsSectionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , digitalObjects : Maybe DigitalObjectsSectionBody
+    , works : Maybe WorksSectionBody
     , recordHistory : RecordHistory
     }
 
@@ -236,6 +238,7 @@ sourceBodyDecoder =
         |> optional "sourceItems" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
+        |> optional "works" (Decode.maybe worksSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
 
