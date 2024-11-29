@@ -53,10 +53,10 @@ hasActionableQueryValidation probeResponse =
         ValidQuery ->
             True
 
-        NotCheckedQuery ->
+        EmptyQuery ->
             True
 
-        EmptyQuery ->
+        NotCheckedQuery ->
             True
 
         _ ->

@@ -207,7 +207,6 @@ rangeStringParser rString =
 selectAppropriateRangeFacetValues : FacetAlias -> ActiveSearch msg -> Maybe ( String, String )
 selectAppropriateRangeFacetValues facetAlias activeSearch =
     Dict.get facetAlias activeSearch.rangeFacetValues
-        |> Maybe.andThen (\v -> Just v)
         |> ME.orElse
             (Dict.get facetAlias (.filters activeSearch.nextQuery)
                 |> Maybe.andThen

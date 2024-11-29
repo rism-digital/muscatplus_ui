@@ -76,6 +76,7 @@ type RelationshipRole
     | AssociatedNameRole
     | AuthorRole
     | BooksellerRole
+    | ChoreographerRole
     | ConceptorRole
     | ComposerRole
     | CensorRole
@@ -255,6 +256,7 @@ roleMap =
     , ( "relators:aut", AuthorRole )
     , ( "relators:bsl", BooksellerRole )
     , ( "relators:ccp", ConceptorRole )
+    , ( "relators:chr", ChoreographerRole )
     , ( "relators:cmp", ComposerRole )
     , ( "relators:cns", CensorRole )
     , ( "relators:cph", CopyrightHolderRole )

@@ -143,11 +143,8 @@ viewExternalSourceExemplar language body =
 
 viewExternalSourceContentsSection : Language -> ExternalSourceContents -> Element msg
 viewExternalSourceContentsSection language body =
-    let
-        sectionTmpl =
-            sectionTemplate language body
-    in
-    sectionTmpl
+    sectionTemplate language
+        body
         [ row
             (width fill
                 :: height fill

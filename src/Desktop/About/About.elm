@@ -32,19 +32,19 @@ view session model =
         responseData =
             case model.response of
                 Response (AboutData body) ->
-                    { indexedTimestamp = viewTimestamp "Last indexed: " body.lastIndexed
+                    { cantusLatest = viewTimestamp "Latest Cantus records: " body.latestFromCantus
+                    , diammLatest = viewTimestamp "Latest DIAMM records: " body.latestFromDIAMM
+                    , indexedTimestamp = viewTimestamp "Last indexed: " body.lastIndexed
                     , indexerVersion = text ("Indexer Version: " ++ body.indexerVersion)
                     , serverVersion = text ("Server Version: " ++ body.serverVersion)
-                    , diammLatest = viewTimestamp "Latest DIAMM records: " body.latestFromDIAMM
-                    , cantusLatest = viewTimestamp "Latest Cantus records: " body.latestFromCantus
                     }
 
                 _ ->
-                    { indexedTimestamp = none
+                    { cantusLatest = none
+                    , diammLatest = none
+                    , indexedTimestamp = none
                     , indexerVersion = none
                     , serverVersion = none
-                    , diammLatest = none
-                    , cantusLatest = none
                     }
 
         renderedAboutText =

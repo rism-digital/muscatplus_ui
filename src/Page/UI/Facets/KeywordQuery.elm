@@ -6,7 +6,7 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, searchKeywordIn
 
 -}
 
-import Element exposing (Color, Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, pointer, px, row, spacing, text, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
@@ -15,7 +15,7 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (QueryValidation(..))
-import Page.UI.Attributes exposing (bodySM, headingXXL, lineSpacing, sectionSpacing)
+import Page.UI.Attributes exposing (bodySM, headingXXL, lineSpacing)
 import Page.UI.Components exposing (h2s)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Images exposing (circleSvg)

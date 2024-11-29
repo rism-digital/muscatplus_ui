@@ -12,6 +12,12 @@ import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelati
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
+viewMaterialGroupsSection : Language -> MaterialGroupsSectionBody -> Element msg
+viewMaterialGroupsSection language mgSection =
+    List.map (viewMaterialGroup language) mgSection.items
+        |> sectionTemplate language mgSection
+
+
 viewMaterialGroup : Language -> MaterialGroupBody -> Element msg
 viewMaterialGroup language mg =
     row
@@ -64,9 +70,3 @@ viewMaterialGroupRelationships language relSection =
                 |> List.map (\( label, items ) -> viewRelationshipBody language label items)
             )
         ]
-
-
-viewMaterialGroupsSection : Language -> MaterialGroupsSectionBody -> Element msg
-viewMaterialGroupsSection language mgSection =
-    List.map (viewMaterialGroup language) mgSection.items
-        |> sectionTemplate language mgSection

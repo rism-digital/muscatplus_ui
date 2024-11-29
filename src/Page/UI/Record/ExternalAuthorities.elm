@@ -11,11 +11,8 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 viewExternalAuthoritiesSection : Language -> ExternalAuthoritiesSectionBody -> Element msg
 viewExternalAuthoritiesSection language extSection =
-    let
-        sectionTmpl =
-            sectionTemplate language extSection
-    in
-    sectionTmpl
+    sectionTemplate language
+        extSection
         [ row
             (width fill
                 :: height fill

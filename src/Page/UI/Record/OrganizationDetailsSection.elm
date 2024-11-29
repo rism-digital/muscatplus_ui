@@ -18,11 +18,8 @@ viewOrganizationDetailsSection :
         }
     -> Element msg
 viewOrganizationDetailsSection language organizationDetails =
-    let
-        sectionTmpl =
-            sectionTemplate language organizationDetails
-    in
-    sectionTmpl
+    sectionTemplate language
+        organizationDetails
         [ row
             (width fill
                 :: height fill

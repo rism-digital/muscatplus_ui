@@ -18,6 +18,7 @@ import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
+import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Set exposing (Set)
 
 
@@ -41,44 +42,6 @@ viewSourcePreview cfg body =
 
         allExternals =
             gatherAllDigitizationLinksForCallout cfg.language body
-
-        pageBodyView =
-            row
-                [ width fill
-                , height fill
-                , alignTop
-                ]
-                [ column
-                    [ width fill
-                    , spacing sectionSpacing
-                    ]
-                    [ viewMaybe (viewPartOfSection cfg.language) body.partOf
-                    , viewIf
-                        (viewDigitizedCopiesCalloutSection
-                            { expandMsg = cfg.expandedDigitizedCopiesMsg
-                            , expanded = cfg.expandedDigitizedCopiesCallout
-                            , language = cfg.language
-                            }
-                            allExternals
-                        )
-                        (Dict.size allExternals > 0)
-                    , viewMaybe (viewContentsSection cfg.language body.creator) body.contents
-                    , viewMaybe
-                        (viewIncipitsSection
-                            { language = cfg.language
-                            , infoToggleMsg = cfg.incipitInfoToggleMsg
-                            , expandedIncipits = cfg.incipitInfoExpanded
-                            }
-                        )
-                        body.incipits
-                    , viewMaybe (viewMaterialGroupsSection cfg.language) body.materialGroups
-                    , viewMaybe (viewRelationshipsSection cfg.language) body.relationships
-                    , viewMaybe (viewReferencesNotesSection cfg.language) body.referencesNotes
-                    , viewMaybe (viewSourceItemsSection cfg.language cfg.itemsExpanded cfg.expandMsg) body.sourceItems
-                    , viewMaybe (viewExternalResourcesSection cfg.language) body.externalResources
-                    , viewMaybe (viewExemplarsSection cfg.language) body.exemplars
-                    ]
-                ]
     in
     row
         [ width fill
@@ -108,7 +71,43 @@ viewSourcePreview cfg body =
                     , pageFullRecordTemplate cfg.language body
                     ]
                 ]
-            , pageBodyView
+            , row
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                [ column
+                    [ width fill
+                    , spacing sectionSpacing
+                    ]
+                    [ viewMaybe (viewPartOfSection cfg.language) body.partOf
+                    , viewIf
+                        (viewDigitizedCopiesCalloutSection
+                            { expandMsg = cfg.expandedDigitizedCopiesMsg
+                            , expanded = cfg.expandedDigitizedCopiesCallout
+                            , language = cfg.language
+                            }
+                            allExternals
+                        )
+                        (Dict.size allExternals > 0)
+                    , viewMaybe (viewContentsSection cfg.language body.creator) body.contents
+                    , viewMaybe
+                        (viewIncipitsSection
+                            { language = cfg.language
+                            , infoToggleMsg = cfg.incipitInfoToggleMsg
+                            , expandedIncipits = cfg.incipitInfoExpanded
+                            }
+                        )
+                        body.incipits
+                    , viewMaybe (viewMaterialGroupsSection cfg.language) body.materialGroups
+                    , viewMaybe (viewRelationshipsSection cfg.language) body.relationships
+                    , viewMaybe (viewSourceWorksSection cfg.language) body.works
+                    , viewMaybe (viewReferencesNotesSection cfg.language) body.referencesNotes
+                    , viewMaybe (viewSourceItemsSection cfg.language cfg.itemsExpanded cfg.expandMsg) body.sourceItems
+                    , viewMaybe (viewExternalResourcesSection cfg.language) body.externalResources
+                    , viewMaybe (viewExemplarsSection cfg.language) body.exemplars
+                    ]
+                ]
             ]
         ]
 

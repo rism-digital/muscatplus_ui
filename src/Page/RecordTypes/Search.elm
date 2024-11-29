@@ -14,6 +14,7 @@ module Page.RecordTypes.Search exposing
     , ModeFacet
     , NotationFacet
     , NotationQueryOptions
+    , ParameterFacet
     , PersonResultBody
     , PersonResultFlags
     , QueryFacet
@@ -483,6 +484,9 @@ facetTypeFromJsonType facetType =
         "rism:NotationFacet" ->
             Notation
 
+        "rism:ParameterFacet" ->
+            Parameter
+
         "rism:QueryFacet" ->
             Query_
 
@@ -494,9 +498,6 @@ facetTypeFromJsonType facetType =
 
         "rism:ToggleFacet" ->
             Toggle
-
-        "rism:ParameterFacet" ->
-            Parameter
 
         _ ->
             UnknownFacetType

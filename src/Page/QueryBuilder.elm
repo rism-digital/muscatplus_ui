@@ -1,13 +1,12 @@
 module Page.QueryBuilder exposing (Model, init, update, view)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Browser.Dom
 import Cmd.Extra as CE
 import Element exposing (Element, centerX, centerY, column, fill, height, htmlAttribute, px, row, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Language exposing (Language, LanguageMap, toLanguageMap)
+import Language exposing (Language, toLanguageMap)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.QueryBuilder.Model exposing (QueryBuilderModel, queryBuilderOperatorToLabel)
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
@@ -17,7 +16,6 @@ import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Components exposing (viewWindowTitleBar)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
-import Task
 
 
 type alias Model =
@@ -32,6 +30,10 @@ init =
 update : QueryBuilderMsg -> QueryBuilderModel -> ( QueryBuilderModel, Cmd QueryBuilderMsg )
 update msg model =
     case msg of
+        UserEnteredTextInQueryBuilder _ ->
+            -- no-op here because it's handled in the parent.
+            ( model, Cmd.none )
+
         UserClickedOnFieldName alias qt ->
             let
                 newQtext =
@@ -43,14 +45,6 @@ update msg model =
             in
             ( model, CE.perform (UserEnteredTextInQueryBuilder newQtext) )
 
-        UserEnteredTextInQueryBuilder qt ->
-            -- no-op here because it's handled in the parent.
-            ( model, Cmd.none )
-
-        UserClickedSearchButton ->
-            -- no-op here because it's handled in the parent.
-            ( model, Cmd.none )
-
         UserClickedOnOperator operator qt ->
             let
                 newQtext =
@@ -61,6 +55,10 @@ update msg model =
                         qt ++ " " ++ queryBuilderOperatorToLabel operator
             in
             ( model, CE.perform (UserEnteredTextInQueryBuilder newQtext) )
+
+        UserClickedSearchButton ->
+            -- no-op here because it's handled in the parent.
+            ( model, Cmd.none )
 
 
 view :
@@ -77,11 +75,11 @@ view :
     -> Element msg
 view cfg =
     let
-        title =
-            toLanguageMap "Query Builder"
-
         nextQuery =
             toNextQuery (.activeSearch cfg.model)
+
+        title =
+            toLanguageMap "Query Builder"
 
         qText =
             toKeywordQuery nextQuery
@@ -117,11 +115,11 @@ view cfg =
             ]
             [ viewWindowTitleBar cfg.language title cfg.closeMsg
             , Page.QueryBuilder.View.view
-                { language = cfg.language
+                { currentMode = currentMode
+                , language = cfg.language
                 , probeResponse = .probeResponse cfg.model
                 , qText = qText
                 , queryFields = queryFields
-                , currentMode = currentMode
                 }
                 |> Element.map cfg.userInteractedWithQueryBuilderMsg
             ]

@@ -1,7 +1,6 @@
 module Page.QueryBuilder.View exposing (view)
 
-import Config as C
-import Element as Event exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, link, newTabLink, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, textColumn, width)
+import Element as Event exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -15,7 +14,7 @@ import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (QueryField)
-import Page.UI.Attributes exposing (bodySM, headingMD, headingXXL, linkColour, minimalDropShadow, minimalInsetShadow)
+import Page.UI.Attributes exposing (bodySM, headingMD, headingXXL, minimalInsetShadow)
 import Page.UI.Components exposing (h3s, h4)
 import Page.UI.Images exposing (circleSvg)
 import Page.UI.Markdown as Markdown
@@ -85,11 +84,11 @@ queryBuilderDescription =
 
 
 view :
-    { language : Language
+    { currentMode : ResultMode
+    , language : Language
     , probeResponse : ProbeStatus
     , qText : String
     , queryFields : List QueryField
-    , currentMode : ResultMode
     }
     -> Element QueryBuilderMsg
 view cfg =
@@ -223,6 +222,7 @@ view cfg =
                         , viewOperator PlusOperator cfg.qText
                         , viewOperator MinusOperator cfg.qText
                         , viewOperator FuzzyOperator cfg.qText
+                        , viewOperator BoostOperator cfg.qText
                         ]
                     ]
                 , column
@@ -255,7 +255,12 @@ view cfg =
                 [ alignBottom
                 , alignRight
                 ]
-                [ viewSearchButton { language = cfg.language, probeResponse = cfg.probeResponse, submitMsg = UserClickedSearchButton } ]
+                [ viewSearchButton
+                    { language = cfg.language
+                    , probeResponse = cfg.probeResponse
+                    , submitMsg = UserClickedSearchButton
+                    }
+                ]
             ]
         ]
 

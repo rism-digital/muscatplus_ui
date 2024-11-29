@@ -12,11 +12,8 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 viewExternalRelationshipsSection : Language -> ExternalRelationshipsSection -> Element msg
 viewExternalRelationshipsSection language body =
-    let
-        sectionTmpl =
-            sectionTemplate language body
-    in
-    sectionTmpl
+    sectionTemplate language
+        body
         [ row
             (width fill
                 :: height fill

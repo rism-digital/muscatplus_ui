@@ -90,6 +90,7 @@ viewFacet cfg msg =
                 }
 
         Just (ParameterFacetData _) ->
+            -- parameter facets are never displayed.
             none
 
         Nothing ->

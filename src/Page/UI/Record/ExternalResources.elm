@@ -174,27 +174,25 @@ viewExternalResources language itms =
 
 viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
 viewExternalResourcesSection language extSection =
-    let
-        sectionBody =
-            [ row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ viewMaybe (viewExternalResources language) extSection.items
-                    , viewMaybe (viewExternalRecords language) extSection.externalRecords
-                    ]
+    sectionTemplate language
+        extSection
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewMaybe (viewExternalResources language) extSection.items
+                , viewMaybe (viewExternalRecords language) extSection.externalRecords
                 ]
             ]
-    in
-    sectionTemplate language extSection sectionBody
+        ]
 
 
 filtTypes : ExternalResourceType -> Bool

@@ -14,6 +14,7 @@ import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecode
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody, sourceRelationshipsSectionBodyDecoder)
+import Page.RecordTypes.Works exposing (PersonWorksSectionBody, personWorksSectionBodyDecoder)
 
 
 type alias NameVariantsSectionBody =
@@ -42,6 +43,7 @@ type alias PersonBody =
     , externalAuthorities : Maybe ExternalAuthoritiesSectionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , sources : Maybe SourceRelationshipsSectionBody
+    , works : Maybe PersonWorksSectionBody
     , recordHistory : RecordHistory
     }
 
@@ -76,4 +78,5 @@ personBodyDecoder =
         |> optional "externalAuthorities" (Decode.maybe externalAuthoritiesSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "sources" (Decode.maybe sourceRelationshipsSectionBodyDecoder) Nothing
+        |> optional "works" (Decode.maybe personWorksSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder

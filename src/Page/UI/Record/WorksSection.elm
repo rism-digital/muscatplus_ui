@@ -1,16 +1,20 @@
-module Page.UI.Record.WorksSection exposing (..)
+module Page.UI.Record.WorksSection exposing (viewPersonWorksSection, viewSourceWorksSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, fill, height, link, newTabLink, none, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, none, padding, paddingXY, row, spacing, table, text, width, wrappedRow)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
-import Page.RecordTypes.Works exposing (WorkReference, WorksSectionBody)
+import Page.RecordTypes.Works exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (externalLinkTemplate, renderLabel)
+import Page.UI.Components exposing (externalLinkTemplate, h3s, renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+import Page.UI.Style exposing (colourScheme)
 
 
-viewWorksSection : Language -> WorksSectionBody -> Element msg
-viewWorksSection language worksSection =
+viewSourceWorksSection : Language -> SourceWorksSectionBody -> Element msg
+viewSourceWorksSection language worksSection =
     sectionTemplate language
         worksSection
         [ row
@@ -27,14 +31,14 @@ viewWorksSection language worksSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewWorkReferenceSection language) worksSection.workReference
+                [ viewMaybe (viewSourceWorkReferenceSection language) worksSection.workReference
                 ]
             ]
         ]
 
 
-viewWorkReferenceSection : Language -> WorkReference -> Element msg
-viewWorkReferenceSection language workReference =
+viewSourceWorkReferenceSection : Language -> WorkReference -> Element msg
+viewSourceWorkReferenceSection language workReference =
     wrappedRow
         [ width fill
         , height fill
@@ -62,6 +66,89 @@ viewWorkReferenceSection language workReference =
                     , url = workReference.authorityUrl
                     }
                 , externalLinkTemplate workReference.authorityUrl
+                ]
+            ]
+        ]
+
+
+viewPersonWorksSection : Language -> PersonWorksSectionBody -> Element msg
+viewPersonWorksSection language worksSection =
+    sectionTemplate language
+        worksSection
+        [ row
+            (List.append
+                [ width fill
+                , height fill
+                , alignTop
+                ]
+                sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewMaybe (viewPersonExternalWorkReferencesSection language) worksSection.workReferences
+                ]
+            ]
+        ]
+
+
+viewPersonExternalWorkReferencesSection : Language -> PersonExternalWorkReferencesBody -> Element msg
+viewPersonExternalWorkReferencesSection language workReferences =
+    let
+        cycleBg i =
+            if modBy 2 i == 0 then
+                Background.color colourScheme.lightestBlue
+
+            else
+                Background.color colourScheme.white
+    in
+    row
+        (width fill :: sectionBorderStyles)
+        [ column
+            [ spacing lineSpacing
+            , width fill
+            , height fill
+            , alignTop
+            ]
+            [ row
+                [ width fill
+                , spacing 5
+                ]
+                [ h3s language workReferences.label
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill
+                    , height fill
+                    , alignTop
+                    , spacing lineSpacing
+                    , paddingXY lineSpacing 10
+                    ]
+                    [ indexedTable
+                        [ Border.width 1
+                        , Border.color colourScheme.midGrey
+                        ]
+                        { data = workReferences.items
+                        , columns =
+                            [ { header = el [ Font.semiBold, padding 10 ] (text "Work title")
+                              , width = fill
+                              , view = \i w -> el [ cycleBg i, padding 10 ] (text w.value)
+                              }
+                            , { header = el [ Font.semiBold, padding 10 ] (text "Sources")
+                              , width = fill
+                              , view = \i w -> link [ cycleBg i, padding 10, linkColour ] { url = w.searchUrl, label = text "Find in RISM Online" }
+                              }
+                            , { header = el [ Font.semiBold, padding 10 ] (text "External authority")
+                              , width = fill
+                              , view = \i w -> newTabLink [ cycleBg i, padding 10, linkColour ] { url = w.authorityUrl, label = text w.externalIdentifier }
+                              }
+                            ]
+                        }
+                    ]
                 ]
             ]
         ]

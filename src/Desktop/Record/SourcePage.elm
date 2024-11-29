@@ -24,7 +24,7 @@ import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeade
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
-import Page.UI.Record.WorksSection exposing (viewWorksSection)
+import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
 import Set exposing (Set)
@@ -169,7 +169,7 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                 body.incipits
             , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
             , viewMaybe (viewRelationshipsSection language) body.relationships
-            , viewMaybe (viewWorksSection language) body.works
+            , viewMaybe (viewSourceWorksSection language) body.works
             , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
             , viewMaybe (viewExemplarsSection language) body.exemplars

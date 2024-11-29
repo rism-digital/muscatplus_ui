@@ -22,6 +22,7 @@ import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Record.WorksSection exposing (viewPersonWorksSection)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
 
@@ -47,6 +48,7 @@ viewDescriptionTab language body =
                 , viewMaybe (viewNotesSection language) body.notes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
+                , viewMaybe (viewPersonWorksSection language) body.works
                 ]
     in
     row
