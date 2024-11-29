@@ -104,6 +104,14 @@ viewPersonExternalWorkReferencesSection language workReferences =
 
             else
                 Background.color colourScheme.white
+
+        headerStyles =
+            [ Font.semiBold
+            , padding 10
+            , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+            , Border.color colourScheme.midGrey
+            , Background.color colourScheme.lightGrey
+            ]
     in
     row
         (width fill :: sectionBorderStyles)
@@ -134,15 +142,18 @@ viewPersonExternalWorkReferencesSection language workReferences =
                         ]
                         { data = workReferences.items
                         , columns =
-                            [ { header = el [ Font.semiBold, padding 10 ] (text "Work title")
+                            [ { header =
+                                    el
+                                        headerStyles
+                                        (text "Work title")
                               , width = fill
                               , view = \i w -> el [ cycleBg i, padding 10 ] (text w.value)
                               }
-                            , { header = el [ Font.semiBold, padding 10 ] (text "Sources")
+                            , { header = el headerStyles (text "Sources")
                               , width = fill
                               , view = \i w -> link [ cycleBg i, padding 10, linkColour ] { url = w.searchUrl, label = text "Find in RISM Online" }
                               }
-                            , { header = el [ Font.semiBold, padding 10 ] (text "External authority")
+                            , { header = el headerStyles (text "External authority")
                               , width = fill
                               , view = \i w -> newTabLink [ cycleBg i, padding 10, linkColour ] { url = w.authorityUrl, label = text w.externalIdentifier }
                               }
