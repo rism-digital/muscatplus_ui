@@ -149,6 +149,10 @@ viewPersonExternalWorkReferencesSection language workReferences =
                               , width = fill
                               , view = \i w -> el [ cycleBg i, padding 10 ] (text w.value)
                               }
+                            , { header = el headerStyles (text "Source count")
+                              , width = fill
+                              , view = \i w -> el [ cycleBg i, padding 10 ] (text (String.fromInt w.sourceCount))
+                              }
                             , { header = el headerStyles (text "Sources")
                               , width = fill
                               , view = \i w -> link [ cycleBg i, padding 10, linkColour ] { url = w.searchUrl, label = text "Find in RISM Online" }

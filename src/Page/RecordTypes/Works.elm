@@ -1,6 +1,6 @@
 module Page.RecordTypes.Works exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference, personWorksSectionBodyDecoder, sourceWorksSectionBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, list, string)
+import Json.Decode as Decode exposing (Decoder, int, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, relatedToBodyDecoder)
@@ -34,6 +34,7 @@ type alias WorkReference =
     , searchUrl : String
     , authorityUrl : String
     , externalIdentifier : String
+    , sourceCount : Int
     }
 
 
@@ -69,3 +70,4 @@ workReferenceDecoder =
         |> required "search" string
         |> required "url" string
         |> required "externalIdentifier" string
+        |> required "sourceCount" int
