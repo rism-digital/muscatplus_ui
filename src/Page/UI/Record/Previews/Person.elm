@@ -14,7 +14,7 @@ import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
-import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -33,7 +33,13 @@ viewPersonPreview language body =
                 isEmpty
                 [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
                 , viewMaybe (viewNameVariantsSection language) body.nameVariants
-                , viewMaybe (viewRelationshipsSection language) body.relationships
+                , viewMaybe
+                    (viewRelationshipsSection
+                        { language = language
+                        , relationshipFormatter = viewRelationshipBody
+                        }
+                    )
+                    body.relationships
                 , viewMaybe (viewNotesSection language) body.notes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 ]

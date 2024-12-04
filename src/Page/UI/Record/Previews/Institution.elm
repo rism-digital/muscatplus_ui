@@ -15,7 +15,7 @@ import Page.UI.Record.LocationSection exposing (viewLocationAddressSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
-import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -35,7 +35,7 @@ viewInstitutionPreview language body =
                 isEmpty
                 [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
                 , viewMaybe (viewLocationAddressSection language) body.location
-                , viewMaybe (viewRelationshipsSection language) body.relationships
+                , viewMaybe (viewRelationshipsSection { language = language, relationshipFormatter = viewRelationshipBody }) body.relationships
                 , viewMaybe (viewNotesSection language) body.notes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities

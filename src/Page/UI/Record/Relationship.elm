@@ -2,7 +2,7 @@ module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewMobile
 
 import Dict
 import Dict.Extra as DE
-import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
@@ -16,8 +16,13 @@ import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 
-viewRelationshipsSection : Language -> RelationshipsSectionBody -> Element msg
-viewRelationshipsSection language relSection =
+viewRelationshipsSection :
+    { language : Language
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    }
+    -> RelationshipsSectionBody
+    -> Element msg
+viewRelationshipsSection { language, relationshipFormatter } relSection =
     sectionTemplate language
         relSection
         [ row
@@ -33,7 +38,7 @@ viewRelationshipsSection language relSection =
                 , spacing lineSpacing
                 ]
                 (gatherRelationshipItems relSection.items
-                    |> List.map (\( label, items ) -> viewRelationshipBody language label items)
+                    |> List.map (\( label, items ) -> relationshipFormatter language label items)
                 )
             ]
         ]
@@ -64,8 +69,22 @@ viewMobileRelationshipBody language label relationships =
             [ width fill
             , spacing 4
             ]
-            (row [ width fill ] [ renderLabel language label ]
-                :: List.map (viewRelationshipValue language) relationships
+            (row
+                [ width fill, paddingEach { bottom = 4, left = 0, right = 0, top = 0 } ]
+                [ renderLabel language label ]
+                :: List.map
+                    (\r ->
+                        row
+                            [ paddingEach
+                                { bottom = 4
+                                , left = 10
+                                , right = 0
+                                , top = 0
+                                }
+                            ]
+                            [ viewRelationshipValue language r ]
+                    )
+                    relationships
             )
         ]
 
@@ -81,9 +100,9 @@ viewRelationshipValue language body =
                 (\() ->
                     viewMaybe
                         (\nm ->
-                            row
+                            el
                                 [ width fill ]
-                                [ text (extractLabelFromLanguageMap language nm) ]
+                                (text (extractLabelFromLanguageMap language nm))
                         )
                         body.name
                 )
@@ -93,9 +112,9 @@ viewRelationshipValue language body =
         note =
             viewMaybe
                 (\noteText ->
-                    row
+                    el
                         [ width fill ]
-                        [ paragraph [] [ text (extractLabelFromLanguageMap language noteText) ] ]
+                        (paragraph [] [ text (extractLabelFromLanguageMap language noteText) ])
                 )
                 body.note
     in

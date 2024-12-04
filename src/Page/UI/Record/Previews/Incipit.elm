@@ -6,7 +6,7 @@ import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, sectionSpacing)
-import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
+import Page.UI.Components exposing (externalLinkTemplate, resourceLink, viewSummaryField)
 import Page.UI.Images exposing (musicNotationSvg)
 import Page.UI.Record.Incipits exposing (viewIncipit)
 import Page.UI.Record.PageTemplate exposing (subHeaderTemplate)
@@ -87,6 +87,7 @@ viewIncipitPreview cfg body =
                         , language = cfg.language
                         , infoIsExpanded = Set.member body.id cfg.incipitInfoExpanded
                         , infoToggleMsg = cfg.infoToggleMsg
+                        , summaryFormatter = viewSummaryField
                         }
                         body
                     ]

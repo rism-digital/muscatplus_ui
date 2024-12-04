@@ -23,6 +23,7 @@ module Page.UI.Components exposing
     , sourceTypeIconChooser
     , tabView
     , verticalLine
+    , viewMobileParagraphField
     , viewMobileSummaryField
     , viewMobileWindowTitleBar
     , viewParagraphField
@@ -285,6 +286,11 @@ h4 language heading =
     paragraph [ headingLG, Region.heading 4, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
 
 
+h4s : Language -> LanguageMap -> Element msg
+h4s language heading =
+    paragraph [ headingLG, Region.heading 4, Font.medium, bodySerifFont ] [ extractLabelFromLanguageMap language heading |> text ]
+
+
 h5 : Language -> LanguageMap -> Element msg
 h5 language heading =
     paragraph [ headingMD, Region.heading 5, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
@@ -468,10 +474,14 @@ viewMobileLabelValueField wrapperStyles language field =
             (List.concatMap
                 (\{ label, value } ->
                     [ row
-                        [ width fill, paddingEach { bottom = 4, left = 0, right = 0, top = 0 } ]
+                        [ width fill
+                        , paddingEach { bottom = 4, left = 0, right = 0, top = 0 }
+                        ]
                         [ renderLabel language label ]
                     , row
-                        [ width fill, paddingEach { bottom = 8, left = 10, right = 0, top = 0 } ]
+                        [ width fill
+                        , paddingEach { bottom = 8, left = 10, right = 0, top = 0 }
+                        ]
                         [ paragraph []
                             (extractTextFromLanguageMap language value
                                 |> styledParagraphs
@@ -488,6 +498,14 @@ viewParagraphField : Language -> List LabelValue -> Element msg
 viewParagraphField language fieldValues =
     viewLabelValueField
         [ spacing sectionSpacing ]
+        language
+        fieldValues
+
+
+viewMobileParagraphField : Language -> List LabelValue -> Element msg
+viewMobileParagraphField language fieldValues =
+    viewMobileLabelValueField
+        [ spacing 4 ]
         language
         fieldValues
 

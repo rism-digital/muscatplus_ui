@@ -7,7 +7,7 @@ import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Source exposing (PartOfSectionBody)
-import Page.UI.Attributes exposing (headingLG, linkColour)
+import Page.UI.Attributes exposing (headingMD, linkColour)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -29,7 +29,7 @@ viewPartOfSection language partOf =
                 , padding 10
                 ]
                 [ el
-                    [ headingLG
+                    [ headingMD
                     , Font.semiBold
                     , Font.color colourScheme.white
                     ]
@@ -41,7 +41,7 @@ viewPartOfSection language partOf =
                 ]
                 [ link
                     [ linkColour
-                    , headingLG
+                    , headingMD
                     ]
                     { label = text (extractLabelFromLanguageMap language (.label partOf.source))
                     , url = .id partOf.source

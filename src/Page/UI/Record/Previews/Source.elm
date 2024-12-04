@@ -6,7 +6,7 @@ import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (sourceIconView)
+import Page.UI.Components exposing (sourceIconView, viewMobileParagraphField, viewMobileSummaryField, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
@@ -16,7 +16,7 @@ import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 import Page.UI.Record.PageTemplate exposing (mobileSubHeaderTemplate, pageFullMobileRecordTemplate, pageFullRecordTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
-import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Set exposing (Set)
@@ -90,22 +90,67 @@ viewSourcePreview cfg body =
                             allExternals
                         )
                         (Dict.size allExternals > 0)
-                    , viewMaybe (viewContentsSection cfg.language body.creator) body.contents
+                    , viewMaybe
+                        (viewContentsSection
+                            { creator = body.creator
+                            , language = cfg.language
+                            , relationshipFormatter = viewRelationshipBody
+                            , summaryFormatter = viewSummaryField
+                            }
+                        )
+                        body.contents
                     , viewMaybe
                         (viewIncipitsSection
                             { language = cfg.language
                             , infoToggleMsg = cfg.incipitInfoToggleMsg
                             , expandedIncipits = cfg.incipitInfoExpanded
+                            , summaryFormatter = viewSummaryField
                             }
                         )
                         body.incipits
-                    , viewMaybe (viewMaterialGroupsSection cfg.language) body.materialGroups
-                    , viewMaybe (viewRelationshipsSection cfg.language) body.relationships
+                    , viewMaybe
+                        (viewMaterialGroupsSection
+                            { language = cfg.language
+                            , paragraphFormatter = viewParagraphField
+                            , relationshipFormatter = viewRelationshipBody
+                            , summaryFormatter = viewSummaryField
+                            }
+                        )
+                        body.materialGroups
+                    , viewMaybe
+                        (viewRelationshipsSection
+                            { language = cfg.language
+                            , relationshipFormatter = viewRelationshipBody
+                            }
+                        )
+                        body.relationships
                     , viewMaybe (viewSourceWorksSection cfg.language) body.works
-                    , viewMaybe (viewReferencesNotesSection cfg.language) body.referencesNotes
-                    , viewMaybe (viewSourceItemsSection cfg.language cfg.itemsExpanded cfg.expandMsg) body.sourceItems
+                    , viewMaybe
+                        (viewReferencesNotesSection
+                            { language = cfg.language
+                            , paragraphFormatter = viewParagraphField
+                            }
+                        )
+                        body.referencesNotes
+                    , viewMaybe
+                        (viewSourceItemsSection
+                            { expandMsg = cfg.expandMsg
+                            , expanded = cfg.itemsExpanded
+                            , language = cfg.language
+                            , summaryFormatter = viewSummaryField
+                            }
+                        )
+                        body.sourceItems
                     , viewMaybe (viewExternalResourcesSection cfg.language) body.externalResources
-                    , viewMaybe (viewExemplarsSection cfg.language) body.exemplars
+                    , viewMaybe
+                        (viewExemplarsSection
+                            { language = cfg.language
+                            , paragraphFormatter = viewParagraphField
+                            , relationshipFormatter = viewRelationshipBody
+                            , summaryFormatter = viewSummaryField
+                            }
+                        )
+                        body.exemplars
                     ]
                 ]
             ]
@@ -152,22 +197,67 @@ viewMobileSourcePreview cfg body =
                             }
                             allExternals
                         )
-                        (Dict.size allExternals > 0)
-                    , viewMaybe (viewContentsSection cfg.language body.creator) body.contents
+                        (not (Dict.isEmpty allExternals))
+                    , viewMaybe
+                        (viewContentsSection
+                            { creator = body.creator
+                            , language = cfg.language
+                            , relationshipFormatter = viewMobileRelationshipBody
+                            , summaryFormatter = viewMobileSummaryField
+                            }
+                        )
+                        body.contents
                     , viewMaybe
                         (viewIncipitsSection
                             { language = cfg.language
                             , infoToggleMsg = cfg.incipitInfoToggleMsg
                             , expandedIncipits = cfg.incipitInfoExpanded
+                            , summaryFormatter = viewMobileSummaryField
                             }
                         )
                         body.incipits
-                    , viewMaybe (viewMaterialGroupsSection cfg.language) body.materialGroups
-                    , viewMaybe (viewRelationshipsSection cfg.language) body.relationships
-                    , viewMaybe (viewReferencesNotesSection cfg.language) body.referencesNotes
-                    , viewMaybe (viewSourceItemsSection cfg.language cfg.itemsExpanded cfg.expandMsg) body.sourceItems
+                    , viewMaybe
+                        (viewMaterialGroupsSection
+                            { language = cfg.language
+                            , paragraphFormatter = viewMobileParagraphField
+                            , relationshipFormatter = viewMobileRelationshipBody
+                            , summaryFormatter = viewMobileSummaryField
+                            }
+                        )
+                        body.materialGroups
+                    , viewMaybe
+                        (viewRelationshipsSection
+                            { language = cfg.language
+                            , relationshipFormatter = viewMobileRelationshipBody
+                            }
+                        )
+                        body.relationships
+                    , viewMaybe
+                        (viewReferencesNotesSection
+                            { language = cfg.language
+                            , paragraphFormatter = viewMobileParagraphField
+                            }
+                        )
+                        body.referencesNotes
+                    , viewMaybe
+                        (viewSourceItemsSection
+                            { expandMsg = cfg.expandMsg
+                            , expanded = cfg.itemsExpanded
+                            , language = cfg.language
+                            , summaryFormatter = viewMobileSummaryField
+                            }
+                        )
+                        body.sourceItems
                     , viewMaybe (viewExternalResourcesSection cfg.language) body.externalResources
-                    , viewMaybe (viewExemplarsSection cfg.language) body.exemplars
+                    , viewMaybe
+                        (viewExemplarsSection
+                            { language = cfg.language
+                            , paragraphFormatter = viewMobileParagraphField
+                            , relationshipFormatter = viewMobileRelationshipBody
+                            , summaryFormatter = viewMobileSummaryField
+                            }
+                        )
+                        body.exemplars
                     ]
                 ]
     in

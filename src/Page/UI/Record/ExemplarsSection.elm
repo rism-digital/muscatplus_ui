@@ -1,13 +1,15 @@
 module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
 import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, paragraph, px, row, spacing, spacingXY, text, width, wrappedRow)
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
+import Page.RecordTypes.Relationship exposing (RelationshipBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (externalLinkTemplate, h3s, renderLabel, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (externalLinkTemplate, h3s, renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, sourcesSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources)
@@ -17,8 +19,36 @@ import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 
-viewExemplar : Language -> ExemplarBody -> Element msg
-viewExemplar language exemplar =
+viewExemplarsSection :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> ExemplarsSectionBody
+    -> Element msg
+viewExemplarsSection { language, paragraphFormatter, relationshipFormatter, summaryFormatter } exemplarSection =
+    List.map
+        (viewExemplar
+            { language = language
+            , paragraphFormatter = paragraphFormatter
+            , relationshipFormatter = relationshipFormatter
+            , summaryFormatter = summaryFormatter
+            }
+        )
+        exemplarSection.items
+        |> sectionTemplate language exemplarSection
+
+
+viewExemplar :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> ExemplarBody
+    -> Element msg
+viewExemplar { language, paragraphFormatter, relationshipFormatter, summaryFormatter } exemplar =
     row
         (width fill
             :: height fill
@@ -44,21 +74,15 @@ viewExemplar language exemplar =
                     [ width fill
                     , spacing lineSpacing
                     ]
-                    [ viewMaybe (viewSummaryField language) exemplar.summary
-                    , viewMaybe (viewParagraphField language) exemplar.notes
-                    , viewMaybe (viewRelationshipsSection language) exemplar.relationships
+                    [ viewMaybe (summaryFormatter language) exemplar.summary
+                    , viewMaybe (paragraphFormatter language) exemplar.notes
+                    , viewMaybe (viewRelationshipsSection { language = language, relationshipFormatter = relationshipFormatter }) exemplar.relationships
                     , viewMaybe (viewBoundWithSection language) exemplar.boundWith
                     , viewMaybe (viewExemplarExternalResourcesSection language) exemplar.externalResources
                     ]
                 ]
             ]
         ]
-
-
-viewExemplarsSection : Language -> ExemplarsSectionBody -> Element msg
-viewExemplarsSection language exemplarSection =
-    List.map (viewExemplar language) exemplarSection.items
-        |> sectionTemplate language exemplarSection
 
 
 viewBoundWithSection : Language -> BoundWithSectionBody -> Element msg

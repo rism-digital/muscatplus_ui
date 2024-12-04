@@ -5,15 +5,21 @@ import Element.Events as Events
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (SourceItemsSectionBody)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h2s, h3s, sourceIconChooser, viewSummaryField)
+import Page.UI.Components exposing (h2s, h3s, sourceIconChooser)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewSourceItem : Language -> BasicSourceBody -> Element msg
-viewSourceItem language source =
+viewSourceItem :
+    { language : Language
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> BasicSourceBody
+    -> Element msg
+viewSourceItem { language, summaryFormatter } source =
     let
         sourceIcon =
             sourceIconChooser (.type_ (.recordType source.sourceTypes))
@@ -47,13 +53,20 @@ viewSourceItem language source =
                     ]
                 ]
             , Maybe.withDefault [] source.summary
-                |> viewSummaryField language
+                |> summaryFormatter language
             ]
         ]
 
 
-viewSourceItemsSection : Language -> Bool -> msg -> SourceItemsSectionBody -> Element msg
-viewSourceItemsSection language expanded expandMsg siSection =
+viewSourceItemsSection :
+    { expandMsg : msg
+    , expanded : Bool
+    , language : Language
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> SourceItemsSectionBody
+    -> Element msg
+viewSourceItemsSection { expandMsg, expanded, language, summaryFormatter } siSection =
     let
         -- don't emit an anchor ID if the TOC value is an empty string
         tocId =
@@ -65,7 +78,13 @@ viewSourceItemsSection language expanded expandMsg siSection =
 
         sectionBody =
             if expanded then
-                List.map (viewSourceItem language) siSection.items
+                List.map
+                    (viewSourceItem
+                        { language = language
+                        , summaryFormatter = summaryFormatter
+                        }
+                    )
+                    siSection.items
 
             else
                 []

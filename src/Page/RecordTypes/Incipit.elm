@@ -13,6 +13,7 @@ module Page.RecordTypes.Incipit exposing
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
+import List.Extra as LE
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 
@@ -32,7 +33,8 @@ type alias PAEEncodedData =
 
 
 type alias IncipitBody =
-    { id : String
+    { sectionToc : String
+    , id : String
     , label : LanguageMap
     , summary : Maybe (List LabelValue)
     , partOf : IncipitParentSourceBody
@@ -61,12 +63,25 @@ type RenderedIncipit
 incipitBodyDecoder : Decoder IncipitBody
 incipitBodyDecoder =
     Decode.succeed IncipitBody
+        |> required "id" incipitTocDecoder
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
         |> required "partOf" incipitParentSourceBodyDecoder
         |> optional "rendered" (Decode.maybe (list (Decode.oneOf [ renderedIncipitDecoderOne, renderedIncipitDecoderTwo ]))) Nothing
         |> optional "encodings" (Decode.maybe (list encodedIncipitDecoder)) Nothing
+
+
+incipitTocDecoder : Decoder String
+incipitTocDecoder =
+    string
+        |> Decode.map
+            (\incipitId ->
+                String.split "/" incipitId
+                    |> LE.last
+                    |> Maybe.withDefault "1.1.1"
+                    |> String.append "incipit-"
+            )
 
 
 encodedIncipitDecoder : Decoder EncodedIncipit

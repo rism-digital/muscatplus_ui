@@ -1,6 +1,6 @@
 module Page.UI.Record.WorksSection exposing (viewPersonWorksSection, viewSourceWorksSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, none, padding, paddingXY, row, spacing, table, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, padding, paddingXY, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -108,7 +108,7 @@ viewPersonExternalWorkReferencesSection language workReferences =
         headerStyles =
             [ Font.semiBold
             , padding 10
-            , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+            , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
             , Border.color colourScheme.midGrey
             , Background.color colourScheme.lightGrey
             ]
@@ -140,8 +140,7 @@ viewPersonExternalWorkReferencesSection language workReferences =
                         [ Border.width 1
                         , Border.color colourScheme.midGrey
                         ]
-                        { data = workReferences.items
-                        , columns =
+                        { columns =
                             [ { header =
                                     el
                                         headerStyles
@@ -155,13 +154,14 @@ viewPersonExternalWorkReferencesSection language workReferences =
                               }
                             , { header = el headerStyles (text "Sources")
                               , width = fill
-                              , view = \i w -> link [ cycleBg i, padding 10, linkColour ] { url = w.searchUrl, label = text "Find in RISM Online" }
+                              , view = \i w -> link [ cycleBg i, padding 10, linkColour ] { label = text "Find in RISM Online", url = w.searchUrl }
                               }
                             , { header = el headerStyles (text "External authority")
                               , width = fill
-                              , view = \i w -> newTabLink [ cycleBg i, padding 10, linkColour ] { url = w.authorityUrl, label = text w.externalIdentifier }
+                              , view = \i w -> newTabLink [ cycleBg i, padding 10, linkColour ] { label = text w.externalIdentifier, url = w.authorityUrl }
                               }
                             ]
+                        , data = workReferences.items
                         }
                     ]
                 ]

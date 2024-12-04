@@ -1,6 +1,6 @@
 module Mobile.BottomBar.Views exposing (view)
 
-import Element exposing (DeviceClass(..), Element, alignBottom, alignLeft, centerX, centerY, column, el, fill, height, htmlAttribute, paddingEach, px, row, spacing, text, width)
+import Element exposing (DeviceClass(..), Element, alignBottom, alignLeft, centerX, centerY, column, el, fill, height, htmlAttribute, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -8,7 +8,7 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Page.BottomBar.Msg exposing (BottomBarMsg(..))
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
-import Page.UI.Images exposing (globeSvg, institutionSvg, musicNotationSvg, peopleSvg, sourcesSvg)
+import Page.UI.Images exposing (institutionSvg, musicNotationSvg, peopleSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
@@ -37,7 +37,8 @@ view session =
         , Background.color colourScheme.darkBlue
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , Border.color colourScheme.darkGrey
-        , paddingEach { bottom = 20, left = 20, right = 20, top = 12 }
+
+        --, paddingEach { bottom = 20, left = 20, right = 20, top = 12 }
         , alignBottom
         ]
         [ column
@@ -45,87 +46,69 @@ view session =
             , height fill
             ]
             [ row
-                [ width fill
-                , height fill
+                [ centerX
+                , centerY
+                , spacing sizes.iconSpacing
                 ]
                 [ column
-                    [ alignLeft ]
+                    [ height fill
+                    , centerY
+                    , centerX
+                    , onClick (UserTouchedBottomBarOptionForFrontPage SourceSearchOption)
+                    ]
                     [ el
                         [ width (px sizes.iconSize)
+                        , alignLeft
+                        , centerY
+                        , centerX
                         ]
-                        (globeSvg colourScheme.white)
-                    , el [] (text " ")
+                        (sourcesSvg colourScheme.white)
+                    , el [ Font.color colourScheme.white, Font.size sizes.fontSize ] (text "Sources")
                     ]
                 , column
-                    [ centerX
+                    [ height fill
+                    , centerY
+                    , centerX
+                    , onClick (UserTouchedBottomBarOptionForFrontPage InstitutionSearchOption)
                     ]
-                    [ row
-                        [ centerX
+                    [ el
+                        [ width (px sizes.iconSize)
+                        , alignLeft
                         , centerY
-                        , width fill
-                        , spacing sizes.iconSpacing
+                        , centerX
                         ]
-                        [ column
-                            [ height fill
-                            , centerY
-                            , centerX
-                            , onClick (UserTouchedBottomBarOptionForFrontPage SourceSearchOption)
-                            ]
-                            [ el
-                                [ width (px sizes.iconSize)
-                                , alignLeft
-                                , centerY
-                                , centerX
-                                ]
-                                (sourcesSvg colourScheme.white)
-                            , el [ Font.color colourScheme.white, Font.size sizes.fontSize ] (text "Sources")
-                            ]
-                        , column
-                            [ height fill
-                            , centerY
-                            , centerX
-                            , onClick (UserTouchedBottomBarOptionForFrontPage InstitutionSearchOption)
-                            ]
-                            [ el
-                                [ width (px sizes.iconSize)
-                                , alignLeft
-                                , centerY
-                                , centerX
-                                ]
-                                (institutionSvg colourScheme.white)
-                            , el [ Font.color colourScheme.white, Font.size sizes.fontSize ] (text "Institutions")
-                            ]
-                        , column
-                            [ height fill
-                            , centerY
-                            , centerX
-                            , onClick (UserTouchedBottomBarOptionForFrontPage PeopleSearchOption)
-                            ]
-                            [ el
-                                [ width (px sizes.iconSize)
-                                , alignLeft
-                                , centerY
-                                , centerX
-                                ]
-                                (peopleSvg colourScheme.white)
-                            , el [ Font.color colourScheme.white, Font.size sizes.fontSize ] (text "People")
-                            ]
-                        , column
-                            [ height fill
-                            , centerY
-                            , centerX
-                            , onClick (UserTouchedBottomBarOptionForFrontPage IncipitSearchOption)
-                            ]
-                            [ el
-                                [ width (px sizes.iconSize)
-                                , alignLeft
-                                , centerY
-                                , centerX
-                                ]
-                                (musicNotationSvg colourScheme.white)
-                            , el [ Font.color colourScheme.white, Font.size sizes.fontSize ] (text "Incipits")
-                            ]
+                        (institutionSvg colourScheme.white)
+                    , el [ Font.color colourScheme.white, Font.size sizes.fontSize ] (text "Institutions")
+                    ]
+                , column
+                    [ height fill
+                    , centerY
+                    , centerX
+                    , onClick (UserTouchedBottomBarOptionForFrontPage PeopleSearchOption)
+                    ]
+                    [ el
+                        [ width (px sizes.iconSize)
+                        , alignLeft
+                        , centerY
+                        , centerX
                         ]
+                        (peopleSvg colourScheme.white)
+                    , el [ Font.color colourScheme.white, Font.size sizes.fontSize ] (text "People")
+                    ]
+                , column
+                    [ height fill
+                    , centerY
+                    , centerX
+                    , onClick (UserTouchedBottomBarOptionForFrontPage IncipitSearchOption)
+                    ]
+                    [ el
+                        [ width (px sizes.iconSize)
+                        , alignLeft
+                        , centerY
+                        , centerX
+                        ]
+                        (musicNotationSvg colourScheme.white)
+                    , el [ Font.color colourScheme.white, Font.size sizes.fontSize ] (text "Incipits")
                     ]
                 ]
             ]

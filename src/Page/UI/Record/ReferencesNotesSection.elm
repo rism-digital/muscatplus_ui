@@ -7,7 +7,7 @@ import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
 import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (renderLabel, viewParagraphField)
+import Page.UI.Components exposing (renderLabel)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
@@ -50,11 +50,6 @@ viewLocation language body =
         ]
 
 
-viewNotesSection : Language -> List LabelValue -> Element msg
-viewNotesSection language notes =
-    viewParagraphField language notes
-
-
 viewPerformanceLocation : Language -> RelationshipBody -> Element msg
 viewPerformanceLocation language location =
     viewMaybe (viewLocation language) location.relatedTo
@@ -76,8 +71,13 @@ viewPerformanceLocationsSection language body =
         ]
 
 
-viewReferencesNotesSection : Language -> ReferencesNotesSectionBody -> Element msg
-viewReferencesNotesSection language refNotesSection =
+viewReferencesNotesSection :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> ReferencesNotesSectionBody
+    -> Element msg
+viewReferencesNotesSection { language, paragraphFormatter } refNotesSection =
     sectionTemplate language
         refNotesSection
         [ row
@@ -94,7 +94,7 @@ viewReferencesNotesSection language refNotesSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewNotesSection language) refNotesSection.notes
+                [ viewMaybe (paragraphFormatter language) refNotesSection.notes
                 , viewMaybe (viewPerformanceLocationsSection language) refNotesSection.performanceLocations
                 , viewMaybe (viewLiturgicalFestivalsSection language) refNotesSection.liturgicalFestivals
                 ]

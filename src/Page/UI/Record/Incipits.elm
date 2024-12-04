@@ -8,12 +8,12 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import List.Extra as LE
 import Maybe.Extra as ME
 import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), PAEEncodedData, RenderedIncipit(..))
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (IncipitsSectionBody)
-import Page.UI.Attributes exposing (bodyRegular, headingLG, lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (h2, h3, viewSummaryField)
+import Page.UI.Attributes exposing (bodyRegular, headingMD, lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Components exposing (h3, h3s)
 import Page.UI.Helpers exposing (viewIf, viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg, fileDownloadSvg, searchSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -28,6 +28,7 @@ type alias IncipitDisplayConfig msg =
     , language : Language
     , infoIsExpanded : Bool
     , infoToggleMsg : String -> msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
     }
 
 
@@ -35,30 +36,29 @@ type alias IncipitSectionConfig msg =
     { language : Language
     , infoToggleMsg : String -> msg
     , expandedIncipits : Set String
+    , summaryFormatter : Language -> List LabelValue -> Element msg
     }
 
 
-splitWorkNumFromId : String -> String
-splitWorkNumFromId incipitId =
-    String.split "/" incipitId
-        |> LE.last
-        |> Maybe.withDefault "1.1.1"
+viewIncipitsSection : IncipitSectionConfig msg -> IncipitsSectionBody -> Element msg
+viewIncipitsSection sectionCfg sectionBody =
+    List.map
+        (\body ->
+            viewIncipit
+                { suppressTitle = False
+                , language = sectionCfg.language
+                , infoIsExpanded = Set.member body.id sectionCfg.expandedIncipits
+                , infoToggleMsg = sectionCfg.infoToggleMsg
+                , summaryFormatter = sectionCfg.summaryFormatter
+                }
+                body
+        )
+        sectionBody.items
+        |> sectionTemplate sectionCfg.language sectionBody
 
 
 viewIncipit : IncipitDisplayConfig msg -> IncipitBody -> Element msg
 viewIncipit cfg incipit =
-    let
-        title =
-            not cfg.suppressTitle
-                |> viewIf
-                    (row
-                        [ width fill
-                        , spacing 5
-                        ]
-                        [ h2 cfg.language incipit.label
-                        ]
-                    )
-    in
     row
         (width fill :: sectionBorderStyles)
         [ column
@@ -66,7 +66,15 @@ viewIncipit cfg incipit =
             , height fill
             , alignTop
             ]
-            [ title
+            [ viewIf
+                (row
+                    [ width fill
+                    , spacing 5
+                    ]
+                    [ h3s cfg.language incipit.label
+                    ]
+                )
+                (not cfg.suppressTitle)
             , row
                 [ width fill
                 , Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
@@ -77,39 +85,20 @@ viewIncipit cfg incipit =
                     [ width fill
                     , height fill
                     , alignTop
-                    , HA.id ("incipit-" ++ splitWorkNumFromId incipit.id) |> htmlAttribute
+                    , HA.id incipit.sectionToc |> htmlAttribute
                     ]
-                    [ row
-                        [ width fill
-                        , paddingEach { bottom = 10, left = 0, right = 0, top = 0 }
-                        ]
-                        [ column
-                            [ width fill
-                            , spacing 0
-                            ]
-                            [ viewMaybe viewRenderedIncipits incipit.rendered ]
-                        ]
-                    , viewMaybe (viewSummaryField cfg.language) incipit.summary
-                    , row
-                        [ width fill
-                        , paddingXY 0 10
-                        ]
-                        [ column
-                            [ width fill
-                            , spacing 0
-                            ]
-                            [ viewMaybe
-                                (viewIncipitExtraInfo
-                                    { ident = incipit.id
-                                    , infoToggleMsg = cfg.infoToggleMsg
-                                    , isExpanded = cfg.infoIsExpanded
-                                    , language = cfg.language
-                                    , renderings = incipit.rendered
-                                    }
-                                )
-                                incipit.encodings
-                            ]
-                        ]
+                    [ viewMaybe viewRenderedIncipits incipit.rendered
+                    , viewMaybe (cfg.summaryFormatter cfg.language) incipit.summary
+                    , viewMaybe
+                        (viewIncipitExtraInfo
+                            { ident = incipit.id
+                            , infoToggleMsg = cfg.infoToggleMsg
+                            , isExpanded = cfg.infoIsExpanded
+                            , language = cfg.language
+                            , renderings = incipit.rendered
+                            }
+                        )
+                        incipit.encodings
                     ]
                 ]
             ]
@@ -149,11 +138,11 @@ viewIncipitExtraInfo cfg encodings =
                 , paddingXY 0 8
                 , spacing 5
                 , Font.medium
-                , headingLG
+                , headingMD
                 ]
                 [ el
-                    [ width (px 16)
-                    , height (px 16)
+                    [ width (px 20)
+                    , height (px 20)
                     , centerY
                     , pointer
                     , onClick (cfg.infoToggleMsg cfg.ident)
@@ -169,22 +158,6 @@ viewIncipitExtraInfo cfg encodings =
             , panelBody
             ]
         ]
-
-
-viewIncipitsSection : IncipitSectionConfig msg -> IncipitsSectionBody -> Element msg
-viewIncipitsSection sectionCfg sectionBody =
-    List.map
-        (\body ->
-            viewIncipit
-                { suppressTitle = False
-                , language = sectionCfg.language
-                , infoIsExpanded = Set.member body.id sectionCfg.expandedIncipits
-                , infoToggleMsg = sectionCfg.infoToggleMsg
-                }
-                body
-        )
-        sectionBody.items
-        |> sectionTemplate sectionCfg.language sectionBody
 
 
 viewAdditionalIncipitInfoAndTools : Language -> Maybe (List RenderedIncipit) -> List EncodedIncipit -> Element msg
@@ -350,21 +323,31 @@ viewPAESearchLink language _ data =
 viewRenderedIncipits : List RenderedIncipit -> Element msg
 viewRenderedIncipits incipits =
     row
-        [ width (fill |> minimum 500 |> maximum 800)
-        , htmlAttribute (HA.class "svg-rendered-incipit")
-        , Background.color colourScheme.transparent
+        [ width fill
+        , paddingEach { bottom = 10, left = 0, right = 0, top = 0 }
         ]
-        (List.map
-            (\rendered ->
-                case rendered of
-                    RenderedIncipit RenderedSVG svgdata ->
-                        viewSVGRenderedIncipit svgdata
+        [ column
+            [ width fill
+            , spacing 0
+            ]
+            [ row
+                [ width (fill |> minimum 500 |> maximum 800)
+                , htmlAttribute (HA.class "svg-rendered-incipit")
+                , Background.color colourScheme.transparent
+                ]
+                (List.map
+                    (\rendered ->
+                        case rendered of
+                            RenderedIncipit RenderedSVG svgdata ->
+                                viewSVGRenderedIncipit svgdata
 
-                    _ ->
-                        none
-            )
-            incipits
-        )
+                            _ ->
+                                none
+                    )
+                    incipits
+                )
+            ]
+        ]
 
 
 viewPAEData : Language -> LanguageMap -> PAEEncodedData -> Element msg

@@ -12,7 +12,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (desktopDisplayWidth, minimalDropShadow, sectionSpacing)
-import Page.UI.Components exposing (sourceIconChooser)
+import Page.UI.Components exposing (sourceIconChooser, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
@@ -23,7 +23,7 @@ import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
-import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
@@ -158,21 +158,58 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                     allExternals
                 )
                 (Dict.size allExternals > 0)
-            , viewMaybe (viewContentsSection language body.creator) body.contents
+            , viewMaybe
+                (viewContentsSection
+                    { creator = body.creator
+                    , language = language
+                    , relationshipFormatter = viewRelationshipBody
+                    , summaryFormatter = viewSummaryField
+                    }
+                )
+                body.contents
             , viewMaybe
                 (viewIncipitsSection
                     { language = language
                     , infoToggleMsg = incipitInfoToggleMsg
                     , expandedIncipits = expandedIncipits
+                    , summaryFormatter = viewSummaryField
                     }
                 )
                 body.incipits
-            , viewMaybe (viewMaterialGroupsSection language) body.materialGroups
-            , viewMaybe (viewRelationshipsSection language) body.relationships
+            , viewMaybe
+                (viewMaterialGroupsSection
+                    { language = language
+                    , paragraphFormatter = viewParagraphField
+                    , relationshipFormatter = viewRelationshipBody
+                    , summaryFormatter = viewSummaryField
+                    }
+                )
+                body.materialGroups
+            , viewMaybe
+                (viewRelationshipsSection
+                    { language = language
+                    , relationshipFormatter = viewRelationshipBody
+                    }
+                )
+                body.relationships
             , viewMaybe (viewSourceWorksSection language) body.works
-            , viewMaybe (viewReferencesNotesSection language) body.referencesNotes
+            , viewMaybe
+                (viewReferencesNotesSection
+                    { language = language
+                    , paragraphFormatter = viewParagraphField
+                    }
+                )
+                body.referencesNotes
             , viewMaybe (viewExternalResourcesSection language) body.externalResources
-            , viewMaybe (viewExemplarsSection language) body.exemplars
+            , viewMaybe
+                (viewExemplarsSection
+                    { language = language
+                    , paragraphFormatter = viewParagraphField
+                    , relationshipFormatter = viewRelationshipBody
+                    , summaryFormatter = viewSummaryField
+                    }
+                )
+                body.exemplars
             , viewMaybe (viewDigitalObjectsSection language) body.digitalObjects
             ]
         ]

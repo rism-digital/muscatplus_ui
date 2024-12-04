@@ -1,25 +1,48 @@
 module Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 
 import Element exposing (Element, alignTop, column, fill, height, paddingXY, row, spacing, width)
-import Language exposing (Language)
-import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody)
+import Language exposing (Language, LanguageMap)
+import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (MaterialGroupBody, MaterialGroupsSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
-import Page.UI.Components exposing (h3s, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (h3s)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
-import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody)
+import Page.UI.Record.Relationship exposing (gatherRelationshipItems)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
-viewMaterialGroupsSection : Language -> MaterialGroupsSectionBody -> Element msg
-viewMaterialGroupsSection language mgSection =
-    List.map (viewMaterialGroup language) mgSection.items
+viewMaterialGroupsSection :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> MaterialGroupsSectionBody
+    -> Element msg
+viewMaterialGroupsSection { language, paragraphFormatter, relationshipFormatter, summaryFormatter } mgSection =
+    List.map
+        (viewMaterialGroup
+            { language = language
+            , paragraphFormatter = paragraphFormatter
+            , relationshipFormatter = relationshipFormatter
+            , summaryFormatter = summaryFormatter
+            }
+        )
+        mgSection.items
         |> sectionTemplate language mgSection
 
 
-viewMaterialGroup : Language -> MaterialGroupBody -> Element msg
-viewMaterialGroup language mg =
+viewMaterialGroup :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> MaterialGroupBody
+    -> Element msg
+viewMaterialGroup { language, paragraphFormatter, relationshipFormatter, summaryFormatter } mg =
     row
         (width fill :: sectionBorderStyles)
         [ column
@@ -43,9 +66,15 @@ viewMaterialGroup language mg =
                     , spacing lineSpacing
                     , paddingXY lineSpacing 10
                     ]
-                    [ viewMaybe (viewSummaryField language) mg.summary
-                    , viewMaybe (viewParagraphField language) mg.notes
-                    , viewMaybe (viewMaterialGroupRelationships language) mg.relationships
+                    [ viewMaybe (summaryFormatter language) mg.summary
+                    , viewMaybe (paragraphFormatter language) mg.notes
+                    , viewMaybe
+                        (viewMaterialGroupRelationships
+                            { language = language
+                            , relationshipFormatter = relationshipFormatter
+                            }
+                        )
+                        mg.relationships
                     , viewMaybe (viewExternalResourcesSection language) mg.externalResources
                     ]
                 ]
@@ -53,8 +82,13 @@ viewMaterialGroup language mg =
         ]
 
 
-viewMaterialGroupRelationships : Language -> RelationshipsSectionBody -> Element msg
-viewMaterialGroupRelationships language relSection =
+viewMaterialGroupRelationships :
+    { language : Language
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    }
+    -> RelationshipsSectionBody
+    -> Element msg
+viewMaterialGroupRelationships { language, relationshipFormatter } relSection =
     row
         [ width fill
         , height fill
@@ -67,6 +101,6 @@ viewMaterialGroupRelationships language relSection =
             , spacing lineSpacing
             ]
             (gatherRelationshipItems relSection.items
-                |> List.map (\( label, items ) -> viewRelationshipBody language label items)
+                |> List.map (\( label, items ) -> relationshipFormatter language label items)
             )
         ]

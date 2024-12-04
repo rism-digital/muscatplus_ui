@@ -13,7 +13,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalProject, ExternalRecord(..), ExternalRecordBody, externalProjectToString)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (iiifLogo)
@@ -271,25 +271,17 @@ viewDigitizedCopiesCalloutSection :
 viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalResourceLinks =
     row
         [ Border.color colourScheme.puce
-        , Border.width
-            (if expanded then
-                1
-
-             else
-                0
-            )
         , width fill
         ]
         [ column
             [ width fill
             , height fill
-            , spacing lineSpacing
             ]
             [ row
                 [ width fill
-                , spacing 10
+                , spacing 8
                 , Background.color colourScheme.puce
-                , padding 10
+                , padding 8
                 , Events.onClick expandMsg
                 , pointer
                 ]
@@ -297,7 +289,7 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalReso
                     []
                     (text "")
                 , el
-                    [ headingLG
+                    [ headingMD
                     , Font.semiBold
                     , Font.color colourScheme.white
                     , alignTop
@@ -323,7 +315,9 @@ viewCalloutBody : Language -> Dict String (List ExternalResourceBody) -> Element
 viewCalloutBody language externalResourceLinks =
     row
         [ width fill
-        , padding 10
+        , padding 8
+        , Border.width 1
+        , Border.color colourScheme.puce
         ]
         [ column
             [ width fill
