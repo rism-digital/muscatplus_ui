@@ -1,14 +1,14 @@
-module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewMobileRelationshipBody, viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
+module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewMobileRelationshipBody, viewRelationshipBody, viewRelationshipsSection)
 
 import Dict
 import Dict.Extra as DE
-import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedTo(..), RelatedToBody, RelationshipBody, RelationshipsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, valueFieldColumnAttributes)
-import Page.UI.Components exposing (renderLabel)
+import Page.UI.Attributes exposing (lineSpacing, linkColour)
+import Page.UI.Components exposing (viewPreRenderedLabelValueField, viewPreRenderedMobileLabelValueField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -46,46 +46,21 @@ viewRelationshipsSection { language, relationshipFormatter } relSection =
 
 viewRelationshipBody : Language -> LanguageMap -> List RelationshipBody -> Element msg
 viewRelationshipBody language label relationships =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column labelFieldColumnAttributes
-            [ renderLabel language label ]
-        , List.map (viewRelationshipValue language) relationships
-            |> column valueFieldColumnAttributes
+    viewPreRenderedLabelValueField [ spacing lineSpacing ]
+        language
+        [ { label = label
+          , value = List.map (viewRelationshipValue language) relationships
+          }
         ]
 
 
 viewMobileRelationshipBody : Language -> LanguageMap -> List RelationshipBody -> Element msg
 viewMobileRelationshipBody language label relationships =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , spacing 4
-            ]
-            (row
-                [ width fill, paddingEach { bottom = 4, left = 0, right = 0, top = 0 } ]
-                [ renderLabel language label ]
-                :: List.map
-                    (\r ->
-                        row
-                            [ paddingEach
-                                { bottom = 4
-                                , left = 10
-                                , right = 0
-                                , top = 0
-                                }
-                            ]
-                            [ viewRelationshipValue language r ]
-                    )
-                    relationships
-            )
+    viewPreRenderedMobileLabelValueField [ spacing 4 ]
+        language
+        [ { label = label
+          , value = List.map (viewRelationshipValue language) relationships
+          }
         ]
 
 

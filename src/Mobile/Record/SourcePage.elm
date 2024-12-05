@@ -9,7 +9,7 @@ import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (sectionSpacing)
-import Page.UI.Components exposing (sourceIconChooser, viewMobileParagraphField, viewMobileSummaryField)
+import Page.UI.Components exposing (sourceIconChooser, viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
@@ -95,6 +95,7 @@ viewFullMobileSourcePage session model body =
                         (viewContentsSection
                             { creator = body.creator
                             , language = session.language
+                            , preRenderedFormatter = viewPreRenderedMobileSummaryField
                             , relationshipFormatter = viewMobileRelationshipBody
                             , summaryFormatter = viewMobileSummaryField
                             }
@@ -125,11 +126,18 @@ viewFullMobileSourcePage session model body =
                             }
                         )
                         body.relationships
-                    , viewMaybe (viewSourceWorksSection session.language) body.works
+                    , viewMaybe
+                        (viewSourceWorksSection
+                            { language = session.language
+                            , preRenderedFormatter = viewPreRenderedMobileSummaryField
+                            }
+                        )
+                        body.works
                     , viewMaybe
                         (viewReferencesNotesSection
                             { language = session.language
                             , paragraphFormatter = viewMobileParagraphField
+                            , preRenderedFormatter = viewPreRenderedMobileSummaryField
                             }
                         )
                         body.referencesNotes
@@ -138,6 +146,7 @@ viewFullMobileSourcePage session model body =
                         (viewExemplarsSection
                             { language = session.language
                             , paragraphFormatter = viewMobileParagraphField
+                            , preRenderedFormatter = viewPreRenderedMobileSummaryField
                             , relationshipFormatter = viewMobileRelationshipBody
                             , summaryFormatter = viewMobileSummaryField
                             }

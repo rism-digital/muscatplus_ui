@@ -16,7 +16,6 @@ module Page.UI.Components exposing
     , makeFlagIcon
     , mapViewer
     , pageBodyOrEmpty
-    , renderLabel
     , resourceLink
     , sourceIconChooser
     , sourceIconView
@@ -27,6 +26,10 @@ module Page.UI.Components exposing
     , viewMobileSummaryField
     , viewMobileWindowTitleBar
     , viewParagraphField
+    , viewPreRenderedLabelValueField
+    , viewPreRenderedMobileLabelValueField
+    , viewPreRenderedMobileSummaryField
+    , viewPreRenderedSummaryField
     , viewSummaryField
     , viewWindowTitleBar
     )
@@ -419,6 +422,34 @@ viewLabelValueField :
     -> List LabelValue
     -> Element msg
 viewLabelValueField wrapperStyles language field =
+    viewLabelValueFieldImpl wrapperStyles
+        language
+        field
+        (\value ->
+            extractTextFromLanguageMap language value
+                |> styledParagraphs
+        )
+
+
+viewPreRenderedLabelValueField :
+    List (Attribute msg)
+    -> Language
+    -> List { label : LanguageMap, value : List (Element msg) }
+    -> Element msg
+viewPreRenderedLabelValueField wrapperStyles language field =
+    viewLabelValueFieldImpl wrapperStyles
+        language
+        field
+        identity
+
+
+viewLabelValueFieldImpl :
+    List (Attribute msg)
+    -> Language
+    -> List { label : LanguageMap, value : a }
+    -> (a -> List (Element msg))
+    -> Element msg
+viewLabelValueFieldImpl wrapperStyles language field fieldRenderer =
     wrappedRow
         [ width fill
         , height fill
@@ -442,9 +473,7 @@ viewLabelValueField wrapperStyles language field =
                         [ column labelFieldColumnAttributes
                             [ renderLabel language label ]
                         , column valueFieldColumnAttributes
-                            (extractTextFromLanguageMap language value
-                                |> styledParagraphs
-                            )
+                            (fieldRenderer value)
                         ]
                 )
                 field
@@ -458,6 +487,37 @@ viewMobileLabelValueField :
     -> List LabelValue
     -> Element msg
 viewMobileLabelValueField wrapperStyles language field =
+    viewMobileLabelValueFieldImpl wrapperStyles
+        language
+        field
+        (\value ->
+            [ paragraph []
+                (extractTextFromLanguageMap language value
+                    |> styledParagraphs
+                )
+            ]
+        )
+
+
+viewPreRenderedMobileLabelValueField :
+    List (Attribute msg)
+    -> Language
+    -> List { label : LanguageMap, value : List (Element msg) }
+    -> Element msg
+viewPreRenderedMobileLabelValueField wrapperStyles language field =
+    viewMobileLabelValueFieldImpl wrapperStyles
+        language
+        field
+        identity
+
+
+viewMobileLabelValueFieldImpl :
+    List (Attribute msg)
+    -> Language
+    -> List { label : LanguageMap, value : a }
+    -> (a -> List (Element msg))
+    -> Element msg
+viewMobileLabelValueFieldImpl wrapperStyles language field fieldRenderer =
     wrappedRow
         [ width fill
         , height fill
@@ -482,10 +542,11 @@ viewMobileLabelValueField wrapperStyles language field =
                         [ width fill
                         , paddingEach { bottom = 8, left = 10, right = 0, top = 0 }
                         ]
-                        [ paragraph []
-                            (extractTextFromLanguageMap language value
-                                |> styledParagraphs
-                            )
+                        [ column
+                            [ width fill
+                            , spacing lineSpacing
+                            ]
+                            (fieldRenderer value)
                         ]
                     ]
                 )
@@ -518,9 +579,25 @@ viewSummaryField language fieldValues =
         fieldValues
 
 
+viewPreRenderedSummaryField : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+viewPreRenderedSummaryField language fieldValues =
+    viewPreRenderedLabelValueField
+        [ spacing lineSpacing ]
+        language
+        fieldValues
+
+
 viewMobileSummaryField : Language -> List LabelValue -> Element msg
 viewMobileSummaryField language fieldValues =
     viewMobileLabelValueField
+        [ spacing 4 ]
+        language
+        fieldValues
+
+
+viewPreRenderedMobileSummaryField : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+viewPreRenderedMobileSummaryField language fieldValues =
+    viewPreRenderedMobileLabelValueField
         [ spacing 4 ]
         language
         fieldValues

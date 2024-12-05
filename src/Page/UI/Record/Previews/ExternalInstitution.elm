@@ -12,6 +12,7 @@ import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplateNoToc)
 import Page.UI.Record.Previews.ExternalShared exposing (viewExternalRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -37,7 +38,13 @@ viewExternalInstitutionPreview language project body =
                     , spacing sectionSpacing
                     ]
                     [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
-                    , viewMaybe (viewExternalRelationshipsSection language) body.relationships
+                    , viewMaybe
+                        (viewExternalRelationshipsSection
+                            { language = language
+                            , relationshipFormatter = viewRelationshipBody
+                            }
+                        )
+                        body.relationships
                     ]
                 ]
 

@@ -1,20 +1,25 @@
 module Page.UI.Record.WorksSection exposing (viewPersonWorksSection, viewSourceWorksSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, padding, paddingXY, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, padding, paddingXY, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Page.RecordTypes.Works exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (externalLinkTemplate, h3s, renderLabel)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Components exposing (externalLinkTemplate, h3s, viewPreRenderedSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewSourceWorksSection : Language -> SourceWorksSectionBody -> Element msg
-viewSourceWorksSection language worksSection =
+viewSourceWorksSection :
+    { language : Language
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    }
+    -> SourceWorksSectionBody
+    -> Element msg
+viewSourceWorksSection { language, preRenderedFormatter } worksSection =
     sectionTemplate language
         worksSection
         [ row
@@ -31,24 +36,21 @@ viewSourceWorksSection language worksSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewSourceWorkReferenceSection language) worksSection.workReference
+                [ viewMaybe (viewSourceWorkReferenceSection { language = language, preRenderedFormatter = preRenderedFormatter }) worksSection.workReference
                 ]
             ]
         ]
 
 
-viewSourceWorkReferenceSection : Language -> WorkReference -> Element msg
-viewSourceWorkReferenceSection language workReference =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            labelFieldColumnAttributes
-            [ renderLabel language workReference.label ]
-        , column
-            valueFieldColumnAttributes
+viewSourceWorkReferenceSection :
+    { language : Language
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    }
+    -> WorkReference
+    -> Element msg
+viewSourceWorkReferenceSection { language } workReference =
+    let
+        preRendered =
             [ text workReference.value
             , link
                 [ linkColour ]
@@ -68,7 +70,8 @@ viewSourceWorkReferenceSection language workReference =
                 , externalLinkTemplate workReference.authorityUrl
                 ]
             ]
-        ]
+    in
+    viewPreRenderedSummaryField language [ { label = workReference.label, value = preRendered } ]
 
 
 viewPersonWorksSection : Language -> PersonWorksSectionBody -> Element msg

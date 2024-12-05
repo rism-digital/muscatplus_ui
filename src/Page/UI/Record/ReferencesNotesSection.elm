@@ -1,13 +1,12 @@
 module Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 
-import Element exposing (Element, alignTop, column, el, fill, height, link, row, spacing, text, width, wrappedRow)
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Element exposing (Element, alignTop, column, el, fill, height, link, row, spacing, text, width)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (renderLabel)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
@@ -22,19 +21,24 @@ viewLiturgicalFestival language festival =
         ]
 
 
-viewLiturgicalFestivalsSection : Language -> LiturgicalFestivalsSectionBody -> Element msg
-viewLiturgicalFestivalsSection language body =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            labelFieldColumnAttributes
-            [ renderLabel language body.label ]
-        , column
-            valueFieldColumnAttributes
-            (List.map (viewLiturgicalFestival language) body.items)
+viewLiturgicalFestivalsSection :
+    { language : Language
+    , preRenderedFormatter :
+        Language
+        ->
+            List
+                { label : LanguageMap
+                , value : List (Element msg)
+                }
+        -> Element msg
+    }
+    -> LiturgicalFestivalsSectionBody
+    -> Element msg
+viewLiturgicalFestivalsSection { language, preRenderedFormatter } body =
+    preRenderedFormatter language
+        [ { label = body.label
+          , value = List.map (viewLiturgicalFestival language) body.items
+          }
         ]
 
 
@@ -55,29 +59,42 @@ viewPerformanceLocation language location =
     viewMaybe (viewLocation language) location.relatedTo
 
 
-viewPerformanceLocationsSection : Language -> PerformanceLocationsSectionBody -> Element msg
-viewPerformanceLocationsSection language body =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            labelFieldColumnAttributes
-            [ renderLabel language body.label ]
-        , column
-            valueFieldColumnAttributes
-            (List.map (viewPerformanceLocation language) body.items)
+viewPerformanceLocationsSection :
+    { language : Language
+    , preRenderedFormatter :
+        Language
+        ->
+            List
+                { label : LanguageMap
+                , value : List (Element msg)
+                }
+        -> Element msg
+    }
+    -> PerformanceLocationsSectionBody
+    -> Element msg
+viewPerformanceLocationsSection { language, preRenderedFormatter } body =
+    preRenderedFormatter language
+        [ { label = body.label
+          , value = List.map (viewPerformanceLocation language) body.items
+          }
         ]
 
 
 viewReferencesNotesSection :
     { language : Language
     , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , preRenderedFormatter :
+        Language
+        ->
+            List
+                { label : LanguageMap
+                , value : List (Element msg)
+                }
+        -> Element msg
     }
     -> ReferencesNotesSectionBody
     -> Element msg
-viewReferencesNotesSection { language, paragraphFormatter } refNotesSection =
+viewReferencesNotesSection { language, paragraphFormatter, preRenderedFormatter } refNotesSection =
     sectionTemplate language
         refNotesSection
         [ row
@@ -95,8 +112,20 @@ viewReferencesNotesSection { language, paragraphFormatter } refNotesSection =
                 , spacing lineSpacing
                 ]
                 [ viewMaybe (paragraphFormatter language) refNotesSection.notes
-                , viewMaybe (viewPerformanceLocationsSection language) refNotesSection.performanceLocations
-                , viewMaybe (viewLiturgicalFestivalsSection language) refNotesSection.liturgicalFestivals
+                , viewMaybe
+                    (viewPerformanceLocationsSection
+                        { language = language
+                        , preRenderedFormatter = preRenderedFormatter
+                        }
+                    )
+                    refNotesSection.performanceLocations
+                , viewMaybe
+                    (viewLiturgicalFestivalsSection
+                        { language = language
+                        , preRenderedFormatter = preRenderedFormatter
+                        }
+                    )
+                    refNotesSection.liturgicalFestivals
                 ]
             ]
         ]

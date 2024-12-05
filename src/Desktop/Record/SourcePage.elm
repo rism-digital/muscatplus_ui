@@ -12,7 +12,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (desktopDisplayWidth, minimalDropShadow, sectionSpacing)
-import Page.UI.Components exposing (sourceIconChooser, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (sourceIconChooser, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
@@ -162,6 +162,7 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                 (viewContentsSection
                     { creator = body.creator
                     , language = language
+                    , preRenderedFormatter = viewPreRenderedSummaryField
                     , relationshipFormatter = viewRelationshipBody
                     , summaryFormatter = viewSummaryField
                     }
@@ -192,11 +193,18 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                     }
                 )
                 body.relationships
-            , viewMaybe (viewSourceWorksSection language) body.works
+            , viewMaybe
+                (viewSourceWorksSection
+                    { language = language
+                    , preRenderedFormatter = viewPreRenderedSummaryField
+                    }
+                )
+                body.works
             , viewMaybe
                 (viewReferencesNotesSection
                     { language = language
                     , paragraphFormatter = viewParagraphField
+                    , preRenderedFormatter = viewPreRenderedSummaryField
                     }
                 )
                 body.referencesNotes
@@ -205,6 +213,7 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                 (viewExemplarsSection
                     { language = language
                     , paragraphFormatter = viewParagraphField
+                    , preRenderedFormatter = viewPreRenderedSummaryField
                     , relationshipFormatter = viewRelationshipBody
                     , summaryFormatter = viewSummaryField
                     }

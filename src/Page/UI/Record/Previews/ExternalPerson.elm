@@ -11,6 +11,7 @@ import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplateNoToc)
 import Page.UI.Record.Previews.ExternalShared exposing (viewExternalRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -36,7 +37,13 @@ viewExternalPersonPreview language project body =
                     , spacing sectionSpacing
                     ]
                     [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
-                    , viewMaybe (viewExternalRelationshipsSection language) body.relationships
+                    , viewMaybe
+                        (viewExternalRelationshipsSection
+                            { language = language
+                            , relationshipFormatter = viewRelationshipBody
+                            }
+                        )
+                        body.relationships
                     ]
                 ]
 

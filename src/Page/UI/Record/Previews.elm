@@ -10,7 +10,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
 import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
-import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowTitleBar)
+import Page.UI.Components exposing (viewMobileWindowTitleBar, viewPreRenderedSummaryField, viewWindowTitleBar)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Events exposing (onComplete)
 import Page.UI.Images exposing (spinnerSvg)
@@ -186,7 +186,12 @@ viewPreviewRouter cfg previewData =
                 Just (ExternalData body) ->
                     case body.record of
                         ExternalSource sourceBody ->
-                            viewExternalSourcePreview cfg.language body.project sourceBody
+                            viewExternalSourcePreview
+                                { language = cfg.language
+                                , preRenderedFormatter = viewPreRenderedSummaryField
+                                }
+                                body.project
+                                sourceBody
 
                         ExternalPerson personBody ->
                             viewExternalPersonPreview cfg.language body.project personBody

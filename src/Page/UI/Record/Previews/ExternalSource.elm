@@ -1,14 +1,14 @@
 module Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, inFront, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, inFront, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width, wrappedRow)
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.CantusLogo exposing (cantusLogo)
-import Page.UI.Components exposing (externalLinkTemplate, h2, renderLabel, resourceLink, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (externalLinkTemplate, h2, resourceLink, viewParagraphField, viewSummaryField)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (bookSvg, institutionSvg)
@@ -18,8 +18,21 @@ import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 
-viewExternalSourcePreview : Language -> ExternalProject -> ExternalSourceRecord -> Element msg
-viewExternalSourcePreview language project body =
+viewExternalSourcePreview :
+    { language : Language
+    , preRenderedFormatter :
+        Language
+        ->
+            List
+                { label : LanguageMap
+                , value : List (Element msg)
+                }
+        -> Element msg
+    }
+    -> ExternalProject
+    -> ExternalSourceRecord
+    -> Element msg
+viewExternalSourcePreview { language, preRenderedFormatter } project body =
     let
         recordIcon =
             el
@@ -41,7 +54,13 @@ viewExternalSourcePreview language project body =
                     ]
                     [ viewMaybe (viewExternalSourceContentsSection language) body.contents
                     , viewMaybe (viewExternalSourceReferencesNotesSection language) body.referencesNotes
-                    , viewMaybe (viewExternalSourceExemplarsSection language) body.exemplars
+                    , viewMaybe
+                        (viewExternalSourceExemplarsSection
+                            { language = language
+                            , preRenderedFormatter = preRenderedFormatter
+                            }
+                        )
+                        body.exemplars
                     ]
                 ]
 
@@ -101,14 +120,44 @@ viewExternalSourcePreview language project body =
         ]
 
 
-viewExternalSourceExemplarsSection : Language -> ExternalSourceExemplarsSection -> Element msg
-viewExternalSourceExemplarsSection language body =
-    List.map (viewExternalSourceExemplar language) body.items
+viewExternalSourceExemplarsSection :
+    { language : Language
+    , preRenderedFormatter :
+        Language
+        ->
+            List
+                { label : LanguageMap
+                , value : List (Element msg)
+                }
+        -> Element msg
+    }
+    -> ExternalSourceExemplarsSection
+    -> Element msg
+viewExternalSourceExemplarsSection { language, preRenderedFormatter } body =
+    List.map
+        (viewExternalSourceExemplar
+            { language = language
+            , preRenderedFormatter = preRenderedFormatter
+            }
+        )
+        body.items
         |> sectionTemplate language body
 
 
-viewExternalSourceExemplar : Language -> ExternalSourceExemplar -> Element msg
-viewExternalSourceExemplar language body =
+viewExternalSourceExemplar :
+    { language : Language
+    , preRenderedFormatter :
+        Language
+        ->
+            List
+                { label : LanguageMap
+                , value : List (Element msg)
+                }
+        -> Element msg
+    }
+    -> ExternalSourceExemplar
+    -> Element msg
+viewExternalSourceExemplar { language, preRenderedFormatter } body =
     row
         (width fill
             :: height fill
@@ -134,7 +183,13 @@ viewExternalSourceExemplar language body =
                     , spacing lineSpacing
                     ]
                     [ viewMaybe (viewSummaryField language) body.summary
-                    , viewMaybe (viewExternalSourceExternalResourcesSection language) body.externalResources
+                    , viewMaybe
+                        (viewExternalSourceExternalResourcesSection
+                            { language = language
+                            , preRenderedFormatter = preRenderedFormatter
+                            }
+                        )
+                        body.externalResources
                     ]
                 ]
             ]
@@ -227,23 +282,43 @@ viewExternalNotesSection language notes =
         ]
 
 
-viewExternalSourceExternalResourcesSection : Language -> ExternalSourceExternalResourcesSection -> Element msg
-viewExternalSourceExternalResourcesSection language linkSection =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
+viewExternalSourceExternalResourcesSection :
+    { language : Language
+    , preRenderedFormatter :
+        Language
+        ->
+            List
+                { label : LanguageMap
+                , value : List (Element msg)
+                }
+        -> Element msg
+    }
+    -> ExternalSourceExternalResourcesSection
+    -> Element msg
+viewExternalSourceExternalResourcesSection { language, preRenderedFormatter } body =
+    preRenderedFormatter language
+        [ { label = body.label
+          , value = List.map (viewExternalResource language) body.items
+          }
         ]
-        [ column
-            labelFieldColumnAttributes
-            [ renderLabel language linkSection.label ]
-        , column
-            valueFieldColumnAttributes
-            [ textColumn
-                [ spacing lineSpacing ]
-                (List.map (viewExternalResource language) linkSection.items)
-            ]
-        ]
+
+
+
+--wrappedRow
+--[ width fill
+--, height fill
+--, alignTop
+--]
+--[ column
+--    labelFieldColumnAttributes
+--    [ renderLabel language linkSection.label ]
+--, column
+--    valueFieldColumnAttributes
+--    [ textColumn
+--        [ spacing lineSpacing ]
+--        (List.map (viewExternalResource language) linkSection.items)
+--    ]
+--]
 
 
 viewExternalResource : Language -> ExternalSourceExternalResource -> Element msg

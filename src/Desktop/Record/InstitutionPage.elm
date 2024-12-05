@@ -1,18 +1,18 @@
 module Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 
 import Desktop.Record.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
-import Page.UI.Attributes exposing (desktopDisplayWidth, labelFieldColumnAttributes, lineSpacing, minimalDropShadow, sectionBorderStyles, sectionSpacing, valueFieldColumnAttributes)
-import Page.UI.Components exposing (mapViewer, pageBodyOrEmpty, renderLabel)
+import Page.UI.Attributes exposing (desktopDisplayWidth, lineSpacing, minimalDropShadow, sectionBorderStyles, sectionSpacing)
+import Page.UI.Components exposing (mapViewer, pageBodyOrEmpty, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
@@ -178,7 +178,6 @@ mapSection language ( windowWidth, windowHeight ) coords =
         coordsValue =
             List.reverse strCoords
                 |> String.join ", "
-                |> text
 
         coordsQ =
             List.map2 (\dim val -> QB.string dim val) [ "lon", "lat" ] strCoords
@@ -204,21 +203,7 @@ mapSection language ( windowWidth, windowHeight ) coords =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ wrappedRow
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    ]
-                    [ column
-                        labelFieldColumnAttributes
-                        [ renderLabel language coords.coordinatesLabel ]
-                    , column
-                        valueFieldColumnAttributes
-                        [ textColumn
-                            [ spacing lineSpacing ]
-                            [ coordsValue ]
-                        ]
-                    ]
+                [ viewSummaryField language [ { label = coords.coordinatesLabel, value = toLanguageMap coordsValue } ]
                 , row
                     [ width fill ]
                     [ mapViewer ( min windowWidth 900, min windowHeight 400 ) mapsUrl ]

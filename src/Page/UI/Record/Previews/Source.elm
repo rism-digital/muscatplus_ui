@@ -6,7 +6,7 @@ import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (sourceIconView, viewMobileParagraphField, viewMobileSummaryField, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (sourceIconView, viewMobileParagraphField, viewMobileSummaryField, viewParagraphField, viewPreRenderedMobileSummaryField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
@@ -94,6 +94,7 @@ viewSourcePreview cfg body =
                         (viewContentsSection
                             { creator = body.creator
                             , language = cfg.language
+                            , preRenderedFormatter = viewPreRenderedSummaryField
                             , relationshipFormatter = viewRelationshipBody
                             , summaryFormatter = viewSummaryField
                             }
@@ -124,11 +125,18 @@ viewSourcePreview cfg body =
                             }
                         )
                         body.relationships
-                    , viewMaybe (viewSourceWorksSection cfg.language) body.works
+                    , viewMaybe
+                        (viewSourceWorksSection
+                            { language = cfg.language
+                            , preRenderedFormatter = viewPreRenderedSummaryField
+                            }
+                        )
+                        body.works
                     , viewMaybe
                         (viewReferencesNotesSection
                             { language = cfg.language
                             , paragraphFormatter = viewParagraphField
+                            , preRenderedFormatter = viewPreRenderedSummaryField
                             }
                         )
                         body.referencesNotes
@@ -146,6 +154,7 @@ viewSourcePreview cfg body =
                         (viewExemplarsSection
                             { language = cfg.language
                             , paragraphFormatter = viewParagraphField
+                            , preRenderedFormatter = viewPreRenderedSummaryField
                             , relationshipFormatter = viewRelationshipBody
                             , summaryFormatter = viewSummaryField
                             }
@@ -202,6 +211,7 @@ viewMobileSourcePreview cfg body =
                         (viewContentsSection
                             { creator = body.creator
                             , language = cfg.language
+                            , preRenderedFormatter = viewPreRenderedMobileSummaryField
                             , relationshipFormatter = viewMobileRelationshipBody
                             , summaryFormatter = viewMobileSummaryField
                             }
@@ -236,6 +246,7 @@ viewMobileSourcePreview cfg body =
                         (viewReferencesNotesSection
                             { language = cfg.language
                             , paragraphFormatter = viewMobileParagraphField
+                            , preRenderedFormatter = viewPreRenderedMobileSummaryField
                             }
                         )
                         body.referencesNotes
@@ -253,6 +264,7 @@ viewMobileSourcePreview cfg body =
                         (viewExemplarsSection
                             { language = cfg.language
                             , paragraphFormatter = viewMobileParagraphField
+                            , preRenderedFormatter = viewPreRenderedMobileSummaryField
                             , relationshipFormatter = viewMobileRelationshipBody
                             , summaryFormatter = viewMobileSummaryField
                             }

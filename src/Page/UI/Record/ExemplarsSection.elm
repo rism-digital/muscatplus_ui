@@ -1,17 +1,17 @@
 module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 
-import Element exposing (Element, above, alignTop, centerY, column, el, fill, height, link, paragraph, px, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Element, above, alignTop, column, el, fill, height, link, paragraph, px, row, spacing, spacingXY, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
-import Page.RecordTypes.Relationship exposing (RelationshipBody)
+import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, linkColour, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (externalLinkTemplate, h3s, renderLabel)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Components exposing (externalLinkTemplate, h3s)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (institutionSvg, sourcesSvg)
+import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -22,16 +22,18 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 viewExemplarsSection :
     { language : Language
     , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> ExemplarsSectionBody
     -> Element msg
-viewExemplarsSection { language, paragraphFormatter, relationshipFormatter, summaryFormatter } exemplarSection =
+viewExemplarsSection { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplarSection =
     List.map
         (viewExemplar
             { language = language
             , paragraphFormatter = paragraphFormatter
+            , preRenderedFormatter = preRenderedFormatter
             , relationshipFormatter = relationshipFormatter
             , summaryFormatter = summaryFormatter
             }
@@ -43,12 +45,13 @@ viewExemplarsSection { language, paragraphFormatter, relationshipFormatter, summ
 viewExemplar :
     { language : Language
     , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> ExemplarBody
     -> Element msg
-viewExemplar { language, paragraphFormatter, relationshipFormatter, summaryFormatter } exemplar =
+viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplar =
     row
         (width fill
             :: height fill
@@ -76,51 +79,53 @@ viewExemplar { language, paragraphFormatter, relationshipFormatter, summaryForma
                     ]
                     [ viewMaybe (summaryFormatter language) exemplar.summary
                     , viewMaybe (paragraphFormatter language) exemplar.notes
-                    , viewMaybe (viewRelationshipsSection { language = language, relationshipFormatter = relationshipFormatter }) exemplar.relationships
-                    , viewMaybe (viewBoundWithSection language) exemplar.boundWith
-                    , viewMaybe (viewExemplarExternalResourcesSection language) exemplar.externalResources
+                    , viewMaybe
+                        (viewRelationshipsSection
+                            { language = language
+                            , relationshipFormatter = relationshipFormatter
+                            }
+                        )
+                        exemplar.relationships
+                    , viewMaybe
+                        (viewBoundWithSection
+                            { language = language
+                            , relationshipFormatter = relationshipFormatter
+                            }
+                        )
+                        exemplar.boundWith
+                    , viewMaybe
+                        (viewExemplarExternalResourcesSection
+                            { language = language
+                            , preRenderedFormatter = preRenderedFormatter
+                            }
+                        )
+                        exemplar.externalResources
                     ]
                 ]
             ]
         ]
 
 
-viewBoundWithSection : Language -> BoundWithSectionBody -> Element msg
-viewBoundWithSection language boundWithSection =
-    let
-        relationshipTooltip =
-            el
-                tooltipStyle
-                (text (extractLabelFromLanguageMap language localTranslations.source))
-    in
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            labelFieldColumnAttributes
-            [ renderLabel language boundWithSection.sectionLabel ]
-        , column
-            valueFieldColumnAttributes
-            [ row
-                [ width fill
-                , spacing 5
-                ]
-                [ el
-                    [ width (px 16)
-                    , height (px 16)
-                    , centerY
-                    , relationshipTooltip |> tooltip above
-                    ]
-                    (sourcesSvg colourScheme.midGrey)
-                , link
-                    [ linkColour ]
-                    { label = text (extractLabelFromLanguageMap language (.label boundWithSection.source))
-                    , url = .id boundWithSection.source
+viewBoundWithSection :
+    { language : Language
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    }
+    -> BoundWithSectionBody
+    -> Element msg
+viewBoundWithSection { language, relationshipFormatter } boundWithSection =
+    relationshipFormatter language
+        boundWithSection.sectionLabel
+        [ { role = Nothing
+          , qualifier = Nothing
+          , relatedTo =
+                Just
+                    { id = .id boundWithSection.source
+                    , label = .label boundWithSection.source
+                    , type_ = SourceRelationship
                     }
-                ]
-            ]
+          , name = Nothing
+          , note = Nothing
+          }
         ]
 
 
@@ -158,19 +163,27 @@ viewHeldBy language body =
         ]
 
 
-viewExemplarExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
-viewExemplarExternalResourcesSection language extSection =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            labelFieldColumnAttributes
-            [ renderLabel language extSection.label ]
-        , column
-            valueFieldColumnAttributes
-            [ viewMaybe (viewExternalResources language) extSection.items
-            , viewMaybe (viewExternalRecords language) extSection.externalRecords
-            ]
+viewExemplarExternalResourcesSection :
+    { language : Language
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    }
+    -> ExternalResourcesSectionBody
+    -> Element msg
+viewExemplarExternalResourcesSection { language, preRenderedFormatter } extSection =
+    let
+        externalResourcesList =
+            Maybe.map (\i -> [ viewExternalResources language i ]) extSection.items
+                |> Maybe.withDefault []
+
+        externalRecordsList =
+            Maybe.map (\i -> [ viewExternalRecords language i ]) extSection.externalRecords
+                |> Maybe.withDefault []
+
+        valuesList =
+            List.concat [ externalResourcesList, externalRecordsList ]
+    in
+    preRenderedFormatter language
+        [ { label = extSection.label
+          , value = valuesList
+          }
         ]

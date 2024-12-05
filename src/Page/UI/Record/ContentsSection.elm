@@ -1,12 +1,11 @@
 module Page.UI.Record.ContentsSection exposing (viewContentsSection)
 
-import Element exposing (Element, alignTop, column, el, fill, height, none, row, spacing, text, textColumn, width, wrappedRow)
+import Element exposing (Element, alignTop, column, fill, height, none, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, Subject, SubjectsSectionBody)
-import Page.UI.Attributes exposing (labelFieldColumnAttributes, lineSpacing, sectionBorderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (renderLabel)
+import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SubjectsSectionBody)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -37,12 +36,13 @@ viewCreator { language, relationshipFormatter } creator =
 viewContentsSection :
     { creator : Maybe RelationshipBody
     , language : Language
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> ContentsSectionBody
     -> Element msg
-viewContentsSection { creator, language, relationshipFormatter, summaryFormatter } contents =
+viewContentsSection { creator, language, preRenderedFormatter, relationshipFormatter, summaryFormatter } contents =
     sectionTemplate
         language
         contents
@@ -67,38 +67,22 @@ viewContentsSection { creator, language, relationshipFormatter, summaryFormatter
                     creator
                 , Maybe.withDefault [] contents.summary
                     |> summaryFormatter language
-                , viewMaybe (viewSubjectsSection language) contents.subjects
+                , viewMaybe
+                    (viewSubjectsSection
+                        { language = language
+                        , preRenderedFormatter = preRenderedFormatter
+                        }
+                    )
+                    contents.subjects
                 ]
             ]
         ]
 
 
-viewSubject : Language -> Subject -> Element msg
-viewSubject language subject =
-    row
-        [ width fill
-        , spacing 5
-        ]
-        [ el
-            [ width fill ]
-            (text (extractLabelFromLanguageMap language subject.label))
-        ]
-
-
-viewSubjectsSection : Language -> SubjectsSectionBody -> Element msg
-viewSubjectsSection language subjectSection =
-    wrappedRow
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            labelFieldColumnAttributes
-            [ renderLabel language subjectSection.label ]
-        , column
-            valueFieldColumnAttributes
-            [ textColumn
-                [ spacing lineSpacing ]
-                (List.map (viewSubject language) subjectSection.items)
-            ]
+viewSubjectsSection : { language : Language, preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg } -> SubjectsSectionBody -> Element msg
+viewSubjectsSection { language, preRenderedFormatter } subjectSection =
+    preRenderedFormatter language
+        [ { label = subjectSection.label
+          , value = List.map (\it -> text (extractLabelFromLanguageMap language it.label)) subjectSection.items
+          }
         ]
