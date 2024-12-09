@@ -3,13 +3,18 @@ module Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Person exposing (NameVariantsSectionBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
-import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
-viewNameVariantsSection : Language -> NameVariantsSectionBody -> Element msg
-viewNameVariantsSection language variantsSection =
+viewNameVariantsSection :
+    { language : Language
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> NameVariantsSectionBody
+    -> Element msg
+viewNameVariantsSection { language, summaryFormatter } variantsSection =
     sectionTemplate
         language
         variantsSection
@@ -25,6 +30,6 @@ viewNameVariantsSection language variantsSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewSummaryField language variantsSection.items ]
+                [ summaryFormatter language variantsSection.items ]
             ]
         ]

@@ -12,9 +12,10 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.UI.Attributes exposing (headingMD, linkColour)
-import Page.UI.Components exposing (Tab(..), tabView)
+import Page.UI.Components exposing (Tab(..), tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
 import Response exposing (Response(..), ServerData(..))
@@ -73,6 +74,10 @@ searchResultsViewRouter session model =
             , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
             , clientStartedAnimatingPreviewWindowClose = RecordMsg.ClientStartedAnimatingPreviewWindowClose
             , clientFinishedAnimatingPreviewWindowShow = RecordMsg.ClientFinishedAnimatingPreviewWindowShow
+            , summaryFormatter = viewSummaryField
+            , preRenderedFormatter = viewPreRenderedSummaryField
+            , relationshipFormatter = viewRelationshipBody
+            , paragraphFormatter = viewParagraphField
             }
     in
     case model.searchResults of

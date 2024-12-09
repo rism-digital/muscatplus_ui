@@ -3,13 +3,18 @@ module Page.UI.Record.Notes exposing (viewNotesSection)
 import Element exposing (Element, alignTop, column, fill, height, row, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.Notes exposing (NotesSectionBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
-import Page.UI.Components exposing (viewParagraphField)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
-viewNotesSection : Language -> NotesSectionBody -> Element msg
-viewNotesSection language notesSection =
+viewNotesSection :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> NotesSectionBody
+    -> Element msg
+viewNotesSection { language, paragraphFormatter } notesSection =
     sectionTemplate
         language
         notesSection
@@ -25,7 +30,7 @@ viewNotesSection language notesSection =
                 , height fill
                 , alignTop
                 ]
-                [ viewParagraphField language notesSection.notes
+                [ paragraphFormatter language notesSection.notes
                 ]
             ]
         ]

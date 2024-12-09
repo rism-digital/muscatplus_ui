@@ -4,6 +4,7 @@ import Element exposing (Element, alignRight, alignTop, centerY, column, el, fil
 import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.ExternalRecord exposing (ExternalPersonRecord, ExternalProject(..))
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -15,8 +16,14 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewExternalPersonPreview : Language -> ExternalProject -> ExternalPersonRecord -> Element msg
-viewExternalPersonPreview language project body =
+viewExternalPersonPreview :
+    { language : Language
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> ExternalProject
+    -> ExternalPersonRecord
+    -> Element msg
+viewExternalPersonPreview { language, summaryFormatter } project body =
     let
         recordIcon =
             el
@@ -36,7 +43,7 @@ viewExternalPersonPreview language project body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
+                    [ viewMaybe (viewBiographicalDetailsSection { language = language, summaryFormatter = summaryFormatter }) body.biographicalDetails
                     , viewMaybe
                         (viewExternalRelationshipsSection
                             { language = language

@@ -12,7 +12,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.UI.Attributes exposing (desktopDisplayWidth, minimalDropShadow, sectionSpacing)
-import Page.UI.Components exposing (pageBodyOrEmpty)
+import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
@@ -42,8 +42,20 @@ viewDescriptionTab language body =
             pageBodyOrEmpty
                 language
                 isEmpty
-                [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
-                , viewMaybe (viewNameVariantsSection language) body.nameVariants
+                [ viewMaybe
+                    (viewBiographicalDetailsSection
+                        { language = language
+                        , summaryFormatter = viewSummaryField
+                        }
+                    )
+                    body.biographicalDetails
+                , viewMaybe
+                    (viewNameVariantsSection
+                        { language = language
+                        , summaryFormatter = viewSummaryField
+                        }
+                    )
+                    body.nameVariants
                 , viewMaybe
                     (viewRelationshipsSection
                         { language = language
@@ -51,7 +63,13 @@ viewDescriptionTab language body =
                         }
                     )
                     body.relationships
-                , viewMaybe (viewNotesSection language) body.notes
+                , viewMaybe
+                    (viewNotesSection
+                        { language = language
+                        , paragraphFormatter = viewParagraphField
+                        }
+                    )
+                    body.notes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 , viewMaybe (viewPersonWorksSection language) body.works

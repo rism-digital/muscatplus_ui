@@ -289,11 +289,6 @@ h4 language heading =
     paragraph [ headingLG, Region.heading 4, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
 
 
-h4s : Language -> LanguageMap -> Element msg
-h4s language heading =
-    paragraph [ headingLG, Region.heading 4, Font.medium, bodySerifFont ] [ extractLabelFromLanguageMap language heading |> text ]
-
-
 h5 : Language -> LanguageMap -> Element msg
 h5 language heading =
     paragraph [ headingMD, Region.heading 5, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
@@ -369,7 +364,9 @@ parsedHtml txt =
     -- if there is no chance that the text contains HTML.
     if isHttpUrl txt then
         [ resourceLink txt
-            [ linkColour ]
+            [ linkColour
+            , alignTop
+            ]
             { label = text txt
             , url = txt
             }
@@ -378,7 +375,9 @@ parsedHtml txt =
 
     else if isMailtoUrl txt then
         [ newTabLink
-            [ linkColour ]
+            [ linkColour
+            , alignTop
+            ]
             { label = text txt
             , url = "mailto:" ++ txt
             }
@@ -387,7 +386,9 @@ parsedHtml txt =
 
     else if not (containsHtml txt) then
         [ paragraph
-            []
+            [ alignTop
+            , width fill
+            ]
             [ text txt ]
         ]
 
@@ -399,7 +400,8 @@ parsedHtml txt =
 listRenderer : String -> Element msg
 listRenderer txt =
     wrappedRow
-        [ spacing 4
+        [ alignTop
+        , width fill
         ]
         (parsedHtml txt)
 
@@ -491,7 +493,11 @@ viewMobileLabelValueField wrapperStyles language field =
         language
         field
         (\value ->
-            [ paragraph []
+            [ column
+                [ alignTop
+                , width fill
+                , spacing lineSpacing
+                ]
                 (extractTextFromLanguageMap language value
                     |> styledParagraphs
                 )
@@ -508,7 +514,15 @@ viewPreRenderedMobileLabelValueField wrapperStyles language field =
     viewMobileLabelValueFieldImpl wrapperStyles
         language
         field
-        identity
+        (\value ->
+            [ column
+                [ alignTop
+                , width fill
+                , spacing lineSpacing
+                ]
+                value
+            ]
+        )
 
 
 viewMobileLabelValueFieldImpl :
@@ -520,14 +534,11 @@ viewMobileLabelValueFieldImpl :
 viewMobileLabelValueFieldImpl wrapperStyles language field fieldRenderer =
     wrappedRow
         [ width fill
-        , height fill
         , alignTop
         ]
         [ column
             (List.append
                 [ width fill
-                , height fill
-                , alignTop
                 ]
                 wrapperStyles
             )
@@ -543,9 +554,7 @@ viewMobileLabelValueFieldImpl wrapperStyles language field fieldRenderer =
                         , paddingEach { bottom = 8, left = 10, right = 0, top = 0 }
                         ]
                         [ column
-                            [ width fill
-                            , spacing lineSpacing
-                            ]
+                            [ width fill ]
                             (fieldRenderer value)
                         ]
                     ]
@@ -574,7 +583,8 @@ viewMobileParagraphField language fieldValues =
 viewSummaryField : Language -> List LabelValue -> Element msg
 viewSummaryField language fieldValues =
     viewLabelValueField
-        [ spacing lineSpacing ]
+        [ spacing lineSpacing
+        ]
         language
         fieldValues
 
@@ -590,7 +600,8 @@ viewPreRenderedSummaryField language fieldValues =
 viewMobileSummaryField : Language -> List LabelValue -> Element msg
 viewMobileSummaryField language fieldValues =
     viewMobileLabelValueField
-        [ spacing 4 ]
+        [ spacing 4
+        ]
         language
         fieldValues
 

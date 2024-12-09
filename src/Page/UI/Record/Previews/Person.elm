@@ -2,9 +2,11 @@ module Page.UI.Record.Previews.Person exposing (viewPersonPreview)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
-import Language exposing (Language)
+import Language exposing (Language, LanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Person exposing (PersonBody)
+import Page.RecordTypes.Relationship exposing (RelationshipBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -14,12 +16,19 @@ import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
-import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewPersonPreview : Language -> PersonBody -> Element msg
-viewPersonPreview language body =
+viewPersonPreview :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> PersonBody
+    -> Element msg
+viewPersonPreview { language, paragraphFormatter, relationshipFormatter, summaryFormatter } body =
     let
         isEmpty =
             ME.isNothing body.biographicalDetails
@@ -31,16 +40,34 @@ viewPersonPreview language body =
         previewBody =
             pageBodyOrEmpty language
                 isEmpty
-                [ viewMaybe (viewBiographicalDetailsSection language) body.biographicalDetails
-                , viewMaybe (viewNameVariantsSection language) body.nameVariants
+                [ viewMaybe
+                    (viewBiographicalDetailsSection
+                        { language = language
+                        , summaryFormatter = summaryFormatter
+                        }
+                    )
+                    body.biographicalDetails
+                , viewMaybe
+                    (viewNameVariantsSection
+                        { language = language
+                        , summaryFormatter = summaryFormatter
+                        }
+                    )
+                    body.nameVariants
                 , viewMaybe
                     (viewRelationshipsSection
                         { language = language
-                        , relationshipFormatter = viewRelationshipBody
+                        , relationshipFormatter = relationshipFormatter
                         }
                     )
                     body.relationships
-                , viewMaybe (viewNotesSection language) body.notes
+                , viewMaybe
+                    (viewNotesSection
+                        { language = language
+                        , paragraphFormatter = paragraphFormatter
+                        }
+                    )
+                    body.notes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 ]
 

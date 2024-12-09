@@ -4,12 +4,13 @@ import Element exposing (Element, alignTop, column, fill, height, row, spacing, 
 import Language exposing (Language, LanguageMap)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
-import Page.UI.Components exposing (viewSummaryField)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 
 viewOrganizationDetailsSection :
-    Language
+    { language : Language
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
     ->
         { a
             | label : LanguageMap
@@ -17,7 +18,7 @@ viewOrganizationDetailsSection :
             , summary : List LabelValue
         }
     -> Element msg
-viewOrganizationDetailsSection language organizationDetails =
+viewOrganizationDetailsSection { language, summaryFormatter } organizationDetails =
     sectionTemplate language
         organizationDetails
         [ row
@@ -32,6 +33,6 @@ viewOrganizationDetailsSection language organizationDetails =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewSummaryField language organizationDetails.summary ]
+                [ summaryFormatter language organizationDetails.summary ]
             ]
         ]

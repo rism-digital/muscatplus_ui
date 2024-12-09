@@ -11,7 +11,9 @@ import Page.RecordTypes.Search exposing (ModeFacet)
 import Page.Search.Facets exposing (facetSearchMsgConfig, viewModeItems)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
+import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme, tabBarHeight)
@@ -84,6 +86,10 @@ searchResultsViewRouter session model =
             , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
             , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
             , clientFinishedAnimatingPreviewWindowShow = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
+            , summaryFormatter = viewSummaryField
+            , preRenderedFormatter = viewPreRenderedSummaryField
+            , relationshipFormatter = viewRelationshipBody
+            , paragraphFormatter = viewParagraphField
             }
     in
     case model.response of

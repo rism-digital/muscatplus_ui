@@ -8,7 +8,7 @@ import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, Exte
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.CantusLogo exposing (cantusLogo)
-import Page.UI.Components exposing (externalLinkTemplate, h2, resourceLink, viewParagraphField, viewSummaryField)
+import Page.UI.Components exposing (externalLinkTemplate, h2, resourceLink)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (bookSvg, institutionSvg)
@@ -20,6 +20,7 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 viewExternalSourcePreview :
     { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter :
         Language
         ->
@@ -28,11 +29,12 @@ viewExternalSourcePreview :
                 , value : List (Element msg)
                 }
         -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> ExternalProject
     -> ExternalSourceRecord
     -> Element msg
-viewExternalSourcePreview { language, preRenderedFormatter } project body =
+viewExternalSourcePreview { language, paragraphFormatter, preRenderedFormatter, summaryFormatter } project body =
     let
         recordIcon =
             el
@@ -52,12 +54,25 @@ viewExternalSourcePreview { language, preRenderedFormatter } project body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewExternalSourceContentsSection language) body.contents
-                    , viewMaybe (viewExternalSourceReferencesNotesSection language) body.referencesNotes
+                    [ viewMaybe
+                        (viewExternalSourceContentsSection
+                            { language = language
+                            , summaryFormatter = summaryFormatter
+                            }
+                        )
+                        body.contents
+                    , viewMaybe
+                        (viewExternalSourceReferencesNotesSection
+                            { language = language
+                            , paragraphFormatter = paragraphFormatter
+                            }
+                        )
+                        body.referencesNotes
                     , viewMaybe
                         (viewExternalSourceExemplarsSection
                             { language = language
                             , preRenderedFormatter = preRenderedFormatter
+                            , summaryFormatter = summaryFormatter
                             }
                         )
                         body.exemplars
@@ -130,14 +145,16 @@ viewExternalSourceExemplarsSection :
                 , value : List (Element msg)
                 }
         -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> ExternalSourceExemplarsSection
     -> Element msg
-viewExternalSourceExemplarsSection { language, preRenderedFormatter } body =
+viewExternalSourceExemplarsSection { language, preRenderedFormatter, summaryFormatter } body =
     List.map
         (viewExternalSourceExemplar
             { language = language
             , preRenderedFormatter = preRenderedFormatter
+            , summaryFormatter = summaryFormatter
             }
         )
         body.items
@@ -154,10 +171,11 @@ viewExternalSourceExemplar :
                 , value : List (Element msg)
                 }
         -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> ExternalSourceExemplar
     -> Element msg
-viewExternalSourceExemplar { language, preRenderedFormatter } body =
+viewExternalSourceExemplar { language, preRenderedFormatter, summaryFormatter } body =
     row
         (width fill
             :: height fill
@@ -182,7 +200,7 @@ viewExternalSourceExemplar { language, preRenderedFormatter } body =
                     [ width fill
                     , spacing lineSpacing
                     ]
-                    [ viewMaybe (viewSummaryField language) body.summary
+                    [ viewMaybe (summaryFormatter language) body.summary
                     , viewMaybe
                         (viewExternalSourceExternalResourcesSection
                             { language = language
@@ -196,8 +214,13 @@ viewExternalSourceExemplar { language, preRenderedFormatter } body =
         ]
 
 
-viewExternalSourceContentsSection : Language -> ExternalSourceContents -> Element msg
-viewExternalSourceContentsSection language body =
+viewExternalSourceContentsSection :
+    { language : Language
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> ExternalSourceContents
+    -> Element msg
+viewExternalSourceContentsSection { language, summaryFormatter } body =
     sectionTemplate language
         body
         [ row
@@ -213,7 +236,7 @@ viewExternalSourceContentsSection language body =
                 , spacing lineSpacing
                 ]
                 [ Maybe.withDefault [] body.summary
-                    |> viewSummaryField language
+                    |> summaryFormatter language
                 ]
             ]
         ]
@@ -244,13 +267,15 @@ viewExternalHeldBy language body =
         ]
 
 
-viewExternalSourceReferencesNotesSection : Language -> ExternalSourceReferencesNotesSection -> Element msg
-viewExternalSourceReferencesNotesSection language body =
-    let
-        sectionTmpl =
-            sectionTemplate language body
-    in
-    sectionTmpl
+viewExternalSourceReferencesNotesSection :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> ExternalSourceReferencesNotesSection
+    -> Element msg
+viewExternalSourceReferencesNotesSection { language, paragraphFormatter } body =
+    sectionTemplate language
+        body
         [ row
             (List.append
                 [ width fill
@@ -265,20 +290,31 @@ viewExternalSourceReferencesNotesSection language body =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewExternalNotesSection language) body.notes
+                [ viewMaybe
+                    (viewExternalNotesSection
+                        { language = language
+                        , paragraphFormatter = paragraphFormatter
+                        }
+                    )
+                    body.notes
                 ]
             ]
         ]
 
 
-viewExternalNotesSection : Language -> List LabelValue -> Element msg
-viewExternalNotesSection language notes =
+viewExternalNotesSection :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> List LabelValue
+    -> Element msg
+viewExternalNotesSection { language, paragraphFormatter } notes =
     row
         [ width fill
         , height fill
         , alignTop
         ]
-        [ viewParagraphField language notes
+        [ paragraphFormatter language notes
         ]
 
 

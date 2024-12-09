@@ -17,8 +17,10 @@ import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.QueryBuilder
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Probe exposing (ProbeStatus)
+import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Page.UI.Attributes exposing (bodyRegular, lineSpacing, resultsColumnWidth)
 import Page.UI.Components exposing (h3)
@@ -81,6 +83,10 @@ type alias SearchResultsSectionConfig a msg =
     , expandedDigitizedCopiesCallout : Bool
     , clientStartedAnimatingPreviewWindowClose : msg
     , clientFinishedAnimatingPreviewWindowShow : msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
     }
 
 
@@ -111,6 +117,10 @@ viewSearchResultsSection cfg resultsLoading body =
                         , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
                         , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
                         , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
+                        , summaryFormatter = cfg.summaryFormatter
+                        , preRenderedFormatter = cfg.preRenderedFormatter
+                        , relationshipFormatter = cfg.relationshipFormatter
+                        , paragraphFormatter = cfg.paragraphFormatter
                         }
                         oldData
                         |> background
@@ -129,6 +139,10 @@ viewSearchResultsSection cfg resultsLoading body =
                         , incipitInfoToggleMsg = cfg.userToggledIncipitInfo
                         , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
                         , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
+                        , summaryFormatter = cfg.summaryFormatter
+                        , preRenderedFormatter = cfg.preRenderedFormatter
+                        , relationshipFormatter = cfg.relationshipFormatter
+                        , paragraphFormatter = cfg.paragraphFormatter
                         }
                         (Just resp)
                         |> background

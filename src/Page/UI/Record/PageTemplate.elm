@@ -1,8 +1,6 @@
 module Page.UI.Record.PageTemplate exposing
     ( mobilePageHeaderTemplate
-    , mobileSubHeaderTemplate
     , pageFooterTemplateRouter
-    , pageFullMobileRecordTemplate
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
@@ -20,7 +18,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, minimalDropShadow)
-import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, h3s, resourceLink)
+import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
@@ -204,20 +202,6 @@ subHeaderTemplate language icon header =
         }
 
 
-mobileSubHeaderTemplate :
-    Language
-    -> Maybe (Element msg)
-    -> { a | label : LanguageMap }
-    -> Element msg
-mobileSubHeaderTemplate language icon header =
-    headerTmpl
-        { body = header
-        , extraAttrs = []
-        , hLevel = h3s language
-        , icon = icon
-        }
-
-
 headerTmpl :
     { body : { a | label : LanguageMap }
     , extraAttrs : List (Attribute msg)
@@ -271,11 +255,6 @@ pageLinkTemplate language langMap fontSize body =
 
 pageFullRecordTemplate : Language -> { a | id : String } -> Element msg
 pageFullRecordTemplate language body =
-    pageLinkTemplate language localTranslations.fullRecord headingMD body
-
-
-pageFullMobileRecordTemplate : Language -> { a | id : String } -> Element msg
-pageFullMobileRecordTemplate language body =
     pageLinkTemplate language localTranslations.fullRecord headingMD body
 
 

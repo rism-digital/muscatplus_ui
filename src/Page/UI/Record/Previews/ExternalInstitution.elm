@@ -4,6 +4,7 @@ import Element exposing (Element, alignRight, alignTop, centerY, column, el, fil
 import Html.Attributes as HA
 import Language exposing (Language)
 import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..))
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.CantusLogo exposing (cantusLogo)
 import Page.UI.DiammLogo exposing (diammLogo)
@@ -16,8 +17,14 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewExternalInstitutionPreview : Language -> ExternalProject -> ExternalInstitutionRecord -> Element msg
-viewExternalInstitutionPreview language project body =
+viewExternalInstitutionPreview :
+    { language : Language
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> ExternalProject
+    -> ExternalInstitutionRecord
+    -> Element msg
+viewExternalInstitutionPreview { language, summaryFormatter } project body =
     let
         recordIcon =
             el
@@ -37,7 +44,13 @@ viewExternalInstitutionPreview language project body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
+                    [ viewMaybe
+                        (viewOrganizationDetailsSection
+                            { language = language
+                            , summaryFormatter = summaryFormatter
+                            }
+                        )
+                        body.organizationDetails
                     , viewMaybe
                         (viewExternalRelationshipsSection
                             { language = language

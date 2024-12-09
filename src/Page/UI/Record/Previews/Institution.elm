@@ -2,9 +2,11 @@ module Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
-import Language exposing (Language)
+import Language exposing (Language, LanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Institution exposing (InstitutionBody)
+import Page.RecordTypes.Relationship exposing (RelationshipBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -15,12 +17,19 @@ import Page.UI.Record.LocationSection exposing (viewLocationAddressSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
-import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 
 
-viewInstitutionPreview : Language -> InstitutionBody -> Element msg
-viewInstitutionPreview language body =
+viewInstitutionPreview :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> InstitutionBody
+    -> Element msg
+viewInstitutionPreview { language, paragraphFormatter, relationshipFormatter, summaryFormatter } body =
     let
         isEmpty =
             ME.isNothing body.organizationDetails
@@ -33,10 +42,34 @@ viewInstitutionPreview language body =
         previewBody =
             pageBodyOrEmpty language
                 isEmpty
-                [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
-                , viewMaybe (viewLocationAddressSection language) body.location
-                , viewMaybe (viewRelationshipsSection { language = language, relationshipFormatter = viewRelationshipBody }) body.relationships
-                , viewMaybe (viewNotesSection language) body.notes
+                [ viewMaybe
+                    (viewOrganizationDetailsSection
+                        { language = language
+                        , summaryFormatter = summaryFormatter
+                        }
+                    )
+                    body.organizationDetails
+                , viewMaybe
+                    (viewLocationAddressSection
+                        { language = language
+                        , summaryFormatter = summaryFormatter
+                        }
+                    )
+                    body.location
+                , viewMaybe
+                    (viewRelationshipsSection
+                        { language = language
+                        , relationshipFormatter = relationshipFormatter
+                        }
+                    )
+                    body.relationships
+                , viewMaybe
+                    (viewNotesSection
+                        { language = language
+                        , paragraphFormatter = paragraphFormatter
+                        }
+                    )
+                    body.notes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 ]

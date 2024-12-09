@@ -9,7 +9,9 @@ import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Facets exposing (facetSearchMsgConfig)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
+import Page.UI.Components exposing (viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Record.Previews exposing (viewMobilePreviewRouter)
+import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultRouter)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
 import Response exposing (Response(..), ServerData(..))
@@ -35,6 +37,10 @@ view session model =
                         , incipitInfoToggleMsg = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
                         , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
                         , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                        , summaryFormatter = viewMobileSummaryField
+                        , preRenderedFormatter = viewPreRenderedMobileSummaryField
+                        , relationshipFormatter = viewMobileRelationshipBody
+                        , paragraphFormatter = viewMobileParagraphField
                         }
                         oldData
 
@@ -52,6 +58,10 @@ view session model =
                         , incipitInfoToggleMsg = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
                         , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
                         , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                        , summaryFormatter = viewMobileSummaryField
+                        , preRenderedFormatter = viewPreRenderedMobileSummaryField
+                        , relationshipFormatter = viewMobileRelationshipBody
+                        , paragraphFormatter = viewMobileParagraphField
                         }
                         (Just resp)
 
@@ -121,6 +131,10 @@ searchResultsViewRouter session model =
             , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
             , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
             , clientFinishedAnimatingPreviewWindowShow = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
+            , summaryFormatter = viewMobileSummaryField
+            , preRenderedFormatter = viewPreRenderedMobileSummaryField
+            , relationshipFormatter = viewMobileRelationshipBody
+            , paragraphFormatter = viewMobileParagraphField
             }
     in
     case model.response of

@@ -87,14 +87,15 @@ viewRelationshipValue language body =
         note =
             viewMaybe
                 (\noteText ->
-                    el
+                    paragraph
                         [ width fill ]
-                        (paragraph [] [ text (extractLabelFromLanguageMap language noteText) ])
+                        [ text (extractLabelFromLanguageMap language noteText) ]
                 )
                 body.note
     in
     row
         [ alignLeft
+        , width fill
         ]
         [ relatedToView
         , note

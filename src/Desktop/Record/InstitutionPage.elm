@@ -1,31 +1,29 @@
 module Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 
 import Desktop.Record.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
+import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionBody, LocationAddressSectionBody)
-import Page.UI.Attributes exposing (desktopDisplayWidth, lineSpacing, minimalDropShadow, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (mapViewer, pageBodyOrEmpty, viewSummaryField)
+import Page.RecordTypes.Institution exposing (InstitutionBody)
+import Page.UI.Attributes exposing (desktopDisplayWidth, minimalDropShadow, sectionSpacing)
+import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (circleSvg, institutionSvg, mapMarkerSvg)
+import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
-import Page.UI.Record.LocationSection exposing (viewLocationAddressSection)
+import Page.UI.Record.LocationSection exposing (viewLocationAddressSection, viewLocationMapSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
-import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
-import Url.Builder as QB exposing (absolute)
 
 
 viewDescriptionTab : Language -> ( Int, Int ) -> InstitutionBody -> Element msg
@@ -42,8 +40,20 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
         pageBody =
             pageBodyOrEmpty language
                 isEmpty
-                [ viewMaybe (viewOrganizationDetailsSection language) body.organizationDetails
-                , viewMaybe (viewLocationAddressSection language) body.location
+                [ viewMaybe
+                    (viewOrganizationDetailsSection
+                        { language = language
+                        , summaryFormatter = viewSummaryField
+                        }
+                    )
+                    body.organizationDetails
+                , viewMaybe
+                    (viewLocationAddressSection
+                        { language = language
+                        , summaryFormatter = viewSummaryField
+                        }
+                    )
+                    body.location
                 , viewMaybe
                     (viewRelationshipsSection
                         { language = language
@@ -51,10 +61,23 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
                         }
                     )
                     body.relationships
-                , viewMaybe (viewNotesSection language) body.notes
+                , viewMaybe
+                    (viewNotesSection
+                        { language = language
+                        , paragraphFormatter = viewParagraphField
+                        }
+                    )
+                    body.notes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-                , viewMaybe (viewLocationMapSection language ( windowWidth, windowHeight )) body.location
+                , viewMaybe
+                    (viewLocationMapSection
+                        { language = language
+                        , summaryFormatter = viewSummaryField
+                        }
+                        ( windowWidth, windowHeight )
+                    )
+                    body.location
                 ]
     in
     row
@@ -167,73 +190,3 @@ viewRecordTopBar language model body =
         , recordId = body.id
         , tabLabel = localTranslations.sources
         }
-
-
-mapSection : Language -> ( Int, Int ) -> CoordinatesSection -> Element msg
-mapSection language ( windowWidth, windowHeight ) coords =
-    let
-        strCoords =
-            List.map String.fromFloat coords.coordinates
-
-        coordsValue =
-            List.reverse strCoords
-                |> String.join ", "
-
-        coordsQ =
-            List.map2 (\dim val -> QB.string dim val) [ "lon", "lat" ] strCoords
-
-        geoJsonQ =
-            QB.string "geo" coords.id
-
-        mapsUrl =
-            (geoJsonQ :: coordsQ)
-                |> absolute [ "maps.html" ]
-    in
-    sectionTemplate language
-        coords
-        [ row
-            (width fill
-                :: height fill
-                :: alignTop
-                :: sectionBorderStyles
-            )
-            [ column
-                [ width fill
-                , height fill
-                , alignTop
-                , spacing lineSpacing
-                ]
-                [ viewSummaryField language [ { label = coords.coordinatesLabel, value = toLanguageMap coordsValue } ]
-                , row
-                    [ width fill ]
-                    [ mapViewer ( min windowWidth 900, min windowHeight 400 ) mapsUrl ]
-                , row
-                    [ width fill ]
-                    [ column
-                        [ width fill
-                        , spacing lineSpacing
-                        ]
-                        [ paragraph
-                            [ width fill
-                            , spacing 5
-                            ]
-                            [ el [ width (px 15), height (px 15) ] (mapMarkerSvg colourScheme.lightBlue)
-                            , el [ paddingXY 5 0 ] (text (extractLabelFromLanguageMap language localTranslations.location))
-                            ]
-                        , paragraph
-                            [ width fill
-                            , spacing 5
-                            ]
-                            [ el [ width (px 15), height (px 15) ] (circleSvg colourScheme.darkOrange)
-                            , el [ paddingXY 5 0 ] (text (extractLabelFromLanguageMap language localTranslations.nearbyInstitutions))
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
-
-
-viewLocationMapSection : Language -> ( Int, Int ) -> LocationAddressSectionBody -> Element msg
-viewLocationMapSection language ( windowWidth, windowHeight ) location =
-    viewMaybe (mapSection language ( windowWidth, windowHeight )) location.coordinates

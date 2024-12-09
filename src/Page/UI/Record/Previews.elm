@@ -5,12 +5,14 @@ import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Http.Detailed
-import Language exposing (Language)
+import Language exposing (Language, LanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
+import Page.RecordTypes.Relationship exposing (RelationshipBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
 import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
-import Page.UI.Components exposing (viewMobileWindowTitleBar, viewPreRenderedSummaryField, viewWindowTitleBar)
+import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowTitleBar)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Events exposing (onComplete)
 import Page.UI.Images exposing (spinnerSvg)
@@ -20,7 +22,7 @@ import Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePrevie
 import Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 import Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Page.UI.Record.Previews.Person exposing (viewPersonPreview)
-import Page.UI.Record.Previews.Source exposing (viewMobileSourcePreview, viewSourcePreview)
+import Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (ServerData(..))
 import Set exposing (Set)
@@ -41,6 +43,10 @@ type alias PreviewConfig msg =
     , incipitInfoToggleMsg : String -> msg
     , expandedDigitizedCopiesMsg : msg
     , expandedDigitizedCopiesCallout : Bool
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
     }
 
 
@@ -135,6 +141,87 @@ viewPreviewLoading =
         ]
 
 
+choosePreview : PreviewConfig msg -> Maybe ServerData -> Element msg
+choosePreview cfg previewData =
+    case previewData of
+        Just (SourceData body) ->
+            viewSourcePreview
+                { expandMsg = cfg.sourceItemExpandMsg
+                , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
+                , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
+                , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
+                , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
+                , itemsExpanded = cfg.sourceItemsExpanded
+                , language = cfg.language
+                , paragraphFormatter = cfg.paragraphFormatter
+                , preRenderedFormatter = cfg.preRenderedFormatter
+                , relationshipFormatter = cfg.relationshipFormatter
+                , summaryFormatter = cfg.summaryFormatter
+                }
+                body
+
+        Just (PersonData body) ->
+            viewPersonPreview
+                { language = cfg.language
+                , paragraphFormatter = cfg.paragraphFormatter
+                , relationshipFormatter = cfg.relationshipFormatter
+                , summaryFormatter = cfg.summaryFormatter
+                }
+                body
+
+        Just (InstitutionData body) ->
+            viewInstitutionPreview
+                { language = cfg.language
+                , paragraphFormatter = cfg.paragraphFormatter
+                , relationshipFormatter = cfg.relationshipFormatter
+                , summaryFormatter = cfg.summaryFormatter
+                }
+                body
+
+        Just (IncipitData body) ->
+            viewIncipitPreview
+                { incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
+                , infoToggleMsg = cfg.incipitInfoToggleMsg
+                , language = cfg.language
+                , summaryFormatter = cfg.summaryFormatter
+                }
+                body
+
+        Just (ExternalData body) ->
+            case body.record of
+                ExternalSource sourceBody ->
+                    viewExternalSourcePreview
+                        { language = cfg.language
+                        , paragraphFormatter = cfg.paragraphFormatter
+                        , preRenderedFormatter = cfg.preRenderedFormatter
+                        , summaryFormatter = cfg.summaryFormatter
+                        }
+                        body.project
+                        sourceBody
+
+                ExternalPerson personBody ->
+                    viewExternalPersonPreview
+                        { language = cfg.language
+                        , summaryFormatter = cfg.summaryFormatter
+                        }
+                        body.project
+                        personBody
+
+                ExternalInstitution institutionBody ->
+                    viewExternalInstitutionPreview
+                        { language = cfg.language
+                        , summaryFormatter = cfg.summaryFormatter
+                        }
+                        body.project
+                        institutionBody
+
+        Nothing ->
+            viewPreviewLoading
+
+        _ ->
+            none
+
+
 viewPreviewRouter : PreviewConfig msg -> Maybe ServerData -> Element msg
 viewPreviewRouter cfg previewData =
     let
@@ -156,54 +243,7 @@ viewPreviewRouter cfg previewData =
                 |> clamp 20 40
 
         preview =
-            case previewData of
-                Just (SourceData body) ->
-                    viewSourcePreview
-                        { expandMsg = cfg.sourceItemExpandMsg
-                        , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
-                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
-                        , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
-                        , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
-                        , itemsExpanded = cfg.sourceItemsExpanded
-                        , language = cfg.language
-                        }
-                        body
-
-                Just (PersonData body) ->
-                    viewPersonPreview cfg.language body
-
-                Just (InstitutionData body) ->
-                    viewInstitutionPreview cfg.language body
-
-                Just (IncipitData body) ->
-                    viewIncipitPreview
-                        { incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
-                        , infoToggleMsg = cfg.incipitInfoToggleMsg
-                        , language = cfg.language
-                        }
-                        body
-
-                Just (ExternalData body) ->
-                    case body.record of
-                        ExternalSource sourceBody ->
-                            viewExternalSourcePreview
-                                { language = cfg.language
-                                , preRenderedFormatter = viewPreRenderedSummaryField
-                                }
-                                body.project
-                                sourceBody
-
-                        ExternalPerson personBody ->
-                            viewExternalPersonPreview cfg.language body.project personBody
-
-                        ExternalInstitution institutionBody ->
-                            viewExternalInstitutionPreview cfg.language body.project institutionBody
-
-                Nothing ->
-                    viewPreviewLoading
-
-                _ ->
-                    none
+            choosePreview cfg previewData
     in
     row
         [ width (px previewWidth |> minimum 800 |> maximum 1100)
@@ -282,44 +322,7 @@ viewMobilePreviewRouter cfg previewData =
                     emptyAttribute
 
         preview =
-            case previewData of
-                Just (SourceData sourceBody) ->
-                    viewMobileSourcePreview
-                        { expandMsg = cfg.sourceItemExpandMsg
-                        , expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
-                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
-                        , incipitInfoExpanded = cfg.incipitInfoSectionsExpanded
-                        , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
-                        , itemsExpanded = cfg.sourceItemsExpanded
-                        , language = cfg.language
-                        }
-                        sourceBody
-
-                Just (PersonData _) ->
-                    none
-
-                Just (InstitutionData _) ->
-                    none
-
-                Just (IncipitData _) ->
-                    none
-
-                Just (ExternalData body) ->
-                    case body.record of
-                        ExternalSource _ ->
-                            none
-
-                        ExternalPerson _ ->
-                            none
-
-                        ExternalInstitution _ ->
-                            none
-
-                Nothing ->
-                    none
-
-                _ ->
-                    none
+            choosePreview cfg previewData
     in
     animatedRow
         previewAnimation
