@@ -7,6 +7,7 @@ import Page.Keyboard as Keyboard
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
 import Page.QueryBuilder.Model exposing (QueryBuilderModel)
+import Page.RecordTypes.Search exposing (FacetItem)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Set exposing (Set)
@@ -32,4 +33,5 @@ type alias ActiveSearch msg =
     , activeSuggestion : Maybe ActiveSuggestion
     , activeSuggestionDebouncer : Debouncer msg
     , queryBuilder : Maybe QueryBuilderModel
+    , resultsNotInCurrentMode : List FacetItem
     }

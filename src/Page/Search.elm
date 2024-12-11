@@ -9,7 +9,7 @@ module Page.Search exposing
     , update
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setKeyboard, setQueryBuilder, setRangeFacetValues, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setKeyboard, setQueryBuilder, setRangeFacetValues, setResultsNotInCurrentMode, toKeyboard)
 import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Config as C
@@ -216,6 +216,19 @@ update session msg model =
                         _ ->
                             Dict.empty
 
+                resultsNotInCurrentMode =
+                    case response of
+                        SearchData body ->
+                            if body.totalItems == 0 && ME.isJust body.modes then
+                                Maybe.map .items body.modes
+                                    |> Maybe.withDefault []
+
+                            else
+                                []
+
+                        _ ->
+                            []
+
                 activeFilters =
                     toNextQuery model.activeSearch
                         |> .filters
@@ -228,6 +241,15 @@ update session msg model =
                         _ ->
                             activeFilters
 
+                --_ =
+                --    Debug.log "current mode" currentMode
+                --
+                --_ =
+                --    Debug.log "preferred mode" alternativeMode
+                --
+                --_ =
+                --    Debug.log "Results but not in current mode" resultsButNotInCurrentMode
+                --
                 newNextQuery =
                     toNextQuery model.activeSearch
                         |> setFilters updatedFiltersWithCorrectLanguageMaps
@@ -236,6 +258,7 @@ update session msg model =
                     model.activeSearch
                         |> setAliasLabelMap aliasLabelMap
                         |> setNextQuery newNextQuery
+                        |> setResultsNotInCurrentMode resultsNotInCurrentMode
 
                 totalItems =
                     case response of

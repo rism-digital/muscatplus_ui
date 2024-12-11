@@ -12,11 +12,13 @@ module ActiveSearch exposing
     , setQueryBuilder
     , setQueryFacetValues
     , setRangeFacetValues
+    , setResultsNotInCurrentMode
     , toActiveSearch
     , toExpandedFacets
     , toKeyboard
     , toQueryFacetValues
     , toRangeFacetValues
+    , toResultsNotInCurrentMode
     )
 
 import ActiveSearch.Model exposing (ActiveSearch)
@@ -28,6 +30,7 @@ import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
 import Page.QueryBuilder as QueryBuilder
+import Page.RecordTypes.Search exposing (FacetItem)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import SearchPreferences exposing (SearchPreferences)
@@ -52,6 +55,7 @@ empty =
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , queryBuilder = Nothing
+    , resultsNotInCurrentMode = []
     }
 
 
@@ -75,6 +79,7 @@ init cfg =
     , activeSuggestion = Nothing
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , queryBuilder = Nothing
+    , resultsNotInCurrentMode = []
     }
 
 
@@ -132,6 +137,11 @@ setRangeFacetValues newValue oldRecord =
     { oldRecord | rangeFacetValues = newValue }
 
 
+setResultsNotInCurrentMode : List FacetItem -> { a | resultsNotInCurrentMode : List FacetItem } -> { a | resultsNotInCurrentMode : List FacetItem }
+setResultsNotInCurrentMode newValue oldRecord =
+    { oldRecord | resultsNotInCurrentMode = newValue }
+
+
 toActiveSearch : { a | activeSearch : ActiveSearch msg } -> ActiveSearch msg
 toActiveSearch model =
     model.activeSearch
@@ -155,3 +165,8 @@ toQueryFacetValues model =
 toRangeFacetValues : { a | rangeFacetValues : Dict FacetAlias ( String, String ) } -> Dict FacetAlias ( String, String )
 toRangeFacetValues model =
     model.rangeFacetValues
+
+
+toResultsNotInCurrentMode : { a | resultsNotInCurrentMode : List FacetItem } -> List FacetItem
+toResultsNotInCurrentMode model =
+    model.resultsNotInCurrentMode

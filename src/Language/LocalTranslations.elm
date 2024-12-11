@@ -71,6 +71,8 @@ localTranslations :
     , recordURI : LanguageMap
     , reportAnIssue : LanguageMap
     , resetAll : LanguageMap
+    , resultsOfOtherTypes : LanguageMap
+    , resultsWereFoundForOthers : LanguageMap
     , rowsPerPage : LanguageMap
     , search : LanguageMap
     , searchNumberOfRecords : LanguageMap
@@ -194,7 +196,14 @@ localTranslations =
         , LanguageValue French [ "Incipits" ]
         ]
     , institution =
-        [ LanguageValue English [ "Institution" ] ]
+        [ LanguageValue English [ "Institution" ]
+        , LanguageValue German [ "Institution" ]
+        , LanguageValue French [ "Institution" ]
+        , LanguageValue Italian [ "Istituzione" ]
+        , LanguageValue Spanish [ "Institución" ]
+        , LanguageValue Portuguese [ "Instituição" ]
+        , LanguageValue Polish [ "Instytucja" ]
+        ]
     , institutions =
         [ LanguageValue Spanish [ "Instituciones" ]
         , LanguageValue Portuguese [ "Instituições" ]
@@ -268,13 +277,13 @@ localTranslations =
         , LanguageValue Polish [ "Dostosuj opcje zapytania lub zresetuj wszystkie filtry, aby zobaczyć wyniki." ]
         ]
     , noResultsHeader =
-        [ LanguageValue English [ "No results were found for your search" ]
-        , LanguageValue German [ "Keine Suchergebnisse gefunden" ]
-        , LanguageValue French [ "Aucun résultat trouvé" ]
-        , LanguageValue Italian [ "Questa ricerca non produce alcun risultato" ]
-        , LanguageValue Spanish [ "No se encontraron resultados con esta búsqueda" ]
-        , LanguageValue Portuguese [ "Nenhum resultado será encontrado para esta pesquisa" ]
-        , LanguageValue Polish [ "Nie znaleziono wyników dla Twojego wyszukiwania" ]
+        [ LanguageValue English [ "No results were found for your {{ recordType }} search" ]
+        , LanguageValue German [ "Es wurden keine Ergebnisse für Ihre {{ recordType }}-Suche gefunden" ]
+        , LanguageValue French [ "Aucun résultat n’a été trouvé pour votre recherche {{ recordType }}" ]
+        , LanguageValue Italian [ "Nessun risultato trovato per la tua ricerca {{ recordType }}" ]
+        , LanguageValue Spanish [ "No se encontraron resultados para tu búsqueda de {{ recordType }}" ]
+        , LanguageValue Portuguese [ "Nenhum resultado foi encontrado para sua pesquisa de {{ recordType }}" ]
+        , LanguageValue Polish [ "Nie znaleziono wyników dla wyszukiwania {{ recordType }}" ]
         ]
     , noResultsWouldBeFound =
         [ LanguageValue English [ "No results would be found with this search" ]
@@ -327,7 +336,14 @@ localTranslations =
         , LanguageValue French [ "Personnes" ]
         ]
     , person =
-        [ LanguageValue English [ "Person" ] ]
+        [ LanguageValue English [ "Person" ]
+        , LanguageValue German [ "Person" ]
+        , LanguageValue French [ "Personne" ]
+        , LanguageValue Italian [ "Persona" ]
+        , LanguageValue Spanish [ "Persona" ]
+        , LanguageValue Portuguese [ "Pessoa" ]
+        , LanguageValue Polish [ "Osoba" ]
+        ]
     , place =
         [ LanguageValue English [ "Place" ] ]
     , previous =
@@ -373,6 +389,24 @@ localTranslations =
         , LanguageValue Spanish [ "Resetear todo" ]
         , LanguageValue Portuguese [ "Reiniciar tudo" ]
         , LanguageValue Polish [ "Zresetować wszystko" ]
+        ]
+    , resultsOfOtherTypes =
+        [ LanguageValue English [ "No results were found for your {{ recordType }} search but other result types were found" ]
+        , LanguageValue German [ "Es wurden keine Ergebnisse für Ihre {{ recordType }}-Suche gefunden, aber andere Ergebnistypen wurden gefunden" ]
+        , LanguageValue French [ "Aucun résultat n’a été trouvé pour votre recherche {{ recordType }}, mais d’autres types de résultats ont été trouvés" ]
+        , LanguageValue Italian [ "Nessun risultato trovato per la tua ricerca {{ recordType }}, ma sono stati trovati altri tipi di risultati" ]
+        , LanguageValue Spanish [ "No se encontraron resultados para tu búsqueda de {{ recordType }}, pero se encontraron otros tipos de resultados" ]
+        , LanguageValue Portuguese [ "Nenhum resultado foi encontrado para sua pesquisa de {{ recordType }}, mas foram encontrados outros tipos de resultados" ]
+        , LanguageValue Polish [ "Nie znaleziono wyników dla wyszukiwania {{ recordType }}, ale znaleziono inne typy wyników" ]
+        ]
+    , resultsWereFoundForOthers =
+        [ LanguageValue English [ "Results were found for other record types" ]
+        , LanguageValue German [ "Ergebnisse wurden für andere Aufzeichnungstypen gefunden" ]
+        , LanguageValue French [ "Des résultats ont été trouvés pour d’autres types d’enregistrements" ]
+        , LanguageValue Italian [ "Sono stati trovati risultati per altri tipi di record" ]
+        , LanguageValue Spanish [ "Se encontraron resultados para otros tipos de registros" ]
+        , LanguageValue Portuguese [ "Foram encontrados resultados para outros tipos de registros" ]
+        , LanguageValue Polish [ "Znaleziono wyniki dla innych typów rekordów" ]
         ]
     , rowsPerPage =
         [ LanguageValue English [ "Rows per page" ] ]

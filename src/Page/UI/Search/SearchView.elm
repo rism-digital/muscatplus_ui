@@ -1,6 +1,6 @@
 module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResultsListPanelConfig, SearchResultsSectionConfig, viewSearchResultRouter, viewSearchResultsSection)
 
-import ActiveSearch exposing (toActiveSearch)
+import ActiveSearch exposing (toActiveSearch, toResultsNotInCurrentMode)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
@@ -453,7 +453,18 @@ type alias SearchResultsListPanelConfig a msg =
 viewSearchResultsListPanel : SearchResultsListPanelConfig a msg -> Element msg
 viewSearchResultsListPanel cfg =
     if .totalItems cfg.body == 0 then
-        viewSearchResultsNotFoundTmpl cfg.language
+        let
+            activeSearch =
+                .activeSearch cfg.model
+
+            otherResultsFound =
+                toResultsNotInCurrentMode activeSearch
+        in
+        viewSearchResultsNotFoundTmpl
+            { currentQuery = activeSearch.nextQuery
+            , language = cfg.language
+            , otherResultsFound = otherResultsFound
+            }
 
     else
         row
