@@ -2,8 +2,8 @@ module Page.UI.Images exposing (altSvg, assistanceSvg, audioMutedSvg, audioUnmut
 
 import Color exposing (toCssString)
 import Element exposing (Element, html)
-import Svg exposing (defs, g, metadata, svg)
-import Svg.Attributes exposing (d, fill, height, id, style, transform, version, viewBox, width)
+import Svg exposing (defs, svg)
+import Svg.Attributes exposing (d, fill, viewBox)
 import VirtualDom exposing (attribute)
 
 
