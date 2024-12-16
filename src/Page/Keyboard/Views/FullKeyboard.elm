@@ -8,6 +8,7 @@ import Page.Keyboard.PAE exposing (keyNoteNameToHumanNoteString)
 import Svg
 import Svg.Attributes exposing (class)
 import Svg.Events as SE
+import Svg.Lazy
 import Utilities exposing (choose)
 import VirtualDom exposing (Attribute, attribute)
 
@@ -63,7 +64,7 @@ whiteKey muted { keyLabel, naturalNote, octave, plainNote, showSymbols } =
             ME.unwrap (Svg.text "") identity keyLabel
     in
     [ Svg.node "title"
-        []
+        [ class "white-key-label" ]
         [ Svg.text plainLabel
         ]
     , Svg.node "rect"
@@ -90,7 +91,7 @@ whiteKey muted { keyLabel, naturalNote, octave, plainNote, showSymbols } =
             , SE.onMouseUp (upKeyMsg muted naturalNote octave)
             ]
             [ Svg.node "title"
-                []
+                [ class "white-key-label" ]
                 [ Svg.text naturalLabel
                 ]
             ]
@@ -109,7 +110,7 @@ whiteKey muted { keyLabel, naturalNote, octave, plainNote, showSymbols } =
         , attribute "d" "M 170.799 -5.194 L 266.192 -5.194 L 266.192 484.73 C 266.192 489.148 262.61 492.73 258.192 492.73 L 178.615 492.73 C 174.196 492.73 170.741 489.175 170.741 484.757"
         ]
         [ Svg.node "title"
-            []
+            [ class "white-key-label" ]
             [ Svg.text naturalLabel
             ]
         ]
@@ -204,7 +205,7 @@ blackKey muted { flatNote, octave, sharpNote, showSymbols } =
 
 fullKeyboard : Bool -> List (Attribute KeyboardMsg) -> Element KeyboardMsg
 fullKeyboard muted attrs =
-    fullKeyboardImpl muted attrs
+    Svg.Lazy.lazy2 fullKeyboardImpl muted attrs
         |> Element.html
 
 
@@ -227,21 +228,23 @@ fullKeyboardImpl muted attrs =
         [ Svg.style
             []
             [ Svg.text """
-                .white-key { fill: rgb(255, 255, 255) }
+                .white-key { fill: rgb(255, 255, 255); cursor: pointer; }
+                .white-key-label { cursor: pointer; }
                 .white-key:active { fill: rgb(0, 115, 181); }
                 .white-key:active ~ .key-label { fill: rgb(255, 255, 255); }
                 .natural-key { fill: rgb(216, 216, 216); stroke-width: 1.1116px; }
                 .natural-key:active { fill: rgb(0, 115, 181); }
-                .accidental-symbol { fill: rgb(0, 0, 0); }
+                .accidental-symbol { fill: rgb(0, 0, 0); cursor: pointer; }
                 .accidental-symbol:active { fill: rgb(255, 255, 255); }
+                .natural-key { cursor: pointer }
                 .natural-key:active ~ .accidental-symbol { fill: rgb(255, 255, 255); }
                 .natural-key-parent:has(.accidental-symbol:active) .natural-key { fill: rgb(0, 115, 181); }
                 .natural-key:active ~ .white-key-divider { stroke: rgb(0, 59, 92); }
-                .black-key { fill: rgb(0, 0, 0); }
+                .black-key { fill: rgb(0, 0, 0); cursor: pointer; }
                 .black-key:active { fill: rgb(0, 115, 181); }
                 .black-key:active ~ .accidental-symbol { fill: rgb(255, 255, 255); }
                 .black-key:active ~ .black-key-parent { fill: rgb(0, 115, 181); }
-                .black-key-accidental-symbol { fill: rgb(255, 255, 255); }
+                .black-key-accidental-symbol { fill: rgb(255, 255, 255); cursor: pointer; }
                 .black-key-parent:has(.black-key-accidental-symbol.upper:active) .black-key.upper { fill: rgb(0, 115, 181); }
                 .black-key-parent:has(.black-key-accidental-symbol.lower:active) .black-key.lower { fill: rgb(0, 115, 181); }
                 .white-key-divider { fill: none; paint-order: fill; stroke: rgb(120, 120, 120); stroke-width: 3px; }
