@@ -99,12 +99,8 @@ viewFacet cfg msg =
 
 viewFacetsControlPanel : String -> LanguageMap -> ControlsConfig body msg -> List (Element msg) -> Element msg
 viewFacetsControlPanel alias header cfg body =
-    let
+    if List.all ((==) none) body then
         -- if all of the body values are empty, skip showing this panel altogether.
-        allAreEmpty =
-            List.all ((==) none) body
-    in
-    if allAreEmpty then
         none
 
     else

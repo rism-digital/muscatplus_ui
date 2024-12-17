@@ -317,14 +317,10 @@ italianLocale =
     }
 
 
-languageDecoder : String -> Decoder Language
-languageDecoder locale =
-    Decode.succeed (parseLocaleToLanguage locale)
-
-
 languageValuesDecoder : ( String, List String ) -> Decoder LanguageValue
 languageValuesDecoder ( locale, translations ) =
-    languageDecoder locale
+    parseLocaleToLanguage locale
+        |> Decode.succeed
         |> Decode.map (\lang -> LanguageValue lang translations)
 
 
