@@ -208,8 +208,7 @@ iiifLogo =
     html
         (Svg.node "svg"
             [ attribute "xmlns" "http://www.w3.org/2000/svg"
-            , attribute "height" "441.333"
-            , attribute "width" "493.36"
+            , attribute "viewBox" "0 0 493.365 441.333"
             ]
             [ Svg.node "g"
                 [ attribute "fill" "#2873ab" ]
