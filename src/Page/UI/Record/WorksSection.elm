@@ -54,7 +54,7 @@ viewSourceWorkReferenceSection { language } workReference =
             [ text workReference.value
             , link
                 [ linkColour ]
-                { label = text (extractLabelFromLanguageMap language (toLanguageMap "Search in RISM Online"))
+                { label = text (extractLabelFromLanguageMap language (toLanguageMap "Search Related Sources"))
                 , url = workReference.searchUrl
                 }
             , row
@@ -64,7 +64,7 @@ viewSourceWorkReferenceSection { language } workReference =
                 ]
                 [ newTabLink
                     [ linkColour ]
-                    { label = text (extractLabelFromLanguageMap language (toLanguageMap "External work authority"))
+                    { label = text (extractLabelFromLanguageMap language (toLanguageMap "External work authority") ++ " | " ++ workReference.externalIdentifier)
                     , url = workReference.authorityUrl
                     }
                 , externalLinkTemplate workReference.authorityUrl
