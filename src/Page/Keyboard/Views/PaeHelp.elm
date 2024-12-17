@@ -63,17 +63,6 @@ viewPaeHelp language model =
                     ]
                     (text (extractLabelFromLanguageMap language paeHelpLabel))
                 ]
-
-            --                  row
-            --[ width fill ]
-            --[ el
-            --    [ bodySM
-            --    , linkColour
-            --    , pointer
-            --    , onClick UserToggledPAEHelpText
-            --    ]
-            --    (text (extractLabelFromLanguageMap language paeHelpLabel))
-            --]
             , viewIf (viewHelpText language) model.paeHelpExpanded
             ]
         ]
