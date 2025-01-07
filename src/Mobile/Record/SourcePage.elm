@@ -21,6 +21,7 @@ import Page.UI.Record.PageTemplate exposing (mobilePageHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
@@ -141,6 +142,15 @@ viewFullMobileSourcePage session model body =
                             }
                         )
                         body.referencesNotes
+                    , viewMaybe
+                        (viewSourceItemsSection
+                            { expandMsg = RecordMsg.UserClickedExpandSourceItemsSectionInPreview
+                            , expanded = model.sourceItemsExpanded
+                            , language = session.language
+                            , summaryFormatter = viewMobileSummaryField
+                            }
+                        )
+                        body.sourceItems
                     , viewMaybe (viewExternalResourcesSection session.language) body.externalResources
                     , viewMaybe
                         (viewExemplarsSection
