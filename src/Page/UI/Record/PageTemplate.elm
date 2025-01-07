@@ -8,7 +8,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, row, shrink, spacing, spacingXY, text, width)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, paragraph, row, shrink, spacing, spacingXY, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -232,7 +232,7 @@ pageLinkTemplate language langMap fontSize body =
         ]
         [ column
             [ width shrink ]
-            [ row
+            [ paragraph
                 [ width fill ]
                 [ el
                     [ fontSize
