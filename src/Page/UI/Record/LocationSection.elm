@@ -150,10 +150,15 @@ mapSection { language, summaryFormatter } ( windowWidth, windowHeight ) coords =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ summaryFormatter language [ { label = coords.coordinatesLabel, value = toLanguageMap coordsValue } ]
+                [ summaryFormatter
+                    language
+                    [ { label = coords.coordinatesLabel
+                      , value = toLanguageMap coordsValue
+                      }
+                    ]
                 , row
                     [ width fill ]
-                    [ mapViewer ( min windowWidth 900, min windowHeight 400 ) mapsUrl ]
+                    [ mapViewer ( min windowWidth 600, min windowHeight 400 ) mapsUrl ]
                 , row
                     [ width fill ]
                     [ column

@@ -2,7 +2,7 @@ module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewMobile
 
 import Dict
 import Dict.Extra as DE
-import Element exposing (Element, alignLeft, alignTop, below, centerY, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
@@ -95,7 +95,6 @@ viewRelationshipValue language body =
     in
     row
         [ alignLeft
-        , width fill
         ]
         [ relatedToView
         , note
@@ -144,7 +143,7 @@ viewRelatedToBody language qualifier body =
                 [ linkColour
                 , centerY
                 ]
-                { label = text (extractLabelFromLanguageMap language label)
+                { label = paragraph [] [ text (extractLabelFromLanguageMap language label) ]
                 , url = body.id
                 }
 
@@ -172,17 +171,26 @@ viewRelatedToBody language qualifier body =
                 )
                 qualifier
     in
-    row
+    paragraph
         [ width fill
-        , spacing 5
         ]
         [ el
-            [ width (px 16)
-            , height (px 16)
-            , centerY
-            , relationshipTooltip |> tooltip below
+            [ paddingEach
+                { bottom = 0
+                , left = 0
+                , right = 5
+                , top = 0
+                }
+            , height fill
             ]
-            relIcon
+            (el
+                [ width (px 16)
+                , height (px 16)
+                , centerY
+                , relationshipTooltip |> tooltip above
+                ]
+                relIcon
+            )
         , relatedEntity
         , qualifierLabel
         ]
