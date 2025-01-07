@@ -1,22 +1,25 @@
 module Mobile.Front.Views exposing (view)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
+import Element.Input as Input
 import Html.Attributes as HA
+import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingHero, minimalDropShadow)
+import Page.UI.Attributes exposing (headingHero, headingLG, headingMD, minimalDropShadow)
 import Page.UI.Components exposing (h1)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, queryValidationState, viewSearchButtons)
+import Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, queryValidationState, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -66,7 +69,7 @@ view session model =
         ]
         [ column
             [ width fill
-            , htmlAttribute (HA.style "height" "60vh")
+            , htmlAttribute (HA.style "height" "40vh")
             , Background.color colourScheme.white
             , minimalDropShadow
             ]
@@ -202,7 +205,7 @@ viewFacetPanels cfg =
                         , queryIsValid = queryValidation
                         , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
                         }
-                    , viewSearchButtons
+                    , viewMobileSearchButtons
                         { language = language
                         , model = cfg.model
                         , isFrontPage = True
@@ -210,6 +213,106 @@ viewFacetPanels cfg =
                         , submitMsg = FrontMsg.UserTriggeredSearchSubmit
                         , resetMsg = FrontMsg.UserResetAllFilters
                         }
+                    ]
+                ]
+            ]
+        ]
+
+
+viewMobileSearchButtons :
+    SearchButtonConfig model msg
+    -> Element msg
+viewMobileSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetMsg } =
+    let
+        actionableProbeResponse =
+            hasActionableProbeResponse model.probeResponse
+
+        ( submitButtonColours, submitButtonMsg, submitPointerStyle ) =
+            if model.applyFilterPrompt && actionableProbeResponse then
+                ( colourScheme.lightBlue
+                , Just submitMsg
+                , pointer
+                )
+
+            else if isFrontPage then
+                ( colourScheme.lightBlue
+                , Just submitMsg
+                , pointer
+                )
+
+            else
+                ( colourScheme.midGrey
+                , Nothing
+                , htmlAttribute (HA.style "cursor" "not-allowed")
+                )
+
+        submitButtonLabel =
+            extractLabelFromLanguageMap language localTranslations.showAllRecords
+    in
+    row
+        [ alignTop
+        , htmlAttribute (HA.style "z-index" "10")
+        , width fill
+        , centerY
+        ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill
+                , spacing 12
+                , height (px 50)
+                ]
+                [ column
+                    [ width shrink
+                    ]
+                    [ Input.button
+                        [ Border.color submitButtonColours
+                        , Background.color submitButtonColours
+                        , height (px 35)
+                        , width shrink
+                        , Font.center
+                        , Font.color colourScheme.white
+                        , headingMD
+                        , submitPointerStyle
+                        , centerY
+                        , paddingXY 10 0
+                        ]
+                        { label = text submitButtonLabel
+                        , onPress = submitButtonMsg
+                        }
+                    ]
+                , column
+                    [ width shrink ]
+                    [ Input.button
+                        [ Border.color colourScheme.turquoise
+                        , Background.color colourScheme.turquoise
+                        , height (px 35)
+                        , width shrink
+                        , Font.center
+                        , Font.color colourScheme.white
+                        , centerY
+                        , headingMD
+                        , paddingXY 10 0
+                        ]
+                        { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
+                        , onPress = Just resetMsg
+                        }
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ column
+                    [ width fill ]
+                    [ row
+                        [ width fill
+                        , spacing 5
+                        ]
+                        [ el
+                            [ Font.medium
+                            , headingLG
+                            ]
+                            (viewProbeResponseNumbers language model.probeResponse)
+                        ]
                     ]
                 ]
             ]

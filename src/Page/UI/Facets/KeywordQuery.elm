@@ -6,19 +6,20 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, searchKeywordIn
 
 -}
 
-import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, pointer, px, row, spacing, text, width)
+import Color exposing (toCssString)
+import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, paddingXY, pointer, row, spacing, text, toRgb, width)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input
+import Html
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (QueryValidation(..))
-import Page.UI.Attributes exposing (bodySM, headingXXL, lineSpacing)
+import Page.UI.Attributes exposing (emptyHtmlAttribute, headingXXL, lineSpacing)
 import Page.UI.Components exposing (h2s)
 import Page.UI.Events exposing (onEnter)
-import Page.UI.Images exposing (circleSvg)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp)
 
@@ -40,7 +41,7 @@ keywordInputHelp =
     """
 
 
-status : String -> QueryValidation -> Element msg
+status : String -> QueryValidation -> Html.Attribute msg
 status queryText queryIsValid =
     let
         queryValidationWithEmptyCheck =
@@ -50,45 +51,52 @@ status queryText queryIsValid =
             else
                 queryIsValid
 
-        ( statusColor, statusMessage ) =
+        ( statusIcon, _ ) =
             case queryValidationWithEmptyCheck of
                 ValidQuery ->
-                    ( colourScheme.lightGreen, "Query is valid" )
+                    let
+                        correctCssCode =
+                            toRgb colourScheme.lightGreen
+                                |> Color.fromRgba
+                                |> toCssString
+
+                        correctIcon =
+                            HA.style "background" ("transparent url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path fill=\"" ++ correctCssCode ++ "\" d=\"M441 103c9.4 9.4 9.4 24.6 0 33.9L177 401c-9.4 9.4-24.6 9.4-33.9 0L7 265c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l119 119L407 103c9.4-9.4 24.6-9.4 33.9 0z\"/></svg>') no-repeat right/30px")
+                    in
+                    ( correctIcon, "Query is valid" )
 
                 InvalidQuery ->
-                    ( colourScheme.red, "Query is not valid" )
+                    let
+                        incorrectCssCode =
+                            toRgb colourScheme.red
+                                |> Color.fromRgba
+                                |> toCssString
+
+                        incorrectIcon =
+                            HA.style "background" ("transparent url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 384 512\"><path fill=\"" ++ incorrectCssCode ++ "\" d=\"M378.4 71.4c8.5-10.1 7.2-25.3-2.9-33.8s-25.3-7.2-33.8 2.9L192 218.7 42.4 40.6C33.9 30.4 18.7 29.1 8.6 37.6S-2.9 61.3 5.6 71.4L160.7 256 5.6 440.6c-8.5 10.2-7.2 25.3 2.9 33.8s25.3 7.2 33.8-2.9L192 293.3 341.6 471.4c8.5 10.1 23.7 11.5 33.8 2.9s11.5-23.7 2.9-33.8L223.3 256l155-184.6z\"/></svg>') no-repeat right/30px")
+                    in
+                    ( incorrectIcon, "Query is not valid" )
 
                 EmptyQuery ->
-                    ( colourScheme.midGrey, "" )
+                    ( emptyHtmlAttribute, "" )
 
                 CheckingQuery ->
-                    ( colourScheme.yellow, "Checking query ..." )
+                    ( emptyHtmlAttribute, "Checking query ..." )
 
                 NotCheckedQuery ->
-                    ( colourScheme.midGrey, "" )
+                    ( emptyHtmlAttribute, "" )
     in
-    row
-        [ width fill
-        , spacing 4
-        ]
-        [ el
-            [ alignLeft
-            , width (px 10)
-            , height (px 10)
-            ]
-            (circleSvg statusColor)
-        , el
-            [ alignLeft
-            , bodySM
-            ]
-            (text statusMessage)
-        ]
+    statusIcon
 
 
 searchKeywordInput :
     KeywordInputConfig msg
     -> Element msg
 searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg } =
+    let
+        statusIconAttribute =
+            status queryText queryIsValid
+    in
     row
         [ width fill
         , alignTop
@@ -129,6 +137,8 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, us
                     , headingXXL
                     , Font.medium
                     , paddingXY 10 12
+                    , htmlAttribute statusIconAttribute
+                    , htmlAttribute (HA.style "background-size" "10px")
                     ]
                     { label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                     , onChange = \inp -> changeMsg inp
@@ -143,8 +153,7 @@ searchKeywordInput { language, submitMsg, changeMsg, queryText, queryIsValid, us
                 ]
             , row
                 [ width fill ]
-                [ status queryText queryIsValid
-                , el
+                [ el
                     [ alignRight
                     , onClick userClickedOpenQueryBuilderMsg
                     , pointer
@@ -162,6 +171,10 @@ viewFrontKeywordQueryInput :
     KeywordInputConfig msg
     -> Element msg
 viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg } =
+    let
+        statusIconAttribute =
+            status queryText queryIsValid
+    in
     row
         [ width fill
         , alignTop
@@ -184,6 +197,7 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsV
                         , htmlAttribute (HA.id "ro-keyword-input")
                         , htmlAttribute (HA.autocomplete False)
                         , htmlAttribute (HA.autofocus True)
+                        , htmlAttribute statusIconAttribute
                         , Border.rounded 0
                         , onEnter submitMsg
                         , headingXXL
@@ -207,8 +221,7 @@ viewFrontKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsV
                 ]
             , row
                 [ width fill ]
-                [ status queryText queryIsValid
-                , el
+                [ el
                     [ alignRight
                     , onClick userClickedOpenQueryBuilderMsg
                     , pointer
