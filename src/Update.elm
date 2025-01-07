@@ -4,6 +4,7 @@ import Basics.Extra as BE
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (isMobileView, setDevice, setWindow)
+import Maybe.Extra as ME
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
 import Page.About as AboutPage
@@ -79,6 +80,13 @@ changePage url model =
                         _ ->
                             SearchPage.init searchCfg
 
+                updatedSession =
+                    if ME.isNothing qargs.nationalCollection then
+                        { newSession | restrictedToNationalCollection = Nothing }
+
+                    else
+                        newSession
+
                 newKeyboardParams =
                     buildNotationQueryParameters kqargs
                         |> toQuery
@@ -96,7 +104,7 @@ changePage url model =
                 searchUrl =
                     { url | query = Just fullQueryParams }
             in
-            ( SearchPage newSession newPageBody
+            ( SearchPage updatedSession newPageBody
             , Cmd.batch
                 [ SearchPage.searchPageRequest searchUrl
                 , SearchPage.requestPreviewIfSelected newPageBody.selectedResult

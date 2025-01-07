@@ -222,6 +222,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 , body = body
                 , resultsLoading = resultsLoading
                 , clickForPreviewMsg = cfg.userClickedResultForPreviewMsg
+                , nationalCollectionFilterIsSet = ME.isJust (.restrictedToNationalCollection cfg.session)
                 }
             , viewPagination language body.pagination cfg.userClickedResultsPaginationMsg
             ]
@@ -447,6 +448,7 @@ type alias SearchResultsListPanelConfig a msg =
     , body : SearchBody
     , resultsLoading : Bool
     , clickForPreviewMsg : String -> msg
+    , nationalCollectionFilterIsSet : Bool
     }
 
 
@@ -463,6 +465,7 @@ viewSearchResultsListPanel cfg =
         viewSearchResultsNotFoundTmpl
             { currentQuery = activeSearch.nextQuery
             , language = cfg.language
+            , nationalCollectionFilterIsSet = cfg.nationalCollectionFilterIsSet
             , otherResultsFound = otherResultsFound
             }
 

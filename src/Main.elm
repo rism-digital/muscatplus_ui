@@ -4,6 +4,7 @@ import Browser
 import Browser.Navigation as Nav
 import Device exposing (isMobileView)
 import Flags exposing (Flags)
+import Maybe.Extra as ME
 import Model exposing (Model(..))
 import Msg exposing (Msg)
 import Page.About as About
@@ -91,13 +92,20 @@ init flags initialUrl key =
                     Search.init searchCfg
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
 
+                updatedSession =
+                    if ME.isNothing qargs.nationalCollection then
+                        { session | restrictedToNationalCollection = Nothing }
+
+                    else
+                        session
+
                 kqArgParams =
                     buildNotationQueryParameters kqargs
                         |> toQuery
                         |> String.dropLeft 1
 
                 newQparams =
-                    addNationalCollectionQueryParameter session qargs
+                    addNationalCollectionQueryParameter updatedSession qargs
 
                 fullQueryParams =
                     String.concat [ newQparams, "&", kqArgParams ]
@@ -105,7 +113,7 @@ init flags initialUrl key =
                 searchUrl =
                     { initialUrl | query = Just fullQueryParams }
             in
-            ( SearchPage session initialBody
+            ( SearchPage updatedSession initialBody
             , Cmd.batch
                 [ Cmd.batch
                     [ Search.searchPageRequest searchUrl
