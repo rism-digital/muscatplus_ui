@@ -14,11 +14,11 @@ import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation)
 import Page.RecordTypes.ResultMode exposing (ResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (QueryField)
-import Page.UI.Attributes exposing (headingMD, minimalInsetShadow)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, headingMD, minimalInsetShadow)
 import Page.UI.Components exposing (h4)
 import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
 import Page.UI.Markdown as Markdown
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, hasActionableQueryValidation)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, hasActionableQueryValidation, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -99,6 +99,9 @@ view cfg =
         heading =
             resultModeHeader cfg.currentMode
                 |> joinLanguageMaps ": " localTranslations.keywordQuery
+
+        numberOfResults =
+            viewProbeResponseNumbers cfg.language cfg.probeResponse
     in
     row
         [ width fill
@@ -187,12 +190,21 @@ view cfg =
             , row
                 [ alignBottom
                 , alignRight
+                , spacing 20
                 ]
-                [ viewSearchButton
-                    { language = cfg.language
-                    , probeResponse = cfg.probeResponse
-                    , submitMsg = UserClickedSearchButton
-                    }
+                [ column
+                    [ alignLeft
+                    , Font.semiBold
+                    ]
+                    [ numberOfResults ]
+                , column
+                    []
+                    [ viewSearchButton
+                        { language = cfg.language
+                        , probeResponse = cfg.probeResponse
+                        , submitMsg = UserClickedSearchButton
+                        }
+                    ]
                 ]
             ]
         ]

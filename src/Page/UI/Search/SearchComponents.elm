@@ -100,9 +100,7 @@ viewProbeResponseNumbers language probeResponse =
                             |> formatNumberByLanguage language
                             |> probeLabel
             in
-            el
-                []
-                (text textMsg)
+            text textMsg
 
         _ ->
             none
