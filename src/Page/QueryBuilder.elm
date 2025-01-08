@@ -97,6 +97,9 @@ view cfg =
                 Response (SearchData body) ->
                     body.queryFields
 
+                Response (FrontData body) ->
+                    body.queryFields
+
                 _ ->
                     []
 

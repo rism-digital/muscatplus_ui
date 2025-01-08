@@ -31,6 +31,7 @@ module Page.RecordTypes.Search exposing
     , SourceResultBody
     , SourceResultFlags
     , ToggleFacet
+    , aliasLabelDecoder
     , extractIdFromSearchResult
     , facetsDecoder
     , parseFacetBehaviourToString
