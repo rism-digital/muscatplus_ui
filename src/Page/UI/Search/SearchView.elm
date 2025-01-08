@@ -44,7 +44,7 @@ import Page.UI.Search.SearchComponents exposing (queryValidationState, viewSearc
 import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Style exposing (colourScheme)
-import Response exposing (Response(..), ServerData)
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Set exposing (Set)
 
@@ -60,6 +60,7 @@ type alias SearchResultsSectionConfig a msg =
             , selectedResult : Maybe String
             , probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
+            , response : Response ServerData
         }
     , searchResponse : Response ServerData
     , expandedIncipitInfoSections : Set String
@@ -341,6 +342,17 @@ viewSearchControls cfg =
             .probeResponse cfg.model
                 |> queryValidationState
 
+        suppressBecauseEmpty =
+            case .response cfg.model of
+                Response (SearchData body) ->
+                    List.isEmpty body.queryFields
+
+                Response (FrontData body) ->
+                    List.isEmpty body.queryFields
+
+                _ ->
+                    True
+
         qText =
             toNextQuery (.activeSearch cfg.model)
                 |> toKeywordQuery
@@ -359,7 +371,7 @@ viewSearchControls cfg =
                     , queryIsValid = queryValidation
                     , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
                     , heading = localTranslations.keywordQuery
-                    , suppressQueryBuilderButton = False
+                    , suppressQueryBuilderButton = suppressBecauseEmpty
                     }
                 ]
 

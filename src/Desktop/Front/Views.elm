@@ -222,6 +222,17 @@ viewFacetPanels cfg =
             .probeResponse cfg.model
                 |> queryValidationState
 
+        suppressBecauseEmpty =
+            case .response cfg.model of
+                Response (SearchData body) ->
+                    List.isEmpty body.queryFields
+
+                Response (FrontData body) ->
+                    List.isEmpty body.queryFields
+
+                _ ->
+                    True
+
         submitMsg =
             if hasActionableProbeResponse (.probeResponse cfg.model) then
                 FrontMsg.UserTriggeredSearchSubmit
@@ -254,7 +265,7 @@ viewFacetPanels cfg =
                         , queryIsValid = queryValidation
                         , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
                         , heading = headingHeroText
-                        , suppressQueryBuilderButton = False
+                        , suppressQueryBuilderButton = suppressBecauseEmpty
                         }
                     )
 
@@ -267,7 +278,7 @@ viewFacetPanels cfg =
                         , queryIsValid = queryValidation
                         , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
                         , heading = headingHeroText
-                        , suppressQueryBuilderButton = False
+                        , suppressQueryBuilderButton = suppressBecauseEmpty
                         }
                     , none
                     )
