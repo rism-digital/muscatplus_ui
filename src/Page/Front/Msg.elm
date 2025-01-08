@@ -5,6 +5,7 @@ import Http
 import Http.Detailed
 import Language exposing (LanguageMap)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -37,4 +38,7 @@ type FrontMsg
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserTriggeredSearchSubmit
     | UserResetAllFilters
+    | UserClickedOpenQueryBuilder
+    | UserClickedCloseQueryBuilder
+    | UserInteractedWithQueryBuilder QueryBuilderMsg
     | NothingHappened

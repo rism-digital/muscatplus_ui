@@ -11,14 +11,14 @@ import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractL
 import Language.LocalTranslations exposing (localTranslations)
 import Page.QueryBuilder.Model exposing (QueryBuilderOperator(..), queryBuilderOperatorToLabel)
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
-import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation(..))
+import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation)
 import Page.RecordTypes.ResultMode exposing (ResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (QueryField)
-import Page.UI.Attributes exposing (bodySM, headingMD, headingXXL, minimalInsetShadow)
-import Page.UI.Components exposing (h3s, h4)
-import Page.UI.Images exposing (circleSvg)
+import Page.UI.Attributes exposing (headingMD, minimalInsetShadow)
+import Page.UI.Components exposing (h4)
+import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
 import Page.UI.Markdown as Markdown
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, hasActionableQueryValidation, queryValidationState, viewProbeResponseNumbers)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, hasActionableQueryValidation)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -84,53 +84,21 @@ queryBuilderDescription =
 
 
 view :
-    { currentMode : ResultMode
+    { changeMsg : String -> QueryBuilderMsg
+    , currentMode : ResultMode
     , language : Language
     , probeResponse : ProbeStatus
     , qText : String
     , queryFields : List QueryField
+    , queryIsValid : QueryValidation
+    , submitMsg : QueryBuilderMsg
     }
     -> Element QueryBuilderMsg
 view cfg =
     let
-        header =
+        heading =
             resultModeHeader cfg.currentMode
-
-        queryValidationWithEmptyCheck =
-            if String.isEmpty cfg.qText then
-                EmptyQuery
-
-            else
-                queryValidationState cfg.probeResponse
-
-        ( statusColor, statusMessage ) =
-            case queryValidationWithEmptyCheck of
-                ValidQuery ->
-                    ( colourScheme.lightGreen, "Query is valid" )
-
-                InvalidQuery ->
-                    ( colourScheme.red, "Query is not valid" )
-
-                EmptyQuery ->
-                    ( colourScheme.midGrey, "" )
-
-                CheckingQuery ->
-                    ( colourScheme.yellow, "Checking query ..." )
-
-                NotCheckedQuery ->
-                    ( colourScheme.midGrey, "" )
-
-        status =
-            row
-                [ width fill
-                , spacing 4
-                ]
-                [ el [ alignLeft, width (px 10), height (px 10) ] (circleSvg statusColor)
-                , el [ alignLeft, bodySM ] (text statusMessage)
-                ]
-
-        probeResponse =
-            viewProbeResponseNumbers cfg.language cfg.probeResponse
+                |> joinLanguageMaps ": " localTranslations.keywordQuery
     in
     row
         [ width fill
@@ -142,51 +110,16 @@ view cfg =
             , padding 10
             , spacing 6
             ]
-            [ row
-                [ width fill
-                , alignLeft
-                ]
-                [ joinLanguageMaps ": " localTranslations.keywordQuery header
-                    |> h3s cfg.language
-                ]
-            , row
-                [ width fill ]
-                [ Input.text
-                    [ width fill
-                    , htmlAttribute (HA.autocomplete False)
-                    , Border.rounded 0
-
-                    --, onEnter cfg.submitMsg
-                    , headingXXL
-                    , Font.medium
-                    , paddingXY 10 12
-                    ]
-                    { label = Input.labelHidden (extractLabelFromLanguageMap cfg.language localTranslations.search)
-                    , onChange = UserEnteredTextInQueryBuilder
-
-                    --, onChange = \inp -> cfg.changeMsg inp
-                    , placeholder =
-                        Just
-                            (Input.placeholder
-                                []
-                                (text (extractLabelFromLanguageMap cfg.language localTranslations.wordsAnywhere))
-                            )
-                    , text = cfg.qText
-                    }
-                ]
-            , row
-                [ width fill
-                , height (px 25)
-                ]
-                [ column
-                    [ alignLeft ]
-                    [ status ]
-                , column
-                    [ alignRight
-                    , bodySM
-                    ]
-                    [ probeResponse ]
-                ]
+            [ viewKeywordQueryInput
+                { language = cfg.language
+                , submitMsg = cfg.submitMsg
+                , changeMsg = cfg.changeMsg
+                , queryText = cfg.qText
+                , queryIsValid = cfg.queryIsValid
+                , userClickedOpenQueryBuilderMsg = NothingHappenedWithTheQueryBuilder
+                , heading = heading
+                , suppressQueryBuilderButton = True
+                }
             , row
                 [ width fill
                 , height fill

@@ -2,7 +2,9 @@ module Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..), QueryValidat
 
 import Http.Detailed
 import Json.Decode as Decode exposing (Decoder, bool, int)
-import Json.Decode.Pipeline exposing (required, requiredAt)
+import Json.Decode.Pipeline exposing (required)
+import Language exposing (LanguageMap)
+import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 
 
 type alias ProbeData =
@@ -20,7 +22,7 @@ type ProbeStatus
 
 type QueryValidation
     = ValidQuery
-    | InvalidQuery
+    | InvalidQuery LanguageMap
     | EmptyQuery
     | CheckingQuery
     | NotCheckedQuery
@@ -30,16 +32,18 @@ probeResponseDecoder : Decoder ProbeData
 probeResponseDecoder =
     Decode.succeed ProbeData
         |> required "totalItems" int
-        |> requiredAt [ "queryValidation", "valid" ]
-            (bool
-                |> Decode.andThen queryValidationDecoder
-            )
+        |> required "queryValidation" queryValidationDecoder
 
 
-queryValidationDecoder : Bool -> Decoder QueryValidation
-queryValidationDecoder qstatus =
-    if qstatus then
-        Decode.succeed ValidQuery
+queryValidationDecoder : Decoder QueryValidation
+queryValidationDecoder =
+    Decode.map2
+        (\status message ->
+            if status then
+                ValidQuery
 
-    else
-        Decode.succeed InvalidQuery
+            else
+                InvalidQuery message
+        )
+        (Decode.field "valid" bool)
+        (Decode.field "message" languageMapLabelDecoder)

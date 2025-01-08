@@ -212,7 +212,10 @@ update session msg model =
                 probeState =
                     case response of
                         SearchData body ->
-                            ProbeSuccess { totalItems = body.totalItems, queryStatus = NotCheckedQuery }
+                            ProbeSuccess
+                                { totalItems = body.totalItems
+                                , queryStatus = NotCheckedQuery
+                                }
 
                         _ ->
                             NotChecked

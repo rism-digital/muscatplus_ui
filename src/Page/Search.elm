@@ -241,15 +241,6 @@ update session msg model =
                         _ ->
                             activeFilters
 
-                --_ =
-                --    Debug.log "current mode" currentMode
-                --
-                --_ =
-                --    Debug.log "preferred mode" alternativeMode
-                --
-                --_ =
-                --    Debug.log "Results but not in current mode" resultsButNotInCurrentMode
-                --
                 newNextQuery =
                     toNextQuery model.activeSearch
                         |> setFilters updatedFiltersWithCorrectLanguageMaps

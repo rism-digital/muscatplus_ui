@@ -8,3 +8,4 @@ type QueryBuilderMsg
     | UserClickedOnFieldName String String
     | UserClickedOnOperator QueryBuilderOperator String
     | UserClickedSearchButton
+    | NothingHappenedWithTheQueryBuilder

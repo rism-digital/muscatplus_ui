@@ -9,11 +9,12 @@ import Html.Attributes as HA
 import Language exposing (Language, toLanguageMap)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.QueryBuilder.Model exposing (QueryBuilderModel, queryBuilderOperatorToLabel)
-import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
+import Page.QueryBuilder.Msg as QueryBuilderMsg exposing (QueryBuilderMsg(..))
 import Page.QueryBuilder.View
 import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Components exposing (viewWindowTitleBar)
+import Page.UI.Search.SearchComponents exposing (queryValidationState)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 
@@ -60,6 +61,9 @@ update msg model =
             -- no-op here because it's handled in the parent.
             ( model, Cmd.none )
 
+        NothingHappenedWithTheQueryBuilder ->
+            ( model, Cmd.none )
+
 
 view :
     { closeMsg : msg
@@ -95,6 +99,10 @@ view cfg =
 
                 _ ->
                     []
+
+        queryValidation =
+            .probeResponse cfg.model
+                |> queryValidationState
     in
     row
         [ width fill
@@ -115,11 +123,14 @@ view cfg =
             ]
             [ viewWindowTitleBar cfg.language title cfg.closeMsg
             , Page.QueryBuilder.View.view
-                { currentMode = currentMode
+                { changeMsg = QueryBuilderMsg.UserEnteredTextInQueryBuilder
+                , currentMode = currentMode
                 , language = cfg.language
                 , probeResponse = .probeResponse cfg.model
                 , qText = qText
                 , queryFields = queryFields
+                , queryIsValid = queryValidation
+                , submitMsg = QueryBuilderMsg.UserClickedSearchButton
                 }
                 |> Element.map cfg.userInteractedWithQueryBuilderMsg
             ]

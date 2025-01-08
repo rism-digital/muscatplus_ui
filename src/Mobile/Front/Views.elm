@@ -1,6 +1,6 @@
 module Mobile.Front.Views exposing (view)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -13,10 +13,9 @@ import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingHero, headingLG, headingMD, minimalDropShadow)
-import Page.UI.Components exposing (h1)
+import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
-import Page.UI.Facets.KeywordQuery exposing (viewFrontKeywordQueryInput)
+import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
 import Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, queryValidationState, viewProbeResponseNumbers)
@@ -191,19 +190,15 @@ viewFacetPanels cfg =
                     , alignTop
                     , padding 10
                     ]
-                    [ paragraph
-                        [ headingHero
-                        , Font.semiBold
-                        , paddingXY 0 10
-                        ]
-                        [ h1 language headingHeroText ]
-                    , viewFrontKeywordQueryInput
+                    [ viewKeywordQueryInput
                         { language = language
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
                         , queryIsValid = queryValidation
                         , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
+                        , heading = headingHeroText
+                        , suppressQueryBuilderButton = True
                         }
                     , viewMobileSearchButtons
                         { language = language

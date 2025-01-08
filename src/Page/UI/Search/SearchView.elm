@@ -26,7 +26,7 @@ import Page.UI.Attributes exposing (bodyRegular, lineSpacing, resultsColumnWidth
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
-import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput)
+import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg)
 import Page.UI.Pagination exposing (viewPagination)
@@ -351,13 +351,15 @@ viewSearchControls cfg =
                 [ width fill
                 , paddingXY 0 10
                 ]
-                [ searchKeywordInput
+                [ viewKeywordQueryInput
                     { language = language
                     , submitMsg = cfg.userTriggeredSearchSubmitMsg
                     , changeMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
                     , queryText = qText
                     , queryIsValid = queryValidation
                     , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
+                    , heading = localTranslations.keywordQuery
+                    , suppressQueryBuilderButton = False
                     }
                 ]
 

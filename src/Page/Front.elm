@@ -7,7 +7,7 @@ module Page.Front exposing
     , update
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setRangeFacetValues, toActiveSearch, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setKeyboard, setQueryBuilder, setRangeFacetValues, toActiveSearch, toKeyboard)
 import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
@@ -19,10 +19,12 @@ import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
+import Page.QueryBuilder as QueryBuilder
+import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToResultMode)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..))
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -380,6 +382,52 @@ update session msg model =
                 , notationRenderCmd
                 ]
             )
+
+        UserClickedOpenQueryBuilder ->
+            let
+                newActiveSearch =
+                    setQueryBuilder (Just QueryBuilder.init) model.activeSearch
+            in
+            ( { model
+                | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
+
+        UserClickedCloseQueryBuilder ->
+            let
+                newActiveSearch =
+                    setQueryBuilder Nothing model.activeSearch
+            in
+            ( { model
+                | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
+
+        UserInteractedWithQueryBuilder (UserEnteredTextInQueryBuilder queryText) ->
+            let
+                -- This is the same code as when the user enters text in the
+                -- non querybuilder box. The idea is that we update the "main"
+                -- query, instead of tracking a specific querybuilder-only state.
+                debounceMsg =
+                    provideInput DebouncerSettledToSendProbeRequest
+                        |> DebouncerCapturedProbeRequest
+            in
+            userEnteredTextInKeywordQueryBox queryText model
+                |> update session debounceMsg
+
+        UserInteractedWithQueryBuilder UserClickedSearchButton ->
+            -- submit the search and close the query builder
+            searchSubmit session { model | activeSearch = setQueryBuilder Nothing model.activeSearch }
+
+        UserInteractedWithQueryBuilder queryBuilderMsg ->
+            let
+                -- all other interactions can go here
+                ( _, qbCmd ) =
+                    QueryBuilder.update queryBuilderMsg {}
+            in
+            ( model, Cmd.map UserInteractedWithQueryBuilder qbCmd )
 
         NothingHappened ->
             ( model, Cmd.none )

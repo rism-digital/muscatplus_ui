@@ -141,7 +141,6 @@ viewRelatedToBody language qualifier body =
         linkRelated label =
             link
                 [ linkColour
-                , centerY
                 ]
                 { label = paragraph [] [ text (extractLabelFromLanguageMap language label) ]
                 , url = body.id
@@ -173,6 +172,7 @@ viewRelatedToBody language qualifier body =
     in
     paragraph
         [ width fill
+        , height fill
         ]
         [ el
             [ paddingEach
@@ -181,12 +181,10 @@ viewRelatedToBody language qualifier body =
                 , right = 5
                 , top = 0
                 }
-            , height fill
+            , centerY
             ]
             (el
                 [ width (px 16)
-                , height (px 16)
-                , centerY
                 , relationshipTooltip |> tooltip above
                 ]
                 relIcon

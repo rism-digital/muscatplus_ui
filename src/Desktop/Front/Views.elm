@@ -1,22 +1,22 @@
 module Desktop.Front.Views exposing (view)
 
 import Desktop.Error.Views
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Font as Font
 import Html.Attributes as HA
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
+import Page.QueryBuilder
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingHero, minimalDropShadow)
-import Page.UI.Components exposing (h1)
+import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
-import Page.UI.Facets.KeywordQuery exposing (searchKeywordInput, viewFrontKeywordQueryInput)
+import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Search.Controls.ControlsConfig exposing (SearchControlsConfig)
 import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
@@ -65,6 +65,20 @@ view session model =
 
                 IncipitSearchOption ->
                     Background.image "/static/images/incipits.jpg"
+
+        queryBuilderWindow =
+            .activeSearch model
+                |> .queryBuilder
+                |> viewMaybe
+                    (\_ ->
+                        Page.QueryBuilder.view
+                            { closeMsg = FrontMsg.UserClickedCloseQueryBuilder
+                            , language = session.language
+                            , model = model
+                            , searchResponse = model.response
+                            , userInteractedWithQueryBuilderMsg = FrontMsg.UserInteractedWithQueryBuilder
+                            }
+                    )
     in
     row
         [ width fill
@@ -73,6 +87,7 @@ view session model =
         , alignLeft
         , backgroundImage
         , htmlAttribute (HA.style "background-position" "top left")
+        , inFront queryBuilderWindow
         ]
         [ column
             [ width (px 1100)
@@ -231,24 +246,28 @@ viewFacetPanels cfg =
                         , searchPreferences = .searchPreferences cfg.session
                         }
                         cfg.facetMsgConfig
-                    , searchKeywordInput
+                    , viewKeywordQueryInput
                         { language = language
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
                         , queryIsValid = queryValidation
-                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
+                        , heading = headingHeroText
+                        , suppressQueryBuilderButton = False
                         }
                     )
 
                 _ ->
-                    ( viewFrontKeywordQueryInput
+                    ( viewKeywordQueryInput
                         { language = language
                         , submitMsg = submitMsg
                         , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
                         , queryText = qText
                         , queryIsValid = queryValidation
-                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
+                        , heading = headingHeroText
+                        , suppressQueryBuilderButton = False
                         }
                     , none
                     )
@@ -293,16 +312,7 @@ viewFacetPanels cfg =
             [ width fill
             , alignTop
             ]
-            [ row
-                [ width fill
-                , alignTop
-                , headingHero
-                , Font.semiBold
-                , paddingXY 0 10
-                ]
-                [ h1 language headingHeroText
-                ]
-            , mainSearchField
+            [ mainSearchField
             , secondaryQueryField
             , row
                 [ alignTop
