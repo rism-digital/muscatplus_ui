@@ -109,7 +109,7 @@ viewProbeResponseNumbers language probeResponse =
                 |> text
 
         NotChecked ->
-            text "Probe not checked"
+            none
 
 
 viewSearchButtons :
