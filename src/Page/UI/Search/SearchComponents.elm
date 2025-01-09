@@ -11,6 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
+import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -102,8 +103,13 @@ viewProbeResponseNumbers language probeResponse =
             in
             text textMsg
 
-        _ ->
-            none
+        ProbeError err ->
+            createErrorMessage language err
+                |> Tuple.first
+                |> text
+
+        NotChecked ->
+            text "Probe not checked"
 
 
 viewSearchButtons :
