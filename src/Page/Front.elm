@@ -174,10 +174,14 @@ update session msg model =
                     .keyboard model.activeSearch
                         |> Maybe.map (\km -> { km | needsProbe = False })
                         |> flip setKeyboard model.activeSearch
+
+                filtersCanBeApplied =
+                    response.totalItems > 0
             in
             ( { model
                 | activeSearch = newActiveSearch
                 , probeResponse = ProbeSuccess response
+                , applyFilterPrompt = filtersCanBeApplied
               }
             , Cmd.none
             )

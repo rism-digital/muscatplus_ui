@@ -121,31 +121,18 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 , pointer
                 )
 
-            else if isFrontPage then
-                ( colourScheme.lightBlue
-                , Just submitMsg
-                , pointer
-                )
-
             else
                 ( colourScheme.midGrey
                 , Nothing
                 , htmlAttribute (HA.style "cursor" "not-allowed")
                 )
 
-        submitButtonLabel =
-            if isFrontPage then
-                extractLabelFromLanguageMap language localTranslations.showAllRecords
-
-            else
-                extractLabelFromLanguageMap language submitLabel
-
         -- never show the 'needs update' message on the front page, since it doesn't really
         -- make sense.
         updateMessage =
             viewIf
                 (viewUpdateMessage submitButtonMsg language model.applyFilterPrompt actionableProbeResponse)
-                isFrontPage
+                (not isFrontPage)
     in
     row
         [ alignTop
@@ -182,7 +169,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 , centerY
                 , paddingXY 10 0
                 ]
-                { label = text submitButtonLabel
+                { label = text (extractLabelFromLanguageMap language submitLabel)
                 , onPress = submitButtonMsg
                 }
             ]
@@ -222,16 +209,16 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
 
 viewUpdateMessage : Maybe msg -> Language -> Bool -> Bool -> Element msg
 viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
-    (applyFilterPrompt && actionableProbResponse)
-        |> viewIf
-            (Input.button
-                [ width shrink
-                , padding 10
-                , Background.color colourScheme.lightOrange
-                , headingLG
-                , Font.color colourScheme.white
-                ]
-                { label = text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
-                , onPress = submitMsg
-                }
-            )
+    viewIf
+        (Input.button
+            [ width shrink
+            , padding 10
+            , Background.color colourScheme.lightOrange
+            , headingLG
+            , Font.color colourScheme.white
+            ]
+            { label = text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
+            , onPress = submitMsg
+            }
+        )
+        (applyFilterPrompt && actionableProbResponse)

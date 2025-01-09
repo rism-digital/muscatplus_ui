@@ -229,20 +229,11 @@ viewMobileSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, 
                 , pointer
                 )
 
-            else if isFrontPage then
-                ( colourScheme.lightBlue
-                , Just submitMsg
-                , pointer
-                )
-
             else
                 ( colourScheme.midGrey
                 , Nothing
                 , htmlAttribute (HA.style "cursor" "not-allowed")
                 )
-
-        submitButtonLabel =
-            extractLabelFromLanguageMap language localTranslations.showAllRecords
     in
     row
         [ alignTop
@@ -272,7 +263,7 @@ viewMobileSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, 
                         , centerY
                         , paddingXY 10 0
                         ]
-                        { label = text submitButtonLabel
+                        { label = text (extractLabelFromLanguageMap language submitLabel)
                         , onPress = submitButtonMsg
                         }
                     ]

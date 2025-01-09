@@ -110,7 +110,7 @@ view cfg =
         [ column
             [ width fill
             , height fill
-            , padding 10
+            , padding 20
             , spacing 6
             ]
             [ viewKeywordQueryInput

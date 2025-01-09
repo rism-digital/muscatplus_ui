@@ -77,7 +77,6 @@ localTranslations :
     , search : LanguageMap
     , searchNumberOfRecords : LanguageMap
     , seeAll : LanguageMap
-    , showAllRecords : LanguageMap
     , showNumItems : LanguageMap
     , showResults : LanguageMap
     , sortAlphabetically : LanguageMap
@@ -423,15 +422,6 @@ localTranslations =
         [ LanguageValue English [ "Search {{ numberOfRecords }} {{ recordType }}" ] ]
     , seeAll =
         [ LanguageValue English [ "See all" ] ]
-    , showAllRecords =
-        [ LanguageValue English [ "Show all results" ]
-        , LanguageValue German [ "Alle Ergebnisse anzeigen" ]
-        , LanguageValue French [ "Afficher tous les résultats" ]
-        , LanguageValue Italian [ "Mostra tutti i risultati" ]
-        , LanguageValue Spanish [ "Mostrar todos los resultados" ]
-        , LanguageValue Portuguese [ "Mostrar todos os resultados" ]
-        , LanguageValue Polish [ "Wyświetl wszystkie wyniki" ]
-        ]
     , showNumItems =
         [ LanguageValue English [ "Show {{ numItems }} items" ] ]
     , showResults =

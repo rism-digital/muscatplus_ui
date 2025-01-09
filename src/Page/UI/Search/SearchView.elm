@@ -237,7 +237,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 { language = language
                 , model = cfg.model
                 , isFrontPage = False
-                , submitLabel = localTranslations.updateResults
+                , submitLabel = localTranslations.showResults
                 , submitMsg = cfg.userTriggeredSearchSubmitMsg
                 , resetMsg = cfg.userResetAllFiltersMsg
                 }
