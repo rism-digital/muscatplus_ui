@@ -13,14 +13,21 @@ import Page.Keyboard.Views.PaeHelp exposing (viewPaeHelp)
 import Page.RecordTypes.Search exposing (NotationFacet)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
-import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
+import Page.UI.Helpers exposing (viewIf, viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (audioMutedSvg, audioUnmutedSvg)
 import Page.UI.Style exposing (colourScheme)
 import SearchPreferences exposing (SearchPreferences)
 
 
-view : Maybe SearchPreferences -> NotationFacet -> Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
-view searchPreferences notationFacet language model =
+view :
+    { searchPreferences : Maybe SearchPreferences
+    , notationFacet : NotationFacet
+    , language : Language
+    , model : KeyboardModel KeyboardMsg
+    , suppressKeyboardGraphic : Bool
+    }
+    -> Element KeyboardMsg
+view { searchPreferences, notationFacet, language, model, suppressKeyboardGraphic } =
     let
         isMuted =
             ME.unwrap True .audioMuted searchPreferences
@@ -28,6 +35,42 @@ view searchPreferences notationFacet language model =
         queryModeOptions =
             .options notationFacet.queryModes
                 |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
+
+        keyboardControl =
+            viewIf
+                (row
+                    [ width fill
+                    , paddingXY 0 20
+                    ]
+                    [ column
+                        [ centerX ]
+                        [ row
+                            [ width fill ]
+                            [ fullKeyboard isMuted []
+                            ]
+                        , row
+                            [ width fill
+                            , height (px 20)
+                            , paddingXY 0 10
+                            ]
+                            [ el
+                                [ width (px 18)
+                                , height (px 18)
+                                , alignLeft
+                                , onClick (UserToggledAudioMuted (not isMuted))
+                                , pointer
+                                ]
+                                (if isMuted then
+                                    audioMutedSvg colourScheme.red
+
+                                 else
+                                    audioUnmutedSvg colourScheme.lightBlue
+                                )
+                            ]
+                        ]
+                    ]
+                )
+                (not suppressKeyboardGraphic)
     in
     row
         [ width fill
@@ -60,37 +103,7 @@ view searchPreferences notationFacet language model =
                         (viewMaybe viewSVGRenderedIncipit model.notation)
                     ]
                 ]
-            , row
-                [ width fill
-                , paddingXY 0 20
-                ]
-                [ column
-                    [ centerX ]
-                    [ row
-                        [ width fill ]
-                        [ fullKeyboard isMuted []
-                        ]
-                    , row
-                        [ width fill
-                        , height (px 20)
-                        , paddingXY 0 10
-                        ]
-                        [ el
-                            [ width (px 18)
-                            , height (px 18)
-                            , alignLeft
-                            , onClick (UserToggledAudioMuted (not isMuted))
-                            , pointer
-                            ]
-                            (if isMuted then
-                                audioMutedSvg colourScheme.red
-
-                             else
-                                audioUnmutedSvg colourScheme.lightBlue
-                            )
-                        ]
-                    ]
-                ]
+            , keyboardControl
             , row
                 [ width fill
                 , spacing lineSpacing

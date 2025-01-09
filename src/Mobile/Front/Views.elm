@@ -1,6 +1,6 @@
 module Mobile.Front.Views exposing (view)
 
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -14,6 +14,7 @@ import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
+import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
 import Page.UI.Images exposing (spinnerSvg)
@@ -68,7 +69,7 @@ view session model =
         ]
         [ column
             [ width fill
-            , htmlAttribute (HA.style "height" "40vh")
+            , htmlAttribute (HA.style "height" "60vh")
             , Background.color colourScheme.white
             , minimalDropShadow
             ]
@@ -169,6 +170,45 @@ viewFacetPanels cfg =
 
             else
                 FrontMsg.NothingHappened
+
+        ( mainSearchField, secondaryQueryField ) =
+            case .showFrontSearchInterface cfg.session of
+                IncipitSearchOption ->
+                    ( viewFacet
+                        { alias = "notation"
+                        , language = .language cfg.session
+                        , activeSearch = .activeSearch cfg.model
+                        , body = cfg.body
+                        , tooltip = []
+                        , searchPreferences = .searchPreferences cfg.session
+                        , suppressKeyboardGraphic = True
+                        }
+                        cfg.facetMsgConfig
+                    , viewKeywordQueryInput
+                        { language = language
+                        , submitMsg = submitMsg
+                        , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        , queryIsValid = queryValidation
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
+                        , heading = headingHeroText
+                        , suppressQueryBuilderButton = True
+                        }
+                    )
+
+                _ ->
+                    ( viewKeywordQueryInput
+                        { language = language
+                        , submitMsg = submitMsg
+                        , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
+                        , queryText = qText
+                        , queryIsValid = queryValidation
+                        , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
+                        , heading = headingHeroText
+                        , suppressQueryBuilderButton = True
+                        }
+                    , none
+                    )
     in
     row
         [ width fill
@@ -190,16 +230,8 @@ viewFacetPanels cfg =
                     , alignTop
                     , padding 10
                     ]
-                    [ viewKeywordQueryInput
-                        { language = language
-                        , submitMsg = submitMsg
-                        , changeMsg = FrontMsg.UserEnteredTextInKeywordQueryBox
-                        , queryText = qText
-                        , queryIsValid = queryValidation
-                        , userClickedOpenQueryBuilderMsg = FrontMsg.NothingHappened
-                        , heading = headingHeroText
-                        , suppressQueryBuilderButton = True
-                        }
+                    [ mainSearchField
+                    , secondaryQueryField
                     , viewMobileSearchButtons
                         { language = language
                         , model = cfg.model

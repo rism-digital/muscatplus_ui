@@ -255,6 +255,7 @@ viewFacetPanels cfg =
                         , body = cfg.body
                         , tooltip = []
                         , searchPreferences = .searchPreferences cfg.session
+                        , suppressKeyboardGraphic = False
                         }
                         cfg.facetMsgConfig
                     , viewKeywordQueryInput

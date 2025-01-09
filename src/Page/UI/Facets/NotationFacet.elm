@@ -15,15 +15,22 @@ type alias NotationFacetConfig msg =
     , notationFacet : NotationFacet
     , userInteractedWithKeyboardMsg : KeyboardMsg -> msg
     , searchPreferences : Maybe SearchPreferences
+    , suppressKeyboardGraphic : Bool
     }
 
 
 viewKeyboardControl : NotationFacetConfig msg -> Element msg
-viewKeyboardControl { language, keyboardModel, notationFacet, userInteractedWithKeyboardMsg, searchPreferences } =
+viewKeyboardControl { language, keyboardModel, notationFacet, userInteractedWithKeyboardMsg, searchPreferences, suppressKeyboardGraphic } =
     row
         [ alignLeft
         , width fill
         ]
-        [ Keyboard.view searchPreferences notationFacet language keyboardModel
+        [ Keyboard.view
+            { searchPreferences = searchPreferences
+            , notationFacet = notationFacet
+            , language = language
+            , model = keyboardModel
+            , suppressKeyboardGraphic = suppressKeyboardGraphic
+            }
             |> Element.map userInteractedWithKeyboardMsg
         ]

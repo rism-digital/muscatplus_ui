@@ -304,6 +304,13 @@ updateDebouncerPAESearchConfig =
     Exposes only the top level view
 
 -}
-view : Maybe SearchPreferences -> NotationFacet -> Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
-view searchPreferences notationFacet lang keyboardConfig =
-    KeyboardViews.view searchPreferences notationFacet lang keyboardConfig
+view :
+    { searchPreferences : Maybe SearchPreferences
+    , notationFacet : NotationFacet
+    , language : Language
+    , model : KeyboardModel KeyboardMsg
+    , suppressKeyboardGraphic : Bool
+    }
+    -> Element KeyboardMsg
+view cfg =
+    KeyboardViews.view cfg
