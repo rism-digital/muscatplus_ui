@@ -7,7 +7,7 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, viewKeywordQuer
 -}
 
 import Color exposing (toCssString)
-import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingXY, paragraph, pointer, row, spacing, text, toRgb, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, spacing, text, toRgb, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -112,6 +112,7 @@ viewKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid,
                 [ width fill
                 , alignTop
                 , spacing lineSpacing
+                , height (px 40)
                 ]
                 [ column
                     [ centerX
