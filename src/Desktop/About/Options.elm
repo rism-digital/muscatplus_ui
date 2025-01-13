@@ -73,6 +73,7 @@ view session model =
         [ width (fill |> maximum 900)
         , height fill
         , clipY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill
@@ -81,7 +82,6 @@ view session model =
             , Background.color colourScheme.white
             , spacing sectionSpacing
             , scrollbarY
-            , htmlAttribute (HA.style "min-height" "unset")
             ]
             [ row
                 [ width fill ]

@@ -490,6 +490,7 @@ view session =
         [ width fill
         , height fill
         , clipY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width (fill |> maximum 900)
@@ -499,7 +500,6 @@ view session =
             , spacing sectionSpacing
             , Font.size 16
             , scrollbarY
-            , htmlAttribute (HA.style "min-height" "unset")
             ]
             [ row
                 [ width fill
