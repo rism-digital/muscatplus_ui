@@ -20,21 +20,21 @@ import SearchPreferences exposing (SearchPreferences)
 
 
 view :
-    { searchPreferences : Maybe SearchPreferences
-    , notationFacet : NotationFacet
-    , language : Language
+    { language : Language
     , model : KeyboardModel KeyboardMsg
+    , notationFacet : NotationFacet
+    , searchPreferences : Maybe SearchPreferences
     , suppressKeyboardGraphic : Bool
     }
     -> Element KeyboardMsg
-view { searchPreferences, notationFacet, language, model, suppressKeyboardGraphic } =
+view { language, model, notationFacet, searchPreferences, suppressKeyboardGraphic } =
     let
-        isMuted =
-            ME.unwrap True .audioMuted searchPreferences
-
         queryModeOptions =
             .options notationFacet.queryModes
                 |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
+
+        isMuted =
+            ME.unwrap True .audioMuted searchPreferences
 
         keyboardControl =
             viewIf

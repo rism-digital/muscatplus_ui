@@ -305,10 +305,10 @@ updateDebouncerPAESearchConfig =
 
 -}
 view :
-    { searchPreferences : Maybe SearchPreferences
-    , notationFacet : NotationFacet
-    , language : Language
+    { language : Language
     , model : KeyboardModel KeyboardMsg
+    , notationFacet : NotationFacet
+    , searchPreferences : Maybe SearchPreferences
     , suppressKeyboardGraphic : Bool
     }
     -> Element KeyboardMsg

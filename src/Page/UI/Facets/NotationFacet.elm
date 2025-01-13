@@ -26,10 +26,10 @@ viewKeyboardControl { language, keyboardModel, notationFacet, userInteractedWith
         , width fill
         ]
         [ Keyboard.view
-            { searchPreferences = searchPreferences
-            , notationFacet = notationFacet
-            , language = language
+            { language = language
             , model = keyboardModel
+            , notationFacet = notationFacet
+            , searchPreferences = searchPreferences
             , suppressKeyboardGraphic = suppressKeyboardGraphic
             }
             |> Element.map userInteractedWithKeyboardMsg

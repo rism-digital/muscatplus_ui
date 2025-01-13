@@ -14,7 +14,7 @@ import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation)
 import Page.RecordTypes.ResultMode exposing (ResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (QueryField)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, headingMD, minimalInsetShadow)
+import Page.UI.Attributes exposing (headingMD, minimalInsetShadow)
 import Page.UI.Components exposing (h4)
 import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
 import Page.UI.Markdown as Markdown

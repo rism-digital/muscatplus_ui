@@ -86,7 +86,7 @@ viewSelectFacet config =
         facetItemList =
             .items config.selectFacet
     in
-    if List.length facetItemList == 0 then
+    if List.isEmpty facetItemList then
         none
 
     else

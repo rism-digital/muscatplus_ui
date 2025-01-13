@@ -249,7 +249,7 @@ viewFacetPanels cfg =
 viewMobileSearchButtons :
     SearchButtonConfig model msg
     -> Element msg
-viewMobileSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetMsg } =
+viewMobileSearchButtons { language, model, submitLabel, submitMsg, resetMsg } =
     let
         actionableProbeResponse =
             hasActionableProbeResponse model.probeResponse
