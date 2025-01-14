@@ -16,17 +16,17 @@ type alias NotationFacetConfig msg =
     , notationFacet : NotationFacet
     , userInteractedWithKeyboardMsg : KeyboardMsg -> msg
     , searchPreferences : Maybe SearchPreferences
-    , suppressKeyboardGraphic : Bool
+    , suppressInMobileUi : Bool
     }
 
 
 viewKeyboardControl : NotationFacetConfig msg -> Element msg
-viewKeyboardControl { language, keyboardModel, notationFacet, userInteractedWithKeyboardMsg, searchPreferences, suppressKeyboardGraphic } =
+viewKeyboardControl { language, keyboardModel, notationFacet, userInteractedWithKeyboardMsg, searchPreferences, suppressInMobileUi } =
     Keyboard.view
         { language = language
         , model = keyboardModel
         , notationFacet = notationFacet
         , searchPreferences = searchPreferences
-        , suppressKeyboardGraphic = suppressKeyboardGraphic
+        , suppressInMobileUi = suppressInMobileUi
         }
         |> Element.map userInteractedWithKeyboardMsg

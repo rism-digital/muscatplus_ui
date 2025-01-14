@@ -24,10 +24,10 @@ view :
     , model : KeyboardModel KeyboardMsg
     , notationFacet : NotationFacet
     , searchPreferences : Maybe SearchPreferences
-    , suppressKeyboardGraphic : Bool
+    , suppressInMobileUi : Bool
     }
     -> Element KeyboardMsg
-view { language, model, notationFacet, searchPreferences, suppressKeyboardGraphic } =
+view { language, model, notationFacet, searchPreferences, suppressInMobileUi } =
     let
         queryModeOptions =
             .options notationFacet.queryModes
@@ -70,7 +70,20 @@ view { language, model, notationFacet, searchPreferences, suppressKeyboardGraphi
                         ]
                     ]
                 )
-                (not suppressKeyboardGraphic)
+                (not suppressInMobileUi)
+
+        renderControls =
+            viewIf
+                (row
+                    [ width fill
+                    , spacing 10
+                    ]
+                    (viewRenderControls language notationFacet model)
+                )
+                (not suppressInMobileUi)
+
+        paeHelp =
+            viewIf (viewPaeHelp language model) (not suppressInMobileUi)
     in
     row
         [ width fill
@@ -92,22 +105,13 @@ view { language, model, notationFacet, searchPreferences, suppressKeyboardGraphi
                     , centerX
                     ]
                     [ el
-                        [ width (fill |> minimum 400) ]
+                        [ width (fill |> minimum 300) ]
                         (viewMaybe viewSVGRenderedIncipit model.notation)
                     ]
                 ]
-            , wrappedRow
-                [ width fill
-                , spacing 10
-                ]
-                (viewRenderControls language notationFacet model)
+            , renderControls
             , keyboardControl
-            , row
-                [ width fill
-                , spacing lineSpacing
-                ]
-                [ viewPaeInput language model
-                ]
+            , viewPaeInput language model
             , row
                 [ width fill
                 , spacing lineSpacing
@@ -131,6 +135,6 @@ view { language, model, notationFacet, searchPreferences, suppressKeyboardGraphi
                         }
                     ]
                 ]
-            , viewPaeHelp language model
+            , paeHelp
             ]
         ]

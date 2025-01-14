@@ -72,7 +72,7 @@ viewFacet cfg msg =
                         , notationFacet = facet
                         , userInteractedWithKeyboardMsg = msg.userInteractedWithPianoKeyboard
                         , searchPreferences = cfg.searchPreferences
-                        , suppressKeyboardGraphic = cfg.suppressKeyboardGraphic
+                        , suppressInMobileUi = cfg.suppressKeyboardElementsForMobile
                         }
                 )
                 (.keyboard cfg.activeSearch)

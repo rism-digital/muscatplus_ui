@@ -15,7 +15,7 @@ type alias FacetConfig a msg =
     , body : { a | facets : Facets }
     , tooltip : LanguageMap
     , searchPreferences : Maybe SearchPreferences
-    , suppressKeyboardGraphic : Bool
+    , suppressKeyboardElementsForMobile : Bool
     }
 
 
@@ -53,5 +53,5 @@ createFacetConfig cfg alias tooltip =
     , body = cfg.body
     , tooltip = tooltip
     , searchPreferences = Nothing
-    , suppressKeyboardGraphic = False
+    , suppressKeyboardElementsForMobile = False
     }

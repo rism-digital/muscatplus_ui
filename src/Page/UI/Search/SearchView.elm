@@ -385,7 +385,7 @@ viewSearchControls cfg =
                         , body = cfg.body
                         , tooltip = []
                         , searchPreferences = .searchPreferences cfg.session
-                        , suppressKeyboardGraphic = False
+                        , suppressKeyboardElementsForMobile = False
                         }
                         cfg.facetMsgConfig
                     , keywordInputField

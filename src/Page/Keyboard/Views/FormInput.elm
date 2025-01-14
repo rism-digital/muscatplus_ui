@@ -17,7 +17,7 @@ viewPaeInput : Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
 viewPaeInput language model =
     row
         [ width fill
-        , height fill
+        , spacing lineSpacing
         ]
         [ column
             [ width fill
