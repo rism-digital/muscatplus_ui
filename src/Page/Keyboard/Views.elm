@@ -1,6 +1,6 @@
 module Page.Keyboard.Views exposing (view)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, column, el, fill, height, minimum, paddingXY, pointer, px, row, spacing, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, column, el, fill, height, maximum, minimum, paddingXY, pointer, px, row, spacing, width)
 import Element.Events exposing (onClick)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
@@ -103,9 +103,12 @@ view { language, model, notationFacet, searchPreferences, suppressInMobileUi } =
                 [ column
                     [ alignTop
                     , centerX
+                    , width fill
                     ]
                     [ el
-                        [ width (fill |> minimum 300) ]
+                        [ width (fill |> minimum 300 |> maximum 600)
+                        , centerX
+                        ]
                         (viewMaybe viewSVGRenderedIncipit model.notation)
                     ]
                 ]

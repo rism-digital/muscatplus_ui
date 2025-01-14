@@ -1,6 +1,6 @@
 module Page.QueryBuilder.View exposing (view)
 
-import Element as Event exposing (Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, textColumn, width)
+import Element as Event exposing (Element, alignBottom, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -14,12 +14,13 @@ import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus, QueryValidation)
 import Page.RecordTypes.ResultMode exposing (ResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (QueryField)
-import Page.UI.Attributes exposing (headingMD, minimalInsetShadow)
-import Page.UI.Components exposing (h4)
+import Page.UI.Attributes exposing (headingMD, lineSpacing, minimalInsetShadow)
+import Page.UI.Components exposing (h1, h4)
 import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
 import Page.UI.Markdown as Markdown
 import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, hasActionableQueryValidation, viewProbeResponseNumbers)
 import Page.UI.Style exposing (colourScheme)
+import Page.UI.Tooltip exposing (facetHelp)
 
 
 qbDescriptionEnglish : String
@@ -113,14 +114,34 @@ view cfg =
             , padding 20
             , spacing 6
             ]
-            [ viewKeywordQueryInput
+            [ row
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                , height (px 40)
+                ]
+                [ column
+                    [ centerX
+                    , centerY
+                    ]
+                    [ facetHelp below "Use this to find any words, anywhere in a record." ]
+                , column
+                    [ width fill
+                    , alignLeft
+                    , centerY
+                    ]
+                    [ paragraph
+                        [ spacing 10 ]
+                        [ h1 cfg.language heading ]
+                    ]
+                ]
+            , viewKeywordQueryInput
                 { language = cfg.language
                 , submitMsg = cfg.submitMsg
                 , changeMsg = cfg.changeMsg
                 , queryText = cfg.qText
                 , queryIsValid = cfg.queryIsValid
                 , userClickedOpenQueryBuilderMsg = NothingHappenedWithTheQueryBuilder
-                , heading = heading
                 , suppressQueryBuilderButton = True
                 }
             , row

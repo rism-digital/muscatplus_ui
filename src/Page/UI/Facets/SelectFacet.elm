@@ -234,9 +234,9 @@ viewSelectFacet config =
             showLink =
                 if List.length sortedItems > 20 then
                     viewShowMoreText
-                        { isExpanded = isExpanded
+                        { facetAlias = facetAlias
+                        , isExpanded = isExpanded
                         , userClickedFacetExpandMsg = config.userClickedFacetExpandMsg
-                        , facetAlias = facetAlias
                         }
 
                 else
@@ -282,9 +282,9 @@ viewSelectFacet config =
 
 
 viewShowMoreText :
-    { isExpanded : Bool
+    { facetAlias : String
+    , isExpanded : Bool
     , userClickedFacetExpandMsg : String -> msg
-    , facetAlias : String
     }
     -> Element msg
 viewShowMoreText config =

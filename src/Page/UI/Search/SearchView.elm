@@ -371,7 +371,6 @@ viewSearchControls cfg =
                     , queryText = qText
                     , queryIsValid = queryValidation
                     , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
-                    , heading = localTranslations.keywordQuery
                     , suppressQueryBuilderButton = suppressBecauseEmpty
                     }
                 ]

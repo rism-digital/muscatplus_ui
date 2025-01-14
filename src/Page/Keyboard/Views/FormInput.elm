@@ -1,6 +1,6 @@
 module Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
 
-import Element exposing (Element, centerX, column, fill, height, paragraph, row, shrink, spacing, text, width)
+import Element exposing (Element, centerX, column, fill, paragraph, row, shrink, spacing, text, width)
 import Element.Font as Font
 import Element.Input as Input
 import Language exposing (Language, extractLabelFromLanguageMap)

@@ -1,7 +1,7 @@
 module Desktop.Front.Views exposing (view)
 
 import Desktop.Error.Views
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, none, padding, px, row, scrollbarY, width)
+import Element exposing (Element, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, none, padding, paragraph, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -12,7 +12,8 @@ import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.QueryBuilder
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (minimalDropShadow)
+import Page.UI.Attributes exposing (lineSpacing, minimalDropShadow)
+import Page.UI.Components exposing (h1)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
@@ -25,6 +26,7 @@ import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, queryValidationState, viewSearchButtons)
 import Page.UI.Style exposing (colourScheme)
+import Page.UI.Tooltip exposing (facetHelp)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Set
@@ -218,6 +220,29 @@ viewFacetPanels cfg =
                 IncipitSearchOption ->
                     localTranslations.incipits
 
+        mainTitle =
+            row
+                [ width fill
+                , alignTop
+                , spacing lineSpacing
+                , height (px 40)
+                ]
+                [ column
+                    [ centerX
+                    , centerY
+                    ]
+                    [ facetHelp below "Use this to find any words, anywhere in a record." ]
+                , column
+                    [ width fill
+                    , alignLeft
+                    , centerY
+                    ]
+                    [ paragraph
+                        [ spacing 10 ]
+                        [ h1 language headingHeroText ]
+                    ]
+                ]
+
         queryValidation =
             .probeResponse cfg.model
                 |> queryValidationState
@@ -245,8 +270,11 @@ viewFacetPanels cfg =
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
 
+        frontSearchInterface =
+            .showFrontSearchInterface cfg.session
+
         ( mainSearchField, secondaryQueryField ) =
-            case .showFrontSearchInterface cfg.session of
+            case frontSearchInterface of
                 IncipitSearchOption ->
                     ( viewFacet
                         { alias = "notation"
@@ -265,7 +293,6 @@ viewFacetPanels cfg =
                         , queryText = qText
                         , queryIsValid = queryValidation
                         , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
-                        , heading = headingHeroText
                         , suppressQueryBuilderButton = suppressBecauseEmpty
                         }
                     )
@@ -278,7 +305,6 @@ viewFacetPanels cfg =
                         , queryText = qText
                         , queryIsValid = queryValidation
                         , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
-                        , heading = headingHeroText
                         , suppressQueryBuilderButton = suppressBecauseEmpty
                         }
                     , none
@@ -324,7 +350,8 @@ viewFacetPanels cfg =
             [ width fill
             , alignTop
             ]
-            [ mainSearchField
+            [ mainTitle
+            , mainSearchField
             , secondaryQueryField
             , row
                 [ alignTop

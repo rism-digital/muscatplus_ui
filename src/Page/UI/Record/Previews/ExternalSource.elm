@@ -1,6 +1,6 @@
 module Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
 
-import Element exposing (Element, above, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, inFront, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width, wrappedRow)
+import Element exposing (Element, above, alignLeft, alignRight, alignTop, column, el, fill, fillPortion, height, htmlAttribute, inFront, link, none, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width, wrappedRow)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)

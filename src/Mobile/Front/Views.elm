@@ -141,20 +141,6 @@ viewFacetPanels cfg =
         language =
             .language cfg.session
 
-        headingHeroText =
-            case .showFrontSearchInterface cfg.session of
-                SourceSearchOption ->
-                    localTranslations.sources
-
-                PeopleSearchOption ->
-                    localTranslations.people
-
-                InstitutionSearchOption ->
-                    localTranslations.institutions
-
-                IncipitSearchOption ->
-                    localTranslations.incipits
-
         qText =
             toNextQuery (.activeSearch cfg.model)
                 |> toKeywordQuery
@@ -191,7 +177,6 @@ viewFacetPanels cfg =
                         , queryText = qText
                         , queryIsValid = queryValidation
                         , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
-                        , heading = headingHeroText
                         , suppressQueryBuilderButton = True
                         }
                     )
@@ -204,7 +189,6 @@ viewFacetPanels cfg =
                         , queryText = qText
                         , queryIsValid = queryValidation
                         , userClickedOpenQueryBuilderMsg = FrontMsg.UserClickedOpenQueryBuilder
-                        , heading = headingHeroText
                         , suppressQueryBuilderButton = True
                         }
                     , none

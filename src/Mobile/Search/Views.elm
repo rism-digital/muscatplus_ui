@@ -1,7 +1,7 @@
 module Mobile.Search.Views exposing (view)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, none, px, row, scrollbarY, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, none, row, scrollbarY, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -97,15 +97,6 @@ view session model =
         ]
 
 
-searchPageTopBar : Element SearchMsg
-searchPageTopBar =
-    row
-        [ width fill
-        , height (px 40)
-        ]
-        []
-
-
 searchResultsViewRouter : Session -> SearchPageModel SearchMsg -> Element SearchMsg
 searchResultsViewRouter session model =
     let
@@ -175,12 +166,12 @@ viewMobileSearchResultsSection cfg _ body =
             , alignTop
             ]
             [ viewMobileSearchResultsList
-                { language = .language cfg.session
-                , selectedResult = .selectedResult cfg.model
-                , body = body
+                { body = body
+                , clickMsg = cfg.userClickedResultForPreviewMsg
+                , language = .language cfg.session
                 , model = cfg.model
                 , searchResponse = cfg.searchResponse
-                , clickMsg = cfg.userClickedResultForPreviewMsg
+                , selectedResult = .selectedResult cfg.model
                 , userChangedResultSortingMsg = cfg.userChangedResultSortingMsg
                 , userChangedResultsPerPageMsg = cfg.userChangedResultsPerPageMsg
                 , userClickedResultsPaginationMsg = cfg.userClickedResultsPaginationMsg
@@ -190,22 +181,22 @@ viewMobileSearchResultsSection cfg _ body =
 
 
 viewMobileSearchResultsList :
-    { model :
+    { body : SearchBody
+    , clickMsg : String -> msg
+    , language : Language
+    , model :
         { a
-            | preview : Response ServerData
-            , previewAnimationStatus : PreviewAnimationStatus
-            , sourceItemsExpanded : Bool
+            | response : Response ServerData
             , activeSearch : ActiveSearch msg
+            , preview : Response ServerData
+            , sourceItemsExpanded : Bool
             , selectedResult : Maybe String
             , probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
-            , response : Response ServerData
+            , previewAnimationStatus : PreviewAnimationStatus
         }
-    , language : Language
-    , selectedResult : Maybe String
-    , body : SearchBody
     , searchResponse : Response ServerData
-    , clickMsg : String -> msg
+    , selectedResult : Maybe String
     , userChangedResultSortingMsg : String -> msg
     , userChangedResultsPerPageMsg : String -> msg
     , userClickedResultsPaginationMsg : String -> msg

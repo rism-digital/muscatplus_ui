@@ -7,7 +7,7 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, viewKeywordQuer
 -}
 
 import Color exposing (toCssString)
-import Element exposing (Element, alignLeft, alignRight, alignTop, below, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, spacing, text, toRgb, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingXY, pointer, px, row, spacing, text, toRgb, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -19,11 +19,9 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, to
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (QueryValidation(..))
 import Page.UI.Attributes exposing (emptyHtmlAttribute, headingMD, headingXXL, lineSpacing)
-import Page.UI.Components exposing (h1)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme)
-import Page.UI.Tooltip exposing (facetHelp)
 
 
 type alias KeywordInputConfig msg =
@@ -33,16 +31,8 @@ type alias KeywordInputConfig msg =
     , queryText : String
     , queryIsValid : QueryValidation
     , userClickedOpenQueryBuilderMsg : msg
-    , heading : LanguageMap
     , suppressQueryBuilderButton : Bool
     }
-
-
-keywordInputHelp : String
-keywordInputHelp =
-    """
-    Use this to find any words, anywhere in a record.
-    """
 
 
 status : String -> QueryValidation -> ( Html.Attribute msg, Maybe LanguageMap )
@@ -93,7 +83,7 @@ status queryText queryIsValid =
 viewKeywordQueryInput :
     KeywordInputConfig msg
     -> Element msg
-viewKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg, heading, suppressQueryBuilderButton } =
+viewKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid, userClickedOpenQueryBuilderMsg, suppressQueryBuilderButton } =
     let
         ( statusIconAttribute, statusMessage ) =
             status queryText queryIsValid
@@ -114,21 +104,7 @@ viewKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid,
                 , spacing lineSpacing
                 , height (px 40)
                 ]
-                [ column
-                    [ centerX
-                    , centerY
-                    ]
-                    [ facetHelp below keywordInputHelp ]
-                , column
-                    [ width fill
-                    , alignLeft
-                    , centerY
-                    ]
-                    [ paragraph
-                        [ spacing 10 ]
-                        [ h1 language heading ]
-                    ]
-                , viewIf
+                [ viewIf
                     (column
                         [ width fill ]
                         [ el
