@@ -47,12 +47,18 @@
             margin: 0;
         }
         /*
+            Fixes an annoying Safari behaviour where the text was being scaled
+            independently of the font size that was set.
+
             Fixes a bug with Safari where SVG has to have an explicit
             width and height set. This selects the browser based on the
             support for a safari-only attribute, and then sets the w/h
             of any rendered SVG incipit.
          */
         @supports (-webkit-backdrop-filter: blur(1px)) {
+            body {
+                -webkit-text-size-adjust: none;
+            }
             .svg-rendered-incipit svg {
                 height: 100%;
                 width: 100%;
