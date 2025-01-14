@@ -1,7 +1,7 @@
 module Page.UI.Search.SortAndRows exposing (SortAndRowsConfig, viewSearchPageSort)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -10,6 +10,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
+import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 
@@ -20,6 +21,7 @@ type alias SortAndRowsConfig msg =
     , body : SearchBody
     , changedResultSortingMsg : String -> msg
     , changedResultRowsPerPageMsg : String -> msg
+    , isMobile : Bool
     }
 
 
@@ -53,6 +55,26 @@ viewRowSelectAndSortSelector cfg =
 
         listOfPageSizes =
             List.map (\d -> ( d, d )) (.pageSizes cfg.body)
+
+        sortByLabel =
+            viewIf
+                (el
+                    [ alignLeft
+                    , centerY
+                    ]
+                    (text (extractLabelFromLanguageMap cfg.language localTranslations.sortBy))
+                )
+                (not cfg.isMobile)
+
+        rppLabel =
+            viewIf
+                (el
+                    [ alignLeft
+                    , centerY
+                    ]
+                    (text (extractLabelFromLanguageMap cfg.language localTranslations.rowsPerPage))
+                )
+                (not cfg.isMobile)
     in
     row
         [ alignTop
@@ -92,11 +114,7 @@ viewRowSelectAndSortSelector cfg =
                         , Border.color colourScheme.midGrey
                         , Background.color colourScheme.white
                         ]
-                        [ el
-                            [ alignLeft
-                            , centerY
-                            ]
-                            (text (extractLabelFromLanguageMap cfg.language localTranslations.sortBy))
+                        [ sortByLabel
                         , el
                             [ alignLeft
                             , centerY
@@ -120,7 +138,7 @@ viewRowSelectAndSortSelector cfg =
                     [ width fill ]
                     [ row
                         [ width shrink
-                        , alignLeft
+                        , alignRight
                         , centerY
                         , spacing 5
                         , padding 5
@@ -129,11 +147,7 @@ viewRowSelectAndSortSelector cfg =
                         , Border.color colourScheme.midGrey
                         , Background.color colourScheme.white
                         ]
-                        [ el
-                            [ alignLeft
-                            , centerY
-                            ]
-                            (text (extractLabelFromLanguageMap cfg.language localTranslations.rowsPerPage))
+                        [ rppLabel
                         , el
                             [ alignLeft
                             , centerY

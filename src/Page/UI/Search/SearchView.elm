@@ -215,6 +215,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 , body = body
                 , changedResultSortingMsg = cfg.userChangedResultSortingMsg
                 , changedResultRowsPerPageMsg = cfg.userChangedResultsPerPageMsg
+                , isMobile = False
                 }
                 cfg.searchResponse
             , viewSearchResultsListPanel

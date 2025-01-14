@@ -1,19 +1,23 @@
 module Mobile.Search.Views exposing (view)
 
+import ActiveSearch.Model exposing (ActiveSearch)
 import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, none, px, row, scrollbarY, text, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Mobile.Error.Views
+import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.Search.Facets exposing (facetSearchMsgConfig)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
+import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Page.UI.Components exposing (viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Record.Previews exposing (viewMobilePreviewRouter)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultRouter)
+import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -88,8 +92,7 @@ view session model =
             -- can result in it being invisible.
             , inFront renderedPreview
             ]
-            [ searchPageTopBar
-            , searchResultsViewRouter session model
+            [ searchResultsViewRouter session model
             ]
         ]
 
@@ -175,6 +178,8 @@ viewMobileSearchResultsSection cfg _ body =
                 { language = .language cfg.session
                 , selectedResult = .selectedResult cfg.model
                 , body = body
+                , model = cfg.model
+                , searchResponse = cfg.searchResponse
                 , clickMsg = cfg.userClickedResultForPreviewMsg
                 , userChangedResultSortingMsg = cfg.userChangedResultSortingMsg
                 , userChangedResultsPerPageMsg = cfg.userChangedResultsPerPageMsg
@@ -185,9 +190,21 @@ viewMobileSearchResultsSection cfg _ body =
 
 
 viewMobileSearchResultsList :
-    { language : Language
+    { model :
+        { a
+            | preview : Response ServerData
+            , previewAnimationStatus : PreviewAnimationStatus
+            , sourceItemsExpanded : Bool
+            , activeSearch : ActiveSearch msg
+            , selectedResult : Maybe String
+            , probeResponse : ProbeStatus
+            , applyFilterPrompt : Bool
+            , response : Response ServerData
+        }
+    , language : Language
     , selectedResult : Maybe String
     , body : SearchBody
+    , searchResponse : Response ServerData
     , clickMsg : String -> msg
     , userChangedResultSortingMsg : String -> msg
     , userChangedResultsPerPageMsg : String -> msg
@@ -205,9 +222,15 @@ viewMobileSearchResultsList cfg =
             , height fill
             , alignTop
             ]
-            [ row
-                [ alignTop ]
-                [ text "sort" ]
+            [ viewSearchPageSort
+                { language = cfg.language
+                , activeSearch = .activeSearch cfg.model
+                , body = cfg.body
+                , changedResultSortingMsg = cfg.userChangedResultSortingMsg
+                , changedResultRowsPerPageMsg = cfg.userChangedResultsPerPageMsg
+                , isMobile = True
+                }
+                cfg.searchResponse
             , row
                 [ alignTop
                 , width fill
