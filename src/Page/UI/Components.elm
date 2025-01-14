@@ -34,7 +34,7 @@ module Page.UI.Components exposing
     , viewWindowTitleBar
     )
 
-import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -399,9 +399,9 @@ parsedHtml txt =
 
 listRenderer : String -> Element msg
 listRenderer txt =
-    wrappedRow
+    paragraph
         [ alignTop
-        , width fill
+        , width (fill |> maximum 800)
         ]
         (parsedHtml txt)
 

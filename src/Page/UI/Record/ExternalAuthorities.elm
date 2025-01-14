@@ -1,6 +1,6 @@
 module Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, fill, height, newTabLink, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, fill, height, newTabLink, paragraph, row, spacing, text, width, wrappedRow)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, ExternalAuthorityBody)
@@ -43,14 +43,14 @@ viewExternalAuthority : Language -> ExternalAuthorityBody -> Element msg
 viewExternalAuthority language authority =
     ME.unpack
         (\() ->
-            row
+            paragraph
                 [ width fill
                 , alignLeft
                 ]
                 [ text (extractLabelFromLanguageMap language authority.label) ]
         )
         (\url ->
-            row
+            paragraph
                 [ width fill
                 , alignLeft
                 , spacing 5

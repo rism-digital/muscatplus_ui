@@ -1,6 +1,6 @@
 module Page.Keyboard.Views exposing (view)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, fillPortion, height, paddingXY, pointer, px, row, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, column, el, fill, height, minimum, paddingXY, pointer, px, row, spacing, width, wrappedRow)
 import Element.Events exposing (onClick)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
@@ -86,23 +86,21 @@ view { language, model, notationFacet, searchPreferences, suppressKeyboardGraphi
             ]
             [ row
                 [ width fill
-                , paddingXY 0 10
                 ]
                 [ column
-                    [ width (fillPortion 1)
-                    , centerY
-                    ]
-                    [ viewRenderControls language notationFacet model ]
-                , column
-                    [ width (fillPortion 4)
-                    , centerY
+                    [ alignTop
+                    , centerX
                     ]
                     [ el
-                        [ width fill
-                        ]
+                        [ width (fill |> minimum 400) ]
                         (viewMaybe viewSVGRenderedIncipit model.notation)
                     ]
                 ]
+            , wrappedRow
+                [ width fill
+                , spacing 10
+                ]
+                (viewRenderControls language notationFacet model)
             , keyboardControl
             , row
                 [ width fill

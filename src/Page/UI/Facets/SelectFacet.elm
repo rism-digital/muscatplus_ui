@@ -2,7 +2,7 @@ module Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, mouseOver, none, onLeft, padding, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, maximum, mouseOver, none, onLeft, padding, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -82,11 +82,7 @@ viewSelectFacet :
     SelectFacetConfig msg
     -> Element msg
 viewSelectFacet config =
-    let
-        facetItemList =
-            .items config.selectFacet
-    in
-    if List.isEmpty facetItemList then
+    if List.isEmpty (.items config.selectFacet) then
         none
 
     else
@@ -107,7 +103,8 @@ viewSelectFacet config =
                 Set.member facetAlias activeSearch.expandedFacets
 
             sortedItems =
-                sortFacetItemList config.language chosenSort facetItemList
+                .items config.selectFacet
+                    |> sortFacetItemList config.language chosenSort
 
             facetItems =
                 if isExpanded then
@@ -236,21 +233,11 @@ viewSelectFacet config =
 
             showLink =
                 if List.length sortedItems > 20 then
-                    let
-                        showMoreText =
-                            if isExpanded then
-                                "Collapse values list"
-
-                            else
-                                "Expand values list"
-                    in
-                    el
-                        [ onClick (config.userClickedFacetExpandMsg facetAlias)
-                        , pointer
-                        , alignRight
-                        , linkColour
-                        ]
-                        (text showMoreText)
+                    viewShowMoreText
+                        { isExpanded = isExpanded
+                        , userClickedFacetExpandMsg = config.userClickedFacetExpandMsg
+                        , facetAlias = facetAlias
+                        }
 
                 else
                     none
@@ -294,6 +281,30 @@ viewSelectFacet config =
             ]
 
 
+viewShowMoreText :
+    { isExpanded : Bool
+    , userClickedFacetExpandMsg : String -> msg
+    , facetAlias : String
+    }
+    -> Element msg
+viewShowMoreText config =
+    let
+        showMoreText =
+            if config.isExpanded then
+                "Collapse values list"
+
+            else
+                "Expand values list"
+    in
+    el
+        [ onClick (config.userClickedFacetExpandMsg config.facetAlias)
+        , pointer
+        , alignRight
+        , linkColour
+        ]
+        (text showMoreText)
+
+
 viewSelectFacetItem :
     SelectFacetConfig msg
     -> FacetItem
@@ -332,6 +343,7 @@ viewSelectFacetItem config fitem =
         [ width fill
         , alignLeft
         , padding 2
+        , spacing 4
         , mouseOver [ Background.color colourScheme.lightestBlue ]
         ]
         [ checkbox
@@ -344,7 +356,8 @@ viewSelectFacetItem config fitem =
             , icon = basicCheckbox
             , label =
                 labelRight
-                    [ bodySM
+                    [ alignLeft
+                    , bodySM
                     , width fill
                     ]
                     (paragraph
@@ -365,7 +378,7 @@ viewSelectFacetItem config fitem =
 viewSelectFacetItemColumn : SelectFacetConfig msg -> List FacetItem -> Element msg
 viewSelectFacetItemColumn config facetRow =
     column
-        [ width (px 250)
+        [ width (fill |> maximum 250)
         , height fill
         , alignTop
         , spacing 8

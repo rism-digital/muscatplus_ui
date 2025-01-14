@@ -11,7 +11,7 @@ import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
-import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, resultsColumnWidth, sectionSpacing, sidebarWidth)
+import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, sectionSpacing, sidebarWidth)
 import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowTitleBar)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Events exposing (onComplete)
@@ -232,14 +232,14 @@ viewPreviewRouter cfg previewData =
             round (toFloat windowHeight * 0.75)
 
         previewWidth =
-            round (toFloat (windowWidth - (sidebarWidth + resultsColumnWidth)) * 0.8)
+            round (toFloat (windowWidth - (sidebarWidth + 600)) * 0.8)
 
         moveDownAmount =
             (toFloat windowHeight * 0.01)
                 |> clamp 10 20
 
         moveRightAmount =
-            (toFloat (windowWidth - (sidebarWidth + resultsColumnWidth)) * 0.02)
+            (toFloat (windowWidth - (sidebarWidth + 600)) * 0.02)
                 |> clamp 20 40
 
         preview =

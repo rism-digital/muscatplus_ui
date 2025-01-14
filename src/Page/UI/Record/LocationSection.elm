@@ -6,7 +6,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Institution exposing (CoordinatesSection, InstitutionAddressBody, LocationAddressSectionBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (h2, mapViewer)
+import Page.UI.Components exposing (mapViewer)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (circleSvg, mapMarkerSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -20,44 +20,30 @@ viewLocationAddressSection :
     }
     -> LocationAddressSectionBody
     -> Element msg
-viewLocationAddressSection { language, summaryFormatter } body =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        , paddingXY 0 20
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , spacing 20
-            , alignTop
-            ]
-            [ row
-                [ width fill ]
-                [ h2 language body.label ]
-            , row
-                (width fill
-                    :: height fill
-                    :: alignTop
-                    :: sectionBorderStyles
-                )
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    [ viewMaybe
-                        (viewAddressSection
-                            { language = language
-                            , summaryFormatter = summaryFormatter
-                            }
-                        )
-                        body.addresses
-                    , viewMaybe (summaryFormatter language) (Maybe.map List.singleton body.website)
-                    , viewMaybe (summaryFormatter language) (Maybe.map List.singleton body.email)
-                    ]
+viewLocationAddressSection { language, summaryFormatter } locationSection =
+    sectionTemplate language
+        locationSection
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ width fill
+                , height fill
+                , alignTop
+                , spacing lineSpacing
+                ]
+                [ viewMaybe
+                    (viewAddressSection
+                        { language = language
+                        , summaryFormatter = summaryFormatter
+                        }
+                    )
+                    locationSection.addresses
+                , viewMaybe (summaryFormatter language) (Maybe.map List.singleton locationSection.website)
+                , viewMaybe (summaryFormatter language) (Maybe.map List.singleton locationSection.email)
                 ]
             ]
         ]

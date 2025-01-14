@@ -48,7 +48,7 @@ viewExternalRecordOnSiteLink language project body =
         [ width fill
         , spacing 5
         ]
-        [ row
+        [ paragraph
             [ width fill
             , alignLeft
             , spacing 5

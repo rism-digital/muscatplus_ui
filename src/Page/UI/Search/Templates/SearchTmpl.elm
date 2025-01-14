@@ -12,6 +12,7 @@ import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (lineSpacing, linkColour)
 import Page.UI.Components exposing (h3)
+import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
 import Request exposing (serverUrl)
@@ -19,24 +20,23 @@ import Request exposing (serverUrl)
 
 viewResultsListLoadingScreenTmpl : Bool -> Element msg
 viewResultsListLoadingScreenTmpl isLoading =
-    if isLoading then
-        el
+    viewIf
+        (el
             [ width fill
             , height fill
             , Background.color colourScheme.translucentGrey
             , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
             ]
-            (el
+            (animatedLoader
                 [ width (px 50)
                 , height (px 50)
-                , centerX
                 , centerY
+                , centerX
                 ]
-                (animatedLoader [ width (px 50), height (px 50) ] (spinnerSvg colourScheme.midGrey))
+                (spinnerSvg colourScheme.lightBlue)
             )
-
-    else
-        none
+        )
+        isLoading
 
 
 viewSearchResultsErrorTmpl : Language -> String -> Element msg

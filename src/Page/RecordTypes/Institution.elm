@@ -59,7 +59,8 @@ type alias InstitutionBody =
 
 
 type alias LocationAddressSectionBody =
-    { label : LanguageMap
+    { sectionToc : String
+    , label : LanguageMap
     , addresses : Maybe (List InstitutionAddressBody)
     , coordinates : Maybe CoordinatesSection
     , website : Maybe LabelValue
@@ -122,6 +123,7 @@ institutionBodyDecoder =
 locationAddressSectionBodyDecoder : Decoder LocationAddressSectionBody
 locationAddressSectionBodyDecoder =
     Decode.succeed LocationAddressSectionBody
+        |> hardcoded "institution-location-address-section"
         |> required "label" languageMapLabelDecoder
         |> optional "addresses" (Decode.maybe (list institutionAddressBodyDecoder)) Nothing
         |> optional "coordinates" (Decode.maybe coordinatesSectionDecoder) Nothing

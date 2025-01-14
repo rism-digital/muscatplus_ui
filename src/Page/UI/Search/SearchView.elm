@@ -3,7 +3,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch, toResultsNotInCurrentMode)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -22,7 +22,7 @@ import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
-import Page.UI.Attributes exposing (bodyRegular, lineSpacing, resultsColumnWidth)
+import Page.UI.Attributes exposing (bodyRegular, lineSpacing)
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -202,7 +202,7 @@ viewSearchResultsSection cfg resultsLoading body =
         , inFront queryBuilderWindow
         ]
         [ column
-            [ width (px resultsColumnWidth)
+            [ width (px 550)
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
@@ -429,7 +429,7 @@ viewSearchControls cfg =
         , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
-            [ width (fill |> maximum 1100)
+            [ width fill
             , height fill
             , alignTop
             , alignLeft

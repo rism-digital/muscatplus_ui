@@ -1,6 +1,6 @@
 module Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
 
-import Element exposing (Element, alignTop, column, el, fill, height, px, row, shrink, spacing, text, width)
+import Element exposing (Element, centerX, column, fill, height, paragraph, row, shrink, spacing, text, width)
 import Element.Font as Font
 import Element.Input as Input
 import Language exposing (Language, extractLabelFromLanguageMap)
@@ -19,36 +19,41 @@ viewPaeInput language model =
         [ width fill
         , height fill
         ]
-        [ Input.text
-            [ width fill ]
-            { label =
-                Input.labelAbove
-                    [ Font.semiBold
-                    , headingMD
-                    ]
-                    (row
-                        [ spacing lineSpacing ]
-                        [ column
-                            []
-                            [ text (extractLabelFromLanguageMap language localTranslations.paeInput) ]
-                        , column
-                            []
-                            [ el
-                                [ bodySM
-                                , Font.regular
-                                ]
-                                (text (extractLabelFromLanguageMap language localTranslations.notationQueryLength))
+        [ column
+            [ width fill
+            , spacing lineSpacing
+            ]
+            [ row
+                [ width fill ]
+                [ Input.text
+                    [ width fill ]
+                    { label =
+                        Input.labelAbove
+                            [ Font.semiBold
+                            , headingMD
                             ]
-                        ]
-                    )
-            , onChange = UserInteractedWithPAEText
-            , placeholder = Nothing
-            , text = Maybe.withDefault "" (.noteData model.query)
-            }
+                            (row
+                                [ spacing lineSpacing ]
+                                [ text (extractLabelFromLanguageMap language localTranslations.paeInput) ]
+                            )
+                    , onChange = UserInteractedWithPAEText
+                    , placeholder = Nothing
+                    , text = Maybe.withDefault "" (.noteData model.query)
+                    }
+                ]
+            , row
+                [ width fill ]
+                [ paragraph
+                    [ bodySM
+                    , Font.regular
+                    ]
+                    [ text (extractLabelFromLanguageMap language localTranslations.notationQueryLength) ]
+                ]
+            ]
         ]
 
 
-viewRenderControls : Language -> NotationFacet -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
+viewRenderControls : Language -> NotationFacet -> KeyboardModel KeyboardMsg -> List (Element KeyboardMsg)
 viewRenderControls language notationFacet model =
     let
         clefLabel =
@@ -62,6 +67,7 @@ viewRenderControls language notationFacet model =
             column
                 [ width shrink
                 , bodySM
+                , centerX
                 ]
                 [ dropdownSelect
                     { selectedMsg = \clefStr -> UserClickedPianoKeyboardChangeClef (clefStrToClef clefStr)
@@ -88,6 +94,7 @@ viewRenderControls language notationFacet model =
             column
                 [ width shrink
                 , bodySM
+                , centerX
                 ]
                 [ dropdownSelect
                     { selectedMsg = \ksigStr -> UserClickedPianoKeyboardChangeKeySignature (keySigStrToKeySignature ksigStr)
@@ -114,6 +121,7 @@ viewRenderControls language notationFacet model =
             column
                 [ width shrink
                 , bodySM
+                , centerX
                 ]
                 [ dropdownSelect
                     { selectedMsg = \tsigStr -> UserClickedPianoKeyboardChangeTimeSignature (timeSigStrToTimeSignature tsigStr)
@@ -129,27 +137,7 @@ viewRenderControls language notationFacet model =
                     }
                 ]
     in
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width (px 200)
-            , height fill
-            , alignTop
-            , spacing lineSpacing
-            ]
-            [ row
-                [ width fill
-                ]
-                [ clefSelect
-                ]
-            , row
-                [ width fill ]
-                [ timeSigSelect ]
-            , row
-                [ width fill ]
-                [ keySigSelect ]
-            ]
-        ]
+    [ clefSelect
+    , timeSigSelect
+    , keySigSelect
+    ]

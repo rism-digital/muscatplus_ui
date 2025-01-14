@@ -5,26 +5,20 @@ module Page.Keyboard exposing
     , initModel
     , load
     , update
-    , view
     )
 
 import Basics.Extra exposing (flip)
 import Char exposing (isAlpha, isUpper)
 import Config
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
-import Element exposing (Element)
-import Language exposing (Language)
 import Maybe.Extra as ME
 import Page.Keyboard.Audio exposing (generateNotes)
 import Page.Keyboard.Model exposing (Clef(..), KeySignature(..), KeyboardKeyPress(..), KeyboardModel, KeyboardQuery, QueryMode(..), TimeSignature(..), setClef, setKeySignature, setKeyboardQuery, setNoteData, setQueryMode, setTimeSignature, toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (createPAENote)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Keyboard.Views as KeyboardViews
-import Page.RecordTypes.Search exposing (NotationFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (createSvgRequest, serverUrl)
-import SearchPreferences exposing (SearchPreferences)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Set
 
@@ -297,20 +291,3 @@ updateDebouncerPAESearchConfig =
         \debouncer model ->
             { model | paeInputSearchDebouncer = debouncer }
     }
-
-
-{-|
-
-    Exposes only the top level view
-
--}
-view :
-    { language : Language
-    , model : KeyboardModel KeyboardMsg
-    , notationFacet : NotationFacet
-    , searchPreferences : Maybe SearchPreferences
-    , suppressKeyboardGraphic : Bool
-    }
-    -> Element KeyboardMsg
-view cfg =
-    KeyboardViews.view cfg

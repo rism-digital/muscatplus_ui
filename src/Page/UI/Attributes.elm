@@ -5,7 +5,6 @@ module Page.UI.Attributes exposing
     , bodyRegular
     , bodySM
     , bodySerifFont
-    , desktopDisplayWidth
     , emptyAttribute
     , emptyHtmlAttribute
     , fontBaseSize
@@ -20,7 +19,6 @@ module Page.UI.Attributes exposing
     , linkColour
     , minimalDropShadow
     , minimalInsetShadow
-    , resultsColumnWidth
     , sectionBorderStyles
     , sectionSpacing
     , sidebarWidth
@@ -219,13 +217,3 @@ valueFieldColumnAttributes =
 sidebarWidth : Int
 sidebarWidth =
     70
-
-
-resultsColumnWidth : Int
-resultsColumnWidth =
-    600
-
-
-desktopDisplayWidth : Int
-desktopDisplayWidth =
-    1100

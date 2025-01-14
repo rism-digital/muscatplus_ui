@@ -1,7 +1,7 @@
 module Views exposing (view)
 
 import Browser
-import Css
+import Css exposing (breakWord, overflowWrap)
 import Css.Global
 import Desktop.About.About
 import Desktop.About.Help
@@ -95,6 +95,7 @@ view model =
         [ toUnstyled
             (Css.Global.global
                 [ Css.Global.a globalLinkColor -- Ensures in-text links are also displayed in blue.
+                , Css.Global.a [ overflowWrap breakWord ]
                 ]
             )
         , layout

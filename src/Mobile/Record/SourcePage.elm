@@ -1,14 +1,13 @@
 module Mobile.Record.SourcePage exposing (viewFullMobileSourcePage)
 
 import Dict
-import Element exposing (Element, alignTop, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
-import Element.Border as Border
 import Html.Attributes as HA
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (sectionSpacing)
+import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser, viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
@@ -43,6 +42,7 @@ viewFullMobileSourcePage session model body =
             el
                 [ width (px 25)
                 , height (px 25)
+                , centerX
                 , alignTop
                 ]
                 (sourceIcon colourScheme.darkBlue)
@@ -64,14 +64,13 @@ viewFullMobileSourcePage session model body =
             [ row
                 [ width fill
                 , paddingXY 10 10
-                , Border.widthEach { bottom = 4, left = 0, right = 0, top = 0 }
-                , htmlAttribute (HA.style "border-bottom-style" "double")
-                , Border.color colourScheme.midGrey
+                , minimalDropShadow
                 ]
                 [ mobilePageHeaderTemplate session.language (Just sourceIconView) body ]
             , row
                 [ width fill
                 , height fill
+                , alignTop
                 , scrollbarY
                 , htmlAttribute (HA.style "min-height" "unset")
                 ]

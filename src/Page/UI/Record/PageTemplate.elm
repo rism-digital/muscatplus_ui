@@ -8,7 +8,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, paragraph, row, spacing, spacingXY, text, width)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, paragraph, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -18,7 +18,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
 import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, minimalDropShadow)
-import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, resourceLink)
+import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, h3s, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
@@ -166,7 +166,7 @@ mobilePageHeaderTemplate language icon header =
     headerTmpl
         { body = header
         , extraAttrs = []
-        , hLevel = h2s language
+        , hLevel = h3s language
         , icon = icon
         }
 
@@ -210,7 +210,7 @@ headerTmpl :
     }
     -> Element msg
 headerTmpl cfg =
-    row
+    wrappedRow
         (width fill
             :: spacingXY 10 5
             :: centerY

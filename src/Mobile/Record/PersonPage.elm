@@ -2,13 +2,12 @@ module Mobile.Record.PersonPage exposing (viewFullMobilePersonPage)
 
 import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
-import Element.Border as Border
 import Html.Attributes as HA
 import Maybe.Extra as ME
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (sectionSpacing)
+import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewMobileParagraphField, viewMobileSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
@@ -62,9 +61,7 @@ viewFullMobilePersonPage session _ body =
             [ row
                 [ width fill
                 , paddingXY 10 10
-                , Border.widthEach { bottom = 4, left = 0, right = 0, top = 0 }
-                , htmlAttribute (HA.style "border-bottom-style" "double")
-                , Border.color colourScheme.midGrey
+                , minimalDropShadow
                 ]
                 [ mobilePageHeaderTemplate session.language (Just icon) body ]
             , row

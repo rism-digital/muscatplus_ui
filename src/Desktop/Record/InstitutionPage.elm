@@ -1,7 +1,7 @@
 module Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 
 import Desktop.Record.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -11,7 +11,7 @@ import Maybe.Extra as ME
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
-import Page.UI.Attributes exposing (desktopDisplayWidth, minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
@@ -88,7 +88,7 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
         , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
-            [ width (fill |> maximum desktopDisplayWidth)
+            [ width fill
             , alignTop
             , spacing sectionSpacing
             , padding 20
