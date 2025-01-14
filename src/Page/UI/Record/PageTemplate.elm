@@ -230,26 +230,23 @@ pageLinkTemplate language langMap fontSize body =
         , alignLeft
         , spacing 5
         ]
-        [ column
-            [ width fill ]
-            [ paragraph
-                [ width fill ]
-                [ el
-                    [ fontSize
-                    , Font.semiBold
-                    ]
-                    (text (extractLabelFromLanguageMap language langMap ++ ": "))
-                , resourceLink body.id
-                    [ linkColour ]
-                    { label =
-                        el
-                            [ fontSize ]
-                            (text body.id)
-                    , url = body.id
-                    }
-                ]
+        [ el
+            [ fontSize
+            , Font.semiBold
             ]
-        , externalLinkTemplate body.id
+            (text (extractLabelFromLanguageMap language langMap ++ ": "))
+        , resourceLink body.id
+            [ linkColour ]
+            { label =
+                row
+                    [ fontSize
+                    , spacing 5
+                    ]
+                    [ text body.id
+                    , externalLinkTemplate body.id
+                    ]
+            , url = body.id
+            }
         ]
 
 

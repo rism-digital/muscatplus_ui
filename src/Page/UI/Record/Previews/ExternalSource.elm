@@ -40,7 +40,7 @@ viewExternalSourcePreview { language, paragraphFormatter, preRenderedFormatter, 
             el
                 [ width (px 25)
                 , height (px 25)
-                , centerY
+                , alignTop
                 ]
                 (bookSvg colourScheme.darkBlue)
 
