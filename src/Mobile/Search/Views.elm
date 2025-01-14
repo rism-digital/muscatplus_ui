@@ -1,6 +1,6 @@
 module Mobile.Search.Views exposing (view)
 
-import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, none, px, row, scrollbarY, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, none, px, row, scrollbarY, text, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -12,6 +12,7 @@ import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.UI.Components exposing (viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Record.Previews exposing (viewMobilePreviewRouter)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
+import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultRouter)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
 import Response exposing (Response(..), ServerData(..))
@@ -164,26 +165,36 @@ viewMobileSearchResultsSection cfg _ body =
         [ width fill
         , height fill
         , alignTop
-        , scrollbarY
-        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill
             , height fill
             , alignTop
             ]
-            [ viewMobileSearchResultsList (.language cfg.session) (.selectedResult cfg.model) body cfg.userClickedResultForPreviewMsg
+            [ viewMobileSearchResultsList
+                { language = .language cfg.session
+                , selectedResult = .selectedResult cfg.model
+                , body = body
+                , clickMsg = cfg.userClickedResultForPreviewMsg
+                , userChangedResultSortingMsg = cfg.userChangedResultSortingMsg
+                , userChangedResultsPerPageMsg = cfg.userChangedResultsPerPageMsg
+                , userClickedResultsPaginationMsg = cfg.userClickedResultsPaginationMsg
+                }
             ]
         ]
 
 
 viewMobileSearchResultsList :
-    Language
-    -> Maybe String
-    -> SearchBody
-    -> (String -> msg)
+    { language : Language
+    , selectedResult : Maybe String
+    , body : SearchBody
+    , clickMsg : String -> msg
+    , userChangedResultSortingMsg : String -> msg
+    , userChangedResultsPerPageMsg : String -> msg
+    , userClickedResultsPaginationMsg : String -> msg
+    }
     -> Element msg
-viewMobileSearchResultsList language selectedResult body clickMsg =
+viewMobileSearchResultsList cfg =
     row
         [ width fill
         , height fill
@@ -191,18 +202,39 @@ viewMobileSearchResultsList language selectedResult body clickMsg =
         ]
         [ column
             [ width fill
+            , height fill
             , alignTop
             ]
-            (List.indexedMap
-                (\idx result ->
-                    viewSearchResultRouter
-                        { language = language
-                        , selectedResult = selectedResult
-                        , searchResult = result
-                        , clickForPreviewMsg = clickMsg
-                        , resultIdx = idx
-                        }
-                )
-                body.items
-            )
+            [ row
+                [ alignTop ]
+                [ text "sort" ]
+            , row
+                [ alignTop
+                , width fill
+                , height fill
+                , clipY
+                ]
+                [ column
+                    [ alignTop
+                    , width fill
+                    , height fill
+                    , scrollbarY
+                    , htmlAttribute (HA.style "min-height" "unset")
+                    , htmlAttribute (HA.id "search-results-list")
+                    ]
+                    (List.indexedMap
+                        (\idx result ->
+                            viewSearchResultRouter
+                                { language = cfg.language
+                                , selectedResult = cfg.selectedResult
+                                , searchResult = result
+                                , clickForPreviewMsg = cfg.clickMsg
+                                , resultIdx = idx
+                                }
+                        )
+                        (.items cfg.body)
+                    )
+                ]
+            , viewPagination cfg.language (.pagination cfg.body) cfg.userClickedResultsPaginationMsg
+            ]
         ]
