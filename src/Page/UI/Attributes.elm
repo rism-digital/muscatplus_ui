@@ -179,7 +179,7 @@ minimalDropShadow : Attribute msg
 minimalDropShadow =
     Border.shadow
         { blur = 4
-        , color = colourScheme.darkBlueTranslucent
+        , color = colourScheme.translucentGrey
         , offset = ( -1, 1 )
         , size = 1
         }
@@ -188,10 +188,10 @@ minimalDropShadow =
 minimalInsetShadow : Attribute msg
 minimalInsetShadow =
     Border.innerShadow
-        { blur = 4
-        , color = colourScheme.darkBlueTranslucent
+        { blur = 2
+        , color = colourScheme.translucentGrey
         , offset = ( -1, 1 )
-        , size = 1
+        , size = 0
         }
 
 

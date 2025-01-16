@@ -348,6 +348,7 @@ viewFacetPanels cfg =
         ]
         [ column
             [ width fill
+            , spacing lineSpacing
             , alignTop
             ]
             [ mainTitle

@@ -18,7 +18,7 @@ import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (QueryValidation(..))
-import Page.UI.Attributes exposing (emptyHtmlAttribute, headingMD, headingXXL, lineSpacing)
+import Page.UI.Attributes exposing (emptyHtmlAttribute, headingMD, headingXXL, lineSpacing, linkColour, minimalInsetShadow)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme)
@@ -100,32 +100,6 @@ viewKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid,
             ]
             [ row
                 [ width fill
-                , alignTop
-                , spacing lineSpacing
-                , height (px 40)
-                ]
-                [ viewIf
-                    (column
-                        [ width fill ]
-                        [ el
-                            [ alignRight
-                            , centerY
-                            , onClick userClickedOpenQueryBuilderMsg
-                            , pointer
-                            , Background.color colourScheme.lightBlue
-                            , padding 10
-                            , Font.color colourScheme.white
-                            ]
-                            (toLanguageMap "Create a query"
-                                |> extractLabelFromLanguageMap language
-                                |> text
-                            )
-                        ]
-                    )
-                    (not suppressQueryBuilderButton)
-                ]
-            , row
-                [ width fill
                 , spacing lineSpacing
                 ]
                 [ column
@@ -142,6 +116,7 @@ viewKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid,
                         , headingXXL
                         , Font.medium
                         , paddingXY 10 20
+                        , minimalInsetShadow
                         ]
                         { label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)
                         , onChange = \inp -> changeMsg inp
@@ -168,12 +143,30 @@ viewKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid,
                                 [ alignLeft
                                 , Font.color colourScheme.white
                                 , Background.color colourScheme.red
-                                , padding 10
+                                , padding 8
                                 , headingMD
                                 ]
                                 (text (extractLabelFromLanguageMap language message))
                         )
                         statusMessage
+                    ]
+                , column
+                    [ width fill ]
+                    [ viewIf
+                        (el
+                            [ alignRight
+                            , centerY
+                            , onClick userClickedOpenQueryBuilderMsg
+                            , pointer
+                            , padding 5
+                            , linkColour
+                            ]
+                            (toLanguageMap "Create a query"
+                                |> extractLabelFromLanguageMap language
+                                |> text
+                            )
+                        )
+                        (not suppressQueryBuilderButton)
                     ]
                 ]
             ]

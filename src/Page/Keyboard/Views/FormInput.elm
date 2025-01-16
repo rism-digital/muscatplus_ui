@@ -9,7 +9,7 @@ import Page.Keyboard.Model exposing (KeyboardModel)
 import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.PAE exposing (clefStrToClef, keySigStrToKeySignature, timeSigStrToTimeSignature)
 import Page.RecordTypes.Search exposing (NotationFacet)
-import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing)
+import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing, minimalInsetShadow)
 import Page.UI.Components exposing (dropdownSelect)
 
 
@@ -26,7 +26,9 @@ viewPaeInput language model =
             [ row
                 [ width fill ]
                 [ Input.text
-                    [ width fill ]
+                    [ width fill
+                    , minimalInsetShadow
+                    ]
                     { label =
                         Input.labelAbove
                             [ Font.semiBold
