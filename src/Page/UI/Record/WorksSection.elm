@@ -157,7 +157,7 @@ viewPersonExternalWorkReferencesSection language workReferences =
                               }
                             , { header = el headerStyles (text "Sources")
                               , width = fill
-                              , view = \i w -> link [ cycleBg i, padding 10, linkColour ] { label = text "Find in RISM Online", url = w.searchUrl }
+                              , view = \i w -> link [ cycleBg i, padding 10, linkColour ] { label = text ("Sources linked to " ++ w.externalIdentifier), url = w.searchUrl }
                               }
                             , { header = el headerStyles (text "External authority")
                               , width = fill
