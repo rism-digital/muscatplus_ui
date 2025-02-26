@@ -54,7 +54,7 @@ init flags initialUrl key =
             Session.init flags initialUrl key
 
         countryListRequest =
-            if isMobileView session.device then
+            if isMobileView session.isFramed session.device then
                 Cmd.none
 
             else

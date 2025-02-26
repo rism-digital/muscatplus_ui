@@ -41,10 +41,14 @@ import Response exposing (Response(..), ServerData(..))
 view : Model -> Browser.Document Msg
 view model =
     let
+        isFramed =
+            toSession model
+                |> .isFramed
+
         deviceView =
             toSession model
                 |> .device
-                |> detectView
+                |> detectView isFramed
 
         -- set the colour for links (a tags) globally.
         globalLinkColor =

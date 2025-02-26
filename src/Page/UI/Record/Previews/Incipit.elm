@@ -10,7 +10,7 @@ import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, sectionS
 import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
 import Page.UI.Images exposing (musicNotationSvg)
 import Page.UI.Record.Incipits exposing (viewIncipit)
-import Page.UI.Record.PageTemplate exposing (subHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 
@@ -71,7 +71,7 @@ viewIncipitPreview cfg body =
                     , height fill
                     , centerY
                     ]
-                    [ subHeaderTemplate cfg.language (Just recordIcon) body
+                    [ pageHeaderTemplate cfg.language (Just recordIcon) body
                     , incipitLink
                     ]
                 ]

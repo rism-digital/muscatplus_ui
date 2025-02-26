@@ -23,23 +23,27 @@ setWindow newWindow oldRecord =
     { oldRecord | window = newWindow }
 
 
-detectView : Device -> DeviceView
-detectView device =
-    if isMobileView device then
+detectView : Bool -> Device -> DeviceView
+detectView isFramed device =
+    if isMobileView isFramed device then
         MobileView
 
     else
         DesktopView
 
 
-isMobileView : Device -> Bool
-isMobileView { class, orientation } =
-    case ( class, orientation ) of
-        ( Phone, _ ) ->
-            True
+isMobileView : Bool -> Device -> Bool
+isMobileView isFramed { class, orientation } =
+    if isFramed then
+        False
 
-        ( Tablet, Portrait ) ->
-            True
+    else
+        case ( class, orientation ) of
+            ( Phone, _ ) ->
+                True
 
-        _ ->
-            False
+            ( Tablet, Portrait ) ->
+                True
+
+            _ ->
+                False

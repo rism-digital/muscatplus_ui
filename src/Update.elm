@@ -271,8 +271,12 @@ update msg model =
 
         ( Msg.UserResizedWindow device width height, _ ) ->
             let
+                isFramed =
+                    toSession model
+                        |> .isFramed
+
                 navBar =
-                    if isMobileView device then
+                    if isMobileView isFramed device then
                         BottomBar BottomBarOptions.init
 
                     else

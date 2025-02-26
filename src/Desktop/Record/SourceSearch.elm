@@ -1,17 +1,14 @@
 module Desktop.Record.SourceSearch exposing
-    ( viewRecordSearchSourcesLink
-    , viewRecordSourceSearchTabBar
+    ( viewRecordSourceSearchTabBar
     , viewSourceSearchTabBody
     )
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, clipY, column, el, fill, height, newTabLink, none, px, row, spacing, text, width)
-import Element.Font as Font
+import Element exposing (Element, alignBottom, alignLeft, alignTop, clipY, column, fill, height, none, px, row, spacing, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
-import Page.UI.Attributes exposing (headingMD, linkColour)
 import Page.UI.Components exposing (Tab(..), tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -172,29 +169,6 @@ viewSourceDescriptionTab { language, model, recordId } =
         , language = language
         , tab = thisTab
         }
-
-
-viewRecordSearchSourcesLink : Language -> LanguageMap -> { a | url : String } -> Element RecordMsg
-viewRecordSearchSourcesLink language label body =
-    row
-        [ width fill
-        , height (px 20)
-        ]
-        [ column
-            [ height fill ]
-            [ el
-                []
-                (newTabLink
-                    [ headingMD
-                    , Font.semiBold
-                    , linkColour
-                    ]
-                    { label = text ("Search " ++ extractLabelFromLanguageMap language label ++ " on RISM Online")
-                    , url = body.url
-                    }
-                )
-            ]
-        ]
 
 
 viewRecordSourceSearchTabBar :

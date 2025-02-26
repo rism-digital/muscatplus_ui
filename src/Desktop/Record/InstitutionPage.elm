@@ -1,7 +1,7 @@
 module Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 
-import Desktop.Record.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -137,7 +137,7 @@ viewFullInstitutionPage session model body =
 
         tabBar =
             if session.isFramed then
-                viewMaybe (viewRecordSearchSourcesLink session.language localTranslations.sources) body.sources
+                none
 
             else
                 viewRecordTopBar session.language model body

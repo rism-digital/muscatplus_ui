@@ -8,7 +8,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, paddingXY, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -151,6 +151,7 @@ pageHeaderTemplate language icon header =
         , extraAttrs =
             [ htmlAttribute (HA.id header.sectionToc)
             , centerY
+            , paddingXY 0 10
             ]
         , hLevel = h1 language
         , icon = icon
@@ -165,7 +166,8 @@ mobilePageHeaderTemplate :
 mobilePageHeaderTemplate language icon header =
     headerTmpl
         { body = header
-        , extraAttrs = []
+        , extraAttrs =
+            []
         , hLevel = h3s language
         , icon = icon
         }
@@ -196,7 +198,10 @@ subHeaderTemplate :
 subHeaderTemplate language icon header =
     headerTmpl
         { body = header
-        , extraAttrs = []
+        , extraAttrs =
+            [ paddingXY 0 10
+            , centerY
+            ]
         , hLevel = h2s language
         , icon = icon
         }

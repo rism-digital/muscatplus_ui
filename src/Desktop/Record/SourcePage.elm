@@ -1,8 +1,8 @@
 module Desktop.Record.SourcePage exposing (viewFullSourcePage)
 
-import Desktop.Record.SourceSearch exposing (viewRecordSearchSourcesLink, viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -25,7 +25,7 @@ import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, tabBarHeight)
 import Session exposing (Session)
 import Set exposing (Set)
 
@@ -54,7 +54,7 @@ viewFullSourcePage session model body =
 
         headerHeight =
             if session.isFramed then
-                px (recordTitleHeight + searchSourcesLinkHeight)
+                px recordTitleHeight
 
             else
                 px (tabBarHeight + recordTitleHeight)
@@ -81,7 +81,7 @@ viewFullSourcePage session model body =
 
         tabBar =
             if session.isFramed then
-                viewMaybe (viewRecordSearchSourcesLink session.language localTranslations.sourceContents) body.sourceItems
+                none
 
             else
                 viewRecordTopBarRouter session.language model body

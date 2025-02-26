@@ -15,7 +15,7 @@ import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 import Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
-import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, subHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
@@ -73,7 +73,7 @@ viewSourcePreview cfg body =
                     , alignTop
                     , spacing lineSpacing
                     ]
-                    [ subHeaderTemplate cfg.language (Just sourceIcon) body
+                    [ pageHeaderTemplate cfg.language (Just sourceIcon) body
                     , pageFullRecordTemplate cfg.language body
                     ]
                 ]

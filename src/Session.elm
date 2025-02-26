@@ -66,7 +66,7 @@ init flags url key =
             detectDevice flags.windowWidth flags.windowHeight
 
         navigationBar =
-            if isMobileView initialDevice then
+            if isMobileView flags.isFramed initialDevice then
                 BottomBar BottomBarOptions.init
 
             else

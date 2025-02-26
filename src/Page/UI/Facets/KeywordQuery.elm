@@ -7,7 +7,7 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, viewKeywordQuer
 -}
 
 import Color exposing (toCssString)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingXY, pointer, px, row, spacing, text, toRgb, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingXY, pointer, row, spacing, text, toRgb, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
