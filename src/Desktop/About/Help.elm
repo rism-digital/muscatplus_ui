@@ -6,6 +6,7 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language(..), LanguageMap, LanguageValue(..), extractLabelFromLanguageMap, toLanguageMapWithLanguage)
 import Page.UI.Attributes exposing (sectionSpacing)
+import Page.UI.CantusLogo exposing (cantusLogo)
 import Page.UI.DiammLogo exposing (diammLogo)
 import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, fileMusicSvg, graduationCapSvg, iiifLogo, linkSvg, musicNotationSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg)
 import Page.UI.Markdown as Markdown
@@ -572,7 +573,7 @@ view session =
                           , view =
                                 \i ->
                                     el
-                                        [ height (px 60)
+                                        [ height (px 50)
                                         , centerY
                                         ]
                                         i.icon
@@ -594,6 +595,7 @@ view session =
                                 ]
                           , icon = diammLogo
                           }
+                        , { description = [ LanguageValue None [ "Cantus Database" ] ], icon = cantusLogo }
                         ]
                     }
                 ]
