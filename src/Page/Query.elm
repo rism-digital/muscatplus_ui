@@ -1,9 +1,11 @@
 module Page.Query exposing
-    ( FrontQueryArgs
+    ( DownloadArgs
+    , FrontQueryArgs
     , QueryArgs
     , buildFrontPageUrl
     , buildQueryParameters
     , defaultQueryArgs
+    , downloadArgsParser
     , frontQueryArgsToQueryArgs
     , frontQueryParamsParser
     , queryParamsParser
@@ -73,6 +75,15 @@ type alias QueryArgs =
     , facetBehaviours : Dict FacetAlias FacetBehaviours
     , facetSorts : Dict FacetAlias FacetSorts
     }
+
+
+type alias DownloadArgs =
+    { searchUrl : Maybe String }
+
+
+downloadArgsParser : Q.Parser DownloadArgs
+downloadArgsParser =
+    Q.map DownloadArgs (Q.string "search-url")
 
 
 createPrefixedField : String -> String -> Maybe QueryParameter

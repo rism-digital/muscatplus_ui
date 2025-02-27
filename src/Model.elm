@@ -1,6 +1,7 @@
 module Model exposing (Model(..), toSession, updateSession)
 
 import Page.About as About
+import Page.Downloader.Model as Downloader
 import Page.Error as NotFound
 import Page.Front as Front
 import Page.Record as Record
@@ -18,6 +19,7 @@ type Model
     | AboutPage Session About.Model
     | HelpPage Session
     | OptionsPage Session About.Model
+    | DownloadPage Session Downloader.Model
 
 
 toSession : Model -> Session
@@ -50,6 +52,9 @@ toSession model =
         OptionsPage session _ ->
             session
 
+        DownloadPage session _ ->
+            session
+
 
 updateSession : Session -> Model -> Model
 updateSession newSession model =
@@ -80,3 +85,6 @@ updateSession newSession model =
 
         OptionsPage _ aboutModel ->
             OptionsPage newSession aboutModel
+
+        DownloadPage _ downloadModel ->
+            DownloadPage newSession downloadModel

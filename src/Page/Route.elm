@@ -2,7 +2,7 @@ module Page.Route exposing (Route(..), isMEIDownloadRoute, isPNGDownloadRoute, i
 
 import Page.Keyboard.Model exposing (KeyboardQuery)
 import Page.Keyboard.Query exposing (notationParamParser)
-import Page.Query exposing (FrontQueryArgs, QueryArgs, frontQueryParamsParser, queryParamsParser)
+import Page.Query exposing (DownloadArgs, FrontQueryArgs, QueryArgs, downloadArgsParser, frontQueryParamsParser, queryParamsParser)
 import Url exposing (Url)
 import Url.Parser as P exposing ((</>), (<?>), s)
 
@@ -20,6 +20,7 @@ type Route
     | AboutPageRoute
     | HelpPageRoute
     | OptionsPageRoute
+    | DownloadPageRoute DownloadArgs
     | NotFoundPageRoute
 
 
@@ -53,6 +54,7 @@ routeParser =
         , P.map AboutPageRoute (s "about")
         , P.map HelpPageRoute (s "about") </> s "help"
         , P.map OptionsPageRoute (s "about") </> s "options"
+        , P.map DownloadPageRoute (s "download" <?> downloadArgsParser)
         ]
 
 
