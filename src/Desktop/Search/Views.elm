@@ -2,7 +2,7 @@ module Desktop.Search.Views exposing (view)
 
 import ActiveSearch exposing (toActiveSearch)
 import Desktop.Error.Views
-import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, px, row, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, px, row, text, width)
 import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -69,6 +69,9 @@ searchResultsViewRouter session model =
             , userInteractedWithQueryBuilderMsg = SearchMsg.UserInteractedWithQueryBuilder
             , userClickedOpenQueryBuilderMsg = SearchMsg.UserClickedOpenQueryBuilder
             , userClickedCloseQueryBuilderMsg = SearchMsg.UserClickedCloseQueryBuilder
+            , userInteractedWithDownloaderMsg = SearchMsg.UserInteractedWithDownloader
+            , userClickedOpenDownloaderMsg = SearchMsg.UserClickedOpenDownloader
+            , userClickedCloseDownloaderMsg = SearchMsg.UserClickedCloseDownloader
             , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
             , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
             , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview

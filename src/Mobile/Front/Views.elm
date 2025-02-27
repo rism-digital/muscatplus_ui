@@ -224,6 +224,8 @@ viewFacetPanels cfg =
                         , submitLabel = localTranslations.showResults
                         , submitMsg = FrontMsg.UserTriggeredSearchSubmit
                         , resetMsg = FrontMsg.UserResetAllFilters
+                        , userClickedCloseDownloaderMsg = FrontMsg.NothingHappened
+                        , userClickedOpenDownloaderMsg = FrontMsg.NothingHappened
                         }
                     ]
                 ]

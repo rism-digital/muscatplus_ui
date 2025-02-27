@@ -1,5 +1,5 @@
 module Page.Downloader.Msg exposing (..)
 
 
-type Msg
+type DownloaderMsg
     = NothingHappenedWithTheDownloader

@@ -5,6 +5,7 @@ import Http
 import Http.Detailed
 import KeyCodes exposing (ArrowDirection)
 import Language exposing (LanguageMap)
+import Page.Downloader.Msg exposing (DownloaderMsg)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Probe exposing (ProbeData)
@@ -45,6 +46,11 @@ type SearchMsg
     | UserRemovedActiveFilter FacetAlias String
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserInteractedWithQueryBuilder QueryBuilderMsg
+    | UserClickedOpenQueryBuilder
+    | UserClickedCloseQueryBuilder
+    | UserInteractedWithDownloader DownloaderMsg
+    | UserClickedOpenDownloader
+    | UserClickedCloseDownloader
     | UserTriggeredSearchSubmit
     | UserResetAllFilters
     | UserChangedResultSorting String
@@ -56,6 +62,4 @@ type SearchMsg
     | UserClickedExpandDigitalCopiesCallout
     | UserClickedClosePreviewWindow
     | UserPressedAnArrowKey ArrowDirection
-    | UserClickedOpenQueryBuilder
-    | UserClickedCloseQueryBuilder
     | NothingHappened

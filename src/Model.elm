@@ -19,7 +19,6 @@ type Model
     | AboutPage Session About.Model
     | HelpPage Session
     | OptionsPage Session About.Model
-    | DownloadPage Session Downloader.Model
 
 
 toSession : Model -> Session
@@ -52,9 +51,6 @@ toSession model =
         OptionsPage session _ ->
             session
 
-        DownloadPage session _ ->
-            session
-
 
 updateSession : Session -> Model -> Model
 updateSession newSession model =
@@ -85,6 +81,3 @@ updateSession newSession model =
 
         OptionsPage _ aboutModel ->
             OptionsPage newSession aboutModel
-
-        DownloadPage _ downloadModel ->
-            DownloadPage newSession downloadModel

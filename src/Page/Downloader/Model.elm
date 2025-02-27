@@ -1,5 +1,5 @@
 module Page.Downloader.Model exposing (..)
 
 
-type alias Model =
+type alias DownloaderModel =
     {}

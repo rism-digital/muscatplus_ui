@@ -1,6 +1,6 @@
 module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, hasActionableQueryValidation, queryValidationState, viewProbeResponseNumbers, viewSearchButtons)
 
-import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -28,6 +28,8 @@ type alias SearchButtonConfig a msg =
     , submitLabel : LanguageMap
     , submitMsg : msg
     , resetMsg : msg
+    , userClickedOpenDownloaderMsg : msg
+    , userClickedCloseDownloaderMsg : msg
     }
 
 
@@ -115,7 +117,7 @@ viewProbeResponseNumbers language probeResponse =
 viewSearchButtons :
     SearchButtonConfig model msg
     -> Element msg
-viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetMsg } =
+viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetMsg, userClickedOpenDownloaderMsg } =
     let
         actionableProbeResponse =
             hasActionableProbeResponse model.probeResponse
@@ -209,6 +211,19 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                     (viewProbeResponseNumbers language model.probeResponse)
                 , updateMessage
                 ]
+            ]
+        , column
+            [ alignRight ]
+            [ Input.button
+                [ Border.color colourScheme.darkBlue
+                , Border.width 1
+                , Background.color colourScheme.lightGrey
+                , height (px 35)
+                , paddingXY 10 0
+                ]
+                { label = text "Download results"
+                , onPress = Just userClickedOpenDownloaderMsg
+                }
             ]
         ]
 

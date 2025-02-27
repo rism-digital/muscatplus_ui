@@ -7,6 +7,7 @@ module ActiveSearch exposing
     , setActiveSuggestion
     , setActiveSuggestionDebouncer
     , setAliasLabelMap
+    , setDownloader
     , setExpandedFacets
     , setKeyboard
     , setQueryBuilder
@@ -25,6 +26,7 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebouncer)
 import Dict exposing (Dict)
 import Language exposing (LanguageMap)
+import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
@@ -56,6 +58,7 @@ empty =
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , queryBuilder = Nothing
     , resultsNotInCurrentMode = []
+    , downloader = Nothing
     }
 
 
@@ -80,6 +83,7 @@ init cfg =
     , activeSuggestionDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , queryBuilder = Nothing
     , resultsNotInCurrentMode = []
+    , downloader = Nothing
     }
 
 
@@ -125,6 +129,11 @@ setKeyboard newKeyboard oldRecord =
 setQueryBuilder : Maybe QueryBuilder.Model -> { a | queryBuilder : Maybe QueryBuilder.Model } -> { a | queryBuilder : Maybe QueryBuilder.Model }
 setQueryBuilder newQueryBuilder oldRecord =
     { oldRecord | queryBuilder = newQueryBuilder }
+
+
+setDownloader : Maybe DownloaderModel -> { a | downloader : Maybe DownloaderModel } -> { a | downloader : Maybe DownloaderModel }
+setDownloader newDownloader oldRecord =
+    { oldRecord | downloader = newDownloader }
 
 
 setQueryFacetValues : Dict FacetAlias String -> { a | queryFacetValues : Dict FacetAlias String } -> { a | queryFacetValues : Dict FacetAlias String }

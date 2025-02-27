@@ -9,13 +9,14 @@ module Page.Search exposing
     , update
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setKeyboard, setQueryBuilder, setRangeFacetValues, setResultsNotInCurrentMode, toKeyboard)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setDownloader, setKeyboard, setQueryBuilder, setRangeFacetValues, setResultsNotInCurrentMode, toKeyboard)
 import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
 import Maybe.Extra as ME
+import Page.Downloader as Downloader
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
@@ -485,6 +486,27 @@ update session msg model =
                     QueryBuilder.update queryBuilderMsg {}
             in
             ( model, Cmd.map UserInteractedWithQueryBuilder qbCmd )
+
+        UserInteractedWithDownloader downloaderMsg ->
+            let
+                ( _, dCmd ) =
+                    Downloader.update downloaderMsg {}
+            in
+            ( model, Cmd.map UserInteractedWithDownloader dCmd )
+
+        UserClickedOpenDownloader ->
+            ( { model
+                | activeSearch = setDownloader (Just Downloader.init) model.activeSearch
+              }
+            , Cmd.none
+            )
+
+        UserClickedCloseDownloader ->
+            ( { model
+                | activeSearch = setDownloader Nothing model.activeSearch
+              }
+            , Cmd.none
+            )
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model

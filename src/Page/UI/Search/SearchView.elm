@@ -13,6 +13,8 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, to
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Maybe.Extra as ME
+import Page.Downloader
+import Page.Downloader.Msg exposing (DownloaderMsg)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.QueryBuilder
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
@@ -67,6 +69,9 @@ type alias SearchResultsSectionConfig a msg =
     , userInteractedWithQueryBuilderMsg : QueryBuilderMsg -> msg
     , userClickedOpenQueryBuilderMsg : msg
     , userClickedCloseQueryBuilderMsg : msg
+    , userInteractedWithDownloaderMsg : DownloaderMsg -> msg
+    , userClickedOpenDownloaderMsg : msg
+    , userClickedCloseDownloaderMsg : msg
     , userClosedPreviewWindowMsg : msg
     , userClickedSourceItemsExpandMsg : msg
     , userClickedResultForPreviewMsg : String -> msg
@@ -194,12 +199,25 @@ viewSearchResultsSection cfg resultsLoading body =
                             , userInteractedWithQueryBuilderMsg = cfg.userInteractedWithQueryBuilderMsg
                             }
                     )
+
+        downloaderWindow =
+            .activeSearch cfg.model
+                |> .downloader
+                |> viewMaybe
+                    (\_ ->
+                        Page.Downloader.view
+                            { language = language
+                            , closeMsg = cfg.userClickedCloseDownloaderMsg
+                            , userInteractedWithDownloaderMsg = cfg.userInteractedWithDownloaderMsg
+                            }
+                    )
     in
     row
         [ width fill
         , height fill
         , Background.color colourScheme.white
         , inFront queryBuilderWindow
+        , inFront downloaderWindow
         ]
         [ column
             [ width (px 550)
@@ -241,6 +259,8 @@ viewSearchResultsSection cfg resultsLoading body =
                 , submitLabel = localTranslations.showResults
                 , submitMsg = cfg.userTriggeredSearchSubmitMsg
                 , resetMsg = cfg.userResetAllFiltersMsg
+                , userClickedOpenDownloaderMsg = cfg.userClickedOpenDownloaderMsg
+                , userClickedCloseDownloaderMsg = cfg.userClickedCloseDownloaderMsg
                 }
             , activeFilters
             , viewSearchControls

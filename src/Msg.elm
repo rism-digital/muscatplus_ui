@@ -4,7 +4,6 @@ import Browser exposing (UrlRequest)
 import Element exposing (Device)
 import Page.About as About
 import Page.BottomBar as BottomBar
-import Page.Downloader.Msg as Downloader
 import Page.Error as NotFound
 import Page.Front as Front
 import Page.Record as Record
@@ -73,5 +72,4 @@ type Msg
     | UserInteractedWithAboutPage About.Msg
     | UserInteractedWithSideBar SideBar.Msg
     | UserInteractedWithBottomBar BottomBar.Msg
-    | UserInteractedWithDownloaderPage Downloader.Msg
     | NothingHappened -- for stubbing out messages and development, a.k.a. 'NoOp'

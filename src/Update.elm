@@ -221,9 +221,6 @@ changePage url model =
             , Cmd.none
             )
 
-        Route.DownloadPageRoute dargs ->
-            ( NotFoundPage newSession NotFoundPage.init, Cmd.none )
-
         Route.NotFoundPageRoute ->
             ( NotFoundPage newSession NotFoundPage.init
             , Cmd.none

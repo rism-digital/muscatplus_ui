@@ -3,6 +3,7 @@ module ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
 import Dict exposing (Dict)
 import Language exposing (LanguageMap)
+import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
@@ -34,4 +35,5 @@ type alias ActiveSearch msg =
     , activeSuggestionDebouncer : Debouncer msg
     , queryBuilder : Maybe QueryBuilderModel
     , resultsNotInCurrentMode : List FacetItem
+    , downloader : Maybe DownloaderModel
     }

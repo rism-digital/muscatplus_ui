@@ -193,12 +193,6 @@ viewPageBody deviceView model =
 
                 ( OptionsPage session pageModel, DesktopView ) ->
                     Element.map Msg.UserInteractedWithAboutPage (Desktop.About.Options.view session pageModel)
-
-                ( DownloadPage session pageModel, DesktopView ) ->
-                    Element.map Msg.UserInteractedWithDownloaderPage none
-
-                ( DownloadPage session pageModel, MobileView ) ->
-                    Element.map Msg.UserInteractedWithDownloaderPage none
     in
     case deviceView of
         MobileView ->
