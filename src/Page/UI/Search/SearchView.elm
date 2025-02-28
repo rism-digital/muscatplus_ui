@@ -165,13 +165,15 @@ viewSearchResultsSection cfg resultsLoading body =
                 NoResponseToShow ->
                     none
 
+        nextQuery =
+            .activeSearch cfg.model
+                |> .nextQuery
+
         language =
             .language cfg.session
 
         hasActiveFilters =
-            .activeSearch cfg.model
-                |> .nextQuery
-                |> .filters
+            nextQuery.filters
                 |> Dict.isEmpty
                 |> not
 
@@ -204,9 +206,10 @@ viewSearchResultsSection cfg resultsLoading body =
             .activeSearch cfg.model
                 |> .downloader
                 |> viewMaybe
-                    (\_ ->
+                    (\downloaderModel ->
                         Page.Downloader.view
                             { language = language
+                            , model = downloaderModel
                             , closeMsg = cfg.userClickedCloseDownloaderMsg
                             , userInteractedWithDownloaderMsg = cfg.userInteractedWithDownloaderMsg
                             }

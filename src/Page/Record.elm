@@ -215,6 +215,7 @@ update session msg model =
                             ProbeSuccess
                                 { totalItems = body.totalItems
                                 , queryStatus = NotCheckedQuery
+                                , pagination = body.pagination
                                 }
 
                         _ ->

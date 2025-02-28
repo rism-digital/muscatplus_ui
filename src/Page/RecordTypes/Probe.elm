@@ -4,12 +4,14 @@ import Http.Detailed
 import Json.Decode as Decode exposing (Decoder, bool, int)
 import Json.Decode.Pipeline exposing (required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.Search exposing (SearchPagination, searchPaginationDecoder)
 import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 
 
 type alias ProbeData =
     { totalItems : Int
     , queryStatus : QueryValidation
+    , pagination : SearchPagination
     }
 
 
@@ -33,6 +35,7 @@ probeResponseDecoder =
     Decode.succeed ProbeData
         |> required "totalItems" int
         |> required "queryValidation" queryValidationDecoder
+        |> required "view" searchPaginationDecoder
 
 
 queryValidationDecoder : Decoder QueryValidation

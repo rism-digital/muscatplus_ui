@@ -39,6 +39,7 @@ module Page.RecordTypes.Search exposing
     , parseStringToFacetBehaviour
     , parseStringToFacetSort
     , searchBodyDecoder
+    , searchPaginationDecoder
     , toBehaviourItems
     , toBehaviours
     , toCurrentBehaviour

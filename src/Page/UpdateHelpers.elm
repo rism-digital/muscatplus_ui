@@ -41,7 +41,9 @@ import KeyCodes exposing (ArrowDirection(..))
 import Language exposing (LanguageMap, toLanguageMap)
 import List.Extra as LE
 import Maybe.Extra as ME
+import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (toKeyboardQuery)
+import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setRows, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
 import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..))
@@ -101,8 +103,15 @@ addNationalCollectionQueryParameter session qargs =
         |> String.dropLeft 1
 
 
-createProbeUrl : Session -> ActiveSearch msg -> String
-createProbeUrl session activeSearch =
+createProbeUrl :
+    Session
+    ->
+        { a
+            | nextQuery : QueryArgs
+            , keyboard : Maybe (Keyboard.Model KeyboardMsg)
+        }
+    -> String
+createProbeUrl session { nextQuery, keyboard } =
     let
         notationQueryParameters =
             ME.unwrap []
@@ -110,7 +119,7 @@ createProbeUrl session activeSearch =
                     toKeyboardQuery p
                         |> buildNotationQueryParameters
                 )
-                activeSearch.keyboard
+                keyboard
 
         probeUrl =
             case session.route of
@@ -127,11 +136,10 @@ createProbeUrl session activeSearch =
                     serverUrl [ "probe" ]
 
         resultMode =
-            toNextQuery activeSearch
-                |> toMode
+            toMode nextQuery
 
         textQueryParameters =
-            setMode resultMode activeSearch.nextQuery
+            setMode resultMode nextQuery
                 |> buildQueryParameters
     in
     List.append textQueryParameters notationQueryParameters
@@ -155,7 +163,7 @@ probeSubmit probeMsg session model =
                 |> setProbeResponse Probing
 
         probeUrl =
-            createProbeUrl session newModel.activeSearch
+            createProbeUrl session model.activeSearch
     in
     ( newModel
     , createProbeRequestWithDecoder probeMsg probeUrl

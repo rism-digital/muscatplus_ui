@@ -258,6 +258,7 @@ update session msg model =
                             ProbeSuccess
                                 { totalItems = body.totalItems
                                 , queryStatus = NotCheckedQuery
+                                , pagination = body.pagination
                                 }
 
                         _ ->
@@ -488,15 +489,37 @@ update session msg model =
             ( model, Cmd.map UserInteractedWithQueryBuilder qbCmd )
 
         UserInteractedWithDownloader downloaderMsg ->
-            let
-                ( _, dCmd ) =
-                    Downloader.update downloaderMsg {}
-            in
-            ( model, Cmd.map UserInteractedWithDownloader dCmd )
+            case .downloader model.activeSearch of
+                Just downloaderModel ->
+                    let
+                        ( dModel, dCmd ) =
+                            Downloader.update downloaderMsg downloaderModel
+
+                        newModel =
+                            setDownloader (Just dModel) model.activeSearch
+                                |> flip setActiveSearch model
+                    in
+                    ( newModel, Cmd.map UserInteractedWithDownloader dCmd )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         UserClickedOpenDownloader ->
+            let
+                nextQuery =
+                    .nextQuery model.activeSearch
+
+                keyboardQuery =
+                    .keyboard model.activeSearch
+
+                modelCfg =
+                    { queryArgs = nextQuery
+                    , keyboard = keyboardQuery
+                    , session = session
+                    }
+            in
             ( { model
-                | activeSearch = setDownloader (Just Downloader.init) model.activeSearch
+                | activeSearch = setDownloader (Just (Downloader.init modelCfg)) model.activeSearch
               }
             , Cmd.none
             )

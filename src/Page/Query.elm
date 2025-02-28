@@ -15,6 +15,7 @@ module Page.Query exposing
     , setMode
     , setNationalCollection
     , setNextQuery
+    , setPage
     , setRows
     , setSort
     , toFacetBehaviours
