@@ -5,8 +5,10 @@ module Page.UI.Style exposing
     , rgbaFloatToInt
     , searchSourcesLinkHeight
     , tabBarHeight
+    , toCssColors
     )
 
+import Css
 import Element
 
 
@@ -212,6 +214,15 @@ rgbaFloatToInt colour =
     , green = round (green * 255)
     , red = round (red * 255)
     }
+
+
+toCssColors : Element.Color -> Css.Color
+toCssColors colour =
+    let
+        { red, green, blue } =
+            rgbaFloatToInt colour
+    in
+    Css.rgb red green blue
 
 
 headerHeight : Int

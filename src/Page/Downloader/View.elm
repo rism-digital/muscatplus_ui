@@ -1,15 +1,18 @@
 module Page.Downloader.View exposing (..)
 
-import Element exposing (Element, alignBottom, alignRight, centerY, column, fill, height, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Css
+import Element exposing (Element, alignBottom, alignRight, centerY, column, fill, height, html, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Html.Styled as HT exposing (toUnstyled)
+import Html.Styled.Attributes as HA
 import Language exposing (Language)
 import Page.Downloader.Model exposing (DownloaderModel)
-import Page.Downloader.Msg exposing (DownloaderMsg(..))
+import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloaderMsg(..))
 import Page.UI.Attributes exposing (headingMD)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, rgbaFloatToInt, toCssColors)
 
 
 view :
@@ -17,7 +20,18 @@ view :
     , model : DownloaderModel
     }
     -> Element DownloaderMsg
-view cfg =
+view { language, model } =
+    let
+        progressView =
+            case model.progress of
+                Progress num all ->
+                    ((toFloat num / toFloat all) * 100)
+                        |> ceiling
+                        |> progressBar
+
+                NoProgress ->
+                    none
+    in
     row
         [ width fill
         , height fill
@@ -29,6 +43,20 @@ view cfg =
             , spacing 6
             ]
             [ row
+                [ width fill ]
+                [ Input.checkbox []
+                    { onChange = UserChangedIncludeSearchUrl
+                    , icon = Input.defaultCheckbox
+                    , checked = model.includeSearchUrlInResults
+                    , label =
+                        Input.labelRight []
+                            (text "Include Search URL in Results")
+                    }
+                ]
+            , row
+                [ width fill ]
+                [ progressView ]
+            , row
                 [ width fill
                 , alignBottom
                 ]
@@ -48,3 +76,32 @@ view cfg =
                 ]
             ]
         ]
+
+
+progressBar : Int -> Element msg
+progressBar pctProgress =
+    HT.div
+        [ HA.css
+            [ Css.backgroundColor (toCssColors colourScheme.lightGrey)
+            , Css.width (Css.pct 100)
+            , Css.height <| Css.px 30
+            ]
+        ]
+        [ HT.div
+            [ HA.css
+                [ Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.justifyContent Css.center
+                , Css.backgroundColor <| toCssColors colourScheme.lightBlue
+                , Css.color (toCssColors colourScheme.white)
+
+                --, Css.borderRadius <| Css.px 9999
+                , Css.overflow Css.hidden
+                , Css.width <| Css.pct (toFloat pctProgress)
+                , Css.height <| Css.pct 100
+                ]
+            ]
+            [ HT.text (String.fromInt pctProgress ++ "%") ]
+        ]
+        |> toUnstyled
+        |> html

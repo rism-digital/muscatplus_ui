@@ -22,6 +22,7 @@ module Page.RecordTypes.Search exposing
     , RangeFacet
     , RangeFacetValue(..)
     , RangeMinMaxValues
+    , ResultsBody
     , SearchBody
     , SearchPagination
     , SearchResult(..)
@@ -38,6 +39,7 @@ module Page.RecordTypes.Search exposing
     , parseFacetSortToString
     , parseStringToFacetBehaviour
     , parseStringToFacetSort
+    , resultsBodyDecoder
     , searchBodyDecoder
     , searchPaginationDecoder
     , toBehaviourItems
@@ -276,6 +278,12 @@ type alias SearchBody =
     , queryFields : List QueryField
     , pageSizes : List String
     }
+
+
+{-| for when we only need to decode a list of results
+-}
+type alias ResultsBody =
+    { items : List SearchResult }
 
 
 type alias SearchPagination =
@@ -651,6 +659,12 @@ searchBodyDecoder =
         |> required "sorts" searchSortBlockDecoder
         |> optional "queryFields" (list (aliasLabelDecoder QueryField)) []
         |> required "pageSizes" (list string)
+
+
+resultsBodyDecoder : Decoder ResultsBody
+resultsBodyDecoder =
+    Decode.succeed ResultsBody
+        |> optional "items" (list searchResultDecoder) []
 
 
 searchPaginationDecoder : Decoder SearchPagination
