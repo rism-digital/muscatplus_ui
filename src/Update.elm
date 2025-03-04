@@ -103,10 +103,26 @@ changePage url model =
 
                 searchUrl =
                     { url | query = Just fullQueryParams }
+
+                -- optimization. If the actual query has not changed, then
+                -- we do not need to trigger a new search request. This happens
+                -- primarily when choosing a preview, where the fragment will change
+                -- indicating the selected preview, but the actual search query will
+                -- not change.
+                queryHasChanged =
+                    Maybe.map2 (/=) previousUrl.query url.query
+                        |> Maybe.withDefault True
+
+                searchCmd =
+                    if queryHasChanged then
+                        SearchPage.searchPageRequest searchUrl
+
+                    else
+                        Cmd.none
             in
             ( SearchPage updatedSession newPageBody
             , Cmd.batch
-                [ SearchPage.searchPageRequest searchUrl
+                [ searchCmd
                 , SearchPage.requestPreviewIfSelected newPageBody.selectedResult
                 ]
                 |> Cmd.map Msg.UserInteractedWithSearchPage
