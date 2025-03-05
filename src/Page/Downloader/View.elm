@@ -33,7 +33,7 @@ view { language, model } =
                 NoProgress ->
                     none
 
-        errorMessage =
+        downloadStatusView =
             case model.downloadState of
                 ErrorDownloading err ->
                     row
@@ -41,6 +41,11 @@ view { language, model } =
                         [ errorMessageConverter err
                             |> text
                         ]
+
+                DownloadCompleted _ ->
+                    row
+                        [ width fill ]
+                        [ text "Download completed!" ]
 
                 _ ->
                     none
@@ -69,7 +74,7 @@ view { language, model } =
             , row
                 [ width fill ]
                 [ progressView ]
-            , errorMessage
+            , downloadStatusView
             , row
                 [ width fill
                 , alignBottom

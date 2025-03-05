@@ -2,6 +2,7 @@ module Page.Downloader.Task exposing (..)
 
 import Http
 import Json.Decode exposing (Decoder)
+import Process
 import Task exposing (Task)
 
 
@@ -12,14 +13,18 @@ queueTasks urls decoder =
 
 getTask : String -> Decoder a -> Task Http.Error a
 getTask path decoder =
-    Http.task
-        { method = "get"
-        , headers = [ Http.header "Accept" "application/ld+json" ]
-        , url = path
-        , body = Http.emptyBody
-        , resolver = handleJsonResponse decoder |> Http.stringResolver
-        , timeout = Nothing
-        }
+    Process.sleep 500
+        |> Task.andThen
+            (\_ ->
+                Http.task
+                    { method = "get"
+                    , headers = [ Http.header "Accept" "application/ld+json" ]
+                    , url = path
+                    , body = Http.emptyBody
+                    , resolver = handleJsonResponse decoder |> Http.stringResolver
+                    , timeout = Nothing
+                    }
+            )
 
 
 handleJsonResponse : Decoder a -> Http.Response String -> Result Http.Error a
