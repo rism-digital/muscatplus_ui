@@ -8,6 +8,7 @@ import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
+import Maybe.Extra as ME
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
@@ -76,6 +77,16 @@ hasActionableProbeResponse probeResponse =
             False
 
 
+numberOfResults : ProbeStatus -> Maybe Int
+numberOfResults probeResponse =
+    case probeResponse of
+        ProbeSuccess d ->
+            Just d.totalItems
+
+        _ ->
+            Nothing
+
+
 viewProbeResponseNumbers : Language -> ProbeStatus -> Element msg
 viewProbeResponseNumbers language probeResponse =
     case probeResponse of
@@ -141,6 +152,22 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
             viewIf
                 (viewUpdateMessage submitButtonMsg language model.applyFilterPrompt actionableProbeResponse)
                 (not isFrontPage)
+
+        downloadButtonMsg =
+            if model.applyFilterPrompt then
+                Nothing
+
+            else
+                numberOfResults model.probeResponse
+                    |> Maybe.map (\c -> c <= 1000)
+                    |> Maybe.andThen
+                        (\isTrue ->
+                            if isTrue then
+                                Just userClickedOpenDownloaderMsg
+
+                            else
+                                Nothing
+                        )
     in
     row
         [ alignTop
@@ -217,12 +244,13 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
             [ Input.button
                 [ Border.color colourScheme.darkBlue
                 , Border.width 1
-                , Background.color colourScheme.lightGrey
+                , Background.color colourScheme.puce
+                , Font.color colourScheme.white
                 , height (px 35)
                 , paddingXY 10 0
                 ]
                 { label = text "Download results"
-                , onPress = Just userClickedOpenDownloaderMsg
+                , onPress = downloadButtonMsg
                 }
             ]
         ]
