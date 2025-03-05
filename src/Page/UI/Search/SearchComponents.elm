@@ -1,6 +1,6 @@
 module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, hasActionableQueryValidation, queryValidationState, viewProbeResponseNumbers, viewSearchButtons)
 
-import Element exposing (Element, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, above, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, onLeft, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -16,6 +16,7 @@ import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 
 type alias SearchButtonConfig a msg =
@@ -152,22 +153,6 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
             viewIf
                 (viewUpdateMessage submitButtonMsg language model.applyFilterPrompt actionableProbeResponse)
                 (not isFrontPage)
-
-        downloadButtonMsg =
-            if model.applyFilterPrompt then
-                Nothing
-
-            else
-                numberOfResults model.probeResponse
-                    |> Maybe.map (\c -> c <= 1000)
-                    |> Maybe.andThen
-                        (\isTrue ->
-                            if isTrue then
-                                Just userClickedOpenDownloaderMsg
-
-                            else
-                                Nothing
-                        )
     in
     row
         [ alignTop
@@ -241,16 +226,9 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
             ]
         , column
             [ alignRight ]
-            [ Input.button
-                [ Border.color colourScheme.darkBlue
-                , Border.width 1
-                , Background.color colourScheme.puce
-                , Font.color colourScheme.white
-                , height (px 35)
-                , paddingXY 10 0
-                ]
-                { label = text "Download results"
-                , onPress = downloadButtonMsg
+            [ viewDownloadButton
+                { model = model
+                , userClickedOpenDownloaderMsg = userClickedOpenDownloaderMsg
                 }
             ]
         ]
@@ -271,3 +249,66 @@ viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
             }
         )
         (applyFilterPrompt && actionableProbResponse)
+
+
+viewDownloadButton :
+    { model :
+        { a
+            | probeResponse : ProbeStatus
+            , applyFilterPrompt : Bool
+        }
+    , userClickedOpenDownloaderMsg : msg
+    }
+    -> Element msg
+viewDownloadButton { model, userClickedOpenDownloaderMsg } =
+    let
+        downloadButtonMsg =
+            if model.applyFilterPrompt then
+                Nothing
+
+            else
+                numberOfResults model.probeResponse
+                    |> Maybe.map (\c -> c <= 1000)
+                    |> Maybe.andThen
+                        (\isTrue ->
+                            if isTrue then
+                                Just userClickedOpenDownloaderMsg
+
+                            else
+                                Nothing
+                        )
+
+        buttonTheme =
+            case downloadButtonMsg of
+                Just _ ->
+                    { background = colourScheme.puce
+                    , cursor = pointer
+                    , fontColour = colourScheme.white
+                    , borderColour = colourScheme.darkBlue
+                    , helpTooltip =
+                        tooltip above none
+                    }
+
+                Nothing ->
+                    { background = colourScheme.lightGrey
+                    , cursor = htmlAttribute (HA.style "cursor" "not-allowed")
+                    , fontColour = colourScheme.darkGrey
+                    , borderColour = colourScheme.darkGrey
+                    , helpTooltip =
+                        el tooltipStyle (text "There is a limit of 1,000 search results to download.")
+                            |> tooltip onLeft
+                    }
+    in
+    Input.button
+        [ Border.color buttonTheme.borderColour
+        , Border.width 1
+        , Background.color buttonTheme.background
+        , Font.color buttonTheme.fontColour
+        , height (px 35)
+        , paddingXY 10 0
+        , buttonTheme.cursor
+        , buttonTheme.helpTooltip
+        ]
+        { label = text "Download results"
+        , onPress = downloadButtonMsg
+        }

@@ -70,6 +70,7 @@ tooltipStyle =
     , padding 4
     , spacing 5
     , bodySM
+    , htmlAttribute (HA.style "z-index" "10000")
     ]
 
 
