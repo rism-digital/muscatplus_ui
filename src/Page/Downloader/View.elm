@@ -8,9 +8,10 @@ import Element.Font as Font
 import Element.Input as Input
 import Html.Styled as HT exposing (toUnstyled)
 import Html.Styled.Attributes as HA
+import Http exposing (Error(..))
 import Language exposing (Language)
 import Page.Downloader.Model exposing (DownloaderModel)
-import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloaderMsg(..))
+import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
 import Page.UI.Attributes exposing (headingMD)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt, toCssColors)
 
@@ -30,6 +31,18 @@ view { language, model } =
                         |> progressBar
 
                 NoProgress ->
+                    none
+
+        errorMessage =
+            case model.downloadState of
+                ErrorDownloading err ->
+                    row
+                        [ width fill ]
+                        [ errorMessageConverter err
+                            |> text
+                        ]
+
+                _ ->
                     none
     in
     row
@@ -56,6 +69,7 @@ view { language, model } =
             , row
                 [ width fill ]
                 [ progressView ]
+            , errorMessage
             , row
                 [ width fill
                 , alignBottom
@@ -80,28 +94,56 @@ view { language, model } =
 
 progressBar : Int -> Element msg
 progressBar pctProgress =
-    HT.div
-        [ HA.css
-            [ Css.backgroundColor (toCssColors colourScheme.lightGrey)
-            , Css.width (Css.pct 100)
-            , Css.height <| Css.px 30
-            ]
-        ]
-        [ HT.div
-            [ HA.css
-                [ Css.displayFlex
-                , Css.alignItems Css.center
-                , Css.justifyContent Css.center
-                , Css.backgroundColor <| toCssColors colourScheme.lightBlue
-                , Css.color (toCssColors colourScheme.white)
+    row
+        [ width fill ]
+        [ column
+            [ width fill ]
+            [ row
+                [ width fill ]
+                [ HT.div
+                    [ HA.css
+                        [ Css.backgroundColor (toCssColors colourScheme.lightGrey)
+                        , Css.width (Css.pct 100)
+                        , Css.height <| Css.px 30
+                        ]
+                    ]
+                    [ HT.div
+                        [ HA.css
+                            [ Css.displayFlex
+                            , Css.alignItems Css.center
+                            , Css.justifyContent Css.center
+                            , Css.backgroundColor <| toCssColors colourScheme.lightBlue
+                            , Css.color (toCssColors colourScheme.white)
 
-                --, Css.borderRadius <| Css.px 9999
-                , Css.overflow Css.hidden
-                , Css.width <| Css.pct (toFloat pctProgress)
-                , Css.height <| Css.pct 100
+                            --, Css.borderRadius <| Css.px 9999
+                            , Css.overflow Css.hidden
+                            , Css.width <| Css.pct (toFloat pctProgress)
+                            , Css.height <| Css.pct 100
+                            ]
+                        ]
+                        [ HT.text (String.fromInt pctProgress ++ "%") ]
+                    ]
+                    |> toUnstyled
+                    |> html
                 ]
             ]
-            [ HT.text (String.fromInt pctProgress ++ "%") ]
         ]
-        |> toUnstyled
-        |> html
+
+
+errorMessageConverter : Http.Error -> String
+errorMessageConverter err =
+    case err of
+        BadUrl u ->
+            "Bad URL: " ++ u
+
+        Timeout ->
+            "Timeout"
+
+        NetworkError ->
+            "Network Error"
+
+        BadStatus s ->
+            "Bad Status" ++ String.fromInt s
+
+        BadBody _ ->
+            "Bad Request Body"

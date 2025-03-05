@@ -6,6 +6,7 @@ import Element.Background as Background
 import Element.Border as Border
 import File.Download
 import Html.Attributes as HA
+import Http exposing (Error(..))
 import Language exposing (Language, toLanguageMap)
 import List.Extra as LE
 import Maybe.Extra as ME
@@ -143,10 +144,20 @@ update msg model =
                         _ ->
                             ( downloadState, Cmd.none )
             in
-            ( { model | downloadState = nextState, progress = Progress downloadProgress totalPages }, nextCmd )
+            ( { model
+                | downloadState = nextState
+                , progress = Progress downloadProgress totalPages
+              }
+            , nextCmd
+            )
 
         RecordDownloadFailed failure ->
-            ( model, Cmd.none )
+            ( { model
+                | downloadState = ErrorDownloading failure
+                , progress = NoProgress
+              }
+            , Cmd.none
+            )
 
         RecordDownloadCompleted completed ->
             let
@@ -170,7 +181,12 @@ update msg model =
                 downloadCmd =
                     File.Download.string fileName "text/csv" resultsList
             in
-            ( { model | downloadState = DownloadCompleted completed }, downloadCmd )
+            ( { model
+                | downloadState = DownloadCompleted completed
+                , progress = NoProgress
+              }
+            , downloadCmd
+            )
 
         NothingHappenedWithTheDownloader ->
             ( model, Cmd.none )

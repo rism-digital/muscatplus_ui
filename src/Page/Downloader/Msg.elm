@@ -15,7 +15,7 @@ type DownloadProgressTracker
 type DownloadState
     = DownloadNotStarted
     | Downloading (Parallel.ListState DownloaderMsg Page.RecordTypes.Search.ResultsBody)
-    | ErrorDownloading String
+    | ErrorDownloading Http.Error
     | DownloadCompleted (List Page.RecordTypes.Search.ResultsBody)
 
 
