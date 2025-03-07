@@ -3,6 +3,7 @@ module Page.UpdateHelpers exposing
     , addNationalCollectionQueryParameter
     , chooseResponse
     , createProbeUrl
+    , createSearchUrl
     , hasNonZeroSourcesAttached
     , probeSubmit
     , selectAppropriateRangeFacetValues
@@ -134,6 +135,49 @@ createProbeUrl session { nextQuery, keyboard } =
 
                 _ ->
                     serverUrl [ "probe" ]
+
+        resultMode =
+            toMode nextQuery
+
+        textQueryParameters =
+            setMode resultMode nextQuery
+                |> buildQueryParameters
+    in
+    List.append textQueryParameters notationQueryParameters
+        |> probeUrl
+
+
+createSearchUrl :
+    Session
+    ->
+        { a
+            | nextQuery : QueryArgs
+            , keyboard : Maybe (Keyboard.Model KeyboardMsg)
+        }
+    -> String
+createSearchUrl session { nextQuery, keyboard } =
+    let
+        notationQueryParameters =
+            ME.unwrap []
+                (\p ->
+                    toKeyboardQuery p
+                        |> buildNotationQueryParameters
+                )
+                keyboard
+
+        probeUrl =
+            case session.route of
+                SourceContentsPageRoute id _ ->
+                    serverUrl [ "sources", String.fromInt id, "contents" ]
+
+                PersonSourcePageRoute id _ ->
+                    serverUrl [ "people", String.fromInt id, "sources" ]
+
+                InstitutionSourcePageRoute id _ ->
+                    serverUrl [ "institutions", String.fromInt id, "sources" ]
+
+                _ ->
+                    serverUrl [ "search" ]
 
         resultMode =
             toMode nextQuery

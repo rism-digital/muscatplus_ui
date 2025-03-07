@@ -2,14 +2,54 @@ module Page.Downloader.CsvHelpers exposing (..)
 
 import Csv.Encode
 import Language exposing (Language(..), extractLabelFromLanguageMap)
-import Maybe.Extra as ME
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (IncipitResultBody, InstitutionResultBody, PersonResultBody, ResultsBody, SearchResult(..), SourceResultBody)
+
+
+type CsvRecordType
+    = SourceCsvRecordType SourceCsvEntry
+    | PersonCsvRecordType CsvEntry
+    | InstitutionCsvRecordType CsvEntry
+    | IncipitCsvRecordType CsvEntry
 
 
 type alias CsvEntry =
     { url : String
     , title : String
     }
+
+
+type alias SourceCsvEntry =
+    { url : String
+    , title : String
+    , sourceType : String
+    , contentType : String
+    }
+
+
+searchUrlRecord : ResultMode -> String -> String
+searchUrlRecord resultMode url =
+    case resultMode of
+        SourcesMode ->
+            url ++ ",\"Search Url\",,"
+
+        PeopleMode ->
+            url ++ ",\"Search URL\""
+
+        InstitutionsMode ->
+            url ++ ",\"Search URL\""
+
+        IncipitsMode ->
+            url ++ ",\"Search URL\""
+
+
+sourceCsvEntryToFieldString : SourceCsvEntry -> List ( String, String )
+sourceCsvEntryToFieldString entry =
+    [ ( "url", entry.url )
+    , ( "title", entry.title )
+    , ( "source_type", entry.sourceType )
+    , ( "content_type", entry.contentType )
+    ]
 
 
 csvEntryToFieldString : CsvEntry -> List ( String, String )
@@ -19,26 +59,32 @@ csvEntryToFieldString { url, title } =
     ]
 
 
-resultListToCsvString : Maybe String -> List ResultsBody -> String
-resultListToCsvString originalUrl searchResults =
-    let
-        converted =
-            List.concatMap .items searchResults
-                |> List.map convertResult
+csvEntriesConverter : CsvRecordType -> List ( String, String )
+csvEntriesConverter record =
+    case record of
+        SourceCsvRecordType entry ->
+            sourceCsvEntryToFieldString entry
 
-        allRecords =
-            ME.unpack (\() -> converted)
-                (\u -> { url = u, title = "Search URL" } :: converted)
-                originalUrl
-    in
+        PersonCsvRecordType entry ->
+            csvEntryToFieldString entry
+
+        InstitutionCsvRecordType entry ->
+            csvEntryToFieldString entry
+
+        IncipitCsvRecordType entry ->
+            csvEntryToFieldString entry
+
+
+resultListToCsvString : List CsvRecordType -> String
+resultListToCsvString searchResults =
     Csv.Encode.encode
-        { encoder = Csv.Encode.withFieldNames csvEntryToFieldString
+        { encoder = Csv.Encode.withFieldNames csvEntriesConverter
         , fieldSeparator = ','
         }
-        allRecords
+        searchResults
 
 
-convertResult : SearchResult -> CsvEntry
+convertResult : SearchResult -> CsvRecordType
 convertResult res =
     case res of
         SourceResult body ->
@@ -54,29 +100,35 @@ convertResult res =
             convertIncipitResultBody body
 
 
-convertSourceResultBody : SourceResultBody -> CsvEntry
+convertSourceResultBody : SourceResultBody -> CsvRecordType
 convertSourceResultBody body =
-    { url = body.id
-    , title = extractLabelFromLanguageMap English body.label
-    }
+    SourceCsvRecordType
+        { url = body.id
+        , title = extractLabelFromLanguageMap English body.label
+        , sourceType = ""
+        , contentType = ""
+        }
 
 
-convertPersonResultBody : PersonResultBody -> CsvEntry
+convertPersonResultBody : PersonResultBody -> CsvRecordType
 convertPersonResultBody body =
-    { url = body.id
-    , title = extractLabelFromLanguageMap English body.label
-    }
+    PersonCsvRecordType
+        { url = body.id
+        , title = extractLabelFromLanguageMap English body.label
+        }
 
 
-convertInstitutionResultBody : InstitutionResultBody -> CsvEntry
+convertInstitutionResultBody : InstitutionResultBody -> CsvRecordType
 convertInstitutionResultBody body =
-    { url = body.id
-    , title = extractLabelFromLanguageMap English body.label
-    }
+    InstitutionCsvRecordType
+        { url = body.id
+        , title = extractLabelFromLanguageMap English body.label
+        }
 
 
-convertIncipitResultBody : IncipitResultBody -> CsvEntry
+convertIncipitResultBody : IncipitResultBody -> CsvRecordType
 convertIncipitResultBody body =
-    { url = body.id
-    , title = extractLabelFromLanguageMap English body.label
-    }
+    IncipitCsvRecordType
+        { url = body.id
+        , title = extractLabelFromLanguageMap English body.label
+        }

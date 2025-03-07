@@ -283,7 +283,9 @@ type alias SearchBody =
 {-| for when we only need to decode a list of results
 -}
 type alias ResultsBody =
-    { items : List SearchResult }
+    { pagination : SearchPagination
+    , items : List SearchResult
+    }
 
 
 type alias SearchPagination =
@@ -664,6 +666,7 @@ searchBodyDecoder =
 resultsBodyDecoder : Decoder ResultsBody
 resultsBodyDecoder =
     Decode.succeed ResultsBody
+        |> required "view" searchPaginationDecoder
         |> optional "items" (list searchResultDecoder) []
 
 

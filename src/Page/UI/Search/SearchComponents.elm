@@ -268,7 +268,7 @@ viewDownloadButton { model, userClickedOpenDownloaderMsg } =
 
             else
                 numberOfResults model.probeResponse
-                    |> Maybe.map (\c -> c <= 1000)
+                    |> Maybe.map (\c -> c <= 100000000000000)
                     |> Maybe.andThen
                         (\isTrue ->
                             if isTrue then

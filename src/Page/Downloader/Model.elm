@@ -1,10 +1,13 @@
 module Page.Downloader.Model exposing (..)
 
+import Http
 import Page.Downloader.Msg exposing (DownloadProgressTracker, DownloadState)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs)
+import Page.RecordTypes.Search exposing (ResultsBody, SearchResult)
 import Session exposing (Session)
+import Task exposing (Task)
 
 
 type alias DownloaderModel =
@@ -15,4 +18,6 @@ type alias DownloaderModel =
     , progress : DownloadProgressTracker
     , timestamp : String
     , includeSearchUrlInResults : Bool
+    , taskQueue : List (List (Task Http.Error ResultsBody))
+    , resultsList : List ( Int, List SearchResult )
     }

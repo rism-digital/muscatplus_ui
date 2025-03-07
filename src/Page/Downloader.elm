@@ -7,28 +7,29 @@ import Element.Border as Border
 import File.Download
 import Html.Attributes as HA
 import Http exposing (Error(..))
+import Json.Decode exposing (Decoder)
 import Language exposing (Language, toLanguageMap)
 import List.Extra as LE
 import Maybe.Extra as ME
-import Page.Downloader.CsvHelpers exposing (resultListToCsvString)
+import Page.Downloader.CsvHelpers exposing (convertResult, resultListToCsvString, searchUrlRecord)
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
-import Page.Downloader.Task exposing (queueTasks)
+import Page.Downloader.Task exposing (getTask)
 import Page.Downloader.View
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, setPage, setRows)
-import Page.RecordTypes.Search exposing (resultsBodyDecoder, searchBodyDecoder)
+import Page.RecordTypes.Search exposing (ResultsBody, SearchResult, resultsBodyDecoder, searchBodyDecoder)
 import Page.Request exposing (createProbeRequestWithDecoder)
 import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Components exposing (viewWindowTitleBar)
 import Page.UI.Style exposing (colourScheme)
-import Page.UpdateHelpers exposing (createProbeUrl)
+import Page.UpdateHelpers exposing (createProbeUrl, createSearchUrl)
 import Request exposing (serverUrl)
 import Session exposing (Session)
-import Task
+import Task exposing (Task)
 import Task.Parallel as Parallel
 import Time
 
@@ -42,6 +43,8 @@ init cfg =
     , progress = NoProgress
     , timestamp = ""
     , includeSearchUrlInResults = False
+    , taskQueue = []
+    , resultsList = []
     }
 
 
@@ -64,6 +67,17 @@ downloadQueryParameters pageNumber { queryToDownload, keyboardQueryToDownload } 
     serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
 
 
+queueTasks : List String -> Decoder a -> List (List (Task Http.Error a))
+queueTasks urls decoder =
+    List.map (\u -> getTask u decoder) urls
+        |> LE.greedyGroupsOf 10
+
+
+processResultsForSorting : List ResultsBody -> List ( Int, List SearchResult )
+processResultsForSorting searchResults =
+    List.map (\rb -> ( .thisPage rb.pagination, rb.items )) searchResults
+
+
 update : DownloaderMsg -> DownloaderModel -> ( DownloaderModel, Cmd DownloaderMsg )
 update msg model =
     case msg of
@@ -77,13 +91,24 @@ update msg model =
                                 , keyboardQueryToDownload = model.keyboardQueryToDownload
                                 }
                         )
+                        |> List.drop 1
 
                 numUrls =
                     List.length requestUrls
 
+                initialTaskQueue : List (List (Task Http.Error ResultsBody))
+                initialTaskQueue =
+                    queueTasks requestUrls resultsBodyDecoder
+
+                -- take the first batch of tasks. If we can't, then the empty lists
+                -- will simply be processed and nothing will happen.
+                ( firstBatch, remainingQueue ) =
+                    LE.uncons initialTaskQueue
+                        |> Maybe.withDefault ( [], [] )
+
                 ( initialState, fetchCmd ) =
                     Parallel.attemptList
-                        { tasks = queueTasks requestUrls resultsBodyDecoder
+                        { tasks = firstBatch
                         , onUpdates = RecordDownloadUpdated
                         , onFailure = RecordDownloadFailed
                         , onSuccess = RecordDownloadCompleted
@@ -112,6 +137,7 @@ update msg model =
             ( { model
                 | downloadState = Downloading initialState
                 , progress = Progress 0 numUrls
+                , taskQueue = remainingQueue
               }
             , Cmd.batch [ downloadStarted, fetchCmd ]
             )
@@ -161,31 +187,65 @@ update msg model =
 
         RecordDownloadCompleted completed ->
             let
-                resultsList =
-                    if model.includeSearchUrlInResults then
+                updateConfig =
+                    if List.length model.taskQueue == 0 then
                         let
-                            downloadUrl =
-                                createProbeUrl model.session
-                                    { nextQuery = model.queryToDownload
-                                    , keyboard = model.keyboardQueryToDownload
-                                    }
+                            fullResultsCsvList =
+                                processResultsForSorting completed
+                                    |> List.append model.resultsList
+                                    |> List.sortBy Tuple.first
+                                    |> List.map Tuple.second
+                                    |> List.concat
+                                    |> List.map convertResult
+                                    |> resultListToCsvString
+
+                            fileName =
+                                "rism-online-search-results-" ++ model.timestamp ++ ".csv"
+
+                            downloadCmd =
+                                File.Download.string fileName "text/csv" fullResultsCsvList
                         in
-                        resultListToCsvString (Just downloadUrl) completed
+                        { nextCmd = downloadCmd
+                        , downloadState = DownloadCompleted completed
+                        , downloadProgress = NoProgress
+                        , taskQueue = model.taskQueue
+                        , resultsList = []
+                        }
 
                     else
-                        resultListToCsvString Nothing completed
+                        let
+                            _ =
+                                Debug.log "Proceeding to the next batch" ""
 
-                fileName =
-                    "rism-online-search-results-" ++ model.timestamp ++ ".csv"
+                            resultsList =
+                                processResultsForSorting completed
 
-                downloadCmd =
-                    File.Download.string fileName "text/csv" resultsList
+                            ( nextBatch, remainingQueue ) =
+                                LE.uncons model.taskQueue
+                                    |> Maybe.withDefault ( [], [] )
+
+                            ( batchState, fetchCmd ) =
+                                Parallel.attemptList
+                                    { tasks = nextBatch
+                                    , onUpdates = RecordDownloadUpdated
+                                    , onFailure = RecordDownloadFailed
+                                    , onSuccess = RecordDownloadCompleted
+                                    }
+                        in
+                        { nextCmd = fetchCmd
+                        , downloadState = Downloading batchState
+                        , downloadProgress = model.progress
+                        , taskQueue = remainingQueue
+                        , resultsList = List.append model.resultsList resultsList
+                        }
             in
             ( { model
-                | downloadState = DownloadCompleted completed
-                , progress = NoProgress
+                | downloadState = updateConfig.downloadState
+                , progress = updateConfig.downloadProgress
+                , taskQueue = updateConfig.taskQueue
+                , resultsList = updateConfig.resultsList
               }
-            , downloadCmd
+            , updateConfig.nextCmd
             )
 
         NothingHappenedWithTheDownloader ->
