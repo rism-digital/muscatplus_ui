@@ -214,9 +214,6 @@ update msg model =
 
                     else
                         let
-                            _ =
-                                Debug.log "Proceeding to the next batch" ""
-
                             resultsList =
                                 processResultsForSorting completed
 
