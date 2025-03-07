@@ -24,6 +24,7 @@ localTranslations :
     , description : LanguageMap
     , downloadMEI : LanguageMap
     , downloadPNG : LanguageMap
+    , downloadsLimited : LanguageMap
     , errorLoadingProbeResults : LanguageMap
     , first : LanguageMap
     , fullRecord : LanguageMap
@@ -128,6 +129,15 @@ localTranslations =
         [ LanguageValue English [ "Download MEI" ] ]
     , downloadPNG =
         [ LanguageValue English [ "Download PNG" ] ]
+    , downloadsLimited =
+        [ LanguageValue English [ "Downloads are limited to {{numResults}} search results." ]
+        , LanguageValue German [ "Downloads sind auf {{numResults}} Suchergebnisse beschränkt." ]
+        , LanguageValue French [ "Les téléchargements sont limités à {{numResults}} résultats de recherche." ]
+        , LanguageValue Italian [ "I download sono limitati a {{numResults}} risultati di ricerca." ]
+        , LanguageValue Spanish [ "Las descargas están limitadas a {{numResults}} resultados de búsqueda." ]
+        , LanguageValue Portuguese [ "Os downloads estão limitados a {{numResults}} resultados de pesquisa." ]
+        , LanguageValue Polish [ "Pobieranie jest ograniczone do {{numResults}} wyników wyszukiwania." ]
+        ]
     , errorLoadingProbeResults =
         [ LanguageValue English [ "Error loading results" ]
         , LanguageValue German [ "Fehler beim Laden der Ergebnisse" ]

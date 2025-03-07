@@ -1,9 +1,12 @@
 module Page.Downloader.CsvHelpers exposing (..)
 
 import Csv.Encode
+import Dict exposing (Dict)
 import Language exposing (Language(..), extractLabelFromLanguageMap)
+import Maybe.Extra as ME
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (IncipitResultBody, InstitutionResultBody, PersonResultBody, ResultsBody, SearchResult(..), SourceResultBody)
+import Page.RecordTypes.Shared exposing (LabelValue)
 
 
 type CsvRecordType
@@ -24,23 +27,36 @@ type alias SourceCsvEntry =
     , title : String
     , sourceType : String
     , contentType : String
+    , recordType : String
+    , dateStatements : String
+    , creatorAuthor : String
+    , otherContributors : String
     }
 
 
-searchUrlRecord : ResultMode -> String -> String
-searchUrlRecord resultMode url =
+createSearchUrlRecord : ResultMode -> String -> CsvRecordType
+createSearchUrlRecord resultMode url =
     case resultMode of
         SourcesMode ->
-            url ++ ",\"Search Url\",,"
+            SourceCsvRecordType
+                { url = url
+                , title = "Search URL"
+                , sourceType = ""
+                , contentType = ""
+                , recordType = ""
+                , dateStatements = ""
+                , creatorAuthor = ""
+                , otherContributors = ""
+                }
 
         PeopleMode ->
-            url ++ ",\"Search URL\""
+            PersonCsvRecordType { url = url, title = "Search URL" }
 
         InstitutionsMode ->
-            url ++ ",\"Search URL\""
+            InstitutionCsvRecordType { url = url, title = "Search URL" }
 
         IncipitsMode ->
-            url ++ ",\"Search URL\""
+            IncipitCsvRecordType { url = url, title = "Search URL" }
 
 
 sourceCsvEntryToFieldString : SourceCsvEntry -> List ( String, String )
@@ -49,6 +65,10 @@ sourceCsvEntryToFieldString entry =
     , ( "title", entry.title )
     , ( "source_type", entry.sourceType )
     , ( "content_type", entry.contentType )
+    , ( "record_type", entry.recordType )
+    , ( "date_statements", entry.dateStatements )
+    , ( "creator_author", entry.creatorAuthor )
+    , ( "other_contributors", entry.otherContributors )
     ]
 
 
@@ -100,13 +120,56 @@ convertResult res =
             convertIncipitResultBody body
 
 
+extractFromSummaryDict : String -> Maybe (Dict String LabelValue) -> String
+extractFromSummaryDict dictKey summaryDict =
+    Maybe.map
+        (\summary ->
+            Dict.get dictKey summary
+                |> Maybe.map (\composer -> extractLabelFromLanguageMap None composer.value)
+        )
+        summaryDict
+        |> ME.join
+        |> Maybe.withDefault ""
+
+
 convertSourceResultBody : SourceResultBody -> CsvRecordType
 convertSourceResultBody body =
+    let
+        sourceType =
+            Maybe.map (\fs -> extractLabelFromLanguageMap English (.label fs.sourceType)) body.flags
+                |> Maybe.withDefault ""
+
+        recordType =
+            Maybe.map (\fs -> extractLabelFromLanguageMap English (.label fs.recordType)) body.flags
+                |> Maybe.withDefault ""
+
+        contentTypes =
+            Maybe.map
+                (\fs ->
+                    List.map (\l -> extractLabelFromLanguageMap English l.label) fs.contentTypes
+                        |> String.join "; "
+                )
+                body.flags
+                |> Maybe.withDefault ""
+
+        dateStatements =
+            extractFromSummaryDict "dateStatements" body.summary
+
+        sourceComposer =
+            extractFromSummaryDict "sourceComposer" body.summary
+
+        resultComposers =
+            extractFromSummaryDict "sourceComposers" body.summary
+    in
     SourceCsvRecordType
         { url = body.id
         , title = extractLabelFromLanguageMap English body.label
-        , sourceType = ""
-        , contentType = ""
+        , sourceType = sourceType
+        , contentType = contentTypes
+        , recordType = recordType
+        , dateStatements = dateStatements
+        , creatorAuthor = sourceComposer
+        , otherContributors = resultComposers
         }
 
 

@@ -1,9 +1,14 @@
-module Config exposing (defaultRows, flagsPath, minimumQueryLength, muscatLinkBase, serverUrl, uiVersion)
+module Config exposing (csvDownloadMaximumRecords, defaultRows, flagsPath, minimumQueryLength, muscatLinkBase, serverUrl, uiVersion)
 
 
 defaultRows : Int
 defaultRows =
     20
+
+
+csvDownloadMaximumRecords : Int
+csvDownloadMaximumRecords =
+    20000
 
 
 flagsPath : String

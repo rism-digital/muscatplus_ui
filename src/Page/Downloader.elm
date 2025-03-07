@@ -11,7 +11,7 @@ import Json.Decode exposing (Decoder)
 import Language exposing (Language, toLanguageMap)
 import List.Extra as LE
 import Maybe.Extra as ME
-import Page.Downloader.CsvHelpers exposing (convertResult, resultListToCsvString, searchUrlRecord)
+import Page.Downloader.CsvHelpers exposing (convertResult, createSearchUrlRecord, resultListToCsvString)
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
 import Page.Downloader.Task exposing (getTask)
@@ -190,14 +190,33 @@ update msg model =
                 updateConfig =
                     if List.length model.taskQueue == 0 then
                         let
-                            fullResultsCsvList =
+                            fullResultsList =
                                 processResultsForSorting completed
                                     |> List.append model.resultsList
                                     |> List.sortBy Tuple.first
                                     |> List.map Tuple.second
                                     |> List.concat
                                     |> List.map convertResult
-                                    |> resultListToCsvString
+
+                            injectedSearchUrlList =
+                                if model.includeSearchUrlInResults then
+                                    let
+                                        searchUrl =
+                                            createSearchUrl model.session
+                                                { nextQuery = model.queryToDownload
+                                                , keyboard = model.keyboardQueryToDownload
+                                                }
+
+                                        searchUrlEntry =
+                                            createSearchUrlRecord (.mode model.queryToDownload) searchUrl
+                                    in
+                                    searchUrlEntry :: fullResultsList
+
+                                else
+                                    fullResultsList
+
+                            fullResultsCsvList =
+                                resultListToCsvString injectedSearchUrlList
 
                             fileName =
                                 "rism-online-search-results-" ++ model.timestamp ++ ".csv"

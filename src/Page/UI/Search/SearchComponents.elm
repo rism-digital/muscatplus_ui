@@ -1,12 +1,13 @@
 module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, hasActionableQueryValidation, queryValidationState, viewProbeResponseNumbers, viewSearchButtons)
 
+import Config as C
 import Element exposing (Element, above, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, onLeft, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html.Attributes as HA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage)
+import Language exposing (Language, LanguageMap, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
@@ -227,7 +228,8 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         , column
             [ alignRight ]
             [ viewDownloadButton
-                { model = model
+                { language = language
+                , model = model
                 , userClickedOpenDownloaderMsg = userClickedOpenDownloaderMsg
                 }
             ]
@@ -252,7 +254,8 @@ viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
 
 
 viewDownloadButton :
-    { model :
+    { language : Language
+    , model :
         { a
             | probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
@@ -260,7 +263,7 @@ viewDownloadButton :
     , userClickedOpenDownloaderMsg : msg
     }
     -> Element msg
-viewDownloadButton { model, userClickedOpenDownloaderMsg } =
+viewDownloadButton { language, model, userClickedOpenDownloaderMsg } =
     let
         downloadButtonMsg =
             if model.applyFilterPrompt then
@@ -268,7 +271,7 @@ viewDownloadButton { model, userClickedOpenDownloaderMsg } =
 
             else
                 numberOfResults model.probeResponse
-                    |> Maybe.map (\c -> c <= 100000000000000)
+                    |> Maybe.map (\c -> c <= C.csvDownloadMaximumRecords)
                     |> Maybe.andThen
                         (\isTrue ->
                             if isTrue then
@@ -277,6 +280,16 @@ viewDownloadButton { model, userClickedOpenDownloaderMsg } =
                             else
                                 Nothing
                         )
+
+        formattedNumber =
+            toFloat C.csvDownloadMaximumRecords
+                |> formatNumberByLanguage language
+
+        tooltipMessage =
+            extractLabelFromLanguageMapWithVariables language
+                [ LanguageMapReplacementVariable "numResults" formattedNumber ]
+                localTranslations.downloadsLimited
+                |> text
 
         buttonTheme =
             case downloadButtonMsg of
@@ -295,7 +308,7 @@ viewDownloadButton { model, userClickedOpenDownloaderMsg } =
                     , fontColour = colourScheme.darkGrey
                     , borderColour = colourScheme.darkGrey
                     , helpTooltip =
-                        el tooltipStyle (text "There is a limit of 1,000 search results to download.")
+                        el tooltipStyle tooltipMessage
                             |> tooltip onLeft
                     }
     in
