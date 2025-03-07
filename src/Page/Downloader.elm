@@ -153,29 +153,33 @@ update msg model =
                 downloadState =
                     model.downloadState
 
-                ( downloadProgress, totalPages ) =
-                    case model.progress of
-                        Progress completed total ->
-                            ( completed + 1, total )
-
-                        NoProgress ->
-                            ( 0, 0 )
-
-                ( nextState, nextCmd ) =
+                ( updatedModel, updatedCmd ) =
                     case downloadState of
                         Downloading taskMsg ->
-                            Parallel.updateList taskMsg updates
-                                |> Tuple.mapFirst Downloading
+                            let
+                                ( downloadProgress, totalPages ) =
+                                    case model.progress of
+                                        Progress completed total ->
+                                            ( completed + 1, total )
+
+                                        NoProgress ->
+                                            ( 0, 0 )
+
+                                ( nextState, nextCmd ) =
+                                    Parallel.updateList taskMsg updates
+                                        |> Tuple.mapFirst Downloading
+                            in
+                            ( { model
+                                | downloadState = nextState
+                                , progress = Progress downloadProgress totalPages
+                              }
+                            , nextCmd
+                            )
 
                         _ ->
-                            ( downloadState, Cmd.none )
+                            ( model, Cmd.none )
             in
-            ( { model
-                | downloadState = nextState
-                , progress = Progress downloadProgress totalPages
-              }
-            , nextCmd
-            )
+            ( updatedModel, updatedCmd )
 
         RecordDownloadFailed failure ->
             ( { model
@@ -282,6 +286,17 @@ update msg model =
             in
             ( model, createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl )
 
+        UserClickedCancelDownloadButton ->
+            ( { model
+                | downloadState = DownloadCancelled
+                , progress = NoProgress
+                , taskQueue = []
+                , resultsList = []
+                , timestamp = ""
+              }
+            , Cmd.none
+            )
+
         UserChangedIncludeSearchUrl checkState ->
             ( { model | includeSearchUrlInResults = checkState }, Cmd.none )
 
@@ -304,7 +319,7 @@ view cfg =
             [ centerX
             , centerY
             , width (px 900)
-            , height (px 300)
+            , height (px 400)
             , Background.color colourScheme.white
             , Border.color colourScheme.darkBlue
             , Border.width 3

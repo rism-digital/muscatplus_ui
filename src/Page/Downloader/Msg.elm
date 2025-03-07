@@ -17,6 +17,7 @@ type DownloadState
     | Downloading (Parallel.ListState DownloaderMsg Page.RecordTypes.Search.ResultsBody)
     | ErrorDownloading Http.Error
     | DownloadCompleted (List Page.RecordTypes.Search.ResultsBody)
+    | DownloadCancelled
 
 
 type DownloaderMsg
@@ -27,4 +28,5 @@ type DownloaderMsg
     | RecordDownloadCompleted (List Page.RecordTypes.Search.ResultsBody)
     | NothingHappenedWithTheDownloader
     | UserClickedDownloadButton
+    | UserClickedCancelDownloadButton
     | UserChangedIncludeSearchUrl Bool

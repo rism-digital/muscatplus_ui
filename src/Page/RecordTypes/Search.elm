@@ -177,6 +177,7 @@ type alias Facets =
 type alias IncipitResultBody =
     { id : String
     , label : LanguageMap
+    , partOf : PartOfSectionBody
     , summary : Maybe (Dict String LabelValue)
     , renderedIncipits : Maybe (List RenderedIncipit)
     }
@@ -525,6 +526,7 @@ incipitResultBodyDecoder =
     Decode.succeed IncipitResultBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
+        |> required "partOf" partOfSectionBodyDecoder
         |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
         |> optional "rendered" (Decode.maybe (list (Decode.oneOf [ renderedIncipitDecoderOne, renderedIncipitDecoderTwo ]))) Nothing
 

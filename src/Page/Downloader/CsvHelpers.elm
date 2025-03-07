@@ -11,9 +11,9 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 
 type CsvRecordType
     = SourceCsvRecordType SourceCsvEntry
-    | PersonCsvRecordType CsvEntry
+    | PersonCsvRecordType PersonCsvEntry
     | InstitutionCsvRecordType CsvEntry
-    | IncipitCsvRecordType CsvEntry
+    | IncipitCsvRecordType IncipitCsvEntry
 
 
 type alias CsvEntry =
@@ -34,6 +34,23 @@ type alias SourceCsvEntry =
     }
 
 
+type alias PersonCsvEntry =
+    { url : String
+    , title : String
+    , gender : String
+    , numberOfSources : String
+    }
+
+
+type alias IncipitCsvEntry =
+    { url : String
+    , title : String
+    , sourceUrl : String
+    , paeCode : String
+    , composer : String
+    }
+
+
 createSearchUrlRecord : ResultMode -> String -> CsvRecordType
 createSearchUrlRecord resultMode url =
     case resultMode of
@@ -50,13 +67,24 @@ createSearchUrlRecord resultMode url =
                 }
 
         PeopleMode ->
-            PersonCsvRecordType { url = url, title = "Search URL" }
+            PersonCsvRecordType
+                { url = url
+                , title = "Search URL"
+                , gender = ""
+                , numberOfSources = ""
+                }
 
         InstitutionsMode ->
             InstitutionCsvRecordType { url = url, title = "Search URL" }
 
         IncipitsMode ->
-            IncipitCsvRecordType { url = url, title = "Search URL" }
+            IncipitCsvRecordType
+                { url = url
+                , title = "Search URL"
+                , sourceUrl = ""
+                , paeCode = ""
+                , composer = ""
+                }
 
 
 sourceCsvEntryToFieldString : SourceCsvEntry -> List ( String, String )
@@ -69,6 +97,25 @@ sourceCsvEntryToFieldString entry =
     , ( "date_statements", entry.dateStatements )
     , ( "creator_author", entry.creatorAuthor )
     , ( "other_contributors", entry.otherContributors )
+    ]
+
+
+personCsvEntryToFieldString : PersonCsvEntry -> List ( String, String )
+personCsvEntryToFieldString entry =
+    [ ( "url", entry.url )
+    , ( "title", entry.title )
+    , ( "gender", entry.gender )
+    , ( "number_of_sources", entry.numberOfSources )
+    ]
+
+
+incipitCsvEntryToFieldString : IncipitCsvEntry -> List ( String, String )
+incipitCsvEntryToFieldString entry =
+    [ ( "url", entry.url )
+    , ( "title", entry.title )
+    , ( "source_url", entry.sourceUrl )
+    , ( "pae_code", entry.paeCode )
+    , ( "composer", entry.composer )
     ]
 
 
@@ -86,13 +133,13 @@ csvEntriesConverter record =
             sourceCsvEntryToFieldString entry
 
         PersonCsvRecordType entry ->
-            csvEntryToFieldString entry
+            personCsvEntryToFieldString entry
 
         InstitutionCsvRecordType entry ->
             csvEntryToFieldString entry
 
         IncipitCsvRecordType entry ->
-            csvEntryToFieldString entry
+            incipitCsvEntryToFieldString entry
 
 
 resultListToCsvString : List CsvRecordType -> String
@@ -175,9 +222,18 @@ convertSourceResultBody body =
 
 convertPersonResultBody : PersonResultBody -> CsvRecordType
 convertPersonResultBody body =
+    let
+        gender =
+            extractFromSummaryDict "gender" body.summary
+
+        numberOfSources =
+            extractFromSummaryDict "numSources" body.summary
+    in
     PersonCsvRecordType
         { url = body.id
         , title = extractLabelFromLanguageMap English body.label
+        , gender = gender
+        , numberOfSources = numberOfSources
         }
 
 
@@ -191,7 +247,22 @@ convertInstitutionResultBody body =
 
 convertIncipitResultBody : IncipitResultBody -> CsvRecordType
 convertIncipitResultBody body =
+    let
+        paeCode =
+            extractFromSummaryDict "paeCode" body.summary
+
+        composer =
+            extractFromSummaryDict "incipitComposer" body.summary
+
+        sourceUrl =
+            body.partOf
+                |> .source
+                |> .id
+    in
     IncipitCsvRecordType
         { url = body.id
         , title = extractLabelFromLanguageMap English body.label
+        , sourceUrl = sourceUrl
+        , paeCode = paeCode
+        , composer = composer
         }

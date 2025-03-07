@@ -1,7 +1,7 @@
 module Page.Downloader.View exposing (..)
 
 import Css
-import Element exposing (Element, alignBottom, alignRight, centerY, column, fill, height, html, none, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignRight, centerY, column, fill, height, html, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -9,10 +9,11 @@ import Element.Input as Input
 import Html.Styled as HT exposing (toUnstyled)
 import Html.Styled.Attributes as HA
 import Http exposing (Error(..))
-import Language exposing (Language)
+import Language exposing (Language, extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
-import Page.UI.Attributes exposing (headingMD)
+import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing, sectionSpacing)
 import Page.UI.Style exposing (colourScheme, rgbaFloatToInt, toCssColors)
 
 
@@ -23,16 +24,6 @@ view :
     -> Element DownloaderMsg
 view { language, model } =
     let
-        progressView =
-            case model.progress of
-                Progress num all ->
-                    ((toFloat num / toFloat all) * 100)
-                        |> ceiling
-                        |> progressBar
-
-                NoProgress ->
-                    none
-
         downloadStatusView =
             case model.downloadState of
                 ErrorDownloading err ->
@@ -49,6 +40,22 @@ view { language, model } =
 
                 _ ->
                     none
+
+        ( cancelColour, cancelFontColour, cancelMsg ) =
+            case model.downloadState of
+                Downloading _ ->
+                    ( colourScheme.red, colourScheme.white, Just UserClickedCancelDownloadButton )
+
+                _ ->
+                    ( colourScheme.lightGrey, colourScheme.darkGrey, Nothing )
+
+        ( downloadColour, downloadFontColour, downloadMsg ) =
+            case model.downloadState of
+                Downloading _ ->
+                    ( colourScheme.lightGrey, colourScheme.darkGrey, Nothing )
+
+                _ ->
+                    ( colourScheme.lightBlue, colourScheme.white, Just UserClickedDownloadButton )
     in
     row
         [ width fill
@@ -58,47 +65,93 @@ view { language, model } =
             [ width fill
             , height fill
             , padding 20
-            , spacing 6
+            , spacing sectionSpacing
             ]
             [ row
                 [ width fill ]
-                [ Input.checkbox []
-                    { onChange = UserChangedIncludeSearchUrl
-                    , icon = Input.defaultCheckbox
-                    , checked = model.includeSearchUrlInResults
-                    , label =
-                        Input.labelRight []
-                            (text "Include Search URL in Results")
-                    }
+                [ textColumn
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ paragraph [ width fill ] [ text (extractLabelFromLanguageMap language localTranslations.downloadsHelpOne) ]
+                    , paragraph [ width fill, Font.semiBold ] [ text (extractLabelFromLanguageMap language localTranslations.downloadsHelpTwo) ]
+                    ]
                 ]
             , row
                 [ width fill ]
-                [ progressView ]
+                [ column
+                    [ width fill
+                    , spacing lineSpacing
+                    ]
+                    [ row
+                        [ width fill ]
+                        [ Input.checkbox []
+                            { onChange = UserChangedIncludeSearchUrl
+                            , icon = Input.defaultCheckbox
+                            , checked = model.includeSearchUrlInResults
+                            , label =
+                                Input.labelRight []
+                                    (text "Include Search URL in Results")
+                            }
+                        ]
+                    , row
+                        [ width fill ]
+                        [ paragraph
+                            [ bodySM ]
+                            [ text (extractLabelFromLanguageMap language localTranslations.downloadsSearchUrlHelp) ]
+                        ]
+                    ]
+                ]
+            , row
+                [ width fill ]
+                [ progressView model ]
             , downloadStatusView
             , row
                 [ width fill
                 , alignBottom
+                , spacing 10
                 ]
                 [ Input.button
-                    [ Border.color colourScheme.lightBlue
-                    , Background.color colourScheme.lightBlue
+                    [ Background.color downloadColour
+                    , Font.color downloadFontColour
                     , height (px 35)
                     , width shrink
                     , Font.center
-                    , Font.color colourScheme.white
                     , headingMD
                     , pointer
                     , alignRight
                     , paddingXY 10 0
                     ]
-                    { label = text "Download", onPress = Just UserClickedDownloadButton }
+                    { label = text "Download", onPress = downloadMsg }
+                , Input.button
+                    [ Background.color cancelColour
+                    , Font.color cancelFontColour
+                    , height (px 35)
+                    , width shrink
+                    , Font.center
+                    , headingMD
+                    , pointer
+                    , alignRight
+                    , paddingXY 10 0
+                    ]
+                    { label = text "Cancel Download", onPress = cancelMsg }
                 ]
             ]
         ]
 
 
-progressBar : Int -> Element msg
-progressBar pctProgress =
+progressView : DownloaderModel -> Element msg
+progressView model =
+    let
+        progressPct =
+            case model.progress of
+                Progress num all ->
+                    ((toFloat num / toFloat all) * 100)
+                        |> ceiling
+
+                NoProgress ->
+                    0
+    in
     row
         [ width fill ]
         [ column
@@ -122,11 +175,11 @@ progressBar pctProgress =
 
                             --, Css.borderRadius <| Css.px 9999
                             , Css.overflow Css.hidden
-                            , Css.width <| Css.pct (toFloat pctProgress)
+                            , Css.width <| Css.pct (toFloat progressPct)
                             , Css.height <| Css.pct 100
                             ]
                         ]
-                        [ HT.text (String.fromInt pctProgress ++ "%") ]
+                        [ HT.text (String.fromInt progressPct ++ "%") ]
                     ]
                     |> toUnstyled
                     |> html

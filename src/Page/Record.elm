@@ -10,7 +10,7 @@ module Page.Record exposing
     , update
     )
 
-import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setQueryBuilder, setRangeFacetValues)
+import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setActiveSuggestionDebouncer, setAliasLabelMap, setDownloader, setQueryBuilder, setRangeFacetValues)
 import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Config as C
@@ -19,6 +19,7 @@ import Dict
 import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Murmur3
+import Page.Downloader as Downloader
 import Page.Query exposing (QueryArgs, defaultQueryArgs, setFilters, setNationalCollection, setNextQuery, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
@@ -526,6 +527,49 @@ update session msg model =
 
         UserInteractedWithQueryBuilder _ ->
             ( model, Cmd.none )
+
+        UserInteractedWithDownloader downloaderMsg ->
+            case .downloader model.activeSearch of
+                Just downloaderModel ->
+                    let
+                        ( dModel, dCmd ) =
+                            Downloader.update downloaderMsg downloaderModel
+
+                        newModel =
+                            setDownloader (Just dModel) model.activeSearch
+                                |> flip setActiveSearch model
+                    in
+                    ( newModel, Cmd.map UserInteractedWithDownloader dCmd )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        UserClickedOpenDownloader ->
+            let
+                nextQuery =
+                    .nextQuery model.activeSearch
+
+                keyboardQuery =
+                    .keyboard model.activeSearch
+
+                modelCfg =
+                    { queryArgs = nextQuery
+                    , keyboard = keyboardQuery
+                    , session = session
+                    }
+            in
+            ( { model
+                | activeSearch = setDownloader (Just (Downloader.init modelCfg)) model.activeSearch
+              }
+            , Cmd.none
+            )
+
+        UserClickedCloseDownloader ->
+            ( { model
+                | activeSearch = setDownloader Nothing model.activeSearch
+              }
+            , Cmd.none
+            )
 
         NothingHappened ->
             ( model, Cmd.none )

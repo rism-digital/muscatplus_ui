@@ -5,6 +5,7 @@ import Http
 import Http.Detailed
 import KeyCodes exposing (ArrowDirection)
 import Language exposing (LanguageMap)
+import Page.Downloader.Msg exposing (DownloaderMsg)
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.Record.Model exposing (CurrentRecordViewTab)
 import Page.RecordTypes.Probe exposing (ProbeData)
@@ -58,4 +59,7 @@ type RecordMsg
     | UserClickedOpenQueryBuilder
     | UserClickedCloseQueryBuilder
     | UserInteractedWithQueryBuilder QueryBuilderMsg
+    | UserInteractedWithDownloader DownloaderMsg
+    | UserClickedOpenDownloader
+    | UserClickedCloseDownloader
     | NothingHappened
