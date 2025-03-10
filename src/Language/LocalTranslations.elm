@@ -97,13 +97,65 @@ localTranslations :
     }
 localTranslations =
     { about =
-        [ LanguageValue English [ "About RISM Online" ] ]
+        [ LanguageValue English [ "About RISM Online" ]
+        , LanguageValue German
+            [ "Über RISM Online" ]
+        , LanguageValue French
+            [ "À propos de RISM Online" ]
+        , LanguageValue Italian
+            [ "Informazioni su RISM Online" ]
+        , LanguageValue Spanish
+            [ "Acerca de RISM Online" ]
+        , LanguageValue Portuguese
+            [ "Sobre o RISM Online" ]
+        , LanguageValue Polish
+            [ "O RISM Online" ]
+        ]
     , aboutAndHelp =
-        [ LanguageValue English [ "About and Help" ] ]
+        [ LanguageValue English [ "About and Help" ]
+        , LanguageValue German
+            [ "Über und Hilfe" ]
+        , LanguageValue French
+            [ "À propos et aide" ]
+        , LanguageValue Italian
+            [ "Informazioni e aiuto" ]
+        , LanguageValue Spanish
+            [ "Acerca de y ayuda" ]
+        , LanguageValue Portuguese
+            [ "Sobre e ajuda" ]
+        , LanguageValue Polish
+            [ "O nas i pomoc" ]
+        ]
     , addTermsToQuery =
-        [ LanguageValue English [ "Add terms to your query" ] ]
+        [ LanguageValue English [ "Add terms to your query" ]
+        , LanguageValue German
+            [ "Fügen Sie Begriffe zu Ihrer Anfrage hinzu" ]
+        , LanguageValue French
+            [ "Ajoutez des termes à votre requête" ]
+        , LanguageValue Italian
+            [ "Aggiungi termini alla tua ricerca" ]
+        , LanguageValue Spanish
+            [ "Añadir términos a su consulta" ]
+        , LanguageValue Portuguese
+            [ "Adicione termos à sua consulta" ]
+        , LanguageValue Polish
+            [ "Dodaj terminy do swojego zapytania" ]
+        ]
     , additionalFilters =
-        [ LanguageValue English [ "Additional filters" ] ]
+        [ LanguageValue English [ "Additional filters" ]
+        , LanguageValue German
+            [ "Zusätzliche Filter" ]
+        , LanguageValue French
+            [ "Filtres supplémentaires" ]
+        , LanguageValue Italian
+            [ "Filtri aggiuntivi" ]
+        , LanguageValue Spanish
+            [ "Filtros adicionales" ]
+        , LanguageValue Portuguese
+            [ "Filtros adicionais" ]
+        , LanguageValue Polish
+            [ "Dodatkowe filtry" ]
+        ]
     , applyFiltersToUpdateResults =
         [ LanguageValue English [ "Apply filters" ]
         , LanguageValue German [ "Filter anwenden" ]
@@ -114,7 +166,20 @@ localTranslations =
         , LanguageValue Polish [ "Zastosuj filtry" ]
         ]
     , chooseCollection =
-        [ LanguageValue English [ "Choose a collection to search" ] ]
+        [ LanguageValue English [ "Choose a collection to search" ]
+        , LanguageValue German
+            [ "Wählen Sie eine Sammlung zum Durchsuchen" ]
+        , LanguageValue French
+            [ "Choisissez une collection à rechercher" ]
+        , LanguageValue Italian
+            [ "Scegli una collezione da cercare" ]
+        , LanguageValue Spanish
+            [ "Elija una colección para buscar" ]
+        , LanguageValue Portuguese
+            [ "Escolha uma coleção para pesquisar" ]
+        , LanguageValue Polish
+            [ "Wybierz kolekcję do przeszukania" ]
+        ]
     , collapse =
         [ LanguageValue English [ "Collapse" ] ]
     , contentTypes =
@@ -129,13 +194,90 @@ localTranslations =
         , LanguageValue Polish [ "Opis" ]
         ]
     , downloadMEI =
-        [ LanguageValue English [ "Download MEI" ] ]
+        [ LanguageValue English [ "Download MEI" ]
+        , LanguageValue German
+            [ "MEI herunterladen" ]
+        , LanguageValue French
+            [ "Télécharger MEI" ]
+        , LanguageValue Italian
+            [ "Scarica MEI" ]
+        , LanguageValue Spanish
+            [ "Descargar MEI" ]
+        , LanguageValue Portuguese
+            [ "Baixar MEI" ]
+        , LanguageValue Polish
+            [ "Pobierz MEI" ]
+        ]
     , downloadPNG =
-        [ LanguageValue English [ "Download PNG" ] ]
+        [ LanguageValue English [ "Download PNG" ]
+        , LanguageValue German
+            [ "PNG herunterladen" ]
+        , LanguageValue French
+            [ "Télécharger PNG" ]
+        , LanguageValue Italian
+            [ "Scarica PNG" ]
+        , LanguageValue Spanish
+            [ "Descargar PNG" ]
+        , LanguageValue Portuguese
+            [ "Baixar PNG" ]
+        , LanguageValue Polish
+            [ "Pobierz PNG" ]
+        ]
     , downloadsHelpOne =
-        [ LanguageValue English [ """Downloads are in Comma Separated Values (CSV) format. Start your download by clicking on the "Download" button. When the download completes, a file save window will appear to save your results to your local computer.""" ] ]
+        [ LanguageValue English
+            [ """Downloads are in Comma Separated Values (CSV) format. Start your download by clicking on the "Download" button. When the download completes, a file save window will appear to save your results to your local computer.""" ]
+        , LanguageValue German
+            [ """Die Downloads liegen im CSV-Format (Comma Separated Values) vor. 
+                    Starten Sie Ihren Download, indem Sie auf die Schaltfläche „Download“ klicken. 
+                    Sobald der Download abgeschlossen ist, erscheint ein Fenster zum Speichern der Datei auf Ihrem lokalen Computer.""" ]
+        , LanguageValue French
+            [ """Les téléchargements sont au format CSV (Comma Separated Values). 
+                    Commencez votre téléchargement en cliquant sur le bouton "Télécharger". 
+                    Une fois le téléchargement terminé, une fenêtre de sauvegarde apparaîtra 
+                    pour enregistrer votre fichier sur votre ordinateur local.""" ]
+        , LanguageValue Italian
+            [ """I download sono in formato CSV (Comma Separated Values). 
+                    Avvia il download facendo clic sul pulsante "Scarica". 
+                    Al termine del download, apparirà una finestra di salvataggio 
+                    per salvare il file sul tuo computer locale.""" ]
+        , LanguageValue Spanish
+            [ """Las descargas están en formato CSV (Comma Separated Values). 
+                    Inicie la descarga haciendo clic en el botón "Descargar". 
+                    Cuando la descarga se complete, aparecerá una ventana de guardado 
+                    para guardar el archivo en su computadora local.""" ]
+        , LanguageValue Portuguese
+            [ """Os downloads estão no formato CSV (Comma Separated Values). 
+                    Inicie o download clicando no botão "Baixar". 
+                    Quando o download for concluído, uma janela de salvamento aparecerá 
+                    para salvar o arquivo no seu computador local.""" ]
+        , LanguageValue Polish
+            [ """Pobrane pliki są w formacie CSV (Comma Separated Values). 
+                    Rozpocznij pobieranie, klikając przycisk „Pobierz”. 
+                    Po zakończeniu pobierania pojawi się okno zapisu, 
+                    aby zapisać plik na komputerze lokalnym.""" ]
+        ]
     , downloadsHelpTwo =
-        [ LanguageValue English [ """While the results are downloading do not close your browser or navigate away from this page. You can continue browsing in another tab or window.""" ] ]
+        [ LanguageValue English
+            [ """While the results are downloading do not close your browser or navigate away from this page. You can continue browsing in another tab or window.""" ]
+        , LanguageValue German
+            [ """Während die Ergebnisse heruntergeladen werden, schließen Sie bitte nicht Ihren Browser 
+                      und verlassen Sie diese Seite nicht. Sie können weiterhin in einem anderen Tab oder Fenster surfen.""" ]
+        , LanguageValue French
+            [ """Pendant le téléchargement des résultats, ne fermez pas votre navigateur 
+                      et ne quittez pas cette page. Vous pouvez continuer à naviguer dans un autre onglet ou une autre fenêtre.""" ]
+        , LanguageValue Italian
+            [ """Durante il download dei risultati, non chiudere il browser 
+                      e non lasciare questa pagina. Puoi continuare a navigare in un'altra scheda o finestra.""" ]
+        , LanguageValue Spanish
+            [ """Mientras se descargan los resultados, no cierre su navegador 
+                      ni navegue fuera de esta página. Puede seguir navegando en otra pestaña o ventana.""" ]
+        , LanguageValue Portuguese
+            [ """Enquanto os resultados estão sendo baixados, não feche o navegador 
+                      nem saia desta página. Você pode continuar navegando em outra aba ou janela.""" ]
+        , LanguageValue Polish
+            [ """Podczas pobierania wyników nie zamykaj przeglądarki 
+                      ani nie opuszczaj tej strony. Możesz kontynuować przeglądanie w innej karcie lub oknie.""" ]
+        ]
     , downloadsLimited =
         [ LanguageValue English [ "Downloads are limited to {{numResults}} search results." ]
         , LanguageValue German [ "Downloads sind auf {{numResults}} Suchergebnisse beschränkt." ]
@@ -146,7 +288,33 @@ localTranslations =
         , LanguageValue Polish [ "Pobieranie jest ograniczone do {{numResults}} wyników wyszukiwania." ]
         ]
     , downloadsSearchUrlHelp =
-        [ LanguageValue English [ """Includes the URL to the original search as the first entry in the CSV. This may be useful for referring back to the search that generated a list of results, but it does not follow the format of the other results so additional care is required if processing the results.""" ] ]
+        [ LanguageValue English
+            [ """Includes the URL to the original search as the first entry in the CSV. This may be useful for referring back to the search that generated a list of results, but it does not follow the format of the other results so additional care is required if processing the results.""" ]
+        , LanguageValue German
+            [ """Enthält die URL zur ursprünglichen Suche als ersten Eintrag in der CSV-Datei.
+                     Dies kann nützlich sein, um auf die Suche zurückzugreifen, die die Liste der Ergebnisse erstellt hat.
+                     Allerdings entspricht sie nicht dem Format der anderen Ergebnisse, sodass bei der Verarbeitung besondere Vorsicht erforderlich ist.""" ]
+        , LanguageValue French
+            [ """Inclut l'URL de la recherche originale en tant que première entrée dans le fichier CSV.
+                     Cela peut être utile pour revenir à la recherche qui a généré la liste des résultats,
+                     mais elle ne suit pas le format des autres résultats, donc une attention particulière est requise lors du traitement.""" ]
+        , LanguageValue Italian
+            [ """Include l'URL della ricerca originale come primo elemento nel file CSV.
+                     Questo può essere utile per fare riferimento alla ricerca che ha generato l'elenco dei risultati,
+                     ma non segue il formato degli altri risultati, quindi è necessaria un'attenzione aggiuntiva durante l'elaborazione.""" ]
+        , LanguageValue Spanish
+            [ """Incluye la URL de la búsqueda original como la primera entrada en el archivo CSV.
+                     Esto puede ser útil para volver a la búsqueda que generó la lista de resultados,
+                     pero no sigue el formato de los demás resultados, por lo que se requiere cuidado adicional al procesarlos.""" ]
+        , LanguageValue Portuguese
+            [ """Inclui a URL da pesquisa original como a primeira entrada no arquivo CSV.
+                     Isso pode ser útil para consultar a pesquisa que gerou a lista de resultados,
+                     mas não segue o formato dos outros resultados, portanto, é necessário ter um cuidado extra ao processá-los.""" ]
+        , LanguageValue Polish
+            [ """Zawiera adres URL oryginalnego wyszukiwania jako pierwszy wpis w pliku CSV.
+                     Może to być przydatne do odniesienia się do wyszukiwania, które wygenerowało listę wyników,
+                     ale nie odpowiada formatowi pozostałych wyników, dlatego podczas przetwarzania należy zachować szczególną ostrożność.""" ]
+        ]
     , errorLoadingProbeResults =
         [ LanguageValue English [ "Error loading results" ]
         , LanguageValue German [ "Fehler beim Laden der Ergebnisse" ]
@@ -184,13 +352,53 @@ localTranslations =
         , LanguageValue Polish [ "Pełny widok rekordu" ]
         ]
     , hasDigitization =
-        [ LanguageValue English [ "Digital images available" ] ]
+        [ LanguageValue English [ "Digital images available" ]
+        , LanguageValue German
+            [ "Digitale Bilder verfügbar" ]
+        , LanguageValue French
+            [ "Images numériques disponibles" ]
+        , LanguageValue Italian
+            [ "Immagini digitali disponibili" ]
+        , LanguageValue Spanish
+            [ "Imágenes digitales disponibles" ]
+        , LanguageValue Portuguese
+            [ "Imagens digitais disponíveis" ]
+        , LanguageValue Polish
+            [ "Dostępne obrazy cyfrowe" ]
+        ]
     , hasIIIFManifest =
         [ LanguageValue English [ "IIIF manifest available" ] ]
     , hasIncipits =
-        [ LanguageValue English [ "Has incipits" ] ]
+        [ LanguageValue English [ "Has incipits" ]
+        , LanguageValue German
+            [ "Hat Incipits" ]
+        , LanguageValue French
+            [ "Contient des incipits" ]
+        , LanguageValue Italian
+            [ "Ha incipit" ]
+        , LanguageValue Spanish
+            [ "Tiene incipits" ]
+        , LanguageValue Portuguese
+            [ "Possui incipits" ]
+        , LanguageValue Polish
+            [ "Zawiera incipity" ]
+        ]
     , heldBy =
-        [ LanguageValue English [ "Held by" ] ]
+        [ LanguageValue English
+            [ "Held by" ]
+        , LanguageValue German
+            [ "Gehalten von" ]
+        , LanguageValue French
+            [ "Détenu par" ]
+        , LanguageValue Italian
+            [ "Posseduto da" ]
+        , LanguageValue Spanish
+            [ "Poseído por" ]
+        , LanguageValue Portuguese
+            [ "Mantido por" ]
+        , LanguageValue Polish
+            [ "Przechowywane przez" ]
+        ]
     , home =
         [ LanguageValue English [ "Home" ]
         , LanguageValue German [ "Startseite" ]
@@ -201,9 +409,36 @@ localTranslations =
         , LanguageValue Polish [ "Strona główna" ]
         ]
     , incipitSearchHelpHide =
-        [ LanguageValue English [ "Hide Incipit Search Help" ] ]
+        [ LanguageValue English [ "Hide Incipit Search Help" ]
+        , LanguageValue German
+            [ "Incipit-Suchhilfe ausblenden" ]
+        , LanguageValue French
+            [ "Masquer l'aide à la recherche d'incipit" ]
+        , LanguageValue Italian
+            [ "Nascondi aiuto per la ricerca dell'incipit" ]
+        , LanguageValue Spanish
+            [ "Ocultar ayuda de búsqueda de incipit" ]
+        , LanguageValue Portuguese
+            [ "Ocultar ajuda de pesquisa de incipit" ]
+        , LanguageValue Polish
+            [ "Ukryj pomoc wyszukiwania incipitu" ]
+        ]
     , incipitSearchHelpShow =
-        [ LanguageValue English [ "Show Incipit Search Help" ] ]
+        [ LanguageValue English
+            [ "Show Incipit Search Help" ]
+        , LanguageValue German
+            [ "Incipit-Suchhilfe anzeigen" ]
+        , LanguageValue French
+            [ "Afficher l'aide à la recherche d'incipit" ]
+        , LanguageValue Italian
+            [ "Mostra aiuto per la ricerca dell'incipit" ]
+        , LanguageValue Spanish
+            [ "Mostrar ayuda de búsqueda de incipit" ]
+        , LanguageValue Portuguese
+            [ "Mostrar ajuda de pesquisa de incipit" ]
+        , LanguageValue Polish
+            [ "Pokaż pomoc wyszukiwania incipitu" ]
+        ]
     , incipits =
         [ LanguageValue Spanish [ "Íncipits" ]
         , LanguageValue Portuguese [ "Incipit" ]
@@ -260,9 +495,35 @@ localTranslations =
         , LanguageValue Polish [ "Lokalizacja" ]
         ]
     , muscatEdit =
-        [ LanguageValue English [ "Edit" ] ]
+        [ LanguageValue English [ "Edit" ]
+        , LanguageValue German
+            [ "Bearbeiten" ]
+        , LanguageValue French
+            [ "Modifier" ]
+        , LanguageValue Italian
+            [ "Modifica" ]
+        , LanguageValue Spanish
+            [ "Editar" ]
+        , LanguageValue Portuguese
+            [ "Editar" ]
+        , LanguageValue Polish
+            [ "Edytuj" ]
+        ]
     , muscatView =
-        [ LanguageValue English [ "View" ] ]
+        [ LanguageValue English [ "View" ]
+        , LanguageValue German
+            [ "Ansehen" ]
+        , LanguageValue French
+            [ "Voir" ]
+        , LanguageValue Italian
+            [ "Visualizza" ]
+        , LanguageValue Spanish
+            [ "Ver" ]
+        , LanguageValue Portuguese
+            [ "Visualizar" ]
+        , LanguageValue Polish
+            [ "Wyświetl" ]
+        ]
     , nearbyInstitutions =
         [ LanguageValue English [ "Nearby institutions" ]
         , LanguageValue German [ "Nahegelegene Körperschaften" ]
@@ -284,7 +545,21 @@ localTranslations =
         , LanguageValue Polish [ "Następny" ]
         ]
     , noAdditionalDetails =
-        [ LanguageValue English [ "No additional details available." ] ]
+        [ LanguageValue English
+            [ "No additional details available." ]
+        , LanguageValue German
+            [ "Keine zusätzlichen Details verfügbar." ]
+        , LanguageValue French
+            [ "Aucun détail supplémentaire disponible." ]
+        , LanguageValue Italian
+            [ "Nessun dettaglio aggiuntivo disponibile." ]
+        , LanguageValue Spanish
+            [ "No hay detalles adicionales disponibles." ]
+        , LanguageValue Portuguese
+            [ "Nenhum detalhe adicional disponível." ]
+        , LanguageValue Polish
+            [ "Brak dodatkowych szczegółów." ]
+        ]
     , noResultsBody =
         [ LanguageValue English [ "Adjust your query options, or reset all filters, to see results." ]
         , LanguageValue German [ "Passen Sie Ihre Abfrageoptionen an oder setzen Sie alle Filter zurück, um Ergebnisse zu sehen." ]
@@ -313,7 +588,20 @@ localTranslations =
         , LanguageValue Polish [ "Nie znaleziono żadnych wyników dla tego wyszukiwania" ]
         ]
     , notationQueryLength =
-        [ LanguageValue English [ "Queries must be longer than three notes" ] ]
+        [ LanguageValue English [ "Queries must be longer than three notes" ]
+        , LanguageValue German
+            [ "Anfragen müssen länger als drei Noten sein" ]
+        , LanguageValue French
+            [ "Les requêtes doivent contenir plus de trois notes" ]
+        , LanguageValue Italian
+            [ "Le query devono essere più lunghe di tre note" ]
+        , LanguageValue Spanish
+            [ "Las consultas deben tener más de tres notas" ]
+        , LanguageValue Portuguese
+            [ "As consultas devem ter mais de três notas" ]
+        , LanguageValue Polish
+            [ "Zapytania muszą zawierać więcej niż trzy nuty" ]
+        ]
     , numberOfResults =
         [ LanguageValue English [ "Number of results" ]
         , LanguageValue German [ "Ergebnisse mit angewendeten Filtern" ]
@@ -324,11 +612,52 @@ localTranslations =
         , LanguageValue Polish [ "Wyniki z zastosowanymi filtrami" ]
         ]
     , optionsWithAnd =
-        [ LanguageValue English [ "Options are combined with an AND operator" ] ]
+        [ LanguageValue English
+            [ "Options are combined with an AND operator" ]
+        , LanguageValue German
+            [ "Optionen werden mit einem AND-Operator kombiniert" ]
+        , LanguageValue French
+            [ "Les options sont combinées avec un opérateur AND" ]
+        , LanguageValue Italian
+            [ "Le opzioni sono combinate con un operatore AND" ]
+        , LanguageValue Spanish
+            [ "Las opciones se combinan con un operador AND" ]
+        , LanguageValue Portuguese
+            [ "As opções são combinadas com um operador AND" ]
+        , LanguageValue Polish
+            [ "Opcje są łączone za pomocą operatora AND" ]
+        ]
     , optionsWithOr =
-        [ LanguageValue English [ "Options are combined with an OR operator" ] ]
+        [ LanguageValue English
+            [ "Options are combined with an OR operator" ]
+        , LanguageValue German
+            [ "Optionen werden mit einem OR-Operator kombiniert" ]
+        , LanguageValue French
+            [ "Les options sont combinées avec un opérateur OR" ]
+        , LanguageValue Italian
+            [ "Le opzioni sono combinate con un operatore OR" ]
+        , LanguageValue Spanish
+            [ "Las opciones se combinan con un operador OR" ]
+        , LanguageValue Portuguese
+            [ "As opções são combinadas com um operador OR" ]
+        , LanguageValue Polish
+            [ "Opcje są łączone za pomocą operatora OR" ]
+        ]
     , orChooseCollection =
-        [ LanguageValue English [ "Or choose a national collection" ] ]
+        [ LanguageValue English [ "Or choose a national collection" ]
+        , LanguageValue German
+            [ "Oder wählen Sie eine nationale Sammlung" ]
+        , LanguageValue French
+            [ "Ou choisissez une collection nationale" ]
+        , LanguageValue Italian
+            [ "Oppure scegli una collezione nazionale" ]
+        , LanguageValue Spanish
+            [ "O elija una colección nacional" ]
+        , LanguageValue Portuguese
+            [ "Ou escolha uma coleção nacional" ]
+        , LanguageValue Polish
+            [ "Lub wybierz kolekcję narodową" ]
+        ]
     , paeInput =
         [ LanguageValue English [ "Plaine and Easie Input" ] ]
     , page =
@@ -343,7 +672,21 @@ localTranslations =
     , partOf =
         [ LanguageValue English [ "Part of" ] ]
     , partOfCollection =
-        [ LanguageValue English [ "This record is part of a collection" ] ]
+        [ LanguageValue English
+            [ "This record is part of a collection" ]
+        , LanguageValue German
+            [ "Diese Eintragung ist Teil einer Sammlung" ]
+        , LanguageValue French
+            [ "Cette notice fait partie d'une collection" ]
+        , LanguageValue Italian
+            [ "Questa scheda fa parte di una collezione" ]
+        , LanguageValue Spanish
+            [ "Esta ficha forma parte de una colección" ]
+        , LanguageValue Portuguese
+            [ "Esta ficha faz parte de uma coleção" ]
+        , LanguageValue Polish
+            [ "Ta karta katalogowa jest częścią kolekcji" ]
+        ]
     , people =
         [ LanguageValue Spanish [ "Personas" ]
         , LanguageValue Portuguese [ "Pessoas" ]
@@ -374,7 +717,20 @@ localTranslations =
         , LanguageValue Polish [ "Poprzedni" ]
         ]
     , queryTerms =
-        [ LanguageValue English [ "Query terms" ] ]
+        [ LanguageValue English [ "Query terms" ]
+        , LanguageValue German
+            [ "Suchbegriffe" ]
+        , LanguageValue French
+            [ "Termes de requête" ]
+        , LanguageValue Italian
+            [ "Termini di ricerca" ]
+        , LanguageValue Spanish
+            [ "Términos de consulta" ]
+        , LanguageValue Portuguese
+            [ "Termos de consulta" ]
+        , LanguageValue Polish
+            [ "Terminy zapytania" ]
+        ]
     , recordPreview =
         [ LanguageValue English [ "Record preview" ]
         , LanguageValue German [ "Dokumentvorschau" ]
@@ -398,7 +754,20 @@ localTranslations =
         , LanguageValue Polish [ "URI rekordu (Odnośnik bezpośredni)" ]
         ]
     , reportAnIssue =
-        [ LanguageValue English [ "Report an issue" ] ]
+        [ LanguageValue English [ "Report an issue" ]
+        , LanguageValue German
+            [ "Ein Problem melden" ]
+        , LanguageValue French
+            [ "Signaler un problème" ]
+        , LanguageValue Italian
+            [ "Segnala un problema" ]
+        , LanguageValue Spanish
+            [ "Informar de un problema" ]
+        , LanguageValue Portuguese
+            [ "Relatar um problema" ]
+        , LanguageValue Polish
+            [ "Zgłoś problem" ]
+        ]
     , resetAll =
         [ LanguageValue English [ "Reset all" ]
         , LanguageValue German [ "Alles zurücksetzen" ]
@@ -427,7 +796,20 @@ localTranslations =
         , LanguageValue Polish [ "Znaleziono wyniki dla innych typów rekordów" ]
         ]
     , rowsPerPage =
-        [ LanguageValue English [ "Rows per page" ] ]
+        [ LanguageValue English [ "Rows per page" ]
+        , LanguageValue German
+            [ "Zeilen pro Seite" ]
+        , LanguageValue French
+            [ "Lignes par page" ]
+        , LanguageValue Italian
+            [ "Righe per pagina" ]
+        , LanguageValue Spanish
+            [ "Filas por página" ]
+        , LanguageValue Portuguese
+            [ "Linhas por página" ]
+        , LanguageValue Polish
+            [ "Wiersze na stronę" ]
+        ]
     , search =
         [ LanguageValue English [ "Search" ]
         , LanguageValue German [ "Suche" ]
@@ -440,9 +822,35 @@ localTranslations =
     , searchNumberOfRecords =
         [ LanguageValue English [ "Search {{ numberOfRecords }} {{ recordType }}" ] ]
     , seeAll =
-        [ LanguageValue English [ "See all" ] ]
+        [ LanguageValue English [ "See all" ]
+        , LanguageValue German
+            [ "Alle anzeigen" ]
+        , LanguageValue French
+            [ "Voir tout" ]
+        , LanguageValue Italian
+            [ "Vedi tutto" ]
+        , LanguageValue Spanish
+            [ "Ver todo" ]
+        , LanguageValue Portuguese
+            [ "Ver tudo" ]
+        , LanguageValue Polish
+            [ "Zobacz wszystko" ]
+        ]
     , showNumItems =
-        [ LanguageValue English [ "Show {{ numItems }} items" ] ]
+        [ LanguageValue English [ "Show {{ numItems }} items" ]
+        , LanguageValue German
+            [ "Zeige {{ numItems }} Einträge" ]
+        , LanguageValue French
+            [ "Afficher {{ numItems }} éléments" ]
+        , LanguageValue Italian
+            [ "Mostra {{ numItems }} elementi" ]
+        , LanguageValue Spanish
+            [ "Mostrar {{ numItems }} elementos" ]
+        , LanguageValue Portuguese
+            [ "Mostrar {{ numItems }} itens" ]
+        , LanguageValue Polish
+            [ "Pokaż {{ numItems }} elementów" ]
+        ]
     , showResults =
         [ LanguageValue English [ "Show search results" ]
         , LanguageValue German [ "Filter anwenden" ]
@@ -453,13 +861,66 @@ localTranslations =
         , LanguageValue Polish [ "Zastosuj filtry" ]
         ]
     , sortAlphabetically =
-        [ LanguageValue English [ "Sort alphabetically (currently sorted by count)" ] ]
+        [ LanguageValue English [ "Sort alphabetically (currently sorted by count)" ]
+        , LanguageValue German
+            [ "Alphabetisch sortieren (derzeit nach Anzahl sortiert)" ]
+        , LanguageValue French
+            [ "Trier par ordre alphabétique (actuellement trié par nombre)" ]
+        , LanguageValue Italian
+            [ "Ordina alfabeticamente (attualmente ordinato per conteggio)" ]
+        , LanguageValue Spanish
+            [ "Ordenar alfabéticamente (actualmente ordenado por cantidad)" ]
+        , LanguageValue Portuguese
+            [ "Ordenar alfabeticamente (atualmente ordenado por contagem)" ]
+        , LanguageValue Polish
+            [ "Sortuj alfabetycznie (obecnie posortowane według liczby)" ]
+        ]
     , sortBy =
-        [ LanguageValue English [ "Sort by" ] ]
+        [ LanguageValue English [ "Sort by" ]
+        , LanguageValue German
+            [ "Sortieren nach" ]
+        , LanguageValue French
+            [ "Trier par" ]
+        , LanguageValue Italian
+            [ "Ordina per" ]
+        , LanguageValue Spanish
+            [ "Ordenar por" ]
+        , LanguageValue Portuguese
+            [ "Ordenar por" ]
+        , LanguageValue Polish
+            [ "Sortuj według" ]
+        ]
     , sortByCount =
-        [ LanguageValue English [ "Sort by count (currently sorted alphabetically)" ] ]
+        [ LanguageValue English [ "Sort by count (currently sorted alphabetically)" ]
+        , LanguageValue German
+            [ "Nach Anzahl sortieren (derzeit alphabetisch sortiert)" ]
+        , LanguageValue French
+            [ "Trier par nombre (actuellement trié par ordre alphabétique)" ]
+        , LanguageValue Italian
+            [ "Ordina per conteggio (attualmente ordinato alfabeticamente)" ]
+        , LanguageValue Spanish
+            [ "Ordenar por cantidad (actualmente ordenado alfabéticamente)" ]
+        , LanguageValue Portuguese
+            [ "Ordenar por contagem (atualmente ordenado alfabeticamente)" ]
+        , LanguageValue Polish
+            [ "Sortuj według liczby (obecnie posortowane alfabetycznie)" ]
+        ]
     , source =
-        [ LanguageValue English [ "Source" ] ]
+        [ LanguageValue English
+            [ "Source" ]
+        , LanguageValue German
+            [ "Quelle" ]
+        , LanguageValue French
+            [ "Source" ]
+        , LanguageValue Italian
+            [ "Fonte" ]
+        , LanguageValue Spanish
+            [ "Fuente" ]
+        , LanguageValue Portuguese
+            [ "Fonte" ]
+        , LanguageValue Polish
+            [ "Źródło" ]
+        ]
     , sourceContents =
         [ LanguageValue English [ "Source contents" ]
         , LanguageValue German [ "Inhalt der Quelle" ]
@@ -469,7 +930,20 @@ localTranslations =
         , LanguageValue Portuguese [ "Conteúdo da fonte" ]
         ]
     , sourceType =
-        [ LanguageValue English [ "Source type" ] ]
+        [ LanguageValue English [ "Source type" ]
+        , LanguageValue German
+            [ "Quellentyp" ]
+        , LanguageValue French
+            [ "Type de source" ]
+        , LanguageValue Italian
+            [ "Tipo di fonte" ]
+        , LanguageValue Spanish
+            [ "Tipo de fuente" ]
+        , LanguageValue Portuguese
+            [ "Tipo de fonte" ]
+        , LanguageValue Polish
+            [ "Typ źródła" ]
+        ]
     , sources =
         [ LanguageValue English [ "Sources" ]
         , LanguageValue German [ "Quellen" ]
@@ -480,7 +954,20 @@ localTranslations =
         , LanguageValue Polish [ "Źródła" ]
         ]
     , unknownError =
-        [ LanguageValue English [ "An unknown error occurred." ] ]
+        [ LanguageValue English [ "An unknown error occurred." ]
+        , LanguageValue German
+            [ "Ein unbekannter Fehler ist aufgetreten." ]
+        , LanguageValue French
+            [ "Une erreur inconnue s'est produite." ]
+        , LanguageValue Italian
+            [ "Si è verificato un errore sconosciuto." ]
+        , LanguageValue Spanish
+            [ "Se ha producido un error desconocido." ]
+        , LanguageValue Portuguese
+            [ "Ocorreu um erro desconhecido." ]
+        , LanguageValue Polish
+            [ "Wystąpił nieznany błąd." ]
+        ]
     , updateResults =
         [ LanguageValue English [ "Update search results" ]
         , LanguageValue German [ "Filter anwenden" ]
@@ -491,7 +978,20 @@ localTranslations =
         , LanguageValue Polish [ "Zastosuj filtry" ]
         ]
     , viewImages =
-        [ LanguageValue English [ "View images" ] ]
+        [ LanguageValue English [ "View images" ]
+        , LanguageValue German
+            [ "Bilder anzeigen" ]
+        , LanguageValue French
+            [ "Voir les images" ]
+        , LanguageValue Italian
+            [ "Visualizza immagini" ]
+        , LanguageValue Spanish
+            [ "Ver imágenes" ]
+        , LanguageValue Portuguese
+            [ "Ver imagens" ]
+        , LanguageValue Polish
+            [ "Zobacz obrazy" ]
+        ]
     , wordsAnywhere =
         [ LanguageValue English [ "Words anywhere" ]
         , LanguageValue German [ "Eingabe Ihrer Anfrage" ]
