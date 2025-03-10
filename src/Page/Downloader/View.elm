@@ -34,7 +34,6 @@ view cfg =
             [ centerX
             , centerY
             , width (px 900)
-            , height (px 380)
             , Background.color colourScheme.white
             , Border.color colourScheme.darkBlue
             , Border.width 3
@@ -185,7 +184,9 @@ progressView language model =
                     "Download cancelled"
 
                 _ ->
-                    ""
+                    -- a space will not display anything but will reserve the line
+                    -- so that it doesn't jump around when a message appears
+                    " "
 
         progressPct =
             if progressTotal == 0 then
