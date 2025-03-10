@@ -224,7 +224,10 @@ progressView language model =
                         , htmlAttribute (HA.style "width" progressPctStr)
                         , height fill
                         ]
-                        (el [ centerY, centerX ] (text progressPctStr))
+                        (el
+                            [ centerY, centerX ]
+                            (text progressPctStr)
+                        )
                     )
                 ]
             , row

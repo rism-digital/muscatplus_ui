@@ -43,8 +43,8 @@ init cfg =
     }
 
 
-getTask : String -> Decoder a -> Task (Http.Detailed.Error String) ( Http.Metadata, a )
-getTask path decoder =
+getTask : Decoder a -> String -> Task (Http.Detailed.Error String) ( Http.Metadata, a )
+getTask decoder path =
     Http.task
         { body = Http.emptyBody
         , headers = [ Http.header "Accept" "application/ld+json" ]
@@ -57,7 +57,7 @@ getTask path decoder =
 
 queueTasks : List String -> Decoder a -> List (List (Task (Http.Detailed.Error String) ( Http.Metadata, a )))
 queueTasks urls decoder =
-    List.map (\u -> getTask u decoder) urls
+    List.map (getTask decoder) urls
         |> LE.greedyGroupsOf 10
 
 
@@ -75,7 +75,10 @@ type alias ContinueOrFinishRecord =
     }
 
 
-continueOrFinish : DownloaderModel -> List ( Http.Metadata, ResultsBody ) -> ContinueOrFinishRecord
+continueOrFinish :
+    DownloaderModel
+    -> List ( Http.Metadata, ResultsBody )
+    -> ContinueOrFinishRecord
 continueOrFinish model completed =
     if List.isEmpty model.taskQueue then
         -- finish
@@ -153,20 +156,14 @@ update msg model =
                 requestUrls =
                     LE.initialize (.totalPages response.pagination + 1)
                         (\pageNum ->
-                            let
-                                textQueryParameters =
-                                    setPage pageNum model.queryToDownload
-                                        |> setRows 100
-                            in
                             createSearchUrl model.session
                                 { keyboard = model.keyboardQueryToDownload
-                                , nextQuery = textQueryParameters
+                                , nextQuery =
+                                    setPage pageNum model.queryToDownload
+                                        |> setRows 100
                                 }
                         )
                         |> List.drop 1
-
-                numUrls =
-                    List.length requestUrls
 
                 -- take the first batch of tasks. If we can't, then the empty lists
                 -- will simply be processed and nothing will happen.
@@ -207,17 +204,26 @@ update msg model =
             in
             ( { model
                 | downloadState = Downloading initialState
-                , progress = Progress 0 numUrls
+                , progress = Progress 0 (List.length requestUrls)
                 , taskQueue = remainingQueue
               }
             , Cmd.batch [ downloadStarted, fetchCmd ]
             )
 
         ServerRespondedWithProbeData (Err error) ->
-            ( { model | downloadState = ErrorDownloading error, progress = NoProgress }, Cmd.none )
+            ( { model
+                | downloadState = ErrorDownloading error
+                , progress = NoProgress
+              }
+            , Cmd.none
+            )
 
         ClientRespondedWithCurrentTime currentTime ->
-            ( { model | timestamp = currentTime }, Cmd.none )
+            ( { model
+                | timestamp = currentTime
+              }
+            , Cmd.none
+            )
 
         RecordDownloadUpdated updates ->
             case model.downloadState of
@@ -275,14 +281,12 @@ update msg model =
                 -- use a probe request to find out how many pages, etc. will be
                 -- needed if we increase the number of results per page to 100.
                 -- increasing the rows to 100 helps with the download speed.
-                newQuery =
-                    model.queryToDownload
-                        |> setRows 100
-
                 probeUrl =
                     createProbeUrl model.session
                         { keyboard = model.keyboardQueryToDownload
-                        , nextQuery = newQuery
+                        , nextQuery =
+                            model.queryToDownload
+                                |> setRows 100
                         }
             in
             ( model

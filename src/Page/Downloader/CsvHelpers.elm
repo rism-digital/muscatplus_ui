@@ -1,4 +1,4 @@
-module Page.Downloader.CsvHelpers exposing (CsvEntry, CsvRecordType(..), IncipitCsvEntry, PersonCsvEntry, SourceCsvEntry, convertResult, createSearchUrlRecord, resultListToCsvString)
+module Page.Downloader.CsvHelpers exposing (convertResult, createSearchUrlRecord, resultListToCsvString)
 
 import Csv.Encode
 import Dict exposing (Dict)
@@ -12,13 +12,15 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 type CsvRecordType
     = SourceCsvRecordType SourceCsvEntry
     | PersonCsvRecordType PersonCsvEntry
-    | InstitutionCsvRecordType CsvEntry
+    | InstitutionCsvRecordType InstitutionCsvEntry
     | IncipitCsvRecordType IncipitCsvEntry
 
 
-type alias CsvEntry =
+type alias InstitutionCsvEntry =
     { url : String
     , title : String
+    , country : String
+    , numberOfSources : String
     }
 
 
@@ -75,7 +77,12 @@ createSearchUrlRecord resultMode url =
                 }
 
         InstitutionsMode ->
-            InstitutionCsvRecordType { url = url, title = "Search URL" }
+            InstitutionCsvRecordType
+                { url = url
+                , title = "Search URL"
+                , country = ""
+                , numberOfSources = ""
+                }
 
         IncipitsMode ->
             IncipitCsvRecordType
@@ -119,10 +126,12 @@ incipitCsvEntryToFieldString entry =
     ]
 
 
-csvEntryToFieldString : CsvEntry -> List ( String, String )
-csvEntryToFieldString { url, title } =
-    [ ( "url", url )
-    , ( "title", title )
+csvEntryToFieldString : InstitutionCsvEntry -> List ( String, String )
+csvEntryToFieldString entry =
+    [ ( "url", entry.url )
+    , ( "title", entry.title )
+    , ( "country", entry.country )
+    , ( "number_of_source", entry.numberOfSources )
     ]
 
 
@@ -239,9 +248,18 @@ convertPersonResultBody body =
 
 convertInstitutionResultBody : InstitutionResultBody -> CsvRecordType
 convertInstitutionResultBody body =
+    let
+        country =
+            extractFromSummaryDict "country" body.summary
+
+        numberOfSources =
+            extractFromSummaryDict "totalSources" body.summary
+    in
     InstitutionCsvRecordType
         { url = body.id
         , title = extractLabelFromLanguageMap English body.label
+        , country = country
+        , numberOfSources = numberOfSources
         }
 
 
