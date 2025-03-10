@@ -4,18 +4,14 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.11.8",
     "chokidar": "^3.5.1",
     "chokidar-cli": "^3.0.0",
-    "elm-json": "^0.2.13",
-    "elm-live": "^4.0.2",
-    "elm-optimize-level-2": "^0.3.5",
-    "elm-review": "^2.12.0",
-    "uglify-js": "^3.17.4"
+    "elm-optimize-level-2": "^0.3.5"
   },
   "scripts": {
-    "develop": "elm-live src/Main.elm -u --port 8002 --dir=./dist -- --output=dist/static/app.js --debug",
-    "develop:build": "chokidar 'src/**/*.elm' -c 'clear && elm make src/Main.elm --debug --output=dist/static/app.js'",
-    "production:build": "elm-optimize-level-2 src/Main.elm --output=dist/static/app.js",
+    "develop": "chokidar 'src/**/*.elm' -c 'clear && elm make src/Main.elm --debug --output=dist/static/app.js'",
     "production:deploy": "./optimize.sh src/Main.elm dist/static/app.js dist/static/app.js"
   }
 }
