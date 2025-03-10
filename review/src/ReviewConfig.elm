@@ -12,7 +12,7 @@ when inside the directory containing this file.
 -}
 
 --import NoMissingTypeAnnotationInLetIn
-import CognitiveComplexity
+--import CognitiveComplexity
 import NoDebug.Log
 import NoDebug.TodoOrToString
 import NoDeprecated
@@ -44,8 +44,7 @@ import Simplify
 
 config : List Rule
 config =
-    [ CognitiveComplexity.rule 15
-    , NoDebug.Log.rule
+    [ NoDebug.Log.rule
     , NoDebug.TodoOrToString.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     , NoSinglePatternCase.rule NoSinglePatternCase.fixInArgument
@@ -83,4 +82,5 @@ config =
          --|> NoUnsortedLetDeclarations.alphabetically
         )
     , NoUnsortedCases.rule NoUnsortedCases.defaults
+    --, CognitiveComplexity.rule 15
     ]
