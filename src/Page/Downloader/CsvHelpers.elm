@@ -1,11 +1,11 @@
-module Page.Downloader.CsvHelpers exposing (..)
+module Page.Downloader.CsvHelpers exposing (CsvEntry, CsvRecordType(..), IncipitCsvEntry, PersonCsvEntry, SourceCsvEntry, convertResult, createSearchUrlRecord, resultListToCsvString)
 
 import Csv.Encode
 import Dict exposing (Dict)
 import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
-import Page.RecordTypes.Search exposing (IncipitResultBody, InstitutionResultBody, PersonResultBody, ResultsBody, SearchResult(..), SourceResultBody)
+import Page.RecordTypes.Search exposing (IncipitResultBody, InstitutionResultBody, PersonResultBody, SearchResult(..), SourceResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 
 

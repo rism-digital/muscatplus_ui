@@ -1,40 +1,35 @@
-module Page.Downloader exposing (..)
+module Page.Downloader exposing (init, update, view)
 
 import DateFormat
-import Element exposing (Element, centerX, centerY, column, fill, height, htmlAttribute, px, row, width)
-import Element.Background as Background
-import Element.Border as Border
+import Element exposing (Element)
 import File.Download
-import Html.Attributes as HA
-import Http exposing (Error(..))
+import Http
+import Http.Detailed
 import Json.Decode exposing (Decoder)
-import Language exposing (Language, toLanguageMap)
+import Language exposing (Language)
 import List.Extra as LE
-import Maybe.Extra as ME
 import Page.Downloader.CsvHelpers exposing (convertResult, createSearchUrlRecord, resultListToCsvString)
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
-import Page.Downloader.Task exposing (getTask)
 import Page.Downloader.View
 import Page.Keyboard as Keyboard
-import Page.Keyboard.Model exposing (toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
-import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query exposing (QueryArgs, buildQueryParameters, setPage, setRows)
-import Page.RecordTypes.Search exposing (ResultsBody, SearchResult, resultsBodyDecoder, searchBodyDecoder)
+import Page.Query exposing (QueryArgs, setPage, setRows)
+import Page.RecordTypes.Search exposing (ResultsBody, SearchResult, resultsBodyDecoder)
 import Page.Request exposing (createProbeRequestWithDecoder)
-import Page.UI.Attributes exposing (minimalDropShadow)
-import Page.UI.Components exposing (viewWindowTitleBar)
-import Page.UI.Style exposing (colourScheme)
 import Page.UpdateHelpers exposing (createProbeUrl, createSearchUrl)
-import Request exposing (serverUrl)
 import Session exposing (Session)
 import Task exposing (Task)
 import Task.Parallel as Parallel
 import Time
 
 
-init : { queryArgs : QueryArgs, keyboard : Maybe (Keyboard.Model KeyboardMsg), session : Session } -> DownloaderModel
+init :
+    { keyboard : Maybe (Keyboard.Model KeyboardMsg)
+    , queryArgs : QueryArgs
+    , session : Session
+    }
+    -> DownloaderModel
 init cfg =
     { queryToDownload = cfg.queryArgs
     , keyboardQueryToDownload = cfg.keyboard
@@ -48,34 +43,103 @@ init cfg =
     }
 
 
-downloadQueryParameters : Int -> { queryToDownload : QueryArgs, keyboardQueryToDownload : Maybe (Keyboard.Model KeyboardMsg) } -> String
-downloadQueryParameters pageNumber { queryToDownload, keyboardQueryToDownload } =
-    let
-        notationQueryParameters =
-            keyboardQueryToDownload
-                |> ME.unwrap []
-                    (\kq ->
-                        toKeyboardQuery kq
-                            |> buildNotationQueryParameters
-                    )
-
-        textQueryParameters =
-            setPage pageNumber queryToDownload
-                |> setRows 100
-                |> buildQueryParameters
-    in
-    serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
+getTask : String -> Decoder a -> Task (Http.Detailed.Error String) ( Http.Metadata, a )
+getTask path decoder =
+    Http.task
+        { body = Http.emptyBody
+        , headers = [ Http.header "Accept" "application/ld+json" ]
+        , method = "get"
+        , resolver = Http.Detailed.responseToJson decoder |> Http.stringResolver
+        , timeout = Nothing
+        , url = path
+        }
 
 
-queueTasks : List String -> Decoder a -> List (List (Task Http.Error a))
+queueTasks : List String -> Decoder a -> List (List (Task (Http.Detailed.Error String) ( Http.Metadata, a )))
 queueTasks urls decoder =
     List.map (\u -> getTask u decoder) urls
         |> LE.greedyGroupsOf 10
 
 
-processResultsForSorting : List ResultsBody -> List ( Int, List SearchResult )
+processResultsForSorting : List ( Http.Metadata, ResultsBody ) -> List ( Int, List SearchResult )
 processResultsForSorting searchResults =
-    List.map (\rb -> ( .thisPage rb.pagination, rb.items )) searchResults
+    List.map (\( _, rb ) -> ( .thisPage rb.pagination, rb.items )) searchResults
+
+
+type alias ContinueOrFinishRecord =
+    { downloadProgress : DownloadProgressTracker
+    , downloadState : DownloadState
+    , nextCmd : Cmd DownloaderMsg
+    , resultsList : List ( Int, List SearchResult )
+    , taskQueue : List (List (Task (Http.Detailed.Error String) ( Http.Metadata, ResultsBody )))
+    }
+
+
+continueOrFinish : DownloaderModel -> List ( Http.Metadata, ResultsBody ) -> ContinueOrFinishRecord
+continueOrFinish model completed =
+    if List.isEmpty model.taskQueue then
+        -- finish
+        let
+            fullResultsList =
+                processResultsForSorting completed
+                    |> List.append model.resultsList
+                    |> List.sortBy Tuple.first
+                    |> List.concatMap Tuple.second
+                    |> List.map convertResult
+
+            injectedSearchUrlList =
+                if model.includeSearchUrlInResults then
+                    let
+                        searchUrlEntry =
+                            createSearchUrl model.session
+                                { keyboard = model.keyboardQueryToDownload
+                                , nextQuery = model.queryToDownload
+                                }
+                                |> createSearchUrlRecord (.mode model.queryToDownload)
+                    in
+                    searchUrlEntry :: fullResultsList
+
+                else
+                    fullResultsList
+
+            fileName =
+                "rism-online-search-results-" ++ model.timestamp ++ ".csv"
+
+            downloadCmd =
+                resultListToCsvString injectedSearchUrlList
+                    |> File.Download.string fileName "text/csv"
+        in
+        { downloadProgress = NoProgress
+        , downloadState = DownloadCompleted
+        , nextCmd = downloadCmd
+        , resultsList = []
+        , taskQueue = model.taskQueue
+        }
+
+    else
+        -- continue
+        let
+            resultsList =
+                processResultsForSorting completed
+
+            ( nextBatch, remainingQueue ) =
+                LE.uncons model.taskQueue
+                    |> Maybe.withDefault ( [], [] )
+
+            ( batchState, fetchCmd ) =
+                Parallel.attemptList
+                    { onFailure = RecordDownloadFailed
+                    , onSuccess = RecordDownloadCompleted
+                    , onUpdates = RecordDownloadUpdated
+                    , tasks = nextBatch
+                    }
+        in
+        { downloadProgress = model.progress
+        , downloadState = Downloading batchState
+        , nextCmd = fetchCmd
+        , resultsList = List.append model.resultsList resultsList
+        , taskQueue = remainingQueue
+        }
 
 
 update : DownloaderMsg -> DownloaderModel -> ( DownloaderModel, Cmd DownloaderMsg )
@@ -83,12 +147,20 @@ update msg model =
     case msg of
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             let
+                -- there is no "0"th page, and the setPage function changes any 0 to 1, so the
+                -- resulting URLs have two page 1 requests. That's why we List.drop 1 at the end.
+                -- A page count of 100 minimizes the number of requests we need to do.
                 requestUrls =
                     LE.initialize (.totalPages response.pagination + 1)
                         (\pageNum ->
-                            downloadQueryParameters pageNum
-                                { queryToDownload = model.queryToDownload
-                                , keyboardQueryToDownload = model.keyboardQueryToDownload
+                            let
+                                textQueryParameters =
+                                    setPage pageNum model.queryToDownload
+                                        |> setRows 100
+                            in
+                            createSearchUrl model.session
+                                { keyboard = model.keyboardQueryToDownload
+                                , nextQuery = textQueryParameters
                                 }
                         )
                         |> List.drop 1
@@ -96,22 +168,21 @@ update msg model =
                 numUrls =
                     List.length requestUrls
 
-                initialTaskQueue : List (List (Task Http.Error ResultsBody))
-                initialTaskQueue =
-                    queueTasks requestUrls resultsBodyDecoder
-
                 -- take the first batch of tasks. If we can't, then the empty lists
                 -- will simply be processed and nothing will happen.
+                -- "uncons" is like "pop" except it returns the first result and the
+                -- rest of the list.
                 ( firstBatch, remainingQueue ) =
-                    LE.uncons initialTaskQueue
+                    queueTasks requestUrls resultsBodyDecoder
+                        |> LE.uncons
                         |> Maybe.withDefault ( [], [] )
 
                 ( initialState, fetchCmd ) =
                     Parallel.attemptList
-                        { tasks = firstBatch
-                        , onUpdates = RecordDownloadUpdated
-                        , onFailure = RecordDownloadFailed
+                        { onFailure = RecordDownloadFailed
                         , onSuccess = RecordDownloadCompleted
+                        , onUpdates = RecordDownloadUpdated
+                        , tasks = firstBatch
                         }
 
                 downloadStarted =
@@ -143,43 +214,36 @@ update msg model =
             )
 
         ServerRespondedWithProbeData (Err error) ->
-            ( model, Cmd.none )
+            ( { model | downloadState = ErrorDownloading error, progress = NoProgress }, Cmd.none )
 
         ClientRespondedWithCurrentTime currentTime ->
             ( { model | timestamp = currentTime }, Cmd.none )
 
         RecordDownloadUpdated updates ->
-            let
-                downloadState =
-                    model.downloadState
+            case model.downloadState of
+                Downloading taskMsg ->
+                    let
+                        ( downloadProgress, totalPages ) =
+                            case model.progress of
+                                NoProgress ->
+                                    ( 0, 0 )
 
-                ( updatedModel, updatedCmd ) =
-                    case downloadState of
-                        Downloading taskMsg ->
-                            let
-                                ( downloadProgress, totalPages ) =
-                                    case model.progress of
-                                        Progress completed total ->
-                                            ( completed + 1, total )
+                                Progress completed total ->
+                                    ( completed + 1, total )
 
-                                        NoProgress ->
-                                            ( 0, 0 )
+                        ( nextState, nextCmd ) =
+                            Parallel.updateList taskMsg updates
+                                |> Tuple.mapFirst Downloading
+                    in
+                    ( { model
+                        | downloadState = nextState
+                        , progress = Progress downloadProgress totalPages
+                      }
+                    , nextCmd
+                    )
 
-                                ( nextState, nextCmd ) =
-                                    Parallel.updateList taskMsg updates
-                                        |> Tuple.mapFirst Downloading
-                            in
-                            ( { model
-                                | downloadState = nextState
-                                , progress = Progress downloadProgress totalPages
-                              }
-                            , nextCmd
-                            )
-
-                        _ ->
-                            ( model, Cmd.none )
-            in
-            ( updatedModel, updatedCmd )
+                _ ->
+                    ( model, Cmd.none )
 
         RecordDownloadFailed failure ->
             ( { model
@@ -192,72 +256,7 @@ update msg model =
         RecordDownloadCompleted completed ->
             let
                 updateConfig =
-                    if List.length model.taskQueue == 0 then
-                        let
-                            fullResultsList =
-                                processResultsForSorting completed
-                                    |> List.append model.resultsList
-                                    |> List.sortBy Tuple.first
-                                    |> List.map Tuple.second
-                                    |> List.concat
-                                    |> List.map convertResult
-
-                            injectedSearchUrlList =
-                                if model.includeSearchUrlInResults then
-                                    let
-                                        searchUrl =
-                                            createSearchUrl model.session
-                                                { nextQuery = model.queryToDownload
-                                                , keyboard = model.keyboardQueryToDownload
-                                                }
-
-                                        searchUrlEntry =
-                                            createSearchUrlRecord (.mode model.queryToDownload) searchUrl
-                                    in
-                                    searchUrlEntry :: fullResultsList
-
-                                else
-                                    fullResultsList
-
-                            fullResultsCsvList =
-                                resultListToCsvString injectedSearchUrlList
-
-                            fileName =
-                                "rism-online-search-results-" ++ model.timestamp ++ ".csv"
-
-                            downloadCmd =
-                                File.Download.string fileName "text/csv" fullResultsCsvList
-                        in
-                        { nextCmd = downloadCmd
-                        , downloadState = DownloadCompleted completed
-                        , downloadProgress = NoProgress
-                        , taskQueue = model.taskQueue
-                        , resultsList = []
-                        }
-
-                    else
-                        let
-                            resultsList =
-                                processResultsForSorting completed
-
-                            ( nextBatch, remainingQueue ) =
-                                LE.uncons model.taskQueue
-                                    |> Maybe.withDefault ( [], [] )
-
-                            ( batchState, fetchCmd ) =
-                                Parallel.attemptList
-                                    { tasks = nextBatch
-                                    , onUpdates = RecordDownloadUpdated
-                                    , onFailure = RecordDownloadFailed
-                                    , onSuccess = RecordDownloadCompleted
-                                    }
-                        in
-                        { nextCmd = fetchCmd
-                        , downloadState = Downloading batchState
-                        , downloadProgress = model.progress
-                        , taskQueue = remainingQueue
-                        , resultsList = List.append model.resultsList resultsList
-                        }
+                    continueOrFinish model completed
             in
             ( { model
                 | downloadState = updateConfig.downloadState
@@ -273,6 +272,8 @@ update msg model =
 
         UserClickedDownloadButton ->
             let
+                -- use a probe request to find out how many pages, etc. will be
+                -- needed if we increase the number of results per page to 100.
                 -- increasing the rows to 100 helps with the download speed.
                 newQuery =
                     model.queryToDownload
@@ -280,57 +281,39 @@ update msg model =
 
                 probeUrl =
                     createProbeUrl model.session
-                        { nextQuery = newQuery
-                        , keyboard = model.keyboardQueryToDownload
+                        { keyboard = model.keyboardQueryToDownload
+                        , nextQuery = newQuery
                         }
             in
-            ( model, createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl )
+            ( model
+            , createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+            )
 
         UserClickedCancelDownloadButton ->
             ( { model
                 | downloadState = DownloadCancelled
                 , progress = NoProgress
+                , timestamp = ""
                 , taskQueue = []
                 , resultsList = []
-                , timestamp = ""
               }
             , Cmd.none
             )
 
         UserChangedIncludeSearchUrl checkState ->
-            ( { model | includeSearchUrlInResults = checkState }, Cmd.none )
+            ( { model
+                | includeSearchUrlInResults = checkState
+              }
+            , Cmd.none
+            )
 
 
 view :
-    { language : Language
+    { closeMsg : msg
+    , language : Language
     , model : DownloaderModel
-    , closeMsg : msg
     , userInteractedWithDownloaderMsg : DownloaderMsg -> msg
     }
     -> Element msg
 view cfg =
-    row
-        [ width fill
-        , height fill
-        , Background.color colourScheme.translucentGrey
-        , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
-        ]
-        [ column
-            [ centerX
-            , centerY
-            , width (px 900)
-            , height (px 400)
-            , Background.color colourScheme.white
-            , Border.color colourScheme.darkBlue
-            , Border.width 3
-            , htmlAttribute (HA.style "z-index" "10")
-            , minimalDropShadow
-            ]
-            [ viewWindowTitleBar cfg.language (toLanguageMap "Download Search Results") cfg.closeMsg
-            , Page.Downloader.View.view
-                { language = cfg.language
-                , model = cfg.model
-                }
-                |> Element.map cfg.userInteractedWithDownloaderMsg
-            ]
-        ]
+    Page.Downloader.View.view cfg

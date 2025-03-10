@@ -1,7 +1,6 @@
 module Model exposing (Model(..), toSession, updateSession)
 
 import Page.About as About
-import Page.Downloader.Model as Downloader
 import Page.Error as NotFound
 import Page.Front as Front
 import Page.Record as Record

@@ -1,46 +1,63 @@
-module Page.Downloader.View exposing (..)
+module Page.Downloader.View exposing (view)
 
-import Css
-import Element exposing (Element, alignBottom, alignRight, centerY, column, fill, height, html, none, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, textColumn, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Html.Styled as HT exposing (toUnstyled)
-import Html.Styled.Attributes as HA
-import Http exposing (Error(..))
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Html.Attributes as HA
+import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
-import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing, sectionSpacing)
-import Page.UI.Style exposing (colourScheme, rgbaFloatToInt, toCssColors)
+import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing, minimalDropShadow)
+import Page.UI.Components exposing (viewWindowTitleBar)
+import Page.UI.Errors exposing (createErrorMessage)
+import Page.UI.Style exposing (colourScheme)
 
 
 view :
+    { closeMsg : msg
+    , language : Language
+    , model : DownloaderModel
+    , userInteractedWithDownloaderMsg : DownloaderMsg -> msg
+    }
+    -> Element msg
+view cfg =
+    row
+        [ width fill
+        , height fill
+        , Background.color colourScheme.translucentGrey
+        , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
+        ]
+        [ column
+            [ centerX
+            , centerY
+            , width (px 900)
+            , height (px 380)
+            , Background.color colourScheme.white
+            , Border.color colourScheme.darkBlue
+            , Border.width 3
+            , htmlAttribute (HA.style "z-index" "10")
+            , minimalDropShadow
+            ]
+            [ viewWindowTitleBar cfg.language (toLanguageMap "Download Search Results") cfg.closeMsg
+            , viewWindowContent
+                { language = cfg.language
+                , model = cfg.model
+                }
+                |> Element.map cfg.userInteractedWithDownloaderMsg
+            ]
+        ]
+
+
+viewWindowContent :
     { language : Language
     , model : DownloaderModel
     }
     -> Element DownloaderMsg
-view { language, model } =
+viewWindowContent { language, model } =
     let
-        downloadStatusView =
-            case model.downloadState of
-                ErrorDownloading err ->
-                    row
-                        [ width fill ]
-                        [ errorMessageConverter err
-                            |> text
-                        ]
-
-                DownloadCompleted _ ->
-                    row
-                        [ width fill ]
-                        [ text "Download completed!" ]
-
-                _ ->
-                    none
-
         ( cancelColour, cancelFontColour, cancelMsg ) =
             case model.downloadState of
                 Downloading _ ->
@@ -65,7 +82,9 @@ view { language, model } =
             [ width fill
             , height fill
             , padding 20
-            , spacing sectionSpacing
+            , spacing lineSpacing
+
+            --, explain Debug.todo
             ]
             [ row
                 [ width fill ]
@@ -86,12 +105,12 @@ view { language, model } =
                     [ row
                         [ width fill ]
                         [ Input.checkbox []
-                            { onChange = UserChangedIncludeSearchUrl
+                            { checked = model.includeSearchUrlInResults
                             , icon = Input.defaultCheckbox
-                            , checked = model.includeSearchUrlInResults
                             , label =
                                 Input.labelRight []
                                     (text "Include Search URL in Results")
+                            , onChange = UserChangedIncludeSearchUrl
                             }
                         ]
                     , row
@@ -104,8 +123,7 @@ view { language, model } =
                 ]
             , row
                 [ width fill ]
-                [ progressView model ]
-            , downloadStatusView
+                [ progressView language model ]
             , row
                 [ width fill
                 , alignBottom
@@ -140,68 +158,76 @@ view { language, model } =
         ]
 
 
-progressView : DownloaderModel -> Element msg
-progressView model =
+progressView : Language -> DownloaderModel -> Element msg
+progressView language model =
     let
-        progressPct =
+        ( progressFinished, progressTotal ) =
             case model.progress of
-                Progress num all ->
-                    ((toFloat num / toFloat all) * 100)
-                        |> ceiling
-
                 NoProgress ->
-                    0
+                    ( 0, 0 )
+
+                Progress fin tot ->
+                    ( fin, tot )
+
+        downloadStatusMessage =
+            case model.downloadState of
+                Downloading _ ->
+                    "Downloading (" ++ String.fromInt progressFinished ++ " of " ++ String.fromInt progressTotal ++ ") result pages"
+
+                ErrorDownloading err ->
+                    createErrorMessage language err
+                        |> Tuple.first
+
+                DownloadCompleted ->
+                    "Download completed, assembling CSV file"
+
+                DownloadCancelled ->
+                    "Download cancelled"
+
+                _ ->
+                    ""
+
+        progressPct =
+            if progressTotal == 0 then
+                0
+
+            else
+                ((toFloat progressFinished / toFloat progressTotal) * 100)
+                    |> ceiling
+
+        progressPctStr =
+            String.fromInt progressPct ++ "%"
     in
     row
         [ width fill ]
         [ column
-            [ width fill ]
+            [ width fill
+            , spacing lineSpacing
+            ]
             [ row
-                [ width fill ]
-                [ HT.div
-                    [ HA.css
-                        [ Css.backgroundColor (toCssColors colourScheme.lightGrey)
-                        , Css.width (Css.pct 100)
-                        , Css.height <| Css.px 30
-                        ]
-                    ]
-                    [ HT.div
-                        [ HA.css
-                            [ Css.displayFlex
-                            , Css.alignItems Css.center
-                            , Css.justifyContent Css.center
-                            , Css.backgroundColor <| toCssColors colourScheme.lightBlue
-                            , Css.color (toCssColors colourScheme.white)
-
-                            --, Css.borderRadius <| Css.px 9999
-                            , Css.overflow Css.hidden
-                            , Css.width <| Css.pct (toFloat progressPct)
-                            , Css.height <| Css.pct 100
-                            ]
-                        ]
-                        [ HT.text (String.fromInt progressPct ++ "%") ]
-                    ]
-                    |> toUnstyled
-                    |> html
+                [ width fill
+                , Border.width 1
+                , Border.color colourScheme.darkGrey
                 ]
+                [ el
+                    [ Background.color colourScheme.lightGrey
+                    , width fill
+                    , height (px 30)
+                    ]
+                    (el
+                        [ alignLeft
+                        , Font.center
+                        , Background.color colourScheme.lightBlue
+                        , Font.color colourScheme.white
+                        , clip
+                        , htmlAttribute (HA.style "width" progressPctStr)
+                        , height fill
+                        ]
+                        (el [ centerY, centerX ] (text progressPctStr))
+                    )
+                ]
+            , row
+                [ width fill ]
+                [ text downloadStatusMessage ]
             ]
         ]
-
-
-errorMessageConverter : Http.Error -> String
-errorMessageConverter err =
-    case err of
-        BadUrl u ->
-            "Bad URL: " ++ u
-
-        Timeout ->
-            "Timeout"
-
-        NetworkError ->
-            "Network Error"
-
-        BadStatus s ->
-            "Bad Status" ++ String.fromInt s
-
-        BadBody _ ->
-            "Bad Request Body"

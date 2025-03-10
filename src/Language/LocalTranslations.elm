@@ -24,9 +24,9 @@ localTranslations :
     , description : LanguageMap
     , downloadMEI : LanguageMap
     , downloadPNG : LanguageMap
-    , downloadsLimited : LanguageMap
     , downloadsHelpOne : LanguageMap
     , downloadsHelpTwo : LanguageMap
+    , downloadsLimited : LanguageMap
     , downloadsSearchUrlHelp : LanguageMap
     , errorLoadingProbeResults : LanguageMap
     , first : LanguageMap
@@ -132,6 +132,10 @@ localTranslations =
         [ LanguageValue English [ "Download MEI" ] ]
     , downloadPNG =
         [ LanguageValue English [ "Download PNG" ] ]
+    , downloadsHelpOne =
+        [ LanguageValue English [ """Downloads are in Comma Separated Values (CSV) format. Start your download by clicking on the "Download" button. When the download completes, a file save window will appear to save your results to your local computer.""" ] ]
+    , downloadsHelpTwo =
+        [ LanguageValue English [ """While the results are downloading do not close your browser or navigate away from this page. You can continue browsing in another tab or window.""" ] ]
     , downloadsLimited =
         [ LanguageValue English [ "Downloads are limited to {{numResults}} search results." ]
         , LanguageValue German [ "Downloads sind auf {{numResults}} Suchergebnisse beschränkt." ]
@@ -141,10 +145,6 @@ localTranslations =
         , LanguageValue Portuguese [ "Os downloads estão limitados a {{numResults}} resultados de pesquisa." ]
         , LanguageValue Polish [ "Pobieranie jest ograniczone do {{numResults}} wyników wyszukiwania." ]
         ]
-    , downloadsHelpOne =
-        [ LanguageValue English [ """Downloads are in Comma Separated Values (CSV) format. Start your download by clicking on the "Download" button. When the download completes, a file save window will appear to save your results to your local computer.""" ] ]
-    , downloadsHelpTwo =
-        [ LanguageValue English [ """While the results are downloading do not close your browser or navigate away from this page. You can continue browsing in another tab or window.""" ] ]
     , downloadsSearchUrlHelp =
         [ LanguageValue English [ """Includes the URL to the original search as the first entry in the CSV. This may be useful for referring back to the search that generated a list of results, but it does not follow the format of the other results so additional care is required if processing the results.""" ] ]
     , errorLoadingProbeResults =

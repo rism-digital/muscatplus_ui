@@ -34,7 +34,7 @@ import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
-import Page.UI.Style exposing (colourScheme, rgbaFloatToInt)
+import Page.UI.Style exposing (colourScheme, toCssColors)
 import Response exposing (Response(..), ServerData(..))
 
 
@@ -52,12 +52,7 @@ view model =
 
         -- set the colour for links (a tags) globally.
         globalLinkColor =
-            let
-                { blue, green, red } =
-                    colourScheme.lightBlue
-                        |> rgbaFloatToInt
-            in
-            [ Css.color (Css.rgb red green blue) ]
+            [ Css.color (toCssColors colourScheme.lightBlue) ]
 
         defaultTitle =
             "RISM Online"

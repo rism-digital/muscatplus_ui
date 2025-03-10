@@ -2,7 +2,6 @@ module Page.UI.Style exposing
     ( colourScheme
     , headerHeight
     , recordTitleHeight
-    , rgbaFloatToInt
     , searchSourcesLinkHeight
     , tabBarHeight
     , toCssColors
@@ -219,7 +218,7 @@ rgbaFloatToInt colour =
 toCssColors : Element.Color -> Css.Color
 toCssColors colour =
     let
-        { red, green, blue } =
+        { blue, green, red } =
             rgbaFloatToInt colour
     in
     Css.rgb red green blue

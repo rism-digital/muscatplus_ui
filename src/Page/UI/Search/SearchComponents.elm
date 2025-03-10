@@ -9,7 +9,6 @@ import Element.Input as Input
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
-import Maybe.Extra as ME
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
@@ -154,6 +153,19 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
             viewIf
                 (viewUpdateMessage submitButtonMsg language model.applyFilterPrompt actionableProbeResponse)
                 (not isFrontPage)
+
+        downloadButton =
+            viewIf
+                (column
+                    [ alignRight ]
+                    [ viewDownloadButton
+                        { language = language
+                        , model = model
+                        , userClickedOpenDownloaderMsg = userClickedOpenDownloaderMsg
+                        }
+                    ]
+                )
+                (not isFrontPage)
     in
     row
         [ alignTop
@@ -225,14 +237,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 , updateMessage
                 ]
             ]
-        , column
-            [ alignRight ]
-            [ viewDownloadButton
-                { language = language
-                , model = model
-                , userClickedOpenDownloaderMsg = userClickedOpenDownloaderMsg
-                }
-            ]
+        , downloadButton
         ]
 
 
@@ -257,8 +262,8 @@ viewDownloadButton :
     { language : Language
     , model :
         { a
-            | probeResponse : ProbeStatus
-            , applyFilterPrompt : Bool
+            | applyFilterPrompt : Bool
+            , probeResponse : ProbeStatus
         }
     , userClickedOpenDownloaderMsg : msg
     }
@@ -281,32 +286,33 @@ viewDownloadButton { language, model, userClickedOpenDownloaderMsg } =
                                 Nothing
                         )
 
-        formattedNumber =
-            toFloat C.csvDownloadMaximumRecords
-                |> formatNumberByLanguage language
-
-        tooltipMessage =
-            extractLabelFromLanguageMapWithVariables language
-                [ LanguageMapReplacementVariable "numResults" formattedNumber ]
-                localTranslations.downloadsLimited
-                |> text
-
         buttonTheme =
             case downloadButtonMsg of
                 Just _ ->
                     { background = colourScheme.puce
+                    , borderColour = colourScheme.darkBlue
                     , cursor = pointer
                     , fontColour = colourScheme.white
-                    , borderColour = colourScheme.darkBlue
                     , helpTooltip =
                         tooltip above none
                     }
 
                 Nothing ->
+                    let
+                        formattedNumber =
+                            toFloat C.csvDownloadMaximumRecords
+                                |> formatNumberByLanguage language
+
+                        tooltipMessage =
+                            extractLabelFromLanguageMapWithVariables language
+                                [ LanguageMapReplacementVariable "numResults" formattedNumber ]
+                                localTranslations.downloadsLimited
+                                |> text
+                    in
                     { background = colourScheme.lightGrey
+                    , borderColour = colourScheme.darkGrey
                     , cursor = htmlAttribute (HA.style "cursor" "not-allowed")
                     , fontColour = colourScheme.darkGrey
-                    , borderColour = colourScheme.darkGrey
                     , helpTooltip =
                         el tooltipStyle tooltipMessage
                             |> tooltip onLeft

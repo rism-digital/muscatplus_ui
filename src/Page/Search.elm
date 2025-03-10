@@ -488,6 +488,28 @@ update session msg model =
             in
             ( model, Cmd.map UserInteractedWithQueryBuilder qbCmd )
 
+        UserClickedOpenQueryBuilder ->
+            let
+                newActiveSearch =
+                    setQueryBuilder (Just QueryBuilder.init) model.activeSearch
+            in
+            ( { model
+                | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
+
+        UserClickedCloseQueryBuilder ->
+            let
+                newActiveSearch =
+                    setQueryBuilder Nothing model.activeSearch
+            in
+            ( { model
+                | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
+
         UserInteractedWithDownloader downloaderMsg ->
             case .downloader model.activeSearch of
                 Just downloaderModel ->
@@ -513,8 +535,8 @@ update session msg model =
                     .keyboard model.activeSearch
 
                 modelCfg =
-                    { queryArgs = nextQuery
-                    , keyboard = keyboardQuery
+                    { keyboard = keyboardQuery
+                    , queryArgs = nextQuery
                     , session = session
                     }
             in
@@ -600,28 +622,6 @@ update session msg model =
 
         UserPressedAnArrowKey arrowDirection ->
             userPressedArrowKeysInSearchResultsList arrowDirection session model
-
-        UserClickedOpenQueryBuilder ->
-            let
-                newActiveSearch =
-                    setQueryBuilder (Just QueryBuilder.init) model.activeSearch
-            in
-            ( { model
-                | activeSearch = newActiveSearch
-              }
-            , Cmd.none
-            )
-
-        UserClickedCloseQueryBuilder ->
-            let
-                newActiveSearch =
-                    setQueryBuilder Nothing model.activeSearch
-            in
-            ( { model
-                | activeSearch = newActiveSearch
-              }
-            , Cmd.none
-            )
 
         NothingHappened ->
             ( model, Cmd.none )

@@ -6,7 +6,6 @@ import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Downloader
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)

@@ -165,12 +165,12 @@ viewSearchResultsSection cfg resultsLoading body =
                 NoResponseToShow ->
                     none
 
+        language =
+            .language cfg.session
+
         nextQuery =
             .activeSearch cfg.model
                 |> .nextQuery
-
-        language =
-            .language cfg.session
 
         hasActiveFilters =
             nextQuery.filters
@@ -208,9 +208,9 @@ viewSearchResultsSection cfg resultsLoading body =
                 |> viewMaybe
                     (\downloaderModel ->
                         Page.Downloader.view
-                            { language = language
+                            { closeMsg = cfg.userClickedCloseDownloaderMsg
+                            , language = language
                             , model = downloaderModel
-                            , closeMsg = cfg.userClickedCloseDownloaderMsg
                             , userInteractedWithDownloaderMsg = cfg.userInteractedWithDownloaderMsg
                             }
                     )

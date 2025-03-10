@@ -1,4 +1,4 @@
-module Page.Downloader.Msg exposing (..)
+module Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
 
 import Http
 import Http.Detailed
@@ -14,18 +14,18 @@ type DownloadProgressTracker
 
 type DownloadState
     = DownloadNotStarted
-    | Downloading (Parallel.ListState DownloaderMsg Page.RecordTypes.Search.ResultsBody)
-    | ErrorDownloading Http.Error
-    | DownloadCompleted (List Page.RecordTypes.Search.ResultsBody)
+    | Downloading (Parallel.ListState DownloaderMsg ( Http.Metadata, Page.RecordTypes.Search.ResultsBody ))
+    | ErrorDownloading (Http.Detailed.Error String)
+    | DownloadCompleted
     | DownloadCancelled
 
 
 type DownloaderMsg
     = ServerRespondedWithProbeData (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ))
     | ClientRespondedWithCurrentTime String
-    | RecordDownloadUpdated (Parallel.ListMsg Page.RecordTypes.Search.ResultsBody)
-    | RecordDownloadFailed Http.Error
-    | RecordDownloadCompleted (List Page.RecordTypes.Search.ResultsBody)
+    | RecordDownloadUpdated (Parallel.ListMsg ( Http.Metadata, Page.RecordTypes.Search.ResultsBody ))
+    | RecordDownloadFailed (Http.Detailed.Error String)
+    | RecordDownloadCompleted (List ( Http.Metadata, Page.RecordTypes.Search.ResultsBody ))
     | NothingHappenedWithTheDownloader
     | UserClickedDownloadButton
     | UserClickedCancelDownloadButton

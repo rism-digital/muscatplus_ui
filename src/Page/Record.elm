@@ -553,8 +553,8 @@ update session msg model =
                     .keyboard model.activeSearch
 
                 modelCfg =
-                    { queryArgs = nextQuery
-                    , keyboard = keyboardQuery
+                    { keyboard = keyboardQuery
+                    , queryArgs = nextQuery
                     , session = session
                     }
             in

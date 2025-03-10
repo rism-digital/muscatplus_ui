@@ -87,23 +87,6 @@ changePage url model =
                     else
                         newSession
 
-                newKeyboardParams =
-                    buildNotationQueryParameters kqargs
-                        |> toQuery
-                        |> String.dropLeft 1
-
-                newQparams =
-                    toNextQuery newPageBody.activeSearch
-                        |> buildQueryParameters
-                        |> toQuery
-                        |> String.dropLeft 1
-
-                fullQueryParams =
-                    newQparams ++ "&" ++ newKeyboardParams
-
-                searchUrl =
-                    { url | query = Just fullQueryParams }
-
                 -- optimization. If the actual query has not changed, then
                 -- we do not need to trigger a new search request. This happens
                 -- primarily when choosing a preview, where the fragment will change
@@ -115,6 +98,24 @@ changePage url model =
 
                 searchCmd =
                     if queryHasChanged then
+                        let
+                            newKeyboardParams =
+                                buildNotationQueryParameters kqargs
+                                    |> toQuery
+                                    |> String.dropLeft 1
+
+                            newQparams =
+                                toNextQuery newPageBody.activeSearch
+                                    |> buildQueryParameters
+                                    |> toQuery
+                                    |> String.dropLeft 1
+
+                            fullQueryParams =
+                                newQparams ++ "&" ++ newKeyboardParams
+
+                            searchUrl =
+                                { url | query = Just fullQueryParams }
+                        in
                         SearchPage.searchPageRequest searchUrl
 
                     else
