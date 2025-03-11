@@ -13,7 +13,7 @@ import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, minimalDropShadow)
+import Page.UI.Attributes exposing (headingLG, headingMD, headingSM, lineSpacing, minimalDropShadow)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
@@ -314,7 +314,7 @@ viewMobileSearchButtons { language, model, submitLabel, submitMsg, resetMsg } =
                         ]
                         [ el
                             [ Font.medium
-                            , headingLG
+                            , headingSM
                             ]
                             (viewProbeResponseNumbers language model.probeResponse)
                         ]

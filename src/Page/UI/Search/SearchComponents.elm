@@ -11,7 +11,7 @@ import Language exposing (Language, LanguageMap, LanguageMapReplacementVariable(
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG, headingMD, minimalDropShadow)
+import Page.UI.Attributes exposing (headingLG, headingMD, headingSM, minimalDropShadow)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
@@ -197,7 +197,6 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 , width shrink
                 , Font.center
                 , Font.color colourScheme.white
-                , headingMD
                 , submitPointerStyle
                 , centerY
                 , paddingXY 10 0
@@ -216,7 +215,6 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 , Font.center
                 , Font.color colourScheme.white
                 , centerY
-                , headingMD
                 , paddingXY 10 0
                 ]
                 { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
@@ -231,7 +229,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 ]
                 [ el
                     [ Font.medium
-                    , headingLG
+                    , headingSM
                     ]
                     (viewProbeResponseNumbers language model.probeResponse)
                 , updateMessage
