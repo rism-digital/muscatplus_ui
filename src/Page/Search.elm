@@ -17,12 +17,13 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Dict
 import Maybe.Extra as ME
 import Page.Downloader as Downloader
+import Page.Downloader.Msg as DownloaderMsg
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, resetPage, setFilters, setMode, setNextQuery, toMode, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
-import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
+import Page.QueryBuilder.Msg as QueryBuilderMsg
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), toFacetLabel)
@@ -464,7 +465,7 @@ update session msg model =
                 Nothing ->
                     ( model, Cmd.none )
 
-        UserInteractedWithQueryBuilder (UserEnteredTextInQueryBuilder queryText) ->
+        UserInteractedWithQueryBuilder (QueryBuilderMsg.UserEnteredTextInQueryBuilder queryText) ->
             let
                 -- This is the same code as when the user enters text in the
                 -- non querybuilder box. The idea is that we update the "main"
@@ -476,7 +477,7 @@ update session msg model =
             userEnteredTextInKeywordQueryBox queryText model
                 |> update session debounceMsg
 
-        UserInteractedWithQueryBuilder UserClickedSearchButton ->
+        UserInteractedWithQueryBuilder QueryBuilderMsg.UserClickedSearchButton ->
             -- submit the search and close the query builder
             searchSubmit session { model | activeSearch = setQueryBuilder Nothing model.activeSearch }
 
@@ -506,6 +507,13 @@ update session msg model =
             in
             ( { model
                 | activeSearch = newActiveSearch
+              }
+            , Cmd.none
+            )
+
+        UserInteractedWithDownloader DownloaderMsg.ClientWantsToCloseTheWindow ->
+            ( { model
+                | activeSearch = setDownloader Nothing model.activeSearch
               }
             , Cmd.none
             )

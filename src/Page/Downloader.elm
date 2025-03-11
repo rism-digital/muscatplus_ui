@@ -1,5 +1,6 @@
 module Page.Downloader exposing (init, update, view)
 
+import Cmd.Extra as CE
 import DateFormat
 import Element exposing (Element)
 import File.Download
@@ -108,13 +109,16 @@ continueOrFinish model completed =
             fileName =
                 "rism-online-search-results-" ++ model.timestamp ++ ".csv"
 
-            downloadCmd =
-                resultListToCsvString injectedSearchUrlList
-                    |> File.Download.string fileName "text/csv"
+            downloadAndCloseCmd =
+                Cmd.batch
+                    [ resultListToCsvString injectedSearchUrlList
+                        |> File.Download.string fileName "text/csv"
+                    , CE.perform ClientWantsToCloseTheWindow
+                    ]
         in
         { downloadProgress = NoProgress
         , downloadState = DownloadCompleted
-        , nextCmd = downloadCmd
+        , nextCmd = downloadAndCloseCmd
         , resultsList = []
         , taskQueue = model.taskQueue
         }
@@ -225,6 +229,10 @@ update msg model =
             , Cmd.none
             )
 
+        ClientWantsToCloseTheWindow ->
+            -- this is handled in the calling update function
+            ( model, Cmd.none )
+
         RecordDownloadUpdated updates ->
             case model.downloadState of
                 Downloading taskMsg ->
@@ -273,9 +281,6 @@ update msg model =
             , updateConfig.nextCmd
             )
 
-        NothingHappenedWithTheDownloader ->
-            ( model, Cmd.none )
-
         UserClickedDownloadButton ->
             let
                 -- use a probe request to find out how many pages, etc. will be
@@ -310,6 +315,9 @@ update msg model =
               }
             , Cmd.none
             )
+
+        NothingHappenedWithTheDownloader ->
+            ( model, Cmd.none )
 
 
 view :

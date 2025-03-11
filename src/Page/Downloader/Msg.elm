@@ -23,10 +23,11 @@ type DownloadState
 type DownloaderMsg
     = ServerRespondedWithProbeData (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ))
     | ClientRespondedWithCurrentTime String
+    | ClientWantsToCloseTheWindow
     | RecordDownloadUpdated (Parallel.ListMsg ( Http.Metadata, Page.RecordTypes.Search.ResultsBody ))
     | RecordDownloadFailed (Http.Detailed.Error String)
     | RecordDownloadCompleted (List ( Http.Metadata, Page.RecordTypes.Search.ResultsBody ))
-    | NothingHappenedWithTheDownloader
     | UserClickedDownloadButton
     | UserClickedCancelDownloadButton
     | UserChangedIncludeSearchUrl Bool
+    | NothingHappenedWithTheDownloader

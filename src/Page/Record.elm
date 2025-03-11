@@ -20,6 +20,7 @@ import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Murmur3
 import Page.Downloader as Downloader
+import Page.Downloader.Msg as DownloaderMsg
 import Page.Query exposing (QueryArgs, defaultQueryArgs, setFilters, setNationalCollection, setNextQuery, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
@@ -527,6 +528,13 @@ update session msg model =
 
         UserInteractedWithQueryBuilder _ ->
             ( model, Cmd.none )
+
+        UserInteractedWithDownloader DownloaderMsg.ClientWantsToCloseTheWindow ->
+            ( { model
+                | activeSearch = setDownloader Nothing model.activeSearch
+              }
+            , Cmd.none
+            )
 
         UserInteractedWithDownloader downloaderMsg ->
             case .downloader model.activeSearch of
