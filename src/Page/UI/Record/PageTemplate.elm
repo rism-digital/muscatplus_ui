@@ -286,7 +286,7 @@ viewMuscatLinks session =
                 ]
                 [ row
                     []
-                    [ text "Muscat: "
+                    [ el [ Font.semiBold ] (text "Muscat: ")
                     , newTabLink
                         [ linkColour ]
                         { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatView)

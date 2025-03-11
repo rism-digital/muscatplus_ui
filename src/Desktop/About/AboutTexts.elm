@@ -45,6 +45,21 @@ You are free to download and modify the data. If you find the data useful, pleas
 link back to RISM Online. We are also interested in knowing how RISM data
 is being used, so please get in touch to tell us about your project.
 
+We make monthly exports of the data available in MARCXML format. These exports cover
+Source records (including incipits), People and Institution authorities, and Secondary Literature
+records. You can find a list of the downloads on the [RISM Digital Data Exports page](https://rism.digital/exports/index.html).
+
+## Documentation and APIs
+
+For more information on the Query format for RISM Online, consult the [Query Builder documentation](https://rism.online/docs/query-builder/introduction/). This
+provides details on how queries are processed and the different fields and operators available for use.
+
+RISM Online has a full set of Data APIs for both Search queries and Record retrieval that are freely available for use
+by anyone. Details on how to use these APIs can be found in the [API Documentation](https://rism.online/docs/api/api/).
+
+If you use OpenRefine, we also make available a Reconciliation Service. Consult the [Reconciliation API documentation](https://rism.online/docs/reconciliation/introduction/)
+for more information.
+
 ## Contact
 
 We are constantly improving RISM Online. Feedback about your experience is welcome!
@@ -112,6 +127,23 @@ Sämtliche Daten in RISM Online sind unter einer Creative Commons CC-BY 3.0 Lize
 die Daten herunterzuladen und zu modifizieren. Wenn Sie die Daten nützlich finden, fügen Sie bitte einen Link zurück
 zu RISM Online ein. Wir sind auch daran interessiert zu erfahren, wie die RISM-Daten genutzt werden. Bitte nehmen
 Sie Kontakt mit uns auf, damit wir mehr über Ihr Projekt in Erfahrung bringen können.
+
+Wir stellen monatliche Exporte der Daten im MARCXML-Format zur Verfügung. Diese Exporte umfassen
+Quelleneinträge (einschließlich Incipits), Personen- und Institutionsautoritäten sowie Einträge der Sekundärliteratur.
+Eine Liste der Downloads finden Sie auf der [RISM Digital Data Exports-Seite](https://rism.digital/exports/index.html).
+
+## Dokumentation und APIs
+
+Für weitere Informationen zum Abfrageformat von RISM Online konsultieren Sie die
+[Query Builder-Dokumentation](https://rism.online/docs/query-builder/introduction/).
+Dort finden Sie Details darüber, wie Abfragen verarbeitet werden und welche Felder und Operatoren zur Verfügung stehen.
+
+RISM Online bietet eine vollständige Reihe von Daten-APIs für Suchabfragen und den Abruf von Einträgen,
+die frei zur Verfügung stehen. Details zur Nutzung dieser APIs finden Sie in der
+[API-Dokumentation](https://rism.online/docs/api/api/).
+
+Falls Sie OpenRefine verwenden, stellen wir außerdem einen Reconciliation-Service bereit.
+Weitere Informationen finden Sie in der [Reconciliation API-Dokumentation](https://rism.online/docs/reconciliation/introduction/).
 
 ## Kontakt
 
@@ -181,6 +213,23 @@ Tutti i dati in RISM Online sono disponibili con licenza Creative Commons CC-BY 
 modificare liberamente. Se ritieni utili i dati, includi nel tuo lavoro un collegamento a RISM Online. Siamo anche
 interessati a sapere come vengono utilizzati i dati RISM, quindi contattaci per raccontarci del tuo progetto.
 
+Rendiamo disponibili esportazioni mensili dei dati in formato MARCXML. Queste esportazioni includono
+i record delle fonti (compresi gli incipit), le autorità per Persone e Istituzioni e i record della Letteratura Secondaria.
+È possibile trovare un elenco dei download sulla [pagina delle esportazioni di dati digitali RISM](https://rism.digital/exports/index.html).
+
+## Documentazione e API
+
+Per ulteriori informazioni sul formato delle query per RISM Online, consultare la
+[documentazione del Query Builder](https://rism.online/docs/query-builder/introduction/).
+Questa documentazione fornisce dettagli su come vengono elaborate le query e sui diversi campi e operatori disponibili.
+
+RISM Online dispone di un set completo di API per l'elaborazione delle ricerche e il recupero dei record,
+disponibili gratuitamente per tutti. I dettagli sull'uso di queste API sono disponibili nella
+[documentazione API](https://rism.online/docs/api/api/).
+
+Se si utilizza OpenRefine, offriamo anche un servizio di riconciliazione.
+Per ulteriori informazioni, consultare la [documentazione dell'API di riconciliazione](https://rism.online/docs/reconciliation/introduction/).
+
 Contatti
 
 Stiamo costantemente migliorando RISM Online. Ogni feedback sulla tua esperienza è benvenuto! Facci sapere se non hai
@@ -243,6 +292,24 @@ Toutes les données de RISM Online sont disponibles sous une licence Creative Co
 télécharger et de modifier les données. Si vous trouvez les données utiles, veuillez inclure un lien vers RISM Online.
 Nous souhaitons également savoir comment les données du RISM sont utilisées. N'hésitez donc pas à nous contacter pour
 nous faire part de votre projet.
+
+Nous mettons à disposition des exportations mensuelles des données au format MARCXML.
+Ces exportations couvrent les notices des sources (y compris les incipits), les autorités pour les Personnes et Institutions,
+ainsi que les notices de Littérature Secondaire.
+Vous pouvez trouver une liste des téléchargements sur la [page des exportations de données numériques RISM](https://rism.digital/exports/index.html).
+
+## Documentation et APIs
+
+Pour plus d’informations sur le format des requêtes pour RISM Online, consultez la
+[documentation du Query Builder](https://rism.online/docs/query-builder/introduction/).
+Elle fournit des détails sur le traitement des requêtes ainsi que les différents champs et opérateurs disponibles.
+
+RISM Online propose un ensemble complet d’APIs de données pour les requêtes de recherche et la récupération des notices,
+librement accessibles à tous. Les détails sur l’utilisation de ces APIs sont disponibles dans la
+[documentation API](https://rism.online/docs/api/api/).
+
+Si vous utilisez OpenRefine, nous proposons également un service de réconciliation.
+Consultez la [documentation de l’API de réconciliation](https://rism.online/docs/reconciliation/introduction/) pour plus d’informations.
 
 ## Contact
 
