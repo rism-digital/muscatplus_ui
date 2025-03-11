@@ -85,26 +85,34 @@ pageFooterTemplate session language footer =
                 |> String.replace "#" "%23"
 
         aperoLink =
-            row
-                [ width fill
+            column
+                [ alignLeft
                 , spacing lineSpacing
                 ]
-                [ el [ Font.semiBold ] (text "API Viewer:")
-                , newTabLink
-                    [ linkColour ]
-                    { label = text "JSON-LD"
-                    , url = "/apero/?url=" ++ currentUrl ++ "&format=jsonld"
-                    }
-                , newTabLink
-                    [ linkColour ]
-                    { label = text "MARCXML"
-                    , url = "/apero/?url=" ++ currentUrl ++ "&format=marcxml"
-                    }
+                [ row
+                    [ spacing 6 ]
+                    [ el
+                        [ Font.semiBold ]
+                        (text "API Viewer:")
+                    , newTabLink
+                        [ linkColour ]
+                        { label = text "JSON-LD"
+                        , url = "/apero/?url=" ++ currentUrl ++ "&format=jsonld"
+                        }
+
+                    --, text " | "
+                    , newTabLink
+                        [ linkColour ]
+                        { label = text "MARCXML"
+                        , url = "/apero/?url=" ++ currentUrl ++ "&format=marcxml"
+                        }
+                    ]
                 ]
 
         feedbackLink =
             newTabLink
                 [ linkColour
+                , alignLeft
                 ]
                 { label = text (extractLabelFromLanguageMap language localTranslations.reportAnIssue)
                 , url = "https://docs.google.com/forms/d/e/1FAIpQLScZ5kDwgmraT3oMaiAA3_FYaEl_s_XpQ-t932SzUfKa63SpMg/viewform?usp=pp_url&entry.1082206543=" ++ currentUrl
@@ -133,8 +141,10 @@ pageFooterTemplate session language footer =
                 , spacing lineSpacing
                 ]
                 [ muscatLinks
-                , feedbackLink
+                , viewIf (text "|") session.showMuscatLinks
                 , aperoLink
+                , text "|"
+                , feedbackLink
                 ]
             ]
         , column
@@ -285,14 +295,15 @@ viewMuscatLinks session =
                 , spacing lineSpacing
                 ]
                 [ row
-                    []
-                    [ el [ Font.semiBold ] (text "Muscat: ")
+                    [ spacing 6 ]
+                    [ el [ Font.semiBold ] (text "Muscat:")
                     , newTabLink
                         [ linkColour ]
                         { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatView)
                         , url = muscatUrl
                         }
-                    , text " | "
+
+                    --, text " |"
                     , newTabLink
                         [ linkColour ]
                         { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatEdit)
