@@ -24,6 +24,7 @@ localTranslations :
     , description : LanguageMap
     , downloadMEI : LanguageMap
     , downloadPNG : LanguageMap
+    , downloadResults : LanguageMap
     , downloadsHelpOne : LanguageMap
     , downloadsHelpTwo : LanguageMap
     , downloadsLimited : LanguageMap
@@ -222,6 +223,22 @@ localTranslations =
             [ "Baixar PNG" ]
         , LanguageValue Polish
             [ "Pobierz PNG" ]
+        ]
+    , downloadResults =
+        [ LanguageValue English
+            [ "Download results " ]
+        , LanguageValue German
+            [ "Ergebnisse herunterladen" ]
+        , LanguageValue French
+            [ "Télécharger les résultats" ]
+        , LanguageValue Italian
+            [ "Scarica i risultati" ]
+        , LanguageValue Spanish
+            [ "Descargar resultados" ]
+        , LanguageValue Portuguese
+            [ "Baixar resultados" ]
+        , LanguageValue Polish
+            [ "Pobierz wyniki" ]
         ]
     , downloadsHelpOne =
         [ LanguageValue English

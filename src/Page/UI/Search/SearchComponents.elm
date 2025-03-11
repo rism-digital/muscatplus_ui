@@ -326,6 +326,6 @@ viewDownloadButton { language, model, userClickedOpenDownloaderMsg } =
         , buttonTheme.cursor
         , buttonTheme.helpTooltip
         ]
-        { label = text "Download results"
+        { label = text (extractLabelFromLanguageMap language localTranslations.downloadResults)
         , onPress = downloadButtonMsg
         }
