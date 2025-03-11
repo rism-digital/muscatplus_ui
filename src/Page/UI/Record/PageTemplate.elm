@@ -85,11 +85,22 @@ pageFooterTemplate session language footer =
                 |> String.replace "#" "%23"
 
         aperoLink =
-            newTabLink
-                [ linkColour ]
-                { label = text "API Viewer"
-                , url = "/apero/?url=" ++ currentUrl
-                }
+            row
+                [ width fill
+                , spacing lineSpacing
+                ]
+                [ el [ Font.semiBold ] (text "API Viewer:")
+                , newTabLink
+                    [ linkColour ]
+                    { label = text "JSON-LD"
+                    , url = "/apero/?url=" ++ currentUrl ++ "&format=jsonld"
+                    }
+                , newTabLink
+                    [ linkColour ]
+                    { label = text "MARCXML"
+                    , url = "/apero/?url=" ++ currentUrl ++ "&format=marcxml"
+                    }
+                ]
 
         feedbackLink =
             newTabLink
