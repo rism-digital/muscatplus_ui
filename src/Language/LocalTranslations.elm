@@ -604,12 +604,18 @@ localTranslations =
         ]
     , numberOfResults =
         [ LanguageValue English [ "Number of results" ]
-        , LanguageValue German [ "Ergebnisse mit angewendeten Filtern" ]
-        , LanguageValue French [ "Résultats avec filtres appliqués" ]
-        , LanguageValue Italian [ "Risultati con filtri applicati" ]
-        , LanguageValue Spanish [ "Resultados con filtros aplicados" ]
-        , LanguageValue Portuguese [ "Resultados com filtros aplicados" ]
-        , LanguageValue Polish [ "Wyniki z zastosowanymi filtrami" ]
+        , LanguageValue German
+            [ "Anzahl der Ergebnisse" ]
+        , LanguageValue French
+            [ "Nombre de résultats" ]
+        , LanguageValue Italian
+            [ "Numero di risultati" ]
+        , LanguageValue Spanish
+            [ "Número de resultados" ]
+        , LanguageValue Portuguese
+            [ "Número de resultados" ]
+        , LanguageValue Polish
+            [ "Liczba wyników" ]
         ]
     , optionsWithAnd =
         [ LanguageValue English
