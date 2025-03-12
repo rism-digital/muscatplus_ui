@@ -3,7 +3,7 @@ module Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForC
 import Config as C
 import Dict exposing (Dict)
 import Dict.Extra as DE
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, newTabLink, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, fillPortion, height, maximum, newTabLink, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
@@ -271,7 +271,7 @@ viewDigitizedCopiesCalloutSection :
 viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalResourceLinks =
     row
         [ Border.color colourScheme.puce
-        , width fill
+        , width (fill |> maximum 800)
         ]
         [ column
             [ width fill

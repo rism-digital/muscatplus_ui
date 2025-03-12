@@ -79,7 +79,12 @@ viewContentsSection { creator, language, preRenderedFormatter, relationshipForma
         ]
 
 
-viewSubjectsSection : { language : Language, preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg } -> SubjectsSectionBody -> Element msg
+viewSubjectsSection :
+    { language : Language
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    }
+    -> SubjectsSectionBody
+    -> Element msg
 viewSubjectsSection { language, preRenderedFormatter } subjectSection =
     preRenderedFormatter language
         [ { label = subjectSection.label
