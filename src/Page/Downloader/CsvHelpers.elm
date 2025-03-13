@@ -21,6 +21,7 @@ type alias InstitutionCsvEntry =
     , title : String
     , country : String
     , numberOfSources : String
+    , catalogSource : String
     }
 
 
@@ -33,6 +34,7 @@ type alias SourceCsvEntry =
     , dateStatements : String
     , creatorAuthor : String
     , otherContributors : String
+    , catalogSource : String
     }
 
 
@@ -41,6 +43,7 @@ type alias PersonCsvEntry =
     , title : String
     , gender : String
     , numberOfSources : String
+    , catalogSource : String
     }
 
 
@@ -66,6 +69,7 @@ createSearchUrlRecord resultMode url =
                 , dateStatements = ""
                 , creatorAuthor = ""
                 , otherContributors = ""
+                , catalogSource = ""
                 }
 
         PeopleMode ->
@@ -74,6 +78,7 @@ createSearchUrlRecord resultMode url =
                 , title = "Search URL"
                 , gender = ""
                 , numberOfSources = ""
+                , catalogSource = ""
                 }
 
         InstitutionsMode ->
@@ -82,6 +87,7 @@ createSearchUrlRecord resultMode url =
                 , title = "Search URL"
                 , country = ""
                 , numberOfSources = ""
+                , catalogSource = ""
                 }
 
         IncipitsMode ->
@@ -104,6 +110,7 @@ sourceCsvEntryToFieldString entry =
     , ( "date_statements", entry.dateStatements )
     , ( "creator_author", entry.creatorAuthor )
     , ( "other_contributors", entry.otherContributors )
+    , ( "catalogue_source", entry.catalogSource )
     ]
 
 
@@ -113,6 +120,7 @@ personCsvEntryToFieldString entry =
     , ( "title", entry.title )
     , ( "gender", entry.gender )
     , ( "number_of_sources", entry.numberOfSources )
+    , ( "catalogue_source", entry.catalogSource )
     ]
 
 
@@ -126,12 +134,13 @@ incipitCsvEntryToFieldString entry =
     ]
 
 
-csvEntryToFieldString : InstitutionCsvEntry -> List ( String, String )
-csvEntryToFieldString entry =
+institutionCsvEntryToFieldString : InstitutionCsvEntry -> List ( String, String )
+institutionCsvEntryToFieldString entry =
     [ ( "url", entry.url )
     , ( "title", entry.title )
     , ( "country", entry.country )
     , ( "number_of_source", entry.numberOfSources )
+    , ( "catalogue_source", entry.catalogSource )
     ]
 
 
@@ -145,7 +154,7 @@ csvEntriesConverter record =
             personCsvEntryToFieldString entry
 
         InstitutionCsvRecordType entry ->
-            csvEntryToFieldString entry
+            institutionCsvEntryToFieldString entry
 
         IncipitCsvRecordType entry ->
             incipitCsvEntryToFieldString entry
@@ -199,6 +208,33 @@ convertSourceResultBody body =
             Maybe.map (\fs -> extractLabelFromLanguageMap English (.label fs.recordType)) body.flags
                 |> Maybe.withDefault ""
 
+        isDIAMMRecord =
+            Maybe.map .isDIAMMRecord body.flags
+                |> Maybe.withDefault False
+
+        isCantusRecord =
+            Maybe.map .isCantusRecord body.flags
+                |> Maybe.withDefault False
+
+        catalogSource =
+            if isDIAMMRecord then
+                "DIAMM"
+
+            else if isCantusRecord then
+                "Cantus"
+
+            else
+                "RISM"
+
+        csvRecordUrl =
+            if isDIAMMRecord || isCantusRecord then
+                Maybe.map .externalProjectURL body.flags
+                    |> Maybe.andThen identity
+                    |> Maybe.withDefault ""
+
+            else
+                body.id
+
         contentTypes =
             Maybe.map
                 (\fs ->
@@ -218,7 +254,7 @@ convertSourceResultBody body =
             extractFromSummaryDict "sourceComposers" body.summary
     in
     SourceCsvRecordType
-        { url = body.id
+        { url = csvRecordUrl
         , title = extractLabelFromLanguageMap English body.label
         , sourceType = sourceType
         , contentType = contentTypes
@@ -226,6 +262,7 @@ convertSourceResultBody body =
         , dateStatements = dateStatements
         , creatorAuthor = sourceComposer
         , otherContributors = resultComposers
+        , catalogSource = catalogSource
         }
 
 
@@ -237,12 +274,33 @@ convertPersonResultBody body =
 
         numberOfSources =
             extractFromSummaryDict "numSources" body.summary
+
+        isDIAMMRecord =
+            Maybe.map .isDIAMMRecord body.flags
+                |> Maybe.withDefault False
+
+        catalogSource =
+            if isDIAMMRecord then
+                "DIAMM"
+
+            else
+                "RISM"
+
+        csvRecordUrl =
+            if isDIAMMRecord then
+                Maybe.map .externalProjectURL body.flags
+                    |> Maybe.andThen identity
+                    |> Maybe.withDefault ""
+
+            else
+                body.id
     in
     PersonCsvRecordType
-        { url = body.id
+        { url = csvRecordUrl
         , title = extractLabelFromLanguageMap English body.label
         , gender = gender
         , numberOfSources = numberOfSources
+        , catalogSource = catalogSource
         }
 
 
@@ -254,12 +312,40 @@ convertInstitutionResultBody body =
 
         numberOfSources =
             extractFromSummaryDict "totalSources" body.summary
+
+        isDIAMMRecord =
+            Maybe.map .isDIAMMRecord body.flags
+                |> Maybe.withDefault False
+
+        isCantusRecord =
+            Maybe.map .isCantusRecord body.flags
+                |> Maybe.withDefault False
+
+        catalogSource =
+            if isDIAMMRecord then
+                "DIAMM"
+
+            else if isCantusRecord then
+                "Cantus"
+
+            else
+                "RISM"
+
+        csvRecordUrl =
+            if isDIAMMRecord || isCantusRecord then
+                Maybe.map .externalProjectURL body.flags
+                    |> Maybe.andThen identity
+                    |> Maybe.withDefault ""
+
+            else
+                body.id
     in
     InstitutionCsvRecordType
-        { url = body.id
+        { url = csvRecordUrl
         , title = extractLabelFromLanguageMap English body.label
         , country = country
         , numberOfSources = numberOfSources
+        , catalogSource = catalogSource
         }
 
 

@@ -49,7 +49,7 @@ module Page.RecordTypes.Search exposing
     )
 
 import Dict exposing (Dict)
-import Json.Decode as Decode exposing (Decoder, andThen, bool, dict, float, int, list, nullable, string)
+import Json.Decode as Decode exposing (Decoder, andThen, bool, dict, float, int, list, maybe, nullable, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import List.Extra as LE
@@ -195,6 +195,7 @@ type alias InstitutionResultFlags =
     { linkedWithExternalRecord : Bool
     , isDIAMMRecord : Bool
     , isCantusRecord : Bool
+    , externalProjectURL : Maybe String
     }
 
 
@@ -231,6 +232,7 @@ type alias PersonResultBody =
 type alias PersonResultFlags =
     { linkedWithExternalRecord : Bool
     , isDIAMMRecord : Bool
+    , externalProjectURL : Maybe String
     }
 
 
@@ -351,6 +353,7 @@ type alias SourceResultFlags =
     , linkedWithExternalRecord : Bool
     , isDIAMMRecord : Bool
     , isCantusRecord : Bool
+    , externalProjectURL : Maybe String
     , sourceType : SourceTypeRecordBody
     , contentTypes : List SourceContentTypeRecordBody
     , recordType : SourceRecordTypeRecordBody
@@ -753,6 +756,7 @@ sourceResultFlagsDecoder =
         |> optional "linkedWithExternalRecord" bool False
         |> optional "isDIAMMRecord" bool False
         |> optional "isCantusRecord" bool False
+        |> optional "externalProjectURL" (maybe string) Nothing
         |> required "sourceType" sourceTypeRecordBodyDecoder
         |> required "contentTypes" (list sourceContentTypeRecordBodyDecoder)
         |> required "recordType" sourceRecordTypeRecordBodyDecoder
@@ -786,6 +790,7 @@ personResultFlagsDecoder =
     Decode.succeed PersonResultFlags
         |> optional "linkedWithExternalRecord" bool False
         |> optional "isDIAMMRecord" bool False
+        |> optional "externalProjectURL" (maybe string) Nothing
 
 
 institutionResultFlagsDecoder : Decoder InstitutionResultFlags
@@ -794,3 +799,4 @@ institutionResultFlagsDecoder =
         |> optional "linkedWithExternalRecord" bool False
         |> optional "isDIAMMRecord" bool False
         |> optional "isCantusRecord" bool False
+        |> optional "externalProjectURL" (maybe string) Nothing
