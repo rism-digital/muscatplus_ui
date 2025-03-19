@@ -43,6 +43,8 @@ type RecordMsg
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String LanguageMap
+    | UserClickedSingleChoiceFacetItem FacetAlias String LanguageMap
+    | UsersClickedSingleChoiceReset FacetAlias
     | UserTriggeredSearchSubmit
     | UserRemovedActiveFilter FacetAlias String
     | UserResetAllFilters

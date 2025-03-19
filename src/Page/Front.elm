@@ -24,7 +24,7 @@ import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToResultMode)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..))
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -296,6 +296,14 @@ update session msg model =
         UserClickedSelectFacetItem alias facetValue label ->
             userClickedSelectFacetItem alias facetValue label model
                 |> frontProbeSubmit session
+
+        UserClickedSingleChoiceFacetItem alias facetValue label ->
+            userClickedSingleChoiceFacetItem alias facetValue label model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UsersClickedSingleChoiceReset alias ->
+            userResetSingleChoiceFacet alias model
+                |> probeSubmit ServerRespondedWithProbeData session
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
             case toKeyboard model.activeSearch of

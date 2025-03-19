@@ -330,11 +330,8 @@ viewSelectFacetItem config fitem =
         -- percent-decode the value to match it against the value in the
         -- active filter list. If we can't decode it (for some reason) just
         -- return the original value.
-        activeFilters =
-            nextQuery.filters
-
         shouldBeChecked =
-            Dict.get facetAlias activeFilters
+            Dict.get facetAlias nextQuery.filters
                 |> Maybe.withDefault []
                 |> List.map (\( val, _ ) -> percentDecode val |> Maybe.withDefault val)
                 |> List.member decodedValue

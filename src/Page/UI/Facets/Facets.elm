@@ -15,6 +15,7 @@ import Page.UI.Facets.NotationFacet exposing (viewKeyboardControl)
 import Page.UI.Facets.QueryFacet exposing (viewQueryFacet)
 import Page.UI.Facets.RangeFacet exposing (viewRangeFacet)
 import Page.UI.Facets.SelectFacet exposing (viewSelectFacet)
+import Page.UI.Facets.SingleChoiceFacet exposing (viewSingleChoiceFacet)
 import Page.UI.Facets.ToggleFacet exposing (viewToggleFacet)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (caretCircleDownSvg, caretCircleRightSvg)
@@ -93,6 +94,15 @@ viewFacet cfg msg =
         Just (ParameterFacetData _) ->
             -- parameter facets are never displayed.
             none
+
+        Just (SingleChoiceFacetData facet) ->
+            viewSingleChoiceFacet
+                { language = cfg.language
+                , activeSearch = cfg.activeSearch
+                , singleChoiceFacet = facet
+                , userSelectedSingleChoiceMsg = msg.userSelectedFacetItemSingleChoiceMsg
+                , userResetSingleChoiceMsg = msg.userResetSingleChoiceMsg
+                }
 
         Nothing ->
             none

@@ -32,7 +32,7 @@ import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -430,6 +430,14 @@ update session msg model =
 
         UserClickedSelectFacetItem alias facetValue label ->
             userClickedSelectFacetItem alias facetValue label model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UserClickedSingleChoiceFacetItem alias facetValue label ->
+            userClickedSingleChoiceFacetItem alias facetValue label model
+                |> probeSubmit ServerRespondedWithProbeData session
+
+        UsersClickedSingleChoiceReset alias ->
+            userResetSingleChoiceFacet alias model
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserRemovedActiveFilter alias value ->

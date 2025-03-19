@@ -43,6 +43,8 @@ type SearchMsg
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String LanguageMap
+    | UserClickedSingleChoiceFacetItem FacetAlias String LanguageMap
+    | UsersClickedSingleChoiceReset FacetAlias
     | UserRemovedActiveFilter FacetAlias String
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserInteractedWithQueryBuilder QueryBuilderMsg

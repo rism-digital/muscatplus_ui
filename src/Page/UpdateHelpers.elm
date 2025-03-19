@@ -20,6 +20,7 @@ module Page.UpdateHelpers exposing
     , userClickedResultForPreview
     , userClickedSelectFacetExpand
     , userClickedSelectFacetItem
+    , userClickedSingleChoiceFacetItem
     , userClickedToggleFacet
     , userEnteredTextInKeywordQueryBox
     , userEnteredTextInQueryFacet
@@ -28,6 +29,7 @@ module Page.UpdateHelpers exposing
     , userLostFocusOnRangeFacet
     , userPressedArrowKeysInSearchResultsList
     , userRemovedItemFromActiveFilters
+    , userResetSingleChoiceFacet
     )
 
 import ActiveSearch exposing (setActiveSearch, setActiveSuggestion, setExpandedFacets, setQueryFacetValues, setRangeFacetValues, toExpandedFacets, toQueryFacetValues, toRangeFacetValues)
@@ -531,6 +533,50 @@ userClickedSelectFacetItem alias facetValue label model =
                 )
                 activeFilters
                 |> Dict.filter (\_ value -> List.isEmpty value |> not)
+    in
+    toNextQuery model.activeSearch
+        |> setFilters newActiveFilters
+        |> flip setNextQuery model.activeSearch
+        |> flip setActiveSearch model
+
+
+userClickedSingleChoiceFacetItem : FacetAlias -> String -> LanguageMap -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
+userClickedSingleChoiceFacetItem alias facetValue label model =
+    let
+        activeFilters =
+            .nextQuery model.activeSearch
+                |> toFilters
+
+        newActiveFilters =
+            Dict.update alias
+                (ME.unpack
+                    (\() -> Just [ ( facetValue, label ) ])
+                    (\list ->
+                        if List.member ( facetValue, label ) list == False then
+                            Just (( facetValue, label ) :: list)
+
+                        else
+                            Just (LE.remove ( facetValue, label ) list)
+                    )
+                )
+                activeFilters
+                |> Dict.filter (\_ value -> List.isEmpty value |> not)
+    in
+    toNextQuery model.activeSearch
+        |> setFilters newActiveFilters
+        |> flip setNextQuery model.activeSearch
+        |> flip setActiveSearch model
+
+
+userResetSingleChoiceFacet : FacetAlias -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
+userResetSingleChoiceFacet alias model =
+    let
+        activeFilters =
+            .nextQuery model.activeSearch
+                |> toFilters
+
+        newActiveFilters =
+            Dict.remove alias activeFilters
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters

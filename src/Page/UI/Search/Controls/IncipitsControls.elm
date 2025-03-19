@@ -1,7 +1,8 @@
 module Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
 
-import Element exposing (Element, alignTop, column, paddingEach, row, spacingXY)
+import Element exposing (Element, alignTop, column, fill, paddingEach, row, spacing, spacingXY, width)
 import Language.LocalTranslations exposing (facetPanelTitles)
+import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Facets.Facets exposing (viewFacet, viewFacetsControlPanel)
 import Page.UI.Facets.FacetsConfig exposing (createFacetConfig)
 import Page.UI.Search.Controls.ControlsConfig exposing (ControlsConfig, PanelConfig)
@@ -45,6 +46,9 @@ viewFacetsForIncipitsMode cfg =
 
         hasNotation =
             viewFacet (createFacetConfig cfg "has-notation" []) cfg.facetMsgConfig
+
+        isMensural =
+            viewFacet (createFacetConfig cfg "is-mensural" []) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias incipitFacetPanels.incipitResultsPanel)
@@ -53,10 +57,15 @@ viewFacetsForIncipitsMode cfg =
         [ row
             [ paddingEach { bottom = 10, left = 0, right = 0, top = 0 }
             , spacingXY 20 0
+            , width fill
             ]
             [ column
-                [ alignTop ]
+                [ alignTop
+                , spacing sectionSpacing
+                , width fill
+                ]
                 [ row [] [ hasNotation ]
+                , row [ width fill ] [ isMensural ]
                 ]
             ]
         ]

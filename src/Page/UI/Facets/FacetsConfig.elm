@@ -28,6 +28,8 @@ type alias FacetMsgConfig msg =
     , userChangedFacetBehaviourSelectMsg : FacetAlias -> FacetBehaviours -> msg
     , userChangedSelectFacetSortSelectMsg : FacetAlias -> FacetSorts -> msg
     , userSelectedFacetItemSelectMsg : FacetAlias -> String -> LanguageMap -> msg
+    , userSelectedFacetItemSingleChoiceMsg : FacetAlias -> String -> LanguageMap -> msg
+    , userResetSingleChoiceMsg : FacetAlias -> msg
     , userInteractedWithPianoKeyboard : KeyboardMsg -> msg
     , userRemovedQueryMsg : String -> String -> msg
     , userEnteredTextQueryMsg : FacetAlias -> String -> String -> msg

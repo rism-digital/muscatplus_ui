@@ -27,6 +27,7 @@ module Page.RecordTypes.Search exposing
     , SearchPagination
     , SearchResult(..)
     , SelectFacet
+    , SingleChoiceFacet
     , SortBlock
     , SortData
     , SourceResultBody
@@ -35,6 +36,7 @@ module Page.RecordTypes.Search exposing
     , aliasLabelDecoder
     , extractIdFromSearchResult
     , facetsDecoder
+    , labelForValue
     , parseFacetBehaviourToString
     , parseFacetSortToString
     , parseStringToFacetBehaviour
@@ -51,7 +53,7 @@ module Page.RecordTypes.Search exposing
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder, andThen, bool, dict, float, int, list, maybe, nullable, string)
 import Json.Decode.Pipeline exposing (optional, required)
-import Language exposing (LanguageMap)
+import Language exposing (LanguageMap, toLanguageMap)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoderOne, renderedIncipitDecoderTwo)
 import Page.RecordTypes.Shared
@@ -99,6 +101,7 @@ type FacetData
     | NotationFacetData NotationFacet
     | QueryFacetData QueryFacet
     | ParameterFacetData ParameterFacet
+    | SingleChoiceFacetData SingleChoiceFacet
 
 
 toFacetLabel : FacetData -> LanguageMap
@@ -122,6 +125,9 @@ toFacetLabel facet =
         ParameterFacetData p ->
             p.label
 
+        SingleChoiceFacetData s ->
+            s.label
+
 
 {-|
 
@@ -135,6 +141,20 @@ toFacetLabel facet =
 -}
 type FacetItem
     = FacetItem String LanguageMap Float
+
+
+labelForValue : String -> List FacetItem -> LanguageMap
+labelForValue value facetItems =
+    LE.findMap
+        (\(FacetItem fval flabel _) ->
+            if fval == value then
+                Just flabel
+
+            else
+                Nothing
+        )
+        facetItems
+        |> Maybe.withDefault (toLanguageMap value)
 
 
 type alias FacetNotationOptions =
@@ -167,6 +187,7 @@ type FacetType
     | Notation
     | Query_
     | Parameter
+    | SingleChoice
     | UnknownFacetType
 
 
@@ -317,6 +338,13 @@ type alias SelectFacet =
     }
 
 
+type alias SingleChoiceFacet =
+    { alias : String
+    , label : LanguageMap
+    , items : List FacetItem
+    }
+
+
 type alias SortBlock =
     { default : String
     , options : List SortData
@@ -460,6 +488,9 @@ facetResponseConverter typeValue =
         Parameter ->
             Decode.map ParameterFacetData parameterFacetDecoder
 
+        SingleChoice ->
+            Decode.map SingleChoiceFacetData singleChoiceFacetDecoder
+
         UnknownFacetType ->
             Decode.fail ("Unknown facet type " ++ typeValue)
 
@@ -514,6 +545,9 @@ facetTypeFromJsonType facetType =
 
         "rism:ToggleFacet" ->
             Toggle
+
+        "rism:SingleChoiceFacet" ->
+            SingleChoice
 
         _ ->
             UnknownFacetType
@@ -800,3 +834,11 @@ institutionResultFlagsDecoder =
         |> optional "isDIAMMRecord" bool False
         |> optional "isCantusRecord" bool False
         |> optional "externalProjectURL" (maybe string) Nothing
+
+
+singleChoiceFacetDecoder : Decoder SingleChoiceFacet
+singleChoiceFacetDecoder =
+    Decode.succeed SingleChoiceFacet
+        |> required "alias" string
+        |> required "label" languageMapLabelDecoder
+        |> required "items" (list facetItemDecoder)

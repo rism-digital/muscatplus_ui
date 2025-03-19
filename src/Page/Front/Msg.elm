@@ -35,6 +35,8 @@ type FrontMsg
     | UserChangedSelectFacetSort FacetAlias FacetSorts
     | UserClickedSelectFacetExpand FacetAlias
     | UserClickedSelectFacetItem FacetAlias String LanguageMap
+    | UserClickedSingleChoiceFacetItem FacetAlias String LanguageMap
+    | UsersClickedSingleChoiceReset FacetAlias
     | UserInteractedWithPianoKeyboard KeyboardMsg
     | UserTriggeredSearchSubmit
     | UserResetAllFilters
