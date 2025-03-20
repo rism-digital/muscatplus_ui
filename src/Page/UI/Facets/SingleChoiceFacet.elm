@@ -4,6 +4,7 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, pointer, row, spacing, text, width)
 import Element.Events exposing (onClick)
+import Element.Input as Input
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage, toLanguageMap)
 import Page.RecordTypes.Search exposing (FacetItem(..), SingleChoiceFacet, labelForValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
