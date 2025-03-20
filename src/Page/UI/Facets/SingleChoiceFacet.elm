@@ -4,11 +4,11 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, pointer, row, spacing, text, width)
 import Element.Events exposing (onClick)
-import Element.Input as Input
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage, toLanguageMap)
 import Page.RecordTypes.Search exposing (FacetItem(..), SingleChoiceFacet, labelForValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Components exposing (basicRadioOption)
 import Page.UI.Facets.Shared exposing (facetTitleBar)
 import Url exposing (percentDecode)
 
@@ -101,6 +101,8 @@ viewOptions language optionList =
                 formattedCount =
                     formatNumberByLanguage language count
             in
-            Input.option value (text (optionLabel ++ " (" ++ formattedCount ++ ")"))
+            text (optionLabel ++ " (" ++ formattedCount ++ ")")
+                |> basicRadioOption
+                |> Input.optionWith value
         )
         optionList

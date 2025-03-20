@@ -2,6 +2,7 @@ module Page.UI.Components exposing
     ( DropdownSelectConfig
     , Tab(..)
     , basicCheckbox
+    , basicRadioOption
     , contentTypeIconChooser
     , dropdownSelect
     , externalLinkTemplate
@@ -34,11 +35,12 @@ module Page.UI.Components exposing
     , viewWindowTitleBar
     )
 
-import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, spacing, text, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, shrink, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Element.Input exposing (OptionState(..))
 import Element.Region as Region
 import Html as HT exposing (Html)
 import Html.Attributes as HA
@@ -81,8 +83,8 @@ basicCheckbox : Bool -> Element msg
 basicCheckbox checked =
     el
         [ htmlAttribute (HA.class "focusable")
-        , width (px 14)
-        , height (px 14)
+        , width (px 20)
+        , height (px 20)
         , Font.color (rgb 1 1 1)
         , alignTop
         , Font.size 9
@@ -141,6 +143,83 @@ basicCheckbox checked =
             )
         ]
         none
+
+
+basicRadioOption : Element msg -> OptionState -> Element msg
+basicRadioOption optionLabel status =
+    row
+        [ spacing 10
+        , alignLeft
+        , width shrink
+        , paddingEach { bottom = 1, left = 2, right = 0, top = 0 }
+        ]
+        [ el
+            [ width (px 20)
+            , height (px 20)
+            , Background.color colourScheme.white
+            , Border.rounded 10
+            , case status of
+                Selected ->
+                    HA.class "focusable" |> htmlAttribute
+
+                _ ->
+                    HA.class "" |> htmlAttribute
+            , Border.shadow
+                (case status of
+                    Idle ->
+                        { blur =
+                            1
+                        , color = rgb (238 / 255) (238 / 255) (238 / 255)
+                        , offset = ( 0, 0 )
+                        , size = 1
+                        }
+
+                    Focused ->
+                        { blur =
+                            0
+                        , color = rgb (238 / 255) (238 / 255) (238 / 255)
+                        , offset = ( 0, 0 )
+                        , size = 1
+                        }
+
+                    Selected ->
+                        { blur =
+                            1
+                        , color = rgba (238 / 255) (238 / 255) (238 / 255) 0
+                        , offset = ( 0, 0 )
+                        , size = 1
+                        }
+                )
+            , Border.width
+                (case status of
+                    Idle ->
+                        1
+
+                    Focused ->
+                        1
+
+                    Selected ->
+                        5
+                )
+            , Border.color
+                (case status of
+                    Idle ->
+                        rgb (211 / 255) (211 / 255) (211 / 255)
+
+                    Focused ->
+                        rgb (211 / 255) (211 / 255) (211 / 255)
+
+                    Selected ->
+                        rgb (59 / 255) (153 / 255) (252 / 255)
+                )
+            ]
+            none
+        , el
+            [ width fill
+            , HA.class "unfocusable" |> htmlAttribute
+            ]
+            optionLabel
+        ]
 
 
 dropdownSelect :
