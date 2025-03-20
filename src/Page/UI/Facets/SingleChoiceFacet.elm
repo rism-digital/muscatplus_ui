@@ -1,10 +1,10 @@
-module Page.UI.Facets.SingleChoiceFacet exposing (..)
+module Page.UI.Facets.SingleChoiceFacet exposing (SingleChoiceFacetConfig, viewSingleChoiceFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, Option, alignLeft, alignRight, alignTop, column, el, fill, none, pointer, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, pointer, row, spacing, text, width)
 import Element.Events exposing (onClick)
-import Element.Input as Input exposing (option)
+import Element.Input as Input
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, formatNumberByLanguage, toLanguageMap)
 import Page.RecordTypes.Search exposing (FacetItem(..), SingleChoiceFacet, labelForValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -80,10 +80,10 @@ viewSingleChoiceFacet cfg =
                     ]
                     { label = Input.labelHidden (extractLabelFromLanguageMap cfg.language (.label cfg.singleChoiceFacet))
                     , onChange = changeMsg
-                    , selected = chosenOption
                     , options =
                         .items cfg.singleChoiceFacet
                             |> viewOptions cfg.language
+                    , selected = chosenOption
                     }
                 ]
             ]

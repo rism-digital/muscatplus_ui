@@ -3,7 +3,7 @@ module Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForC
 import Config as C
 import Dict exposing (Dict)
 import Dict.Extra as DE
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, fillPortion, height, maximum, newTabLink, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, maximum, newTabLink, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events

@@ -11,7 +11,7 @@ import Language exposing (Language, LanguageMap, LanguageMapReplacementVariable(
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (headingLG, headingMD, headingSM, minimalDropShadow)
+import Page.UI.Attributes exposing (headingLG, headingSM, minimalDropShadow)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)

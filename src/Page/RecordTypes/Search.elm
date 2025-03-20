@@ -543,11 +543,11 @@ facetTypeFromJsonType facetType =
         "rism:SelectFacet" ->
             Select
 
-        "rism:ToggleFacet" ->
-            Toggle
-
         "rism:SingleChoiceFacet" ->
             SingleChoice
+
+        "rism:ToggleFacet" ->
+            Toggle
 
         _ ->
             UnknownFacetType
@@ -564,8 +564,8 @@ incipitResultBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "partOf" partOfSectionBodyDecoder
-        |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
-        |> optional "rendered" (Decode.maybe (list (Decode.oneOf [ renderedIncipitDecoderOne, renderedIncipitDecoderTwo ]))) Nothing
+        |> optional "summary" (maybe (dict labelValueDecoder)) Nothing
+        |> optional "rendered" (maybe (list (Decode.oneOf [ renderedIncipitDecoderOne, renderedIncipitDecoderTwo ]))) Nothing
 
 
 institutionResultBodyDecoder : Decoder InstitutionResultBody
@@ -573,8 +573,8 @@ institutionResultBodyDecoder =
     Decode.succeed InstitutionResultBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
-        |> optional "flags" (Decode.maybe institutionResultFlagsDecoder) Nothing
+        |> optional "summary" (maybe (dict labelValueDecoder)) Nothing
+        |> optional "flags" (maybe institutionResultFlagsDecoder) Nothing
 
 
 modeFacetDecoder : Decoder ModeFacet
@@ -651,8 +651,8 @@ personResultBodyDecoder =
     Decode.succeed PersonResultBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
-        |> optional "flags" (Decode.maybe personResultFlagsDecoder) Nothing
+        |> optional "summary" (maybe (dict labelValueDecoder)) Nothing
+        |> optional "flags" (maybe personResultFlagsDecoder) Nothing
 
 
 queryFacetDecoder : Decoder QueryFacet
@@ -696,7 +696,7 @@ searchBodyDecoder =
         |> optional "items" (list searchResultDecoder) []
         |> required "view" searchPaginationDecoder
         |> optional "facets" facetsDecoder Dict.empty
-        |> optional "modes" (Decode.maybe modeFacetDecoder) Nothing
+        |> optional "modes" (maybe modeFacetDecoder) Nothing
         |> required "sorts" searchSortBlockDecoder
         |> optional "queryFields" (list (aliasLabelDecoder QueryField)) []
         |> required "pageSizes" (list string)
@@ -774,9 +774,9 @@ sourceResultBodyDecoder =
     Decode.succeed SourceResultBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
-        |> optional "partOf" (Decode.maybe partOfSectionBodyDecoder) Nothing
-        |> optional "summary" (Decode.maybe (dict labelValueDecoder)) Nothing
-        |> optional "flags" (Decode.maybe sourceResultFlagsDecoder) Nothing
+        |> optional "partOf" (maybe partOfSectionBodyDecoder) Nothing
+        |> optional "summary" (maybe (dict labelValueDecoder)) Nothing
+        |> optional "flags" (maybe sourceResultFlagsDecoder) Nothing
 
 
 sourceResultFlagsDecoder : Decoder SourceResultFlags

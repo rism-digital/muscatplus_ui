@@ -1,4 +1,4 @@
-module Page.Downloader.CsvHelpers exposing (convertResult, createSearchUrlRecord, resultListToCsvString)
+module Page.Downloader.CsvHelpers exposing (CsvRecordType, convertResult, createSearchUrlRecord, resultListToCsvString)
 
 import Csv.Encode
 import Dict exposing (Dict)
@@ -200,14 +200,6 @@ extractFromSummaryDict dictKey summaryDict =
 convertSourceResultBody : SourceResultBody -> CsvRecordType
 convertSourceResultBody body =
     let
-        sourceType =
-            Maybe.map (\fs -> extractLabelFromLanguageMap English (.label fs.sourceType)) body.flags
-                |> Maybe.withDefault ""
-
-        recordType =
-            Maybe.map (\fs -> extractLabelFromLanguageMap English (.label fs.recordType)) body.flags
-                |> Maybe.withDefault ""
-
         isDIAMMRecord =
             Maybe.map .isDIAMMRecord body.flags
                 |> Maybe.withDefault False
@@ -215,6 +207,14 @@ convertSourceResultBody body =
         isCantusRecord =
             Maybe.map .isCantusRecord body.flags
                 |> Maybe.withDefault False
+
+        sourceType =
+            Maybe.map (\fs -> extractLabelFromLanguageMap English (.label fs.sourceType)) body.flags
+                |> Maybe.withDefault ""
+
+        recordType =
+            Maybe.map (\fs -> extractLabelFromLanguageMap English (.label fs.recordType)) body.flags
+                |> Maybe.withDefault ""
 
         catalogSource =
             if isDIAMMRecord then
@@ -269,15 +269,15 @@ convertSourceResultBody body =
 convertPersonResultBody : PersonResultBody -> CsvRecordType
 convertPersonResultBody body =
     let
+        isDIAMMRecord =
+            Maybe.map .isDIAMMRecord body.flags
+                |> Maybe.withDefault False
+
         gender =
             extractFromSummaryDict "gender" body.summary
 
         numberOfSources =
             extractFromSummaryDict "numSources" body.summary
-
-        isDIAMMRecord =
-            Maybe.map .isDIAMMRecord body.flags
-                |> Maybe.withDefault False
 
         catalogSource =
             if isDIAMMRecord then
@@ -307,12 +307,6 @@ convertPersonResultBody body =
 convertInstitutionResultBody : InstitutionResultBody -> CsvRecordType
 convertInstitutionResultBody body =
     let
-        country =
-            extractFromSummaryDict "country" body.summary
-
-        numberOfSources =
-            extractFromSummaryDict "totalSources" body.summary
-
         isDIAMMRecord =
             Maybe.map .isDIAMMRecord body.flags
                 |> Maybe.withDefault False
@@ -320,6 +314,12 @@ convertInstitutionResultBody body =
         isCantusRecord =
             Maybe.map .isCantusRecord body.flags
                 |> Maybe.withDefault False
+
+        country =
+            extractFromSummaryDict "country" body.summary
+
+        numberOfSources =
+            extractFromSummaryDict "totalSources" body.summary
 
         catalogSource =
             if isDIAMMRecord then

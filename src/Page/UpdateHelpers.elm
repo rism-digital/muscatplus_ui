@@ -515,23 +515,20 @@ userClickedSelectFacetItem :
     -> { a | activeSearch : ActiveSearch msg }
 userClickedSelectFacetItem alias facetValue label model =
     let
-        activeFilters =
+        newActiveFilters =
             .nextQuery model.activeSearch
                 |> toFilters
+                |> Dict.update alias
+                    (ME.unpack
+                        (\() -> Just [ ( facetValue, label ) ])
+                        (\list ->
+                            if List.member ( facetValue, label ) list == False then
+                                Just (( facetValue, label ) :: list)
 
-        newActiveFilters =
-            Dict.update alias
-                (ME.unpack
-                    (\() -> Just [ ( facetValue, label ) ])
-                    (\list ->
-                        if List.member ( facetValue, label ) list == False then
-                            Just (( facetValue, label ) :: list)
-
-                        else
-                            Just (LE.remove ( facetValue, label ) list)
+                            else
+                                Just (LE.remove ( facetValue, label ) list)
+                        )
                     )
-                )
-                activeFilters
                 |> Dict.filter (\_ value -> List.isEmpty value |> not)
     in
     toNextQuery model.activeSearch
@@ -543,24 +540,10 @@ userClickedSelectFacetItem alias facetValue label model =
 userClickedSingleChoiceFacetItem : FacetAlias -> String -> LanguageMap -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userClickedSingleChoiceFacetItem alias facetValue label model =
     let
-        activeFilters =
+        newActiveFilters =
             .nextQuery model.activeSearch
                 |> toFilters
-
-        newActiveFilters =
-            Dict.update alias
-                (ME.unpack
-                    (\() -> Just [ ( facetValue, label ) ])
-                    (\list ->
-                        if List.member ( facetValue, label ) list == False then
-                            Just (( facetValue, label ) :: list)
-
-                        else
-                            Just (LE.remove ( facetValue, label ) list)
-                    )
-                )
-                activeFilters
-                |> Dict.filter (\_ value -> List.isEmpty value |> not)
+                |> Dict.insert alias [ ( facetValue, label ) ]
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters
@@ -571,12 +554,10 @@ userClickedSingleChoiceFacetItem alias facetValue label model =
 userResetSingleChoiceFacet : FacetAlias -> { a | activeSearch : ActiveSearch msg } -> { a | activeSearch : ActiveSearch msg }
 userResetSingleChoiceFacet alias model =
     let
-        activeFilters =
+        newActiveFilters =
             .nextQuery model.activeSearch
                 |> toFilters
-
-        newActiveFilters =
-            Dict.remove alias activeFilters
+                |> Dict.remove alias
     in
     toNextQuery model.activeSearch
         |> setFilters newActiveFilters
