@@ -351,30 +351,13 @@ modeQueryStringToResultMode modeList =
 
 pageParamParser : Q.Parser Int
 pageParamParser =
-    -- returns 1 if the page parameter cannot be parsed to an int.
-    Q.custom "page"
-        (\stringList ->
-            case stringList of
-                [ str ] ->
-                    Maybe.withDefault 1 (String.toInt str)
-
-                _ ->
-                    1
-        )
+    Q.map (Maybe.withDefault 1) (Q.int "page")
 
 
 rowsParamParser : Q.Parser Int
 rowsParamParser =
     -- returns the default rows if the rows parameter cannot be parsed to an int.
-    Q.custom "rows"
-        (\stringList ->
-            case stringList of
-                [ str ] ->
-                    Maybe.withDefault 1 (String.toInt str)
-
-                _ ->
-                    C.defaultRows
-        )
+    Q.map (Maybe.withDefault 1) (Q.int "rows")
 
 
 setPage : Int -> { a | page : Int } -> { a | page : Int }
