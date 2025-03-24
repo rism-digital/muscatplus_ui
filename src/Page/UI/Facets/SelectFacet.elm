@@ -2,7 +2,7 @@ module Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignRight, alignTop, column, el, fill, height, maximum, mouseOver, none, onLeft, padding, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, maximum, mouseOver, none, onLeft, padding, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -356,6 +356,7 @@ viewSelectFacetItem config fitem =
                     [ alignLeft
                     , bodySM
                     , width fill
+                    , centerY
                     ]
                     (paragraph
                         [ width fill ]

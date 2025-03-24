@@ -882,7 +882,10 @@ tabView cfg =
                         , alignLeft
                         , centerY
                         ]
-                        [ el [] (text (extractLabelFromLanguageMap cfg.language label)) ]
+                        [ el
+                            []
+                            (text (extractLabelFromLanguageMap cfg.language label))
+                        ]
     in
     column
         [ alignLeft
