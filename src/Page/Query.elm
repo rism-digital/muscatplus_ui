@@ -357,7 +357,7 @@ pageParamParser =
 rowsParamParser : Q.Parser Int
 rowsParamParser =
     -- returns the default rows if the rows parameter cannot be parsed to an int.
-    Q.map (Maybe.withDefault 1) (Q.int "rows")
+    Q.map (Maybe.withDefault C.defaultRows) (Q.int "rows")
 
 
 setPage : Int -> { a | page : Int } -> { a | page : Int }
