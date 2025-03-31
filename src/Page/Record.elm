@@ -500,7 +500,7 @@ update session msg model =
                                     let
                                         searchRequest =
                                             Url.fromString searchUrl
-                                                |> ME.unwrap Cmd.none (\a -> recordSearchRequest a)
+                                                |> ME.unwrap Cmd.none recordSearchRequest
                                     in
                                     Cmd.batch
                                         [ searchRequest

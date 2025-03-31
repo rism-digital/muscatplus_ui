@@ -209,11 +209,11 @@ update msg model =
                     else
                         text
 
+                -- Ensure that any pitches letters that are entered are upper-cased
+                -- skips "b" since that can also be a flat!
                 lettersToUppercase =
                     Set.fromList [ 'a', 'c', 'd', 'e', 'f', 'g' ]
 
-                -- Ensure that any pitches letters that are entered are upper-cased
-                -- skips "b" since that can also be a flat!
                 newText =
                     String.map
                         (\c ->

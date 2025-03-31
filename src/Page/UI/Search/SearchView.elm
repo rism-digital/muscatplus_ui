@@ -168,12 +168,10 @@ viewSearchResultsSection cfg resultsLoading body =
         language =
             .language cfg.session
 
-        nextQuery =
+        hasActiveFilters =
             .activeSearch cfg.model
                 |> .nextQuery
-
-        hasActiveFilters =
-            nextQuery.filters
+                |> .filters
                 |> Dict.isEmpty
                 |> not
 
@@ -283,11 +281,9 @@ viewSearchResultsSection cfg resultsLoading body =
 viewActiveFilters : ActiveFiltersCfg a b msg -> Element msg
 viewActiveFilters { session, model, userRemovedActiveFilterMsg } =
     let
-        nextQuery =
-            .nextQuery model.activeSearch
-
         filters =
-            nextQuery.filters
+            .nextQuery model.activeSearch
+                |> .filters
                 |> Dict.toList
 
         asfTmpl : ( String, List ( String, LanguageMap ) ) -> List (Element msg)
@@ -378,7 +374,8 @@ viewSearchControls cfg =
                     True
 
         qText =
-            toNextQuery (.activeSearch cfg.model)
+            .activeSearch cfg.model
+                |> .nextQuery
                 |> toKeywordQuery
                 |> Maybe.withDefault ""
 
