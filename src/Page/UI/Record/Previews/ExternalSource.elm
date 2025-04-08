@@ -339,24 +339,6 @@ viewExternalSourceExternalResourcesSection { language, preRenderedFormatter } bo
         ]
 
 
-
---wrappedRow
---[ width fill
---, height fill
---, alignTop
---]
---[ column
---    labelFieldColumnAttributes
---    [ renderLabel language linkSection.label ]
---, column
---    valueFieldColumnAttributes
---    [ textColumn
---        [ spacing lineSpacing ]
---        (List.map (viewExternalResource language) linkSection.items)
---    ]
---]
-
-
 viewExternalResource : Language -> ExternalSourceExternalResource -> Element msg
 viewExternalResource language body =
     wrappedRow
