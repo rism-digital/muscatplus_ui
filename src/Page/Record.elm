@@ -190,25 +190,22 @@ update session msg model =
                         _ ->
                             Dict.empty
 
-                activeFilters =
+                nextQuery =
                     toNextQuery model.activeSearch
-                        |> .filters
 
                 updatedFiltersWithCorrectLanguageMaps =
                     case response of
                         SearchData body ->
-                            updateActiveFiltersWithLangMapResultsFromServer activeFilters body.facets
+                            updateActiveFiltersWithLangMapResultsFromServer nextQuery.filters body.facets
 
                         _ ->
-                            activeFilters
+                            nextQuery.filters
 
                 newNextQuery =
-                    toNextQuery model.activeSearch
-                        |> setFilters updatedFiltersWithCorrectLanguageMaps
+                    setFilters updatedFiltersWithCorrectLanguageMaps nextQuery
 
                 newActiveSearch =
-                    model.activeSearch
-                        |> setAliasLabelMap aliasLabelMap
+                    setAliasLabelMap aliasLabelMap model.activeSearch
                         |> setNextQuery newNextQuery
 
                 probeState =
@@ -303,12 +300,10 @@ update session msg model =
             )
 
         ServerRespondedWithSuggestionData (Ok ( _, response )) ->
-            let
-                newModel =
-                    setActiveSuggestion (Just response) model.activeSearch
-                        |> flip setActiveSearch model
-            in
-            ( newModel, Cmd.none )
+            ( setActiveSuggestion (Just response) model.activeSearch
+                |> flip setActiveSearch model
+            , Cmd.none
+            )
 
         ServerRespondedWithSuggestionData (Err _) ->
             ( model, Cmd.none )
@@ -320,7 +315,9 @@ update session msg model =
             ( model, Cmd.none )
 
         ClientStartedAnimatingPreviewWindowClose ->
-            ( { model | previewAnimationStatus = NoAnimation }
+            ( { model
+                | previewAnimationStatus = NoAnimation
+              }
             , Cmd.none
             )
 
@@ -438,12 +435,8 @@ update session msg model =
                 |> searchSubmit session
 
         UserClickedSearchResultsPagination pageUrl ->
-            let
-                oldData =
-                    chooseResponse model.searchResults
-            in
             ( { model
-                | searchResults = Loading oldData
+                | searchResults = Loading (chooseResponse model.searchResults)
                 , preview = NoResponseToShow
               }
             , Cmd.batch
@@ -463,12 +456,8 @@ update session msg model =
             )
 
         UserClickedExpandIncipitInfoSectionInPreview incipitIdent ->
-            let
-                newExpandedSet =
-                    SE.toggle incipitIdent model.incipitInfoExpanded
-            in
             ( { model
-                | incipitInfoExpanded = newExpandedSet
+                | incipitInfoExpanded = SE.toggle incipitIdent model.incipitInfoExpanded
               }
             , Cmd.none
             )
@@ -517,22 +506,18 @@ update session msg model =
             userPressedArrowKeysInSearchResultsList arrowDirection session model
 
         UserClickedOpenQueryBuilder ->
-            let
-                newActiveSearch =
-                    setQueryBuilder (Just QueryBuilder.init) model.activeSearch
-            in
             ( { model
-                | activeSearch = newActiveSearch
+                | activeSearch = setQueryBuilder (Just QueryBuilder.init) model.activeSearch
               }
             , Cmd.none
             )
 
         UserClickedCloseQueryBuilder ->
-            let
-                newActiveSearch =
-                    setQueryBuilder Nothing model.activeSearch
-            in
-            ( { model | activeSearch = newActiveSearch }, Cmd.none )
+            ( { model
+                | activeSearch = setQueryBuilder Nothing model.activeSearch
+              }
+            , Cmd.none
+            )
 
         UserInteractedWithQueryBuilder _ ->
             ( model, Cmd.none )
@@ -562,15 +547,9 @@ update session msg model =
 
         UserClickedOpenDownloader ->
             let
-                nextQuery =
-                    .nextQuery model.activeSearch
-
-                keyboardQuery =
-                    .keyboard model.activeSearch
-
                 modelCfg =
-                    { keyboard = keyboardQuery
-                    , queryArgs = nextQuery
+                    { keyboard = .keyboard model.activeSearch
+                    , queryArgs = .nextQuery model.activeSearch
                     , session = session
                     }
             in

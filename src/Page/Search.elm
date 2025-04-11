@@ -62,11 +62,7 @@ type alias SearchConfig =
 
 
 convertFacetToResultMode : FacetItem -> ResultMode
-convertFacetToResultMode facet =
-    let
-        (FacetItem qval _ _) =
-            facet
-    in
+convertFacetToResultMode (FacetItem qval _ _) =
     parseStringToResultMode qval
 
 
@@ -154,12 +150,9 @@ searchSubmit session model =
             setNextQuery resetPageInQueryArgs model.activeSearch
                 |> flip setActiveSearch model
 
-        oldData =
-            chooseResponse model.response
-
         newModel =
             { nationalCollectionSetModel
-                | response = Loading oldData
+                | response = Loading (chooseResponse model.response)
                 , preview = NoResponseToShow
             }
 
@@ -176,7 +169,8 @@ searchSubmit session model =
                 |> buildQueryParameters
 
         searchUrl =
-            serverUrl [ "search" ] (List.append textQueryParameters notationQueryParameters)
+            List.append textQueryParameters notationQueryParameters
+                |> serverUrl [ "search" ]
     in
     ( newModel
     , Nav.pushUrl session.key searchUrl
@@ -334,12 +328,16 @@ update session msg model =
             ( model, Cmd.none )
 
         ClientStartedAnimatingPreviewWindowClose ->
-            ( { model | previewAnimationStatus = MovingOut }
+            ( { model
+                | previewAnimationStatus = MovingOut
+              }
             , Cmd.none
             )
 
         ClientFinishedAnimatingPreviewWindowShow ->
-            ( { model | previewAnimationStatus = ShownAndNotMoving }
+            ( { model
+                | previewAnimationStatus = ShownAndNotMoving
+              }
             , Cmd.none
             )
 
@@ -498,23 +496,15 @@ update session msg model =
             ( model, Cmd.map UserInteractedWithQueryBuilder qbCmd )
 
         UserClickedOpenQueryBuilder ->
-            let
-                newActiveSearch =
-                    setQueryBuilder (Just QueryBuilder.init) model.activeSearch
-            in
             ( { model
-                | activeSearch = newActiveSearch
+                | activeSearch = setQueryBuilder (Just QueryBuilder.init) model.activeSearch
               }
             , Cmd.none
             )
 
         UserClickedCloseQueryBuilder ->
-            let
-                newActiveSearch =
-                    setQueryBuilder Nothing model.activeSearch
-            in
             ( { model
-                | activeSearch = newActiveSearch
+                | activeSearch = setQueryBuilder Nothing model.activeSearch
               }
             , Cmd.none
             )
@@ -544,15 +534,9 @@ update session msg model =
 
         UserClickedOpenDownloader ->
             let
-                nextQuery =
-                    .nextQuery model.activeSearch
-
-                keyboardQuery =
-                    .keyboard model.activeSearch
-
                 modelCfg =
-                    { keyboard = keyboardQuery
-                    , queryArgs = nextQuery
+                    { keyboard = .keyboard model.activeSearch
+                    , queryArgs = .nextQuery model.activeSearch
                     , session = session
                     }
             in
