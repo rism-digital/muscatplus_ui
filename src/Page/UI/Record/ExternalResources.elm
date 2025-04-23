@@ -73,6 +73,9 @@ viewExternalResourceIiifManifest language body =
         , spacing 5
         ]
         [ el
+            [ alignLeft ]
+            (text (extractLabelFromLanguageMap language body.label ++ ": "))
+        , el
             [ width (px 18)
             , height (px 19)
             , alignLeft
