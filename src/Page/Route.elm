@@ -12,6 +12,7 @@ type Route
     | SearchPageRoute QueryArgs KeyboardQuery
     | SourcePageRoute Int
     | SourceContentsPageRoute Int QueryArgs
+    | SourceHoldingsPageRoute Int Int
     | PersonPageRoute Int
     | PersonSourcePageRoute Int QueryArgs
     | InstitutionPageRoute Int
@@ -46,6 +47,7 @@ routeParser =
         , P.map SearchPageRoute (s "search" <?> queryParamsParser <?> notationParamParser)
         , P.map SourcePageRoute (s "sources" </> P.int)
         , P.map SourceContentsPageRoute (s "sources" </> P.int </> s "contents" <?> queryParamsParser)
+        , P.map SourceHoldingsPageRoute (s "sources" </> P.int </> s "holdings" </> P.int)
         , P.map PersonPageRoute (s "people" </> P.int)
         , P.map PersonSourcePageRoute (s "people" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map InstitutionPageRoute (s "institutions" </> P.int)

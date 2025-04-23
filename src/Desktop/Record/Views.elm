@@ -1,6 +1,7 @@
 module Desktop.Record.Views exposing (view)
 
 import Desktop.Error.Views
+import Desktop.Record.HoldingPage exposing (viewFullHoldingPage)
 import Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 import Desktop.Record.PersonPage exposing (viewFullPersonPage)
 import Desktop.Record.SourcePage exposing (viewFullSourcePage)
@@ -22,6 +23,9 @@ viewChooser session model dataType =
 
         InstitutionData body ->
             viewFullInstitutionPage session model body
+
+        HoldingData body ->
+            viewFullHoldingPage session model body
 
         _ ->
             none

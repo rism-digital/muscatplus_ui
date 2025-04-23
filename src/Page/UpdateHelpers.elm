@@ -203,16 +203,10 @@ probeSubmit :
     -> { a | activeSearch : ActiveSearch msg, probeResponse : ProbeStatus }
     -> ( { a | activeSearch : ActiveSearch msg, probeResponse : ProbeStatus }, Cmd msg )
 probeSubmit probeMsg session model =
-    let
-        newModel =
-            addNationalCollectionFilter session.restrictedToNationalCollection model
-                |> setProbeResponse Probing
-
-        probeUrl =
-            createProbeUrl session model.activeSearch
-    in
-    ( newModel
-    , createProbeRequestWithDecoder probeMsg probeUrl
+    ( addNationalCollectionFilter session.restrictedToNationalCollection model
+        |> setProbeResponse Probing
+    , createProbeUrl session model.activeSearch
+        |> createProbeRequestWithDecoder probeMsg
     )
 
 
@@ -474,16 +468,13 @@ userClickedResultForPreview result session model =
         currentUrl =
             session.url
 
-        resultUrl =
-            Url.fromString result
-
         resPath =
-            Maybe.map
-                (\p ->
-                    String.dropLeft 1 p.path
-                        |> convertPathToNodeId
-                )
-                resultUrl
+            Url.fromString result
+                |> Maybe.map
+                    (\p ->
+                        String.dropLeft 1 p.path
+                            |> convertPathToNodeId
+                    )
     in
     ( { model
         | preview = Loading Nothing
@@ -808,12 +799,9 @@ correlateQueryValuesWithFacetLangMap qValues serverValues =
         (\( qVal, qLabel ) ->
             LE.find
                 (\(FacetItem fVal _ _) ->
-                    let
-                        decodedFVal =
-                            percentDecode fVal
-                                |> Maybe.withDefault fVal
-                    in
-                    decodedFVal == qVal
+                    percentDecode fVal
+                        |> Maybe.withDefault fVal
+                        |> (==) qVal
                 )
                 serverValues
                 |> ME.unpack

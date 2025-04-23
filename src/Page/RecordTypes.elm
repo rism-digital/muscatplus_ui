@@ -8,6 +8,7 @@ type RecordType
     | Person
     | Institution
     | Place
+    | Holding
     | Incipit
     | CollectionSearchResult
     | Front
@@ -29,6 +30,8 @@ recordTypeOptions =
     , ( "rism:Institution", Institution )
     , ( "rism:Incipit", Incipit )
     , ( "rism:Place", Place )
+    , ( "rism:Holding", Holding )
+    , ( "rism:Exemplar", Holding ) -- alias for now.
     , ( "Collection", CollectionSearchResult )
     , ( "rism:Front", Front )
     , ( "rism:ExternalRecord", ExternalRecord )

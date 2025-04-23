@@ -4,15 +4,17 @@ import Element exposing (Element, above, alignTop, column, el, fill, height, lin
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
+import Page.RecordTypes.Holding exposing (BoundWithSectionBody, HoldingBody)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.RecordTypes.Source exposing (BoundWithSectionBody, ExemplarBody, ExemplarsSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
+import Page.RecordTypes.Source exposing (ExemplarsSectionBody)
+import Page.UI.Attributes exposing (bodyRegular, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (externalLinkTemplate, h3s)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources)
+import Page.UI.Record.PageTemplate exposing (pageUriTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
@@ -49,7 +51,7 @@ viewExemplar :
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
-    -> ExemplarBody
+    -> HoldingBody
     -> Element msg
 viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplar =
     row
@@ -77,7 +79,8 @@ viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipF
                     [ width fill
                     , spacing lineSpacing
                     ]
-                    [ viewMaybe (summaryFormatter language) exemplar.summary
+                    [ pageUriTemplate language bodyRegular exemplar
+                    , viewMaybe (summaryFormatter language) exemplar.summary
                     , viewMaybe (paragraphFormatter language) exemplar.notes
                     , viewMaybe
                         (viewRelationshipsSection
@@ -172,11 +175,13 @@ viewExemplarExternalResourcesSection :
 viewExemplarExternalResourcesSection { language, preRenderedFormatter } extSection =
     let
         externalResourcesList =
-            Maybe.map (\i -> [ viewExternalResources language i ]) extSection.items
+            Maybe.map (viewExternalResources language) extSection.items
+                |> Maybe.map List.singleton
                 |> Maybe.withDefault []
 
         externalRecordsList =
-            Maybe.map (\i -> [ viewExternalRecords language i ]) extSection.externalRecords
+            Maybe.map (viewExternalRecords language) extSection.externalRecords
+                |> Maybe.map List.singleton
                 |> Maybe.withDefault []
 
         valuesList =

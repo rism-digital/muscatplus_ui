@@ -157,6 +157,17 @@ init flags initialUrl key =
                 ]
             )
 
+        SourceHoldingsPageRoute _ _ ->
+            let
+                ( initialBody, initialCmds ) =
+                    recordHoldingsRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        }
+            in
+            ( HoldingPage session initialBody, Cmd.batch [ initialCmds ] )
+
         PersonPageRoute _ ->
             let
                 ( initialBody, initialCmds ) =
@@ -350,5 +361,32 @@ recordContentsRouteHelper { initialUrl, qargs, route, session } =
         , Record.recordSearchRequest sourcesUrl
         , Record.requestPreviewIfSelected initialBody.selectedResult
         ]
+        |> Cmd.map Msg.UserInteractedWithRecordPage
+    )
+
+
+recordHoldingsRouteHelper :
+    { initialUrl : Url
+    , route : Route
+    , session : Session
+    }
+    -> ( RecordPageModel RecordMsg, Cmd Msg )
+recordHoldingsRouteHelper { initialUrl, route, session } =
+    let
+        recordCfg =
+            { incomingUrl = initialUrl
+            , route = route
+            , queryArgs = Nothing
+            , nationalCollection = session.restrictedToNationalCollection
+            , searchPreferences = session.searchPreferences
+            }
+
+        initialBody =
+            Record.init recordCfg
+                |> addNationalCollectionFilter session.restrictedToNationalCollection
+    in
+    ( initialBody
+    , Cmd.batch
+        [ Record.recordPageRequest session.cacheBuster initialUrl ]
         |> Cmd.map Msg.UserInteractedWithRecordPage
     )

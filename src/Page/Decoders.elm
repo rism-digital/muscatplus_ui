@@ -1,14 +1,14 @@
-module Page.Decoders exposing (aboutResponseDecoder, recordResponseDecoder)
+module Page.Decoders exposing (recordResponseDecoder)
 
-import Json.Decode as Decode exposing (Decoder, andThen, string)
+import Json.Decode exposing (Decoder, andThen, fail, field, map, string)
 import Page.RecordTypes
     exposing
         ( RecordType(..)
         , recordTypeFromJsonType
         )
-import Page.RecordTypes.About exposing (aboutBodyDecoder)
 import Page.RecordTypes.ExternalRecord exposing (externalRecordBodyDecoder)
 import Page.RecordTypes.Front exposing (frontBodyDecoder)
+import Page.RecordTypes.Holding exposing (holdingBodyDecoder)
 import Page.RecordTypes.Incipit exposing (incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)
 import Page.RecordTypes.Person exposing (personBodyDecoder)
@@ -17,75 +17,38 @@ import Page.RecordTypes.Source exposing (sourceBodyDecoder)
 import Response exposing (ServerData(..))
 
 
-aboutResponseDecoder : Decoder ServerData
-aboutResponseDecoder =
-    Decode.map AboutData aboutBodyDecoder
-
-
 recordResponseDecoder : Decoder ServerData
 recordResponseDecoder =
-    Decode.field "type" string
+    field "type" string
         |> andThen recordResponseConverter
-
-
-frontResponseDecoder : Decoder ServerData
-frontResponseDecoder =
-    Decode.map FrontData frontBodyDecoder
-
-
-incipitResponseDecoder : Decoder ServerData
-incipitResponseDecoder =
-    Decode.map IncipitData incipitBodyDecoder
-
-
-institutionResponseDecoder : Decoder ServerData
-institutionResponseDecoder =
-    Decode.map InstitutionData institutionBodyDecoder
-
-
-personResponseDecoder : Decoder ServerData
-personResponseDecoder =
-    Decode.map PersonData personBodyDecoder
-
-
-externalRecordResponseDecoder : Decoder ServerData
-externalRecordResponseDecoder =
-    Decode.map ExternalData externalRecordBodyDecoder
 
 
 recordResponseConverter : String -> Decoder ServerData
 recordResponseConverter typevalue =
     case recordTypeFromJsonType typevalue of
         Source ->
-            sourceResponseDecoder
+            map SourceData sourceBodyDecoder
 
         Person ->
-            personResponseDecoder
+            map PersonData personBodyDecoder
 
         Institution ->
-            institutionResponseDecoder
+            map InstitutionData institutionBodyDecoder
+
+        Holding ->
+            map HoldingData holdingBodyDecoder
 
         Incipit ->
-            incipitResponseDecoder
+            map IncipitData incipitBodyDecoder
 
         CollectionSearchResult ->
-            searchResponseDecoder
+            map SearchData searchBodyDecoder
 
         Front ->
-            frontResponseDecoder
+            map FrontData frontBodyDecoder
 
         ExternalRecord ->
-            externalRecordResponseDecoder
+            map ExternalData externalRecordBodyDecoder
 
         _ ->
-            Decode.fail "Could not decode record body response"
-
-
-searchResponseDecoder : Decoder ServerData
-searchResponseDecoder =
-    Decode.map SearchData searchBodyDecoder
-
-
-sourceResponseDecoder : Decoder ServerData
-sourceResponseDecoder =
-    Decode.map SourceData sourceBodyDecoder
+            fail "Could not decode record body response"

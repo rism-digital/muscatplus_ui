@@ -50,14 +50,14 @@ viewExternalAuthority language authority =
                 [ text (extractLabelFromLanguageMap language authority.label) ]
         )
         (\url ->
-            paragraph
+            row
                 [ width fill
                 , alignLeft
                 , spacing 5
                 ]
                 [ newTabLink
                     [ linkColour ]
-                    { label = text (extractLabelFromLanguageMap language authority.label)
+                    { label = paragraph [] [ text (extractLabelFromLanguageMap language authority.label) ]
                     , url = url
                     }
                 , externalLinkTemplate url

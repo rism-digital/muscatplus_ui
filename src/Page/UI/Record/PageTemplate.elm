@@ -4,6 +4,7 @@ module Page.UI.Record.PageTemplate exposing
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
+    , pageUriTemplate
     , subHeaderTemplate
     )
 
@@ -28,16 +29,16 @@ import Url
 
 
 pageFooterTemplateRouter : Session -> Language -> { a | id : String, recordHistory : RecordHistory } -> Element msg
-pageFooterTemplateRouter session language footer =
+pageFooterTemplateRouter session language body =
     if session.isFramed then
-        pageFooterTemplateFramed session language footer
+        pageFooterTemplateFramed session language body
 
     else
-        pageFooterTemplate session language footer
+        pageFooterTemplate session language body
 
 
 pageFooterTemplateFramed : Session -> Language -> { a | id : String, recordHistory : RecordHistory } -> Element msg
-pageFooterTemplateFramed _ _ footer =
+pageFooterTemplateFramed _ _ body =
     row
         [ width fill
         , alignBottom
@@ -62,7 +63,7 @@ pageFooterTemplateFramed _ _ footer =
                         el
                             []
                             (rismLogo colourScheme.white 50)
-                    , url = footer.id
+                    , url = body.id
                     }
                 , newTabLink
                     []
@@ -70,7 +71,7 @@ pageFooterTemplateFramed _ _ footer =
                         el
                             [ Font.color colourScheme.white ]
                             (text "View full record in RISM Online")
-                    , url = footer.id
+                    , url = body.id
                     }
                 ]
             ]
@@ -99,8 +100,6 @@ pageFooterTemplate session language footer =
                         { label = text "JSON-LD"
                         , url = "/apero/?url=" ++ currentUrl ++ "&format=jsonld"
                         }
-
-                    --, text " | "
                     , newTabLink
                         [ linkColour ]
                         { label = text "MARCXML"
@@ -302,8 +301,6 @@ viewMuscatLinks session =
                         { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatView)
                         , url = muscatUrl
                         }
-
-                    --, text " |"
                     , newTabLink
                         [ linkColour ]
                         { label = text (extractLabelFromLanguageMap session.language localTranslations.muscatEdit)
@@ -330,6 +327,9 @@ viewMuscatLinks session =
 
         InstitutionSourcePageRoute id _ ->
             linkTmpl (C.muscatLinkBase ++ "institutions/" ++ String.fromInt id)
+
+        SourceHoldingsPageRoute sourceId _ ->
+            linkTmpl (C.muscatLinkBase ++ "sources/" ++ String.fromInt sourceId)
 
         _ ->
             none

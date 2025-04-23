@@ -160,12 +160,14 @@ recordPageRequest applyCacheBuster initialUrl =
             else
                 initialUrl
     in
-    createRequestWithDecoder ServerRespondedWithRecordData (Url.toString requestUrl)
+    Url.toString requestUrl
+        |> createRequestWithDecoder ServerRespondedWithRecordData
 
 
 recordSearchRequest : Url -> Cmd RecordMsg
 recordSearchRequest searchUrl =
-    createRequestWithDecoder ServerRespondedWithPageSearch (Url.toString searchUrl)
+    Url.toString searchUrl
+        |> createRequestWithDecoder ServerRespondedWithPageSearch
 
 
 requestPreviewIfSelected : Maybe String -> Cmd RecordMsg
@@ -178,6 +180,9 @@ update session msg model =
     case msg of
         ServerRespondedWithPageSearch (Ok ( _, response )) ->
             let
+                nextQuery =
+                    toNextQuery model.activeSearch
+
                 jumpCmd =
                     .fragment session.url
                         |> ME.unwrap Cmd.none (jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list")
@@ -189,9 +194,6 @@ update session msg model =
 
                         _ ->
                             Dict.empty
-
-                nextQuery =
-                    toNextQuery model.activeSearch
 
                 updatedFiltersWithCorrectLanguageMaps =
                     case response of

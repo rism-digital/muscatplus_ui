@@ -446,7 +446,7 @@ parsedHtml txt =
             [ linkColour
             , alignTop
             ]
-            { label = text txt
+            { label = paragraph [] [ text txt ]
             , url = txt
             }
         , externalLinkTemplate txt
@@ -457,7 +457,7 @@ parsedHtml txt =
             [ linkColour
             , alignTop
             ]
-            { label = text txt
+            { label = paragraph [] [ text txt ]
             , url = "mailto:" ++ txt
             }
         , externalLinkTemplate txt
@@ -478,9 +478,10 @@ parsedHtml txt =
 
 listRenderer : String -> Element msg
 listRenderer txt =
-    paragraph
+    wrappedRow
         [ alignTop
         , width (fill |> maximum 800)
+        , spacing 5
         ]
         (parsedHtml txt)
 
@@ -851,10 +852,11 @@ tabView cfg =
                                 , Font.center
                                 , alignLeft
                                 , centerY
+                                , spacing 5
                                 ]
                                 [ tabIcon
                                 , el [] (text (extractLabelFromLanguageMap cfg.language label))
-                                , el [] (text (" (" ++ searchCount ++ ")"))
+                                , el [] (text ("(" ++ searchCount ++ ")"))
                                 ]
 
                         Nothing ->
@@ -863,6 +865,7 @@ tabView cfg =
                                 , Font.center
                                 , alignLeft
                                 , centerY
+                                , spacing 5
                                 ]
                                 [ tabIcon
                                 , el [] (text (extractLabelFromLanguageMap cfg.language label))

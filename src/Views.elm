@@ -165,6 +165,12 @@ viewPageBody deviceView model =
                 ( PersonPage session pageModel, DesktopView ) ->
                     Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
 
+                ( HoldingPage session pageModel, MobileView ) ->
+                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.view session pageModel)
+
+                ( HoldingPage session pageModel, DesktopView ) ->
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
+
                 ( InstitutionPage session pageModel, MobileView ) ->
                     Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.view session pageModel)
 
@@ -280,6 +286,13 @@ loadingIndicator model =
             chooseView pageModel.response
 
         PersonPage _ pageModel ->
+            if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
+                loadingView
+
+            else
+                Keyed.el [] ( "progress-bar-none", none )
+
+        HoldingPage _ pageModel ->
             if List.any (\t -> isLoading t) [ pageModel.response, pageModel.searchResults, pageModel.preview ] then
                 loadingView
 

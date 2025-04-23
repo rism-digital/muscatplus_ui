@@ -160,6 +160,21 @@ changePage url model =
             , refreshCmds
             )
 
+        Route.SourceHoldingsPageRoute _ _ ->
+            let
+                ( newPageBody, refreshCmds ) =
+                    changeRecordHoldingPageHelper
+                        { model = model
+                        , newSession = newSession
+                        , previousUrl = previousUrl
+                        , route = route
+                        , url = url
+                        }
+            in
+            ( HoldingPage newSession newPageBody
+            , refreshCmds
+            )
+
         Route.PersonPageRoute _ ->
             let
                 ( newPageBody, refreshCmds ) =
@@ -322,6 +337,10 @@ update msg model =
         ( Msg.UserInteractedWithRecordPage recordMsg, PersonPage session pageModel ) ->
             RecordPage.update session recordMsg pageModel
                 |> updateWith (PersonPage session) Msg.UserInteractedWithRecordPage model
+
+        ( Msg.UserInteractedWithRecordPage recordMsg, HoldingPage session pageModel ) ->
+            RecordPage.update session recordMsg pageModel
+                |> updateWith (HoldingPage session) Msg.UserInteractedWithRecordPage model
 
         ( Msg.UserInteractedWithRecordPage recordMsg, InstitutionPage session pageModel ) ->
             RecordPage.update session recordMsg pageModel
@@ -522,3 +541,46 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
         ]
         |> Cmd.map Msg.UserInteractedWithRecordPage
     )
+
+
+changeRecordHoldingPageHelper :
+    { model : Model
+    , newSession : Session
+    , previousUrl : Url
+    , route : Route
+    , url : Url
+    }
+    -> ( RecordPageModel RecordMsg, Cmd Msg )
+changeRecordHoldingPageHelper { model, newSession, previousUrl, route, url } =
+    let
+        recordCfg =
+            { incomingUrl = url
+            , route = route
+            , queryArgs = Nothing
+            , nationalCollection = newSession.restrictedToNationalCollection
+            , searchPreferences = newSession.searchPreferences
+            }
+
+        samePage oldBody =
+            if url.path == previousUrl.path then
+                ( RecordPage.load recordCfg oldBody, True )
+
+            else
+                ( RecordPage.init recordCfg, False )
+
+        ( newPageBody, isSameRecordPage ) =
+            case ( route, model ) of
+                ( Route.SourceHoldingsPageRoute _ _, HoldingPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                _ ->
+                    ( RecordPage.init recordCfg, False )
+    in
+    if isSameRecordPage then
+        ( newPageBody, Cmd.none )
+
+    else
+        ( newPageBody
+        , Cmd.batch [ RecordPage.recordPageRequest newSession.cacheBuster url ]
+            |> Cmd.map Msg.UserInteractedWithRecordPage
+        )

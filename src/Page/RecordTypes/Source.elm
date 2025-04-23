@@ -1,7 +1,5 @@
 module Page.RecordTypes.Source exposing
-    ( BoundWithSectionBody
-    , ExemplarBody
-    , ExemplarsSectionBody
+    ( ExemplarsSectionBody
     , FullSourceBody
     , IncipitsSectionBody
     , LiturgicalFestivalsSectionBody
@@ -21,8 +19,8 @@ import Language exposing (LanguageMap)
 import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
+import Page.RecordTypes.Holding exposing (HoldingBody, holdingBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
-import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitutionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
@@ -52,27 +50,10 @@ type alias FullSourceBody =
     }
 
 
-type alias ExemplarBody =
-    { label : LanguageMap
-    , summary : Maybe (List LabelValue)
-    , heldBy : BasicInstitutionBody
-    , externalResources : Maybe ExternalResourcesSectionBody
-    , notes : Maybe (List LabelValue)
-    , relationships : Maybe RelationshipsSectionBody
-    , boundWith : Maybe BoundWithSectionBody
-    }
-
-
 type alias ExemplarsSectionBody =
     { sectionToc : String
     , label : LanguageMap
-    , items : List ExemplarBody
-    }
-
-
-type alias BoundWithSectionBody =
-    { sectionLabel : LanguageMap
-    , source : BasicSourceBody
+    , items : List HoldingBody
     }
 
 
@@ -135,31 +116,12 @@ type alias SourceItemsSectionBody =
     }
 
 
-exemplarsBodyDecoder : Decoder ExemplarBody
-exemplarsBodyDecoder =
-    Decode.succeed ExemplarBody
-        |> required "label" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> required "heldBy" basicInstitutionBodyDecoder
-        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
-        |> optional "notes" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
-        |> optional "boundWith" (Decode.maybe boundWithSectionBodyDecoder) Nothing
-
-
 exemplarsSectionBodyDecoder : Decoder ExemplarsSectionBody
 exemplarsSectionBodyDecoder =
     Decode.succeed ExemplarsSectionBody
         |> hardcoded "source-record-exemplars-section"
         |> required "sectionLabel" languageMapLabelDecoder
-        |> required "items" (list exemplarsBodyDecoder)
-
-
-boundWithSectionBodyDecoder : Decoder BoundWithSectionBody
-boundWithSectionBodyDecoder =
-    Decode.succeed BoundWithSectionBody
-        |> required "sectionLabel" languageMapLabelDecoder
-        |> required "source" basicSourceBodyDecoder
+        |> required "items" (list holdingBodyDecoder)
 
 
 incipitsSectionBodyDecoder : Decoder IncipitsSectionBody

@@ -1,11 +1,13 @@
 module Page.About exposing (Model, Msg, init, initialCmd, update)
 
+import Json.Decode as Decode
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.Decoders exposing (aboutResponseDecoder)
+import Page.RecordTypes.About exposing (aboutBodyDecoder)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (createRequest)
-import Response exposing (Response(..))
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Url exposing (Url)
 
@@ -27,7 +29,7 @@ init session =
 
 initialCmd : Url -> Cmd Msg
 initialCmd initialUrl =
-    createRequest ServerRespondedWithAboutData aboutResponseDecoder (Url.toString initialUrl)
+    createRequest ServerRespondedWithAboutData (Decode.map AboutData aboutBodyDecoder) (Url.toString initialUrl)
 
 
 update : Session -> Msg -> Model -> ( Model, Cmd Msg )

@@ -14,6 +14,7 @@ type Model
     | FrontPage Session Front.Model
     | SourcePage Session Record.Model
     | PersonPage Session Record.Model
+    | HoldingPage Session Record.Model
     | InstitutionPage Session Record.Model
     | AboutPage Session About.Model
     | HelpPage Session
@@ -36,6 +37,9 @@ toSession model =
             session
 
         PersonPage session _ ->
+            session
+
+        HoldingPage session _ ->
             session
 
         InstitutionPage session _ ->
@@ -68,6 +72,9 @@ updateSession newSession model =
 
         PersonPage _ pageModel ->
             PersonPage newSession pageModel
+
+        HoldingPage _ pageModel ->
+            HoldingPage newSession pageModel
 
         InstitutionPage _ pageModel ->
             InstitutionPage newSession pageModel
