@@ -1,10 +1,10 @@
-module Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
+module Page.UI.Record.ExemplarsSection exposing (viewBoundWithSection, viewExemplarExternalResourcesSection, viewExemplarsSection)
 
-import Element exposing (Element, above, alignTop, column, el, fill, height, link, paragraph, px, row, spacing, spacingXY, text, width)
+import Element exposing (Element, above, alignTop, column, el, fill, height, link, none, paragraph, px, row, spacing, spacingXY, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
-import Page.RecordTypes.Holding exposing (BoundWithSectionBody, HoldingBody)
+import Page.RecordTypes.Holding exposing (BoundWithSectionBody, HoldingBody, HoldingType(..))
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
@@ -54,6 +54,15 @@ viewExemplar :
     -> HoldingBody
     -> Element msg
 viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplar =
+    let
+        pagelink =
+            case exemplar.holdingType of
+                ManuscriptHolding ->
+                    none
+
+                _ ->
+                    pageUriTemplate language bodyRegular exemplar
+    in
     row
         (width fill
             :: height fill
@@ -79,8 +88,7 @@ viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipF
                     [ width fill
                     , spacing lineSpacing
                     ]
-                    [ pageUriTemplate language bodyRegular exemplar
-                    , viewMaybe (summaryFormatter language) exemplar.summary
+                    [ viewMaybe (summaryFormatter language) exemplar.summary
                     , viewMaybe (paragraphFormatter language) exemplar.notes
                     , viewMaybe
                         (viewRelationshipsSection
@@ -103,6 +111,7 @@ viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipF
                             }
                         )
                         exemplar.externalResources
+                    , pagelink
                     ]
                 ]
             ]

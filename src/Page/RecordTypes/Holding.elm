@@ -1,6 +1,7 @@
-module Page.RecordTypes.Holding exposing (BoundWithSectionBody, HoldingBody, HoldingParentSourceBody, holdingBodyDecoder)
+module Page.RecordTypes.Holding exposing (BoundWithSectionBody, HoldingBody, HoldingParentSourceBody, HoldingType(..), holdingBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, list, maybe, string)
+import Dict
+import Json.Decode as Decode exposing (Decoder, list, map, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
@@ -8,6 +9,12 @@ import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitu
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
+
+
+type HoldingType
+    = PrintHolding
+    | ManuscriptHolding
+    | CompositeHolding
 
 
 type alias HoldingParentSourceBody =
@@ -26,6 +33,7 @@ type alias HoldingBody =
     { id : String
     , sectionToc : String
     , label : LanguageMap
+    , holdingType : HoldingType
     , summary : Maybe (List LabelValue)
     , heldBy : BasicInstitutionBody
     , externalResources : Maybe ExternalResourcesSectionBody
@@ -43,6 +51,7 @@ holdingBodyDecoder =
         |> required "id" string
         |> hardcoded "record-holding"
         |> required "label" languageMapLabelDecoder
+        |> required "holdingType" holdingTypeDecoder
         |> optional "summary" (maybe (list labelValueDecoder)) Nothing
         |> required "heldBy" basicInstitutionBodyDecoder
         |> optional "externalResources" (maybe externalResourcesSectionBodyDecoder) Nothing
@@ -65,3 +74,23 @@ holdingParentSourceBodyDecoder =
     Decode.succeed HoldingParentSourceBody
         |> required "label" languageMapLabelDecoder
         |> required "source" basicSourceBodyDecoder
+
+
+holdingTypeDecoder : Decoder HoldingType
+holdingTypeDecoder =
+    map holdingTypeFromJsonType string
+
+
+holdingTypeFromJsonType : String -> HoldingType
+holdingTypeFromJsonType jsonType =
+    Dict.fromList holdingTypeOptions
+        |> Dict.get jsonType
+        |> Maybe.withDefault PrintHolding
+
+
+holdingTypeOptions : List ( String, HoldingType )
+holdingTypeOptions =
+    [ ( "rism:PrintHolding", PrintHolding )
+    , ( "rism:ManuscriptHolding", ManuscriptHolding )
+    , ( "rism:CompositeHolding", CompositeHolding )
+    ]

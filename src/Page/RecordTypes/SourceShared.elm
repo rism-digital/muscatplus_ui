@@ -190,11 +190,7 @@ sourceSubjectsBodyDecoder =
 
 sourceTypeDecoder : Decoder SourceType
 sourceTypeDecoder =
-    string
-        |> Decode.map
-            (\str ->
-                sourceTypeFromJsonType str
-            )
+    Decode.map sourceTypeFromJsonType string
 
 
 sourceTypeFromJsonType : String -> SourceType
