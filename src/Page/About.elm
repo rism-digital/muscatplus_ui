@@ -3,7 +3,6 @@ module Page.About exposing (Model, Msg, init, initialCmd, update)
 import Json.Decode as Decode
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
-import Page.Decoders exposing (aboutResponseDecoder)
 import Page.RecordTypes.About exposing (aboutBodyDecoder)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (createRequest)
