@@ -1,7 +1,7 @@
 module Page.UI.Record.ExemplarsSection exposing (viewBoundWithSection, viewExemplarExternalResourcesSection, viewExemplarsSection)
 
 import Element exposing (Element, above, alignTop, column, el, fill, height, link, none, paragraph, px, row, spacing, spacingXY, text, width)
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody)
 import Page.RecordTypes.Holding exposing (BoundWithSectionBody, HoldingBody, HoldingType(..))
@@ -10,7 +10,7 @@ import Page.RecordTypes.Relationship exposing (RelatedTo(..), RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (ExemplarsSectionBody)
 import Page.UI.Attributes exposing (bodyRegular, lineSpacing, linkColour, sectionBorderStyles)
-import Page.UI.Components exposing (externalLinkTemplate, h3s)
+import Page.UI.Components exposing (externalLinkTemplate, h3s, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalRecords, viewExternalResources)
@@ -61,7 +61,11 @@ viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipF
                     none
 
                 _ ->
-                    pageUriTemplate language bodyRegular exemplar
+                    viewSummaryField language
+                        [ { label = localTranslations.exemplarURI
+                          , value = toLanguageMap exemplar.id
+                          }
+                        ]
     in
     row
         (width fill

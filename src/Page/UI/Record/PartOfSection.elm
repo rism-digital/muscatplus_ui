@@ -1,6 +1,6 @@
 module Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection, viewPartOfSection)
 
-import Element exposing (Element, column, el, fill, height, link, padding, row, shrink, text, width)
+import Element exposing (Element, column, el, fill, height, link, maximum, padding, row, shrink, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -27,7 +27,7 @@ viewPartOfSectionImpl language title partOf =
         [ width shrink
         , Border.color colourScheme.darkGrey
         , Border.width 1
-        , width fill
+        , width (fill |> maximum 800)
         ]
         [ column
             [ width fill

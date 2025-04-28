@@ -30,6 +30,7 @@ localTranslations :
     , downloadsLimited : LanguageMap
     , downloadsSearchUrlHelp : LanguageMap
     , errorLoadingProbeResults : LanguageMap
+    , exemplarURI : LanguageMap
     , first : LanguageMap
     , fullRecord : LanguageMap
     , globalCollection : LanguageMap
@@ -340,6 +341,15 @@ localTranslations =
         , LanguageValue Spanish [ "Error al cargar resultados" ]
         , LanguageValue Portuguese [ "Erro ao carregar os resultados" ]
         , LanguageValue Polish [ "Błąd podczas ładowania wyników" ]
+        ]
+    , exemplarURI =
+        [ LanguageValue English [ "Exemplar URI" ]
+        , LanguageValue German [ "Exemplar URI" ]
+        , LanguageValue French [ "URI de l'exemplaire" ]
+        , LanguageValue Italian [ "URI dell'esemplare" ]
+        , LanguageValue Spanish [ "URI del ejemplar" ]
+        , LanguageValue Portuguese [ "URI do exemplar" ]
+        , LanguageValue Polish [ "URI egzemplarza" ]
         ]
     , first =
         [ LanguageValue English [ "First" ]
