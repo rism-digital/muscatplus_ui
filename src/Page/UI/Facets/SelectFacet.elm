@@ -309,11 +309,8 @@ viewSelectFacetItem :
     SelectFacetConfig msg
     -> FacetItem
     -> Element msg
-viewSelectFacetItem config fitem =
+viewSelectFacetItem config (FacetItem value label count) =
     let
-        (FacetItem value label count) =
-            fitem
-
         facetAlias =
             .alias config.selectFacet
 
@@ -324,14 +321,13 @@ viewSelectFacetItem config fitem =
             percentDecode value
                 |> Maybe.withDefault value
 
-        nextQuery =
-            .nextQuery config.activeSearch
-
         -- percent-decode the value to match it against the value in the
         -- active filter list. If we can't decode it (for some reason) just
         -- return the original value.
         shouldBeChecked =
-            Dict.get facetAlias nextQuery.filters
+            .nextQuery config.activeSearch
+                |> .filters
+                |> Dict.get facetAlias
                 |> Maybe.withDefault []
                 |> List.map (\( val, _ ) -> percentDecode val |> Maybe.withDefault val)
                 |> List.member decodedValue
@@ -339,14 +335,14 @@ viewSelectFacetItem config fitem =
     row
         [ width fill
         , alignLeft
-        , padding 2
-        , spacing 4
+        , padding 4
+        , spacing 2
         , mouseOver [ Background.color colourScheme.lightestBlue ]
         ]
         [ checkbox
             [ Element.htmlAttribute (HA.alt fullLabel)
             , alignLeft
-            , alignTop
+            , centerY
             , width fill
             ]
             { checked = shouldBeChecked
@@ -367,7 +363,7 @@ viewSelectFacetItem config fitem =
         , el
             [ alignRight
             , bodySM
-            , alignTop
+            , centerY
             ]
             (text (formatNumberByLanguage config.language count))
         ]
