@@ -4,7 +4,6 @@ module Page.UI.Record.PageTemplate exposing
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
-    , pageUriTemplate
     , subHeaderTemplate
     )
 
@@ -316,6 +315,9 @@ viewMuscatLinks session =
         SourceContentsPageRoute id _ ->
             linkTmpl (C.muscatLinkBase ++ "sources/" ++ String.fromInt id)
 
+        SourceHoldingsPageRoute sourceId _ ->
+            linkTmpl (C.muscatLinkBase ++ "sources/" ++ String.fromInt sourceId)
+
         PersonPageRoute id ->
             linkTmpl (C.muscatLinkBase ++ "people/" ++ String.fromInt id)
 
@@ -327,9 +329,6 @@ viewMuscatLinks session =
 
         InstitutionSourcePageRoute id _ ->
             linkTmpl (C.muscatLinkBase ++ "institutions/" ++ String.fromInt id)
-
-        SourceHoldingsPageRoute sourceId _ ->
-            linkTmpl (C.muscatLinkBase ++ "sources/" ++ String.fromInt sourceId)
 
         _ ->
             none

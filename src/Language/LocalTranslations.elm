@@ -1156,6 +1156,7 @@ facetPanelTitles =
 errorMessages :
     { badQuery : LanguageMap
     , notFound : LanguageMap
+    , recordDeleted : LanguageMap
     }
 errorMessages =
     { badQuery =
@@ -1176,4 +1177,6 @@ errorMessages =
         , LanguageValue Portuguese [ "A página não foi encontrada" ]
         , LanguageValue Polish [ "Strona nie została znaleziona" ]
         ]
+    , recordDeleted =
+        [ LanguageValue English [ "This record was deleted" ] ]
     }

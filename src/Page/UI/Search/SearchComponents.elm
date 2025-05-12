@@ -12,7 +12,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingLG, headingSM, minimalDropShadow)
-import Page.UI.Errors exposing (createErrorMessage)
+import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -118,8 +118,8 @@ viewProbeResponseNumbers language probeResponse =
             text textMsg
 
         ProbeError err ->
-            createErrorMessage language err
-                |> Tuple.first
+            createErrorMessage err
+                |> errorMessageString language
                 |> text
 
         NotChecked ->

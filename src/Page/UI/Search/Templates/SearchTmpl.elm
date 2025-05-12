@@ -1,4 +1,4 @@
-module Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
+module Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, link, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
@@ -37,11 +37,6 @@ viewResultsListLoadingScreenTmpl isLoading =
             )
         )
         isLoading
-
-
-viewSearchResultsErrorTmpl : Language -> String -> Element msg
-viewSearchResultsErrorTmpl _ err =
-    text err
 
 
 viewSearchResultsLoadingTmpl : Language -> Element msg

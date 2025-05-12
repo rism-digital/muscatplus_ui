@@ -1,6 +1,7 @@
 module Page.UI.Record.Previews exposing (PreviewConfig, viewMobilePreviewRouter, viewPreviewError, viewPreviewRouter)
 
-import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
+import Desktop.Error.Views exposing (errorMessageView)
+import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -59,11 +60,9 @@ viewPreviewError :
     -> Element msg
 viewPreviewError cfg =
     let
-        ( mainMessage, details ) =
-            createErrorMessage cfg.language cfg.errorMessage
-
         messageDetails =
-            Maybe.withDefault "" details
+            createErrorMessage cfg.errorMessage
+                |> errorMessageView cfg.language
 
         ( _, windowHeight ) =
             cfg.windowSize
@@ -100,8 +99,7 @@ viewPreviewError cfg =
                     , centerY
                     , padding 20
                     ]
-                    [ el [ width fill ] (text mainMessage)
-                    , el [ width fill ] (text messageDetails)
+                    [ messageDetails
                     ]
                 ]
             ]

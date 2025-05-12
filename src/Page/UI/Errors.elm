@@ -1,35 +1,108 @@
-module Page.UI.Errors exposing (createErrorMessage)
+module Page.UI.Errors exposing (ErrorResponse(..), createErrorMessage, errorMessageString)
 
 import Http.Detailed
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Json.Decode exposing (errorToString)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (errorMessages)
+import Page.RecordTypes.Tombstone exposing (Tombstone, messageToTombstone)
 
 
-createErrorMessage : Language -> Http.Detailed.Error String -> ( String, Maybe String )
-createErrorMessage language error =
+type ErrorResponse
+    = BadUrlResponse { label : LanguageMap }
+    | BadBodyResponse { label : LanguageMap, description : String }
+    | NotFoundResponse { label : LanguageMap, description : String }
+    | BadRequestResponse { label : LanguageMap, description : String }
+    | GoneResponse { label : LanguageMap, tombstone : Tombstone }
+    | OtherBadStatusResponse { label : LanguageMap, description : String, statusCode : Int }
+    | NetworkErrorResponse { label : LanguageMap }
+    | TimeoutErrorResponse { label : LanguageMap }
+
+
+createErrorMessage : Http.Detailed.Error String -> ErrorResponse
+createErrorMessage error =
     case error of
         Http.Detailed.BadUrl url ->
-            ( "A Bad URL was supplied: " ++ url, Nothing )
+            BadUrlResponse { label = toLanguageMap ("A Bad URL was supplied: " ++ url) }
+
+        Http.Detailed.Timeout ->
+            TimeoutErrorResponse
+                { label = toLanguageMap "A timeout error response was received." }
+
+        Http.Detailed.NetworkError ->
+            NetworkErrorResponse
+                { label = toLanguageMap "A problem with the network was detected."
+                }
 
         Http.Detailed.BadStatus metadata message ->
             case metadata.statusCode of
                 400 ->
-                    ( extractLabelFromLanguageMap language errorMessages.badQuery
-                    , Just message
-                    )
+                    BadRequestResponse
+                        { label = errorMessages.badQuery
+                        , description = message
+                        }
 
                 404 ->
-                    ( extractLabelFromLanguageMap language errorMessages.notFound
-                    , Just message
-                    )
+                    NotFoundResponse
+                        { label = errorMessages.notFound
+                        , description = message
+                        }
+
+                410 ->
+                    let
+                        decodedMessage =
+                            messageToTombstone message
+                    in
+                    case decodedMessage of
+                        Ok ts ->
+                            GoneResponse
+                                { label = errorMessages.recordDeleted
+                                , tombstone = ts
+                                }
+
+                        Err e ->
+                            OtherBadStatusResponse
+                                { label = toLanguageMap "A record is missing but no tombstone is available."
+                                , description = errorToString e
+                                , statusCode = metadata.statusCode
+                                }
 
                 _ ->
-                    ( "Response status code: " ++ String.fromInt metadata.statusCode
-                    , Just message
-                    )
+                    OtherBadStatusResponse
+                        { label = toLanguageMap ("Response status code: " ++ String.fromInt metadata.statusCode)
+                        , description = message
+                        , statusCode = metadata.statusCode
+                        }
 
         Http.Detailed.BadBody _ _ message ->
-            ( "Unexpected response", Just message )
+            BadBodyResponse
+                { label = toLanguageMap "Unexpected response"
+                , description = message
+                }
 
-        _ ->
-            ( "An unknown problem happened with the request", Nothing )
+
+errorMessageString : Language -> ErrorResponse -> String
+errorMessageString language err =
+    case err of
+        BadUrlResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        BadBodyResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        NotFoundResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        BadRequestResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        GoneResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        OtherBadStatusResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        NetworkErrorResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        TimeoutErrorResponse { label } ->
+            extractLabelFromLanguageMap language label

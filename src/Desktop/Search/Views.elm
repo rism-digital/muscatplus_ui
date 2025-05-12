@@ -2,7 +2,7 @@ module Desktop.Search.Views exposing (view)
 
 import ActiveSearch exposing (toActiveSearch)
 import Desktop.Error.Views
-import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, px, row, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, px, row, text, width)
 import Element.Border as Border
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -15,7 +15,7 @@ import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryFi
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
+import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme, tabBarHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -116,7 +116,7 @@ searchResultsViewRouter session model =
         _ ->
             -- For any other responses, show the error.
             extractLabelFromLanguageMap session.language localTranslations.unknownError
-                |> viewSearchResultsErrorTmpl session.language
+                |> text
 
 
 view : Session -> SearchPageModel SearchMsg -> Element SearchMsg

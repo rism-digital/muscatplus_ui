@@ -1,7 +1,7 @@
 module Mobile.Search.Views exposing (view)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, none, row, scrollbarY, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, none, row, scrollbarY, text, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -18,7 +18,7 @@ import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultRouter)
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
+import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsLoadingTmpl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -153,7 +153,7 @@ searchResultsViewRouter session model =
 
         _ ->
             extractLabelFromLanguageMap session.language localTranslations.unknownError
-                |> viewSearchResultsErrorTmpl session.language
+                |> text
 
 
 viewMobileSearchResultsSection : SearchResultsSectionConfig a msg -> Bool -> SearchBody -> Element msg

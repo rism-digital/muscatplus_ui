@@ -12,7 +12,7 @@ import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
 import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing, minimalDropShadow)
 import Page.UI.Components exposing (viewWindowTitleBar)
-import Page.UI.Errors exposing (createErrorMessage)
+import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -174,8 +174,8 @@ progressView language model =
                     "Downloading (" ++ String.fromInt progressFinished ++ " of " ++ String.fromInt progressTotal ++ ") result pages"
 
                 ErrorDownloading err ->
-                    createErrorMessage language err
-                        |> Tuple.first
+                    createErrorMessage err
+                        |> errorMessageString language
 
                 DownloadCompleted ->
                     "Download completed, assembling CSV file"

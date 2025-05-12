@@ -4,17 +4,17 @@ module Desktop.Record.SourceSearch exposing
     )
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, clipY, column, fill, height, none, px, row, spacing, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, clipY, column, fill, height, none, px, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.UI.Components exposing (Tab(..), tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
-import Page.UI.Errors exposing (createErrorMessage)
+import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsErrorTmpl, viewSearchResultsLoadingTmpl)
+import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsLoadingTmpl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -91,9 +91,9 @@ searchResultsViewRouter session model =
             viewSearchResultsSection resultsConfig False body
 
         Error err ->
-            createErrorMessage session.language err
-                |> Tuple.first
-                |> viewSearchResultsErrorTmpl session.language
+            createErrorMessage err
+                |> errorMessageString session.language
+                |> text
 
         NoResponseToShow ->
             -- In case we're just booting the app up, show
@@ -102,7 +102,7 @@ searchResultsViewRouter session model =
 
         _ ->
             extractLabelFromLanguageMap session.language localTranslations.unknownError
-                |> viewSearchResultsErrorTmpl session.language
+                |> text
 
 
 viewSourceSearchTab :

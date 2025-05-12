@@ -1,6 +1,6 @@
 module Desktop.Record.HoldingPage exposing (viewFullHoldingPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -83,8 +83,8 @@ viewFullHoldingPage session model body =
             , viewHoldingBody
                 { language = session.language
                 , paragraphFormatter = viewParagraphField
-                , relationshipFormatter = viewRelationshipBody
                 , preRenderedFormatter = viewPreRenderedSummaryField
+                , relationshipFormatter = viewRelationshipBody
                 , summaryFormatter = viewSummaryField
                 }
                 body
@@ -101,13 +101,13 @@ viewFullHoldingPage session model body =
 viewHoldingBody :
     { language : Language
     , paragraphFormatter : Language -> List LabelValue -> Element msg
-    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> HoldingBody
     -> Element msg
-viewHoldingBody { language, paragraphFormatter, relationshipFormatter, preRenderedFormatter, summaryFormatter } body =
+viewHoldingBody { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } body =
     let
         pageBody =
             pageBodyOrEmpty language

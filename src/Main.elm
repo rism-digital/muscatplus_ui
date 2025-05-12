@@ -166,7 +166,7 @@ init flags initialUrl key =
                         , session = session
                         }
             in
-            ( HoldingPage session initialBody, Cmd.batch [ initialCmds ] )
+            ( HoldingPage session initialBody, initialCmds )
 
         PersonPageRoute _ ->
             let
@@ -386,7 +386,6 @@ recordHoldingsRouteHelper { initialUrl, route, session } =
                 |> addNationalCollectionFilter session.restrictedToNationalCollection
     in
     ( initialBody
-    , Cmd.batch
-        [ Record.recordPageRequest session.cacheBuster initialUrl ]
+    , Record.recordPageRequest session.cacheBuster initialUrl
         |> Cmd.map Msg.UserInteractedWithRecordPage
     )

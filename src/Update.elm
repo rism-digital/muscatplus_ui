@@ -581,6 +581,6 @@ changeRecordHoldingPageHelper { model, newSession, previousUrl, route, url } =
 
     else
         ( newPageBody
-        , Cmd.batch [ RecordPage.recordPageRequest newSession.cacheBuster url ]
+        , RecordPage.recordPageRequest newSession.cacheBuster url
             |> Cmd.map Msg.UserInteractedWithRecordPage
         )
