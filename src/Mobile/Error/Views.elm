@@ -1,6 +1,6 @@
 module Mobile.Error.Views exposing (view)
 
-import Element exposing (Element, none)
+import Element exposing (Element, fill, height, none, row, width)
 import Response exposing (Response)
 import Session exposing (Session)
 
@@ -9,5 +9,9 @@ view :
     Session
     -> { a | response : Response data }
     -> Element msg
-view _ _ =
-    none
+view session model =
+    row
+        [ width fill
+        , height fill
+        ]
+        []

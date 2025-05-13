@@ -1,11 +1,15 @@
 module Desktop.Error.Views exposing (errorMessageView, view)
 
 import Config as C
-import Element exposing (Element, centerX, centerY, column, el, fill, height, link, none, padding, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, centerX, centerY, column, el, fill, height, link, none, padding, paragraph, px, row, spacing, text, textColumn, width)
 import Element.Background as Background
+import Element.Font as Font
+import Element.Region as Region
 import Language exposing (Language, LanguageMap, dateFormatter, extractLabelFromLanguageMap, toLanguageMap)
+import Page.RecordTypes.ApiError exposing (ApiError)
 import Page.RecordTypes.Tombstone exposing (Tombstone)
 import Page.UI.Attributes exposing (headingXL, lineSpacing, linkColour)
+import Page.UI.Components exposing (h1, h2, h3)
 import Page.UI.Errors exposing (ErrorResponse(..), createErrorMessage)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
 import Page.UI.Style exposing (colourScheme)
@@ -109,9 +113,9 @@ errorMessageView language err =
                         , language = language
                         }
 
-                NotFoundResponse { label, description } ->
+                NotFoundResponse { label, errorMessage } ->
                     viewNotFoundResponse
-                        { description = description
+                        { errorMessage = errorMessage
                         , label = label
                         , language = language
                         }
@@ -150,35 +154,38 @@ errorMessageView language err =
                         }
     in
     row
-        [ centerX
+        [ width fill
+        , centerX
         , centerY
+        , Region.mainContent
         ]
         [ column
-            [ width fill
-            , spacing lineSpacing
+            [ spacing lineSpacing
+            , width fill
+            , centerX
             ]
             specificErrorMessage
         ]
 
 
 viewNotFoundResponse :
-    { description : String
+    { errorMessage : ApiError
     , label : LanguageMap
     , language : Language
     }
     -> List (Element msg)
-viewNotFoundResponse { description, label, language } =
-    [ paragraph
-        [ centerX
-        , centerY
+viewNotFoundResponse { label, language, errorMessage } =
+    [ row
+        [ width fill
+        , centerX
         , headingXL
         ]
-        [ text (extractLabelFromLanguageMap language label) ]
-    , paragraph
-        [ centerX
-        , centerY
+        [ h2 language label ]
+    , row
+        [ width fill
+        , centerX
         ]
-        [ text description ]
+        [ el [ Font.center ] (text errorMessage.message) ]
     ]
 
 
@@ -189,30 +196,35 @@ viewGoneResponse :
     }
     -> List (Element msg)
 viewGoneResponse { label, language, tombstone } =
-    let
-        deletedDateFormatted =
-            dateFormatter utc tombstone.deleted
-
-        deleted =
-            extractLabelFromLanguageMap language (toLanguageMap "Deleted on") ++ ": " ++ deletedDateFormatted
-    in
-    [ paragraph
-        [ centerX
-        , centerY
-        , headingXL
-        ]
-        [ text (extractLabelFromLanguageMap language label) ]
-    , paragraph
+    [ row
         [ centerX
         , centerY
         ]
-        [ text (extractLabelFromLanguageMap language tombstone.name)
+        [ h2 language label ]
+    , row
+        [ centerX ]
+        [ textColumn
+            [ centerX
+            , width fill
+            ]
+            [ paragraph [ Font.center ] [ el [ Font.center ] (text "This is a normal part of our editorial process.") ]
+            , paragraph [ Font.center ] [ text "It may have been a duplicate of another record, or removed for another reason." ]
+            , paragraph [ Font.center ] [ text "The last heading we have for this record is:" ]
+            ]
         ]
-    , paragraph
+    , row
+        [ centerX
+        , centerY
+        ]
+        [ h3 language tombstone.name
+        ]
+    , row
         [ centerY
         , centerX
         ]
-        [ text deleted ]
+        [ el [ Font.semiBold ] (text "Removed on: ")
+        , el [] (text (dateFormatter utc tombstone.deleted))
+        ]
     ]
 
 
@@ -222,12 +234,7 @@ viewGenericErrorResponse :
     }
     -> List (Element msg)
 viewGenericErrorResponse { label, language } =
-    [ paragraph
-        [ centerX
-        , centerY
-        , headingXL
-        ]
-        [ text (extractLabelFromLanguageMap language label) ]
+    [ h2 language label
     ]
 
 
@@ -238,15 +245,9 @@ viewDescriptionErrorResponse :
     }
     -> List (Element msg)
 viewDescriptionErrorResponse { description, label, language } =
-    [ paragraph
-        [ centerX
-        , centerY
-        , headingXL
-        ]
-        [ text (extractLabelFromLanguageMap language label) ]
+    [ h2 language label
     , paragraph
-        [ centerX
-        , centerY
+        [ Font.center
         ]
         [ text description ]
     ]

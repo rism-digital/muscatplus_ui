@@ -4,13 +4,14 @@ import Http.Detailed
 import Json.Decode exposing (errorToString)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (errorMessages)
+import Page.RecordTypes.ApiError exposing (ApiError, messageToApiError)
 import Page.RecordTypes.Tombstone exposing (Tombstone, messageToTombstone)
 
 
 type ErrorResponse
     = BadUrlResponse { label : LanguageMap }
     | BadBodyResponse { label : LanguageMap, description : String }
-    | NotFoundResponse { label : LanguageMap, description : String }
+    | NotFoundResponse { label : LanguageMap, errorMessage : ApiError }
     | BadRequestResponse { label : LanguageMap, description : String }
     | GoneResponse { label : LanguageMap, tombstone : Tombstone }
     | OtherBadStatusResponse { label : LanguageMap, description : String, statusCode : Int }
@@ -42,10 +43,23 @@ createErrorMessage error =
                         }
 
                 404 ->
-                    NotFoundResponse
-                        { label = errorMessages.notFound
-                        , description = message
-                        }
+                    let
+                        decodedMessage =
+                            messageToApiError message
+                    in
+                    case decodedMessage of
+                        Ok apiErr ->
+                            NotFoundResponse
+                                { label = errorMessages.notFound
+                                , errorMessage = apiErr
+                                }
+
+                        Err e ->
+                            OtherBadStatusResponse
+                                { label = toLanguageMap "The page was not found."
+                                , description = errorToString e
+                                , statusCode = metadata.statusCode
+                                }
 
                 410 ->
                     let

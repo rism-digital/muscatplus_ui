@@ -12,6 +12,7 @@ import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight,
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -127,6 +128,7 @@ pageFooterTemplate session language footer =
         , minimalDropShadow
         , Border.color colourScheme.midGrey
         , htmlAttribute (HA.style "z-index" "10")
+        , Region.footer
         ]
         [ column
             [ width fill

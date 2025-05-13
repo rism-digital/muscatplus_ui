@@ -115,11 +115,8 @@ viewSourceSearchTab :
     -> Element RecordMsg
 viewSourceSearchTab { language, model, searchUrl, tabLabel } =
     let
-        currentMode =
-            model.currentTab
-
         isSelected =
-            case currentMode of
+            case model.currentTab of
                 RelatedSourcesSearchTab _ ->
                     True
 

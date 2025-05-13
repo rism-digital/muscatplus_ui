@@ -10,6 +10,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Lazy exposing (lazy3)
+import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -202,6 +203,7 @@ view session options =
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , Border.shadow { blur = 4, color = colourScheme.darkBlueTranslucent, offset = ( 2, 1 ), size = 1 }
+        , Region.navigation
         ]
         [ row
             [ width fill

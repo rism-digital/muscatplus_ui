@@ -1178,5 +1178,5 @@ errorMessages =
         , LanguageValue Polish [ "Strona nie została znaleziona" ]
         ]
     , recordDeleted =
-        [ LanguageValue English [ "This record was deleted" ] ]
+        [ LanguageValue English [ "This record used to exist, but it was removed." ] ]
     }

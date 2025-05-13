@@ -4,6 +4,7 @@ import Desktop.Error.Views
 import Element exposing (Element, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, none, padding, paragraph, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Region as Region
 import Html.Attributes as HA
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
@@ -92,6 +93,7 @@ view session model =
         , backgroundImage
         , htmlAttribute (HA.style "background-position" "top left")
         , inFront queryBuilderWindow
+        , Region.mainContent
         ]
         [ column
             [ width (px 1100)

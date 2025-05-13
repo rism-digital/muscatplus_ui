@@ -5,6 +5,7 @@ import Dict
 import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -89,6 +90,7 @@ viewFullSourcePage session model body =
     row
         [ width fill
         , height fill
+        , Region.mainContent
         ]
         [ column
             [ width fill
