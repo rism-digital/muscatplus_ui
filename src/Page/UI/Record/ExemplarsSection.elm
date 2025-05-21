@@ -54,6 +54,7 @@ viewExemplar :
     -> Element msg
 viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplar =
     let
+        -- used below when we have agreement to publish.
         pagelink =
             case exemplar.holdingType of
                 ManuscriptHolding ->
@@ -114,7 +115,9 @@ viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipF
                             }
                         )
                         exemplar.externalResources
-                    , pagelink
+
+                    -- Uncomment when we have agreement to publish.
+                    --, pagelink
                     ]
                 ]
             ]
