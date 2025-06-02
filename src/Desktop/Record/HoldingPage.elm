@@ -13,7 +13,7 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (holdingSvg)
+import Page.UI.Images exposing (booksSvg)
 import Page.UI.Record.ExemplarsSection exposing (viewBoundWithSection, viewExemplarExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection)
@@ -27,7 +27,7 @@ viewFullHoldingPage :
     -> RecordPageModel RecordMsg
     -> HoldingBody
     -> Element RecordMsg
-viewFullHoldingPage session model body =
+viewFullHoldingPage session _ body =
     let
         headerHeight =
             if session.isFramed then
@@ -43,7 +43,7 @@ viewFullHoldingPage session model body =
                 , centerX
                 , centerY
                 ]
-                (holdingSvg colourScheme.darkBlue)
+                (booksSvg colourScheme.darkBlue)
 
         pageHeader =
             if session.isFramed then
