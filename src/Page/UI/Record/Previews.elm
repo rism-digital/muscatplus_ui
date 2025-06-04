@@ -1,6 +1,5 @@
 module Page.UI.Record.Previews exposing (PreviewConfig, viewMobilePreviewRouter, viewPreviewError, viewPreviewRouter)
 
-import Desktop.Error.Views exposing (errorMessageView)
 import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
@@ -8,6 +7,7 @@ import Html.Attributes as HA
 import Http.Detailed
 import Language exposing (Language, LanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.Error.Views exposing (errorMessageView)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
