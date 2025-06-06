@@ -2,6 +2,7 @@ module Page.Request exposing
     ( createCountryCodeRequestWithDecoder
     , createProbeRequestWithDecoder
     , createRequestWithDecoder
+    , createRequestWithNotFoundDecoder
     , createSuggestRequestWithDecoder
     )
 
@@ -10,6 +11,7 @@ import Http
 import Http.Detailed
 import Language exposing (LanguageMap)
 import Page.Decoders exposing (recordResponseDecoder)
+import Page.RecordTypes.ApiError exposing (ApiError, apiErrorDecoder)
 import Page.RecordTypes.Countries exposing (CountryCode, countryCodeDecoder)
 import Page.RecordTypes.Probe exposing (ProbeData, probeResponseDecoder)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion, suggestionResponseDecoder)
@@ -35,3 +37,8 @@ createRequestWithDecoder msg url =
 createSuggestRequestWithDecoder : (Result (Http.Detailed.Error String) ( Http.Metadata, ActiveSuggestion ) -> msg) -> String -> Cmd msg
 createSuggestRequestWithDecoder msg url =
     createRequest msg suggestionResponseDecoder url
+
+
+createRequestWithNotFoundDecoder : (Result (Http.Detailed.Error String) ( Http.Metadata, ApiError ) -> msg) -> String -> Cmd msg
+createRequestWithNotFoundDecoder msg url =
+    createRequest msg apiErrorDecoder url

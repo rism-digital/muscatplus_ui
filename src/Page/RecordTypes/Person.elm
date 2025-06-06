@@ -14,7 +14,7 @@ import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecode
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody, sourceRelationshipsSectionBodyDecoder)
-import Page.RecordTypes.Works exposing (PersonWorksSectionBody, personWorksSectionBodyDecoder)
+import Page.RecordTypes.WorkNode exposing (PersonWorksSectionBody, personWorksSectionBodyDecoder)
 
 
 type alias NameVariantsSectionBody =

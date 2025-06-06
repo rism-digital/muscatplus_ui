@@ -1,6 +1,6 @@
 module Mobile.Record.Views exposing (view)
 
-import Element exposing (Element, none)
+import Element exposing (Element, el, none, text)
 import Mobile.Error.Views
 import Mobile.Record.InstitutionPage exposing (viewFullMobileInstitutionPage)
 import Mobile.Record.PersonPage exposing (viewFullMobilePersonPage)
@@ -23,6 +23,9 @@ viewChooser session model dataType =
         InstitutionData body ->
             viewFullMobileInstitutionPage session model body
 
+        PublicationData body ->
+            el [] (text "Publications.")
+
         _ ->
             none
 
@@ -39,5 +42,8 @@ view session model =
         Error _ ->
             Mobile.Error.Views.view session model
 
-        _ ->
+        Loading Nothing ->
+            none
+
+        NoResponseToShow ->
             none

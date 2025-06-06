@@ -8,6 +8,7 @@ type NavigationBarOption
     | PeopleSearchOption
     | InstitutionSearchOption
     | IncipitSearchOption
+    | WorkCatalogueNavigateOption
 
 
 resultModeToNavigationBarOption : ResultMode -> NavigationBarOption
@@ -25,6 +26,9 @@ resultModeToNavigationBarOption mode =
         IncipitsMode ->
             IncipitSearchOption
 
+        WorkCatalogueMode ->
+            WorkCatalogueNavigateOption
+
 
 navigationBarOptionToModeString : NavigationBarOption -> String
 navigationBarOptionToModeString option =
@@ -41,6 +45,9 @@ navigationBarOptionToModeString option =
         IncipitSearchOption ->
             "incipits"
 
+        WorkCatalogueNavigateOption ->
+            "publications"
+
 
 navigationBarOptionToResultMode : NavigationBarOption -> ResultMode
 navigationBarOptionToResultMode option =
@@ -56,3 +63,6 @@ navigationBarOptionToResultMode option =
 
         IncipitSearchOption ->
             IncipitsMode
+
+        WorkCatalogueNavigateOption ->
+            WorkCatalogueMode

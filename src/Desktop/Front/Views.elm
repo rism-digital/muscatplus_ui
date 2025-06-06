@@ -71,6 +71,9 @@ view session model =
                 IncipitSearchOption ->
                     Background.image "/static/images/incipits.jpg"
 
+                WorkCatalogueNavigateOption ->
+                    Background.image "/static/images/incipits.jpg"
+
         queryBuilderWindow =
             .activeSearch model
                 |> .queryBuilder
@@ -226,6 +229,9 @@ viewFacetPanels cfg =
                 IncipitSearchOption ->
                     localTranslations.incipits
 
+                WorkCatalogueNavigateOption ->
+                    localTranslations.workCatalogues
+
         mainTitle =
             row
                 [ width fill
@@ -346,6 +352,9 @@ viewFacetPanels cfg =
 
                 IncipitSearchOption ->
                     viewFacetsForIncipitsMode facetConfig
+
+                WorkCatalogueNavigateOption ->
+                    []
     in
     row
         [ width fill

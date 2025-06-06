@@ -31,7 +31,7 @@ import Dict exposing (Dict)
 import Language exposing (LanguageMap, toLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Countries exposing (CountryCode)
-import Page.RecordTypes.Navigation exposing (NavigationBarOption, navigationBarOptionToModeString)
+import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToModeString)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
 import Page.RecordTypes.Search
     exposing
@@ -382,14 +382,19 @@ stringSplitToList str =
 
 buildFrontPageUrl : NavigationBarOption -> Maybe CountryCode -> String
 buildFrontPageUrl sidebarOption countryCode =
-    let
-        modeParameter =
-            navigationBarOptionToModeString sidebarOption
-                |> Url.Builder.string "mode"
+    case sidebarOption of
+        WorkCatalogueNavigateOption ->
+            serverUrl [ "/publications" ] []
 
-        -- Omits the parameter if the country code is Nothing.
-        ncParameter =
-            Maybe.map (\ccode -> List.singleton (Url.Builder.string "nc" ccode)) countryCode
-                |> Maybe.withDefault []
-    in
-    serverUrl [ "/" ] (modeParameter :: ncParameter)
+        _ ->
+            let
+                modeParameter =
+                    navigationBarOptionToModeString sidebarOption
+                        |> Url.Builder.string "mode"
+
+                -- Omits the parameter if the country code is Nothing.
+                ncParameter =
+                    Maybe.map (\ccode -> List.singleton (Url.Builder.string "nc" ccode)) countryCode
+                        |> Maybe.withDefault []
+            in
+            serverUrl [ "/" ] (modeParameter :: ncParameter)

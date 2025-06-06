@@ -14,6 +14,7 @@ type ErrorResponse
     | NotFoundResponse { label : LanguageMap, errorMessage : ApiError }
     | BadRequestResponse { label : LanguageMap, description : String }
     | GoneResponse { label : LanguageMap, tombstone : Tombstone }
+    | NotImplementedResponse { label : LanguageMap, errorMessage : ApiError }
     | OtherBadStatusResponse { label : LanguageMap, description : String, statusCode : Int }
     | NetworkErrorResponse { label : LanguageMap }
     | TimeoutErrorResponse { label : LanguageMap }
@@ -80,6 +81,25 @@ createErrorMessage error =
                                 , statusCode = metadata.statusCode
                                 }
 
+                501 ->
+                    let
+                        decodedMessage =
+                            messageToApiError message
+                    in
+                    case decodedMessage of
+                        Ok apiErr ->
+                            NotImplementedResponse
+                                { label = errorMessages.notImplemented
+                                , errorMessage = apiErr
+                                }
+
+                        Err e ->
+                            OtherBadStatusResponse
+                                { label = toLanguageMap "The route is known, but handling is not implemented"
+                                , description = errorToString e
+                                , statusCode = metadata.statusCode
+                                }
+
                 _ ->
                     OtherBadStatusResponse
                         { label = toLanguageMap ("Response status code: " ++ String.fromInt metadata.statusCode)
@@ -104,6 +124,9 @@ errorMessageString language err =
             extractLabelFromLanguageMap language label
 
         NotFoundResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        NotImplementedResponse { label } ->
             extractLabelFromLanguageMap language label
 
         BadRequestResponse { label } ->

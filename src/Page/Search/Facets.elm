@@ -1,6 +1,6 @@
 module Page.Search.Facets exposing (facetSearchMsgConfig, viewModeItems)
 
-import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, padding, paddingXY, px, row, spacing, width)
+import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, el, fill, height, none, padding, paddingXY, px, row, spacing, width)
 import Language exposing (Language)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), ModeFacet)
@@ -75,6 +75,9 @@ viewModeItem selectedMode language fitem =
 
                 IncipitsMode ->
                     iconTmpl (musicNotationSvg iconColour)
+
+                WorkCatalogueMode ->
+                    none
 
         thisTab =
             CountTab label (truncate count |> Just)

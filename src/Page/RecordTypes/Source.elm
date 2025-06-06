@@ -25,7 +25,7 @@ import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSe
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, SourceRecordDescriptors, contentsSectionBodyDecoder, sourceRecordDescriptorsDecoder)
-import Page.RecordTypes.Works exposing (SourceWorksSectionBody, sourceWorksSectionBodyDecoder)
+import Page.RecordTypes.WorkNode exposing (SourceWorksSectionBody, sourceWorksSectionBodyDecoder)
 
 
 type alias FullSourceBody =
@@ -112,7 +112,7 @@ type alias SourceItemsSectionBody =
     , label : LanguageMap
     , url : String
     , totalItems : Int
-    , items : List BasicSourceBody
+    , items : Maybe (List BasicSourceBody)
     }
 
 
@@ -211,4 +211,4 @@ sourceItemsSectionBodyDecoder =
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "url" string
         |> required "totalItems" int
-        |> required "items" (list basicSourceBodyDecoder)
+        |> optional "items" (Decode.maybe (list basicSourceBodyDecoder)) Nothing

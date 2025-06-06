@@ -62,6 +62,9 @@ view session model =
 
                 IncipitSearchOption ->
                     Background.image "/static/images/incipits.jpg"
+
+                WorkCatalogueNavigateOption ->
+                    Background.image "/static/images/incipits.jpg"
     in
     row
         [ width fill

@@ -9,7 +9,7 @@ import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column,
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
-import Element.Lazy exposing (lazy3)
+import Element.Lazy exposing (lazy2, lazy3)
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap)
@@ -95,7 +95,6 @@ view session options =
                 , showLabel = showLabels
                 }
                 IncipitSearchOption
-                (checkHover IncipitSearchOption)
 
         -- If a national collection is chosen this will return
         -- false, indicating that the menu option should not
@@ -109,14 +108,13 @@ view session options =
                 , showLabel = showLabels
                 }
                 InstitutionSearchOption
-                (checkHover InstitutionSearchOption)
 
         showWhenChoosingNationalCollection =
             ME.isNothing session.restrictedToNationalCollection
 
         peopleInterfaceMenuOption =
             viewIf
-                (lazy3 menuOption
+                (lazy2 menuOption
                     { icon = peopleSvg
                     , isCurrent = checkSelected PeopleSearchOption
                     , isHovered = checkHover PeopleSearchOption
@@ -124,7 +122,6 @@ view session options =
                     , showLabel = showLabels
                     }
                     PeopleSearchOption
-                    (checkHover PeopleSearchOption)
                 )
                 showWhenChoosingNationalCollection
 
@@ -190,7 +187,16 @@ view session options =
                 , showLabel = showLabels
                 }
                 SourceSearchOption
-                (checkHover SourceSearchOption)
+
+        workCataloguesInterfaceMenuOption =
+            menuOption
+                { icon = sourcesSvg
+                , isCurrent = checkSelected WorkCatalogueNavigateOption
+                , isHovered = checkHover WorkCatalogueNavigateOption
+                , label = text (extractLabelFromLanguageMap session.language localTranslations.workCatalogues)
+                , showLabel = showLabels
+                }
+                WorkCatalogueNavigateOption
     in
     animatedColumn
         sideAnimation
@@ -285,6 +291,24 @@ view session options =
                 ]
             ]
         , dividingLine
+        , row
+            [ width fill
+            , height shrink
+            , alignLeft
+            , paddingXY 0 10
+            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
+            , Border.color colourScheme.darkBlue
+            , Background.color colourScheme.darkBlue
+            ]
+            [ column
+                [ width fill
+                , height fill
+                , centerX
+                , alignTop
+                , spacing 2
+                ]
+                [ workCataloguesInterfaceMenuOption ]
+            ]
         , row
             [ height fill
             , width fill

@@ -5,7 +5,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
-import Page.RecordTypes.Works exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference)
+import Page.RecordTypes.WorkNode exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (externalLinkTemplate, h3s, viewPreRenderedSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)

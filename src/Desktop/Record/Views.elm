@@ -4,8 +4,9 @@ import Desktop.Error.Views
 import Desktop.Record.HoldingPage exposing (viewFullHoldingPage)
 import Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 import Desktop.Record.PersonPage exposing (viewFullPersonPage)
+import Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 import Desktop.Record.SourcePage exposing (viewFullSourcePage)
-import Element exposing (Element, none)
+import Element exposing (Element, el, none, text)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Response exposing (Response(..), ServerData(..))
@@ -27,6 +28,9 @@ viewChooser session model dataType =
         HoldingData body ->
             viewFullHoldingPage session model body
 
+        PublicationData body ->
+            viewFullPublicationPage session model body
+
         _ ->
             none
 
@@ -43,5 +47,8 @@ view session model =
         Error _ ->
             Desktop.Error.Views.view session model
 
-        _ ->
+        Loading Nothing ->
+            none
+
+        NoResponseToShow ->
             none

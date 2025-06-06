@@ -1,8 +1,9 @@
 module Page.Error exposing (Model, Msg, init, initialCmd, update)
 
+import Http.Detailed exposing (Error(..))
 import Page.Error.Model exposing (ErrorPageModel)
 import Page.Error.Msg exposing (NotFoundMsg(..))
-import Page.Request exposing (createRequestWithDecoder)
+import Page.Request exposing (createRequestWithDecoder, createRequestWithNotFoundDecoder)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -18,20 +19,20 @@ type alias Msg =
 
 init : ErrorPageModel
 init =
-    { response = Loading Nothing }
+    { response = NoResponseToShow }
 
 
 initialCmd : Url -> Cmd NotFoundMsg
 initialCmd initialUrl =
-    createRequestWithDecoder ServerRespondedWithNotFoundData (Url.toString initialUrl)
+    createRequestWithNotFoundDecoder ServerRespondedWithNotFoundData (Url.toString initialUrl)
 
 
 update : Session -> NotFoundMsg -> ErrorPageModel -> ( ErrorPageModel, Cmd NotFoundMsg )
 update _ msg model =
     case msg of
-        ServerRespondedWithNotFoundData (Ok _) ->
+        ServerRespondedWithNotFoundData (Ok resp) ->
             ( { model
-                | response = NoResponseToShow
+                | response = Error (BadStatus (Tuple.first resp) "Not Found")
               }
             , Cmd.none
             )

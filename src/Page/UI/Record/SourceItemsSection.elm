@@ -78,13 +78,18 @@ viewSourceItemsSection { expandMsg, expanded, language, summaryFormatter } siSec
 
         sectionBody =
             if expanded then
-                List.map
-                    (viewSourceItem
-                        { language = language
-                        , summaryFormatter = summaryFormatter
-                        }
+                Maybe.map
+                    (\sourceItems ->
+                        List.map
+                            (viewSourceItem
+                                { language = language
+                                , summaryFormatter = summaryFormatter
+                                }
+                            )
+                            sourceItems
                     )
                     siSection.items
+                    |> Maybe.withDefault []
 
             else
                 []

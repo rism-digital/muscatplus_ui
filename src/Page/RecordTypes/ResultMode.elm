@@ -15,6 +15,7 @@ type ResultMode
     | PeopleMode
     | InstitutionsMode
     | IncipitsMode
+    | WorkCatalogueMode
 
 
 parseResultModeToString : ResultMode -> String
@@ -61,3 +62,6 @@ resultModeHeader mode =
 
         IncipitsMode ->
             localTranslations.incipits
+
+        WorkCatalogueMode ->
+            localTranslations.workCatalogues

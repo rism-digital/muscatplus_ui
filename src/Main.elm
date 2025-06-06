@@ -234,6 +234,22 @@ init flags initialUrl key =
                 ]
             )
 
+        PublicationPageRoute _ ->
+            let
+                ( initialBody, initialCmds ) =
+                    recordRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        }
+            in
+            ( PublicationPage session initialBody
+            , Cmd.batch
+                [ initialCmds
+                , countryListRequest
+                ]
+            )
+
         AboutPageRoute ->
             ( AboutPage session (About.init session)
             , Cmd.batch
@@ -283,36 +299,58 @@ recordRouteHelper { initialUrl, route, session } =
             Record.init recordCfg
                 |> addNationalCollectionFilter session.restrictedToNationalCollection
 
-        ncQueryParam =
-            Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
-
-        contentsUrlSuffix =
-            if isSourcePageRoute initialUrl then
-                "/contents"
-
-            else
-                "/sources"
-
-        sourceContentsPath =
-            if String.endsWith "/" initialUrl.path then
-                initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
-
-            else
-                initialUrl.path ++ contentsUrlSuffix
-
-        sourcesUrl =
-            { initialUrl
-                | path = sourceContentsPath
-                , query = ncQueryParam
-            }
+        fetchInitialSourceResultsCmd =
+            sourceFetchCmd session initialUrl route
     in
     ( initialBody
     , Cmd.batch
         [ Record.recordPageRequest session.cacheBuster initialUrl
-        , Record.recordSearchRequest sourcesUrl
+        , fetchInitialSourceResultsCmd
         ]
         |> Cmd.map Msg.UserInteractedWithRecordPage
     )
+
+
+sourceFetchCmd : Session -> Url -> Route -> Cmd RecordMsg
+sourceFetchCmd session initialUrl route =
+    let
+        shouldFetchSources =
+            case route of
+                SourcePageRoute _ ->
+                    Just "/contents"
+
+                PersonPageRoute _ ->
+                    Just "/sources"
+
+                InstitutionPageRoute _ ->
+                    Just "/sources"
+
+                _ ->
+                    Nothing
+    in
+    case shouldFetchSources of
+        Just contentsUrlSuffix ->
+            let
+                ncQueryParam =
+                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
+
+                sourceContentsPath =
+                    if String.endsWith "/" initialUrl.path then
+                        initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
+
+                    else
+                        initialUrl.path ++ contentsUrlSuffix
+
+                sourcesUrl =
+                    { initialUrl
+                        | path = sourceContentsPath
+                        , query = ncQueryParam
+                    }
+            in
+            Record.recordSearchRequest sourcesUrl
+
+        Nothing ->
+            Cmd.none
 
 
 recordContentsRouteHelper :

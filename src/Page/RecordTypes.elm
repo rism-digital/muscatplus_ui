@@ -13,6 +13,8 @@ type RecordType
     | CollectionSearchResult
     | Front
     | ExternalRecord
+    | Publication
+    | Work
     | Unknown
 
 
@@ -35,4 +37,6 @@ recordTypeOptions =
     , ( "Collection", CollectionSearchResult )
     , ( "rism:Front", Front )
     , ( "rism:ExternalRecord", ExternalRecord )
+    , ( "rism:Publication", Publication )
+    , ( "rism:Work", Work )
     ]

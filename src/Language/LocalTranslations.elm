@@ -96,6 +96,7 @@ localTranslations :
     , updateResults : LanguageMap
     , viewImages : LanguageMap
     , wordsAnywhere : LanguageMap
+    , workCatalogues : LanguageMap
     }
 localTranslations =
     { about =
@@ -1034,6 +1035,8 @@ localTranslations =
         , LanguageValue Portuguese [ "Introduza a sua consulta" ]
         , LanguageValue Polish [ "Wprowadź swoje zapytanie" ]
         ]
+    , workCatalogues =
+        [ LanguageValue English [ "Work Catalogs" ] ]
     }
 
 
@@ -1157,6 +1160,7 @@ errorMessages :
     { badQuery : LanguageMap
     , notFound : LanguageMap
     , recordDeleted : LanguageMap
+    , notImplemented : LanguageMap
     }
 errorMessages =
     { badQuery =
@@ -1179,4 +1183,6 @@ errorMessages =
         ]
     , recordDeleted =
         [ LanguageValue English [ "This record used to exist, but it was removed." ] ]
+    , notImplemented =
+        [ LanguageValue English [ "This route is known, but a handler for it has not been implemented." ] ]
     }

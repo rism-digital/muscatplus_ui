@@ -14,6 +14,7 @@ type CsvRecordType
     | PersonCsvRecordType PersonCsvEntry
     | InstitutionCsvRecordType InstitutionCsvEntry
     | IncipitCsvRecordType IncipitCsvEntry
+    | UnsupportedRecordType
 
 
 type alias InstitutionCsvEntry =
@@ -99,6 +100,9 @@ createSearchUrlRecord resultMode url =
                 , composer = ""
                 }
 
+        WorkCatalogueMode ->
+            UnsupportedRecordType
+
 
 sourceCsvEntryToFieldString : SourceCsvEntry -> List ( String, String )
 sourceCsvEntryToFieldString entry =
@@ -158,6 +162,9 @@ csvEntriesConverter record =
 
         IncipitCsvRecordType entry ->
             incipitCsvEntryToFieldString entry
+
+        UnsupportedRecordType ->
+            []
 
 
 resultListToCsvString : List CsvRecordType -> String

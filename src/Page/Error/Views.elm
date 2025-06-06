@@ -31,7 +31,7 @@ errorMessageView language err =
                         }
 
                 NotFoundResponse { label, errorMessage } ->
-                    viewNotFoundResponse
+                    viewDecodedErrorMessageResponse
                         { errorMessage = errorMessage
                         , label = label
                         , language = language
@@ -49,6 +49,13 @@ errorMessageView language err =
                         { label = label
                         , language = language
                         , tombstone = tombstone
+                        }
+
+                NotImplementedResponse { label, errorMessage } ->
+                    viewDecodedErrorMessageResponse
+                        { errorMessage = errorMessage
+                        , label = label
+                        , language = language
                         }
 
                 OtherBadStatusResponse { label, description, statusCode } ->
@@ -71,8 +78,7 @@ errorMessageView language err =
                         }
     in
     row
-        [ width fill
-        , centerX
+        [ centerX
         , centerY
         , Region.mainContent
         ]
@@ -80,18 +86,19 @@ errorMessageView language err =
             [ spacing lineSpacing
             , width fill
             , centerX
+            , Font.center
             ]
             specificErrorMessage
         ]
 
 
-viewNotFoundResponse :
+viewDecodedErrorMessageResponse :
     { errorMessage : ApiError
     , label : LanguageMap
     , language : Language
     }
     -> List (Element msg)
-viewNotFoundResponse { label, language, errorMessage } =
+viewDecodedErrorMessageResponse { label, language, errorMessage } =
     [ row
         [ width fill
         , centerX
@@ -99,10 +106,14 @@ viewNotFoundResponse { label, language, errorMessage } =
         ]
         [ h2 language label ]
     , row
-        [ width fill
-        , centerX
+        [ centerX
         ]
-        [ el [ Font.center ] (text errorMessage.message) ]
+        [ paragraph
+            [ Font.center
+            , centerX
+            ]
+            [ text errorMessage.message ]
+        ]
     ]
 
 

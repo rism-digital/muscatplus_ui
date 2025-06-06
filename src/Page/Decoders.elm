@@ -12,6 +12,7 @@ import Page.RecordTypes.Holding exposing (holdingBodyDecoder)
 import Page.RecordTypes.Incipit exposing (incipitBodyDecoder)
 import Page.RecordTypes.Institution exposing (institutionBodyDecoder)
 import Page.RecordTypes.Person exposing (personBodyDecoder)
+import Page.RecordTypes.Publication exposing (publicationBodyDecoder)
 import Page.RecordTypes.Search exposing (searchBodyDecoder)
 import Page.RecordTypes.Source exposing (sourceBodyDecoder)
 import Response exposing (ServerData(..))
@@ -49,6 +50,12 @@ recordResponseConverter typevalue =
 
         ExternalRecord ->
             map ExternalData externalRecordBodyDecoder
+
+        Publication ->
+            map PublicationData publicationBodyDecoder
+
+        Work ->
+            map WorkData (fail "")
 
         _ ->
             fail "Could not decode record body response"

@@ -440,6 +440,9 @@ viewSearchControls cfg =
 
                 IncipitsMode ->
                     viewFacetsForIncipitsMode facetConfig
+
+                WorkCatalogueMode ->
+                    []
     in
     row
         [ width fill
