@@ -1,22 +1,15 @@
 module Desktop.Error.Views exposing (view)
 
 import Config as C
-import Element exposing (Element, centerX, centerY, column, el, fill, height, link, none, padding, paragraph, px, row, spacing, text, textColumn, width)
+import Element exposing (Element, centerX, centerY, column, el, fill, height, link, none, padding, paragraph, px, row, spacing, text, width)
 import Element.Background as Background
-import Element.Font as Font
-import Element.Region as Region
-import Language exposing (Language, LanguageMap, dateFormatter, extractLabelFromLanguageMap, toLanguageMap)
 import Page.Error.Views exposing (errorMessageView)
-import Page.RecordTypes.ApiError exposing (ApiError)
-import Page.RecordTypes.Tombstone exposing (Tombstone)
 import Page.UI.Attributes exposing (headingXL, lineSpacing, linkColour)
-import Page.UI.Components exposing (h1, h2, h3)
 import Page.UI.Errors exposing (ErrorResponse(..), createErrorMessage)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..))
 import Session exposing (Session)
-import Time exposing (utc)
 
 
 view :

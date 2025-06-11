@@ -4,9 +4,10 @@ import Desktop.Error.Views
 import Desktop.Record.HoldingPage exposing (viewFullHoldingPage)
 import Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 import Desktop.Record.PersonPage exposing (viewFullPersonPage)
+import Desktop.Record.PublicationListPage exposing (viewPublicationListPage)
 import Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 import Desktop.Record.SourcePage exposing (viewFullSourcePage)
-import Element exposing (Element, el, none, text)
+import Element exposing (Element, none)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Response exposing (Response(..), ServerData(..))
@@ -31,6 +32,9 @@ viewChooser session model dataType =
         PublicationData body ->
             viewFullPublicationPage session model body
 
+        PublicationListData body ->
+            viewPublicationListPage session model body
+
         _ ->
             none
 
@@ -41,14 +45,14 @@ view session model =
         Loading (Just dataType) ->
             viewChooser session model dataType
 
+        Loading Nothing ->
+            none
+
         Response dataType ->
             viewChooser session model dataType
 
         Error _ ->
             Desktop.Error.Views.view session model
-
-        Loading Nothing ->
-            none
 
         NoResponseToShow ->
             none

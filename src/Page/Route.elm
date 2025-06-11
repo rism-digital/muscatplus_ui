@@ -19,6 +19,7 @@ type Route
     | InstitutionSourcePageRoute Int QueryArgs
     | PublicationPageRoute Int
     | PublicationWorksPageRoute Int
+    | PublicationsListPageRoute
       --| PlacePageRoute Int
     | AboutPageRoute
     | HelpPageRoute
@@ -56,6 +57,7 @@ routeParser =
         , P.map InstitutionSourcePageRoute (s "institutions" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map PublicationPageRoute (s "publications" </> P.int)
         , P.map PublicationWorksPageRoute (s "publications" </> P.int </> s "works")
+        , P.map PublicationsListPageRoute (s "publications")
         , P.map AboutPageRoute (s "about")
         , P.map HelpPageRoute (s "about") </> s "help"
         , P.map OptionsPageRoute (s "about") </> s "options"

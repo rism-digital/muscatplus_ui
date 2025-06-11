@@ -1,4 +1,4 @@
-module Page.RecordTypes.ApiError exposing (..)
+module Page.RecordTypes.ApiError exposing (ApiError, apiErrorDecoder, messageToApiError)
 
 import Json.Decode as Decode exposing (Decoder, Error, decodeString, string)
 import Json.Decode.Pipeline exposing (required)

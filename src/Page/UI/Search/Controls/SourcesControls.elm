@@ -1,6 +1,7 @@
 module Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
 
 import Element exposing (Element, alignTop, column, none, row, spacing)
+import Element.Lazy exposing (lazy2)
 import Language.LocalTranslations exposing (facetPanelTitles, localTranslations)
 import Language.Tooltips exposing (tooltips)
 import Page.UI.Components exposing (verticalLine)
@@ -54,63 +55,63 @@ viewFacetsForSourcesMode : ControlsConfig body msg -> List (Element msg)
 viewFacetsForSourcesMode cfg =
     let
         hasIncipitsToggle =
-            viewFacet (createFacetConfig cfg "has-incipits" tooltips.hasIncipits) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "has-incipits" tooltips.hasIncipits) cfg.facetMsgConfig
 
         institutionSigla =
-            viewFacet (createFacetConfig cfg "sigla" tooltips.institutionSigla) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "sigla" tooltips.institutionSigla) cfg.facetMsgConfig
 
         institutionNumHoldings =
-            viewFacet (createFacetConfig cfg "num-holdings" tooltips.institutionNumHoldings) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "num-holdings" tooltips.institutionNumHoldings) cfg.facetMsgConfig
 
         composerRelationships =
-            viewFacet (createFacetConfig cfg "composer" tooltips.composerAuthor) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "composer" tooltips.composerAuthor) cfg.facetMsgConfig
 
         otherPeopleRelationships =
-            viewFacet (createFacetConfig cfg "people" tooltips.otherPeople) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "people" tooltips.otherPeople) cfg.facetMsgConfig
 
         hasAnonymousCreator =
-            viewFacet (createFacetConfig cfg "has-anonymous-creator" tooltips.anonymousCreator) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "has-anonymous-creator" tooltips.anonymousCreator) cfg.facetMsgConfig
 
         subjects =
-            viewFacet (createFacetConfig cfg "subjects" tooltips.subjects) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "subjects" tooltips.subjects) cfg.facetMsgConfig
 
         dateRange =
-            viewFacet (createFacetConfig cfg "date-range" tooltips.dateRange) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "date-range" tooltips.dateRange) cfg.facetMsgConfig
 
         formatExtent =
-            viewFacet (createFacetConfig cfg "format-extent" tooltips.formatExtent) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "format-extent" tooltips.formatExtent) cfg.facetMsgConfig
 
         textLanguage =
-            viewFacet (createFacetConfig cfg "text-language" tooltips.textLanguage) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "text-language" tooltips.textLanguage) cfg.facetMsgConfig
 
         scoring =
-            viewFacet (createFacetConfig cfg "scoring" tooltips.scoring) cfg.facetMsgConfig
+            lazy2 viewFacet (createFacetConfig cfg "scoring" tooltips.scoring) cfg.facetMsgConfig
 
         sourceResultsPanel =
             let
                 sourceType =
-                    viewFacet (createFacetConfig cfg "source-type" []) cfg.facetMsgConfig
+                    lazy2 viewFacet (createFacetConfig cfg "source-type" []) cfg.facetMsgConfig
 
                 materialSourceType =
-                    viewFacet (createFacetConfig cfg "material-source-types" []) cfg.facetMsgConfig
+                    lazy2 viewFacet (createFacetConfig cfg "material-source-types" []) cfg.facetMsgConfig
 
                 materialContentType =
-                    viewFacet (createFacetConfig cfg "material-content-types" []) cfg.facetMsgConfig
+                    lazy2 viewFacet (createFacetConfig cfg "material-content-types" []) cfg.facetMsgConfig
 
                 sourceContentsToggle =
-                    viewFacet (createFacetConfig cfg "hide-source-contents" tooltips.sourceContents) cfg.facetMsgConfig
+                    lazy2 viewFacet (createFacetConfig cfg "hide-source-contents" tooltips.sourceContents) cfg.facetMsgConfig
 
                 sourceCollectionsToggle =
-                    viewFacet (createFacetConfig cfg "hide-source-collections" tooltips.sourceCollections) cfg.facetMsgConfig
+                    lazy2 viewFacet (createFacetConfig cfg "hide-source-collections" tooltips.sourceCollections) cfg.facetMsgConfig
 
                 compositeVolumesToggle =
-                    viewFacet (createFacetConfig cfg "hide-composite-volumes" tooltips.compositeVolume) cfg.facetMsgConfig
+                    lazy2 viewFacet (createFacetConfig cfg "hide-composite-volumes" tooltips.compositeVolume) cfg.facetMsgConfig
 
                 diammRecordsToggle =
-                    viewFacet (createFacetConfig cfg "hide-diamm-records" tooltips.diammProject) cfg.facetMsgConfig
+                    lazy2 viewFacet (createFacetConfig cfg "hide-diamm-records" tooltips.diammProject) cfg.facetMsgConfig
 
                 cantusRecordsToggle =
-                    viewFacet (createFacetConfig cfg "hide-cantus-records" tooltips.cantusProject) cfg.facetMsgConfig
+                    lazy2 viewFacet (createFacetConfig cfg "hide-cantus-records" tooltips.cantusProject) cfg.facetMsgConfig
 
                 allAreEmpty =
                     List.all

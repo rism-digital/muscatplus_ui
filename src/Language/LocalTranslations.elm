@@ -1159,8 +1159,8 @@ facetPanelTitles =
 errorMessages :
     { badQuery : LanguageMap
     , notFound : LanguageMap
-    , recordDeleted : LanguageMap
     , notImplemented : LanguageMap
+    , recordDeleted : LanguageMap
     }
 errorMessages =
     { badQuery =
@@ -1181,8 +1181,8 @@ errorMessages =
         , LanguageValue Portuguese [ "A página não foi encontrada" ]
         , LanguageValue Polish [ "Strona nie została znaleziona" ]
         ]
-    , recordDeleted =
-        [ LanguageValue English [ "This record used to exist, but it was removed." ] ]
     , notImplemented =
         [ LanguageValue English [ "This route is known, but a handler for it has not been implemented." ] ]
+    , recordDeleted =
+        [ LanguageValue English [ "This record used to exist, but it was removed." ] ]
     }

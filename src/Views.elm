@@ -16,6 +16,7 @@ import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column,
 import Element.Background as Background
 import Element.Border as Border
 import Element.Keyed as Keyed
+import Element.Lazy exposing (lazy2)
 import Html.Attributes as HA
 import Html.Styled exposing (toUnstyled)
 import Language exposing (extractLabelFromLanguageMap)
@@ -102,10 +103,8 @@ view model =
             , bodyFont
             , bodyFontColour
             , fontBaseSize
-
-            --, pageBackground
             ]
-            (viewPageBody deviceView model)
+            (lazy2 viewPageBody deviceView model)
         ]
     }
 
@@ -181,6 +180,12 @@ viewPageBody deviceView model =
                     Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.view session pageModel)
 
                 ( PublicationPage session pageModel, DesktopView ) ->
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
+
+                ( PublicationListPage session pageModel, MobileView ) ->
+                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.view session pageModel)
+
+                ( PublicationListPage session pageModel, DesktopView ) ->
                     Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
 
                 ( AboutPage session pageModel, MobileView ) ->

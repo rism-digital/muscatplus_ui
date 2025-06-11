@@ -12,7 +12,7 @@ import Page.Error as NotFound
 import Page.Front as Front
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs)
-import Page.Record as Record
+import Page.Record as Record exposing (sourceFetchCmd)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Route as Route exposing (Route(..), isSourcePageRoute)
@@ -250,6 +250,22 @@ init flags initialUrl key =
                 ]
             )
 
+        PublicationsListPageRoute ->
+            let
+                ( initialBody, initialCmds ) =
+                    recordRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        }
+            in
+            ( PublicationListPage session initialBody
+            , Cmd.batch
+                [ initialCmds
+                , countryListRequest
+                ]
+            )
+
         AboutPageRoute ->
             ( AboutPage session (About.init session)
             , Cmd.batch
@@ -309,48 +325,6 @@ recordRouteHelper { initialUrl, route, session } =
         ]
         |> Cmd.map Msg.UserInteractedWithRecordPage
     )
-
-
-sourceFetchCmd : Session -> Url -> Route -> Cmd RecordMsg
-sourceFetchCmd session initialUrl route =
-    let
-        shouldFetchSources =
-            case route of
-                SourcePageRoute _ ->
-                    Just "/contents"
-
-                PersonPageRoute _ ->
-                    Just "/sources"
-
-                InstitutionPageRoute _ ->
-                    Just "/sources"
-
-                _ ->
-                    Nothing
-    in
-    case shouldFetchSources of
-        Just contentsUrlSuffix ->
-            let
-                ncQueryParam =
-                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
-
-                sourceContentsPath =
-                    if String.endsWith "/" initialUrl.path then
-                        initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
-
-                    else
-                        initialUrl.path ++ contentsUrlSuffix
-
-                sourcesUrl =
-                    { initialUrl
-                        | path = sourceContentsPath
-                        , query = ncQueryParam
-                    }
-            in
-            Record.recordSearchRequest sourcesUrl
-
-        Nothing ->
-            Cmd.none
 
 
 recordContentsRouteHelper :

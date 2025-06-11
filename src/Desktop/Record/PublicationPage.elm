@@ -1,6 +1,6 @@
-module Desktop.Record.PublicationPage exposing (..)
+module Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, none, paddingXY, px, row, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, paddingXY, px, row, width)
 import Element.Background as Background
 import Element.Border as Border
 import Page.Record.Model exposing (RecordPageModel)

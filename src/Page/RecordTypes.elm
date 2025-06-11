@@ -14,6 +14,7 @@ type RecordType
     | Front
     | ExternalRecord
     | Publication
+    | PublicationList
     | Work
     | Unknown
 
@@ -38,5 +39,6 @@ recordTypeOptions =
     , ( "rism:Front", Front )
     , ( "rism:ExternalRecord", ExternalRecord )
     , ( "rism:Publication", Publication )
+    , ( "rism:PublicationList", PublicationList )
     , ( "rism:Work", Work )
     ]

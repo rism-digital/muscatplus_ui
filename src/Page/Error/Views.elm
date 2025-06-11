@@ -1,4 +1,4 @@
-module Page.Error.Views exposing (..)
+module Page.Error.Views exposing (errorMessageView)
 
 import Element exposing (Element, centerX, centerY, column, el, fill, link, paragraph, row, spacing, text, textColumn, width)
 import Element.Font as Font
@@ -98,7 +98,7 @@ viewDecodedErrorMessageResponse :
     , language : Language
     }
     -> List (Element msg)
-viewDecodedErrorMessageResponse { label, language, errorMessage } =
+viewDecodedErrorMessageResponse { errorMessage, label, language } =
     [ row
         [ width fill
         , centerX

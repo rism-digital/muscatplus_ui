@@ -1,6 +1,6 @@
 module Desktop.SideBar.MenuOption exposing (menuOption, sidebarChooserAnimations)
 
-import Element exposing (Attribute, Color, Element, alignLeft, alignTop, centerY, el, fill, none, paddingXY, pointer, px, row, spacing, width)
+import Element exposing (Color, Element, alignLeft, alignTop, centerY, el, fill, paddingXY, pointer, px, row, spacing, width)
 import Element.Background as Background
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font

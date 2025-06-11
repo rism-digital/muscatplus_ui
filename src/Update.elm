@@ -15,13 +15,14 @@ import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.NavigationBar exposing (NavigationBar(..), setNavigationBar)
 import Page.Query exposing (QueryArgs, buildQueryParameters, toNextQuery)
-import Page.Record as RecordPage
+import Page.Record as RecordPage exposing (sourceFetchCmd)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Route as Route exposing (Route, isMEIDownloadRoute, isPNGDownloadRoute, isSourcePageRoute, parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Page.SideBar.Options as SideBarOptions
+import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
 import Url.Builder exposing (toQuery)
@@ -268,6 +269,21 @@ changePage url model =
         Route.PublicationWorksPageRoute _ ->
             ( model, Cmd.none )
 
+        Route.PublicationsListPageRoute ->
+            let
+                ( newPageBody, refreshCmds ) =
+                    changeRecordPageHelper
+                        { model = model
+                        , newSession = newSession
+                        , previousUrl = previousUrl
+                        , route = route
+                        , url = url
+                        }
+            in
+            ( PublicationListPage newSession newPageBody
+            , refreshCmds
+            )
+
         Route.AboutPageRoute ->
             ( AboutPage newSession (AboutPage.init newSession)
             , AboutPage.initialCmd url
@@ -381,6 +397,10 @@ update msg model =
             RecordPage.update session recordMsg pageModel
                 |> updateWith (PublicationPage session) Msg.UserInteractedWithRecordPage model
 
+        ( Msg.UserInteractedWithRecordPage recordMsg, PublicationListPage session pageModel ) ->
+            RecordPage.update session recordMsg pageModel
+                |> updateWith (PublicationListPage session) Msg.UserInteractedWithRecordPage model
+
         ( Msg.UserInteractedWithNotFoundPage notFoundMsg, NotFoundPage session pageModel ) ->
             NotFoundPage.update session notFoundMsg pageModel
                 |> updateWith (NotFoundPage session) Msg.UserInteractedWithNotFoundPage model
@@ -473,6 +493,9 @@ changeRecordPageHelper { model, newSession, previousUrl, route, url } =
                 ( Route.PublicationPageRoute _, PublicationPage _ oldPageBody ) ->
                     samePage oldPageBody
 
+                ( Route.PublicationsListPageRoute, PublicationListPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
                 _ ->
                     ( RecordPage.init recordCfg, False )
     in
@@ -480,30 +503,10 @@ changeRecordPageHelper { model, newSession, previousUrl, route, url } =
         ( newPageBody, Cmd.none )
 
     else
-        let
-            sourceQuery =
-                toNextQuery newPageBody.activeSearch
-                    |> buildQueryParameters
-                    |> toQuery
-                    |> String.dropLeft 1
-
-            sourceContentsPath =
-                if String.endsWith "/" url.path then
-                    url.path ++ String.dropLeft 1 contentsUrlSuffix
-
-                else
-                    url.path ++ contentsUrlSuffix
-
-            sourcesUrl =
-                { url
-                    | path = sourceContentsPath
-                    , query = Just sourceQuery
-                }
-        in
         ( newPageBody
         , Cmd.batch
             [ RecordPage.recordPageRequest newSession.cacheBuster url
-            , RecordPage.recordSearchRequest sourcesUrl
+            , sourceFetchCmd newSession url route
             ]
             |> Cmd.map Msg.UserInteractedWithRecordPage
         )

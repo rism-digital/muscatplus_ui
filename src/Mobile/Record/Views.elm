@@ -36,14 +36,14 @@ view session model =
         Loading (Just dataType) ->
             viewChooser session model dataType
 
+        Loading Nothing ->
+            none
+
         Response dataType ->
             viewChooser session model dataType
 
         Error _ ->
             Mobile.Error.Views.view session model
-
-        Loading Nothing ->
-            none
 
         NoResponseToShow ->
             none

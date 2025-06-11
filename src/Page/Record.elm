@@ -7,6 +7,7 @@ module Page.Record exposing
     , recordPageRequest
     , recordSearchRequest
     , requestPreviewIfSelected
+    , sourceFetchCmd
     , update
     )
 
@@ -30,7 +31,7 @@ import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.Search exposing (toFacetLabel)
 import Page.Request exposing (createRequestWithDecoder)
-import Page.Route exposing (Route)
+import Page.Route exposing (Route(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
@@ -627,4 +628,46 @@ updatePageMetadata incomingData =
                 |> sendOutgoingMessageOnPort
 
         _ ->
+            Cmd.none
+
+
+sourceFetchCmd : Session -> Url -> Route -> Cmd RecordMsg
+sourceFetchCmd session initialUrl route =
+    let
+        shouldFetchSources =
+            case route of
+                SourcePageRoute _ ->
+                    Just "/contents"
+
+                PersonPageRoute _ ->
+                    Just "/sources"
+
+                InstitutionPageRoute _ ->
+                    Just "/sources"
+
+                _ ->
+                    Nothing
+    in
+    case shouldFetchSources of
+        Just contentsUrlSuffix ->
+            let
+                ncQueryParam =
+                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
+
+                sourceContentsPath =
+                    if String.endsWith "/" initialUrl.path then
+                        initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
+
+                    else
+                        initialUrl.path ++ contentsUrlSuffix
+
+                sourcesUrl =
+                    { initialUrl
+                        | path = sourceContentsPath
+                        , query = ncQueryParam
+                    }
+            in
+            recordSearchRequest sourcesUrl
+
+        Nothing ->
             Cmd.none

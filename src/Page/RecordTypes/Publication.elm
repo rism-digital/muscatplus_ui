@@ -1,4 +1,4 @@
-module Page.RecordTypes.Publication exposing (..)
+module Page.RecordTypes.Publication exposing (PublicationBody, WorksSectionBody, publicationBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, int, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
@@ -34,9 +34,9 @@ publicationBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
-        |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
-        |> optional "notes" (Decode.maybe notesSectionBodyDecoder) Nothing
-        |> optional "works" (Decode.maybe worksSectionBodyDecoder) Nothing
+        |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
+        |> optional "notes" (maybe notesSectionBodyDecoder) Nothing
+        |> optional "works" (maybe worksSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
 

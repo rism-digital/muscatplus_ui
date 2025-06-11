@@ -9,7 +9,7 @@ import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column,
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
-import Element.Lazy exposing (lazy2, lazy3)
+import Element.Lazy exposing (lazy2)
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (extractLabelFromLanguageMap)

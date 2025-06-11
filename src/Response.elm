@@ -9,6 +9,7 @@ import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.RecordTypes.Publication exposing (PublicationBody)
+import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.RecordTypes.Work exposing (WorkBody)
@@ -39,4 +40,5 @@ type ServerData
     | AboutData AboutBody
     | ExternalData ExternalRecordBody
     | PublicationData PublicationBody
+    | PublicationListData PublicationListBody
     | WorkData WorkBody

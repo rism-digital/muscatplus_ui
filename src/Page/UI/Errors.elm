@@ -126,13 +126,13 @@ errorMessageString language err =
         NotFoundResponse { label } ->
             extractLabelFromLanguageMap language label
 
-        NotImplementedResponse { label } ->
-            extractLabelFromLanguageMap language label
-
         BadRequestResponse { label } ->
             extractLabelFromLanguageMap language label
 
         GoneResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        NotImplementedResponse { label } ->
             extractLabelFromLanguageMap language label
 
         OtherBadStatusResponse { label } ->
