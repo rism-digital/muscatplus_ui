@@ -96,8 +96,21 @@ changePage url model =
                     Maybe.map2 (/=) previousUrl.query url.query
                         |> Maybe.withDefault True
 
+                isLoading =
+                    case model of
+                        SearchPage _ pageBody ->
+                            case pageBody.response of
+                                Loading r ->
+                                    ME.isJust r
+
+                                _ ->
+                                    False
+
+                        _ ->
+                            False
+
                 searchCmd =
-                    if queryHasChanged then
+                    if queryHasChanged || isLoading then
                         let
                             newKeyboardParams =
                                 buildNotationQueryParameters kqargs
