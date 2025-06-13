@@ -269,6 +269,21 @@ changePage url model =
         Route.PublicationWorksPageRoute _ ->
             ( model, Cmd.none )
 
+        Route.WorkPageRoute _ ->
+            let
+                ( newPageBody, refreshCmds ) =
+                    changeRecordPageHelper
+                        { model = model
+                        , newSession = newSession
+                        , previousUrl = previousUrl
+                        , route = route
+                        , url = url
+                        }
+            in
+            ( WorkPage newSession newPageBody
+            , refreshCmds
+            )
+
         Route.PublicationsListPageRoute ->
             let
                 ( newPageBody, refreshCmds ) =
@@ -400,6 +415,10 @@ update msg model =
         ( Msg.UserInteractedWithRecordPage recordMsg, PublicationListPage session pageModel ) ->
             RecordPage.update session recordMsg pageModel
                 |> updateWith (PublicationListPage session) Msg.UserInteractedWithRecordPage model
+
+        ( Msg.UserInteractedWithRecordPage recordMsg, WorkPage session pageModel ) ->
+            RecordPage.update session recordMsg pageModel
+                |> updateWith (WorkPage session) Msg.UserInteractedWithRecordPage model
 
         ( Msg.UserInteractedWithNotFoundPage notFoundMsg, NotFoundPage session pageModel ) ->
             NotFoundPage.update session notFoundMsg pageModel
@@ -557,6 +576,9 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
                     samePage oldPageBody
 
                 ( Route.InstitutionSourcePageRoute _ _, InstitutionPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                ( Route.PublicationWorksPageRoute _, PublicationPage _ oldPageBody ) ->
                     samePage oldPageBody
 
                 _ ->

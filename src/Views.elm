@@ -188,6 +188,12 @@ viewPageBody deviceView model =
                 ( PublicationListPage session pageModel, DesktopView ) ->
                     Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
 
+                ( WorkPage session pageModel, MobileView ) ->
+                    Element.map Msg.UserInteractedWithRecordPage (Mobile.Record.Views.view session pageModel)
+
+                ( WorkPage session pageModel, DesktopView ) ->
+                    Element.map Msg.UserInteractedWithRecordPage (Desktop.Record.Views.view session pageModel)
+
                 ( AboutPage session pageModel, MobileView ) ->
                     Element.map Msg.UserInteractedWithAboutPage (Mobile.About.About.view session pageModel)
 

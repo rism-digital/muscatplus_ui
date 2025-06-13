@@ -16,6 +16,7 @@ import Page.RecordTypes.Publication exposing (publicationBodyDecoder)
 import Page.RecordTypes.PublicationList exposing (publicationListBodyDecoder)
 import Page.RecordTypes.Search exposing (searchBodyDecoder)
 import Page.RecordTypes.Source exposing (sourceBodyDecoder)
+import Page.RecordTypes.Work exposing (workBodyDecoder)
 import Response exposing (ServerData(..))
 
 
@@ -59,7 +60,7 @@ recordResponseConverter typevalue =
             map PublicationListData publicationListBodyDecoder
 
         Work ->
-            fail ""
+            map WorkData workBodyDecoder
 
         _ ->
             fail "Could not decode record body response"

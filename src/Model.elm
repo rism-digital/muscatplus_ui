@@ -18,6 +18,7 @@ type Model
     | InstitutionPage Session Record.Model
     | PublicationPage Session Record.Model
     | PublicationListPage Session Record.Model
+    | WorkPage Session Record.Model
     | AboutPage Session About.Model
     | HelpPage Session
     | OptionsPage Session About.Model
@@ -51,6 +52,9 @@ toSession model =
             session
 
         PublicationListPage session _ ->
+            session
+
+        WorkPage session _ ->
             session
 
         AboutPage session _ ->
@@ -92,6 +96,9 @@ updateSession newSession model =
 
         PublicationListPage _ pageModel ->
             PublicationListPage newSession pageModel
+
+        WorkPage _ pageModel ->
+            WorkPage newSession pageModel
 
         AboutPage _ aboutModel ->
             AboutPage newSession aboutModel

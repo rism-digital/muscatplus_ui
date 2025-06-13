@@ -20,6 +20,7 @@ type Route
     | PublicationPageRoute Int
     | PublicationWorksPageRoute Int
     | PublicationsListPageRoute
+    | WorkPageRoute Int
       --| PlacePageRoute Int
     | AboutPageRoute
     | HelpPageRoute
@@ -58,6 +59,7 @@ routeParser =
         , P.map PublicationPageRoute (s "publications" </> P.int)
         , P.map PublicationWorksPageRoute (s "publications" </> P.int </> s "works")
         , P.map PublicationsListPageRoute (s "publications")
+        , P.map WorkPageRoute (s "works" </> P.int)
         , P.map AboutPageRoute (s "about")
         , P.map HelpPageRoute (s "about") </> s "help"
         , P.map OptionsPageRoute (s "about") </> s "options"
