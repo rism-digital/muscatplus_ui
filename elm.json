@@ -26,7 +26,7 @@
             "elm/svg": "1.0.1",
             "elm/time": "1.0.0",
             "elm/url": "1.0.0",
-            "elm/virtual-dom": "1.0.3",
+            "elm/virtual-dom": "1.0.4",
             "elm-community/json-extra": "4.3.0",
             "elmcraft/core-extra": "2.2.0",
             "hayleigh-dot-dev/elm-web-audio": "1.1.1",
@@ -37,7 +37,7 @@
             "rtfeldman/elm-css": "18.0.0",
             "rtfeldman/elm-iso8601-date-strings": "1.1.4",
             "rtfeldman/elm-validate": "4.0.2",
-            "ryannhg/date-format": "2.3.0"
+            "ryan-haskell/date-format": "1.0.0"
         },
         "indirect": {
             "andre-dietrich/parser-combinators": "3.2.0",
