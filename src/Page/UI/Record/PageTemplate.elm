@@ -8,7 +8,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, paddingXY, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, clip, column, el, fill, height, htmlAttribute, newTabLink, none, padding, paddingXY, px, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -23,7 +23,7 @@ import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, h3s, resource
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, headerHeight)
 import Session exposing (Session)
 import Url
 
@@ -171,7 +171,7 @@ pageHeaderTemplate language icon header =
         { body = header
         , extraAttrs =
             [ htmlAttribute (HA.id header.sectionToc)
-            , centerY
+            , alignTop
             , paddingXY 0 10
             ]
         , hLevel = h1 language
@@ -239,9 +239,8 @@ headerTmpl cfg =
     wrappedRow
         (width fill
             :: spacingXY 10 5
-            :: centerY
             :: alignTop
-            --:: clip
+            :: height (px headerHeight)
             :: cfg.extraAttrs
         )
         [ viewMaybe identity cfg.icon

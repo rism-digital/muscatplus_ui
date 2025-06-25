@@ -1,4 +1,4 @@
-module Page.Route exposing (Route(..), isMEIDownloadRoute, isPNGDownloadRoute, isSourcePageRoute, parseUrl, setRoute, setUrl)
+module Page.Route exposing (Route(..), baseRecordPathFromRoute, isMEIDownloadRoute, isPNGDownloadRoute, isSourcePageRoute, parseUrl, setRoute, setUrl)
 
 import Page.Keyboard.Model exposing (KeyboardQuery)
 import Page.Keyboard.Query exposing (notationParamParser)
@@ -18,7 +18,7 @@ type Route
     | InstitutionPageRoute Int
     | InstitutionSourcePageRoute Int QueryArgs
     | PublicationPageRoute Int
-    | PublicationWorksPageRoute Int
+    | PublicationWorksPageRoute Int QueryArgs
     | PublicationsListPageRoute
     | WorkPageRoute Int
       --| PlacePageRoute Int
@@ -57,7 +57,7 @@ routeParser =
         , P.map InstitutionPageRoute (s "institutions" </> P.int)
         , P.map InstitutionSourcePageRoute (s "institutions" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map PublicationPageRoute (s "publications" </> P.int)
-        , P.map PublicationWorksPageRoute (s "publications" </> P.int </> s "works")
+        , P.map PublicationWorksPageRoute (s "publications" </> P.int </> s "works" <?> queryParamsParser)
         , P.map PublicationsListPageRoute (s "publications")
         , P.map WorkPageRoute (s "works" </> P.int)
         , P.map AboutPageRoute (s "about")
@@ -98,3 +98,58 @@ isSourcePageRoute url =
         )
         url
         |> Maybe.withDefault False
+
+
+baseRecordPathFromRoute : Route -> String
+baseRecordPathFromRoute route =
+    case route of
+        FrontPageRoute _ ->
+            "/"
+
+        SearchPageRoute _ _ ->
+            "/search"
+
+        SourcePageRoute rid ->
+            "/sources/" ++ String.fromInt rid
+
+        SourceContentsPageRoute rid _ ->
+            "/sources/" ++ String.fromInt rid
+
+        SourceHoldingsPageRoute rid _ ->
+            "/sources/" ++ String.fromInt rid
+
+        PersonPageRoute pid ->
+            "/people/" ++ String.fromInt pid
+
+        PersonSourcePageRoute pid _ ->
+            "/people/" ++ String.fromInt pid
+
+        InstitutionPageRoute iid ->
+            "/institutions/" ++ String.fromInt iid
+
+        InstitutionSourcePageRoute iid _ ->
+            "/institutions/" ++ String.fromInt iid
+
+        PublicationPageRoute pid ->
+            "/publications/" ++ String.fromInt pid
+
+        PublicationWorksPageRoute pid _ ->
+            "/publications/" ++ String.fromInt pid
+
+        PublicationsListPageRoute ->
+            "/publications/"
+
+        WorkPageRoute wid ->
+            "/works/" ++ String.fromInt wid
+
+        AboutPageRoute ->
+            "/about/"
+
+        HelpPageRoute ->
+            "/about/help/"
+
+        OptionsPageRoute ->
+            "/about/options/"
+
+        NotFoundPageRoute ->
+            "/does-not-exist"

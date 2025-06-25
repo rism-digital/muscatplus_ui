@@ -33,8 +33,10 @@ module Page.RecordTypes.Search exposing
     , SourceResultBody
     , SourceResultFlags
     , ToggleFacet
+    , WorkResultBody
     , aliasLabelDecoder
     , extractIdFromSearchResult
+    , extractLabelFromSearchResult
     , facetsDecoder
     , labelForValue
     , parseFacetBehaviourToString
@@ -220,6 +222,19 @@ type alias InstitutionResultFlags =
     }
 
 
+type alias WorkResultBody =
+    { id : String
+    , label : LanguageMap
+    , summary : Maybe (Dict String LabelValue)
+    , flags : WorkResultFlags
+    }
+
+
+type alias WorkResultFlags =
+    { catalogueIdentifier : Maybe String
+    }
+
+
 type alias ModeFacet =
     { alias : String
     , label : LanguageMap
@@ -327,6 +342,7 @@ type SearchResult
     | PersonResult PersonResultBody
     | InstitutionResult InstitutionResultBody
     | IncipitResult IncipitResultBody
+    | WorkResult WorkResultBody
 
 
 type alias SelectFacet =
@@ -410,6 +426,28 @@ extractIdFromSearchResult searchResult =
         IncipitResult ic ->
             ic.id
 
+        WorkResult wi ->
+            wi.id
+
+
+extractLabelFromSearchResult : SearchResult -> LanguageMap
+extractLabelFromSearchResult searchResult =
+    case searchResult of
+        SourceResult d ->
+            d.label
+
+        PersonResult p ->
+            p.label
+
+        InstitutionResult i ->
+            i.label
+
+        IncipitResult ic ->
+            ic.label
+
+        WorkResult wi ->
+            wi.label
+
 
 facetBehaviourOptions : List ( String, FacetBehaviours )
 facetBehaviourOptions =
@@ -444,12 +482,12 @@ facetItemDecoder =
 
 facetItemValueDecoder : Decoder String
 facetItemValueDecoder =
-    string
-        |> Decode.map
-            (\str ->
-                percentDecode str
-                    |> Maybe.withDefault str
-            )
+    Decode.map
+        (\str ->
+            percentDecode str
+                |> Maybe.withDefault str
+        )
+        string
 
 
 facetNotationOptionsDecoder : Decoder FacetNotationOptions
@@ -741,6 +779,9 @@ searchResultTypeDecoder restype =
         "rism:Source" ->
             Decode.map SourceResult sourceResultBodyDecoder
 
+        "rism:Work" ->
+            Decode.map WorkResult workResultBodyDecoder
+
         _ ->
             Decode.fail ("Could not determine result type for " ++ restype)
 
@@ -842,3 +883,18 @@ singleChoiceFacetDecoder =
         |> required "alias" string
         |> required "label" languageMapLabelDecoder
         |> required "items" (list facetItemDecoder)
+
+
+workResultBodyDecoder : Decoder WorkResultBody
+workResultBodyDecoder =
+    Decode.succeed WorkResultBody
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
+        |> optional "summary" (maybe (dict labelValueDecoder)) Nothing
+        |> required "flags" workResultFlagDecoder
+
+
+workResultFlagDecoder : Decoder WorkResultFlags
+workResultFlagDecoder =
+    Decode.succeed WorkResultFlags
+        |> optional "catalogNumber" (maybe string) Nothing

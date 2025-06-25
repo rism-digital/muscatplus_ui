@@ -15,7 +15,7 @@ import Page.Query exposing (QueryArgs)
 import Page.Record as Record exposing (sourceFetchCmd)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.Route as Route exposing (Route(..), isSourcePageRoute)
+import Page.Route as Route exposing (Route(..), baseRecordPathFromRoute, isSourcePageRoute)
 import Page.Search as Search
 import Page.SideBar as Sidebar
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, addNationalCollectionQueryParameter)
@@ -250,6 +250,23 @@ init flags initialUrl key =
                 ]
             )
 
+        PublicationWorksPageRoute _ qargs ->
+            let
+                ( initialBody, initialCmds ) =
+                    recordContentsRouteHelper
+                        { initialUrl = initialUrl
+                        , qargs = qargs
+                        , route = route
+                        , session = session
+                        }
+            in
+            ( PublicationPage session initialBody
+            , Cmd.batch
+                [ initialCmds
+                , countryListRequest
+                ]
+            )
+
         PublicationsListPageRoute ->
             let
                 ( initialBody, initialCmds ) =
@@ -348,29 +365,16 @@ recordContentsRouteHelper { initialUrl, qargs, route, session } =
             Record.init recordCfg
                 |> addNationalCollectionFilter session.restrictedToNationalCollection
 
-        contentsUrlSuffix =
-            if isSourcePageRoute initialUrl then
-                "/contents"
-
-            else
-                "/sources"
-
-        recordPath =
-            String.replace contentsUrlSuffix "" initialUrl.path
+        fetchInitialContentsResultsCmd =
+            sourceFetchCmd session initialUrl route
 
         recordUrl =
-            { initialUrl | path = recordPath }
-
-        newQparams =
-            addNationalCollectionQueryParameter session qargs
-
-        sourcesUrl =
-            { initialUrl | query = Just newQparams }
+            { initialUrl | path = baseRecordPathFromRoute route }
     in
     ( initialBody
     , Cmd.batch
         [ Record.recordPageRequest session.cacheBuster recordUrl
-        , Record.recordSearchRequest sourcesUrl
+        , fetchInitialContentsResultsCmd
         , Record.requestPreviewIfSelected initialBody.selectedResult
         ]
         |> Cmd.map Msg.UserInteractedWithRecordPage

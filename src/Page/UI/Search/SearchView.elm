@@ -42,6 +42,7 @@ import Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
+import Page.UI.Search.Results.WorkResult exposing (viewWorkSearchResult)
 import Page.UI.Search.SearchComponents exposing (queryValidationState, viewSearchButtons)
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsNotFoundTmpl)
@@ -588,3 +589,6 @@ viewSearchResultRouter cfg =
 
         IncipitResult body ->
             viewIncipitSearchResult resultConfig body
+
+        WorkResult body ->
+            viewWorkSearchResult resultConfig body

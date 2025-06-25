@@ -16,6 +16,7 @@ import Set exposing (Set)
 type CurrentRecordViewTab
     = DefaultRecordViewTab String
     | RelatedSourcesSearchTab String
+    | RelatedWorksListTab String
 
 
 type alias RecordPageModel msg =

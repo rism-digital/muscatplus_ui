@@ -498,6 +498,17 @@ update session msg model =
                                         [ searchRequest
                                         , Nav.pushUrl session.key searchUrl
                                         ]
+
+                        RelatedWorksListTab searchUrl ->
+                            let
+                                worksRequest =
+                                    Url.fromString searchUrl
+                                        |> ME.unwrap Cmd.none recordSearchRequest
+                            in
+                            Cmd.batch
+                                [ worksRequest
+                                , Nav.pushUrl session.key searchUrl
+                                ]
             in
             ( { model
                 | currentTab = recordTab
@@ -644,6 +655,9 @@ sourceFetchCmd session initialUrl route =
 
                 InstitutionPageRoute _ ->
                     Just "/sources"
+
+                PublicationPageRoute _ ->
+                    Just "/works"
 
                 _ ->
                     Nothing

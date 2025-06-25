@@ -708,17 +708,13 @@ mapViewer ( width, height ) iframeUrl =
 
 sourceIconView : SourceRecordType -> Element msg
 sourceIconView recordType =
-    let
-        sourceIcon =
-            sourceIconChooser recordType
-    in
     el
         [ width (px 25)
         , height (px 25)
         , centerX
         , alignTop
         ]
-        (sourceIcon colourScheme.darkBlue)
+        (sourceIconChooser recordType colourScheme.darkBlue)
 
 
 sourceIconChooser : SourceRecordType -> (Color -> Element msg)

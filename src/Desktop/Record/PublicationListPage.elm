@@ -1,15 +1,16 @@
 module Desktop.Record.PublicationListPage exposing (viewPublicationListPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, link, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Language exposing (extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Publication exposing (PublicationBody)
+import Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody)
 import Page.RecordTypes.PublicationList exposing (PublicationListBody)
-import Page.UI.Attributes exposing (linkColour, minimalDropShadow, sectionSpacing)
+import Page.RecordTypes.Relationship exposing (RelatedToBody)
+import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (h2, h3s)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, subHeaderTemplate)
@@ -72,8 +73,6 @@ viewPublicationListPage session model body =
                     , minimalDropShadow
                     ]
                     [ pageHeader
-
-                    --, tabBar
                     ]
                 ]
             , row
@@ -89,22 +88,54 @@ viewPublicationListPage session model body =
                     , alignTop
                     , spacing sectionSpacing
                     ]
-                    (List.map (\b -> viewPublication session b) body.items)
+                    [ indexedTable
+                        [ Border.width 1
+                        , Border.color colourScheme.midGrey
+                        ]
+                        { columns =
+                            [ { header = el tableHeaderStyles (text "Composer")
+                              , width = fillPortion 1
+                              , view = \i w -> viewComposerCell session.language i w.composer
+                              }
+                            , { header = el tableHeaderStyles (text "(Abbreviation) and Catalog Title")
+                              , width = fillPortion 3
+                              , view = \i w -> viewCatalogTitleCell session.language i w
+                              }
+                            ]
+                        , data = body.items
+                        }
+                    ]
                 ]
-
-            --, pageBodyView
-            --, pageFooterTemplateRouter session session.language body
             ]
         ]
 
 
-viewPublication : Session -> PublicationBody -> Element RecordMsg
-viewPublication session body =
-    row
-        [ width fill ]
-        [ link
-            [ linkColour ]
-            { label = h3s session.language body.label
-            , url = body.id
-            }
-        ]
+viewCatalogTitleCell : Language -> Int -> PublicationBasic -> Element RecordMsg
+viewCatalogTitleCell language rowNum publication =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+    in
+    link
+        [ cellBg, linkColour, padding 10 ]
+        { url = publication.id
+        , label = text (extractLabelFromLanguageMap language publication.label)
+        }
+
+
+viewComposerCell : Language -> Int -> Maybe RelatedToBody -> Element RecordMsg
+viewComposerCell language rowNum composer =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+    in
+    case composer of
+        Just c ->
+            link
+                [ cellBg, linkColour, padding 10 ]
+                { url = c.id
+                , label = text (extractLabelFromLanguageMap language c.label)
+                }
+
+        Nothing ->
+            el [ cellBg, padding 10 ] (text "[No composer]")

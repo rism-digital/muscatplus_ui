@@ -5,6 +5,7 @@ module Page.UI.Attributes exposing
     , bodyRegular
     , bodySM
     , bodySerifFont
+    , cycleTableBackground
     , emptyAttribute
     , emptyHtmlAttribute
     , fontBaseSize
@@ -22,10 +23,12 @@ module Page.UI.Attributes exposing
     , sectionBorderStyles
     , sectionSpacing
     , sidebarWidth
+    , tableHeaderStyles
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, alignTop, fill, htmlAttribute, maximum, modular, paddingEach, paddingXY, spacing, width)
+import Element exposing (Attr, Attribute, alignTop, fill, htmlAttribute, maximum, modular, padding, paddingEach, paddingXY, spacing, width)
+import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html as HT
@@ -217,3 +220,22 @@ valueFieldColumnAttributes =
 sidebarWidth : Int
 sidebarWidth =
     70
+
+
+cycleTableBackground : Int -> Attribute msg
+cycleTableBackground i =
+    if modBy 2 i == 0 then
+        Background.color colourScheme.lightestBlue
+
+    else
+        Background.color colourScheme.white
+
+
+tableHeaderStyles : List (Attribute msg)
+tableHeaderStyles =
+    [ Font.semiBold
+    , padding 10
+    , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+    , Border.color colourScheme.midGrey
+    , Background.color colourScheme.lightGrey
+    ]

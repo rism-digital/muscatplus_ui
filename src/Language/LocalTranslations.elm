@@ -97,6 +97,7 @@ localTranslations :
     , viewImages : LanguageMap
     , wordsAnywhere : LanguageMap
     , workCatalogues : LanguageMap
+    , works : LanguageMap
     }
 localTranslations =
     { about =
@@ -1037,6 +1038,8 @@ localTranslations =
         ]
     , workCatalogues =
         [ LanguageValue English [ "Work Catalogs" ] ]
+    , works =
+        [ LanguageValue English [ "Works" ] ]
     }
 
 

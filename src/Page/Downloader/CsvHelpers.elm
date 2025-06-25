@@ -191,6 +191,9 @@ convertResult res =
         IncipitResult body ->
             convertIncipitResultBody body
 
+        WorkResult _ ->
+            UnsupportedRecordType
+
 
 extractFromSummaryDict : String -> Maybe (Dict String LabelValue) -> String
 extractFromSummaryDict dictKey summaryDict =

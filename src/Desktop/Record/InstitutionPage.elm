@@ -112,6 +112,9 @@ viewFullInstitutionPage session model body =
                 RelatedSourcesSearchTab _ ->
                     viewSourceSearchTabBody session model
 
+                RelatedWorksListTab _ ->
+                    none
+
         headerHeight =
             if session.isFramed then
                 px (recordTitleHeight + searchSourcesLinkHeight)

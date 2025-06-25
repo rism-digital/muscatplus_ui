@@ -266,7 +266,7 @@ changePage url model =
             , refreshCmds
             )
 
-        Route.PublicationWorksPageRoute _ ->
+        Route.PublicationWorksPageRoute _ _ ->
             ( model, Cmd.none )
 
         Route.WorkPageRoute _ ->
@@ -578,7 +578,7 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
                 ( Route.InstitutionSourcePageRoute _ _, InstitutionPage _ oldPageBody ) ->
                     samePage oldPageBody
 
-                ( Route.PublicationWorksPageRoute _, PublicationPage _ oldPageBody ) ->
+                ( Route.PublicationWorksPageRoute _ _, PublicationPage _ oldPageBody ) ->
                     samePage oldPageBody
 
                 _ ->

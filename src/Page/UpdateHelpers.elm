@@ -766,6 +766,9 @@ hasNonZeroSourcesAttached recordBody =
         InstitutionData institutionBody ->
             ME.isJust institutionBody.sources
 
+        PublicationData publicationBody ->
+            ME.isJust publicationBody.works
+
         _ ->
             False
 

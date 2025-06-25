@@ -1,0 +1,13 @@
+module Page.UI.Search.Results.WorkResult exposing (..)
+
+import Element exposing (Element, none, text)
+import Page.RecordTypes.Search exposing (WorkResultBody)
+import Page.UI.Search.Results exposing (SearchResultConfig)
+
+
+viewWorkSearchResult :
+    SearchResultConfig msg
+    -> WorkResultBody
+    -> Element msg
+viewWorkSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
+    text "Work result"

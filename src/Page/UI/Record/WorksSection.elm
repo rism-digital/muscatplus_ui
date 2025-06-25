@@ -1,12 +1,12 @@
 module Page.UI.Record.WorksSection exposing (viewPersonWorksSection, viewSourceWorksSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, padding, paddingXY, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, none, padding, paddingXY, paragraph, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
-import Page.RecordTypes.WorkNode exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
+import Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody)
+import Page.UI.Attributes exposing (cycleTableBackground, lineSpacing, linkColour, sectionBorderStyles, tableHeaderStyles, valueFieldColumnAttributes)
 import Page.UI.Components exposing (externalLinkTemplate, h3s, viewPreRenderedSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -92,7 +92,8 @@ viewPersonWorksSection language worksSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewPersonExternalWorkReferencesSection language) worksSection.workReferences
+                [ viewMaybe (viewPersonWorksCatalogueSection language) worksSection.worksCatalogs
+                , viewMaybe (viewPersonExternalWorkReferencesSection language) worksSection.workReferences
                 ]
             ]
         ]
@@ -100,73 +101,92 @@ viewPersonWorksSection language worksSection =
 
 viewPersonExternalWorkReferencesSection : Language -> PersonExternalWorkReferencesBody -> Element msg
 viewPersonExternalWorkReferencesSection language workReferences =
-    let
-        cycleBg i =
-            if modBy 2 i == 0 then
-                Background.color colourScheme.lightestBlue
-
-            else
-                Background.color colourScheme.white
-
-        headerStyles =
-            [ Font.semiBold
-            , padding 10
-            , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-            , Border.color colourScheme.midGrey
-            , Background.color colourScheme.lightGrey
-            ]
-    in
-    row
-        (width fill :: sectionBorderStyles)
-        [ column
-            [ spacing lineSpacing
-            , width fill
-            , height fill
-            , alignTop
-            ]
-            [ row
-                [ width fill
-                , spacing 5
+    sectionTemplate language
+        workReferences
+        [ row
+            (width fill :: sectionBorderStyles)
+            [ column
+                [ spacing lineSpacing
+                , width fill
+                , height fill
+                , alignTop
                 ]
-                [ h3s language workReferences.label
-                ]
-            , row
-                [ width fill ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , alignTop
-                    , spacing lineSpacing
-                    , paddingXY lineSpacing 10
-                    ]
-                    [ indexedTable
-                        [ Border.width 1
-                        , Border.color colourScheme.midGrey
+                [ row
+                    [ width fill ]
+                    [ column
+                        [ width fill
+                        , height fill
+                        , alignTop
+                        , spacing lineSpacing
+                        , paddingXY lineSpacing 10
                         ]
-                        { columns =
-                            [ { header =
-                                    el
-                                        headerStyles
-                                        (text "Work title")
-                              , width = fill
-                              , view = \i w -> el [ cycleBg i, padding 10 ] (text w.value)
-                              }
-                            , { header = el headerStyles (text "Source count")
-                              , width = fill
-                              , view = \i w -> el [ cycleBg i, padding 10 ] (text (String.fromInt w.sourceCount))
-                              }
-                            , { header = el headerStyles (text "Sources")
-                              , width = fill
-                              , view = \i w -> link [ cycleBg i, padding 10, linkColour ] { label = text ("Sources linked to " ++ w.externalIdentifier), url = w.searchUrl }
-                              }
-                            , { header = el headerStyles (text "External authority")
-                              , width = fill
-                              , view = \i w -> newTabLink [ cycleBg i, padding 10, linkColour ] { label = text w.externalIdentifier, url = w.authorityUrl }
-                              }
+                        [ indexedTable
+                            [ Border.width 1
+                            , Border.color colourScheme.midGrey
                             ]
-                        , data = workReferences.items
-                        }
+                            { columns =
+                                [ { header =
+                                        el
+                                            tableHeaderStyles
+                                            (text "Work title")
+                                  , width = fill
+                                  , view = \i w -> el [ cycleTableBackground i, padding 10 ] (text w.value)
+                                  }
+                                , { header = el tableHeaderStyles (text "Source count")
+                                  , width = fill
+                                  , view = \i w -> el [ cycleTableBackground i, padding 10 ] (text (String.fromInt w.sourceCount))
+                                  }
+                                , { header = el tableHeaderStyles (text "Sources")
+                                  , width = fill
+                                  , view = \i w -> link [ cycleTableBackground i, padding 10, linkColour ] { label = text ("Sources linked to " ++ w.externalIdentifier), url = w.searchUrl }
+                                  }
+                                , { header = el tableHeaderStyles (text "External authority")
+                                  , width = fill
+                                  , view = \i w -> newTabLink [ cycleTableBackground i, padding 10, linkColour ] { label = text w.externalIdentifier, url = w.authorityUrl }
+                                  }
+                                ]
+                            , data = workReferences.items
+                            }
+                        ]
                     ]
                 ]
             ]
+        ]
+
+
+viewPersonWorksCatalogueSection : Language -> WorksCatalogueSectionBody -> Element msg
+viewPersonWorksCatalogueSection language catalogues =
+    sectionTemplate language
+        catalogues
+        [ row
+            (width fill :: sectionBorderStyles)
+            [ column
+                [ spacing lineSpacing
+                , width fill
+                , height fill
+                , alignTop
+                ]
+                [ row
+                    [ width fill ]
+                    [ column
+                        (spacing lineSpacing :: valueFieldColumnAttributes)
+                        (List.map (viewWorksCatalogue language) catalogues.items)
+                    ]
+                ]
+            ]
+        ]
+
+
+viewWorksCatalogue : Language -> WorksCatalogue -> Element msg
+viewWorksCatalogue language catalogue =
+    row
+        [ width fill
+        , alignLeft
+        , spacing 5
+        ]
+        [ link
+            [ linkColour ]
+            { label = paragraph [] [ text (extractLabelFromLanguageMap language catalogue.label) ]
+            , url = catalogue.id
+            }
         ]
