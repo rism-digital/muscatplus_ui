@@ -7,6 +7,7 @@ import Desktop.Record.PersonPage exposing (viewFullPersonPage)
 import Desktop.Record.PublicationListPage exposing (viewPublicationListPage)
 import Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 import Desktop.Record.SourcePage exposing (viewFullSourcePage)
+import Desktop.Record.WorkPage exposing (viewFullWorkPage)
 import Element exposing (Element, none)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
@@ -34,6 +35,9 @@ viewChooser session model dataType =
 
         PublicationListData body ->
             viewPublicationListPage session model body
+
+        WorkData body ->
+            viewFullWorkPage session model body
 
         _ ->
             none

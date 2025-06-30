@@ -232,6 +232,9 @@ type alias WorkResultBody =
 
 type alias WorkResultFlags =
     { catalogueIdentifier : Maybe String
+    , numberOfSources : Maybe Int
+    , keyMode : Maybe LanguageMap
+    , scoringSummary : Maybe String
     }
 
 
@@ -898,3 +901,6 @@ workResultFlagDecoder : Decoder WorkResultFlags
 workResultFlagDecoder =
     Decode.succeed WorkResultFlags
         |> optional "catalogNumber" (maybe string) Nothing
+        |> optional "numberOfSources" (maybe int) Nothing
+        |> optional "keyMode" (maybe languageMapLabelDecoder) Nothing
+        |> optional "scoringSummary" (maybe string) Nothing

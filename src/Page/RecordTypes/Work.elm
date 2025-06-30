@@ -3,8 +3,8 @@ module Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonW
 import Json.Decode as Decode exposing (Decoder, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes.Relationship exposing (RelatedToBody, relatedToBodyDecoder)
-import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
+import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, relatedToBodyDecoder, relationshipBodyDecoder)
+import Page.RecordTypes.Shared exposing (RecordHistory, languageMapLabelDecoder, recordHistoryDecoder)
 
 
 type alias PersonWorksSectionBody =
@@ -54,7 +54,14 @@ type alias WorksCatalogue =
 
 
 type alias WorkBody =
-    {}
+    { sectionToc : String
+    , id : String
+    , label : LanguageMap
+    , creator : Maybe RelationshipBody
+    , incipits : Maybe String
+    , sources : Maybe String
+    , recordHistory : RecordHistory
+    }
 
 
 sourceWorksSectionBodyDecoder : Decoder SourceWorksSectionBody
@@ -112,3 +119,10 @@ worksCatalogueDecoder =
 workBodyDecoder : Decoder WorkBody
 workBodyDecoder =
     Decode.succeed WorkBody
+        |> hardcoded "work-body-section"
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
+        |> optional "creator" (maybe relationshipBodyDecoder) Nothing
+        |> optional "incipits" (maybe string) Nothing
+        |> optional "sources" (maybe string) Nothing
+        |> required "recordHistory" recordHistoryDecoder

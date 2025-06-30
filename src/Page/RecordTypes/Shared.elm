@@ -40,11 +40,15 @@ type alias LabelValue =
     }
 
 
+type alias LabelTimeValue =
+    { label : LanguageMap
+    , value : Time.Posix
+    }
+
+
 type alias RecordHistory =
-    { createdLabel : LanguageMap
-    , created : Time.Posix
-    , updatedLabel : LanguageMap
-    , updated : Time.Posix
+    { created : LabelTimeValue
+    , updated : LabelTimeValue
     }
 
 
@@ -69,6 +73,13 @@ labelValueDecoder =
         |> required "value" languageMapLabelDecoder
 
 
+labelTimeValueDecoder : Decoder LabelTimeValue
+labelTimeValueDecoder =
+    Decode.succeed LabelTimeValue
+        |> required "label" languageMapLabelDecoder
+        |> required "value" datetime
+
+
 languageMapLabelDecoder : Decoder LanguageMap
 languageMapLabelDecoder =
     Decode.keyValuePairs (list string)
@@ -78,7 +89,5 @@ languageMapLabelDecoder =
 recordHistoryDecoder : Decoder RecordHistory
 recordHistoryDecoder =
     Decode.succeed RecordHistory
-        |> required "createdLabel" languageMapLabelDecoder
-        |> required "created" datetime
-        |> required "updatedLabel" languageMapLabelDecoder
-        |> required "updated" datetime
+        |> required "created" labelTimeValueDecoder
+        |> required "updated" labelTimeValueDecoder

@@ -650,11 +650,20 @@ sourceFetchCmd session initialUrl route =
                 SourcePageRoute _ ->
                     Just "/contents"
 
+                SourceContentsPageRoute _ _ ->
+                    Just ""
+
                 PersonPageRoute _ ->
                     Just "/sources"
 
+                PersonSourcePageRoute _ _ ->
+                    Just ""
+
                 InstitutionPageRoute _ ->
                     Just "/sources"
+
+                InstitutionSourcePageRoute _ _ ->
+                    Just ""
 
                 PublicationPageRoute _ ->
                     Just "/works"

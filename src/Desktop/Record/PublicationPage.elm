@@ -5,8 +5,10 @@ import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, cen
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
+import Html.Styled.Attributes exposing (align)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import List.Extra as LE
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.RecordTypes.Publication exposing (PublicationBody)
@@ -406,8 +408,20 @@ viewWorksResultsSection cfg body =
                           , view = \i w -> viewCatalogNumberCell language i w
                           }
                         , { header = el tableHeaderStyles (text "Title")
-                          , width = fillPortion 3
+                          , width = fillPortion 2
                           , view = \i w -> viewWorkTitleCell language i w
+                          }
+                        , { header = el tableHeaderStyles (text "Key")
+                          , width = fillPortion 1
+                          , view = \i w -> viewKeyModeCell language i w
+                          }
+                        , { header = el tableHeaderStyles (text "Scoring")
+                          , width = fillPortion 1
+                          , view = \i w -> viewScoringSummaryCell language i w
+                          }
+                        , { header = el tableHeaderStyles (text "Number of Sources")
+                          , width = fillPortion 1
+                          , view = \i w -> viewNumberOfSourcesCell language i w
                           }
                         ]
                     , data = results
@@ -447,3 +461,83 @@ viewWorkTitleCell language rowNum result =
             extractLabelFromLanguageMap language result.label
                 |> text
         }
+
+
+viewKeyModeCell : Language -> Int -> WorkResultBody -> Element msg
+viewKeyModeCell language rowNum result =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+
+        keyModeFlagValue =
+            case .keyMode result.flags of
+                Just v ->
+                    extractLabelFromLanguageMap language v
+
+                Nothing ->
+                    ""
+    in
+    el [ cellBg, padding 10, width fill, height fill ] (text keyModeFlagValue)
+
+
+viewScoringSummaryCell : Language -> Int -> WorkResultBody -> Element msg
+viewScoringSummaryCell language rowNum result =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+
+        scoringSummaryFlagValue =
+            Maybe.withDefault "" (.scoringSummary result.flags)
+    in
+    el [ cellBg, padding 10, width fill, height fill ] (text scoringSummaryFlagValue)
+
+
+viewNumberOfSourcesCell : Language -> Int -> WorkResultBody -> Element msg
+viewNumberOfSourcesCell language rowNum result =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+
+        numSourcesFlagValue =
+            case .numberOfSources result.flags of
+                Just v ->
+                    String.fromInt v
+
+                Nothing ->
+                    ""
+
+        workId =
+            String.split "/" result.id
+                |> LE.last
+                |> Maybe.withDefault ""
+                |> String.append "work_"
+
+        viewSourcesLink =
+            case .numberOfSources result.flags of
+                Just v ->
+                    if v > 0 then
+                        link
+                            [ linkColour
+                            , alignLeft
+                            ]
+                            { url = "/search?fq=works:" ++ workId, label = text "View Linked Sources" }
+
+                    else
+                        none
+
+                Nothing ->
+                    none
+    in
+    row
+        [ width fill
+        , height fill
+        , cellBg
+        , padding 10
+        , spacing 10
+        , alignLeft
+        ]
+        [ el
+            []
+            (text numSourcesFlagValue)
+        , viewSourcesLink
+        ]

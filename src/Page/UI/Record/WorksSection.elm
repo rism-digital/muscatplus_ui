@@ -134,15 +134,27 @@ viewPersonExternalWorkReferencesSection language workReferences =
                                   }
                                 , { header = el tableHeaderStyles (text "Source count")
                                   , width = fill
-                                  , view = \i w -> el [ cycleTableBackground i, padding 10 ] (text (String.fromInt w.sourceCount))
+                                  , view =
+                                        \i w ->
+                                            el
+                                                [ cycleTableBackground i, padding 10 ]
+                                                (text (String.fromInt w.sourceCount))
                                   }
                                 , { header = el tableHeaderStyles (text "Sources")
                                   , width = fill
-                                  , view = \i w -> link [ cycleTableBackground i, padding 10, linkColour ] { label = text ("Sources linked to " ++ w.externalIdentifier), url = w.searchUrl }
+                                  , view =
+                                        \i w ->
+                                            link
+                                                [ cycleTableBackground i, padding 10, linkColour ]
+                                                { label = text ("Sources linked to " ++ w.externalIdentifier), url = w.searchUrl }
                                   }
                                 , { header = el tableHeaderStyles (text "External authority")
                                   , width = fill
-                                  , view = \i w -> newTabLink [ cycleTableBackground i, padding 10, linkColour ] { label = text w.externalIdentifier, url = w.authorityUrl }
+                                  , view =
+                                        \i w ->
+                                            newTabLink
+                                                [ cycleTableBackground i, padding 10, linkColour ]
+                                                { label = text w.externalIdentifier, url = w.authorityUrl }
                                   }
                                 ]
                             , data = workReferences.items

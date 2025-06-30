@@ -11,16 +11,18 @@ viewRecordHistory : Language -> RecordHistory -> Element msg
 viewRecordHistory language history =
     let
         createdDateFormatted =
-            dateFormatter utc history.created
+            .value history.created
+                |> dateFormatter utc
 
         created =
-            extractLabelFromLanguageMap language history.createdLabel ++ ": " ++ createdDateFormatted
+            extractLabelFromLanguageMap language (.label history.created) ++ ": " ++ createdDateFormatted
 
         updatedDateFormatted =
-            dateFormatter utc history.updated
+            .value history.updated
+                |> dateFormatter utc
 
         updated =
-            extractLabelFromLanguageMap language history.updatedLabel ++ ": " ++ updatedDateFormatted
+            extractLabelFromLanguageMap language (.label history.updated) ++ ": " ++ updatedDateFormatted
     in
     row
         [ width fill

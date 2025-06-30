@@ -283,6 +283,22 @@ init flags initialUrl key =
                 ]
             )
 
+        WorkPageRoute _ ->
+            let
+                ( initialBody, initialCmds ) =
+                    recordRouteHelper
+                        { initialUrl = initialUrl
+                        , route = route
+                        , session = session
+                        }
+            in
+            ( WorkPage session initialBody
+            , Cmd.batch
+                [ initialCmds
+                , countryListRequest
+                ]
+            )
+
         AboutPageRoute ->
             ( AboutPage session (About.init session)
             , Cmd.batch
