@@ -453,10 +453,6 @@ update msg model =
             )
 
         ( Msg.NothingHappened, _ ) ->
-            let
-                _ =
-                    Debug.log "Nothing" "Happened in main update."
-            in
             ( model, Cmd.none )
 
         _ ->
