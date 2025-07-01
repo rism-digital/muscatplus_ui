@@ -235,7 +235,7 @@ tableHeaderStyles : List (Attribute msg)
 tableHeaderStyles =
     [ Font.semiBold
     , padding 10
-    , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+    , Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
     , Border.color colourScheme.midGrey
     , Background.color colourScheme.lightGrey
     ]

@@ -482,7 +482,7 @@ update session msg model =
                         DefaultRecordViewTab recordUrl ->
                             Nav.pushUrl session.key recordUrl
 
-                        RelatedSourcesSearchTab searchUrl ->
+                        ContentsSearchDisplayTab searchUrl ->
                             case model.searchResults of
                                 -- if there is already a response, then don't refresh it when we switch tabs
                                 Response _ ->
@@ -498,17 +498,6 @@ update session msg model =
                                         [ searchRequest
                                         , Nav.pushUrl session.key searchUrl
                                         ]
-
-                        RelatedWorksListTab searchUrl ->
-                            let
-                                worksRequest =
-                                    Url.fromString searchUrl
-                                        |> ME.unwrap Cmd.none recordSearchRequest
-                            in
-                            Cmd.batch
-                                [ worksRequest
-                                , Nav.pushUrl session.key searchUrl
-                                ]
             in
             ( { model
                 | currentTab = recordTab
@@ -667,6 +656,9 @@ sourceFetchCmd session initialUrl route =
 
                 PublicationPageRoute _ ->
                     Just "/works"
+
+                PublicationWorksPageRoute _ _ ->
+                    Just ""
 
                 _ ->
                     Nothing

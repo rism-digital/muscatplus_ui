@@ -50,11 +50,8 @@ viewFullSourcePage session model body =
                         }
                         body
 
-                RelatedSourcesSearchTab _ ->
+                ContentsSearchDisplayTab _ ->
                     viewSourceSearchTabBody session model
-
-                RelatedWorksListTab _ ->
-                    none
 
         headerHeight =
             if session.isFramed then

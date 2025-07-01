@@ -15,8 +15,7 @@ import Set exposing (Set)
 
 type CurrentRecordViewTab
     = DefaultRecordViewTab String
-    | RelatedSourcesSearchTab String
-    | RelatedWorksListTab String
+    | ContentsSearchDisplayTab String
 
 
 type alias RecordPageModel msg =
@@ -40,13 +39,16 @@ routeToCurrentRecordViewTab : Route -> (String -> CurrentRecordViewTab)
 routeToCurrentRecordViewTab route =
     case route of
         SourceContentsPageRoute _ _ ->
-            RelatedSourcesSearchTab
+            ContentsSearchDisplayTab
 
         PersonSourcePageRoute _ _ ->
-            RelatedSourcesSearchTab
+            ContentsSearchDisplayTab
 
         InstitutionSourcePageRoute _ _ ->
-            RelatedSourcesSearchTab
+            ContentsSearchDisplayTab
+
+        PublicationWorksPageRoute _ _ ->
+            ContentsSearchDisplayTab
 
         _ ->
             DefaultRecordViewTab

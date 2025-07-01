@@ -1,11 +1,10 @@
 module Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Html.Styled.Attributes exposing (align)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
@@ -13,7 +12,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.RecordTypes.Publication exposing (PublicationBody)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
-import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody, extractIdFromSearchResult, extractLabelFromSearchResult)
+import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (Tab(..), pageBodyOrEmpty, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
@@ -22,7 +21,9 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
+import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
+import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -40,11 +41,8 @@ viewFullPublicationPage session model body =
                 DefaultRecordViewTab _ ->
                     viewDescriptionTab session.language body
 
-                RelatedWorksListTab _ ->
+                ContentsSearchDisplayTab _ ->
                     viewRelatedWorksListTabBody session model
-
-                RelatedSourcesSearchTab _ ->
-                    none
 
         headerHeight =
             if session.isFramed then
@@ -245,7 +243,7 @@ viewWorksDisplayTab { language, model, searchUrl, worksCount, tabLabel } =
     let
         isSelected =
             case model.currentTab of
-                RelatedWorksListTab _ ->
+                ContentsSearchDisplayTab _ ->
                     True
 
                 _ ->
@@ -255,7 +253,7 @@ viewWorksDisplayTab { language, model, searchUrl, worksCount, tabLabel } =
             CountTab tabLabel (Just worksCount)
     in
     tabView
-        { clickMsg = UserClickedRecordViewTab (RelatedWorksListTab searchUrl)
+        { clickMsg = UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
         , icon = none
         , isSelected = isSelected
         , language = language
@@ -348,13 +346,13 @@ viewRelatedWorksSectionRouter session model =
     in
     case model.searchResults of
         Loading (Just (SearchData oldData)) ->
-            text "Loading with old data"
+            viewWorksResultsSection resultsConfig True oldData
 
         Loading _ ->
             text "Loading without old data"
 
         Response (SearchData body) ->
-            viewWorksResultsSection resultsConfig body
+            viewWorksResultsSection resultsConfig False body
 
         Error err ->
             createErrorMessage err
@@ -369,8 +367,8 @@ viewRelatedWorksSectionRouter session model =
                 |> text
 
 
-viewWorksResultsSection : SearchResultsSectionConfig a msg -> SearchBody -> Element msg
-viewWorksResultsSection cfg body =
+viewWorksResultsSection : SearchResultsSectionConfig a msg -> Bool -> SearchBody -> Element msg
+viewWorksResultsSection cfg isLoading body =
     let
         language =
             .language cfg.session
@@ -399,7 +397,9 @@ viewWorksResultsSection cfg body =
             , padding 20
             ]
             [ row
-                []
+                [ width fill
+                , inFront (viewResultsListLoadingScreenTmpl isLoading)
+                ]
                 [ indexedTable
                     [ Border.width 1, Border.color colourScheme.midGrey ]
                     { columns =
@@ -427,6 +427,9 @@ viewWorksResultsSection cfg body =
                     , data = results
                     }
                 ]
+            , row
+                [ width fill ]
+                [ viewPagination language body.pagination cfg.userClickedResultsPaginationMsg ]
             ]
         ]
 
@@ -477,7 +480,9 @@ viewKeyModeCell language rowNum result =
                 Nothing ->
                     ""
     in
-    el [ cellBg, padding 10, width fill, height fill ] (text keyModeFlagValue)
+    el
+        [ cellBg, padding 10, width fill, height fill ]
+        (text keyModeFlagValue)
 
 
 viewScoringSummaryCell : Language -> Int -> WorkResultBody -> Element msg
@@ -489,7 +494,9 @@ viewScoringSummaryCell language rowNum result =
         scoringSummaryFlagValue =
             Maybe.withDefault "" (.scoringSummary result.flags)
     in
-    el [ cellBg, padding 10, width fill, height fill ] (text scoringSummaryFlagValue)
+    el
+        [ cellBg, padding 10, width fill, height fill ]
+        (text scoringSummaryFlagValue)
 
 
 viewNumberOfSourcesCell : Language -> Int -> WorkResultBody -> Element msg

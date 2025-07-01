@@ -117,7 +117,7 @@ viewSourceSearchTab { language, model, searchUrl, tabLabel } =
     let
         isSelected =
             case model.currentTab of
-                RelatedSourcesSearchTab _ ->
+                ContentsSearchDisplayTab _ ->
                     True
 
                 _ ->
@@ -135,7 +135,7 @@ viewSourceSearchTab { language, model, searchUrl, tabLabel } =
             CountTab tabLabel sourceCount
     in
     tabView
-        { clickMsg = UserClickedRecordViewTab (RelatedSourcesSearchTab searchUrl)
+        { clickMsg = UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
         , icon = none
         , isSelected = isSelected
         , language = language
