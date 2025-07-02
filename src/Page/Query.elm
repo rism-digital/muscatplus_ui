@@ -363,11 +363,14 @@ rowsParamParser =
 setPage : Int -> { a | page : Int } -> { a | page : Int }
 setPage pageNum oldRecord =
     -- ensure the page number is 1 or greater
-    if pageNum < 1 then
-        { oldRecord | page = 1 }
+    { oldRecord
+        | page =
+            if pageNum < 1 then
+                1
 
-    else
-        { oldRecord | page = pageNum }
+            else
+                pageNum
+    }
 
 
 stringSplitToList : String -> Maybe ( String, List String )
