@@ -103,6 +103,9 @@ createSearchUrlRecord resultMode url =
         WorkCatalogueMode ->
             UnsupportedRecordType
 
+        NoMode ->
+            UnsupportedRecordType
+
 
 sourceCsvEntryToFieldString : SourceCsvEntry -> List ( String, String )
 sourceCsvEntryToFieldString entry =

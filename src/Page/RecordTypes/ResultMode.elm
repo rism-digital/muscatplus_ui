@@ -1,12 +1,12 @@
 module Page.RecordTypes.ResultMode exposing
     ( ResultMode(..)
-    , parseResultModeToString
     , parseStringToResultMode
     , resultModeHeader
+    , resultModeOptions
     )
 
 import Dict
-import Language exposing (LanguageMap)
+import Language exposing (LanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 
 
@@ -16,14 +16,7 @@ type ResultMode
     | InstitutionsMode
     | IncipitsMode
     | WorkCatalogueMode
-
-
-parseResultModeToString : ResultMode -> String
-parseResultModeToString mode =
-    List.filter (\( _, m ) -> m == mode) resultModeOptions
-        |> List.head
-        |> Maybe.withDefault ( "sources", SourcesMode )
-        |> Tuple.first
+    | NoMode
 
 
 {-|
@@ -36,7 +29,7 @@ parseStringToResultMode : String -> ResultMode
 parseStringToResultMode string =
     Dict.fromList resultModeOptions
         |> Dict.get string
-        |> Maybe.withDefault SourcesMode
+        |> Maybe.withDefault NoMode
 
 
 resultModeOptions : List ( String, ResultMode )
@@ -65,3 +58,6 @@ resultModeHeader mode =
 
         WorkCatalogueMode ->
             localTranslations.workCatalogues
+
+        NoMode ->
+            toLanguageMap "No mode."

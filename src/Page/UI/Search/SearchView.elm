@@ -444,6 +444,9 @@ viewSearchControls cfg =
 
                 WorkCatalogueMode ->
                     []
+
+                NoMode ->
+                    []
     in
     row
         [ width fill

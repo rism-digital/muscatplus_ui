@@ -65,6 +65,9 @@ view session model =
 
                 WorkCatalogueNavigateOption ->
                     Background.image "/static/images/incipits.jpg"
+
+                EmptyOption ->
+                    Background.color colourScheme.white
     in
     row
         [ width fill

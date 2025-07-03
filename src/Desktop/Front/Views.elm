@@ -6,6 +6,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Region as Region
 import Html.Attributes as HA
+import Language exposing (toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
@@ -73,6 +74,9 @@ view session model =
 
                 WorkCatalogueNavigateOption ->
                     Background.image "/static/images/incipits.jpg"
+
+                EmptyOption ->
+                    Background.color colourScheme.white
 
         queryBuilderWindow =
             .activeSearch model
@@ -232,6 +236,9 @@ viewFacetPanels cfg =
                 WorkCatalogueNavigateOption ->
                     localTranslations.workCatalogues
 
+                EmptyOption ->
+                    toLanguageMap "No options"
+
         mainTitle =
             row
                 [ width fill
@@ -354,6 +361,9 @@ viewFacetPanels cfg =
                     viewFacetsForIncipitsMode facetConfig
 
                 WorkCatalogueNavigateOption ->
+                    []
+
+                EmptyOption ->
                     []
     in
     row

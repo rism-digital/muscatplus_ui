@@ -79,6 +79,9 @@ viewModeItem selectedMode language fitem =
                 WorkCatalogueMode ->
                     none
 
+                NoMode ->
+                    none
+
         thisTab =
             CountTab label (truncate count |> Just)
     in

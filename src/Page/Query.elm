@@ -32,7 +32,7 @@ import Language exposing (LanguageMap, toLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToModeString)
-import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseResultModeToString, parseStringToResultMode)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode, resultModeOptions)
 import Page.RecordTypes.Search
     exposing
         ( FacetBehaviours
@@ -95,6 +95,20 @@ createPrefixedField alias val =
             |> Just
 
 
+parseResultModeToString : ResultMode -> List QueryParameter
+parseResultModeToString mode =
+    List.filterMap
+        (\( s, m ) ->
+            if m == mode then
+                Url.Builder.string "mode" s
+                    |> Just
+
+            else
+                Nothing
+        )
+        resultModeOptions
+
+
 {-|
 
     Converts our application's QueryArgs to a set of QueryParameters
@@ -105,7 +119,8 @@ buildQueryParameters : QueryArgs -> List QueryParameter
 buildQueryParameters queryArgs =
     let
         fbParams =
-            Dict.toList queryArgs.facetBehaviours
+            queryArgs.facetBehaviours
+                |> Dict.toList
                 |> List.map
                     (\( alias, facetBehaviour ) ->
                         (alias ++ ":" ++ parseFacetBehaviourToString facetBehaviour)
@@ -114,15 +129,16 @@ buildQueryParameters queryArgs =
 
         fqParams =
             -- concatMap will collapse lists-of-lists into a single list: [ [1], [2] ] -> [1, 2]
-            Dict.toList queryArgs.filters
+            queryArgs.filters
+                |> Dict.toList
                 |> List.concatMap
                     (\( alias, filts ) ->
-                        List.map Tuple.first filts
-                            |> List.filterMap (\s -> createPrefixedField alias s)
+                        List.filterMap (\( s, _ ) -> createPrefixedField alias s) filts
                     )
 
         fsParams =
-            Dict.toList queryArgs.facetSorts
+            queryArgs.facetSorts
+                |> Dict.toList
                 |> List.map
                     (\( alias, sort ) ->
                         (alias ++ ":" ++ parseFacetSortToString sort)
@@ -130,15 +146,16 @@ buildQueryParameters queryArgs =
                     )
 
         modeParam =
-            [ Url.Builder.string "mode" (parseResultModeToString queryArgs.mode)
-            ]
+            queryArgs.mode
+                |> parseResultModeToString
 
         ncParam =
             queryArgs.nationalCollection
                 |> ME.unwrap [] (\countryPrefix -> [ Url.Builder.string "nc" countryPrefix ])
 
         pageParam =
-            [ String.fromInt queryArgs.page
+            [ queryArgs.page
+                |> String.fromInt
                 |> Url.Builder.string "page"
             ]
 
@@ -147,7 +164,8 @@ buildQueryParameters queryArgs =
                 |> ME.unwrap [] (\q -> [ Url.Builder.string "q" q ])
 
         rowsParam =
-            [ String.fromInt queryArgs.rows
+            [ queryArgs.rows
+                |> String.fromInt
                 |> Url.Builder.string "rows"
             ]
 
@@ -165,7 +183,7 @@ defaultQueryArgs =
     , sort = Nothing
     , page = 1
     , rows = C.defaultRows
-    , mode = SourcesMode
+    , mode = NoMode
     , nationalCollection = Nothing
     , facetBehaviours = Dict.empty
     , facetSorts = Dict.empty
@@ -346,7 +364,7 @@ modeQueryStringToResultMode : List String -> ResultMode
 modeQueryStringToResultMode modeList =
     List.map parseStringToResultMode modeList
         |> List.head
-        |> Maybe.withDefault SourcesMode
+        |> Maybe.withDefault NoMode
 
 
 pageParamParser : Q.Parser Int
