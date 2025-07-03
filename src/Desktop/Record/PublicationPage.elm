@@ -206,8 +206,8 @@ viewRecordTopBar language model body =
                         { language = language
                         , model = model
                         , searchUrl = s.url
-                        , worksCount = s.totalItems
                         , tabLabel = localTranslations.works
+                        , worksCount = s.totalItems
                         }
                 )
                 body.works
@@ -235,11 +235,11 @@ viewWorksDisplayTab :
     { language : Language
     , model : RecordPageModel RecordMsg
     , searchUrl : String
-    , worksCount : Int
     , tabLabel : LanguageMap
+    , worksCount : Int
     }
     -> Element RecordMsg
-viewWorksDisplayTab { language, model, searchUrl, worksCount, tabLabel } =
+viewWorksDisplayTab { language, model, searchUrl, tabLabel, worksCount } =
     let
         isSelected =
             case model.currentTab of
@@ -459,10 +459,10 @@ viewWorkTitleCell language rowNum result =
     in
     link
         [ cellBg, linkColour, padding 10 ]
-        { url = result.id
-        , label =
+        { label =
             extractLabelFromLanguageMap language result.label
                 |> text
+        , url = result.id
         }
 
 
@@ -513,21 +513,22 @@ viewNumberOfSourcesCell language rowNum result =
                 Nothing ->
                     ""
 
-        workId =
-            String.split "/" result.id
-                |> LE.last
-                |> Maybe.withDefault ""
-                |> String.append "work_"
-
         viewSourcesLink =
             case .numberOfSources result.flags of
                 Just v ->
                     if v > 0 then
+                        let
+                            workId =
+                                String.split "/" result.id
+                                    |> LE.last
+                                    |> Maybe.withDefault ""
+                                    |> String.append "work_"
+                        in
                         link
                             [ linkColour
                             , alignLeft
                             ]
-                            { url = "/search?fq=works:" ++ workId, label = text "View Linked Sources" }
+                            { label = text "View Linked Sources", url = "/search?fq=works:" ++ workId }
 
                     else
                         none

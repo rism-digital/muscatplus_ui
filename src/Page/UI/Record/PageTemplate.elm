@@ -8,7 +8,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, clip, column, el, fill, height, htmlAttribute, newTabLink, none, padding, paddingXY, px, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, newTabLink, none, padding, paddingXY, px, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font

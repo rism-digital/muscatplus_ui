@@ -18,7 +18,7 @@ import Page.Query exposing (QueryArgs, buildQueryParameters, toNextQuery)
 import Page.Record as RecordPage exposing (sourceFetchCmd)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.Route as Route exposing (Route(..), baseRecordPathFromRoute, isMEIDownloadRoute, isPNGDownloadRoute, isSourcePageRoute, parseUrl, setRoute, setUrl)
+import Page.Route as Route exposing (Route, baseRecordPathFromRoute, isMEIDownloadRoute, isPNGDownloadRoute, parseUrl, setRoute, setUrl)
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Page.SideBar.Options as SideBarOptions
@@ -153,8 +153,8 @@ changePage url model =
                     changeRecordPageHelper
                         { model = model
                         , newSession = newSession
-                        , previousUrl = previousUrl
                         , previousRoute = previousRoute
+                        , previousUrl = previousUrl
                         , route = route
                         , url = url
                         }
@@ -200,8 +200,8 @@ changePage url model =
                     changeRecordPageHelper
                         { model = model
                         , newSession = newSession
-                        , previousUrl = previousUrl
                         , previousRoute = previousRoute
+                        , previousUrl = previousUrl
                         , route = route
                         , url = url
                         }
@@ -232,8 +232,8 @@ changePage url model =
                     changeRecordPageHelper
                         { model = model
                         , newSession = newSession
-                        , previousUrl = previousUrl
                         , previousRoute = previousRoute
+                        , previousUrl = previousUrl
                         , route = route
                         , url = url
                         }
@@ -264,8 +264,8 @@ changePage url model =
                     changeRecordPageHelper
                         { model = model
                         , newSession = newSession
-                        , previousUrl = previousUrl
                         , previousRoute = previousRoute
+                        , previousUrl = previousUrl
                         , route = route
                         , url = url
                         }
@@ -290,35 +290,35 @@ changePage url model =
             , refreshCmds
             )
 
-        Route.WorkPageRoute _ ->
-            let
-                ( newPageBody, refreshCmds ) =
-                    changeRecordPageHelper
-                        { model = model
-                        , newSession = newSession
-                        , previousUrl = previousUrl
-                        , previousRoute = previousRoute
-                        , route = route
-                        , url = url
-                        }
-            in
-            ( WorkPage newSession newPageBody
-            , refreshCmds
-            )
-
         Route.PublicationsListPageRoute ->
             let
                 ( newPageBody, refreshCmds ) =
                     changeRecordPageHelper
                         { model = model
                         , newSession = newSession
-                        , previousUrl = previousUrl
                         , previousRoute = previousRoute
+                        , previousUrl = previousUrl
                         , route = route
                         , url = url
                         }
             in
             ( PublicationListPage newSession newPageBody
+            , refreshCmds
+            )
+
+        Route.WorkPageRoute _ ->
+            let
+                ( newPageBody, refreshCmds ) =
+                    changeRecordPageHelper
+                        { model = model
+                        , newSession = newSession
+                        , previousRoute = previousRoute
+                        , previousUrl = previousUrl
+                        , route = route
+                        , url = url
+                        }
+            in
+            ( WorkPage newSession newPageBody
             , refreshCmds
             )
 
@@ -492,13 +492,13 @@ updateWith toModel toMsg _ ( subModel, subCmd ) =
 changeRecordPageHelper :
     { model : Model
     , newSession : Session
-    , previousUrl : Url
     , previousRoute : Route
+    , previousUrl : Url
     , route : Route
     , url : Url
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-changeRecordPageHelper { model, newSession, previousUrl, previousRoute, route, url } =
+changeRecordPageHelper { model, newSession, previousRoute, previousUrl, route, url } =
     let
         recordCfg =
             { incomingUrl = url
@@ -597,9 +597,6 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
                 _ ->
                     ( RecordPage.init recordCfg, False )
 
-        recordUrl =
-            { url | path = recordPath }
-
         newQparams =
             toNextQuery newPageBody.activeSearch
                 |> buildQueryParameters
@@ -608,15 +605,16 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
 
         sourceUrl =
             { url | query = Just newQparams }
-
-        resultsFetchCmd =
-            if url.path == previousUrl.path && url.query == previousUrl.query then
-                Cmd.none
-
-            else
-                RecordPage.recordSearchRequest sourceUrl
     in
     if isSameRecordPage then
+        let
+            resultsFetchCmd =
+                if url.path == previousUrl.path && url.query == previousUrl.query then
+                    Cmd.none
+
+                else
+                    RecordPage.recordSearchRequest sourceUrl
+        in
         ( newPageBody
         , Cmd.batch
             [ RecordPage.requestPreviewIfSelected newPageBody.selectedResult
@@ -626,6 +624,10 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
         )
 
     else
+        let
+            recordUrl =
+                { url | path = recordPath }
+        in
         ( newPageBody
         , Cmd.batch
             [ RecordPage.recordPageRequest newSession.cacheBuster recordUrl

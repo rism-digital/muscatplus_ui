@@ -1,6 +1,6 @@
 module Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody, personWorksSectionBodyDecoder, sourceWorksSectionBodyDecoder, workBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, int, list, maybe, string)
+import Json.Decode exposing (Decoder, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, relatedToBodyDecoder, relationshipBodyDecoder)
@@ -66,7 +66,7 @@ type alias WorkBody =
 
 sourceWorksSectionBodyDecoder : Decoder SourceWorksSectionBody
 sourceWorksSectionBodyDecoder =
-    Decode.succeed SourceWorksSectionBody
+    succeed SourceWorksSectionBody
         |> hardcoded "record-works-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> optional "workReference" (maybe workReferenceDecoder) Nothing
@@ -74,16 +74,16 @@ sourceWorksSectionBodyDecoder =
 
 personWorksSectionBodyDecoder : Decoder PersonWorksSectionBody
 personWorksSectionBodyDecoder =
-    Decode.succeed PersonWorksSectionBody
+    succeed PersonWorksSectionBody
         |> hardcoded "record-works-section"
         |> required "sectionLabel" languageMapLabelDecoder
-        |> optional "workReferences" (Decode.maybe personExternalWorkReferencesSectionDecoder) Nothing
+        |> optional "workReferences" (maybe personExternalWorkReferencesSectionDecoder) Nothing
         |> optional "worksCatalogs" (maybe worksCatalogueSectionBodyDecoder) Nothing
 
 
 personExternalWorkReferencesSectionDecoder : Decoder PersonExternalWorkReferencesBody
 personExternalWorkReferencesSectionDecoder =
-    Decode.succeed PersonExternalWorkReferencesBody
+    succeed PersonExternalWorkReferencesBody
         |> hardcoded "person-external-work-references"
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list workReferenceDecoder)
@@ -91,7 +91,7 @@ personExternalWorkReferencesSectionDecoder =
 
 workReferenceDecoder : Decoder WorkReference
 workReferenceDecoder =
-    Decode.succeed WorkReference
+    succeed WorkReference
         |> required "relatedTo" relatedToBodyDecoder
         |> required "label" languageMapLabelDecoder
         |> required "value" string
@@ -103,7 +103,7 @@ workReferenceDecoder =
 
 worksCatalogueSectionBodyDecoder : Decoder WorksCatalogueSectionBody
 worksCatalogueSectionBodyDecoder =
-    Decode.succeed WorksCatalogueSectionBody
+    succeed WorksCatalogueSectionBody
         |> hardcoded "works-catalogue-section-body"
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list worksCatalogueDecoder)
@@ -111,14 +111,14 @@ worksCatalogueSectionBodyDecoder =
 
 worksCatalogueDecoder : Decoder WorksCatalogue
 worksCatalogueDecoder =
-    Decode.succeed WorksCatalogue
+    succeed WorksCatalogue
         |> required "id" string
         |> required "label" languageMapLabelDecoder
 
 
 workBodyDecoder : Decoder WorkBody
 workBodyDecoder =
-    Decode.succeed WorkBody
+    succeed WorkBody
         |> hardcoded "work-body-section"
         |> required "id" string
         |> required "label" languageMapLabelDecoder

@@ -34,6 +34,7 @@ module Page.RecordTypes.Search exposing
     , SourceResultFlags
     , ToggleFacet
     , WorkResultBody
+    , WorkResultFlags
     , aliasLabelDecoder
     , extractIdFromSearchResult
     , extractLabelFromSearchResult

@@ -1,4 +1,4 @@
-module Page.UI.Search.Results.WorkResult exposing (..)
+module Page.UI.Search.Results.WorkResult exposing (viewWorkSearchResult)
 
 import Element exposing (Element, none, text)
 import Page.RecordTypes.Search exposing (WorkResultBody)

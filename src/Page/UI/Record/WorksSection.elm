@@ -1,13 +1,11 @@
 module Page.UI.Record.WorksSection exposing (viewPersonWorksSection, viewSourceWorksSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, none, padding, paddingXY, paragraph, row, spacing, text, width)
-import Element.Background as Background
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, padding, paddingXY, paragraph, row, spacing, text, width)
 import Element.Border as Border
-import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody)
 import Page.UI.Attributes exposing (cycleTableBackground, lineSpacing, linkColour, sectionBorderStyles, tableHeaderStyles, valueFieldColumnAttributes)
-import Page.UI.Components exposing (externalLinkTemplate, h3s, viewPreRenderedSummaryField)
+import Page.UI.Components exposing (externalLinkTemplate, viewPreRenderedSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)

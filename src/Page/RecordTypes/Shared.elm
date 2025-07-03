@@ -2,6 +2,7 @@ module Page.RecordTypes.Shared exposing
     ( FacetAlias
     , LabelNumericValue
     , LabelStringValue
+    , LabelTimeValue
     , LabelValue
     , RecordHistory
     , labelNumericValueDecoder

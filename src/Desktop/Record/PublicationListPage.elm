@@ -118,8 +118,8 @@ viewCatalogTitleCell language rowNum publication =
     in
     link
         [ cellBg, linkColour, padding 10 ]
-        { url = publication.id
-        , label = text (extractLabelFromLanguageMap language publication.label)
+        { label = text (extractLabelFromLanguageMap language publication.label)
+        , url = publication.id
         }
 
 
@@ -133,8 +133,8 @@ viewComposerCell language rowNum composer =
         Just c ->
             link
                 [ cellBg, linkColour, padding 10 ]
-                { url = c.id
-                , label = text (extractLabelFromLanguageMap language c.label)
+                { label = text (extractLabelFromLanguageMap language c.label)
+                , url = c.id
                 }
 
         Nothing ->

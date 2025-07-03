@@ -1,4 +1,4 @@
-module Desktop.Record.WorkPage exposing (..)
+module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, none, paddingXY, px, row, width)
 import Element.Background as Background

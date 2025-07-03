@@ -3,7 +3,7 @@ module Page.RecordTypes.PublicationList exposing (PublicationListBody, publicati
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody, publicationBasicBodyDecoder, publicationBodyDecoder)
+import Page.RecordTypes.Publication exposing (PublicationBasic, publicationBasicBodyDecoder)
 import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 
 
