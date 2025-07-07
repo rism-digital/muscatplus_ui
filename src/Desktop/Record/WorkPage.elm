@@ -15,7 +15,7 @@ import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.ContentsSection exposing (viewCreator)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
-import Page.UI.Record.Relationship exposing (viewRelationshipBody)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
 
@@ -69,6 +69,13 @@ viewFullWorkPage session model body =
                         }
                     )
                     body.formOfWork
+                , viewMaybe
+                    (viewRelationshipsSection
+                        { language = language
+                        , relationshipFormatter = viewRelationshipBody
+                        }
+                    )
+                    body.relationships
                 , viewMaybe
                     (viewIncipitsSection
                         { language = language

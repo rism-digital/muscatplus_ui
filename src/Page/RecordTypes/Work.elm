@@ -4,7 +4,7 @@ import Json.Decode exposing (Decoder, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Incipit exposing (IncipitsSectionBody, incipitsSectionBodyDecoder)
-import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, relatedToBodyDecoder, relationshipBodyDecoder)
+import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody, relatedToBodyDecoder, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 
 
@@ -63,6 +63,7 @@ type alias WorkBody =
     , incipits : Maybe IncipitsSectionBody
     , sources : Maybe String
     , formOfWork : Maybe FormOfWorkSectionBody
+    , relationships : Maybe RelationshipsSectionBody
     , recordHistory : RecordHistory
     }
 
@@ -142,6 +143,7 @@ workBodyDecoder =
         |> optional "incipits" (maybe incipitsSectionBodyDecoder) Nothing
         |> optional "sources" (maybe string) Nothing
         |> optional "formOfWork" (maybe formOfWorkSectionBodyDecoder) Nothing
+        |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
 
