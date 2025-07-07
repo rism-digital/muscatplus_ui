@@ -1,8 +1,9 @@
-module Page.Route exposing (Route(..), baseRecordPathFromRoute, isMEIDownloadRoute, isPNGDownloadRoute, isSourcePageRoute, parseUrl, setRoute, setUrl)
+module Page.Route exposing (Route(..), baseRecordPathFromRoute, isMEIDownloadRoute, isPNGDownloadRoute, isSourcePageRoute, parseUrl, routeToResultMode, setRoute, setUrl)
 
 import Page.Keyboard.Model exposing (KeyboardQuery)
 import Page.Keyboard.Query exposing (notationParamParser)
 import Page.Query exposing (FrontQueryArgs, QueryArgs, frontQueryParamsParser, queryParamsParser)
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Url exposing (Url)
 import Url.Parser as P exposing ((</>), (<?>), s)
 
@@ -153,3 +154,34 @@ baseRecordPathFromRoute route =
 
         NotFoundPageRoute ->
             "/does-not-exist"
+
+
+routeToResultMode : Route -> ResultMode
+routeToResultMode route =
+    case route of
+        SourcePageRoute _ ->
+            SourcesMode
+
+        SourceContentsPageRoute _ _ ->
+            SourcesMode
+
+        SourceHoldingsPageRoute _ _ ->
+            EmptyMode
+
+        PersonPageRoute _ ->
+            SourcesMode
+
+        PersonSourcePageRoute _ _ ->
+            SourcesMode
+
+        InstitutionPageRoute _ ->
+            SourcesMode
+
+        InstitutionSourcePageRoute _ _ ->
+            SourcesMode
+
+        PublicationWorksPageRoute _ _ ->
+            WorkMode
+
+        _ ->
+            EmptyMode

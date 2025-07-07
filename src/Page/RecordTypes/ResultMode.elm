@@ -16,7 +16,8 @@ type ResultMode
     | InstitutionsMode
     | IncipitsMode
     | WorkCatalogueMode
-    | NoMode
+    | WorkMode
+    | EmptyMode
 
 
 {-|
@@ -29,7 +30,7 @@ parseStringToResultMode : String -> ResultMode
 parseStringToResultMode string =
     Dict.fromList resultModeOptions
         |> Dict.get string
-        |> Maybe.withDefault NoMode
+        |> Maybe.withDefault EmptyMode
 
 
 resultModeOptions : List ( String, ResultMode )
@@ -59,5 +60,8 @@ resultModeHeader mode =
         WorkCatalogueMode ->
             localTranslations.workCatalogues
 
-        NoMode ->
-            toLanguageMap "No mode."
+        WorkMode ->
+            localTranslations.works
+
+        EmptyMode ->
+            toLanguageMap "empty"

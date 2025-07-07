@@ -1,6 +1,7 @@
 module SearchPreferences exposing (SearchPreferences, searchPreferencesDecoder)
 
-import Json.Decode as Decode exposing (Decoder, bool, list, string)
+import Config as C
+import Json.Decode as Decode exposing (Decoder, bool, int, list, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Set exposing (Set)
 
@@ -27,6 +28,7 @@ import Set exposing (Set)
 type alias SearchPreferences =
     { expandedFacetPanels : Set String
     , audioMuted : Bool
+    , resultsPerPage : Int
     }
 
 
@@ -35,6 +37,7 @@ searchPreferencesDecoder =
     Decode.succeed SearchPreferences
         |> required "expandedFacetPanels" (list string |> Decode.andThen expandedFacetPanelDecoder)
         |> optional "audioMuted" bool True
+        |> optional "resultsPerPage" int C.defaultRows
 
 
 expandedFacetPanelDecoder : List String -> Decoder (Set String)

@@ -79,7 +79,10 @@ viewModeItem selectedMode language fitem =
                 WorkCatalogueMode ->
                     none
 
-                NoMode ->
+                WorkMode ->
+                    none
+
+                EmptyMode ->
                     none
 
         thisTab =

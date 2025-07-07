@@ -349,7 +349,7 @@ recordRouteHelper { initialUrl, route, session } =
                 |> addNationalCollectionFilter session.restrictedToNationalCollection
 
         fetchInitialSourceResultsCmd =
-            sourceFetchCmd session initialUrl route
+            sourceFetchCmd initialBody initialUrl route
     in
     ( initialBody
     , Cmd.batch
@@ -382,7 +382,7 @@ recordContentsRouteHelper { initialUrl, qargs, route, session } =
                 |> addNationalCollectionFilter session.restrictedToNationalCollection
 
         fetchInitialContentsResultsCmd =
-            sourceFetchCmd session initialUrl route
+            sourceFetchCmd initialBody initialUrl route
 
         recordUrl =
             { initialUrl | path = baseRecordPathFromRoute route }

@@ -33,9 +33,11 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
+import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
+import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
 import Set
 import Set.Extra as SE
@@ -579,8 +581,26 @@ update session msg model =
                 |> searchSubmit session
 
         UserChangedResultsPerPage num ->
-            userChangedResultsPerPage num model
-                |> searchSubmit session
+            let
+                intNum =
+                    String.toInt num
+                        |> Maybe.withDefault C.defaultRows
+
+                ( newModel, updateCmd ) =
+                    userChangedResultsPerPage num model
+                        |> searchSubmit session
+            in
+            ( newModel
+            , Cmd.batch
+                [ updateCmd
+                , PortSendSaveSearchPreference
+                    { key = "resultsPerPage"
+                    , value = IntPreference intNum
+                    }
+                    |> encodeMessageForPortSend
+                    |> sendOutgoingMessageOnPort
+                ]
+            )
 
         UserClickedSearchResultsPagination url ->
             ( { model

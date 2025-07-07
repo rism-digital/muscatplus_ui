@@ -1,10 +1,11 @@
 module Page.UI.Record.Previews.Incipit exposing (viewIncipitPreview)
 
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, none, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
-import Page.RecordTypes.Incipit exposing (IncipitBody)
+import Maybe.Extra as ME
+import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitParent(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
@@ -13,6 +14,30 @@ import Page.UI.Record.Incipits exposing (viewIncipit)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
+
+
+viewPartOfLink : Language -> Maybe IncipitParent -> Element msg
+viewPartOfLink language parent =
+    ME.unpack (\() -> none)
+        (\partOf ->
+            case partOf of
+                SourceParent sbody ->
+                    incipitLinkTemplate language
+                        sbody.label
+                        headingLG
+                        { id = .id sbody.source
+                        , label = .label sbody.source
+                        }
+
+                WorkParent wbody ->
+                    incipitLinkTemplate language
+                        wbody.label
+                        headingLG
+                        { id = .id wbody.work
+                        , label = .label wbody.work
+                        }
+        )
+        parent
 
 
 viewIncipitPreview :
@@ -33,19 +58,8 @@ viewIncipitPreview cfg body =
                 ]
                 (musicNotationSvg colourScheme.darkBlue)
 
-        labelLanguageMap =
-            .label body.partOf
-
-        sourceUrl =
-            .source body.partOf
-                |> .id
-
-        sourceLabel =
-            .source body.partOf
-                |> .label
-
         incipitLink =
-            incipitLinkTemplate cfg.language labelLanguageMap headingLG { id = sourceUrl, label = sourceLabel }
+            viewPartOfLink cfg.language body.partOf
     in
     row
         [ width fill

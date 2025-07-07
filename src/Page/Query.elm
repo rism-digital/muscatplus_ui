@@ -183,7 +183,7 @@ defaultQueryArgs =
     , sort = Nothing
     , page = 1
     , rows = C.defaultRows
-    , mode = NoMode
+    , mode = EmptyMode
     , nationalCollection = Nothing
     , facetBehaviours = Dict.empty
     , facetSorts = Dict.empty
@@ -364,7 +364,7 @@ modeQueryStringToResultMode : List String -> ResultMode
 modeQueryStringToResultMode modeList =
     List.map parseStringToResultMode modeList
         |> List.head
-        |> Maybe.withDefault NoMode
+        |> Maybe.withDefault EmptyMode
 
 
 pageParamParser : Q.Parser Int

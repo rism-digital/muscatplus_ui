@@ -22,7 +22,7 @@ import Maybe.Extra as ME
 import Murmur3
 import Page.Downloader as Downloader
 import Page.Downloader.Msg as DownloaderMsg
-import Page.Query exposing (QueryArgs, defaultQueryArgs, setFilters, setNationalCollection, setNextQuery, toNextQuery)
+import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, setFilters, setMode, setNationalCollection, setNextQuery, setRows, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
@@ -31,12 +31,14 @@ import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.Search exposing (toFacetLabel)
 import Page.Request exposing (createRequestWithDecoder)
-import Page.Route exposing (Route(..))
+import Page.Route exposing (Route(..), routeToResultMode)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
+import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
+import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
 import Set
 import Set.Extra as SE
@@ -65,6 +67,12 @@ type alias RecordConfig =
 init : RecordConfig -> RecordPageModel RecordMsg
 init cfg =
     let
+        numRows =
+            ME.unwrap C.defaultRows .resultsPerPage cfg.searchPreferences
+
+        resultMode =
+            routeToResultMode cfg.route
+
         activeSearchInit =
             cfg.queryArgs
                 |> ME.unpack (\() -> ActiveSearch.empty)
@@ -79,6 +87,8 @@ init cfg =
         activeSearch =
             toNextQuery activeSearchInit
                 |> setNationalCollection cfg.nationalCollection
+                |> setRows numRows
+                |> setMode resultMode
                 |> flip setNextQuery activeSearchInit
 
         selectedResult =
@@ -111,9 +121,13 @@ load cfg oldBody =
         activeSearchInit =
             ActiveSearch.load oldBody.activeSearch
 
+        resultMode =
+            routeToResultMode cfg.route
+
         initActiveSearch =
             toNextQuery activeSearchInit
                 |> setNationalCollection cfg.nationalCollection
+                |> setMode resultMode
                 |> flip setNextQuery activeSearchInit
 
         activeSearch =
@@ -165,10 +179,9 @@ recordPageRequest applyCacheBuster initialUrl =
         |> createRequestWithDecoder ServerRespondedWithRecordData
 
 
-recordSearchRequest : Url -> Cmd RecordMsg
+recordSearchRequest : String -> Cmd RecordMsg
 recordSearchRequest searchUrl =
-    Url.toString searchUrl
-        |> createRequestWithDecoder ServerRespondedWithPageSearch
+    createRequestWithDecoder ServerRespondedWithPageSearch searchUrl
 
 
 requestPreviewIfSelected : Maybe String -> Cmd RecordMsg
@@ -434,8 +447,26 @@ update session msg model =
                 |> searchSubmit session
 
         UserChangedResultsPerPage num ->
-            userChangedResultsPerPage num model
-                |> searchSubmit session
+            let
+                intNum =
+                    String.toInt num
+                        |> Maybe.withDefault C.defaultRows
+
+                ( newModel, updateCmd ) =
+                    userChangedResultsPerPage num model
+                        |> searchSubmit session
+            in
+            ( newModel
+            , Cmd.batch
+                [ updateCmd
+                , PortSendSaveSearchPreference
+                    { key = "resultsPerPage"
+                    , value = IntPreference intNum
+                    }
+                    |> encodeMessageForPortSend
+                    |> sendOutgoingMessageOnPort
+                ]
+            )
 
         UserClickedSearchResultsPagination pageUrl ->
             ( { model
@@ -489,13 +520,8 @@ update session msg model =
                                     Nav.pushUrl session.key searchUrl
 
                                 _ ->
-                                    let
-                                        searchRequest =
-                                            Url.fromString searchUrl
-                                                |> ME.unwrap Cmd.none recordSearchRequest
-                                    in
                                     Cmd.batch
-                                        [ searchRequest
+                                        [ recordSearchRequest searchUrl
                                         , Nav.pushUrl session.key searchUrl
                                         ]
             in
@@ -631,8 +657,8 @@ updatePageMetadata incomingData =
             Cmd.none
 
 
-sourceFetchCmd : Session -> Url -> Route -> Cmd RecordMsg
-sourceFetchCmd session initialUrl route =
+sourceFetchCmd : RecordPageModel RecordMsg -> Url -> Route -> Cmd RecordMsg
+sourceFetchCmd body initialUrl route =
     let
         shouldFetchSources =
             case route of
@@ -666,8 +692,13 @@ sourceFetchCmd session initialUrl route =
     case shouldFetchSources of
         Just contentsUrlSuffix ->
             let
-                ncQueryParam =
-                    Maybe.map (\c -> "nc=" ++ c) session.restrictedToNationalCollection
+                resultMode =
+                    routeToResultMode route
+
+                qps =
+                    toNextQuery body.activeSearch
+                        |> setMode resultMode
+                        |> buildQueryParameters
 
                 sourceContentsPath =
                     if String.endsWith "/" initialUrl.path then
@@ -677,10 +708,7 @@ sourceFetchCmd session initialUrl route =
                         initialUrl.path ++ contentsUrlSuffix
 
                 sourcesUrl =
-                    { initialUrl
-                        | path = sourceContentsPath
-                        , query = ncQueryParam
-                    }
+                    serverUrl [ sourceContentsPath ] qps
             in
             recordSearchRequest sourcesUrl
 

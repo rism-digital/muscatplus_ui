@@ -1,10 +1,11 @@
-module Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody, personWorksSectionBodyDecoder, sourceWorksSectionBodyDecoder, workBodyDecoder)
+module Page.RecordTypes.Work exposing (FormOfWorkSectionBody, PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody, personWorksSectionBodyDecoder, sourceWorksSectionBodyDecoder, workBodyDecoder)
 
 import Json.Decode exposing (Decoder, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.Incipit exposing (IncipitsSectionBody, incipitsSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, relatedToBodyDecoder, relationshipBodyDecoder)
-import Page.RecordTypes.Shared exposing (RecordHistory, languageMapLabelDecoder, recordHistoryDecoder)
+import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 
 
 type alias PersonWorksSectionBody =
@@ -58,9 +59,23 @@ type alias WorkBody =
     , id : String
     , label : LanguageMap
     , creator : Maybe RelationshipBody
-    , incipits : Maybe String
+    , summary : Maybe (List LabelValue)
+    , incipits : Maybe IncipitsSectionBody
     , sources : Maybe String
+    , formOfWork : Maybe FormOfWorkSectionBody
     , recordHistory : RecordHistory
+    }
+
+
+type alias FormOfWorkSectionBody =
+    { label : LanguageMap
+    , items : List FormOfWork
+    }
+
+
+type alias FormOfWork =
+    { id : String
+    , label : LanguageMap
     }
 
 
@@ -123,6 +138,22 @@ workBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
-        |> optional "incipits" (maybe string) Nothing
+        |> optional "summary" (maybe (list labelValueDecoder)) Nothing
+        |> optional "incipits" (maybe incipitsSectionBodyDecoder) Nothing
         |> optional "sources" (maybe string) Nothing
+        |> optional "formOfWork" (maybe formOfWorkSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
+
+
+formOfWorkSectionBodyDecoder : Decoder FormOfWorkSectionBody
+formOfWorkSectionBodyDecoder =
+    succeed FormOfWorkSectionBody
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "items" (list formOfWorkDecoder)
+
+
+formOfWorkDecoder : Decoder FormOfWork
+formOfWorkDecoder =
+    succeed FormOfWork
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder

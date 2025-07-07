@@ -30,8 +30,8 @@ resultModeToNavigationBarOption mode =
         WorkCatalogueMode ->
             WorkCatalogueNavigateOption
 
-        NoMode ->
-            EmptyOption
+        _ ->
+            SourceSearchOption
 
 
 navigationBarOptionToModeString : NavigationBarOption -> String
@@ -75,4 +75,4 @@ navigationBarOptionToResultMode option =
             WorkCatalogueMode
 
         EmptyOption ->
-            NoMode
+            EmptyMode

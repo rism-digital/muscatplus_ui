@@ -103,7 +103,10 @@ createSearchUrlRecord resultMode url =
         WorkCatalogueMode ->
             UnsupportedRecordType
 
-        NoMode ->
+        WorkMode ->
+            UnsupportedRecordType
+
+        EmptyMode ->
             UnsupportedRecordType
 
 

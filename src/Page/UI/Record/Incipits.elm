@@ -9,9 +9,8 @@ import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
-import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), PAEEncodedData, RenderedIncipit(..))
+import Page.RecordTypes.Incipit exposing (EncodedIncipit(..), IncipitBody, IncipitFormat(..), IncipitsSectionBody, PAEEncodedData, RenderedIncipit(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.RecordTypes.Source exposing (IncipitsSectionBody)
 import Page.UI.Attributes exposing (bodyRegular, headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (h3, h3s)
 import Page.UI.Helpers exposing (viewIf, viewMaybe, viewSVGRenderedIncipit)

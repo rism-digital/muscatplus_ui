@@ -1,7 +1,6 @@
 module Page.RecordTypes.Source exposing
     ( ExemplarsSectionBody
     , FullSourceBody
-    , IncipitsSectionBody
     , LiturgicalFestivalsSectionBody
     , MaterialGroupBody
     , MaterialGroupsSectionBody
@@ -20,7 +19,7 @@ import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digi
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Holding exposing (HoldingBody, holdingBodyDecoder)
-import Page.RecordTypes.Incipit exposing (IncipitBody, incipitBodyDecoder)
+import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitsSectionBody, incipitsSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
@@ -54,13 +53,6 @@ type alias ExemplarsSectionBody =
     { sectionToc : String
     , label : LanguageMap
     , items : List HoldingBody
-    }
-
-
-type alias IncipitsSectionBody =
-    { sectionToc : String
-    , label : LanguageMap
-    , items : List IncipitBody
     }
 
 
@@ -122,14 +114,6 @@ exemplarsSectionBodyDecoder =
         |> hardcoded "source-record-exemplars-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list holdingBodyDecoder)
-
-
-incipitsSectionBodyDecoder : Decoder IncipitsSectionBody
-incipitsSectionBodyDecoder =
-    Decode.succeed IncipitsSectionBody
-        |> hardcoded "source-record-incipits-section"
-        |> required "sectionLabel" languageMapLabelDecoder
-        |> required "items" (list incipitBodyDecoder)
 
 
 liturgicalFestivalsSectionBodyDecoder : Decoder LiturgicalFestivalsSectionBody

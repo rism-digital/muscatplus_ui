@@ -2,20 +2,24 @@ module Page.RecordTypes.Incipit exposing
     ( EncodedIncipit(..)
     , IncipitBody
     , IncipitFormat(..)
+    , IncipitParent(..)
     , IncipitParentSourceBody
+    , IncipitsSectionBody
     , PAEEncodedData
     , RenderedIncipit(..)
     , incipitBodyDecoder
+    , incipitsSectionBodyDecoder
     , renderedIncipitDecoderOne
     , renderedIncipitDecoderTwo
     )
 
-import Json.Decode as Decode exposing (Decoder, list, string)
-import Json.Decode.Pipeline exposing (optional, required)
+import Json.Decode as Decode exposing (Decoder, list, map, maybe, oneOf, string)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import List.Extra as LE
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
+import Page.RecordTypes.WorkBasic exposing (BasicWorkBody, basicWorkBodyDecoder)
 
 
 type EncodedIncipit
@@ -32,12 +36,24 @@ type alias PAEEncodedData =
     }
 
 
+type alias IncipitsSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , items : List IncipitBody
+    }
+
+
+type IncipitParent
+    = SourceParent IncipitParentSourceBody
+    | WorkParent IncipitParentWorkBody
+
+
 type alias IncipitBody =
     { sectionToc : String
     , id : String
     , label : LanguageMap
     , summary : Maybe (List LabelValue)
-    , partOf : IncipitParentSourceBody
+    , partOf : Maybe IncipitParent
     , rendered : Maybe (List RenderedIncipit)
     , encodings : Maybe (List EncodedIncipit)
     }
@@ -56,6 +72,12 @@ type alias IncipitParentSourceBody =
     }
 
 
+type alias IncipitParentWorkBody =
+    { label : LanguageMap
+    , work : BasicWorkBody
+    }
+
+
 type RenderedIncipit
     = RenderedIncipit IncipitFormat String
 
@@ -63,13 +85,14 @@ type RenderedIncipit
 incipitBodyDecoder : Decoder IncipitBody
 incipitBodyDecoder =
     Decode.succeed IncipitBody
+        -- nb: decodes the id into the sectionToc field.
         |> required "id" incipitTocDecoder
         |> required "id" string
         |> required "label" languageMapLabelDecoder
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
-        |> required "partOf" incipitParentSourceBodyDecoder
-        |> optional "rendered" (Decode.maybe (list (Decode.oneOf [ renderedIncipitDecoderOne, renderedIncipitDecoderTwo ]))) Nothing
-        |> optional "encodings" (Decode.maybe (list encodedIncipitDecoder)) Nothing
+        |> optional "summary" (maybe (list labelValueDecoder)) Nothing
+        |> optional "partOf" (maybe incipitParentBodyDecoder) Nothing
+        |> optional "rendered" (maybe (list renderedIncipitEncoder)) Nothing
+        |> optional "encodings" (maybe (list encodedIncipitDecoder)) Nothing
 
 
 incipitTocDecoder : Decoder String
@@ -86,9 +109,17 @@ incipitTocDecoder =
 
 encodedIncipitDecoder : Decoder EncodedIncipit
 encodedIncipitDecoder =
-    Decode.oneOf
+    oneOf
         [ paeEncodedIncipitDecoder
         , meiEncodedIncipitDecoder
+        ]
+
+
+renderedIncipitEncoder : Decoder RenderedIncipit
+renderedIncipitEncoder =
+    oneOf
+        [ renderedIncipitDecoderOne
+        , renderedIncipitDecoderTwo
         ]
 
 
@@ -136,11 +167,26 @@ incipitFormatDecoder =
             )
 
 
+incipitParentBodyDecoder : Decoder IncipitParent
+incipitParentBodyDecoder =
+    Decode.oneOf
+        [ incipitParentSourceBodyDecoder |> map SourceParent
+        , incipitParentWorkBodyDecoder |> map WorkParent
+        ]
+
+
 incipitParentSourceBodyDecoder : Decoder IncipitParentSourceBody
 incipitParentSourceBodyDecoder =
     Decode.succeed IncipitParentSourceBody
         |> required "label" languageMapLabelDecoder
         |> required "source" basicSourceBodyDecoder
+
+
+incipitParentWorkBodyDecoder : Decoder IncipitParentWorkBody
+incipitParentWorkBodyDecoder =
+    Decode.succeed IncipitParentWorkBody
+        |> required "label" languageMapLabelDecoder
+        |> required "work" basicWorkBodyDecoder
 
 
 renderedIncipitDecoderOne : Decoder RenderedIncipit
@@ -155,3 +201,11 @@ renderedIncipitDecoderTwo =
     Decode.succeed RenderedIncipit
         |> required "format" incipitFormatDecoder
         |> required "url" string
+
+
+incipitsSectionBodyDecoder : Decoder IncipitsSectionBody
+incipitsSectionBodyDecoder =
+    Decode.succeed IncipitsSectionBody
+        |> hardcoded "record-incipits-section"
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "items" (list incipitBodyDecoder)

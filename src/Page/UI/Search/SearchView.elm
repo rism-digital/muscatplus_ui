@@ -412,8 +412,17 @@ viewSearchControls cfg =
                     , keywordInputField
                     )
 
-                _ ->
+                SourcesMode ->
                     ( keywordInputField, none )
+
+                PeopleMode ->
+                    ( keywordInputField, none )
+
+                InstitutionsMode ->
+                    ( keywordInputField, none )
+
+                _ ->
+                    ( none, none )
 
         expandedFacetPanels =
             .searchPreferences cfg.session
@@ -445,7 +454,10 @@ viewSearchControls cfg =
                 WorkCatalogueMode ->
                     []
 
-                NoMode ->
+                WorkMode ->
+                    []
+
+                EmptyMode ->
                     []
     in
     row

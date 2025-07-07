@@ -49,6 +49,9 @@ convertOutgoingMessageToJsonMsg msg =
 
                         BoolPreference boolPref ->
                             Encode.bool boolPref
+
+                        IntPreference intPref ->
+                            Encode.int intPref
             in
             [ ( "msg", Encode.string "save-search-preference" )
             , ( "value"

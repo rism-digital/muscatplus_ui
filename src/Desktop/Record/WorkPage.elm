@@ -1,14 +1,21 @@
 module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, none, paddingXY, px, row, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Html.Attributes as HA
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.Record.Model exposing (RecordPageModel)
-import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Work exposing (WorkBody)
-import Page.UI.Attributes exposing (minimalDropShadow)
+import Page.Record.Msg as RecordMsg exposing (RecordMsg)
+import Page.RecordTypes.Work exposing (FormOfWorkSectionBody, WorkBody)
+import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
+import Page.UI.Components exposing (pageBodyOrEmpty, viewPreRenderedSummaryField, viewSummaryField)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
+import Page.UI.Record.ContentsSection exposing (viewCreator)
+import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
 import Session exposing (Session)
 
@@ -21,11 +28,7 @@ viewFullWorkPage :
 viewFullWorkPage session model body =
     let
         headerHeight =
-            if session.isFramed then
-                px (recordTitleHeight + searchSourcesLinkHeight)
-
-            else
-                px (tabBarHeight + recordTitleHeight)
+            px (recordTitleHeight + searchSourcesLinkHeight)
 
         icon =
             el
@@ -43,8 +46,39 @@ viewFullWorkPage session model body =
             else
                 pageHeaderTemplate session.language (Just icon) body
 
+        language =
+            session.language
+
         pageBodyView =
-            none
+            pageBodyOrEmpty
+                session.language
+                False
+                [ viewMaybe
+                    (viewCreator
+                        { language = language
+                        , relationshipFormatter = viewRelationshipBody
+                        }
+                    )
+                    body.creator
+                , Maybe.withDefault [] body.summary
+                    |> viewSummaryField language
+                , viewMaybe
+                    (viewFormOfWorkSection
+                        { language = language
+                        , preRenderedFormatter = viewPreRenderedSummaryField
+                        }
+                    )
+                    body.formOfWork
+                , viewMaybe
+                    (viewIncipitsSection
+                        { language = language
+                        , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                        , expandedIncipits = model.incipitInfoExpanded
+                        , summaryFormatter = viewSummaryField
+                        }
+                    )
+                    body.incipits
+                ]
     in
     row
         [ width fill
@@ -72,11 +106,37 @@ viewFullWorkPage session model body =
                     , minimalDropShadow
                     ]
                     [ pageHeader
-
-                    --, tabBar
                     ]
                 ]
-            , pageBodyView
+            , row
+                [ width fill
+                , height fill
+                , alignTop
+                , scrollbarY
+                , htmlAttribute (HA.style "min-height" "unset")
+                ]
+                [ column
+                    [ width fill
+                    , spacing sectionSpacing
+                    , alignTop
+                    , padding 20
+                    ]
+                    pageBodyView
+                ]
             , pageFooterTemplateRouter session session.language body
             ]
+        ]
+
+
+viewFormOfWorkSection :
+    { language : Language
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    }
+    -> FormOfWorkSectionBody
+    -> Element msg
+viewFormOfWorkSection { language, preRenderedFormatter } formOfWorkSection =
+    preRenderedFormatter language
+        [ { label = formOfWorkSection.label
+          , value = List.map (\it -> text (extractLabelFromLanguageMap language it.label)) formOfWorkSection.items
+          }
         ]

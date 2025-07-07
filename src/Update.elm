@@ -22,6 +22,7 @@ import Page.Route as Route exposing (Route, baseRecordPathFromRoute, isMEIDownlo
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Page.SideBar.Options as SideBarOptions
+import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -545,7 +546,7 @@ changeRecordPageHelper { model, newSession, previousRoute, previousUrl, route, u
         ( newPageBody
         , Cmd.batch
             [ RecordPage.recordPageRequest newSession.cacheBuster url
-            , sourceFetchCmd newSession url route
+            , sourceFetchCmd newPageBody url route
             ]
             |> Cmd.map Msg.UserInteractedWithRecordPage
         )
@@ -600,11 +601,9 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
         newQparams =
             toNextQuery newPageBody.activeSearch
                 |> buildQueryParameters
-                |> toQuery
-                |> String.dropLeft 1
 
         sourceUrl =
-            { url | query = Just newQparams }
+            serverUrl [ url.path ] newQparams
     in
     if isSameRecordPage then
         let
