@@ -56,7 +56,8 @@ viewRelationshipBody language label relationships =
 
 viewMobileRelationshipBody : Language -> LanguageMap -> List RelationshipBody -> Element msg
 viewMobileRelationshipBody language label relationships =
-    viewPreRenderedMobileLabelValueField [ spacing 4 ]
+    viewPreRenderedMobileLabelValueField
+        [ spacing 4 ]
         language
         [ { label = label
           , value = List.map (viewRelationshipValue language) relationships

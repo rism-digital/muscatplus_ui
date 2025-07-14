@@ -1,6 +1,6 @@
 module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -13,10 +13,11 @@ import Page.UI.Components exposing (pageBodyOrEmpty, viewPreRenderedSummaryField
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.ContentsSection exposing (viewCreator)
+import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight)
 import Session exposing (Session)
 
 
@@ -85,6 +86,7 @@ viewFullWorkPage session model body =
                         }
                     )
                     body.incipits
+                , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 ]
     in
     row
