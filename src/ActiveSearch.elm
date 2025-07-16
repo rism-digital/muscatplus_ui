@@ -30,7 +30,7 @@ import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
-import Page.Query exposing (QueryArgs)
+import Page.Query exposing (QueryArgs, setRows)
 import Page.QueryBuilder as QueryBuilder
 import Page.RecordTypes.Search exposing (FacetItem)
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -46,9 +46,14 @@ type alias ActiveSearchConfig =
     }
 
 
-empty : ActiveSearch msg
-empty =
-    { nextQuery = Page.Query.defaultQueryArgs
+empty : Maybe SearchPreferences -> ActiveSearch msg
+empty searchPreferences =
+    let
+        queryArgs =
+            Maybe.map .resultsPerPage searchPreferences
+                |> Page.Query.defaultQueryArgs
+    in
+    { nextQuery = queryArgs
     , expandedFacets = Set.empty
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty
@@ -72,8 +77,16 @@ init cfg =
                         |> setKeyboardQuery kq
                 )
                 cfg.keyboardQueryArgs
+
+        queryArgs =
+            case cfg.searchPreferences of
+                Just q ->
+                    setRows q.resultsPerPage cfg.queryArgs
+
+                Nothing ->
+                    cfg.queryArgs
     in
-    { nextQuery = cfg.queryArgs
+    { nextQuery = queryArgs
     , expandedFacets = Set.empty
     , rangeFacetValues = Dict.empty
     , queryFacetValues = Dict.empty

@@ -13,6 +13,7 @@ type alias PublicationBasic =
     , label : LanguageMap
     , creator : Maybe RelationshipBody
     , composer : Maybe RelatedToBody
+    , properties : Maybe PublicationProperties
     }
 
 
@@ -26,6 +27,13 @@ type alias PublicationBody =
     , referencesNotes : Maybe NotesSectionBody
     , works : Maybe WorksSectionBody
     , recordHistory : RecordHistory
+    , properties : Maybe PublicationProperties
+    }
+
+
+type alias PublicationProperties =
+    { shortTitle : Maybe LanguageMap
+    , publicationDates : Maybe LanguageMap
     }
 
 
@@ -48,6 +56,7 @@ publicationBodyDecoder =
         |> optional "notes" (maybe notesSectionBodyDecoder) Nothing
         |> optional "works" (maybe worksSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
+        |> optional "properties" (maybe publicationPropertiesDecoder) Nothing
 
 
 worksSectionBodyDecoder : Decoder WorksSectionBody
@@ -65,3 +74,11 @@ publicationBasicBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
         |> optional "composer" (maybe relatedToBodyDecoder) Nothing
+        |> optional "properties" (maybe publicationPropertiesDecoder) Nothing
+
+
+publicationPropertiesDecoder : Decoder PublicationProperties
+publicationPropertiesDecoder =
+    Decode.succeed PublicationProperties
+        |> optional "shortTitle" (maybe languageMapLabelDecoder) Nothing
+        |> optional "publicationDates" (maybe languageMapLabelDecoder) Nothing

@@ -44,6 +44,7 @@ import Page.RecordTypes.Search
         )
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Request exposing (apply, serverUrl)
+import SearchPreferences exposing (SearchPreferences)
 import Url exposing (percentDecode)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
@@ -176,13 +177,17 @@ buildQueryParameters queryArgs =
     List.concat [ qParam, ncParam, modeParam, fqParams, fbParams, fsParams, pageParam, sortParam, rowsParam ]
 
 
-defaultQueryArgs : QueryArgs
-defaultQueryArgs =
+defaultQueryArgs : Maybe Int -> QueryArgs
+defaultQueryArgs rowsPreference =
+    let
+        numRows =
+            Maybe.withDefault C.defaultRows rowsPreference
+    in
     { keywordQuery = Nothing
     , filters = Dict.empty
     , sort = Nothing
     , page = 1
-    , rows = C.defaultRows
+    , rows = numRows
     , mode = EmptyMode
     , nationalCollection = Nothing
     , facetBehaviours = Dict.empty
@@ -190,9 +195,16 @@ defaultQueryArgs =
     }
 
 
-frontQueryArgsToQueryArgs : FrontQueryArgs -> QueryArgs
-frontQueryArgsToQueryArgs frontQuery =
-    { defaultQueryArgs
+frontQueryArgsToQueryArgs : Maybe SearchPreferences -> FrontQueryArgs -> QueryArgs
+frontQueryArgsToQueryArgs searchPreferences frontQuery =
+    let
+        numRows =
+            Maybe.map .resultsPerPage searchPreferences
+
+        defaultArgs =
+            defaultQueryArgs numRows
+    in
+    { defaultArgs
         | mode = frontQuery.mode
         , nationalCollection = frontQuery.nationalCollection
     }

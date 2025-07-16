@@ -567,8 +567,12 @@ update session msg model =
                     toNextQuery model.activeSearch
                         |> toMode
 
+                prefArgs =
+                    Maybe.map .resultsPerPage session.searchPreferences
+                        |> defaultQueryArgs
+
                 adjustedQueryArgs =
-                    { defaultQueryArgs | mode = currentMode }
+                    { prefArgs | mode = currentMode }
             in
             setNextQuery adjustedQueryArgs model.activeSearch
                 |> setRangeFacetValues Dict.empty

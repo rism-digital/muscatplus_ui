@@ -70,7 +70,7 @@ init cfg =
     { response = Loading Nothing
     , activeSearch =
         ActiveSearch.init
-            { queryArgs = frontQueryArgsToQueryArgs cfg.queryArgs
+            { queryArgs = frontQueryArgsToQueryArgs cfg.searchPreferences cfg.queryArgs
             , keyboardQueryArgs = Just Keyboard.defaultKeyboardQuery
             , searchPreferences = cfg.searchPreferences
             }
@@ -364,8 +364,12 @@ update session msg model =
                     toNextQuery model.activeSearch
                         |> toMode
 
+                qargs =
+                    Maybe.map .resultsPerPage session.searchPreferences
+                        |> defaultQueryArgs
+
                 adjustedQueryArgs =
-                    { defaultQueryArgs | mode = currentMode }
+                    { qargs | mode = currentMode }
 
                 ( newModel, cmds ) =
                     setNextQuery adjustedQueryArgs model.activeSearch

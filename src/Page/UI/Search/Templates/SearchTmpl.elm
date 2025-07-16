@@ -43,6 +43,7 @@ viewSearchResultsLoadingTmpl : Language -> Element msg
 viewSearchResultsLoadingTmpl _ =
     row
         [ width fill
+        , height fill
         ]
         [ column
             [ width fill
@@ -50,9 +51,20 @@ viewSearchResultsLoadingTmpl _ =
             , Background.color colourScheme.white
             , scrollbarY
             , htmlAttribute (HA.style "min-height" "unset")
-            , alignTop
             ]
-            []
+            [ el
+                [ width (px 50)
+                , height (px 50)
+                , centerX
+                , centerY
+                ]
+                (animatedLoader
+                    [ width (px 50)
+                    , height (px 50)
+                    ]
+                    (spinnerSvg colourScheme.midGrey)
+                )
+            ]
         ]
 
 

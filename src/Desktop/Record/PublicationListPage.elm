@@ -5,6 +5,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Maybe.Extra as ME
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody)
@@ -26,11 +27,7 @@ viewPublicationListPage :
 viewPublicationListPage session model body =
     let
         headerHeight =
-            if session.isFramed then
-                px (recordTitleHeight + searchSourcesLinkHeight)
-
-            else
-                px (tabBarHeight + recordTitleHeight)
+            px recordTitleHeight
 
         icon =
             el
@@ -94,12 +91,20 @@ viewPublicationListPage session model body =
                         ]
                         { columns =
                             [ { header = el tableHeaderStyles (text "Composer")
-                              , width = fillPortion 1
+                              , width = fillPortion 2
                               , view = \i w -> viewComposerCell session.language i w.composer
                               }
-                            , { header = el tableHeaderStyles (text "(Abbreviation) and Catalog Title")
-                              , width = fillPortion 3
+                            , { header = el tableHeaderStyles (text "Short Title")
+                              , width = fillPortion 1
+                              , view = \i w -> viewShortTitleCell session.language i w
+                              }
+                            , { header = el tableHeaderStyles (text "Catalog Title")
+                              , width = fillPortion 4
                               , view = \i w -> viewCatalogTitleCell session.language i w
+                              }
+                            , { header = el tableHeaderStyles (text "Publication Year")
+                              , width = fillPortion 1
+                              , view = \i w -> viewPublicationYearCell session.language i w
                               }
                             ]
                         , data = body.items
@@ -110,17 +115,51 @@ viewPublicationListPage session model body =
         ]
 
 
+viewShortTitleCell : Language -> Int -> PublicationBasic -> Element RecordMsg
+viewShortTitleCell language rowNum publication =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+
+        shortTitle =
+            Maybe.map .shortTitle publication.properties
+                |> ME.join
+                |> Maybe.map (extractLabelFromLanguageMap language)
+                |> Maybe.withDefault ""
+    in
+    link
+        [ cellBg, linkColour, padding 10, height fill ]
+        { label = text shortTitle
+        , url = publication.id
+        }
+
+
+viewPublicationYearCell : Language -> Int -> PublicationBasic -> Element RecordMsg
+viewPublicationYearCell language rowNum publication =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+
+        publicationDates =
+            Maybe.map .publicationDates publication.properties
+                |> ME.join
+                |> Maybe.map (extractLabelFromLanguageMap language)
+                |> Maybe.withDefault ""
+    in
+    el
+        [ cellBg, padding 10, height fill ]
+        (text publicationDates)
+
+
 viewCatalogTitleCell : Language -> Int -> PublicationBasic -> Element RecordMsg
 viewCatalogTitleCell language rowNum publication =
     let
         cellBg =
             cycleTableBackground rowNum
     in
-    link
-        [ cellBg, linkColour, padding 10 ]
-        { label = text (extractLabelFromLanguageMap language publication.label)
-        , url = publication.id
-        }
+    el
+        [ cellBg, padding 10 ]
+        (text (extractLabelFromLanguageMap language publication.label))
 
 
 viewComposerCell : Language -> Int -> Maybe RelatedToBody -> Element RecordMsg
@@ -131,11 +170,9 @@ viewComposerCell language rowNum composer =
     in
     case composer of
         Just c ->
-            link
-                [ cellBg, linkColour, padding 10 ]
-                { label = text (extractLabelFromLanguageMap language c.label)
-                , url = c.id
-                }
+            el
+                [ cellBg, padding 10 ]
+                (text (extractLabelFromLanguageMap language c.label))
 
         Nothing ->
             el [ cellBg, padding 10 ] (text "[No composer]")

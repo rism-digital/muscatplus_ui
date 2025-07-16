@@ -75,7 +75,7 @@ init cfg =
 
         activeSearchInit =
             cfg.queryArgs
-                |> ME.unpack (\() -> ActiveSearch.empty)
+                |> ME.unpack (\() -> ActiveSearch.empty cfg.searchPreferences)
                     (\qa ->
                         ActiveSearch.init
                             { queryArgs = qa
@@ -437,7 +437,12 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserResetAllFilters ->
-            setNextQuery defaultQueryArgs model.activeSearch
+            let
+                qargs =
+                    Maybe.map .resultsPerPage session.searchPreferences
+                        |> defaultQueryArgs
+            in
+            setNextQuery qargs model.activeSearch
                 |> setRangeFacetValues Dict.empty
                 |> flip setActiveSearch model
                 |> searchSubmit session

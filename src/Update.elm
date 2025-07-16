@@ -14,7 +14,7 @@ import Page.Error as NotFoundPage
 import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.NavigationBar exposing (NavigationBar(..), setNavigationBar)
-import Page.Query exposing (QueryArgs, buildQueryParameters, toNextQuery)
+import Page.Query exposing (QueryArgs, buildQueryParameters, setRows, toNextQuery)
 import Page.Record as RecordPage exposing (sourceFetchCmd)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
