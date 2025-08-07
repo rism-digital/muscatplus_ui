@@ -35,7 +35,10 @@
 
     if (lat && lon && geojson)
     {
-        const response = await fetch(geojson);
+        const response = await fetch(geojson, {
+            headers: {"accept": "application/json"}
+        });
+
         const geojson_data = await response.json();
 
         const map = L.map('map').setView([lat, lon], 15);
