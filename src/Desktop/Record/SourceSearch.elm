@@ -91,8 +91,7 @@ searchResultsViewRouter session model =
             viewSearchResultsSection resultsConfig False body
 
         Error err ->
-            createErrorMessage err
-                |> errorMessageString session.language
+            errorMessageString session.language err
                 |> text
 
         NoResponseToShow ->

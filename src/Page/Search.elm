@@ -32,6 +32,7 @@ import Page.Route exposing (Route)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
+import Page.UI.Errors exposing (createErrorMessage)
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
@@ -275,7 +276,7 @@ update session msg model =
 
         ServerRespondedWithSearchData (Err error) ->
             ( { model
-                | response = Error error
+                | response = Error (createErrorMessage error)
               }
             , Cmd.none
             )
@@ -308,7 +309,7 @@ update session msg model =
 
         ServerRespondedWithSearchPreview (Err error) ->
             ( { model
-                | preview = Error error
+                | preview = Error (createErrorMessage error)
                 , sourceItemsExpanded = False
               }
             , Cmd.none

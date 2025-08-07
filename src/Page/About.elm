@@ -4,6 +4,7 @@ import Json.Decode as Decode
 import Page.About.Model exposing (AboutPageModel)
 import Page.About.Msg exposing (AboutMsg(..))
 import Page.RecordTypes.About exposing (aboutBodyDecoder)
+import Page.UI.Errors exposing (createErrorMessage)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (createRequest)
 import Response exposing (Response(..), ServerData(..))
@@ -43,7 +44,7 @@ update _ msg model =
 
         ServerRespondedWithAboutData (Err error) ->
             ( { model
-                | response = Error error
+                | response = Error (createErrorMessage error)
               }
             , Cmd.none
             )

@@ -55,6 +55,7 @@ changePage url model =
                     FrontPage.init
                         { queryArgs = qargs
                         , searchPreferences = newSession.searchPreferences
+                        , initialData = Nothing
                         }
             in
             ( FrontPage newSession initialPageBody
@@ -507,6 +508,7 @@ changeRecordPageHelper { model, newSession, previousRoute, previousUrl, route, u
             , queryArgs = Nothing
             , nationalCollection = newSession.restrictedToNationalCollection
             , searchPreferences = newSession.searchPreferences
+            , initialData = Nothing
             }
 
         previousRecordPath =
@@ -569,6 +571,7 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
             , queryArgs = Just qargs
             , nationalCollection = newSession.restrictedToNationalCollection
             , searchPreferences = newSession.searchPreferences
+            , initialData = Nothing
             }
 
         recordPath =
@@ -653,6 +656,7 @@ changeRecordHoldingPageHelper { model, newSession, previousUrl, route, url } =
             , queryArgs = Nothing
             , nationalCollection = newSession.restrictedToNationalCollection
             , searchPreferences = newSession.searchPreferences
+            , initialData = Nothing
             }
 
         samePage oldBody =

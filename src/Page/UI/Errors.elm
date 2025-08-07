@@ -11,6 +11,7 @@ import Page.RecordTypes.Tombstone exposing (Tombstone, messageToTombstone)
 type ErrorResponse
     = BadUrlResponse { label : LanguageMap }
     | BadBodyResponse { label : LanguageMap, description : String }
+    | BadBodyEncodedResponse { label : LanguageMap, errorMessage : ApiError }
     | NotFoundResponse { label : LanguageMap, errorMessage : ApiError }
     | BadRequestResponse { label : LanguageMap, description : String }
     | GoneResponse { label : LanguageMap, tombstone : Tombstone }
@@ -121,6 +122,9 @@ errorMessageString language err =
             extractLabelFromLanguageMap language label
 
         BadBodyResponse { label } ->
+            extractLabelFromLanguageMap language label
+
+        BadBodyEncodedResponse { label } ->
             extractLabelFromLanguageMap language label
 
         NotFoundResponse { label } ->

@@ -21,8 +21,7 @@ view session model =
         errorMessage =
             case model.response of
                 Error err ->
-                    createErrorMessage err
-                        |> errorMessageView session.language
+                    errorMessageView session.language err
 
                 NoResponseToShow ->
                     row

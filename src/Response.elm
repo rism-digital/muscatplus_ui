@@ -1,6 +1,5 @@
 module Response exposing (Response(..), ServerData(..))
 
-import Http.Detailed
 import Page.RecordTypes.About exposing (AboutBody)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecordBody)
 import Page.RecordTypes.Front exposing (FrontBody)
@@ -13,6 +12,7 @@ import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.RecordTypes.Work exposing (WorkBody)
+import Page.UI.Errors exposing (ErrorResponse)
 
 
 {-|
@@ -25,7 +25,7 @@ import Page.RecordTypes.Work exposing (WorkBody)
 type Response data
     = Loading (Maybe data)
     | Response data
-    | Error (Http.Detailed.Error String)
+    | Error ErrorResponse
     | NoResponseToShow
 
 

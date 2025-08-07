@@ -14,7 +14,7 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
 import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, sectionSpacing, sidebarWidth)
 import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowTitleBar)
-import Page.UI.Errors exposing (createErrorMessage)
+import Page.UI.Errors exposing (ErrorResponse, createErrorMessage)
 import Page.UI.Events exposing (onComplete)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
@@ -53,7 +53,7 @@ type alias PreviewConfig msg =
 
 viewPreviewError :
     { closeMsg : msg
-    , errorMessage : Http.Detailed.Error String
+    , errorMessage : ErrorResponse
     , language : Language
     , windowSize : ( Int, Int )
     }
@@ -61,8 +61,7 @@ viewPreviewError :
 viewPreviewError cfg =
     let
         messageDetails =
-            createErrorMessage cfg.errorMessage
-                |> errorMessageView cfg.language
+            errorMessageView cfg.language cfg.errorMessage
 
         ( _, windowHeight ) =
             cfg.windowSize

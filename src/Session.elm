@@ -23,7 +23,7 @@ import Language exposing (Language, LanguageMap, parseLocaleToLanguage)
 import Maybe.Extra as ME
 import Page.BottomBar.Options as BottomBarOptions
 import Page.NavigationBar exposing (NavigationBar(..))
-import Page.RecordTypes.Countries exposing (CountryCode)
+import Page.RecordTypes.Countries exposing (CountryCode, countryCodeDecoder)
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), resultModeToNavigationBarOption)
 import Page.Route exposing (Route(..), parseUrl)
 import Page.SideBar.Options as SideBarOptions
@@ -117,6 +117,11 @@ init flags url key =
                 )
                 flags.searchPreferences
                 |> ME.join
+
+        countryList =
+            Maybe.map (Decode.decodeValue countryCodeDecoder) flags.countryList
+                |> Maybe.andThen Result.toMaybe
+                |> Maybe.withDefault Dict.empty
     in
     { key = key
     , language = language
@@ -128,7 +133,7 @@ init flags url key =
     , isFramed = flags.isFramed
     , navigationBar = navigationBar
     , restrictedToNationalCollection = nationalCollectionFilter
-    , allNationalCollections = Dict.empty
+    , allNationalCollections = countryList
     , searchPreferences = searchPreferences
     , cacheBuster = flags.cacheBuster
     , showFrontSearchInterface = initialMode

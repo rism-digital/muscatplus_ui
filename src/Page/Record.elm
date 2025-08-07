@@ -17,9 +17,11 @@ import Browser.Navigation as Nav
 import Config as C
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
-import Language exposing (Language(..), extractLabelFromLanguageMap)
+import Json.Decode as Decode exposing (Value)
+import Language exposing (Language(..), extractLabelFromLanguageMap, toLanguageMap)
 import Maybe.Extra as ME
 import Murmur3
+import Page.Decoders exposing (recordResponseDecoder)
 import Page.Downloader as Downloader
 import Page.Downloader.Msg as DownloaderMsg
 import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, setFilters, setMode, setNationalCollection, setNextQuery, setRows, toNextQuery)
@@ -27,16 +29,19 @@ import Page.QueryBuilder as QueryBuilder
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
+import Page.RecordTypes.ApiError exposing (apiErrorDecoder)
 import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.Search exposing (toFacetLabel)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route(..), routeToResultMode)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
+import Page.UI.Errors exposing (ErrorResponse(..), createErrorMessage)
 import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
+import Result.Extra as RE
 import SearchPreferences exposing (SearchPreferences)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
@@ -61,12 +66,56 @@ type alias RecordConfig =
     , queryArgs : Maybe QueryArgs
     , nationalCollection : Maybe CountryCode
     , searchPreferences : Maybe SearchPreferences
+    , initialData : Maybe Value
     }
 
 
 init : RecordConfig -> RecordPageModel RecordMsg
 init cfg =
     let
+        ( recordInitialData, searchInitialData ) =
+            case cfg.initialData of
+                Just d ->
+                    let
+                        dval =
+                            Decode.decodeValue recordResponseDecoder d
+                    in
+                    case dval of
+                        Ok (SearchData sd) ->
+                            ( Loading Nothing, Response (SearchData sd) )
+
+                        Ok rd ->
+                            ( Response rd, NoResponseToShow )
+
+                        Err _ ->
+                            let
+                                eVal =
+                                    Decode.decodeValue apiErrorDecoder d
+                            in
+                            case eVal of
+                                Ok o ->
+                                    ( Error
+                                        (BadBodyEncodedResponse
+                                            { label = toLanguageMap "Unexpected response"
+                                            , errorMessage = o
+                                            }
+                                        )
+                                    , NoResponseToShow
+                                    )
+
+                                Err er ->
+                                    ( Error
+                                        (BadBodyResponse
+                                            { label = toLanguageMap "Unexpected response"
+                                            , description = Decode.errorToString er
+                                            }
+                                        )
+                                    , NoResponseToShow
+                                    )
+
+                Nothing ->
+                    ( Loading Nothing, NoResponseToShow )
+
         numRows =
             ME.unwrap C.defaultRows .resultsPerPage cfg.searchPreferences
 
@@ -99,9 +148,9 @@ init cfg =
             Url.toString cfg.incomingUrl
                 |> routeToCurrentRecordViewTab cfg.route
     in
-    { response = Loading Nothing
+    { response = recordInitialData
     , currentTab = tabView
-    , searchResults = NoResponseToShow
+    , searchResults = searchInitialData
     , preview = NoResponseToShow
     , sourceItemsExpanded = False
     , incipitInfoExpanded = Set.empty
@@ -255,7 +304,7 @@ update session msg model =
 
         ServerRespondedWithPageSearch (Err error) ->
             ( { model
-                | response = Error error
+                | response = Error (createErrorMessage error)
               }
             , Cmd.none
             )
@@ -294,7 +343,7 @@ update session msg model =
 
         ServerRespondedWithRecordData (Err error) ->
             ( { model
-                | response = Error error
+                | response = Error (createErrorMessage error)
               }
             , Cmd.none
             )
@@ -309,7 +358,7 @@ update session msg model =
 
         ServerRespondedWithRecordPreview (Err error) ->
             ( { model
-                | preview = Error error
+                | preview = Error (createErrorMessage error)
                 , sourceItemsExpanded = False
               }
             , Cmd.none

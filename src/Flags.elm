@@ -12,4 +12,6 @@ type alias Flags =
     , searchPreferences : Maybe Value
     , isFramed : Bool
     , cacheBuster : Bool
+    , initialData : Maybe Value
+    , countryList : Maybe Value
     }

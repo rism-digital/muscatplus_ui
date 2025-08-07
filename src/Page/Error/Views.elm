@@ -30,6 +30,13 @@ errorMessageView language err =
                         , language = language
                         }
 
+                BadBodyEncodedResponse { label, errorMessage } ->
+                    viewDecodedErrorMessageResponse
+                        { errorMessage = errorMessage
+                        , label = label
+                        , language = language
+                        }
+
                 NotFoundResponse { label, errorMessage } ->
                     viewDecodedErrorMessageResponse
                         { errorMessage = errorMessage

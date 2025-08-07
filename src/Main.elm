@@ -3,22 +3,26 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (isMobileView)
+import Dict
 import Flags exposing (Flags)
+import Json.Decode exposing (Value)
 import Maybe.Extra as ME
 import Model exposing (Model(..))
 import Msg exposing (Msg)
 import Page.About as About
 import Page.Error as NotFound
 import Page.Front as Front
+import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs)
 import Page.Record as Record exposing (sourceFetchCmd)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.Route as Route exposing (Route(..), baseRecordPathFromRoute, isSourcePageRoute)
+import Page.Request exposing (createProbeRequestWithDecoder)
+import Page.Route as Route exposing (Route(..), baseRecordPathFromRoute)
 import Page.Search as Search
 import Page.SideBar as Sidebar
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, addNationalCollectionQueryParameter)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, addNationalCollectionQueryParameter, createProbeUrl)
 import Session exposing (Session)
 import Subscriptions
 import Update
@@ -57,6 +61,12 @@ init flags initialUrl key =
             if isMobileView session.isFramed session.device then
                 Cmd.none
 
+            else if not (Dict.isEmpty session.allNationalCollections) then
+                -- if the national collections property is not empty, it means that the
+                -- country list was passed in via the flags and successfully decoded,
+                -- so no need to re-fetch it.
+                Cmd.none
+
             else
                 Cmd.map Msg.UserInteractedWithSideBar Sidebar.countryListRequest
     in
@@ -67,12 +77,29 @@ init flags initialUrl key =
                     Front.init
                         { queryArgs = qargs
                         , searchPreferences = session.searchPreferences
+                        , initialData = flags.initialData
                         }
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
+
+                frontDataFetchCmd =
+                    case flags.initialData of
+                        Just _ ->
+                            -- if the initial data was passed in, no need to
+                            -- fetch it.
+                            Cmd.none
+
+                        Nothing ->
+                            Front.frontPageRequest initialUrl
+
+                probeUrl =
+                    createProbeUrl session initialBody.activeSearch
             in
             ( FrontPage session initialBody
             , Cmd.batch
-                [ Front.frontPageRequest initialUrl
+                [ Cmd.batch
+                    [ frontDataFetchCmd
+                    , createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+                    ]
                     |> Cmd.map Msg.UserInteractedWithFrontPage
                 , countryListRequest
                 ]
@@ -131,6 +158,7 @@ init flags initialUrl key =
                         { initialUrl = initialUrl
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( SourcePage session initialBody
@@ -148,6 +176,7 @@ init flags initialUrl key =
                         , qargs = qargs
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( SourcePage session initialBody
@@ -164,6 +193,7 @@ init flags initialUrl key =
                         { initialUrl = initialUrl
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( HoldingPage session initialBody, initialCmds )
@@ -175,6 +205,7 @@ init flags initialUrl key =
                         { initialUrl = initialUrl
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( PersonPage session initialBody
@@ -192,6 +223,7 @@ init flags initialUrl key =
                         , qargs = qargs
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( PersonPage session initialBody
@@ -208,6 +240,7 @@ init flags initialUrl key =
                         { initialUrl = initialUrl
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( InstitutionPage session initialBody
@@ -225,6 +258,7 @@ init flags initialUrl key =
                         , qargs = qargs
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( InstitutionPage session initialBody
@@ -241,6 +275,7 @@ init flags initialUrl key =
                         { initialUrl = initialUrl
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( PublicationPage session initialBody
@@ -258,6 +293,7 @@ init flags initialUrl key =
                         , qargs = qargs
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( PublicationPage session initialBody
@@ -274,6 +310,7 @@ init flags initialUrl key =
                         { initialUrl = initialUrl
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( PublicationListPage session initialBody
@@ -290,6 +327,7 @@ init flags initialUrl key =
                         { initialUrl = initialUrl
                         , route = route
                         , session = session
+                        , initialData = flags.initialData
                         }
             in
             ( WorkPage session initialBody
@@ -332,9 +370,10 @@ recordRouteHelper :
     { initialUrl : Url
     , route : Route
     , session : Session
+    , initialData : Maybe Value
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordRouteHelper { initialUrl, route, session } =
+recordRouteHelper { initialUrl, route, session, initialData } =
     let
         recordCfg =
             { incomingUrl = initialUrl
@@ -342,6 +381,7 @@ recordRouteHelper { initialUrl, route, session } =
             , queryArgs = Nothing
             , nationalCollection = session.restrictedToNationalCollection
             , searchPreferences = session.searchPreferences
+            , initialData = initialData
             }
 
         initialBody =
@@ -350,10 +390,18 @@ recordRouteHelper { initialUrl, route, session } =
 
         fetchInitialSourceResultsCmd =
             sourceFetchCmd initialBody initialUrl route
+
+        fetchInitialRecordBodyCmd =
+            case initialData of
+                Just _ ->
+                    Cmd.none
+
+                Nothing ->
+                    Record.recordPageRequest session.cacheBuster initialUrl
     in
     ( initialBody
     , Cmd.batch
-        [ Record.recordPageRequest session.cacheBuster initialUrl
+        [ fetchInitialRecordBodyCmd
         , fetchInitialSourceResultsCmd
         ]
         |> Cmd.map Msg.UserInteractedWithRecordPage
@@ -365,9 +413,10 @@ recordContentsRouteHelper :
     , qargs : QueryArgs
     , route : Route
     , session : Session
+    , initialData : Maybe Value
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordContentsRouteHelper { initialUrl, qargs, route, session } =
+recordContentsRouteHelper { initialUrl, qargs, route, session, initialData } =
     let
         recordCfg =
             { incomingUrl = initialUrl
@@ -375,6 +424,7 @@ recordContentsRouteHelper { initialUrl, qargs, route, session } =
             , queryArgs = Just qargs
             , nationalCollection = session.restrictedToNationalCollection
             , searchPreferences = session.searchPreferences
+            , initialData = initialData
             }
 
         initialBody =
@@ -382,7 +432,12 @@ recordContentsRouteHelper { initialUrl, qargs, route, session } =
                 |> addNationalCollectionFilter session.restrictedToNationalCollection
 
         fetchInitialContentsResultsCmd =
-            sourceFetchCmd initialBody initialUrl route
+            case initialData of
+                Just _ ->
+                    Cmd.none
+
+                Nothing ->
+                    sourceFetchCmd initialBody initialUrl route
 
         recordUrl =
             { initialUrl | path = baseRecordPathFromRoute route }
@@ -401,9 +456,10 @@ recordHoldingsRouteHelper :
     { initialUrl : Url
     , route : Route
     , session : Session
+    , initialData : Maybe Value
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordHoldingsRouteHelper { initialUrl, route, session } =
+recordHoldingsRouteHelper { initialUrl, route, session, initialData } =
     let
         recordCfg =
             { incomingUrl = initialUrl
@@ -411,6 +467,7 @@ recordHoldingsRouteHelper { initialUrl, route, session } =
             , queryArgs = Nothing
             , nationalCollection = session.restrictedToNationalCollection
             , searchPreferences = session.searchPreferences
+            , initialData = initialData
             }
 
         initialBody =

@@ -12,7 +12,9 @@ import Basics.Extra exposing (flip)
 import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideInput, toDebouncer)
 import Dict
+import Json.Decode as Decode exposing (Value)
 import Maybe.Extra as ME
+import Page.Decoders exposing (recordResponseDecoder)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
@@ -24,6 +26,7 @@ import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToResultMode)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..))
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
+import Page.UI.Errors exposing (createErrorMessage)
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
@@ -35,6 +38,7 @@ import Url exposing (Url)
 type alias FrontConfig =
     { queryArgs : FrontQueryArgs
     , searchPreferences : Maybe SearchPreferences
+    , initialData : Maybe Value
     }
 
 
@@ -67,14 +71,21 @@ frontProbeSubmit session model =
 
 init : FrontConfig -> FrontPageModel FrontMsg
 init cfg =
-    { response = Loading Nothing
+    let
+        frontData =
+            Maybe.map (Decode.decodeValue recordResponseDecoder) cfg.initialData
+                |> Maybe.andThen Result.toMaybe
+                |> Maybe.map Response
+                |> Maybe.withDefault (Loading Nothing)
+    in
+    { response = frontData
     , activeSearch =
         ActiveSearch.init
             { queryArgs = frontQueryArgsToQueryArgs cfg.searchPreferences cfg.queryArgs
             , keyboardQueryArgs = Just Keyboard.defaultKeyboardQuery
             , searchPreferences = cfg.searchPreferences
             }
-    , probeResponse = NotChecked
+    , probeResponse = Probing
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     }
@@ -163,7 +174,7 @@ update session msg model =
 
         ServerRespondedWithFrontData (Err err) ->
             ( { model
-                | response = Error err
+                | response = Error (createErrorMessage err)
               }
             , Cmd.none
             )
