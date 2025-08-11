@@ -240,7 +240,6 @@ headerTmpl cfg =
         (width fill
             :: spacingXY 10 5
             :: alignTop
-            :: height (px headerHeight)
             :: cfg.extraAttrs
         )
         [ viewMaybe identity cfg.icon
