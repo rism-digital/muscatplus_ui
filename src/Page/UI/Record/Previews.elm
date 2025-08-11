@@ -4,7 +4,6 @@ import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el,
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Http.Detailed
 import Language exposing (Language, LanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Error.Views exposing (errorMessageView)
@@ -14,7 +13,7 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
 import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, sectionSpacing, sidebarWidth)
 import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowTitleBar)
-import Page.UI.Errors exposing (ErrorResponse, createErrorMessage)
+import Page.UI.Errors exposing (ErrorResponse)
 import Page.UI.Events exposing (onComplete)
 import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)

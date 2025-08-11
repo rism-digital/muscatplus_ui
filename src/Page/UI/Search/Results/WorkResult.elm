@@ -1,6 +1,6 @@
 module Page.UI.Search.Results.WorkResult exposing (viewWorkSearchResult)
 
-import Element exposing (Element, none, text)
+import Element exposing (Element, text)
 import Page.RecordTypes.Search exposing (WorkResultBody)
 import Page.UI.Search.Results exposing (SearchResultConfig)
 

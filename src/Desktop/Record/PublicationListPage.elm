@@ -1,6 +1,6 @@
 module Desktop.Record.PublicationListPage exposing (viewPublicationListPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -12,10 +12,9 @@ import Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody)
 import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
-import Page.UI.Components exposing (h2, h3s)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, subHeaderTemplate)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight)
 import Session exposing (Session)
 
 

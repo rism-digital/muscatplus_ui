@@ -1,4 +1,4 @@
-module Page.RecordTypes.Work exposing (FormOfWorkSectionBody, PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody, personWorksSectionBodyDecoder, sourceWorksSectionBodyDecoder, workBodyDecoder)
+module Page.RecordTypes.Work exposing (FormOfWork, FormOfWorkSectionBody, PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody, personWorksSectionBodyDecoder, sourceWorksSectionBodyDecoder, workBodyDecoder)
 
 import Json.Decode exposing (Decoder, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)

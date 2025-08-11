@@ -37,7 +37,6 @@ module Page.RecordTypes.Search exposing
     , WorkResultFlags
     , aliasLabelDecoder
     , extractIdFromSearchResult
-    , extractLabelFromSearchResult
     , facetsDecoder
     , labelForValue
     , parseFacetBehaviourToString

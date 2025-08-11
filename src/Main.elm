@@ -155,10 +155,10 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( SourcePage session initialBody
@@ -172,11 +172,11 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordContentsRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , qargs = qargs
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( SourcePage session initialBody
@@ -190,10 +190,10 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordHoldingsRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( HoldingPage session initialBody, initialCmds )
@@ -202,10 +202,10 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( PersonPage session initialBody
@@ -219,11 +219,11 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordContentsRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , qargs = qargs
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( PersonPage session initialBody
@@ -237,10 +237,10 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( InstitutionPage session initialBody
@@ -254,11 +254,11 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordContentsRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , qargs = qargs
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( InstitutionPage session initialBody
@@ -272,10 +272,10 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( PublicationPage session initialBody
@@ -289,11 +289,11 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordContentsRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , qargs = qargs
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( PublicationPage session initialBody
@@ -307,10 +307,10 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( PublicationListPage session initialBody
@@ -324,10 +324,10 @@ init flags initialUrl key =
             let
                 ( initialBody, initialCmds ) =
                     recordRouteHelper
-                        { initialUrl = initialUrl
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
                         , route = route
                         , session = session
-                        , initialData = flags.initialData
                         }
             in
             ( WorkPage session initialBody
@@ -367,13 +367,13 @@ init flags initialUrl key =
 
 
 recordRouteHelper :
-    { initialUrl : Url
+    { initialData : Maybe Value
+    , initialUrl : Url
     , route : Route
     , session : Session
-    , initialData : Maybe Value
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordRouteHelper { initialUrl, route, session, initialData } =
+recordRouteHelper { initialData, initialUrl, route, session } =
     let
         recordCfg =
             { incomingUrl = initialUrl
@@ -409,14 +409,14 @@ recordRouteHelper { initialUrl, route, session, initialData } =
 
 
 recordContentsRouteHelper :
-    { initialUrl : Url
+    { initialData : Maybe Value
+    , initialUrl : Url
     , qargs : QueryArgs
     , route : Route
     , session : Session
-    , initialData : Maybe Value
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordContentsRouteHelper { initialUrl, qargs, route, session, initialData } =
+recordContentsRouteHelper { initialData, initialUrl, qargs, route, session } =
     let
         recordCfg =
             { incomingUrl = initialUrl
@@ -453,13 +453,13 @@ recordContentsRouteHelper { initialUrl, qargs, route, session, initialData } =
 
 
 recordHoldingsRouteHelper :
-    { initialUrl : Url
+    { initialData : Maybe Value
+    , initialUrl : Url
     , route : Route
     , session : Session
-    , initialData : Maybe Value
     }
     -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordHoldingsRouteHelper { initialUrl, route, session, initialData } =
+recordHoldingsRouteHelper { initialData, initialUrl, route, session } =
     let
         recordCfg =
             { incomingUrl = initialUrl

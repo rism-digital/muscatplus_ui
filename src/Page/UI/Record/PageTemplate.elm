@@ -8,7 +8,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, newTabLink, none, padding, paddingXY, px, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, paddingXY, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -23,7 +23,7 @@ import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, h3s, resource
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
-import Page.UI.Style exposing (colourScheme, headerHeight)
+import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Url
 
@@ -128,6 +128,7 @@ pageFooterTemplate session language footer =
         , minimalDropShadow
         , Border.color colourScheme.midGrey
         , htmlAttribute (HA.style "z-index" "10")
+        , htmlAttribute (HA.id "ro-record-footer")
         , Region.footer
         ]
         [ column

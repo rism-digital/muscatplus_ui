@@ -1,6 +1,7 @@
 module Page.UI.Style exposing
     ( colourScheme
     , headerHeight
+    , printMediaQuery
     , recordTitleHeight
     , searchSourcesLinkHeight
     , tabBarHeight
@@ -8,6 +9,7 @@ module Page.UI.Style exposing
     )
 
 import Css
+import Css.Global
 import Element
 
 
@@ -242,3 +244,10 @@ searchSourcesLinkHeight =
 recordTitleHeight : Int
 recordTitleHeight =
     50
+
+
+printMediaQuery : List Css.Global.Snippet
+printMediaQuery =
+    [ Css.Global.id "ro-sidebar-nav" [ Css.display Css.none ]
+    , Css.Global.id "ro-record-footer" [ Css.display Css.none ]
+    ]

@@ -4,6 +4,7 @@ module Page.RecordTypes.Incipit exposing
     , IncipitFormat(..)
     , IncipitParent(..)
     , IncipitParentSourceBody
+    , IncipitParentWorkBody
     , IncipitsSectionBody
     , PAEEncodedData
     , RenderedIncipit(..)
@@ -98,7 +99,7 @@ incipitBodyDecoder =
 incipitTocDecoder : Decoder String
 incipitTocDecoder =
     string
-        |> Decode.map
+        |> map
             (\incipitId ->
                 String.split "/" incipitId
                     |> LE.last
@@ -140,17 +141,17 @@ meiEncodedIncipitDecoder =
 incipitEncodingDataDecoder : Decoder PAEEncodedData
 incipitEncodingDataDecoder =
     Decode.succeed PAEEncodedData
-        |> optional "clef" (Decode.maybe string) Nothing
-        |> optional "keysig" (Decode.maybe string) Nothing
-        |> optional "timesig" (Decode.maybe string) Nothing
-        |> optional "key" (Decode.maybe string) Nothing
+        |> optional "clef" (maybe string) Nothing
+        |> optional "keysig" (maybe string) Nothing
+        |> optional "timesig" (maybe string) Nothing
+        |> optional "key" (maybe string) Nothing
         |> required "data" string
 
 
 incipitFormatDecoder : Decoder IncipitFormat
 incipitFormatDecoder =
     string
-        |> Decode.map
+        |> map
             (\mimetype ->
                 case mimetype of
                     "audio/midi" ->
@@ -169,7 +170,7 @@ incipitFormatDecoder =
 
 incipitParentBodyDecoder : Decoder IncipitParent
 incipitParentBodyDecoder =
-    Decode.oneOf
+    oneOf
         [ incipitParentSourceBodyDecoder |> map SourceParent
         , incipitParentWorkBodyDecoder |> map WorkParent
         ]

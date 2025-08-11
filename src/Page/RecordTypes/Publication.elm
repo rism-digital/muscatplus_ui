@@ -1,4 +1,4 @@
-module Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody, WorksSectionBody, publicationBasicBodyDecoder, publicationBodyDecoder)
+module Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody, PublicationProperties, WorksSectionBody, publicationBasicBodyDecoder, publicationBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)

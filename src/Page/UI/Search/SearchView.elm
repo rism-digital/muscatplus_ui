@@ -398,6 +398,15 @@ viewSearchControls cfg =
 
         ( mainSearchField, secondaryQueryField ) =
             case currentMode of
+                SourcesMode ->
+                    ( keywordInputField, none )
+
+                PeopleMode ->
+                    ( keywordInputField, none )
+
+                InstitutionsMode ->
+                    ( keywordInputField, none )
+
                 IncipitsMode ->
                     ( viewFacet
                         { alias = "notation"
@@ -411,15 +420,6 @@ viewSearchControls cfg =
                         cfg.facetMsgConfig
                     , keywordInputField
                     )
-
-                SourcesMode ->
-                    ( keywordInputField, none )
-
-                PeopleMode ->
-                    ( keywordInputField, none )
-
-                InstitutionsMode ->
-                    ( keywordInputField, none )
 
                 _ ->
                     ( none, none )

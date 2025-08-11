@@ -61,7 +61,7 @@ holdingBodyDecoder =
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "boundWith" (maybe boundWithSectionBodyDecoder) Nothing
         |> optional "partOf" (maybe holdingParentSourceBodyDecoder) Nothing
-        |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
+        |> optional "digitalObjects" (maybe digitalObjectsSectionBodyDecoder) Nothing
         |> optional "recordHistory" (maybe recordHistoryDecoder) Nothing
 
 

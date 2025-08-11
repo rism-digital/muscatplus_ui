@@ -3,6 +3,7 @@ module Views exposing (view)
 import Browser
 import Css exposing (breakWord, overflowWrap)
 import Css.Global
+import Css.Media
 import Desktop.About.About
 import Desktop.About.Help
 import Desktop.About.Options
@@ -35,7 +36,7 @@ import Page.UI.Animations exposing (progressBar)
 import Page.UI.Attributes exposing (bodyFont, bodyFontColour, fontBaseSize)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
-import Page.UI.Style exposing (colourScheme, toCssColors)
+import Page.UI.Style exposing (colourScheme, printMediaQuery, toCssColors)
 import Response exposing (Response(..), ServerData(..))
 
 
@@ -96,6 +97,9 @@ view model =
             (Css.Global.global
                 [ Css.Global.a globalLinkColor -- Ensures in-text links are also displayed in blue.
                 , Css.Global.a [ overflowWrap breakWord ]
+                , Css.Global.media
+                    [ Css.Media.only Css.Media.print [] ]
+                    printMediaQuery
                 ]
             )
         , layout
@@ -123,7 +127,8 @@ viewPageBody deviceView model =
                 DesktopView ->
                     viewIf
                         (column
-                            [ width (px 70)
+                            [ htmlAttribute (HA.id "ro-sidebar-nav")
+                            , width (px 70)
                             , height fill
                             , alignTop
                             , inFront (Element.map Msg.UserInteractedWithSideBar (Desktop.SideBar.Views.viewRouter pageSession))

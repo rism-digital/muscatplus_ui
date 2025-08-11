@@ -1,4 +1,4 @@
-module Page.RecordTypes.WorkBasic exposing (..)
+module Page.RecordTypes.WorkBasic exposing (BasicWorkBody, basicWorkBodyDecoder)
 
 import Json.Decode exposing (Decoder, string, succeed)
 import Json.Decode.Pipeline exposing (required)

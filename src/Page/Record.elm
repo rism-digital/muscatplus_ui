@@ -41,7 +41,6 @@ import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, p
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
-import Result.Extra as RE
 import SearchPreferences exposing (SearchPreferences)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
