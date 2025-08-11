@@ -2,7 +2,7 @@ module Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
 
 import Element exposing (Element, centerX, column, fill, paragraph, row, shrink, spacing, text, width)
 import Element.Font as Font
-import Element.Input as Input
+import Element.Input as Input exposing (placeholder)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Keyboard.Model exposing (KeyboardModel)
@@ -39,7 +39,7 @@ viewPaeInput language model =
                                 [ text (extractLabelFromLanguageMap language localTranslations.paeInput) ]
                             )
                     , onChange = UserInteractedWithPAEText
-                    , placeholder = Nothing
+                    , placeholder = Just (placeholder [] (text "e.g., EDCDEEE or bB'A''C'nB"))
                     , text = Maybe.withDefault "" (.noteData model.query)
                     }
                 ]

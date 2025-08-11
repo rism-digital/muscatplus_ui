@@ -617,19 +617,13 @@ localTranslations =
         , LanguageValue Polish [ "Nie znaleziono żadnych wyników dla tego wyszukiwania" ]
         ]
     , notationQueryLength =
-        [ LanguageValue English [ "Queries must be longer than three notes" ]
-        , LanguageValue German
-            [ "Anfragen müssen länger als drei Noten sein" ]
-        , LanguageValue French
-            [ "Les requêtes doivent contenir plus de trois notes" ]
-        , LanguageValue Italian
-            [ "Le query devono essere più lunghe di tre note" ]
-        , LanguageValue Spanish
-            [ "Las consultas deben tener más de tres notas" ]
-        , LanguageValue Portuguese
-            [ "As consultas devem ter mais de três notas" ]
-        , LanguageValue Polish
-            [ "Zapytania muszą zawierać więcej niż trzy nuty" ]
+        [ LanguageValue English [ "Queries must be longer than three notes. Enter queries in Plaine and Easie format." ]
+        , LanguageValue German [ "Anfragen müssen länger als drei Noten sein. Geben Sie Anfragen im Plaine-and-Easie-Format ein." ]
+        , LanguageValue French [ "Les requêtes doivent contenir plus de trois notes. Saisissez les requêtes au format Plaine and Easie." ]
+        , LanguageValue Italian [ "Le query devono essere più lunghe di tre note. Inserire le query nel formato Plaine and Easie." ]
+        , LanguageValue Spanish [ "Las consultas deben tener más de tres notas. Introduzca las consultas en el formato Plaine and Easie." ]
+        , LanguageValue Portuguese [ "As consultas devem ter mais de três notas. Insira as consultas no formato Plaine and Easie." ]
+        , LanguageValue Polish [ "Zapytania muszą zawierać więcej niż trzy nuty. Wprowadź zapytania w formacie Plaine and Easie." ]
         ]
     , numberOfResults =
         [ LanguageValue English [ "Number of results" ]
