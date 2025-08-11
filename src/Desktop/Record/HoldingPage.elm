@@ -14,6 +14,7 @@ import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (booksSvg)
+import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewBoundWithSection, viewExemplarExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection)
@@ -137,6 +138,7 @@ viewHoldingBody { language, paragraphFormatter, preRenderedFormatter, relationsh
                         }
                     )
                     body.externalResources
+                , viewMaybe (viewDigitalObjectsSection language) body.digitalObjects
                 ]
     in
     row

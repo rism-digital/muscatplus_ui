@@ -4,6 +4,7 @@ import Dict
 import Json.Decode as Decode exposing (Decoder, list, map, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitutionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
@@ -41,6 +42,7 @@ type alias HoldingBody =
     , relationships : Maybe RelationshipsSectionBody
     , boundWith : Maybe BoundWithSectionBody
     , partOf : Maybe HoldingParentSourceBody
+    , digitalObjects : Maybe DigitalObjectsSectionBody
     , recordHistory : Maybe RecordHistory
     }
 
@@ -59,6 +61,7 @@ holdingBodyDecoder =
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "boundWith" (maybe boundWithSectionBodyDecoder) Nothing
         |> optional "partOf" (maybe holdingParentSourceBodyDecoder) Nothing
+        |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
         |> optional "recordHistory" (maybe recordHistoryDecoder) Nothing
 
 

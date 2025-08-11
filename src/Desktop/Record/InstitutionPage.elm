@@ -15,6 +15,7 @@ import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
+import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.LocationSection exposing (viewLocationAddressSection, viewLocationMapSection)
@@ -78,6 +79,7 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
                         ( windowWidth, windowHeight )
                     )
                     body.location
+                , viewMaybe (viewDigitalObjectsSection language) body.digitalObjects
                 ]
     in
     row

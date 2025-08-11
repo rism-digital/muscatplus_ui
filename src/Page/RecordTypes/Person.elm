@@ -8,6 +8,7 @@ module Page.RecordTypes.Person exposing
 import Json.Decode as Decode exposing (Decoder, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
@@ -44,6 +45,7 @@ type alias PersonBody =
     , externalResources : Maybe ExternalResourcesSectionBody
     , sources : Maybe SourceRelationshipsSectionBody
     , works : Maybe PersonWorksSectionBody
+    , digitalObjects : Maybe DigitalObjectsSectionBody
     , recordHistory : RecordHistory
     }
 
@@ -79,4 +81,5 @@ personBodyDecoder =
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "sources" (Decode.maybe sourceRelationshipsSectionBodyDecoder) Nothing
         |> optional "works" (Decode.maybe personWorksSectionBodyDecoder) Nothing
+        |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder

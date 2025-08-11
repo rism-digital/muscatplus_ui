@@ -12,6 +12,7 @@ module Page.RecordTypes.Institution exposing
 import Json.Decode as Decode exposing (Decoder, float, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required, requiredAt)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
@@ -54,6 +55,7 @@ type alias InstitutionBody =
     , externalResources : Maybe ExternalResourcesSectionBody
     , location : Maybe LocationAddressSectionBody
     , sources : Maybe SourceRelationshipsSectionBody
+    , digitalObjects : Maybe DigitalObjectsSectionBody
     , recordHistory : RecordHistory
     }
 
@@ -117,6 +119,7 @@ institutionBodyDecoder =
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "location" (Decode.maybe locationAddressSectionBodyDecoder) Nothing
         |> optional "sources" (Decode.maybe sourceRelationshipsSectionBodyDecoder) Nothing
+        |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
 

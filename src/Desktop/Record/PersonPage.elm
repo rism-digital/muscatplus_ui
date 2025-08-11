@@ -16,6 +16,7 @@ import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewSum
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
 import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
+import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
@@ -73,6 +74,7 @@ viewDescriptionTab language body =
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 , viewMaybe (viewPersonWorksSection language) body.works
+                , viewMaybe (viewDigitalObjectsSection language) body.digitalObjects
                 ]
     in
     row
