@@ -1,4 +1,4 @@
-module Page.UI.Images exposing (altSvg, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, booksSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, externalLinkSvg, fileDownloadSvg, fileMusicSvg, globeSvg, graduationCapSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, linkSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, printingPressSvg, rectanglesMixedSvg, rismLogo, searchSvg, shapesSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, userCircleSvg)
+module Page.UI.Images exposing (altSvg, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, booksSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, externalLinkSvg, fileDownloadSvg, fileMusicSvg, folderMusicSvg, globeSvg, graduationCapSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, linkSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, printingPressSvg, rectanglesMixedSvg, rismLogo, searchSvg, shapesSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, userCircleSvg, userMusicSvg)
 
 import Color exposing (toCssString)
 import Element exposing (Element, html)
@@ -192,6 +192,14 @@ fileMusicSvg color =
     makeSvgIcon color
         { path = "M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zm32 224v32V384c0 17.7-21.5 32-48 32s-48-14.3-48-32s21.5-32 48-32c5.6 0 11 .6 16 1.8V279.1l-96 36V416c0 17.7-21.5 32-48 32s-48-14.3-48-32s21.5-32 48-32c5.6 0 11 .6 16 1.8V304 272c0-6.7 4.1-12.6 10.4-15l128-48c4.9-1.8 10.4-1.2 14.7 1.8s6.9 7.9 6.9 13.2z"
         , viewBox = "0 0 384 512"
+        }
+
+
+folderMusicSvg : Element.Color -> Element msg
+folderMusicSvg color =
+    makeSvgIcon color
+        { path = "M512 416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96C0 60.7 28.7 32 64 32H192c20.1 0 39.1 9.5 51.2 25.6l19.2 25.6c6 8.1 15.5 12.8 25.6 12.8H448c35.3 0 64 28.7 64 64V416zM352 192c0-5.2-2.6-10.2-6.9-13.2s-9.8-3.7-14.7-1.8l-128 48c-6.2 2.3-10.4 8.3-10.4 15v32 81.8c-5-1.2-10.4-1.8-16-1.8c-26.5 0-48 14.3-48 32s21.5 32 48 32s48-14.3 48-32V283.1l96-36v74.7c-5-1.2-10.4-1.8-16-1.8c-26.5 0-48 14.3-48 32s21.5 32 48 32s48-14.3 48-32V224 192z"
+        , viewBox = "0 0 512 512"
         }
 
 
@@ -500,6 +508,14 @@ userCircleSvg color =
     makeSvgIcon color
         { path = "M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"
         , viewBox = "0 0 512 512"
+        }
+
+
+userMusicSvg : Element.Color -> Element msg
+userMusicSvg color =
+    makeSvgIcon color
+        { path = "M224 0a128 128 0 1 1 0 256A128 128 0 1 1 224 0zM178.3 304h91.4c36.3 0 70.1 10.9 98.3 29.5v51.6c-18 2.5-34.8 9.1-48.5 19.4c-17.6 13.2-31.5 34-31.5 59.5c0 19.1 7.7 35.4 18.9 48H29.7C13.3 512 0 498.7 0 482.3C0 383.8 79.8 304 178.3 304zM630 164.5c6.3 4.5 10 11.8 10 19.5v48V392c0 1.2-.1 2.4-.3 3.6c.2 1.5 .3 2.9 .3 4.4c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48c5.5 0 10.9 .5 16 1.5V265.3l-144 48V464c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48c5.5 0 10.9 .5 16 1.5V296 248c0-10.3 6.6-19.5 16.4-22.8l192-64c7.3-2.4 15.4-1.2 21.6 3.3z"
+        , viewBox = "0 0 640 512"
         }
 
 

@@ -12,7 +12,7 @@ import Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody)
 import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
-import Page.UI.Images exposing (peopleSvg)
+import Page.UI.Images exposing (folderMusicSvg, peopleSvg)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight)
 import Session exposing (Session)
@@ -35,7 +35,7 @@ viewPublicationListPage session model body =
                 , centerX
                 , centerY
                 ]
-                (peopleSvg colourScheme.darkBlue)
+                (folderMusicSvg colourScheme.darkBlue)
 
         pageHeader =
             if session.isFramed then

@@ -23,7 +23,7 @@ import Page.SideBar.Options exposing (SideBarOptions)
 import Page.UI.Animations exposing (animatedColumn, animatedEl)
 import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Images exposing (institutionSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
+import Page.UI.Images exposing (folderMusicSvg, institutionSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, headerHeight, recordTitleHeight, tabBarHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
@@ -190,7 +190,7 @@ view session options =
 
         workCataloguesInterfaceMenuOption =
             menuOption
-                { icon = sourcesSvg
+                { icon = folderMusicSvg
                 , isCurrent = checkSelected WorkCatalogueNavigateOption
                 , isHovered = checkHover WorkCatalogueNavigateOption
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.workCatalogues)

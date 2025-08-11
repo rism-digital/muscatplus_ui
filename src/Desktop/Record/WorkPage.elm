@@ -11,7 +11,7 @@ import Page.RecordTypes.Work exposing (FormOfWorkSectionBody, WorkBody)
 import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (peopleSvg)
+import Page.UI.Images exposing (userMusicSvg)
 import Page.UI.Record.ContentsSection exposing (viewCreator)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
@@ -38,7 +38,7 @@ viewFullWorkPage session model body =
                 , centerX
                 , centerY
                 ]
-                (peopleSvg colourScheme.darkBlue)
+                (userMusicSvg colourScheme.darkBlue)
 
         pageHeader =
             if session.isFramed then

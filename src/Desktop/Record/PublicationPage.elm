@@ -18,7 +18,7 @@ import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDro
 import Page.UI.Components exposing (Tab(..), pageBodyOrEmpty, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (peopleSvg)
+import Page.UI.Images exposing (folderMusicSvg, peopleSvg)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Search.Pagination exposing (viewPagination)
@@ -58,7 +58,7 @@ viewFullPublicationPage session model body =
                 , centerX
                 , centerY
                 ]
-                (peopleSvg colourScheme.darkBlue)
+                (folderMusicSvg colourScheme.darkBlue)
 
         pageHeader =
             if session.isFramed then
@@ -295,7 +295,8 @@ viewRelatedWorksListTabBody session model =
         [ width fill
         , height fill
         , alignTop
-        , clipY
+        , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill
@@ -418,7 +419,7 @@ viewWorksResultsSection cfg isLoading body =
                           , width = fillPortion 1
                           , view = \i w -> viewScoringSummaryCell language i w
                           }
-                        , { header = el tableHeaderStyles (text "Number of Sources")
+                        , { header = el tableHeaderStyles (text "Sources")
                           , width = fillPortion 1
                           , view = \i w -> viewNumberOfSourcesCell language i w
                           }
