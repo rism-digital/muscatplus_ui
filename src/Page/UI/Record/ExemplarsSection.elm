@@ -117,7 +117,7 @@ viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipF
                         exemplar.externalResources
 
                     -- Uncomment when we have agreement to publish.
-                    --, pagelink
+                    , pagelink
                     ]
                 ]
             ]
