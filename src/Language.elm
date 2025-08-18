@@ -186,7 +186,7 @@ formatNumberByLanguage lang num =
             format italianLocale num
 
         Portuguese ->
-            format portugeseLocale num
+            format portugueseLocale num
 
         Spanish ->
             format spanishLocale num
@@ -356,8 +356,8 @@ polishLocale =
     }
 
 
-portugeseLocale : Locale
-portugeseLocale =
+portugueseLocale : Locale
+portugueseLocale =
     { base
         | decimals = Max 3
         , thousandSeparator = "\u{202F}"
