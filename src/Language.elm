@@ -248,8 +248,17 @@ parseLanguageToLabel language =
         |> Maybe.withDefault "English"
 
 
+{-|
+
+    Takes a language type and returns the string representation,
+    e.g., "en", "de", etc.
+
+-}
 parseLanguageToLocale : Language -> String
 parseLanguageToLocale language =
+    -- it's unlikely that a language will get passed in that doesn't exist,
+    -- but this will use English as the default language if that ever happens
+    -- creates a new list with just the locale and language type, then filters
     LE.findMap
         (\( l, _, s ) ->
             if s == language then
@@ -321,30 +330,6 @@ languageValuesDecoder : ( String, List String ) -> Decoder LanguageValue
 languageValuesDecoder ( locale, translations ) =
     LanguageValue (parseLocaleToLanguage locale) translations
         |> Decode.succeed
-
-
-
---{-|
---
---    Takes a language type and returns the string representation,
---    e.g., "en", "de", etc.
---
----}
---parseLanguageToLocale : Language -> String
---parseLanguageToLocale lang =
---    -- it's unlikely that a language will get passed in that doesn't exist,
---    -- but this will use English as the default language if that ever happens
---    -- creates a new list with just the locale and language type, then filters
---    LE.findMap
---        (\( l, _, s ) ->
---            if s == lang then
---                Just l
---
---            else
---                Nothing
---        )
---        languageOptions
---        |> Maybe.withDefault "en"
 
 
 polishLocale : Locale
