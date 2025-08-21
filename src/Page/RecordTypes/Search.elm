@@ -227,6 +227,7 @@ type alias WorkResultBody =
     , label : LanguageMap
     , summary : Maybe (Dict String LabelValue)
     , flags : WorkResultFlags
+    , renderedIncipits : Maybe RenderedIncipit
     }
 
 
@@ -895,6 +896,7 @@ workResultBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (maybe (dict labelValueDecoder)) Nothing
         |> required "flags" workResultFlagDecoder
+        |> optional "rendered" (maybe renderedIncipitDecoderOne) Nothing
 
 
 workResultFlagDecoder : Decoder WorkResultFlags

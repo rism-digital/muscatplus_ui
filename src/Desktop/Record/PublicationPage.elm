@@ -1,7 +1,7 @@
 module Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -10,6 +10,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
+import Page.RecordTypes.Incipit exposing (IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Publication exposing (PublicationBody)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody)
@@ -17,7 +18,7 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (Tab(..), pageBodyOrEmpty, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg, peopleSvg)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
@@ -411,6 +412,10 @@ viewWorksResultsSection cfg isLoading body =
                           , width = fillPortion 2
                           , view = \i w -> viewWorkTitleCell language i w
                           }
+                        , { header = el tableHeaderStyles (text "Incipit")
+                          , width = fillPortion 2
+                          , view = \i w -> viewIncipitCell language i w
+                          }
                         , { header = el tableHeaderStyles (text "Key")
                           , width = fillPortion 1
                           , view = \i w -> viewKeyModeCell language i w
@@ -434,6 +439,10 @@ viewWorksResultsSection cfg isLoading body =
         ]
 
 
+rowPadding =
+    8
+
+
 viewCatalogNumberCell : Language -> Int -> WorkResultBody -> Element msg
 viewCatalogNumberCell language rowNum body =
     let
@@ -443,12 +452,12 @@ viewCatalogNumberCell language rowNum body =
         catalogNum =
             case .catalogueIdentifier body.flags of
                 Just ident ->
-                    text ident
+                    el [ centerY ] (text ident)
 
                 Nothing ->
                     none
     in
-    el [ cellBg, padding 10 ] catalogNum
+    el [ cellBg, padding rowPadding, width shrink, height fill ] catalogNum
 
 
 viewWorkTitleCell : Language -> Int -> WorkResultBody -> Element msg
@@ -458,10 +467,11 @@ viewWorkTitleCell language rowNum result =
             cycleTableBackground rowNum
     in
     link
-        [ cellBg, linkColour, padding 10 ]
+        [ cellBg, linkColour, padding rowPadding, width shrink, height fill ]
         { label =
             extractLabelFromLanguageMap language result.label
                 |> text
+                |> el [ centerY ]
         , url = result.id
         }
 
@@ -481,8 +491,8 @@ viewKeyModeCell language rowNum result =
                     ""
     in
     el
-        [ cellBg, padding 10, width fill, height fill ]
-        (text keyModeFlagValue)
+        [ cellBg, padding rowPadding, width shrink, height fill ]
+        (el [ centerY ] (text keyModeFlagValue))
 
 
 viewScoringSummaryCell : Language -> Int -> WorkResultBody -> Element msg
@@ -495,8 +505,8 @@ viewScoringSummaryCell language rowNum result =
             Maybe.withDefault "" (.scoringSummary result.flags)
     in
     el
-        [ cellBg, padding 10, width fill, height fill ]
-        (text scoringSummaryFlagValue)
+        [ cellBg, padding rowPadding, width shrink, height fill ]
+        (el [ centerY ] (text scoringSummaryFlagValue))
 
 
 viewNumberOfSourcesCell : Language -> Int -> WorkResultBody -> Element msg
@@ -531,6 +541,7 @@ viewNumberOfSourcesCell language rowNum result =
                         link
                             [ linkColour
                             , alignLeft
+                            , centerY
                             ]
                             { label = text "View Linked Sources", url = "/search?fq=works:" ++ workId }
 
@@ -544,12 +555,36 @@ viewNumberOfSourcesCell language rowNum result =
         [ width fill
         , height fill
         , cellBg
-        , padding 10
+        , padding rowPadding
         , spacing 10
         , alignLeft
         ]
         [ el
-            []
+            [ centerY ]
             (text numSourcesFlagValue)
         , viewSourcesLink
         ]
+
+
+viewIncipitCell : Language -> Int -> WorkResultBody -> Element msg
+viewIncipitCell language rowNum result =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+
+        renderedIncipit =
+            Maybe.map
+                (\ri ->
+                    case ri of
+                        RenderedIncipit RenderedSVG svgdata ->
+                            viewSVGRenderedIncipit svgdata
+
+                        _ ->
+                            el [ centerY ] (text "-")
+                )
+                result.renderedIncipits
+                |> Maybe.withDefault (el [ centerY ] (text "-"))
+    in
+    el
+        [ cellBg, padding rowPadding, width fill, height fill ]
+        renderedIncipit
