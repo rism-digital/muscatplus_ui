@@ -506,12 +506,16 @@ viewNumberOfSourcesCell language rowNum result =
             cycleTableBackground rowNum
 
         numSourcesFlagValue =
-            case .numberOfSources result.flags of
-                Just v ->
-                    String.fromInt v
+            Maybe.map String.fromInt (.numberOfSources result.flags)
+                |> Maybe.andThen
+                    (\t ->
+                        if t == "0" then
+                            Nothing
 
-                Nothing ->
-                    ""
+                        else
+                            Just t
+                    )
+                |> Maybe.withDefault "-"
 
         viewSourcesLink =
             case .numberOfSources result.flags of
