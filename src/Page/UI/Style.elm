@@ -5,6 +5,7 @@ module Page.UI.Style exposing
     , recordTitleHeight
     , searchSourcesLinkHeight
     , tabBarHeight
+    , tableCellPadding
     , toCssColors
     )
 
@@ -244,6 +245,11 @@ searchSourcesLinkHeight =
 recordTitleHeight : Int
 recordTitleHeight =
     50
+
+
+tableCellPadding : Int
+tableCellPadding =
+    8
 
 
 printMediaQuery : List Css.Global.Snippet

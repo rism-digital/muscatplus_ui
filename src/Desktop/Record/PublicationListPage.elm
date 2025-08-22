@@ -1,6 +1,6 @@
 module Desktop.Record.PublicationListPage exposing (viewPublicationListPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -11,10 +11,11 @@ import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody)
 import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody)
+import Page.RecordTypes.Shared exposing (LabelStringValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
-import Page.UI.Images exposing (folderMusicSvg, peopleSvg)
+import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, subHeaderTemplate)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, tableCellPadding)
 import Session exposing (Session)
 
 
@@ -105,6 +106,10 @@ viewPublicationListPage session model body =
                               , width = fillPortion 1
                               , view = \i w -> viewPublicationYearCell session.language i w
                               }
+                            , { header = el tableHeaderStyles (text "Status")
+                              , width = fillPortion 1
+                              , view = \i w -> viewStatusCell session.language i w.status
+                              }
                             ]
                         , data = body.items
                         }
@@ -127,8 +132,8 @@ viewShortTitleCell language rowNum publication =
                 |> Maybe.withDefault ""
     in
     link
-        [ cellBg, linkColour, padding 10, height fill ]
-        { label = text shortTitle
+        [ cellBg, linkColour, padding tableCellPadding, height fill ]
+        { label = paragraph [ centerY ] [ text shortTitle ]
         , url = publication.id
         }
 
@@ -146,8 +151,8 @@ viewPublicationYearCell language rowNum publication =
                 |> Maybe.withDefault ""
     in
     el
-        [ cellBg, padding 10, height fill ]
-        (text publicationDates)
+        [ cellBg, padding tableCellPadding, height fill ]
+        (paragraph [ centerY ] [ text publicationDates ])
 
 
 viewCatalogTitleCell : Language -> Int -> PublicationBasic -> Element RecordMsg
@@ -157,8 +162,12 @@ viewCatalogTitleCell language rowNum publication =
             cycleTableBackground rowNum
     in
     el
-        [ cellBg, padding 10 ]
-        (text (extractLabelFromLanguageMap language publication.label))
+        [ cellBg, padding tableCellPadding, height fill ]
+        (paragraph [ centerY ]
+            [ extractLabelFromLanguageMap language publication.label
+                |> text
+            ]
+        )
 
 
 viewComposerCell : Language -> Int -> Maybe RelatedToBody -> Element RecordMsg
@@ -170,8 +179,28 @@ viewComposerCell language rowNum composer =
     case composer of
         Just c ->
             el
-                [ cellBg, padding 10 ]
-                (text (extractLabelFromLanguageMap language c.label))
+                [ cellBg, padding tableCellPadding, height fill ]
+                (paragraph
+                    [ centerY ]
+                    [ text (extractLabelFromLanguageMap language c.label) ]
+                )
 
         Nothing ->
-            el [ cellBg, padding 10 ] (text "[No composer]")
+            el
+                [ cellBg, padding tableCellPadding, height fill ]
+                (paragraph [ centerY ] [ text "[No composer]" ])
+
+
+viewStatusCell : Language -> Int -> LabelStringValue -> Element RecordMsg
+viewStatusCell language rowNum status =
+    let
+        cellBg =
+            cycleTableBackground rowNum
+    in
+    el
+        [ cellBg, padding tableCellPadding, height fill ]
+        (paragraph [ centerY ]
+            [ extractLabelFromLanguageMap language status.label
+                |> text
+            ]
+        )

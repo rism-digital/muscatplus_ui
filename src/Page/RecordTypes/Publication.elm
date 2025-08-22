@@ -5,7 +5,7 @@ import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody, relatedToBodyDecoder, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
-import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
+import Page.RecordTypes.Shared exposing (LabelStringValue, LabelValue, RecordHistory, labelStringValueDecoder, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 
 
 type alias PublicationBasic =
@@ -14,6 +14,7 @@ type alias PublicationBasic =
     , creator : Maybe RelationshipBody
     , composer : Maybe RelatedToBody
     , properties : Maybe PublicationProperties
+    , status : LabelStringValue
     }
 
 
@@ -23,6 +24,7 @@ type alias PublicationBody =
     , label : LanguageMap
     , creator : Maybe RelationshipBody
     , summary : Maybe (List LabelValue)
+    , status : LabelStringValue
     , relationships : Maybe RelationshipsSectionBody
     , referencesNotes : Maybe NotesSectionBody
     , works : Maybe WorksSectionBody
@@ -52,6 +54,7 @@ publicationBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
         |> optional "summary" (maybe (list labelValueDecoder)) Nothing
+        |> required "status" labelStringValueDecoder
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "notes" (maybe notesSectionBodyDecoder) Nothing
         |> optional "works" (maybe worksSectionBodyDecoder) Nothing
@@ -75,6 +78,7 @@ publicationBasicBodyDecoder =
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
         |> optional "composer" (maybe relatedToBodyDecoder) Nothing
         |> optional "properties" (maybe publicationPropertiesDecoder) Nothing
+        |> required "status" labelStringValueDecoder
 
 
 publicationPropertiesDecoder : Decoder PublicationProperties

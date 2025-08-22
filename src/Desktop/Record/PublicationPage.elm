@@ -1,7 +1,7 @@
 module Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paddingXY, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, maximum, minimum, none, padding, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -25,7 +25,7 @@ import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelati
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight, tableCellPadding)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -409,11 +409,11 @@ viewWorksResultsSection cfg isLoading body =
                           , view = \i w -> viewCatalogNumberCell language i w
                           }
                         , { header = el tableHeaderStyles (text "Title")
-                          , width = fillPortion 2
+                          , width = fillPortion 1
                           , view = \i w -> viewWorkTitleCell language i w
                           }
                         , { header = el tableHeaderStyles (text "Incipit")
-                          , width = fillPortion 2
+                          , width = fill |> minimum 500 |> maximum 800
                           , view = \i w -> viewIncipitCell language i w
                           }
                         , { header = el tableHeaderStyles (text "Key")
@@ -439,10 +439,6 @@ viewWorksResultsSection cfg isLoading body =
         ]
 
 
-rowPadding =
-    8
-
-
 viewCatalogNumberCell : Language -> Int -> WorkResultBody -> Element msg
 viewCatalogNumberCell language rowNum body =
     let
@@ -452,12 +448,12 @@ viewCatalogNumberCell language rowNum body =
         catalogNum =
             case .catalogueIdentifier body.flags of
                 Just ident ->
-                    el [ centerY ] (text ident)
+                    paragraph [ centerY ] [ text ident ]
 
                 Nothing ->
                     none
     in
-    el [ cellBg, padding rowPadding, width shrink, height fill ] catalogNum
+    el [ cellBg, padding tableCellPadding, width shrink, height fill ] catalogNum
 
 
 viewWorkTitleCell : Language -> Int -> WorkResultBody -> Element msg
@@ -467,11 +463,12 @@ viewWorkTitleCell language rowNum result =
             cycleTableBackground rowNum
     in
     link
-        [ cellBg, linkColour, padding rowPadding, width shrink, height fill ]
+        [ cellBg, linkColour, padding tableCellPadding, width shrink, height fill ]
         { label =
-            extractLabelFromLanguageMap language result.label
-                |> text
-                |> el [ centerY ]
+            paragraph [ centerY ]
+                [ extractLabelFromLanguageMap language result.label
+                    |> text
+                ]
         , url = result.id
         }
 
@@ -491,8 +488,8 @@ viewKeyModeCell language rowNum result =
                     ""
     in
     el
-        [ cellBg, padding rowPadding, width shrink, height fill ]
-        (el [ centerY ] (text keyModeFlagValue))
+        [ cellBg, padding tableCellPadding, width shrink, height fill ]
+        (paragraph [ centerY ] [ text keyModeFlagValue ])
 
 
 viewScoringSummaryCell : Language -> Int -> WorkResultBody -> Element msg
@@ -505,8 +502,8 @@ viewScoringSummaryCell language rowNum result =
             Maybe.withDefault "" (.scoringSummary result.flags)
     in
     el
-        [ cellBg, padding rowPadding, width shrink, height fill ]
-        (el [ centerY ] (text scoringSummaryFlagValue))
+        [ cellBg, padding tableCellPadding, width shrink, height fill ]
+        (paragraph [ centerY ] [ text scoringSummaryFlagValue ])
 
 
 viewNumberOfSourcesCell : Language -> Int -> WorkResultBody -> Element msg
@@ -540,8 +537,8 @@ viewNumberOfSourcesCell language rowNum result =
                         in
                         link
                             [ linkColour
-                            , alignLeft
                             , centerY
+                            , alignLeft
                             ]
                             { label = text "View Linked Sources", url = "/search?fq=works:" ++ workId }
 
@@ -555,13 +552,17 @@ viewNumberOfSourcesCell language rowNum result =
         [ width fill
         , height fill
         , cellBg
-        , padding rowPadding
-        , spacing 10
+        , padding tableCellPadding
         , alignLeft
+        , spacing 10
         ]
-        [ el
-            [ centerY ]
-            (text numSourcesFlagValue)
+        [ paragraph
+            [ centerY
+            , spacing 10
+            , width shrink
+            ]
+            [ text numSourcesFlagValue
+            ]
         , viewSourcesLink
         ]
 
@@ -586,5 +587,5 @@ viewIncipitCell language rowNum result =
                 |> Maybe.withDefault (el [ centerY ] (text "-"))
     in
     el
-        [ cellBg, padding rowPadding, width fill, height fill ]
+        [ cellBg, padding tableCellPadding, width fill, height fill ]
         renderedIncipit
