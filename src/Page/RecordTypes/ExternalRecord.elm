@@ -1,10 +1,10 @@
-module Page.RecordTypes.ExternalRecord exposing (ExternalBiographicalDetailsSectionBody, ExternalInstitutionRecord, ExternalOrganizationDetailsSection, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalRelationshipBody, ExternalRelationshipsSection, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalProjectToString, externalRecordBodyDecoder)
+module Page.RecordTypes.ExternalRecord exposing (ExternalBiographicalDetailsSectionBody, ExternalInstitutionRecord, ExternalOrganizationDetailsSection, ExternalPersonRecord, ExternalProject(..), ExternalRecord(..), ExternalRecordBody, ExternalRelationshipBody, ExternalRelationshipsSection, ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection, externalProjectToString, externalRecordBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, andThen, list, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedToBody, RoleBody, qualifierBodyDecoder, relatedToBodyDecoder, roleBodyDecoder)
-import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
+import Page.RecordTypes.Shared exposing (LabelUrl, LabelValue, labelUrlDecoder, labelValueDecoder, languageMapLabelDecoder)
 
 
 type alias ExternalSourceRecord =
@@ -41,14 +41,15 @@ type alias ExternalSourceExemplar =
 type alias ExternalSourceExternalResourcesSection =
     { sectionToc : String
     , label : LanguageMap
-    , items : List ExternalSourceExternalResource
+    , items : List LabelUrl
     }
 
 
-type alias ExternalSourceExternalResource =
-    { url : String
-    , label : LanguageMap
-    }
+
+--type alias ExternalSourceExternalResource =
+--    { url : String
+--    , label : LanguageMap
+--    }
 
 
 type alias ExternalSourceReferencesNotesSection =
@@ -256,14 +257,7 @@ externalSourceExternalResourcesSectionDecoder =
     Decode.succeed ExternalSourceExternalResourcesSection
         |> hardcoded "external-source-external-resources-section"
         |> required "sectionLabel" languageMapLabelDecoder
-        |> required "items" (list externalSourceExternalResourceDecoder)
-
-
-externalSourceExternalResourceDecoder : Decoder ExternalSourceExternalResource
-externalSourceExternalResourceDecoder =
-    Decode.succeed ExternalSourceExternalResource
-        |> required "url" string
-        |> required "label" languageMapLabelDecoder
+        |> required "items" (list labelUrlDecoder)
 
 
 biographicalDetailsSectionBodyDecoder : Decoder ExternalBiographicalDetailsSectionBody

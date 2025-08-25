@@ -4,8 +4,8 @@ import Element exposing (Element, above, alignLeft, alignRight, alignTop, column
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResource, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
-import Page.RecordTypes.Shared exposing (LabelValue)
+import Page.RecordTypes.ExternalRecord exposing (ExternalInstitutionRecord, ExternalProject(..), ExternalSourceContents, ExternalSourceExemplar, ExternalSourceExemplarsSection, ExternalSourceExternalResourcesSection, ExternalSourceRecord, ExternalSourceReferencesNotesSection)
+import Page.RecordTypes.Shared exposing (LabelUrl, LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.CantusLogo exposing (cantusLogo)
 import Page.UI.Components exposing (externalLinkTemplate, h2, resourceLink)
@@ -339,7 +339,7 @@ viewExternalSourceExternalResourcesSection { language, preRenderedFormatter } bo
         ]
 
 
-viewExternalResource : Language -> ExternalSourceExternalResource -> Element msg
+viewExternalResource : Language -> LabelUrl -> Element msg
 viewExternalResource language body =
     wrappedRow
         [ width fill

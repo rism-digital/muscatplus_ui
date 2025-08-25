@@ -3,10 +3,12 @@ module Page.RecordTypes.Shared exposing
     , LabelNumericValue
     , LabelStringValue
     , LabelTimeValue
+    , LabelUrl
     , LabelValue
     , RecordHistory
     , labelNumericValueDecoder
     , labelStringValueDecoder
+    , labelUrlDecoder
     , labelValueDecoder
     , languageMapLabelDecoder
     , recordHistoryDecoder
@@ -32,6 +34,12 @@ type alias LabelNumericValue =
 type alias LabelStringValue =
     { label : LanguageMap
     , value : String
+    }
+
+
+type alias LabelUrl =
+    { label : LanguageMap
+    , url : String
     }
 
 
@@ -65,6 +73,13 @@ labelStringValueDecoder =
     Decode.succeed LabelStringValue
         |> required "label" languageMapLabelDecoder
         |> required "value" string
+
+
+labelUrlDecoder : Decoder LabelUrl
+labelUrlDecoder =
+    Decode.succeed LabelUrl
+        |> required "label" languageMapLabelDecoder
+        |> required "url" string
 
 
 labelValueDecoder : Decoder LabelValue
