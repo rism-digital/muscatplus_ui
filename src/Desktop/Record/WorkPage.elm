@@ -3,6 +3,7 @@ module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.Record.Model exposing (RecordPageModel)
@@ -28,9 +29,6 @@ viewFullWorkPage :
     -> Element RecordMsg
 viewFullWorkPage session model body =
     let
-        headerHeight =
-            px (recordTitleHeight + searchSourcesLinkHeight)
-
         icon =
             el
                 [ width (px 25)
@@ -92,6 +90,7 @@ viewFullWorkPage session model body =
     row
         [ width fill
         , height fill
+        , Region.mainContent
         ]
         [ column
             [ width fill
@@ -102,7 +101,6 @@ viewFullWorkPage session model body =
             ]
             [ row
                 [ width fill
-                , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.midGrey
                 ]

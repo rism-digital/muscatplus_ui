@@ -26,9 +26,6 @@ viewPublicationListPage :
     -> Element RecordMsg
 viewPublicationListPage session model body =
     let
-        headerHeight =
-            px recordTitleHeight
-
         icon =
             el
                 [ width (px 25)
@@ -58,7 +55,6 @@ viewPublicationListPage session model body =
             ]
             [ row
                 [ width fill
-                , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 ]
                 [ column

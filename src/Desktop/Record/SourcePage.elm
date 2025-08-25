@@ -53,13 +53,6 @@ viewFullSourcePage session model body =
                 ContentsSearchDisplayTab _ ->
                     viewSourceSearchTabBody session model
 
-        headerHeight =
-            if session.isFramed then
-                px recordTitleHeight
-
-            else
-                px (tabBarHeight + recordTitleHeight)
-
         sourceIcon =
             .recordType body.sourceTypes
                 |> .type_
@@ -101,7 +94,6 @@ viewFullSourcePage session model body =
             ]
             [ row
                 [ width fill
-                , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.midGrey
                 ]

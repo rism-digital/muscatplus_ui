@@ -114,13 +114,6 @@ viewFullInstitutionPage session model body =
                 ContentsSearchDisplayTab _ ->
                     viewSourceSearchTabBody session model
 
-        headerHeight =
-            if session.isFramed then
-                px (recordTitleHeight + searchSourcesLinkHeight)
-
-            else
-                px (tabBarHeight + recordTitleHeight)
-
         icon =
             el
                 [ width (px 25)
@@ -157,7 +150,6 @@ viewFullInstitutionPage session model body =
             ]
             [ row
                 [ width fill
-                , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.midGrey
                 ]

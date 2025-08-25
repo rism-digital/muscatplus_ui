@@ -4,6 +4,7 @@ import Desktop.Record.Facets exposing (facetRecordMsgConfig)
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, maximum, minimum, none, padding, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -45,13 +46,6 @@ viewFullPublicationPage session model body =
                 ContentsSearchDisplayTab _ ->
                     viewRelatedWorksListTabBody session model
 
-        headerHeight =
-            if session.isFramed then
-                px (recordTitleHeight + searchSourcesLinkHeight)
-
-            else
-                px (tabBarHeight + recordTitleHeight)
-
         icon =
             el
                 [ width (px 25)
@@ -78,6 +72,7 @@ viewFullPublicationPage session model body =
     row
         [ width fill
         , height fill
+        , Region.mainContent
         ]
         [ column
             [ width fill
@@ -88,7 +83,6 @@ viewFullPublicationPage session model body =
             ]
             [ row
                 [ width fill
-                , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.midGrey
                 ]

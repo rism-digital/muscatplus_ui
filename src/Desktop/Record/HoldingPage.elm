@@ -30,13 +30,6 @@ viewFullHoldingPage :
     -> Element RecordMsg
 viewFullHoldingPage session _ body =
     let
-        headerHeight =
-            if session.isFramed then
-                px (recordTitleHeight + searchSourcesLinkHeight)
-
-            else
-                px (tabBarHeight + recordTitleHeight)
-
         icon =
             el
                 [ width (px 25)
@@ -66,7 +59,6 @@ viewFullHoldingPage session _ body =
             ]
             [ row
                 [ width fill
-                , height headerHeight
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
                 , Border.color colourScheme.midGrey
                 ]
