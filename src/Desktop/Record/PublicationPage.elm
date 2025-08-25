@@ -424,7 +424,7 @@ viewWorksResultsSection cfg isLoading body =
                           , width = fillPortion 1
                           , view = \i w -> viewScoringSummaryCell language i w
                           }
-                        , { header = el tableHeaderStyles (text "Sources")
+                        , { header = el tableHeaderStyles (text "Appears in")
                           , width = fillPortion 1
                           , view = \i w -> viewNumberOfSourcesCell language i w
                           }
@@ -525,28 +525,17 @@ viewNumberOfSourcesCell language rowNum result =
                 |> Maybe.withDefault "-"
 
         viewSourcesLink =
-            case .numberOfSources result.flags of
+            case result.sources of
                 Just v ->
-                    if v > 0 then
-                        let
-                            workId =
-                                String.split "/" result.id
-                                    |> LE.last
-                                    |> Maybe.withDefault ""
-                                    |> String.append "work_"
-                        in
-                        link
-                            [ linkColour
-                            , centerY
-                            , alignLeft
-                            ]
-                            { label = text "View Linked Sources", url = "/search?fq=works:" ++ workId }
-
-                    else
-                        none
+                    link
+                        [ linkColour
+                        , centerY
+                        , alignLeft
+                        ]
+                        { label = text (extractLabelFromLanguageMap language v.label), url = v.url }
 
                 Nothing ->
-                    none
+                    text numSourcesFlagValue
     in
     row
         [ width fill
@@ -558,12 +547,9 @@ viewNumberOfSourcesCell language rowNum result =
         ]
         [ paragraph
             [ centerY
-            , spacing 10
-            , width shrink
             ]
-            [ text numSourcesFlagValue
+            [ viewSourcesLink
             ]
-        , viewSourcesLink
         ]
 
 

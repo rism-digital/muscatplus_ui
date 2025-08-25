@@ -58,17 +58,7 @@ import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap, toLanguageMap)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoderOne, renderedIncipitDecoderTwo)
-import Page.RecordTypes.Shared
-    exposing
-        ( FacetAlias
-        , LabelNumericValue
-        , LabelStringValue
-        , LabelValue
-        , labelNumericValueDecoder
-        , labelStringValueDecoder
-        , labelValueDecoder
-        , languageMapLabelDecoder
-        )
+import Page.RecordTypes.Shared exposing (FacetAlias, LabelNumericValue, LabelStringValue, LabelUrl, LabelValue, labelNumericValueDecoder, labelStringValueDecoder, labelUrlDecoder, labelValueDecoder, languageMapLabelDecoder)
 import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.SourceShared
     exposing
@@ -228,6 +218,7 @@ type alias WorkResultBody =
     , summary : Maybe (Dict String LabelValue)
     , flags : WorkResultFlags
     , renderedIncipits : Maybe RenderedIncipit
+    , sources : Maybe LabelUrl
     }
 
 
@@ -897,6 +888,7 @@ workResultBodyDecoder =
         |> optional "summary" (maybe (dict labelValueDecoder)) Nothing
         |> required "flags" workResultFlagDecoder
         |> optional "rendered" (maybe renderedIncipitDecoderOne) Nothing
+        |> optional "sources" (maybe labelUrlDecoder) Nothing
 
 
 workResultFlagDecoder : Decoder WorkResultFlags
