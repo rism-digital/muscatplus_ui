@@ -337,6 +337,24 @@ init flags initialUrl key =
                 ]
             )
 
+        WorkSourcePageRoute _ qargs ->
+            let
+                ( initialBody, initialCmds ) =
+                    recordContentsRouteHelper
+                        { initialData = flags.initialData
+                        , initialUrl = initialUrl
+                        , qargs = qargs
+                        , route = route
+                        , session = session
+                        }
+            in
+            ( WorkPage session initialBody
+            , Cmd.batch
+                [ initialCmds
+                , countryListRequest
+                ]
+            )
+
         AboutPageRoute ->
             ( AboutPage session (About.init session)
             , Cmd.batch

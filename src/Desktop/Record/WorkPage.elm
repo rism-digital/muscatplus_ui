@@ -1,12 +1,14 @@
 module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
-import Page.Record.Model exposing (RecordPageModel)
+import Language.LocalTranslations exposing (localTranslations)
+import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Work exposing (FormOfWorkSectionBody, WorkBody)
 import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
@@ -20,6 +22,7 @@ import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeade
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight)
 import Session exposing (Session)
+import Set exposing (Set)
 
 
 viewFullWorkPage :
@@ -29,6 +32,9 @@ viewFullWorkPage :
     -> Element RecordMsg
 viewFullWorkPage session model body =
     let
+        language =
+            session.language
+
         icon =
             el
                 [ width (px 25)
@@ -40,17 +46,98 @@ viewFullWorkPage session model body =
 
         pageHeader =
             if session.isFramed then
-                subHeaderTemplate session.language (Just icon) body
+                subHeaderTemplate language (Just icon) body
 
             else
-                pageHeaderTemplate session.language (Just icon) body
-
-        language =
-            session.language
+                pageHeaderTemplate language (Just icon) body
 
         pageBodyView =
+            case model.currentTab of
+                DefaultRecordViewTab _ ->
+                    viewDescriptionTab
+                        { language = language
+                        , expandedIncipits = model.incipitInfoExpanded
+                        , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                        }
+                        body
+
+                ContentsSearchDisplayTab _ ->
+                    viewSourceSearchTabBody session model
+
+        tabBar =
+            if session.isFramed then
+                none
+
+            else
+                viewRecordSourceSearchTabBar
+                    { body = body.sources
+                    , language = language
+                    , model = model
+                    , recordId = body.id
+                    , tabLabel = localTranslations.sources
+                    }
+    in
+    row
+        [ width fill
+        , height fill
+        , Region.mainContent
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , alignTop
+            , clipY
+            , Background.color colourScheme.white
+            ]
+            [ row
+                [ width fill
+                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+                , Border.color colourScheme.midGrey
+                ]
+                [ column
+                    [ width fill
+                    , height fill
+                    , centerY
+                    , alignLeft
+                    , paddingXY 20 0
+                    , minimalDropShadow
+                    ]
+                    [ pageHeader
+                    , tabBar
+                    ]
+                ]
+            , pageBodyView
+            , pageFooterTemplateRouter session session.language body
+            ]
+        ]
+
+
+viewFormOfWorkSection :
+    { language : Language
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    }
+    -> FormOfWorkSectionBody
+    -> Element msg
+viewFormOfWorkSection { language, preRenderedFormatter } formOfWorkSection =
+    preRenderedFormatter language
+        [ { label = formOfWorkSection.label
+          , value = List.map (\it -> text (extractLabelFromLanguageMap language it.label)) formOfWorkSection.items
+          }
+        ]
+
+
+viewDescriptionTab :
+    { language : Language
+    , expandedIncipits : Set String
+    , incipitInfoToggleMsg : String -> msg
+    }
+    -> WorkBody
+    -> Element RecordMsg
+viewDescriptionTab { language, expandedIncipits, incipitInfoToggleMsg } body =
+    let
+        pageBody =
             pageBodyOrEmpty
-                session.language
+                language
                 False
                 [ viewMaybe
                     (viewCreator
@@ -79,7 +166,7 @@ viewFullWorkPage session model body =
                     (viewIncipitsSection
                         { language = language
                         , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , expandedIncipits = model.incipitInfoExpanded
+                        , expandedIncipits = expandedIncipits
                         , summaryFormatter = viewSummaryField
                         }
                     )
@@ -90,60 +177,15 @@ viewFullWorkPage session model body =
     row
         [ width fill
         , height fill
-        , Region.mainContent
+        , alignTop
+        , scrollbarY
+        , htmlAttribute (HA.style "min-height" "unset")
         ]
         [ column
             [ width fill
-            , height fill
+            , spacing sectionSpacing
             , alignTop
-            , clipY
-            , Background.color colourScheme.white
+            , padding 20
             ]
-            [ row
-                [ width fill
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                , Border.color colourScheme.midGrey
-                ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , centerY
-                    , alignLeft
-                    , paddingXY 20 0
-                    , minimalDropShadow
-                    ]
-                    [ pageHeader
-                    ]
-                ]
-            , row
-                [ width fill
-                , height fill
-                , alignTop
-                , scrollbarY
-                , htmlAttribute (HA.style "min-height" "unset")
-                ]
-                [ column
-                    [ width fill
-                    , spacing sectionSpacing
-                    , alignTop
-                    , padding 20
-                    ]
-                    pageBodyView
-                ]
-            , pageFooterTemplateRouter session session.language body
-            ]
-        ]
-
-
-viewFormOfWorkSection :
-    { language : Language
-    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
-    }
-    -> FormOfWorkSectionBody
-    -> Element msg
-viewFormOfWorkSection { language, preRenderedFormatter } formOfWorkSection =
-    preRenderedFormatter language
-        [ { label = formOfWorkSection.label
-          , value = List.map (\it -> text (extractLabelFromLanguageMap language it.label)) formOfWorkSection.items
-          }
+            pageBody
         ]

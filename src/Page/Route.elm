@@ -22,6 +22,7 @@ type Route
     | PublicationWorksPageRoute Int QueryArgs
     | PublicationsListPageRoute
     | WorkPageRoute Int
+    | WorkSourcePageRoute Int QueryArgs
       --| PlacePageRoute Int
     | AboutPageRoute
     | HelpPageRoute
@@ -61,6 +62,7 @@ routeParser =
         , P.map PublicationWorksPageRoute (s "publications" </> P.int </> s "works" <?> queryParamsParser)
         , P.map PublicationsListPageRoute (s "publications")
         , P.map WorkPageRoute (s "works" </> P.int)
+        , P.map WorkSourcePageRoute (s "works" </> P.int </> s "sources" <?> queryParamsParser)
         , P.map AboutPageRoute (s "about")
         , P.map HelpPageRoute (s "about") </> s "help"
         , P.map OptionsPageRoute (s "about") </> s "options"
@@ -131,6 +133,9 @@ baseRecordPathFromRoute route =
         WorkPageRoute wid ->
             "/works/" ++ String.fromInt wid
 
+        WorkSourcePageRoute wid _ ->
+            "/works/" ++ String.fromInt wid
+
         AboutPageRoute ->
             "/about/"
 
@@ -170,6 +175,9 @@ routeToResultMode route =
 
         PublicationWorksPageRoute _ _ ->
             WorkMode
+
+        WorkSourcePageRoute _ _ ->
+            SourcesMode
 
         _ ->
             EmptyMode

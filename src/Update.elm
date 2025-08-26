@@ -324,6 +324,22 @@ changePage url model =
             , refreshCmds
             )
 
+        Route.WorkSourcePageRoute _ qargs ->
+            let
+                ( newPageBody, refreshCmds ) =
+                    changeRecordContentsPageHelper
+                        { model = model
+                        , newSession = newSession
+                        , previousUrl = previousUrl
+                        , qargs = qargs
+                        , route = route
+                        , url = url
+                        }
+            in
+            ( WorkPage newSession newPageBody
+            , refreshCmds
+            )
+
         Route.AboutPageRoute ->
             ( AboutPage newSession (AboutPage.init newSession)
             , AboutPage.initialCmd url
@@ -596,6 +612,9 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
                     samePage oldPageBody
 
                 ( Route.PublicationWorksPageRoute _ _, PublicationPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                ( Route.WorkSourcePageRoute _ _, WorkPage _ oldPageBody ) ->
                     samePage oldPageBody
 
                 _ ->

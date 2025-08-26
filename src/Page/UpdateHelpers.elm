@@ -135,6 +135,9 @@ createProbeUrl session { nextQuery, keyboard } =
                 InstitutionSourcePageRoute id _ ->
                     serverUrl [ "institutions", String.fromInt id, "probe" ]
 
+                WorkSourcePageRoute id _ ->
+                    serverUrl [ "works", String.fromInt id, "probe" ]
+
                 _ ->
                     serverUrl [ "probe" ]
 
@@ -177,6 +180,9 @@ createSearchUrl session { nextQuery, keyboard } =
 
                 InstitutionSourcePageRoute id _ ->
                     serverUrl [ "institutions", String.fromInt id, "sources" ]
+
+                WorkSourcePageRoute id _ ->
+                    serverUrl [ "works", String.fromInt id, "sources" ]
 
                 _ ->
                     serverUrl [ "search" ]

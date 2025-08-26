@@ -50,5 +50,8 @@ routeToCurrentRecordViewTab route =
         PublicationWorksPageRoute _ _ ->
             ContentsSearchDisplayTab
 
+        WorkSourcePageRoute _ _ ->
+            ContentsSearchDisplayTab
+
         _ ->
             DefaultRecordViewTab

@@ -739,6 +739,12 @@ sourceFetchCmd body initialUrl route =
                 PublicationWorksPageRoute _ _ ->
                     Just ""
 
+                WorkPageRoute _ ->
+                    Just "/sources"
+
+                WorkSourcePageRoute _ _ ->
+                    Just ""
+
                 _ ->
                     Nothing
     in
