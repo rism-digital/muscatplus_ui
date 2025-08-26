@@ -4,6 +4,7 @@ import Json.Decode exposing (Decoder, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitsSectionBody, incipitsSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody, relatedToBodyDecoder, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
@@ -67,6 +68,7 @@ type alias WorkBody =
     , formOfWork : Maybe FormOfWorkSectionBody
     , relationships : Maybe RelationshipsSectionBody
     , externalAuthorities : Maybe ExternalAuthoritiesSectionBody
+    , externalResources : Maybe ExternalResourcesSectionBody
     , recordHistory : RecordHistory
     }
 
@@ -148,6 +150,7 @@ workBodyDecoder =
         |> optional "formOfWork" (maybe formOfWorkSectionBodyDecoder) Nothing
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "externalAuthorities" (maybe externalAuthoritiesSectionBodyDecoder) Nothing
+        |> optional "externalResources" (maybe externalResourcesSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
 

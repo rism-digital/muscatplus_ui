@@ -17,6 +17,7 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (userMusicSvg)
 import Page.UI.Record.ContentsSection exposing (viewCreator)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
+import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
@@ -171,6 +172,7 @@ viewDescriptionTab { language, expandedIncipits, incipitInfoToggleMsg } body =
                         }
                     )
                     body.incipits
+                , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 ]
     in
