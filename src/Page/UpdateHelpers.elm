@@ -170,7 +170,7 @@ createSearchUrl session { nextQuery, keyboard } =
                 )
                 keyboard
 
-        probeUrl =
+        searchUrl =
             case session.route of
                 SourceContentsPageRoute id _ ->
                     serverUrl [ "sources", String.fromInt id, "contents" ]
@@ -195,7 +195,7 @@ createSearchUrl session { nextQuery, keyboard } =
                 |> buildQueryParameters
     in
     List.append textQueryParameters notationQueryParameters
-        |> probeUrl
+        |> searchUrl
 
 
 createRangeString : String -> String -> String
