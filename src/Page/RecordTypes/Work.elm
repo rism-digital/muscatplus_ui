@@ -6,6 +6,7 @@ import Language exposing (LanguageMap)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitsSectionBody, incipitsSectionBodyDecoder)
+import Page.RecordTypes.PartOf exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody, relatedToBodyDecoder, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody, sourceRelationshipsSectionBodyDecoder)
@@ -63,6 +64,7 @@ type alias WorkBody =
     , label : LanguageMap
     , creator : Maybe RelationshipBody
     , summary : Maybe (List LabelValue)
+    , partOf : Maybe PartOfSectionBody
     , incipits : Maybe IncipitsSectionBody
     , sources : Maybe SourceRelationshipsSectionBody
     , formOfWork : Maybe FormOfWorkSectionBody
@@ -145,6 +147,7 @@ workBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
         |> optional "summary" (maybe (list labelValueDecoder)) Nothing
+        |> optional "partOf" (maybe partOfSectionBodyDecoder) Nothing
         |> optional "incipits" (maybe incipitsSectionBodyDecoder) Nothing
         |> optional "sources" (maybe sourceRelationshipsSectionBodyDecoder) Nothing
         |> optional "formOfWork" (maybe formOfWorkSectionBodyDecoder) Nothing

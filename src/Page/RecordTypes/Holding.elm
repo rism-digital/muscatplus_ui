@@ -1,4 +1,4 @@
-module Page.RecordTypes.Holding exposing (BoundWithSectionBody, HoldingBody, HoldingParentSourceBody, HoldingType(..), holdingBodyDecoder)
+module Page.RecordTypes.Holding exposing (BoundWithSectionBody, HoldingBody, HoldingType(..), holdingBodyDecoder)
 
 import Dict
 import Json.Decode as Decode exposing (Decoder, list, map, maybe, string)
@@ -7,6 +7,7 @@ import Language exposing (LanguageMap)
 import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Institution exposing (BasicInstitutionBody, basicInstitutionBodyDecoder)
+import Page.RecordTypes.PartOf exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
@@ -16,12 +17,6 @@ type HoldingType
     = PrintHolding
     | ManuscriptHolding
     | CompositeHolding
-
-
-type alias HoldingParentSourceBody =
-    { label : LanguageMap
-    , source : BasicSourceBody
-    }
 
 
 type alias BoundWithSectionBody =
@@ -41,7 +36,7 @@ type alias HoldingBody =
     , notes : Maybe (List LabelValue)
     , relationships : Maybe RelationshipsSectionBody
     , boundWith : Maybe BoundWithSectionBody
-    , partOf : Maybe HoldingParentSourceBody
+    , partOf : Maybe PartOfSectionBody
     , digitalObjects : Maybe DigitalObjectsSectionBody
     , recordHistory : Maybe RecordHistory
     }
@@ -60,7 +55,7 @@ holdingBodyDecoder =
         |> optional "notes" (maybe (list labelValueDecoder)) Nothing
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "boundWith" (maybe boundWithSectionBodyDecoder) Nothing
-        |> optional "partOf" (maybe holdingParentSourceBodyDecoder) Nothing
+        |> optional "partOf" (maybe partOfSectionBodyDecoder) Nothing
         |> optional "digitalObjects" (maybe digitalObjectsSectionBodyDecoder) Nothing
         |> optional "recordHistory" (maybe recordHistoryDecoder) Nothing
 
@@ -69,13 +64,6 @@ boundWithSectionBodyDecoder : Decoder BoundWithSectionBody
 boundWithSectionBodyDecoder =
     Decode.succeed BoundWithSectionBody
         |> required "sectionLabel" languageMapLabelDecoder
-        |> required "source" basicSourceBodyDecoder
-
-
-holdingParentSourceBodyDecoder : Decoder HoldingParentSourceBody
-holdingParentSourceBodyDecoder =
-    Decode.succeed HoldingParentSourceBody
-        |> required "label" languageMapLabelDecoder
         |> required "source" basicSourceBodyDecoder
 
 

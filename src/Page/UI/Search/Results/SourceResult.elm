@@ -5,9 +5,9 @@ import Element exposing (Color, Element, alignRight, column, el, fill, link, max
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, extractUrlAndLabelFromPartOf)
 import Page.RecordTypes.Search exposing (SourceResultBody, SourceResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.RecordTypes.Source exposing (PartOfSectionBody)
 import Page.RecordTypes.SourceShared exposing (SourceContentTypeRecordBody)
 import Page.UI.Attributes exposing (bodyRegular, bodySM)
 import Page.UI.CantusLogo exposing (cantusLogo)
@@ -162,6 +162,10 @@ assembleContentTypeFlags language sourceContentTypes =
 
 viewSourcePartOf : Language -> Color -> PartOfSectionBody -> Element msg
 viewSourcePartOf language fontLinkColour partOfBody =
+    let
+        ( url, label ) =
+            extractUrlAndLabelFromPartOf partOfBody.partOf
+    in
     row
         [ width fill
         , bodyRegular
@@ -174,8 +178,8 @@ viewSourcePartOf language fontLinkColour partOfBody =
                 [ text (extractLabelFromLanguageMap language localTranslations.partOf ++ " ")
                 , link
                     [ Font.color fontLinkColour ]
-                    { label = text (extractLabelFromLanguageMap language (.label partOfBody.source))
-                    , url = .id partOfBody.source
+                    { label = text (extractLabelFromLanguageMap language label)
+                    , url = url
                     }
                 ]
             ]

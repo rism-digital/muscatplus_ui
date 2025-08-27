@@ -1,4 +1,4 @@
-module Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody, PublicationProperties, WorksSectionBody, publicationBasicBodyDecoder, publicationBodyDecoder)
+module Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody, PublicationProperties, WorksSectionBody, basicPublicationBodyDecoder, publicationBodyDecoder)
 
 import Json.Decode as Decode exposing (Decoder, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
@@ -8,7 +8,7 @@ import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, 
 import Page.RecordTypes.Shared exposing (LabelStringValue, LabelValue, RecordHistory, labelStringValueDecoder, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 
 
-type alias PublicationBasic =
+type alias BasicPublicationBody =
     { id : String
     , label : LanguageMap
     , creator : Maybe RelationshipBody
@@ -70,9 +70,9 @@ worksSectionBodyDecoder =
         |> required "totalItems" int
 
 
-publicationBasicBodyDecoder : Decoder PublicationBasic
-publicationBasicBodyDecoder =
-    Decode.succeed PublicationBasic
+basicPublicationBodyDecoder : Decoder BasicPublicationBody
+basicPublicationBodyDecoder =
+    Decode.succeed BasicPublicationBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing

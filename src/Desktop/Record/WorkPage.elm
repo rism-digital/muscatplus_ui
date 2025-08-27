@@ -20,8 +20,9 @@ import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSecti
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.PartOfSection exposing (viewWorkPartOfCatalogueSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight)
+import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
 
@@ -140,7 +141,8 @@ viewDescriptionTab { language, expandedIncipits, incipitInfoToggleMsg } body =
             pageBodyOrEmpty
                 language
                 False
-                [ viewMaybe
+                [ viewMaybe (viewWorkPartOfCatalogueSection language) body.partOf
+                , viewMaybe
                     (viewCreator
                         { language = language
                         , relationshipFormatter = viewRelationshipBody

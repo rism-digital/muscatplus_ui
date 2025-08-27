@@ -58,8 +58,8 @@ import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap, toLanguageMap)
 import List.Extra as LE
 import Page.RecordTypes.Incipit exposing (RenderedIncipit, renderedIncipitDecoderOne, renderedIncipitDecoderTwo)
+import Page.RecordTypes.PartOf exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (FacetAlias, LabelNumericValue, LabelStringValue, LabelUrl, LabelValue, labelNumericValueDecoder, labelStringValueDecoder, labelUrlDecoder, labelValueDecoder, languageMapLabelDecoder)
-import Page.RecordTypes.Source exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.SourceShared
     exposing
         ( SourceContentTypeRecordBody

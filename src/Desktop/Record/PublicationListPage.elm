@@ -8,14 +8,14 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Publication exposing (PublicationBasic, PublicationBody)
+import Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody)
 import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody)
 import Page.RecordTypes.Shared exposing (LabelStringValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, subHeaderTemplate)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, tableCellPadding)
+import Page.UI.Style exposing (colourScheme, tableCellPadding)
 import Session exposing (Session)
 
 
@@ -115,7 +115,7 @@ viewPublicationListPage session model body =
         ]
 
 
-viewShortTitleCell : Language -> Int -> PublicationBasic -> Element RecordMsg
+viewShortTitleCell : Language -> Int -> BasicPublicationBody -> Element RecordMsg
 viewShortTitleCell language rowNum publication =
     let
         cellBg =
@@ -134,7 +134,7 @@ viewShortTitleCell language rowNum publication =
         }
 
 
-viewPublicationYearCell : Language -> Int -> PublicationBasic -> Element RecordMsg
+viewPublicationYearCell : Language -> Int -> BasicPublicationBody -> Element RecordMsg
 viewPublicationYearCell language rowNum publication =
     let
         cellBg =
@@ -151,7 +151,7 @@ viewPublicationYearCell language rowNum publication =
         (paragraph [ centerY ] [ text publicationDates ])
 
 
-viewCatalogTitleCell : Language -> Int -> PublicationBasic -> Element RecordMsg
+viewCatalogTitleCell : Language -> Int -> BasicPublicationBody -> Element RecordMsg
 viewCatalogTitleCell language rowNum publication =
     let
         cellBg =

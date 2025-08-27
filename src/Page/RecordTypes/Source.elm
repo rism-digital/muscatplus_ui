@@ -4,22 +4,21 @@ module Page.RecordTypes.Source exposing
     , LiturgicalFestivalsSectionBody
     , MaterialGroupBody
     , MaterialGroupsSectionBody
-    , PartOfSectionBody
     , PerformanceLocationsSectionBody
     , ReferencesNotesSectionBody
     , SourceItemsSectionBody
-    , partOfSectionBodyDecoder
     , sourceBodyDecoder
     )
 
-import Json.Decode as Decode exposing (Decoder, int, list, string)
-import Json.Decode.Pipeline exposing (hardcoded, optional, required)
+import Json.Decode as Decode exposing (Decoder, int, list, oneOf, string)
+import Json.Decode.Pipeline exposing (custom, hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Holding exposing (HoldingBody, holdingBodyDecoder)
 import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitsSectionBody, incipitsSectionBodyDecoder)
+import Page.RecordTypes.PartOf exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
@@ -78,12 +77,6 @@ type alias MaterialGroupsSectionBody =
     }
 
 
-type alias PartOfSectionBody =
-    { label : LanguageMap
-    , source : BasicSourceBody
-    }
-
-
 type alias PerformanceLocationsSectionBody =
     { label : LanguageMap
     , items : List RelationshipBody
@@ -139,13 +132,6 @@ materialGroupsSectionBodyDecoder =
         |> hardcoded "source-record-material-groups-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "items" (list materialGroupBodyDecoder)
-
-
-partOfSectionBodyDecoder : Decoder PartOfSectionBody
-partOfSectionBodyDecoder =
-    Decode.succeed PartOfSectionBody
-        |> required "sectionLabel" languageMapLabelDecoder
-        |> required "source" basicSourceBodyDecoder
 
 
 performanceLocationsSectionBodyDecoder : Decoder PerformanceLocationsSectionBody
