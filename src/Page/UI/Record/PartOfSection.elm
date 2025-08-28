@@ -30,10 +30,10 @@ viewPartOfSectionImpl : Language -> LanguageMap -> PartOfSectionBody -> Element 
 viewPartOfSectionImpl language title partOf =
     let
         ( url, label ) =
-            extractUrlAndLabelFromPartOf partOf.partOf
+            extractUrlAndLabelFromPartOf (.primary partOf.related)
 
         otherParts =
-            Maybe.map (viewOtherParts language) partOf.other
+            Maybe.map (viewOtherParts language) (.secondary partOf.related)
                 |> Maybe.withDefault []
     in
     row

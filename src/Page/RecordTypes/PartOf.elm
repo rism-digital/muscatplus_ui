@@ -1,18 +1,24 @@
 module Page.RecordTypes.PartOf exposing (..)
 
-import Json.Decode as Decode exposing (Decoder, field, list, map, maybe, oneOf)
+import Json.Decode as Decode exposing (Decoder, andThen, field, list, map, maybe, oneOf, string)
 import Json.Decode.Pipeline exposing (custom, optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType)
 import Page.RecordTypes.Publication exposing (BasicPublicationBody, basicPublicationBodyDecoder)
 import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 import Page.RecordTypes.WorkBasic exposing (BasicWorkBody, basicWorkBodyDecoder)
 
 
+type alias RelatedBlock =
+    { primary : PartOf
+    , secondary : Maybe (List PartOf)
+    }
+
+
 type alias PartOfSectionBody =
     { label : LanguageMap
-    , partOf : PartOf
-    , other : Maybe (List PartOf)
+    , related : RelatedBlock
     }
 
 
@@ -39,41 +45,34 @@ partOfSectionBodyDecoder : Decoder PartOfSectionBody
 partOfSectionBodyDecoder =
     Decode.succeed PartOfSectionBody
         |> required "label" languageMapLabelDecoder
-        |> custom partOfDecoder
-        |> optional "other" (maybe (list otherPartOfDecoder)) Nothing
+        |> required "related" relatedBlockDecoder
+
+
+relatedBlockDecoder : Decoder RelatedBlock
+relatedBlockDecoder =
+    Decode.succeed RelatedBlock
+        |> required "primary" partOfDecoder
+        |> optional "secondary" (maybe (list partOfDecoder)) Nothing
+
+
+recordTypePartOfDecoder : RecordType -> Decoder PartOf
+recordTypePartOfDecoder rt =
+    case rt of
+        Source ->
+            basicSourceBodyDecoder |> map SourcePart
+
+        Work ->
+            basicWorkBodyDecoder |> map WorkPart
+
+        Publication ->
+            basicPublicationBodyDecoder |> map PublicationPart
+
+        _ ->
+            Decode.fail "Record type is not valid in a part of context."
 
 
 partOfDecoder : Decoder PartOf
 partOfDecoder =
-    oneOf
-        [ partOfSourceDecoder
-        , partOfPublicationDecoder
-        , partOfWorkDecoder
-        ]
-
-
-otherPartOfDecoder : Decoder PartOf
-otherPartOfDecoder =
-    oneOf
-        [ basicSourceBodyDecoder |> map SourcePart
-        , basicPublicationBodyDecoder |> map PublicationPart
-        , basicWorkBodyDecoder |> map WorkPart
-        ]
-
-
-partOfSourceDecoder : Decoder PartOf
-partOfSourceDecoder =
-    field "source" basicSourceBodyDecoder
-        |> map SourcePart
-
-
-partOfPublicationDecoder : Decoder PartOf
-partOfPublicationDecoder =
-    field "publication" basicPublicationBodyDecoder
-        |> map PublicationPart
-
-
-partOfWorkDecoder : Decoder PartOf
-partOfWorkDecoder =
-    field "work" basicWorkBodyDecoder
-        |> map WorkPart
+    field "type" string
+        |> map recordTypeFromJsonType
+        |> andThen recordTypePartOfDecoder

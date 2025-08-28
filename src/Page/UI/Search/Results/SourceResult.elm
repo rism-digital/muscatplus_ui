@@ -164,7 +164,7 @@ viewSourcePartOf : Language -> Color -> PartOfSectionBody -> Element msg
 viewSourcePartOf language fontLinkColour partOfBody =
     let
         ( url, label ) =
-            extractUrlAndLabelFromPartOf partOfBody.partOf
+            extractUrlAndLabelFromPartOf (.primary partOfBody.related)
     in
     row
         [ width fill

@@ -376,7 +376,7 @@ convertIncipitResultBody body =
             extractFromSummaryDict "incipitComposer" body.summary
 
         sourceUrl =
-            case .partOf body.partOf of
+            case .primary (.related body.partOf) of
                 SourcePart s ->
                     s.id
 
