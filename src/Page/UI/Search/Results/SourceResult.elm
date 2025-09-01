@@ -5,7 +5,7 @@ import Element exposing (Color, Element, alignRight, column, el, fill, link, max
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, extractUrlAndLabelFromPartOf)
+import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, PartOfType(..), extractUrlAndLabelFromPartOf)
 import Page.RecordTypes.Search exposing (SourceResultBody, SourceResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentTypeRecordBody)
@@ -163,8 +163,24 @@ assembleContentTypeFlags language sourceContentTypes =
 viewSourcePartOf : Language -> Color -> PartOfSectionBody -> Element msg
 viewSourcePartOf language fontLinkColour partOfBody =
     let
-        ( url, label ) =
-            extractUrlAndLabelFromPartOf (.primary partOfBody.related)
+        partOfDisplay =
+            List.filter (\p -> p.relationshipType == PrimaryPartOf) partOfBody.items
+                |> List.map
+                    (\s ->
+                        let
+                            ( url, label ) =
+                                extractUrlAndLabelFromPartOf s.relatedTo
+                        in
+                        row
+                            [ width fill ]
+                            [ text (extractLabelFromLanguageMap language localTranslations.partOf ++ " ")
+                            , link
+                                [ Font.color fontLinkColour ]
+                                { label = text (extractLabelFromLanguageMap language label)
+                                , url = url
+                                }
+                            ]
+                    )
     in
     row
         [ width fill
@@ -173,16 +189,7 @@ viewSourcePartOf language fontLinkColour partOfBody =
         [ column
             [ width fill
             ]
-            [ row
-                [ width fill ]
-                [ text (extractLabelFromLanguageMap language localTranslations.partOf ++ " ")
-                , link
-                    [ Font.color fontLinkColour ]
-                    { label = text (extractLabelFromLanguageMap language label)
-                    , url = url
-                    }
-                ]
-            ]
+            partOfDisplay
         ]
 
 

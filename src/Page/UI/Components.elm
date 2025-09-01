@@ -6,6 +6,7 @@ module Page.UI.Components exposing
     , contentTypeIconChooser
     , dropdownSelect
     , externalLinkTemplate
+    , formatPublicationStatusBadge
     , h1
     , h2
     , h2s
@@ -48,13 +49,14 @@ import Html.Events as HE
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, formatNumberByLanguage, limitLength)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
+import Page.RecordTypes.Publication exposing (WorkCatalogueStatus(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
 import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, closeWindowSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, determineOptimalTextColorForBackground)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (choose, toLinkedHtml)
 import Validate
@@ -978,3 +980,25 @@ viewMobileWindowTitleBar language closeMsg =
             ]
             (h4 language localTranslations.recordPreview)
         ]
+
+
+formatPublicationStatusBadge : Language -> WorkCatalogueStatus -> Element msg
+formatPublicationStatusBadge language status =
+    let
+        statusElement lab bgc =
+            el
+                [ Background.color bgc
+                , Font.color (determineOptimalTextColorForBackground bgc)
+                , padding 4
+                ]
+                (text (extractLabelFromLanguageMap language lab))
+    in
+    case status of
+        Completed st ->
+            statusElement st colourScheme.lightGreen
+
+        Partial st ->
+            statusElement st colourScheme.yellow
+
+        Alternate st ->
+            statusElement st colourScheme.darkOrange

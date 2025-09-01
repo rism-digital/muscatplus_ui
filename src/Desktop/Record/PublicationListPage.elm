@@ -8,11 +8,12 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody)
+import Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody, WorkCatalogueStatus)
 import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody)
 import Page.RecordTypes.Shared exposing (LabelStringValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
+import Page.UI.Components exposing (formatPublicationStatusBadge)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Style exposing (colourScheme, tableCellPadding)
@@ -187,16 +188,18 @@ viewComposerCell language rowNum composer =
                 (paragraph [ centerY ] [ text "[No composer]" ])
 
 
-viewStatusCell : Language -> Int -> LabelStringValue -> Element RecordMsg
+viewStatusCell : Language -> Int -> WorkCatalogueStatus -> Element RecordMsg
 viewStatusCell language rowNum status =
     let
         cellBg =
             cycleTableBackground rowNum
+
+        badge =
+            formatPublicationStatusBadge language status
     in
     el
         [ cellBg, padding tableCellPadding, height fill ]
         (paragraph [ centerY ]
-            [ extractLabelFromLanguageMap language status.label
-                |> text
+            [ badge
             ]
         )

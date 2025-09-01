@@ -1,7 +1,7 @@
 module Page.RecordTypes.PartOf exposing (..)
 
-import Json.Decode as Decode exposing (Decoder, andThen, field, list, map, maybe, oneOf, string)
-import Json.Decode.Pipeline exposing (custom, optional, required)
+import Json.Decode as Decode exposing (Decoder, andThen, field, list, map, maybe, string, succeed)
+import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType)
 import Page.RecordTypes.Publication exposing (BasicPublicationBody, basicPublicationBodyDecoder)
@@ -11,15 +11,21 @@ import Page.RecordTypes.WorkBasic exposing (BasicWorkBody, basicWorkBodyDecoder)
 
 
 type alias RelatedBlock =
-    { primary : PartOf
-    , secondary : Maybe (List PartOf)
+    { relatedTo : PartOf
+    , relationshipType : PartOfType
+    , workInfo : Maybe String
     }
 
 
 type alias PartOfSectionBody =
     { label : LanguageMap
-    , related : RelatedBlock
+    , items : List RelatedBlock
     }
+
+
+type PartOfType
+    = PrimaryPartOf
+    | SecondaryPartOf
 
 
 type PartOf
@@ -45,14 +51,28 @@ partOfSectionBodyDecoder : Decoder PartOfSectionBody
 partOfSectionBodyDecoder =
     Decode.succeed PartOfSectionBody
         |> required "label" languageMapLabelDecoder
-        |> required "related" relatedBlockDecoder
+        |> required "items" (list relatedBlockDecoder)
 
 
 relatedBlockDecoder : Decoder RelatedBlock
 relatedBlockDecoder =
     Decode.succeed RelatedBlock
-        |> required "primary" partOfDecoder
-        |> optional "secondary" (maybe (list partOfDecoder)) Nothing
+        |> required "relatedTo" partOfDecoder
+        |> required "relationshipType" (string |> andThen partOfTypeDecoder)
+        |> optional "workNumber" (maybe string) Nothing
+
+
+partOfTypeDecoder : String -> Decoder PartOfType
+partOfTypeDecoder partOfType =
+    case partOfType of
+        "rism:PrimaryPartOf" ->
+            succeed PrimaryPartOf
+
+        "rism:SecondaryPartOf" ->
+            succeed SecondaryPartOf
+
+        _ ->
+            Decode.fail "could not determine part of type"
 
 
 recordTypePartOfDecoder : RecordType -> Decoder PartOf

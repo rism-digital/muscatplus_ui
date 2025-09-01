@@ -1,11 +1,17 @@
-module Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody, PublicationProperties, WorksSectionBody, basicPublicationBodyDecoder, publicationBodyDecoder)
+module Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody, PublicationProperties, WorkCatalogueStatus(..), WorksSectionBody, basicPublicationBodyDecoder, publicationBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, int, list, maybe, string)
+import Json.Decode as Decode exposing (Decoder, andThen, fail, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody, relatedToBodyDecoder, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelStringValue, LabelValue, RecordHistory, labelStringValueDecoder, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
+
+
+type WorkCatalogueStatus
+    = Completed LanguageMap
+    | Partial LanguageMap
+    | Alternate LanguageMap
 
 
 type alias BasicPublicationBody =
@@ -14,7 +20,7 @@ type alias BasicPublicationBody =
     , creator : Maybe RelationshipBody
     , composer : Maybe RelatedToBody
     , properties : Maybe PublicationProperties
-    , status : LabelStringValue
+    , status : WorkCatalogueStatus
     }
 
 
@@ -78,7 +84,7 @@ basicPublicationBodyDecoder =
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
         |> optional "composer" (maybe relatedToBodyDecoder) Nothing
         |> optional "properties" (maybe publicationPropertiesDecoder) Nothing
-        |> required "status" labelStringValueDecoder
+        |> required "status" workCatalogueStatusDecoder
 
 
 publicationPropertiesDecoder : Decoder PublicationProperties
@@ -86,3 +92,25 @@ publicationPropertiesDecoder =
     Decode.succeed PublicationProperties
         |> optional "shortTitle" (maybe languageMapLabelDecoder) Nothing
         |> optional "publicationDates" (maybe languageMapLabelDecoder) Nothing
+
+
+workCatalogueStatusDecoder : Decoder WorkCatalogueStatus
+workCatalogueStatusDecoder =
+    labelStringValueDecoder
+        |> andThen stringToWorkCatalogueStatus
+
+
+stringToWorkCatalogueStatus : LabelStringValue -> Decoder WorkCatalogueStatus
+stringToWorkCatalogueStatus { label, value } =
+    case value of
+        "completed" ->
+            succeed (Completed label)
+
+        "partial" ->
+            succeed (Partial label)
+
+        "alternate" ->
+            succeed (Partial label)
+
+        _ ->
+            fail ("Could not determine work catalogue status: " ++ value)

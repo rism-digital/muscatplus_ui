@@ -1,13 +1,16 @@
 module Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection, viewPartOfSection, viewWorkPartOfCatalogueSection)
 
-import Element exposing (Element, column, el, fill, height, link, maximum, padding, paragraph, row, text, width)
+import Element exposing (Element, column, el, fill, fillPortion, height, link, maximum, padding, paragraph, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, extractUrlAndLabelFromPartOf)
-import Page.UI.Attributes exposing (headingMD, linkColour)
+import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, PartOfType(..), RelatedBlock, extractUrlAndLabelFromPartOf)
+import Page.RecordTypes.Publication exposing (BasicPublicationBody, WorkCatalogueStatus(..))
+import Page.UI.Attributes exposing (headingMD, headingSM, linkColour)
+import Page.UI.Components exposing (formatPublicationStatusBadge)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -28,14 +31,6 @@ viewWorkPartOfCatalogueSection language partOf =
 
 viewPartOfSectionImpl : Language -> LanguageMap -> PartOfSectionBody -> Element msg
 viewPartOfSectionImpl language title partOf =
-    let
-        ( url, label ) =
-            extractUrlAndLabelFromPartOf (.primary partOf.related)
-
-        otherParts =
-            Maybe.map (viewOtherParts language) (.secondary partOf.related)
-                |> Maybe.withDefault []
-    in
     row
         [ Border.color colourScheme.darkGrey
         , Border.width 1
@@ -45,76 +40,179 @@ viewPartOfSectionImpl language title partOf =
             [ width fill
             , height fill
             ]
-            (List.concat
-                [ [ row
-                        [ width fill
-                        , Background.color colourScheme.darkGrey
-                        , padding 10
-                        ]
-                        [ el
-                            [ headingMD
-                            , Font.semiBold
-                            , Font.color colourScheme.white
-                            ]
-                            (text (extractLabelFromLanguageMap language title))
-                        ]
-                  , row
-                        [ width fill
-                        , padding 10
-                        ]
-                        [ paragraph []
-                            [ link
-                                [ linkColour
-                                , headingMD
-                                , Font.semiBold
-                                ]
-                                { label = text (extractLabelFromLanguageMap language label)
-                                , url = url
-                                }
-                            ]
-                        ]
-                  ]
-                , otherParts
+            [ row
+                [ width fill
+                , Background.color colourScheme.darkGrey
+                , padding 10
                 ]
-            )
+                [ el
+                    [ headingMD
+                    , Font.semiBold
+                    , Font.color colourScheme.white
+                    ]
+                    (text (extractLabelFromLanguageMap language title))
+                ]
+            , viewPartOfBoxBody language partOf
+            ]
         ]
 
 
-viewOtherParts : Language -> List PartOf -> List (Element msg)
-viewOtherParts language parts =
-    List.map (viewOtherPart language) parts
-
-
-viewOtherPart : Language -> PartOf -> Element msg
-viewOtherPart language part =
+viewPartOfBoxBody : Language -> PartOfSectionBody -> Element msg
+viewPartOfBoxBody language partOf =
     let
-        ( url, label ) =
-            extractUrlAndLabelFromPartOf part
+        primaryParts =
+            List.filter (\p -> p.relationshipType == PrimaryPartOf) partOf.items
+                |> List.map
+                    (\b ->
+                        case b.relatedTo of
+                            PublicationPart publicationBody ->
+                                viewWorkCataloguePrimaryTitle language b publicationBody
 
-        otherLabel =
-            case part of
-                PublicationPart p ->
-                    "(" ++ extractLabelFromLanguageMap language (.label p.status) ++ ") "
+                            _ ->
+                                let
+                                    ( primaryUrl, primaryLabel ) =
+                                        extractUrlAndLabelFromPartOf b.relatedTo
+                                in
+                                viewPartOfPrimaryTitle language primaryUrl primaryLabel
+                    )
 
-                _ ->
-                    ""
+        secondaryParts : List (Element msg)
+        secondaryParts =
+            List.filter (\p -> p.relationshipType == SecondaryPartOf) partOf.items
+                |> List.map (\s -> viewOtherPartRouter language s)
     in
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width fill
+            , height fill
+            ]
+            (primaryParts ++ secondaryParts)
+        ]
+
+
+viewWorkCataloguePrimaryTitle : Language -> RelatedBlock -> BasicPublicationBody -> Element msg
+viewWorkCataloguePrimaryTitle language relBlock partOf =
+    row
+        [ width fill ]
+        [ column
+            [ width (fillPortion 1)
+            , padding 10
+            ]
+            [ viewMaybe text relBlock.workInfo ]
+        , column
+            [ width (fillPortion 4)
+            , padding 10
+            ]
+            [ row
+                [ width fill ]
+                [ paragraph
+                    [ width fill ]
+                    [ link
+                        [ linkColour
+                        , headingMD
+                        , Font.semiBold
+                        ]
+                        { url = partOf.id
+                        , label = text (extractLabelFromLanguageMap language partOf.label)
+                        }
+                    ]
+                ]
+            ]
+        ]
+
+
+viewPartOfPrimaryTitle : Language -> String -> LanguageMap -> Element msg
+viewPartOfPrimaryTitle language primaryUrl primaryLabel =
     row
         [ width fill
         , padding 10
         ]
-        [ column
+        [ paragraph
             [ width fill ]
+            [ link
+                [ linkColour
+                , headingMD
+                , Font.semiBold
+                ]
+                { url = primaryUrl
+                , label = text (extractLabelFromLanguageMap language primaryLabel)
+                }
+            ]
+        ]
+
+
+viewOtherPartRouter : Language -> RelatedBlock -> Element msg
+viewOtherPartRouter language relBlock =
+    case relBlock.relatedTo of
+        PublicationPart p ->
+            viewPartOfSecondaryWorkCatalogue language relBlock p
+
+        SourcePart s ->
+            viewPartOfTitle language s
+
+        WorkPart w ->
+            viewPartOfTitle language w
+
+
+viewPartOfSecondaryWorkCatalogue : Language -> RelatedBlock -> BasicPublicationBody -> Element msg
+viewPartOfSecondaryWorkCatalogue language relBlock partOf =
+    let
+        label =
+            extractLabelFromLanguageMap language partOf.label
+
+        statusBadge =
+            formatPublicationStatusBadge language partOf.status
+    in
+    row
+        [ width fill
+        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , Border.color colourScheme.midGrey
+        ]
+        [ column
+            [ width (fillPortion 1)
+            , padding 10
+            , spacing 6
+            ]
+            [ viewMaybe text relBlock.workInfo
+            , statusBadge
+            ]
+        , column
+            [ width (fillPortion 4)
+            , padding 10
+            ]
             [ row
                 [ width fill ]
                 [ paragraph
-                    []
-                    [ text otherLabel
-                    , link [ linkColour ]
-                        { label = text (extractLabelFromLanguageMap language label)
-                        , url = url
+                    [ width fill ]
+                    [ link
+                        [ linkColour
+                        , headingSM
+                        ]
+                        { url = partOf.id
+                        , label = text label
                         }
                     ]
                 ]
+            ]
+        ]
+
+
+viewPartOfTitle : Language -> { a | id : String, label : LanguageMap } -> Element msg
+viewPartOfTitle language { id, label } =
+    row
+        [ width fill
+        , padding 10
+        ]
+        [ paragraph
+            [ width fill ]
+            [ link
+                [ linkColour
+                ]
+                { url = id
+                , label = text (extractLabelFromLanguageMap language label)
+                }
             ]
         ]

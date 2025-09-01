@@ -4,7 +4,7 @@ import Csv.Encode
 import Dict exposing (Dict)
 import Language exposing (Language(..), extractLabelFromLanguageMap)
 import Maybe.Extra as ME
-import Page.RecordTypes.PartOf exposing (PartOf(..))
+import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfType(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (IncipitResultBody, InstitutionResultBody, PersonResultBody, SearchResult(..), SourceResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
@@ -375,21 +375,26 @@ convertIncipitResultBody body =
         composer =
             extractFromSummaryDict "incipitComposer" body.summary
 
-        sourceUrl =
-            case .primary (.related body.partOf) of
-                SourcePart s ->
-                    s.id
+        primarySourceUrls =
+            List.filter (\p -> p.relationshipType == PrimaryPartOf) (.items body.partOf)
+                |> List.map
+                    (\e ->
+                        case e.relatedTo of
+                            SourcePart s ->
+                                s.id
 
-                PublicationPart p ->
-                    p.id
+                            PublicationPart p ->
+                                p.id
 
-                WorkPart w ->
-                    w.id
+                            WorkPart w ->
+                                w.id
+                    )
+                |> String.join " "
     in
     IncipitCsvRecordType
         { url = body.id
         , title = extractLabelFromLanguageMap English body.label
-        , sourceUrl = sourceUrl
+        , sourceUrl = primarySourceUrls
         , paeCode = paeCode
         , composer = composer
         }
