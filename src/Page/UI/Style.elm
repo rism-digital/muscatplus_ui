@@ -236,9 +236,6 @@ determineOptimalTextColorForBackground backgroundColor =
 
         threshold =
             (0.2126 * (red ^ 2.2)) + (0.7152 * (green ^ 2.2)) + (0.0722 * (blue ^ 2.2))
-
-        _ =
-            Debug.log "threshold" threshold
     in
     if threshold > 0.5 then
         colourScheme.black
