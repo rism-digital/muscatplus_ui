@@ -392,6 +392,9 @@ viewWorksResultsSection cfg isLoading body =
             , padding 20
             ]
             [ row
+                [ width fill ]
+                [ viewPagination language body.pagination cfg.userClickedResultsPaginationMsg ]
+            , row
                 [ width fill
                 , inFront (viewResultsListLoadingScreenTmpl isLoading)
                 ]
@@ -403,11 +406,11 @@ viewWorksResultsSection cfg isLoading body =
                           , view = \i w -> viewCatalogNumberCell language i w
                           }
                         , { header = el tableHeaderStyles (text "Title")
-                          , width = fillPortion 1
+                          , width = fillPortion 3
                           , view = \i w -> viewWorkTitleCell language i w
                           }
                         , { header = el tableHeaderStyles (text "Incipit")
-                          , width = fill |> minimum 500 |> maximum 800
+                          , width = fillPortion 3
                           , view = \i w -> viewIncipitCell language i w
                           }
                         , { header = el tableHeaderStyles (text "Key")
@@ -419,7 +422,7 @@ viewWorksResultsSection cfg isLoading body =
                           , view = \i w -> viewScoringSummaryCell language i w
                           }
                         , { header = el tableHeaderStyles (text "Appears in")
-                          , width = fillPortion 1
+                          , width = fillPortion 2
                           , view = \i w -> viewNumberOfSourcesCell language i w
                           }
                         ]
@@ -567,5 +570,9 @@ viewIncipitCell language rowNum result =
                 |> Maybe.withDefault (el [ centerY ] (text "-"))
     in
     el
-        [ cellBg, padding tableCellPadding, width fill, height fill ]
+        [ cellBg
+        , padding tableCellPadding
+        , width fill
+        , height fill
+        ]
         renderedIncipit
