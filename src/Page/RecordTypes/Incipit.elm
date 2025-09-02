@@ -2,7 +2,6 @@ module Page.RecordTypes.Incipit exposing
     ( EncodedIncipit(..)
     , IncipitBody
     , IncipitFormat(..)
-    , IncipitParent(..)
     , IncipitParentSourceBody
     , IncipitParentWorkBody
     , IncipitsSectionBody
@@ -18,6 +17,7 @@ import Json.Decode as Decode exposing (Decoder, list, map, maybe, oneOf, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import List.Extra as LE
+import Page.RecordTypes.PartOf exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 import Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 import Page.RecordTypes.WorkBasic exposing (BasicWorkBody, basicWorkBodyDecoder)
@@ -44,17 +44,12 @@ type alias IncipitsSectionBody =
     }
 
 
-type IncipitParent
-    = SourceParent IncipitParentSourceBody
-    | WorkParent IncipitParentWorkBody
-
-
 type alias IncipitBody =
     { sectionToc : String
     , id : String
     , label : LanguageMap
     , summary : Maybe (List LabelValue)
-    , partOf : Maybe IncipitParent
+    , partOf : Maybe PartOfSectionBody
     , rendered : Maybe (List RenderedIncipit)
     , encodings : Maybe (List EncodedIncipit)
     }
@@ -91,7 +86,7 @@ incipitBodyDecoder =
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> optional "summary" (maybe (list labelValueDecoder)) Nothing
-        |> optional "partOf" (maybe incipitParentBodyDecoder) Nothing
+        |> optional "partOf" (maybe partOfSectionBodyDecoder) Nothing
         |> optional "rendered" (maybe (list renderedIncipitEncoder)) Nothing
         |> optional "encodings" (maybe (list encodedIncipitDecoder)) Nothing
 
@@ -166,28 +161,6 @@ incipitFormatDecoder =
                     _ ->
                         UnknownFormat
             )
-
-
-incipitParentBodyDecoder : Decoder IncipitParent
-incipitParentBodyDecoder =
-    oneOf
-        [ incipitParentSourceBodyDecoder |> map SourceParent
-        , incipitParentWorkBodyDecoder |> map WorkParent
-        ]
-
-
-incipitParentSourceBodyDecoder : Decoder IncipitParentSourceBody
-incipitParentSourceBodyDecoder =
-    Decode.succeed IncipitParentSourceBody
-        |> required "label" languageMapLabelDecoder
-        |> required "source" basicSourceBodyDecoder
-
-
-incipitParentWorkBodyDecoder : Decoder IncipitParentWorkBody
-incipitParentWorkBodyDecoder =
-    Decode.succeed IncipitParentWorkBody
-        |> required "label" languageMapLabelDecoder
-        |> required "work" basicWorkBodyDecoder
 
 
 renderedIncipitDecoderOne : Decoder RenderedIncipit

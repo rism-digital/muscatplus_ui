@@ -5,7 +5,8 @@ import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
-import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitParent(..))
+import Page.RecordTypes.Incipit exposing (IncipitBody)
+import Page.RecordTypes.PartOf exposing (PartOfSectionBody, extractUrlAndLabelFromPartOf)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (headingLG, lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
@@ -16,28 +17,25 @@ import Page.UI.Style exposing (colourScheme)
 import Set exposing (Set)
 
 
-viewPartOfLink : Language -> Maybe IncipitParent -> Element msg
+viewPartOfLink : Language -> Maybe PartOfSectionBody -> Element msg
 viewPartOfLink language parent =
-    ME.unpack (\() -> none)
-        (\partOf ->
-            case partOf of
-                SourceParent sbody ->
-                    incipitLinkTemplate language
-                        sbody.label
-                        headingLG
-                        { id = .id sbody.source
-                        , label = .label sbody.source
-                        }
-
-                WorkParent wbody ->
-                    incipitLinkTemplate language
-                        wbody.label
-                        headingLG
-                        { id = .id wbody.work
-                        , label = .label wbody.work
-                        }
+    Maybe.map
+        (\pos ->
+            List.head pos.items
+                |> Maybe.map (\rb -> extractUrlAndLabelFromPartOf rb.relatedTo)
+                |> Maybe.map
+                    (\( id, label ) ->
+                        incipitLinkTemplate language
+                            pos.label
+                            headingLG
+                            { id = id
+                            , label = label
+                            }
+                    )
         )
         parent
+        |> ME.join
+        |> Maybe.withDefault none
 
 
 viewIncipitPreview :
