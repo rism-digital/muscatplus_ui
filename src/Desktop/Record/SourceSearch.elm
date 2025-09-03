@@ -130,11 +130,18 @@ viewSourceSearchTab { language, model, searchUrl, tabLabel } =
                 _ ->
                     Nothing
 
+        clickMsg =
+            if isSelected then
+                NothingHappened
+
+            else
+                UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
+
         thisTab =
             CountTab tabLabel sourceCount
     in
     tabView
-        { clickMsg = UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
+        { clickMsg = clickMsg
         , icon = none
         , isSelected = isSelected
         , language = language
@@ -160,9 +167,16 @@ viewSourceDescriptionTab { language, model, recordId } =
 
         thisTab =
             BareTab localTranslations.description
+
+        tabSelectMsg =
+            if isSelected then
+                NothingHappened
+
+            else
+                UserClickedRecordViewTab (DefaultRecordViewTab recordId)
     in
     tabView
-        { clickMsg = UserClickedRecordViewTab (DefaultRecordViewTab recordId)
+        { clickMsg = tabSelectMsg
         , icon = none
         , isSelected = isSelected
         , language = language
