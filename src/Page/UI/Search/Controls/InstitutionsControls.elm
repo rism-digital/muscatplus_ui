@@ -52,6 +52,9 @@ viewFacetsForInstitutionsMode cfg =
 
         cantusRecordsToggle =
             viewFacet (createFacetConfig cfg "hide-cantus-records" tooltips.cantusProject) cfg.facetMsgConfig
+
+        institutionType =
+            viewFacet (createFacetConfig cfg "institution-type" tooltips.city) cfg.facetMsgConfig
     in
     [ viewFacetsControlPanel
         (.alias institutionFacetPanels.institutionResultsPanel)
@@ -67,6 +70,7 @@ viewFacetsForInstitutionsMode cfg =
                 , row [] [ cantusRecordsToggle ]
                 ]
             ]
+        , institutionType
         ]
     , viewFacetsControlPanel
         (.alias institutionFacetPanels.locationPanel)
