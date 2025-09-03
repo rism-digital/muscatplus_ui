@@ -27,8 +27,8 @@ recordResponseDecoder =
 
 
 recordResponseConverter : String -> Decoder ServerData
-recordResponseConverter typevalue =
-    case recordTypeFromJsonType typevalue of
+recordResponseConverter typeValue =
+    case recordTypeFromJsonType typeValue of
         Source ->
             map SourceData sourceBodyDecoder
 
