@@ -1,6 +1,6 @@
 ## RISM Online User Interface
 
-The primary UI for RISM Online. (The development name for this project was "Muscat Plus", and so the name persists.) It
+The primary UI for RISM Online. (The development name for this project was "Muscat Plus," and so the name persists.) It
 is primarily written in [Elm](https://elm-lang.org).
 
 ### Building and running locally (built-in server)
@@ -9,7 +9,7 @@ Dependency management happens with `yarn`, so:
 
     $ yarn install
 
-will install all of the necessary packages, then:
+will install all the necessary packages, then:
 
     $ yarn run develop:build
 
@@ -21,7 +21,7 @@ probably check the `src/Config.elm` file to verify the remote API server URL.
 ### Building and running locally (local web server)
 
 One limitation of building and running locally with the built-in server is that your UI and your data service
-will be on separate domains. This means that when the UI renders URLs that it receives from the server it will
+will be on separate domains. This means that when the UI renders URLs that it receives from the server, it will
 not match, and you will be redirected to the external server. In this case, you may want to run a local instance
 of nginx and replicate a full stack setup.
 
@@ -34,7 +34,7 @@ On a Mac, you will need to refresh your DNS cache:
     $ sudo killall -HUP mDNSResponder
 
 You can install nginx on a Mac with [Homebrew](https://formulae.brew.sh/formula/nginx). This creates the configuration
-files in `/usr/local/etc/nginx`. 
+files in `/opt/homebrew/etc/nginx`. 
 
 In the `server-setup` directory in this repo you will find an example configuration. You will need to comment
 out one of the `upstream app` sections, depending on how you want to run it. You will also need to configure
@@ -47,9 +47,9 @@ really like this, but we can manage nginx with `sudo brew services start nginx`.
 error log when running this the first time, since the Homebrew services command is not the best at notifying you
 whether there was a problem starting the service.
 
-    $ tail -f /usr/local/var/log/nginx/error.log
+    $ tail -f /opt/homebrew/var/log/nginx/error.log
 
-When all of this setup is successful you should be able to visit `http://dev.rism.offline` and then use the app as normal.
+When all of this setup is successful, you should be able to visit `http://dev.rism.offline` and then use the app as normal.
 
 To update the results as you develop, you should run the development builds. This watches the source for changes and then
 recompiles, installing the output in the `dist` directory. `yarn install` installs the `chokidar` tool which will
