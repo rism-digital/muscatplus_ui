@@ -26,7 +26,7 @@ import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
 

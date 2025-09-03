@@ -19,7 +19,7 @@ import Page.UI.Record.ExemplarsSection exposing (viewBoundWithSection, viewExemp
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
 

@@ -10,8 +10,8 @@ module Page.RecordTypes.Source exposing
     , sourceBodyDecoder
     )
 
-import Json.Decode as Decode exposing (Decoder, int, list, oneOf, string)
-import Json.Decode.Pipeline exposing (custom, hardcoded, optional, required)
+import Json.Decode as Decode exposing (Decoder, int, list, string)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)

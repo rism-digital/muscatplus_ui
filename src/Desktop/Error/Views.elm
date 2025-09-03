@@ -5,7 +5,6 @@ import Element exposing (Element, centerX, centerY, column, el, fill, height, li
 import Element.Background as Background
 import Page.Error.Views exposing (errorMessageView)
 import Page.UI.Attributes exposing (headingXL, lineSpacing, linkColour)
-import Page.UI.Errors exposing (ErrorResponse(..), createErrorMessage)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..))

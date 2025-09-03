@@ -1,14 +1,13 @@
 module Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, maximum, minimum, none, padding, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import List.Extra as LE
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.RecordTypes.Incipit exposing (IncipitFormat(..), RenderedIncipit(..))
@@ -18,15 +17,15 @@ import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResul
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (Tab(..), pageBodyOrEmpty, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
-import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
+import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
-import Page.UI.Images exposing (folderMusicSvg, peopleSvg)
+import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight, tableCellPadding)
+import Page.UI.Style exposing (colourScheme, tableCellPadding)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 

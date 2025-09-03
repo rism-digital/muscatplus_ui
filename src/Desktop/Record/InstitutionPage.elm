@@ -23,7 +23,7 @@ import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
-import Page.UI.Style exposing (colourScheme, recordTitleHeight, searchSourcesLinkHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
 

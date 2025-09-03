@@ -3,10 +3,8 @@ module Mobile.Error.Views exposing (view)
 import Config as C
 import Element exposing (Element, centerX, centerY, column, el, fill, height, link, none, padding, paragraph, px, row, spacing, text, width)
 import Element.Background as Background
-import Language exposing (Language)
 import Page.Error.Views exposing (errorMessageView)
 import Page.UI.Attributes exposing (headingXL, lineSpacing, linkColour)
-import Page.UI.Errors exposing (ErrorResponse, createErrorMessage)
 import Page.UI.Images exposing (onlineTextSvg, rismLogo)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..))

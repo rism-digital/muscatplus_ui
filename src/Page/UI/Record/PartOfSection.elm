@@ -1,6 +1,6 @@
 module Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection, viewPartOfSection, viewWorkPartOfCatalogueSection)
 
-import Element exposing (Element, column, el, fill, fillPortion, height, link, maximum, padding, paragraph, row, shrink, spacing, text, width)
+import Element exposing (Element, column, el, fill, fillPortion, height, link, maximum, padding, paragraph, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font

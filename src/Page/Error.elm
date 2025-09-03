@@ -1,6 +1,5 @@
 module Page.Error exposing (Model, Msg, init, initialCmd, update)
 
-import Http.Detailed exposing (Error(..))
 import Language.LocalTranslations exposing (errorMessages)
 import Page.Error.Model exposing (ErrorPageModel)
 import Page.Error.Msg exposing (NotFoundMsg(..))
