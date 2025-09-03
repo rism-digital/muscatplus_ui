@@ -87,11 +87,7 @@ init cfg =
                             ( Response rd, NoResponseToShow )
 
                         Err _ ->
-                            let
-                                eVal =
-                                    Decode.decodeValue apiErrorDecoder d
-                            in
-                            case eVal of
+                            case Decode.decodeValue apiErrorDecoder d of
                                 Ok o ->
                                     ( Error
                                         (BadBodyEncodedResponse
@@ -267,6 +263,7 @@ update session msg model =
 
                 newNextQuery =
                     setFilters updatedFiltersWithCorrectLanguageMaps nextQuery
+                        |> setMode (routeToResultMode session.route)
 
                 newActiveSearch =
                     setAliasLabelMap aliasLabelMap model.activeSearch
@@ -291,9 +288,21 @@ update session msg model =
 
                         _ ->
                             NoResponseToShow
+
+                -- The record data gets reset to Loading when submitting the search, so just get the
+                -- old data (if it's there) and add it back to the model.
+                -- if it's any other response than "Loading", then just keep it in that state.
+                recordResponse =
+                    case model.response of
+                        Loading (Just oldData) ->
+                            Response oldData
+
+                        _ ->
+                            model.response
             in
             ( { model
                 | searchResults = searchResults
+                , response = recordResponse
                 , activeSearch = newActiveSearch
                 , probeResponse = probeState
                 , applyFilterPrompt = False
