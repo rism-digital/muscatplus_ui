@@ -29,7 +29,7 @@ view language options =
         showLabels =
             showSideBarLabels options.expandedSideBar
 
-        hoverSyles =
+        hoverStyles =
             if options.currentlyHoveredAboutMenuSidebarOption then
                 Background.color colourScheme.white
 
@@ -73,7 +73,7 @@ view language options =
                 , onMouseEnter UserMouseEnteredAboutMenuSidebarOption
                 , onMouseLeave UserMouseExitedAboutMenuSidebarOption
                 , onRight viewChooser
-                , hoverSyles
+                , hoverStyles
                 , Font.color hoveredColour
                 ]
                 [ column
