@@ -1,21 +1,10 @@
-module Request exposing (apply, createRequest, createSvgRequest, serverUrl)
+module Request exposing (createRequest, createSvgRequest, serverUrl)
 
 import Config as C
 import Http exposing (Expect)
 import Http.Detailed
 import Json.Decode exposing (Decoder)
 import Url.Builder exposing (QueryParameter)
-import Url.Parser.Query as Q
-
-
-{-|
-
-    Creates a pipeline-like Query parser.
-
--}
-apply : Q.Parser a -> Q.Parser (a -> b) -> Q.Parser b
-apply argParser funcParser =
-    Q.map2 (<|) funcParser argParser
 
 
 createRequest :
@@ -25,6 +14,14 @@ createRequest :
     -> Cmd msg
 createRequest responseMsg responseDecoder url =
     createRequestWithAcceptAndExpect "application/ld+json" (Http.Detailed.expectJson responseMsg responseDecoder) url
+
+
+createSvgRequest :
+    (Result (Http.Detailed.Error String) ( Http.Metadata, String ) -> msg)
+    -> String
+    -> Cmd msg
+createSvgRequest responseMsg url =
+    createRequestWithAcceptAndExpect "image/svg+xml" (Http.Detailed.expectString responseMsg) url
 
 
 createRequestWithAcceptAndExpect : String -> Expect msg -> String -> Cmd msg
@@ -38,16 +35,8 @@ createRequestWithAcceptAndExpect accept expect url =
         , body = Http.emptyBody
         , expect = expect
         , timeout = Nothing
-        , tracker = Nothing
+        , tracker = Just url
         }
-
-
-createSvgRequest :
-    (Result (Http.Detailed.Error String) ( Http.Metadata, String ) -> msg)
-    -> String
-    -> Cmd msg
-createSvgRequest responseMsg url =
-    createRequestWithAcceptAndExpect "image/svg+xml" (Http.Detailed.expectString responseMsg) url
 
 
 serverUrl : List String -> List QueryParameter -> String

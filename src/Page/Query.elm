@@ -1,6 +1,7 @@
 module Page.Query exposing
     ( FrontQueryArgs
     , QueryArgs
+    , apply
     , buildFrontPageUrl
     , buildQueryParameters
     , defaultQueryArgs
@@ -43,7 +44,7 @@ import Page.RecordTypes.Search
         , parseStringToFacetSort
         )
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Request exposing (apply, serverUrl)
+import Request exposing (serverUrl)
 import SearchPreferences exposing (SearchPreferences)
 import Url exposing (percentDecode)
 import Url.Builder exposing (QueryParameter)
@@ -431,3 +432,13 @@ buildFrontPageUrl sidebarOption countryCode =
                         |> Maybe.withDefault []
             in
             serverUrl [ "/" ] (modeParameter :: ncParameter)
+
+
+{-|
+
+    Creates a pipeline-like Query parser.
+
+-}
+apply : Q.Parser a -> Q.Parser (a -> b) -> Q.Parser b
+apply argParser funcParser =
+    Q.map2 (<|) funcParser argParser

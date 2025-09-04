@@ -23,7 +23,7 @@ import Page.Keyboard.PAE
         , timeSignatureSymToQueryStr
         )
 import Page.Keyboard.Utilities exposing (comparableToSymHelper, symToStringHelper)
-import Request exposing (apply)
+import Page.Query exposing (apply)
 import Url.Builder exposing (QueryParameter)
 import Url.Parser.Query as Q
 
@@ -127,8 +127,8 @@ keySigParamParser =
 
 
 keySigQueryStringToKeySignature : List String -> KeySignature
-keySigQueryStringToKeySignature ksiglist =
-    List.head ksiglist
+keySigQueryStringToKeySignature ksigList =
+    List.head ksigList
         |> Maybe.map (\a -> keySigStrToKeySignature a)
         |> Maybe.withDefault KS_N
 
@@ -166,8 +166,8 @@ queryModeParamParser =
 
 
 queryModeStringToQueryMode : List String -> QueryMode
-queryModeStringToQueryMode qmlist =
-    List.head qmlist
+queryModeStringToQueryMode qmList =
+    List.head qmList
         |> Maybe.map queryModeStrToQueryMode
         |> Maybe.withDefault IntervalQueryMode
 
@@ -178,7 +178,7 @@ timeSigParamParser =
 
 
 timeSigQueryStringToTimeSignature : List String -> TimeSignature
-timeSigQueryStringToTimeSignature tsiglist =
-    List.head tsiglist
+timeSigQueryStringToTimeSignature tsigList =
+    List.head tsigList
         |> Maybe.map timeSigStrToTimeSignature
         |> Maybe.withDefault TNone
