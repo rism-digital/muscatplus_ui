@@ -4,6 +4,7 @@ import Basics.Extra as BE
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (isMobileView, setDevice, setWindow)
+import Http
 import Maybe.Extra as ME
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
@@ -552,6 +553,9 @@ changeRecordPageHelper { model, newSession, previousRoute, previousUrl, route, u
                     samePage oldPageBody
 
                 ( Route.PublicationsListPageRoute, PublicationListPage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                ( Route.WorkPageRoute _, WorkPage _ oldPageBody ) ->
                     samePage oldPageBody
 
                 _ ->
