@@ -334,7 +334,7 @@ update session msg model =
                     case model.searchResults of
                         NoResponseToShow ->
                             if hasNonZeroSourcesAttached response then
-                                Loading Nothing
+                                NoResponseToShow
 
                             else
                                 model.searchResults

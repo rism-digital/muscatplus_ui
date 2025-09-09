@@ -110,9 +110,10 @@ viewSourceSearchTab :
     , recordId : String
     , searchUrl : String
     , tabLabel : LanguageMap
+    , totalItems : Int
     }
     -> Element RecordMsg
-viewSourceSearchTab { language, model, searchUrl, tabLabel } =
+viewSourceSearchTab { language, model, searchUrl, tabLabel, totalItems } =
     let
         isSelected =
             case model.currentTab of
@@ -122,14 +123,7 @@ viewSourceSearchTab { language, model, searchUrl, tabLabel } =
                 _ ->
                     False
 
-        sourceCount =
-            case model.searchResults of
-                Response (SearchData searchData) ->
-                    Just searchData.totalItems
-
-                _ ->
-                    Nothing
-
+        -- if the tab is already selected, do not emit a message.
         clickMsg =
             if isSelected then
                 NothingHappened
@@ -138,7 +132,7 @@ viewSourceSearchTab { language, model, searchUrl, tabLabel } =
                 UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
 
         thisTab =
-            CountTab tabLabel sourceCount
+            CountTab tabLabel (Just totalItems)
     in
     tabView
         { clickMsg = clickMsg
@@ -149,13 +143,13 @@ viewSourceSearchTab { language, model, searchUrl, tabLabel } =
         }
 
 
-viewSourceDescriptionTab :
+viewRecordDescriptionTab :
     { language : Language
     , model : RecordPageModel RecordMsg
     , recordId : String
     }
     -> Element RecordMsg
-viewSourceDescriptionTab { language, model, recordId } =
+viewRecordDescriptionTab { language, model, recordId } =
     let
         isSelected =
             case model.currentTab of
@@ -185,7 +179,7 @@ viewSourceDescriptionTab { language, model, recordId } =
 
 
 viewRecordSourceSearchTabBar :
-    { body : Maybe { a | url : String }
+    { body : Maybe { a | url : String, totalItems : Int }
     , language : Language
     , model : RecordPageModel RecordMsg
     , recordId : String
@@ -197,18 +191,31 @@ viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
         sourceSearchTab =
             viewMaybe
                 (\s ->
+                    let
+                        ( searchUrl, itemCount ) =
+                            case model.searchResults of
+                                Response (SearchData d) ->
+                                    ( d.id, d.totalItems )
+
+                                Loading (Just (SearchData d)) ->
+                                    ( d.id, d.totalItems )
+
+                                _ ->
+                                    ( s.url, s.totalItems )
+                    in
                     viewSourceSearchTab
                         { language = language
                         , model = model
                         , recordId = recordId
-                        , searchUrl = s.url
+                        , searchUrl = searchUrl
                         , tabLabel = tabLabel
+                        , totalItems = itemCount
                         }
                 )
                 body
 
-        sourceDescriptionTab =
-            viewSourceDescriptionTab
+        recordDescriptionTab =
+            viewRecordDescriptionTab
                 { language = language
                 , model = model
                 , recordId = recordId
@@ -221,6 +228,6 @@ viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
         , alignBottom
         , spacing 10
         ]
-        [ sourceDescriptionTab
+        [ recordDescriptionTab
         , sourceSearchTab
         ]

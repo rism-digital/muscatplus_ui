@@ -568,7 +568,8 @@ changeRecordPageHelper { model, newSession, previousRoute, previousUrl, route, u
         ( newPageBody
         , Cmd.batch
             [ RecordPage.recordPageRequest newSession.cacheBuster url
-            , sourceFetchCmd newPageBody url route
+
+            --, sourceFetchCmd newPageBody url route
             ]
             |> Cmd.map Msg.UserInteractedWithRecordPage
         )
@@ -655,8 +656,8 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
         in
         ( newPageBody
         , Cmd.batch
-            [ RecordPage.recordPageRequest newSession.cacheBuster recordUrl
-            , RecordPage.recordSearchRequest sourceUrl
+            [ RecordPage.recordSearchRequest sourceUrl
+            , RecordPage.recordPageRequest newSession.cacheBuster recordUrl
             , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
             ]
             |> Cmd.map Msg.UserInteractedWithRecordPage
