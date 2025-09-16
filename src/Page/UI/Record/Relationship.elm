@@ -10,7 +10,7 @@ import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedTo(..), Rel
 import Page.UI.Attributes exposing (lineSpacing, linkColour)
 import Page.UI.Components exposing (viewPreRenderedLabelValueField, viewPreRenderedMobileLabelValueField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg)
+import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg, userMusicSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -135,6 +135,12 @@ viewRelatedToBody language qualifier body =
                         (text (extractLabelFromLanguageMap language localTranslations.source))
                     )
 
+                WorkRelationship ->
+                    ( userMusicSvg colourScheme.midGrey
+                    , el tooltipStyle
+                        (text (extractLabelFromLanguageMap language localTranslations.works))
+                    )
+
                 UnknownRelationship ->
                     ( none, none )
 
@@ -159,6 +165,9 @@ viewRelatedToBody language qualifier body =
                     el [ centerY ] (text (extractLabelFromLanguageMap language body.label))
 
                 SourceRelationship ->
+                    linkRelated body.label
+
+                WorkRelationship ->
                     linkRelated body.label
 
                 UnknownRelationship ->

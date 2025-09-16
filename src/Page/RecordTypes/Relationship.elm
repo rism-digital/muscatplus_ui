@@ -41,6 +41,7 @@ type RelatedTo
     | InstitutionRelationship
     | PlaceRelationship
     | SourceRelationship
+    | WorkRelationship
     | UnknownRelationship
 
 
@@ -191,6 +192,9 @@ relatedToConverter typeString =
 
         "rism:Source" ->
             Decode.succeed SourceRelationship
+
+        "rism:Work" ->
+            Decode.succeed WorkRelationship
 
         _ ->
             Decode.succeed UnknownRelationship
