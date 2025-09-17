@@ -3,7 +3,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch, toResultsNotInCurrentMode)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, moveDown, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -24,7 +24,7 @@ import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
-import Page.UI.Attributes exposing (bodyRegular, lineSpacing)
+import Page.UI.Attributes exposing (blurredBackground, bodyRegular, lineSpacing)
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -104,8 +104,7 @@ viewSearchResultsSection cfg resultsLoading body =
             el
                 [ width fill
                 , height fill
-                , Background.color colourScheme.translucentGrey
-                , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
+                , blurredBackground
                 ]
 
         renderedPreview =

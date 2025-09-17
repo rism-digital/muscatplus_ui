@@ -1,5 +1,6 @@
 module Page.UI.Attributes exposing
-    ( bodyFont
+    ( blurredBackground
+    , bodyFont
     , bodyFontColour
     , bodyMonospaceFont
     , bodyRegular
@@ -239,3 +240,8 @@ tableHeaderStyles =
     , Border.color colourScheme.midGrey
     , Background.color colourScheme.lightGrey
     ]
+
+
+blurredBackground : Attribute msg
+blurredBackground =
+    htmlAttribute (HA.attribute "style" "background: rgba(255, 255, 255, 0); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index:200;")

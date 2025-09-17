@@ -1,4 +1,4 @@
-module Page.UI.Search.Templates.SearchTmpl exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
+module Page.UI.Search.Templates.SearchTmpl exposing (controlsTmpl, viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, link, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
@@ -11,7 +11,7 @@ import Page.Query exposing (QueryArgs, buildQueryParameters, setMode, setNationa
 import Page.RecordTypes.ResultMode exposing (parseStringToResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, minimalDropShadow)
+import Page.UI.Attributes exposing (blurredBackground, lineSpacing, linkColour, minimalDropShadow)
 import Page.UI.Components exposing (h3)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
@@ -25,8 +25,7 @@ viewResultsListLoadingScreenTmpl isLoading =
         (el
             [ width fill
             , height fill
-            , Background.color colourScheme.translucentGrey
-            , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
+            , blurredBackground
             ]
             (animatedLoader
                 [ width (px 50)
