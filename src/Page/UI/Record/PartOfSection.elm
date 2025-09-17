@@ -95,13 +95,19 @@ viewPartOfBoxBody language partOf =
 
 viewWorkCataloguePrimaryTitle : Language -> RelatedBlock -> BasicPublicationBody -> Element msg
 viewWorkCataloguePrimaryTitle language relBlock partOf =
+    let
+        statusBadge =
+            formatPublicationStatusBadge language partOf.status
+    in
     row
         [ width fill ]
         [ column
             [ width (fillPortion 1)
             , padding 10
             ]
-            [ viewMaybe text relBlock.workInfo ]
+            [ viewMaybe text relBlock.workInfo
+            , statusBadge
+            ]
         , column
             [ width (fillPortion 4)
             , padding 10
