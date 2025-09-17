@@ -24,7 +24,7 @@ import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeade
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl)
+import Page.UI.Search.Templates.SearchTmpl exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme, tableCellPadding)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -344,7 +344,7 @@ viewRelatedWorksSectionRouter session model =
             viewWorksResultsSection resultsConfig True oldData
 
         Loading _ ->
-            viewSearchResultsLoadingTmpl session.language
+            viewRelatedWorksSearchResultsLoadingTmpl session.language
 
         Response (SearchData body) ->
             viewWorksResultsSection resultsConfig False body
@@ -354,7 +354,7 @@ viewRelatedWorksSectionRouter session model =
                 |> text
 
         NoResponseToShow ->
-            viewSearchResultsLoadingTmpl session.language
+            viewRelatedWorksSearchResultsLoadingTmpl session.language
 
         _ ->
             extractLabelFromLanguageMap session.language localTranslations.unknownError

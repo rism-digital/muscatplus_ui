@@ -1,7 +1,8 @@
-module Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
+module Page.UI.Search.Templates.SearchTmpl exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, link, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
+import Element.Border as Border
 import Html as HT
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables, toLanguageMap)
@@ -10,7 +11,7 @@ import Page.Query exposing (QueryArgs, buildQueryParameters, setMode, setNationa
 import Page.RecordTypes.ResultMode exposing (parseStringToResultMode, resultModeHeader)
 import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (lineSpacing, linkColour)
+import Page.UI.Attributes exposing (lineSpacing, linkColour, minimalDropShadow)
 import Page.UI.Components exposing (h3)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
@@ -39,8 +40,8 @@ viewResultsListLoadingScreenTmpl isLoading =
         isLoading
 
 
-viewSearchResultsLoadingTmpl : Language -> Element msg
-viewSearchResultsLoadingTmpl _ =
+viewRelatedWorksSearchResultsLoadingTmpl : Language -> Element msg
+viewRelatedWorksSearchResultsLoadingTmpl _ =
     row
         [ width fill
         , height fill
@@ -64,6 +65,79 @@ viewSearchResultsLoadingTmpl _ =
                     ]
                     (spinnerSvg colourScheme.midGrey)
                 )
+            ]
+        ]
+
+
+viewSearchResultsLoadingTmpl : Language -> Element msg
+viewSearchResultsLoadingTmpl _ =
+    row
+        [ width fill
+        , height fill
+        ]
+        [ column
+            [ width (px 550)
+            , height fill
+            , alignTop
+            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
+            , Border.color colourScheme.midGrey
+            ]
+            [ row
+                [ alignTop
+                , Background.color colourScheme.lightGrey
+                , Border.color colourScheme.midGrey
+                , minimalDropShadow
+                , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
+                , width fill
+                , height (px 50)
+                , paddingXY 20 0
+                , centerY
+                , htmlAttribute (HA.style "z-index" "10")
+                ]
+                [ none ]
+            , row
+                [ width fill
+                , height fill
+                ]
+                [ none ]
+            ]
+        , column
+            [ width fill
+            , height fill
+            , Background.color colourScheme.white
+            , scrollbarY
+            , htmlAttribute (HA.style "min-height" "unset")
+            ]
+            [ row
+                [ alignTop
+                , Background.color colourScheme.lightGrey
+                , Border.color colourScheme.midGrey
+                , minimalDropShadow
+                , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
+                , width fill
+                , height (px 50)
+                , paddingXY 20 0
+                , centerY
+                , htmlAttribute (HA.style "z-index" "10")
+                ]
+                [ none ]
+            , row
+                [ width fill
+                , height fill
+                ]
+                [ el
+                    [ width (px 50)
+                    , height (px 50)
+                    , centerX
+                    , centerY
+                    ]
+                    (animatedLoader
+                        [ width (px 50)
+                        , height (px 50)
+                        ]
+                        (spinnerSvg colourScheme.midGrey)
+                    )
+                ]
             ]
         ]
 
