@@ -990,12 +990,13 @@ formatPublicationStatusBadge language status =
                 [ width fill
                 , height fill
                 , spacing 4
+                , padding 6
                 ]
                 [ el
                     [ width (px 15)
                     , height (px 15)
                     , centerY
-                    , moveDown 2
+                    , moveDown 1
                     ]
                     (circleSvg bgc)
                 , el
