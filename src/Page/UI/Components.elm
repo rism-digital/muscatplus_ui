@@ -36,7 +36,7 @@ module Page.UI.Components exposing
     , viewWindowTitleBar
     )
 
-import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, shrink, spacing, text, transparent, width, wrappedRow)
+import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, moveDown, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, shrink, spacing, text, transparent, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -55,8 +55,8 @@ import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceReco
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
-import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, closeWindowSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
-import Page.UI.Style exposing (colourScheme, determineOptimalTextColorForBackground)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, circleSvg, closeWindowSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
+import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (choose, toLinkedHtml)
 import Validate
@@ -986,12 +986,24 @@ formatPublicationStatusBadge : Language -> WorkCatalogueStatus -> Element msg
 formatPublicationStatusBadge language status =
     let
         statusElement lab bgc =
-            el
-                [ Background.color bgc
-                , Font.color (determineOptimalTextColorForBackground bgc)
-                , padding 4
+            row
+                [ width fill
+                , height fill
+                , spacing 4
                 ]
-                (text (extractLabelFromLanguageMap language lab))
+                [ el
+                    [ width (px 15)
+                    , height (px 15)
+                    , centerY
+                    , moveDown 2
+                    ]
+                    (circleSvg bgc)
+                , el
+                    [ centerY
+                    , height (px 15)
+                    ]
+                    (text (extractLabelFromLanguageMap language lab))
+                ]
     in
     case status of
         Completed st ->
