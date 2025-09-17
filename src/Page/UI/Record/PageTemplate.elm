@@ -9,7 +9,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, htmlAttribute, newTabLink, none, padding, paddingXY, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, newTabLink, none, padding, paddingXY, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -144,8 +144,9 @@ pageFooterTemplate session language footer =
         , padding 20
         , alignBottom
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
-        , minimalDropShadow
-        , Border.color colourScheme.midGrey
+
+        --, minimalDropShadow
+        --, Border.color colourScheme.midGrey
         , htmlAttribute (HA.style "z-index" "10")
         , htmlAttribute (HA.id "ro-record-footer")
         , Region.footer

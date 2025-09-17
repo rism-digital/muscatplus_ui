@@ -49,7 +49,8 @@ viewPagination language pagination clickMsg =
         , Background.color colourScheme.lightGrey
         , Border.color colourScheme.midGrey
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
-        , minimalDropShadow
+
+        --, minimalDropShadow
         , htmlAttribute (HA.style "z-index" "10")
         ]
         [ column

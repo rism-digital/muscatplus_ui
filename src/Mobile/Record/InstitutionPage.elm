@@ -64,7 +64,8 @@ viewFullMobileInstitutionPage session _ body =
             [ wrappedRow
                 [ width fill
                 , paddingXY 10 10
-                , minimalDropShadow
+
+                --, minimalDropShadow
                 ]
                 [ mobilePageHeaderTemplate session.language (Just icon) body ]
             , row
