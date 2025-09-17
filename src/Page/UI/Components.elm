@@ -829,6 +829,16 @@ tabView cfg =
                 , Font.color colourScheme.black
                 )
 
+        baseTab : List (Element msg) -> Element msg
+        baseTab =
+            row
+                [ width fill
+                , Font.center
+                , alignLeft
+                , centerY
+                , spacing 5
+                ]
+
         tabLabel =
             case cfg.tab of
                 CountTab label count ->
@@ -845,26 +855,14 @@ tabView cfg =
                                     toFloat num
                                         |> formatNumberByLanguage cfg.language
                             in
-                            row
-                                [ width fill
-                                , Font.center
-                                , alignLeft
-                                , centerY
-                                , spacing 5
-                                ]
+                            baseTab
                                 [ tabIcon
                                 , el [] (text (extractLabelFromLanguageMap cfg.language label))
                                 , el [] (text ("(" ++ searchCount ++ ")"))
                                 ]
 
                         Nothing ->
-                            row
-                                [ width fill
-                                , Font.center
-                                , alignLeft
-                                , centerY
-                                , spacing 5
-                                ]
+                            baseTab
                                 [ tabIcon
                                 , el [] (text (extractLabelFromLanguageMap cfg.language label))
                                 , el []
@@ -877,12 +875,7 @@ tabView cfg =
                                 ]
 
                 BareTab label ->
-                    row
-                        [ width fill
-                        , Font.center
-                        , alignLeft
-                        , centerY
-                        ]
+                    baseTab
                         [ el
                             []
                             (text (extractLabelFromLanguageMap cfg.language label))
