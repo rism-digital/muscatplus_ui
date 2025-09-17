@@ -30,7 +30,7 @@ type alias PublicationBody =
     , label : LanguageMap
     , creator : Maybe RelationshipBody
     , summary : Maybe (List LabelValue)
-    , status : LabelStringValue
+    , status : WorkCatalogueStatus
     , relationships : Maybe RelationshipsSectionBody
     , referencesNotes : Maybe NotesSectionBody
     , works : Maybe WorksSectionBody
@@ -60,7 +60,7 @@ publicationBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
         |> optional "summary" (maybe (list labelValueDecoder)) Nothing
-        |> required "status" labelStringValueDecoder
+        |> required "status" workCatalogueStatusDecoder
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "notes" (maybe notesSectionBodyDecoder) Nothing
         |> optional "works" (maybe worksSectionBodyDecoder) Nothing

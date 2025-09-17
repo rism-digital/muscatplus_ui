@@ -983,7 +983,6 @@ formatPublicationStatusBadge language status =
         statusElement lab bgc =
             row
                 [ width fill
-                , height fill
                 , spacing 4
                 , padding 6
                 ]

@@ -6,17 +6,17 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Region as Region
 import Html.Attributes as HA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.RecordTypes.Incipit exposing (IncipitFormat(..), RenderedIncipit(..))
-import Page.RecordTypes.Publication exposing (PublicationBody)
+import Page.RecordTypes.Publication exposing (PublicationBody, WorkCatalogueStatus)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
-import Page.UI.Components exposing (Tab(..), pageBodyOrEmpty, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
+import Page.UI.Components exposing (Tab(..), formatPublicationStatusBadge, pageBodyOrEmpty, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg)
@@ -132,6 +132,9 @@ viewPublicationBody { language, paragraphFormatter, preRenderedFormatter, relati
                         }
                     )
                     publicationBody.relationships
+
+                -- WIP
+                --, viewWorkCatalogueStatus { language = language, preRenderedFormatter = preRenderedFormatter } publicationBody.status
                 ]
     in
     row
@@ -148,6 +151,27 @@ viewPublicationBody { language, paragraphFormatter, preRenderedFormatter, relati
             , padding 20
             ]
             pageBody
+        ]
+
+
+viewWorkCatalogueStatus :
+    { language : Language
+    , preRenderedFormatter :
+        Language
+        ->
+            List
+                { label : LanguageMap
+                , value : List (Element msg)
+                }
+        -> Element msg
+    }
+    -> WorkCatalogueStatus
+    -> Element msg
+viewWorkCatalogueStatus { language, preRenderedFormatter } status =
+    preRenderedFormatter language
+        [ { label = toLanguageMap "Status"
+          , value = [ el [ alignTop ] (formatPublicationStatusBadge language status) ]
+          }
         ]
 
 

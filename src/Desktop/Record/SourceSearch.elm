@@ -4,7 +4,7 @@ module Desktop.Record.SourceSearch exposing
     )
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, clipY, column, fill, height, none, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, clipY, column, fill, height, none, px, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
@@ -223,9 +223,9 @@ viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
     in
     row
         [ width fill
-        , height (px 30)
+        , height (px 35)
         , alignLeft
-        , alignBottom
+        , centerY
         , spacing 10
         ]
         [ recordDescriptionTab
