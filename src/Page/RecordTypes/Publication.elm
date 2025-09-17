@@ -110,7 +110,7 @@ stringToWorkCatalogueStatus { label, value } =
             succeed (Partial label)
 
         "alternate" ->
-            succeed (Partial label)
+            succeed (Alternate label)
 
         _ ->
             fail ("Could not determine work catalogue status: " ++ value)

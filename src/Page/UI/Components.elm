@@ -893,9 +893,11 @@ tabView cfg =
         , height fill
         , paddingXY 20 2
         , Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
-        , Border.color colourScheme.darkGrey
-        , minimalDropShadow
-        , htmlAttribute (HA.style "clip-path" "inset(-5px -5px 0px -5px)")
+        , Border.color colourScheme.midGrey
+
+        --, Border.rounded 10
+        --, minimalDropShadow
+        , htmlAttribute (HA.style "z-index" "100")
         , onClick cfg.clickMsg
         , backgroundColour
         , fontColour
@@ -1004,7 +1006,7 @@ formatPublicationStatusBadge language status =
             statusElement st colourScheme.lightGreen
 
         Partial st ->
-            statusElement st colourScheme.yellow
+            statusElement st colourScheme.darkOrange
 
         Alternate st ->
-            statusElement st colourScheme.darkOrange
+            statusElement st colourScheme.puce
