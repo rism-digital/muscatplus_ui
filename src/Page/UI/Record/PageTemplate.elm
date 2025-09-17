@@ -4,6 +4,7 @@ module Page.UI.Record.PageTemplate exposing
     , pageFullRecordTemplate
     , pageHeaderTemplate
     , pageHeaderTemplateNoToc
+    , recordHeaderTemplate
     , subHeaderTemplate
     )
 
@@ -75,6 +76,24 @@ pageFooterTemplateFramed _ _ body =
                     }
                 ]
             ]
+        ]
+
+
+recordHeaderTemplate : List (Element msg) -> Element msg
+recordHeaderTemplate content =
+    row
+        [ width fill
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.midGrey
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , centerY
+            , alignLeft
+            , paddingXY 20 0
+            ]
+            content
         ]
 
 

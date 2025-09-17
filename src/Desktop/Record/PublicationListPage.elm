@@ -14,7 +14,7 @@ import Page.RecordTypes.Relationship exposing (RelatedToBody)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (formatPublicationStatusBadge)
 import Page.UI.Images exposing (folderMusicSvg)
-import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Style exposing (colourScheme, tableCellPadding)
 import Session exposing (Session)
 
@@ -53,20 +53,8 @@ viewPublicationListPage session model body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ row
-                [ width fill
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , centerY
-                    , alignLeft
-                    , paddingXY 20 0
-                    , minimalDropShadow
-                    ]
-                    [ pageHeader
-                    ]
+            [ recordHeaderTemplate
+                [ pageHeader
                 ]
             , row
                 [ width fill

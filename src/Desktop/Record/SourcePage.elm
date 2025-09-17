@@ -21,7 +21,7 @@ import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 import Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
@@ -90,24 +90,10 @@ viewFullSourcePage session model body =
             , height fill
             , alignTop
             , clipY
-            , Background.color colourScheme.white
             ]
-            [ row
-                [ width fill
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                , Border.color colourScheme.midGrey
-                ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , centerY
-                    , alignLeft
-                    , paddingXY 20 0
-                    , minimalDropShadow
-                    ]
-                    [ pageHeader
-                    , tabBar
-                    ]
+            [ recordHeaderTemplate
+                [ pageHeader
+                , tabBar
                 ]
             , pageBodyView
             , pageFooterTemplateRouter session session.language body

@@ -21,7 +21,7 @@ import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSecti
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
 import Page.UI.Record.Notes exposing (viewNotesSection)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.WorksSection exposing (viewPersonWorksSection)
 import Page.UI.Style exposing (colourScheme)
@@ -143,22 +143,9 @@ viewFullPersonPage session model body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ row
-                [ width fill
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                , Border.color colourScheme.midGrey
-                ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , centerY
-                    , alignLeft
-                    , paddingXY 20 0
-                    , minimalDropShadow
-                    ]
-                    [ pageHeader
-                    , tabBar
-                    ]
+            [ recordHeaderTemplate
+                [ pageHeader
+                , tabBar
                 ]
             , pageBodyView
             , pageFooterTemplateRouter session session.language body

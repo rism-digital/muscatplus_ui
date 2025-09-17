@@ -16,7 +16,7 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (booksSvg)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewBoundWithSection, viewExemplarExternalResourcesSection)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
@@ -57,21 +57,8 @@ viewFullHoldingPage session _ body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ row
-                [ width fill
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                , Border.color colourScheme.midGrey
-                ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , centerY
-                    , alignLeft
-                    , paddingXY 20 0
-                    , minimalDropShadow
-                    ]
-                    [ pageHeader
-                    ]
+            [ recordHeaderTemplate
+                [ pageHeader
                 ]
             , viewHoldingBody
                 { language = session.language

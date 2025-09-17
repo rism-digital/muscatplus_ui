@@ -20,7 +20,7 @@ import Page.UI.Components exposing (Tab(..), pageBodyOrEmpty, tabView, viewParag
 import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
@@ -80,22 +80,9 @@ viewFullPublicationPage session model body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ row
-                [ width fill
-                , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                , Border.color colourScheme.midGrey
-                ]
-                [ column
-                    [ width fill
-                    , height fill
-                    , centerY
-                    , alignLeft
-                    , paddingXY 20 0
-                    , minimalDropShadow
-                    ]
-                    [ pageHeader
-                    , tabBar
-                    ]
+            [ recordHeaderTemplate
+                [ pageHeader
+                , tabBar
                 ]
             , pageBodyView
             , pageFooterTemplateRouter session session.language body
