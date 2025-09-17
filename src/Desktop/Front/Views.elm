@@ -185,11 +185,9 @@ viewFrontSearchControlsLoading =
             ]
             [ row
                 [ width fill
-                , height (px 85)
                 , Background.color colourScheme.lightGrey
                 , Border.color colourScheme.midGrey
                 , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-                , minimalDropShadow
                 ]
                 []
             , row

@@ -15,6 +15,7 @@ import Page.UI.Attributes exposing (headingLG, headingSM, minimalDropShadow)
 import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
+import Page.UI.Search.Templates.SearchTmpl exposing (controlsTmpl)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
@@ -167,26 +168,7 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 )
                 (not isFrontPage)
     in
-    row
-        [ alignTop
-        , Background.color colourScheme.lightGrey
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.color colourScheme.midGrey
-        , minimalDropShadow
-        , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
-        , htmlAttribute (HA.style "z-index" "10")
-        , width fill
-        , height
-            (if isFrontPage then
-                px 85
-
-             else
-                px 50
-            )
-        , spacing 12
-        , centerY
-        , paddingXY 20 0
-        ]
+    controlsTmpl
         [ column
             [ width shrink
             ]

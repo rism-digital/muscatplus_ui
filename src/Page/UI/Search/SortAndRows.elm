@@ -8,9 +8,9 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchBody)
-import Page.UI.Attributes exposing (minimalDropShadow)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
+import Page.UI.Search.Templates.SearchTmpl exposing (controlsTmpl)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 
@@ -76,19 +76,7 @@ viewRowSelectAndSortSelector cfg =
                 )
                 (not cfg.isMobile)
     in
-    row
-        [ alignTop
-        , Background.color colourScheme.lightGrey
-        , Border.color colourScheme.midGrey
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , minimalDropShadow
-        , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
-        , width fill
-        , height (px 50)
-        , paddingXY 20 0
-        , centerY
-        , htmlAttribute (HA.style "z-index" "10")
-        ]
+    controlsTmpl
         [ column
             [ width fill
             , height fill

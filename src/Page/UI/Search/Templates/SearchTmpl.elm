@@ -69,6 +69,22 @@ viewRelatedWorksSearchResultsLoadingTmpl _ =
         ]
 
 
+controlsTmpl : List (Element msg) -> Element msg
+controlsTmpl contents =
+    row
+        [ alignTop
+        , Background.color colourScheme.lightGrey
+        , Border.color colourScheme.midGrey
+        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+        , width fill
+        , height (px 50)
+        , paddingXY 10 0
+        , spacing lineSpacing
+        , centerY
+        ]
+        contents
+
+
 viewSearchResultsLoadingTmpl : Language -> Element msg
 viewSearchResultsLoadingTmpl _ =
     row
@@ -82,18 +98,7 @@ viewSearchResultsLoadingTmpl _ =
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
             , Border.color colourScheme.midGrey
             ]
-            [ row
-                [ alignTop
-                , Background.color colourScheme.lightGrey
-                , Border.color colourScheme.midGrey
-                , minimalDropShadow
-                , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
-                , width fill
-                , height (px 50)
-                , paddingXY 20 0
-                , centerY
-                , htmlAttribute (HA.style "z-index" "10")
-                ]
+            [ controlsTmpl
                 [ none ]
             , row
                 [ width fill
@@ -108,18 +113,7 @@ viewSearchResultsLoadingTmpl _ =
             , scrollbarY
             , htmlAttribute (HA.style "min-height" "unset")
             ]
-            [ row
-                [ alignTop
-                , Background.color colourScheme.lightGrey
-                , Border.color colourScheme.midGrey
-                , minimalDropShadow
-                , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
-                , width fill
-                , height (px 50)
-                , paddingXY 20 0
-                , centerY
-                , htmlAttribute (HA.style "z-index" "10")
-                ]
+            [ controlsTmpl
                 [ none ]
             , row
                 [ width fill
