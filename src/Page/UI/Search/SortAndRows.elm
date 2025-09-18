@@ -1,10 +1,9 @@
 module Page.UI.Search.SortAndRows exposing (SortAndRowsConfig, viewSearchPageSort)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, centerY, column, el, fill, height, none, padding, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchBody)

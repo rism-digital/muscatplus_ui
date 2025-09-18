@@ -844,9 +844,7 @@ tabView cfg =
                 CountTab label count ->
                     let
                         tabIcon =
-                            el
-                                []
-                                cfg.icon
+                            cfg.icon
                     in
                     case count of
                         Just num ->
@@ -890,13 +888,13 @@ tabView cfg =
 
           else
             Font.medium
-        , height fill
-        , paddingXY 20 2
-        , Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
-        , Border.color colourScheme.midGrey
+        , paddingXY 10 10
 
-        --, Border.rounded 10
-        --, minimalDropShadow
+        --, Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
+        , Border.color colourScheme.darkBlue
+        , Border.width 1
+        , Border.rounded 8
+        , minimalDropShadow
         , htmlAttribute (HA.style "z-index" "100")
         , onClick cfg.clickMsg
         , backgroundColour
@@ -984,17 +982,17 @@ formatPublicationStatusBadge language status =
             row
                 [ width fill
                 , spacing 4
-                , padding 6
+                , alignTop
                 ]
                 [ el
                     [ width (px 15)
                     , height (px 15)
-                    , centerY
+                    , alignTop
                     , moveDown 1
                     ]
                     (circleSvg bgc)
                 , el
-                    [ centerY
+                    [ alignTop
                     , height (px 15)
                     ]
                     (text (extractLabelFromLanguageMap language lab))

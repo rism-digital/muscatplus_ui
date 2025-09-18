@@ -57,7 +57,7 @@ viewFullHoldingPage session _ body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ recordHeaderTemplate
+            [ recordHeaderTemplate True
                 [ pageHeader
                 ]
             , viewHoldingBody

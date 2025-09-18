@@ -38,10 +38,10 @@ viewFullSourcePage :
     -> Element RecordMsg
 viewFullSourcePage session model body =
     let
-        pageBodyView =
+        ( pageBodyView, showBottomShadow ) =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    viewDescriptionTab
+                    ( viewDescriptionTab
                         { expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
                         , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
                         , expandedIncipits = model.incipitInfoExpanded
@@ -49,9 +49,11 @@ viewFullSourcePage session model body =
                         , language = session.language
                         }
                         body
+                    , True
+                    )
 
                 ContentsSearchDisplayTab _ ->
-                    viewSourceSearchTabBody session model
+                    ( viewSourceSearchTabBody session model, False )
 
         sourceIcon =
             .recordType body.sourceTypes
@@ -91,7 +93,7 @@ viewFullSourcePage session model body =
             , alignTop
             , clipY
             ]
-            [ recordHeaderTemplate
+            [ recordHeaderTemplate showBottomShadow
                 [ pageHeader
                 , tabBar
                 ]

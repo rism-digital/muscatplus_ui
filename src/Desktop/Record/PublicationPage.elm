@@ -22,7 +22,7 @@ import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
-import Page.UI.Search.Pagination exposing (viewPagination)
+import Page.UI.Search.Pagination exposing (viewPagination, viewTablePagination)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme, tableCellPadding)
@@ -37,13 +37,13 @@ viewFullPublicationPage :
     -> Element RecordMsg
 viewFullPublicationPage session model body =
     let
-        pageBodyView =
+        ( pageBodyView, showBottomShadow ) =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    viewDescriptionTab session.language body
+                    ( viewDescriptionTab session.language body, True )
 
                 ContentsSearchDisplayTab _ ->
-                    viewRelatedWorksListTabBody session model
+                    ( viewRelatedWorksListTabBody session model, True )
 
         icon =
             el
@@ -80,7 +80,7 @@ viewFullPublicationPage session model body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ recordHeaderTemplate
+            [ recordHeaderTemplate True
                 [ pageHeader
                 , tabBar
                 ]
@@ -116,7 +116,12 @@ viewPublicationBody { language, paragraphFormatter, preRenderedFormatter, relati
         pageBody =
             pageBodyOrEmpty language
                 False
-                [ viewMaybe
+                [ viewWorkCatalogueStatus
+                    { language = language
+                    , preRenderedFormatter = preRenderedFormatter
+                    }
+                    publicationBody.status
+                , viewMaybe
                     (viewCreator
                         { language = language
                         , relationshipFormatter = relationshipFormatter
@@ -134,7 +139,6 @@ viewPublicationBody { language, paragraphFormatter, preRenderedFormatter, relati
                     publicationBody.relationships
 
                 -- WIP
-                --, viewWorkCatalogueStatus { language = language, preRenderedFormatter = preRenderedFormatter } publicationBody.status
                 ]
     in
     row
@@ -403,7 +407,7 @@ viewWorksResultsSection cfg isLoading body =
             ]
             [ row
                 [ width fill ]
-                [ viewPagination language body.pagination cfg.userClickedResultsPaginationMsg ]
+                [ viewTablePagination language body.pagination cfg.userClickedResultsPaginationMsg ]
             , row
                 [ width fill
                 , inFront (viewResultsListLoadingScreenTmpl isLoading)
@@ -441,7 +445,7 @@ viewWorksResultsSection cfg isLoading body =
                 ]
             , row
                 [ width fill ]
-                [ viewPagination language body.pagination cfg.userClickedResultsPaginationMsg ]
+                [ viewTablePagination language body.pagination cfg.userClickedResultsPaginationMsg ]
             ]
         ]
 

@@ -1,6 +1,6 @@
-module Page.UI.Search.Pagination exposing (viewPagination)
+module Page.UI.Search.Pagination exposing (viewPagination, viewTablePagination)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, padding, pointer, px, row, shrink, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, none, padding, pointer, px, row, shrink, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -9,7 +9,7 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
-import Page.UI.Attributes exposing (headingSM, minimalDropShadow)
+import Page.UI.Attributes exposing (headingMD, headingSM, minimalDropShadow)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -27,8 +27,31 @@ paginationLink icon clickFn url =
         icon
 
 
-viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
-viewPagination language pagination clickMsg =
+viewTablePagination : Language -> SearchPagination -> (String -> msg) -> Element msg
+viewTablePagination language pagination clickMsg =
+    let
+        rowStyle =
+            row
+                [ htmlAttribute (HA.style "width" "50%")
+                , centerX
+                ]
+    in
+    viewPaginationImpl
+        { language = language
+        , pagination = pagination
+        , clickMsg = clickMsg
+        , rowStyle = rowStyle
+        }
+
+
+viewPaginationImpl :
+    { language : Language
+    , pagination : SearchPagination
+    , clickMsg : String -> msg
+    , rowStyle : List (Element msg) -> Element msg
+    }
+    -> Element msg
+viewPaginationImpl { language, pagination, clickMsg, rowStyle } =
     let
         pageLabel =
             extractLabelFromLanguageMap language localTranslations.page
@@ -42,17 +65,7 @@ viewPagination language pagination clickMsg =
         pageInfo =
             pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
     in
-    row
-        [ width fill
-        , alignBottom
-        , height (px 30)
-        , Background.color colourScheme.lightGrey
-        , Border.color colourScheme.midGrey
-        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
-
-        --, minimalDropShadow
-        , htmlAttribute (HA.style "z-index" "10")
-        ]
+    rowStyle
         [ column
             [ alignLeft
             , width fill
@@ -76,7 +89,7 @@ viewPagination language pagination clickMsg =
                 , centerY
                 ]
                 [ el
-                    [ headingSM
+                    [ headingMD
                     , Font.medium
                     ]
                     (text pageInfo)
@@ -95,3 +108,22 @@ viewPagination language pagination clickMsg =
                 ]
             ]
         ]
+
+
+viewPagination : Language -> SearchPagination -> (String -> msg) -> Element msg
+viewPagination language pagination clickMsg =
+    let
+        rowStyle =
+            row
+                [ width fill
+                , alignBottom
+                , height (px 30)
+                , Background.color colourScheme.lightGrey
+                , Border.color colourScheme.midGrey
+                , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
+
+                --, minimalDropShadow
+                , htmlAttribute (HA.style "z-index" "10")
+                ]
+    in
+    viewPaginationImpl { language = language, pagination = pagination, clickMsg = clickMsg, rowStyle = rowStyle }

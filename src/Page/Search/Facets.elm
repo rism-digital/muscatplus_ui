@@ -47,9 +47,8 @@ viewModeItem selectedMode language fitem =
 
         iconTmpl svg =
             el
-                [ width (px 25)
-                , height fill
-                , padding 4
+                [ height (px 15)
+                , width (px 15)
                 , centerX
                 , centerY
                 ]

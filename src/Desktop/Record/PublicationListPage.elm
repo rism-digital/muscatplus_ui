@@ -53,7 +53,7 @@ viewPublicationListPage session model body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ recordHeaderTemplate
+            [ recordHeaderTemplate True
                 [ pageHeader
                 ]
             , row

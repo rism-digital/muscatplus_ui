@@ -53,18 +53,20 @@ viewFullWorkPage session model body =
             else
                 pageHeaderTemplate language (Just icon) body
 
-        pageBodyView =
+        ( pageBodyView, showBottomShadow ) =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    viewDescriptionTab
+                    ( viewDescriptionTab
                         { language = language
                         , expandedIncipits = model.incipitInfoExpanded
                         , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
                         }
                         body
+                    , True
+                    )
 
                 ContentsSearchDisplayTab _ ->
-                    viewSourceSearchTabBody session model
+                    ( viewSourceSearchTabBody session model, False )
 
         tabBar =
             if session.isFramed then
@@ -91,7 +93,7 @@ viewFullWorkPage session model body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ recordHeaderTemplate
+            [ recordHeaderTemplate showBottomShadow
                 [ pageHeader
                 , tabBar
                 ]

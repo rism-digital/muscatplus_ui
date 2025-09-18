@@ -21,7 +21,7 @@ import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.SideBar.Options exposing (SideBarOptions)
 import Page.UI.Animations exposing (animatedColumn, animatedEl)
-import Page.UI.Attributes exposing (sidebarWidth)
+import Page.UI.Attributes exposing (shadowHighElevation, sidebarWidth)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (folderMusicSvg, institutionSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
 import Page.UI.Style exposing (colourScheme, headerHeight, recordTitleHeight, tabBarHeight)
@@ -209,6 +209,8 @@ view session options =
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , Border.shadow { blur = 4, color = colourScheme.darkBlueTranslucent, offset = ( 2, 1 ), size = 1 }
+
+        --, shadowHighElevation
         , Region.navigation
         ]
         [ row

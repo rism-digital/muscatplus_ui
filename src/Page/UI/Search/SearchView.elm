@@ -219,6 +219,7 @@ viewSearchResultsSection cfg resultsLoading body =
         , Background.color colourScheme.white
         , inFront queryBuilderWindow
         , inFront downloaderWindow
+        , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
         ]
         [ column
             [ width (px 550)
@@ -226,7 +227,6 @@ viewSearchResultsSection cfg resultsLoading body =
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
             , Border.color colourScheme.midGrey
-            , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
             ]
             [ viewSearchPageSort
                 { language = language

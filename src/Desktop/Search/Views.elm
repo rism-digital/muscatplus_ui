@@ -13,6 +13,7 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.PageTemplate exposing (recordHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
 import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsLoadingTmpl)
@@ -157,18 +158,6 @@ viewSearchBody session model =
 
 viewTopBar : Language -> SearchPageModel SearchMsg -> Element SearchMsg
 viewTopBar lang model =
-    row
-        [ width fill
-        , height (px tabBarHeight)
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.color colourScheme.midGrey
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , height fill
-            ]
-            [ searchModeSelectorRouter lang model
-            ]
+    recordHeaderTemplate False
+        [ searchModeSelectorRouter lang model
         ]

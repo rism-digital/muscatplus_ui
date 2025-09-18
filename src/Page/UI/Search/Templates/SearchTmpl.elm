@@ -74,7 +74,10 @@ controlsTmpl contents =
         [ alignTop
         , Background.color colourScheme.lightGrey
         , Border.color colourScheme.midGrey
-        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
+        , Border.widthEach { top = 1, bottom = 1, left = 0, right = 0 }
+        , minimalDropShadow
+        , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
+        , htmlAttribute (HA.style "z-index" "10")
         , width fill
         , height (px 50)
         , paddingXY 10 0

@@ -9,7 +9,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, newTabLink, none, padding, paddingXY, row, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, newTabLink, none, padding, paddingXY, row, shrink, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -19,12 +19,12 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
-import Page.UI.Attributes exposing (headingLG, headingMD, lineSpacing, linkColour, minimalDropShadow)
+import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, lineSpacing, linkColour, minimalDropShadow, shadowMediumElevation)
 import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, h3s, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
-import Page.UI.Style exposing (colourScheme)
+import Page.UI.Style exposing (colourScheme, headerHeight, tabBarHeight)
 import Session exposing (Session)
 import Url
 
@@ -79,19 +79,27 @@ pageFooterTemplateFramed _ _ body =
         ]
 
 
-recordHeaderTemplate : List (Element msg) -> Element msg
-recordHeaderTemplate content =
+recordHeaderTemplate : Bool -> List (Element msg) -> Element msg
+recordHeaderTemplate showBottomShadow content =
     row
         [ width fill
-        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
-        , Border.color colourScheme.midGrey
+        , if showBottomShadow then
+            minimalDropShadow
+
+          else
+            emptyAttribute
+        , htmlAttribute (HA.style "z-index" "100")
+        , paddingXY 0 10
         ]
         [ column
             [ width fill
-            , height fill
+
+            --, height fill
             , centerY
             , alignLeft
             , paddingXY 20 0
+            , spacingXY 0 lineSpacing
+            , height (fill |> minimum tabBarHeight)
             ]
             content
         ]
@@ -144,9 +152,8 @@ pageFooterTemplate session language footer =
         , padding 20
         , alignBottom
         , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
-
-        --, minimalDropShadow
-        --, Border.color colourScheme.midGrey
+        , minimalDropShadow
+        , Border.color colourScheme.midGrey
         , htmlAttribute (HA.style "z-index" "10")
         , htmlAttribute (HA.id "ro-record-footer")
         , Region.footer
@@ -297,7 +304,7 @@ pageLinkTemplate language langMap fontSize body =
 
 pageFullRecordTemplate : Language -> { a | id : String } -> Element msg
 pageFullRecordTemplate language body =
-    pageLinkTemplate language localTranslations.fullRecord headingMD body
+    pageLinkTemplate language localTranslations.fullRecord headingLG body
 
 
 pageUriTemplate : Language -> Attribute msg -> { a | id : String } -> Element msg

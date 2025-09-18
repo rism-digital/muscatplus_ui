@@ -101,13 +101,13 @@ viewFullPersonPage :
     -> Element RecordMsg
 viewFullPersonPage session model body =
     let
-        pageBodyView =
+        ( pageBodyView, showBottomShadow ) =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    viewDescriptionTab session.language body
+                    ( viewDescriptionTab session.language body, True )
 
                 ContentsSearchDisplayTab _ ->
-                    viewSourceSearchTabBody session model
+                    ( viewSourceSearchTabBody session model, False )
 
         icon =
             el
@@ -143,7 +143,7 @@ viewFullPersonPage session model body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ recordHeaderTemplate
+            [ recordHeaderTemplate showBottomShadow
                 [ pageHeader
                 , tabBar
                 ]
