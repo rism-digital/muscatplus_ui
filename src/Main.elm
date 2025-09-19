@@ -76,8 +76,8 @@ init flags initialUrl key =
                 initialBody =
                     Front.init
                         { queryArgs = qargs
-                        , searchPreferences = session.searchPreferences
                         , initialData = flags.initialData
+                        , session = session
                         }
                         |> addNationalCollectionFilter session.restrictedToNationalCollection
 
@@ -113,6 +113,7 @@ init flags initialUrl key =
                     , queryArgs = qargs
                     , keyboardQueryArgs = kqargs
                     , searchPreferences = session.searchPreferences
+                    , session = session
                     }
 
                 initialBody =
@@ -397,9 +398,8 @@ recordRouteHelper { initialData, initialUrl, route, session } =
             { incomingUrl = initialUrl
             , route = route
             , queryArgs = Nothing
-            , nationalCollection = session.restrictedToNationalCollection
-            , searchPreferences = session.searchPreferences
             , initialData = initialData
+            , session = session
             }
 
         initialBody =
@@ -440,9 +440,8 @@ recordContentsRouteHelper { initialData, initialUrl, qargs, route, session } =
             { incomingUrl = initialUrl
             , route = route
             , queryArgs = Just qargs
-            , nationalCollection = session.restrictedToNationalCollection
-            , searchPreferences = session.searchPreferences
             , initialData = initialData
+            , session = session
             }
 
         initialBody =
@@ -483,9 +482,8 @@ recordHoldingsRouteHelper { initialData, initialUrl, route, session } =
             { incomingUrl = initialUrl
             , route = route
             , queryArgs = Nothing
-            , nationalCollection = session.restrictedToNationalCollection
-            , searchPreferences = session.searchPreferences
             , initialData = initialData
+            , session = session
             }
 
         initialBody =

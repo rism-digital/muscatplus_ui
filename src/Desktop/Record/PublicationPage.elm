@@ -1,7 +1,7 @@
 module Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paddingXY, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Region as Region
@@ -15,16 +15,16 @@ import Page.RecordTypes.Publication exposing (PublicationBody, WorkCatalogueStat
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
+import Page.UI.Attributes exposing (cycleTableBackground, linkColour, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (Tab(..), formatPublicationStatusBadge, pageBodyOrEmpty, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
-import Page.UI.Search.Pagination exposing (viewPagination, viewTablePagination)
+import Page.UI.Search.Pagination exposing (viewTablePagination)
+import Page.UI.Search.SearchTemplate exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme, tableCellPadding)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -37,13 +37,13 @@ viewFullPublicationPage :
     -> Element RecordMsg
 viewFullPublicationPage session model body =
     let
-        ( pageBodyView, showBottomShadow ) =
+        pageBodyView =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    ( viewDescriptionTab session.language body, True )
+                    viewDescriptionTab session.language body
 
                 ContentsSearchDisplayTab _ ->
-                    ( viewRelatedWorksListTabBody session model, True )
+                    viewRelatedWorksListTabBody session model
 
         icon =
             el

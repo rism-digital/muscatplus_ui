@@ -2,9 +2,7 @@ module Desktop.Record.SourcePage exposing (viewFullSourcePage)
 
 import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
-import Element.Background as Background
-import Element.Border as Border
+import Element exposing (Element, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language)
@@ -12,7 +10,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
-import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (sourceIconChooser, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)

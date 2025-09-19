@@ -1,6 +1,7 @@
 module Desktop.SideBar.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
 
 import Config
+import Desktop.SideBar.Icons exposing (sidebarIcon)
 import Desktop.SideBar.MenuOption exposing (sidebarChooserAnimations)
 import Dict exposing (Dict)
 import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, image, maximum, minimum, mouseOver, moveLeft, moveRight, none, onRight, padding, paddingXY, paragraph, pointer, px, row, scrollbarY, shrink, spacing, text, width)
@@ -256,13 +257,9 @@ viewNationalCollectionChooserMenuOption session options =
         showLabels =
             showSideBarLabels options.expandedSideBar
 
-        sidebarIcon =
+        menuOptionIcon =
             case session.restrictedToNationalCollection of
                 Just countryCode ->
-                    let
-                        countryFlagImage =
-                            imageForCountryCode countryCode
-                    in
                     column
                         [ width (px 35)
                         , Border.width 2
@@ -274,7 +271,7 @@ viewNationalCollectionChooserMenuOption session options =
                             , centerX
                             , centerY
                             ]
-                            countryFlagImage
+                            (imageForCountryCode countryCode)
                         , el
                             [ centerX
                             , centerY
@@ -286,18 +283,8 @@ viewNationalCollectionChooserMenuOption session options =
                         ]
 
                 Nothing ->
-                    column
-                        [ width (px 35)
-                        , Border.width 2
-                        , padding 2
-                        ]
-                        [ el
-                            [ width (px 18)
-                            , centerX
-                            , centerY
-                            ]
-                            (globeSvg labelFontColour)
-                        ]
+                    globeSvg labelFontColour
+                        |> sidebarIcon [ Border.width 2 ]
 
         viewChooser =
             if options.currentlyHoveredNationalCollectionSidebarOption && options.expandedSideBar == Expanded then
@@ -336,7 +323,7 @@ viewNationalCollectionChooserMenuOption session options =
                 , spacing 10
                 , moveRight iconAlignment
                 ]
-                [ sidebarIcon
+                [ menuOptionIcon
                 , viewIf (animatedLabel labelEl) showLabels
                 ]
             ]

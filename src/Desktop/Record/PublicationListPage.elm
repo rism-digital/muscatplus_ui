@@ -1,6 +1,6 @@
 module Desktop.Record.PublicationListPage exposing (viewPublicationListPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, padding, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -11,7 +11,7 @@ import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody, WorkCatalogueStatus)
 import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody)
-import Page.UI.Attributes exposing (cycleTableBackground, linkColour, minimalDropShadow, sectionSpacing, tableHeaderStyles)
+import Page.UI.Attributes exposing (cycleTableBackground, linkColour, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (formatPublicationStatusBadge)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.PageTemplate exposing (pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)

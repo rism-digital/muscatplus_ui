@@ -117,12 +117,11 @@ viewPagination language pagination clickMsg =
             row
                 [ width fill
                 , alignBottom
-                , height (px 30)
+                , height (px 50)
                 , Background.color colourScheme.lightGrey
                 , Border.color colourScheme.midGrey
                 , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
-
-                --, minimalDropShadow
+                , minimalDropShadow
                 , htmlAttribute (HA.style "z-index" "10")
                 ]
     in

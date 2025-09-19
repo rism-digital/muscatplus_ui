@@ -18,7 +18,7 @@ import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (QueryValidation(..))
-import Page.UI.Attributes exposing (emptyHtmlAttribute, headingMD, headingXXL, lineSpacing, linkColour, minimalInsetShadow)
+import Page.UI.Attributes exposing (emptyHtmlAttribute, headingLG, headingMD, headingXXL, lineSpacing, linkColour, minimalInsetShadow)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme)
@@ -111,11 +111,10 @@ viewKeywordQueryInput { language, submitMsg, changeMsg, queryText, queryIsValid,
                         , htmlAttribute (HA.autocomplete False)
                         , htmlAttribute (HA.autofocus True)
                         , htmlAttribute statusIconAttribute
-                        , Border.rounded 0
                         , onEnter submitMsg
-                        , headingXXL
+                        , headingMD
                         , Font.medium
-                        , paddingXY 10 20
+                        , padding 12
                         , minimalInsetShadow
                         ]
                         { label = Input.labelHidden (extractLabelFromLanguageMap language localTranslations.search)

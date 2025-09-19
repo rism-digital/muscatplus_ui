@@ -16,9 +16,9 @@ import Page.UI.Components exposing (viewMobileParagraphField, viewMobileSummaryF
 import Page.UI.Record.Previews exposing (viewMobilePreviewRouter)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
 import Page.UI.Search.Pagination exposing (viewPagination)
+import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingTmpl)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultRouter)
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsLoadingTmpl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 

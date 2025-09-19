@@ -9,7 +9,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchBody)
 import Page.UI.Components exposing (dropdownSelect)
 import Page.UI.Helpers exposing (viewIf)
-import Page.UI.Search.Templates.SearchTmpl exposing (controlsTmpl)
+import Page.UI.Search.SearchTemplate exposing (controlsTmpl)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 

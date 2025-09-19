@@ -9,7 +9,7 @@ module Page.UI.Record.PageTemplate exposing
     )
 
 import Config as C
-import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, newTabLink, none, padding, paddingXY, row, shrink, spacing, spacingXY, text, width, wrappedRow)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, minimum, newTabLink, none, padding, paddingXY, row, spacing, spacingXY, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -19,12 +19,12 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Shared exposing (RecordHistory)
 import Page.Route exposing (Route(..))
-import Page.UI.Attributes exposing (emptyAttribute, headingLG, headingMD, lineSpacing, linkColour, minimalDropShadow, shadowMediumElevation)
+import Page.UI.Attributes exposing (emptyAttribute, headingLG, lineSpacing, linkColour, minimalDropShadow)
 import Page.UI.Components exposing (externalLinkTemplate, h1, h2s, h3s, resourceLink)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (rismLogo)
 import Page.UI.Record.RecordHistory exposing (viewRecordHistory)
-import Page.UI.Style exposing (colourScheme, headerHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme, tabBarHeight)
 import Session exposing (Session)
 import Url
 
@@ -89,16 +89,15 @@ recordHeaderTemplate showBottomShadow content =
           else
             emptyAttribute
         , htmlAttribute (HA.style "z-index" "100")
-        , paddingXY 0 10
+        , paddingXY 20 10
+        , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
+        , Border.color colourScheme.midGrey
         ]
         [ column
             [ width fill
-
-            --, height fill
             , centerY
             , alignLeft
-            , paddingXY 20 0
-            , spacingXY 0 lineSpacing
+            , spacingXY 0 12
             , height (fill |> minimum tabBarHeight)
             ]
             content
@@ -200,7 +199,6 @@ pageHeaderTemplate language icon header =
         , extraAttrs =
             [ htmlAttribute (HA.id header.sectionToc)
             , alignTop
-            , paddingXY 0 10
             ]
         , hLevel = h1 language
         , icon = icon

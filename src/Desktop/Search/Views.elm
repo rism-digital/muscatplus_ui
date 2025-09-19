@@ -2,8 +2,7 @@ module Desktop.Search.Views exposing (view)
 
 import ActiveSearch exposing (toActiveSearch)
 import Desktop.Error.Views
-import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, px, row, text, width)
-import Element.Border as Border
+import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, row, text, width)
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toMode, toNextQuery)
@@ -15,9 +14,8 @@ import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryFi
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.PageTemplate exposing (recordHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
+import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingTmpl)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsLoadingTmpl)
-import Page.UI.Style exposing (colourScheme, tabBarHeight)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 

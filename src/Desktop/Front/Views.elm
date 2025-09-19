@@ -204,7 +204,7 @@ viewFrontSearchControlsLoading =
                         [ width (px 50)
                         , height (px 50)
                         ]
-                        (spinnerSvg colourScheme.midGrey)
+                        (spinnerSvg colourScheme.lightBlue)
                     )
                 ]
             ]
@@ -371,7 +371,6 @@ viewFacetPanels cfg =
         ]
         [ column
             [ width fill
-            , spacing lineSpacing
             , alignTop
             ]
             [ mainTitle

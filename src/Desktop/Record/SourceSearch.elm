@@ -13,8 +13,8 @@ import Page.UI.Components exposing (Tab(..), tabView, viewParagraphField, viewPr
 import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
+import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingTmpl)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewSearchResultsLoadingTmpl)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 

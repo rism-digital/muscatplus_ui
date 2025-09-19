@@ -1,6 +1,7 @@
 module Desktop.SideBar.MenuOption exposing (menuOption, sidebarChooserAnimations)
 
-import Element exposing (Color, Element, alignLeft, alignTop, centerY, el, fill, paddingXY, pointer, px, row, spacing, width)
+import Desktop.SideBar.Icons exposing (sidebarIcon)
+import Element exposing (Color, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, moveRight, padding, paddingXY, pointer, px, row, shrink, spacing, width)
 import Element.Background as Background
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
@@ -29,6 +30,7 @@ menuOption :
     { icon : Color -> Element SideBarMsg
     , isCurrent : Bool
     , isHovered : Bool
+    , isExpanded : Bool
     , label : Element SideBarMsg
     , showLabel : Bool
     }
@@ -58,12 +60,25 @@ menuOption cfg option =
             choose cfg.isCurrent
                 (\() -> Background.color colourScheme.white)
                 (\() -> emptyAttribute)
+
+        optionLabel =
+            el [ Font.alignLeft, alignLeft ] cfg.label
+
+        menuOptionIcon =
+            sidebarIcon [] icon
+
+        ( iconCentering, iconAlignment ) =
+            if cfg.isExpanded then
+                ( alignLeft, 15 )
+
+            else
+                ( centerX, 0 )
     in
     row
         [ width fill
+        , height (px 30)
         , alignTop
-        , paddingXY 22 10
-        , spacing 10
+        , alignLeft
         , pointer
         , hoverStyles
         , selectedStyle
@@ -72,11 +87,18 @@ menuOption cfg option =
         , onMouseLeave UserMouseExitedSideBarOption
         , Font.color fontColour
         ]
-        [ el
-            [ width (px 24)
+        [ column
+            [ width fill
             , alignLeft
-            , centerY
             ]
-            icon
-        , viewIf (animatedLabel cfg.label) cfg.showLabel
+            [ row
+                [ width shrink
+                , iconCentering
+                , spacing 10
+                , moveRight iconAlignment
+                ]
+                [ menuOptionIcon
+                , viewIf (animatedLabel optionLabel) cfg.showLabel
+                ]
+            ]
         ]

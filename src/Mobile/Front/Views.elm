@@ -123,7 +123,7 @@ viewFrontSearchControlsLoading =
                 [ width (px 50)
                 , height (px 50)
                 ]
-                (spinnerSvg colourScheme.midGrey)
+                (spinnerSvg colourScheme.lightBlue)
             )
         ]
 

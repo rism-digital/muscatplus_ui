@@ -7,7 +7,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.Query exposing (toFilters, toNextQuery)
 import Page.RecordTypes.Search exposing (ToggleFacet)
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.UI.Attributes exposing (bodySM)
+import Page.UI.Attributes exposing (bodyRegular)
 import Page.UI.Facets.Toggle as Toggle
 import Page.UI.Tooltip exposing (facetTooltip)
 
@@ -42,7 +42,7 @@ viewToggleFacet config =
             []
             [ row
                 []
-                [ el [ bodySM ]
+                [ el [ bodyRegular ]
                     (Toggle.view isActive (config.userClickedFacetToggleMsg facetAlias)
                         |> Toggle.setLabel (extractLabelFromLanguageMap config.language (.label config.toggleFacet))
                         |> Toggle.render

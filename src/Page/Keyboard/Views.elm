@@ -138,6 +138,5 @@ view { language, model, notationFacet, searchPreferences, suppressInMobileUi } =
                         }
                     ]
                 ]
-            , paeHelp
             ]
         ]

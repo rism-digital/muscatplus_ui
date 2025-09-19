@@ -2,6 +2,7 @@ module Desktop.SideBar.Views exposing (viewRouter)
 
 import Debouncer.Messages exposing (provideInput)
 import Desktop.SideBar.AboutMenu as AboutMenu
+import Desktop.SideBar.Icons exposing (sidebarRowBaseOptions, sidebarRowColumnBaseOptions)
 import Desktop.SideBar.LanguageChooser exposing (viewLanguageChooserMenuOption)
 import Desktop.SideBar.MenuOption exposing (menuOption)
 import Desktop.SideBar.NationalCollectionChooser exposing (viewNationalCollectionChooserMenuOption)
@@ -9,6 +10,7 @@ import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column,
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
+import Element.Font as Font
 import Element.Lazy exposing (lazy2)
 import Element.Region as Region
 import Html.Attributes as HA
@@ -21,10 +23,10 @@ import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.SideBar.Options exposing (SideBarOptions)
 import Page.UI.Animations exposing (animatedColumn, animatedEl)
-import Page.UI.Attributes exposing (shadowHighElevation, sidebarWidth)
+import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (folderMusicSvg, institutionSvg, musicNotationSvg, onlineTextSvg, peopleSvg, rismLogo, sourcesSvg)
-import Page.UI.Style exposing (colourScheme, headerHeight, recordTitleHeight, tabBarHeight)
+import Page.UI.Style exposing (colourScheme, headerHeight)
 import Session exposing (Session)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
@@ -35,12 +37,12 @@ dividingLine =
     row
         [ width fill
         , height shrink
-        , paddingXY 15 0
+        , paddingXY 12 0
         , Background.color colourScheme.darkBlue
         ]
         [ column
             [ width fill
-            , Border.widthEach { bottom = 1, left = 0, right = 0, top = 1 }
+            , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
             , Border.color colourScheme.white
             ]
             []
@@ -86,11 +88,20 @@ view session options =
         sideBarAnimation =
             options.expandedSideBar
 
+        isExpanded =
+            case sideBarAnimation of
+                Expanded ->
+                    True
+
+                _ ->
+                    False
+
         incipitsInterfaceMenuOption =
             menuOption
                 { icon = musicNotationSvg
                 , isCurrent = checkSelected IncipitSearchOption
                 , isHovered = checkHover IncipitSearchOption
+                , isExpanded = isExpanded
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.incipits)
                 , showLabel = showLabels
                 }
@@ -104,6 +115,7 @@ view session options =
                 { icon = institutionSvg
                 , isCurrent = checkSelected InstitutionSearchOption
                 , isHovered = checkHover InstitutionSearchOption
+                , isExpanded = isExpanded
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.institutions)
                 , showLabel = showLabels
                 }
@@ -118,6 +130,7 @@ view session options =
                     { icon = peopleSvg
                     , isCurrent = checkSelected PeopleSearchOption
                     , isHovered = checkHover PeopleSearchOption
+                    , isExpanded = isExpanded
                     , label = text (extractLabelFromLanguageMap session.language localTranslations.people)
                     , showLabel = showLabels
                     }
@@ -183,6 +196,7 @@ view session options =
                 { icon = sourcesSvg
                 , isCurrent = checkSelected SourceSearchOption
                 , isHovered = checkHover SourceSearchOption
+                , isExpanded = isExpanded
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.sources)
                 , showLabel = showLabels
                 }
@@ -193,6 +207,7 @@ view session options =
                 { icon = folderMusicSvg
                 , isCurrent = checkSelected WorkCatalogueNavigateOption
                 , isHovered = checkHover WorkCatalogueNavigateOption
+                , isExpanded = isExpanded
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.workCatalogues)
                 , showLabel = showLabels
                 }
@@ -208,14 +223,12 @@ view session options =
         , Background.color colourScheme.white
         , onMouseEnter (UserMouseEnteredSideBar |> provideInput |> ClientDebouncedSideBarMessages)
         , onMouseLeave (UserMouseExitedSideBar |> provideInput |> ClientDebouncedSideBarMessages)
-        , Border.shadow { blur = 4, color = colourScheme.darkBlueTranslucent, offset = ( 2, 1 ), size = 1 }
-
-        --, shadowHighElevation
+        , Border.shadow { blur = 4, color = colourScheme.translucentGrey, offset = ( 2, 1 ), size = 1 }
         , Region.navigation
         ]
         [ row
             [ width fill
-            , height (px (tabBarHeight + recordTitleHeight))
+            , height (px 80)
             , Background.color colourScheme.darkBlue
             ]
             [ column
@@ -250,42 +263,19 @@ view session options =
                 ]
             ]
         , row
-            [ width fill
-            , height shrink
-            , alignLeft
-            , paddingXY 0 10
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color colourScheme.darkBlue
-            , Background.color colourScheme.darkBlue
-            ]
+            sidebarRowBaseOptions
             [ column
-                [ width fill
-                , height fill
-                , centerX
-                , alignTop
-                , spacing 10
+                sidebarRowColumnBaseOptions
+                [ viewNationalCollectionChooserMenuOption session options
                 ]
-                [ viewNationalCollectionChooserMenuOption session options ]
             ]
         , dividingLine
         , viewLanguageChooserMenuOption session options
         , dividingLine
         , row
-            [ width fill
-            , height shrink
-            , alignLeft
-            , paddingXY 0 10
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color colourScheme.darkBlue
-            , Background.color colourScheme.darkBlue
-            ]
+            sidebarRowBaseOptions
             [ column
-                [ width fill
-                , height fill
-                , centerX
-                , alignTop
-                , spacing 2
-                ]
+                sidebarRowColumnBaseOptions
                 [ sourcesInterfaceMenuOption
                 , peopleInterfaceMenuOption
                 , institutionInterfaceMenuOption
@@ -294,35 +284,15 @@ view session options =
             ]
         , dividingLine
         , row
-            [ width fill
-            , height shrink
-            , alignLeft
-            , paddingXY 0 10
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color colourScheme.darkBlue
-            , Background.color colourScheme.darkBlue
-            ]
+            sidebarRowBaseOptions
             [ column
-                [ width fill
-                , height fill
-                , centerX
-                , alignTop
-                , spacing 2
-                ]
+                sidebarRowColumnBaseOptions
                 [ workCataloguesInterfaceMenuOption ]
             ]
         , row
-            [ height fill
-            , width fill
-            , Border.widthEach { bottom = 0, left = 0, right = 2, top = 0 }
-            , Border.color colourScheme.darkBlue
-            , Background.color colourScheme.darkBlue
-            ]
+            (sidebarRowBaseOptions ++ [ height fill ])
             [ column
-                [ height fill
-                , width fill
-                , paddingXY 0 10
-                ]
+                sidebarRowColumnBaseOptions
                 [ AboutMenu.view session.language options ]
             ]
         ]

@@ -10,7 +10,7 @@ import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
-import Page.UI.Attributes exposing (bodySM, headingMD, lineSpacing, minimalDropShadow)
+import Page.UI.Attributes exposing (bodySM, buttonBaseStyles, headingMD, lineSpacing, minimalDropShadow)
 import Page.UI.Components exposing (viewWindowTitleBar)
 import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Style exposing (colourScheme)
@@ -57,13 +57,21 @@ viewWindowContent :
     -> Element DownloaderMsg
 viewWindowContent { language, model } =
     let
-        ( cancelColour, cancelFontColour, cancelMsg ) =
+        cancelButtonCfg =
             case model.downloadState of
                 Downloading _ ->
-                    ( colourScheme.red, colourScheme.white, Just UserClickedCancelDownloadButton )
+                    { colour = colourScheme.red
+                    , fontColour = colourScheme.white
+                    , msg = Just UserClickedCancelDownloadButton
+                    , pointer = pointer
+                    }
 
                 _ ->
-                    ( colourScheme.lightGrey, colourScheme.darkGrey, Nothing )
+                    { colour = colourScheme.lightGrey
+                    , fontColour = colourScheme.darkGrey
+                    , msg = Nothing
+                    , pointer = htmlAttribute (HA.style "cursor" "not-allowed")
+                    }
 
         ( downloadColour, downloadFontColour, downloadMsg ) =
             case model.downloadState of
@@ -129,29 +137,24 @@ viewWindowContent { language, model } =
                 , spacing 10
                 ]
                 [ Input.button
-                    [ Background.color downloadColour
-                    , Font.color downloadFontColour
-                    , height (px 35)
-                    , width shrink
-                    , Font.center
-                    , headingMD
-                    , pointer
-                    , alignRight
-                    , paddingXY 10 0
-                    ]
+                    ([ Background.color downloadColour
+                     , Font.color downloadFontColour
+                     , pointer
+                     , alignRight
+                     ]
+                        ++ buttonBaseStyles
+                    )
                     { label = text "Download", onPress = downloadMsg }
                 , Input.button
-                    [ Background.color cancelColour
-                    , Font.color cancelFontColour
-                    , height (px 35)
-                    , width shrink
-                    , Font.center
-                    , headingMD
-                    , pointer
-                    , alignRight
-                    , paddingXY 10 0
-                    ]
-                    { label = text "Cancel Download", onPress = cancelMsg }
+                    ([ Background.color cancelButtonCfg.colour
+                     , Font.color cancelButtonCfg.fontColour
+                     , Font.center
+                     , cancelButtonCfg.pointer
+                     , alignRight
+                     ]
+                        ++ buttonBaseStyles
+                    )
+                    { label = text "Cancel Download", onPress = cancelButtonCfg.msg }
                 ]
             ]
         ]

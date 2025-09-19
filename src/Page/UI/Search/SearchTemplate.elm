@@ -1,4 +1,4 @@
-module Page.UI.Search.Templates.SearchTmpl exposing (controlsTmpl, viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
+module Page.UI.Search.SearchTemplate exposing (controlsTmpl, viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, link, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
@@ -62,7 +62,7 @@ viewRelatedWorksSearchResultsLoadingTmpl _ =
                     [ width (px 50)
                     , height (px 50)
                     ]
-                    (spinnerSvg colourScheme.midGrey)
+                    (spinnerSvg colourScheme.lightBlue)
                 )
             ]
         ]
@@ -74,7 +74,7 @@ controlsTmpl contents =
         [ alignTop
         , Background.color colourScheme.lightGrey
         , Border.color colourScheme.midGrey
-        , Border.widthEach { top = 1, bottom = 1, left = 0, right = 0 }
+        , Border.widthEach { top = 0, bottom = 1, left = 0, right = 0 }
         , minimalDropShadow
         , htmlAttribute (HA.style "clip-path" "inset(0px 0px -5px 0px)")
         , htmlAttribute (HA.style "z-index" "10")
@@ -92,6 +92,7 @@ viewSearchResultsLoadingTmpl _ =
     row
         [ width fill
         , height fill
+        , blurredBackground
         ]
         [ column
             [ width (px 550)
@@ -114,6 +115,7 @@ viewSearchResultsLoadingTmpl _ =
             , Background.color colourScheme.white
             , scrollbarY
             , htmlAttribute (HA.style "min-height" "unset")
+            , minimalDropShadow
             ]
             [ controlsTmpl
                 [ none ]
@@ -131,7 +133,7 @@ viewSearchResultsLoadingTmpl _ =
                         [ width (px 50)
                         , height (px 50)
                         ]
-                        (spinnerSvg colourScheme.midGrey)
+                        (spinnerSvg colourScheme.lightBlue)
                     )
                 ]
             ]

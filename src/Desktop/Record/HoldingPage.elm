@@ -1,8 +1,7 @@
 module Desktop.Record.HoldingPage exposing (viewFullHoldingPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
-import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
 import Page.Record.Model exposing (RecordPageModel)
@@ -10,7 +9,7 @@ import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Holding exposing (HoldingBody)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (booksSvg)

@@ -17,6 +17,7 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Dict
 import Maybe.Extra as ME
 import Page.Downloader as Downloader
+import Page.Downloader.Model as Downloader
 import Page.Downloader.Msg as DownloaderMsg
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
@@ -61,6 +62,7 @@ type alias SearchConfig =
     , queryArgs : QueryArgs
     , keyboardQueryArgs : KeyboardQuery
     , searchPreferences : Maybe SearchPreferences
+    , session : Session
     }
 
 
@@ -81,7 +83,7 @@ init cfg =
         ActiveSearch.init
             { queryArgs = cfg.queryArgs
             , keyboardQueryArgs = Just cfg.keyboardQueryArgs
-            , searchPreferences = cfg.searchPreferences
+            , session = cfg.session
             }
     , preview = NoResponseToShow
     , sourceItemsExpanded = False

@@ -1,6 +1,6 @@
 module Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
 
-import Element exposing (Element, centerX, column, fill, paragraph, row, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerX, column, fill, padding, paragraph, row, shrink, spacing, text, width)
 import Element.Font as Font
 import Element.Input as Input exposing (placeholder)
 import Language exposing (Language, extractLabelFromLanguageMap)
@@ -17,10 +17,12 @@ viewPaeInput : Language -> KeyboardModel KeyboardMsg -> Element KeyboardMsg
 viewPaeInput language model =
     row
         [ width fill
-        , spacing lineSpacing
+        , alignTop
+        , alignLeft
         ]
         [ column
             [ width fill
+            , alignRight
             , spacing lineSpacing
             ]
             [ row
@@ -28,6 +30,9 @@ viewPaeInput language model =
                 [ Input.text
                     [ width fill
                     , minimalInsetShadow
+                    , headingMD
+                    , Font.medium
+                    , padding 10
                     ]
                     { label =
                         Input.labelAbove

@@ -24,7 +24,7 @@ import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
-import Page.UI.Attributes exposing (blurredBackground, bodyRegular, lineSpacing)
+import Page.UI.Attributes exposing (blurredBackground, bodyRegular, lineSpacing, minimalDropShadow)
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -44,8 +44,8 @@ import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 import Page.UI.Search.Results.WorkResult exposing (viewWorkSearchResult)
 import Page.UI.Search.SearchComponents exposing (queryValidationState, viewSearchButtons)
+import Page.UI.Search.SearchTemplate exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
-import Page.UI.Search.Templates.SearchTmpl exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -251,6 +251,7 @@ viewSearchResultsSection cfg resultsLoading body =
             [ width fill
             , height fill
             , alignTop
+            , minimalDropShadow
             , inFront renderedPreview
             ]
             [ viewSearchButtons

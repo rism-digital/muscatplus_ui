@@ -23,6 +23,7 @@ import Maybe.Extra as ME
 import Murmur3
 import Page.Decoders exposing (recordResponseDecoder)
 import Page.Downloader as Downloader
+import Page.Downloader.Model as Downloader
 import Page.Downloader.Msg as DownloaderMsg
 import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, setFilters, setMode, setNationalCollection, setNextQuery, setRows, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
@@ -30,7 +31,6 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, ro
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.ApiError exposing (apiErrorDecoder)
-import Page.RecordTypes.Countries exposing (CountryCode)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.Search exposing (toFacetLabel)
 import Page.Request exposing (createRequestWithDecoder)
@@ -63,15 +63,20 @@ type alias RecordConfig =
     { incomingUrl : Url
     , route : Route
     , queryArgs : Maybe QueryArgs
-    , nationalCollection : Maybe CountryCode
-    , searchPreferences : Maybe SearchPreferences
+
+    --, nationalCollection : Maybe CountryCode
+    --, searchPreferences : Maybe SearchPreferences
     , initialData : Maybe Value
+    , session : Session
     }
 
 
 init : RecordConfig -> RecordPageModel RecordMsg
 init cfg =
     let
+        session =
+            cfg.session
+
         ( recordInitialData, searchInitialData ) =
             case cfg.initialData of
                 Just d ->
@@ -112,25 +117,25 @@ init cfg =
                     ( Loading Nothing, NoResponseToShow )
 
         numRows =
-            ME.unwrap C.defaultRows .resultsPerPage cfg.searchPreferences
+            ME.unwrap C.defaultRows .resultsPerPage session.searchPreferences
 
         resultMode =
             routeToResultMode cfg.route
 
         activeSearchInit =
             cfg.queryArgs
-                |> ME.unpack (\() -> ActiveSearch.empty cfg.searchPreferences)
+                |> ME.unpack (\() -> ActiveSearch.empty session.searchPreferences)
                     (\qa ->
                         ActiveSearch.init
                             { queryArgs = qa
                             , keyboardQueryArgs = Nothing
-                            , searchPreferences = cfg.searchPreferences
+                            , session = cfg.session
                             }
                     )
 
         activeSearch =
             toNextQuery activeSearchInit
-                |> setNationalCollection cfg.nationalCollection
+                |> setNationalCollection session.restrictedToNationalCollection
                 |> setRows numRows
                 |> setMode resultMode
                 |> flip setNextQuery activeSearchInit
@@ -162,6 +167,9 @@ init cfg =
 load : RecordConfig -> RecordPageModel RecordMsg -> RecordPageModel RecordMsg
 load cfg oldBody =
     let
+        session =
+            cfg.session
+
         activeSearchInit =
             ActiveSearch.load oldBody.activeSearch
 
@@ -170,7 +178,7 @@ load cfg oldBody =
 
         initActiveSearch =
             toNextQuery activeSearchInit
-                |> setNationalCollection cfg.nationalCollection
+                |> setNationalCollection session.restrictedToNationalCollection
                 |> setMode resultMode
                 |> flip setNextQuery activeSearchInit
 

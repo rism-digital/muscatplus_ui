@@ -6,6 +6,7 @@ module Page.UI.Attributes exposing
     , bodyRegular
     , bodySM
     , bodySerifFont
+    , buttonBaseStyles
     , cycleTableBackground
     , emptyAttribute
     , emptyHtmlAttribute
@@ -23,14 +24,12 @@ module Page.UI.Attributes exposing
     , minimalInsetShadow
     , sectionBorderStyles
     , sectionSpacing
-    , shadowHighElevation
-    , shadowMediumElevation
     , sidebarWidth
     , tableHeaderStyles
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, alignTop, centerY, fill, htmlAttribute, maximum, modular, padding, paddingEach, paddingXY, spacing, width)
+import Element exposing (Attr, Attribute, alignTop, centerY, fill, height, htmlAttribute, maximum, modular, padding, paddingEach, paddingXY, pointer, px, shrink, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -41,7 +40,7 @@ import Page.UI.Style exposing (colourScheme)
 
 baseSize : Float
 baseSize =
-    16.0
+    14.0
 
 
 bodyFont : Attribute msg
@@ -99,7 +98,7 @@ bodySM =
 -}
 emptyAttribute : Attribute msg
 emptyAttribute =
-    htmlAttribute (HA.classList [])
+    htmlAttribute emptyHtmlAttribute
 
 
 emptyHtmlAttribute : HT.Attribute msg
@@ -172,7 +171,7 @@ labelFieldColumnAttributes =
 
 lineSpacing : Int
 lineSpacing =
-    round (baseSize * 0.8)
+    round (baseSize * 0.6)
 
 
 linkColour : Attribute msg
@@ -186,34 +185,9 @@ minimalDropShadow =
     Border.shadow
         { blur = 4
         , color = colourScheme.translucentGrey
-        , offset = ( -1, 1 )
-        , size = 1
+        , offset = ( 0, 1 )
+        , size = 0.5
         }
-
-
-shadowLowElevation : Attribute msg
-shadowLowElevation =
-    htmlAttribute (HA.attribute "style" "")
-
-
-shadowMediumElevation : Attribute msg
-shadowMediumElevation =
-    htmlAttribute (HA.attribute "style" """box-shadow: 0px 1px 0.9px hsl(0deg 0% 73% / 0.39),
-0px 2.2px 2px -1.3px hsl(0deg 0% 73% / 0.32),
-0px 6.3px 5.8px -2.6px hsl(0deg 0% 73% / 0.25),
-0px 17px 15.6px -3.9px hsl(0deg 0% 73% / 0.18);""")
-
-
-shadowHighElevation : Attribute msg
-shadowHighElevation =
-    htmlAttribute (HA.attribute "style" """box-shadow: 0px 1px 0.9px hsl(0deg 0% 73% / 0.36),
-0px 2.6px 2.4px -0.6px hsl(0deg 0% 73% / 0.33),
-0px 4.9px 4.5px -1.1px hsl(0deg 0% 73% / 0.3),
-0px 9.2px 8.4px -1.7px hsl(0deg 0% 73% / 0.26),
-0px 16.7px 15.3px -2.2px hsl(0deg 0% 73% / 0.23),
--0.1px 28.5px 26.1px -2.8px hsl(0deg 0% 73% / 0.2),
--0.1px 45.8px 41.9px -3.3px hsl(0deg 0% 73% / 0.17),
--0.1px 70px 64.1px -3.9px hsl(0deg 0% 73% / 0.13);""")
 
 
 minimalInsetShadow : Attribute msg
@@ -272,3 +246,16 @@ tableHeaderStyles =
 blurredBackground : Attribute msg
 blurredBackground =
     htmlAttribute (HA.attribute "style" "background: rgba(255, 255, 255, 0); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index:200;")
+
+
+buttonBaseStyles : List (Attribute msg)
+buttonBaseStyles =
+    [ Border.rounded 6
+    , height (px 35)
+    , width shrink
+    , Font.center
+    , centerY
+    , paddingXY 10 0
+    , headingMD
+    , minimalDropShadow
+    ]

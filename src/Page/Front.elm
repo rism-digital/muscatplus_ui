@@ -37,8 +37,8 @@ import Url exposing (Url)
 
 type alias FrontConfig =
     { queryArgs : FrontQueryArgs
-    , searchPreferences : Maybe SearchPreferences
     , initialData : Maybe Value
+    , session : Session
     }
 
 
@@ -77,13 +77,16 @@ init cfg =
                 |> Maybe.andThen Result.toMaybe
                 |> Maybe.map Response
                 |> Maybe.withDefault (Loading Nothing)
+
+        searchPreferences =
+            .searchPreferences cfg.session
     in
     { response = frontData
     , activeSearch =
         ActiveSearch.init
-            { queryArgs = frontQueryArgsToQueryArgs cfg.searchPreferences cfg.queryArgs
+            { queryArgs = frontQueryArgsToQueryArgs searchPreferences cfg.queryArgs
             , keyboardQueryArgs = Just Keyboard.defaultKeyboardQuery
-            , searchPreferences = cfg.searchPreferences
+            , session = cfg.session
             }
     , probeResponse = Probing
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer

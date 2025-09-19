@@ -3,8 +3,6 @@ module Page.UI.Style exposing
     , determineOptimalTextColorForBackground
     , headerHeight
     , printMediaQuery
-    , recordTitleHeight
-    , searchSourcesLinkHeight
     , tabBarHeight
     , tableCellPadding
     , toCssColors
@@ -251,16 +249,6 @@ headerHeight =
 
 tabBarHeight : Int
 tabBarHeight =
-    50
-
-
-searchSourcesLinkHeight : Int
-searchSourcesLinkHeight =
-    20
-
-
-recordTitleHeight : Int
-recordTitleHeight =
     50
 
 

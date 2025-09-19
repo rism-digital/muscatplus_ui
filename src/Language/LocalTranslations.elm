@@ -1022,7 +1022,7 @@ localTranslations =
             [ "Zobacz obrazy" ]
         ]
     , wordsAnywhere =
-        [ LanguageValue English [ "Words anywhere" ]
+        [ LanguageValue English [ "Keyword search" ]
         , LanguageValue German [ "Eingabe Ihrer Anfrage" ]
         , LanguageValue French [ "Entrez votre requête" ]
         , LanguageValue Italian [ "Inserisci la tua richiesta" ]

@@ -2,7 +2,7 @@ module Page.UI.Facets.SelectFacet exposing (SelectFacetConfig, viewSelectFacet)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, maximum, mouseOver, none, onLeft, padding, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, maximum, mouseOver, none, onLeft, padding, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -14,7 +14,7 @@ import List.Extra as LE
 import Page.Query exposing (toFacetBehaviours, toNextQuery)
 import Page.RecordTypes.Search exposing (FacetBehaviours(..), FacetItem(..), FacetSorts(..), SelectFacet, parseFacetBehaviourToString, parseStringToFacetBehaviour, toBehaviours, toCurrentBehaviour)
 import Page.RecordTypes.Shared exposing (FacetAlias)
-import Page.UI.Attributes exposing (bodySM, linkColour)
+import Page.UI.Attributes exposing (bodyRegular, bodySM, linkColour)
 import Page.UI.Components exposing (basicCheckbox, dropdownSelect, verticalLine)
 import Page.UI.Facets.Shared exposing (facetTitleBar)
 import Page.UI.Images exposing (intersectionSvg, sortAlphaDescSvg, sortNumericDescSvg, unionSvg)
@@ -340,7 +340,7 @@ viewSelectFacetItem config (FacetItem value label count) =
         , mouseOver [ Background.color colourScheme.lightestBlue ]
         ]
         [ checkbox
-            [ Element.htmlAttribute (HA.alt fullLabel)
+            [ htmlAttribute (HA.alt fullLabel)
             , alignLeft
             , centerY
             , width fill
@@ -350,7 +350,7 @@ viewSelectFacetItem config (FacetItem value label count) =
             , label =
                 labelRight
                     [ alignLeft
-                    , bodySM
+                    , bodyRegular
                     , width fill
                     , centerY
                     ]

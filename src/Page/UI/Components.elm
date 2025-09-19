@@ -332,12 +332,11 @@ dropdownSelectStyles =
 h1 : Language -> LanguageMap -> Element msg
 h1 language heading =
     paragraph
-        [ headingHero
-        , Region.heading 1
+        [ Region.heading 1
         , Font.medium
         , bodySerifFont
-        , htmlAttribute (HA.style "font-size" "calc(24px + 0.2vw)")
-        , htmlAttribute (HA.style "line-height" "2rem")
+        , htmlAttribute (HA.style "font-size" "calc(18px + 0.2vw)")
+        , htmlAttribute (HA.style "line-height" "1.5rem")
         ]
         [ limitLength 140 heading
             |> extractLabelFromLanguageMap language
@@ -347,12 +346,23 @@ h1 language heading =
 
 h2 : Language -> LanguageMap -> Element msg
 h2 language heading =
-    paragraph [ headingXXL, Region.heading 2, Font.medium ] [ extractLabelFromLanguageMap language heading |> text ]
+    paragraph
+        [ headingXXL
+        , Region.heading 2
+        , Font.medium
+        ]
+        [ extractLabelFromLanguageMap language heading |> text ]
 
 
 h2s : Language -> LanguageMap -> Element msg
 h2s language heading =
-    paragraph [ headingXXL, Region.heading 2, Font.medium, bodySerifFont ] [ extractLabelFromLanguageMap language heading |> text ]
+    paragraph
+        [ headingXXL
+        , Region.heading 2
+        , Font.medium
+        , bodySerifFont
+        ]
+        [ extractLabelFromLanguageMap language heading |> text ]
 
 
 h3 : Language -> LanguageMap -> Element msg
@@ -868,7 +878,7 @@ tabView cfg =
                                         [ width (px 15)
                                         , height (px 15)
                                         ]
-                                        (spinnerSvg colourScheme.midGrey)
+                                        (spinnerSvg colourScheme.lightBlue)
                                     )
                                 ]
 
@@ -888,12 +898,12 @@ tabView cfg =
 
           else
             Font.medium
-        , paddingXY 10 10
+        , padding 8
 
         --, Border.widthEach { bottom = 0, left = 1, right = 1, top = 1 }
         , Border.color colourScheme.darkBlue
         , Border.width 1
-        , Border.rounded 8
+        , Border.rounded 6
         , minimalDropShadow
         , htmlAttribute (HA.style "z-index" "100")
         , onClick cfg.clickMsg

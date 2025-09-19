@@ -1,4 +1,4 @@
-module Page.Downloader exposing (init, update, view)
+module Page.Downloader exposing (update, view)
 
 import Cmd.Extra as CE
 import DateFormat
@@ -13,35 +13,13 @@ import Page.Downloader.CsvHelpers exposing (convertResult, createSearchUrlRecord
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
 import Page.Downloader.View
-import Page.Keyboard as Keyboard
-import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Query exposing (QueryArgs, setPage, setRows)
 import Page.RecordTypes.Search exposing (ResultsBody, SearchResult, resultsBodyDecoder)
 import Page.Request exposing (createProbeRequestWithDecoder)
 import Page.UpdateHelpers exposing (createProbeUrl, createSearchUrl)
-import Session exposing (Session)
 import Task exposing (Task)
 import Task.Parallel as Parallel
 import Time
-
-
-init :
-    { keyboard : Maybe (Keyboard.Model KeyboardMsg)
-    , queryArgs : QueryArgs
-    , session : Session
-    }
-    -> DownloaderModel
-init cfg =
-    { queryToDownload = cfg.queryArgs
-    , keyboardQueryToDownload = cfg.keyboard
-    , session = cfg.session
-    , downloadState = DownloadNotStarted
-    , progress = NoProgress
-    , timestamp = ""
-    , includeSearchUrlInResults = False
-    , taskQueue = []
-    , resultsList = []
-    }
 
 
 getTask : Decoder a -> String -> Task (Http.Detailed.Error String) ( Http.Metadata, a )

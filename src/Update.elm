@@ -4,7 +4,6 @@ import Basics.Extra as BE
 import Browser
 import Browser.Navigation as Nav
 import Device exposing (isMobileView, setDevice, setWindow)
-import Http
 import Maybe.Extra as ME
 import Model exposing (Model(..), toSession, updateSession)
 import Msg exposing (Msg)
@@ -16,7 +15,7 @@ import Page.Front as FrontPage
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.NavigationBar exposing (NavigationBar(..), setNavigationBar)
 import Page.Query exposing (QueryArgs, buildQueryParameters, toNextQuery)
-import Page.Record as RecordPage exposing (sourceFetchCmd)
+import Page.Record as RecordPage
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.Route as Route exposing (Route, baseRecordPathFromRoute, isMEIDownloadRoute, isPNGDownloadRoute, parseUrl, setRoute, setUrl)
@@ -55,8 +54,8 @@ changePage url model =
                 initialPageBody =
                     FrontPage.init
                         { queryArgs = qargs
-                        , searchPreferences = newSession.searchPreferences
                         , initialData = Nothing
+                        , session = newSession
                         }
             in
             ( FrontPage newSession initialPageBody
@@ -78,6 +77,7 @@ changePage url model =
                     , queryArgs = qargs
                     , keyboardQueryArgs = kqargs
                     , searchPreferences = newSession.searchPreferences
+                    , session = newSession
                     }
 
                 newPageBody =
@@ -523,9 +523,8 @@ changeRecordPageHelper { model, newSession, previousRoute, previousUrl, route, u
             { incomingUrl = url
             , route = route
             , queryArgs = Nothing
-            , nationalCollection = newSession.restrictedToNationalCollection
-            , searchPreferences = newSession.searchPreferences
             , initialData = Nothing
+            , session = newSession
             }
 
         previousRecordPath =
@@ -590,9 +589,8 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
             { incomingUrl = url
             , route = route
             , queryArgs = Just qargs
-            , nationalCollection = newSession.restrictedToNationalCollection
-            , searchPreferences = newSession.searchPreferences
             , initialData = Nothing
+            , session = newSession
             }
 
         recordPath =
@@ -678,9 +676,8 @@ changeRecordHoldingPageHelper { model, newSession, previousUrl, route, url } =
             { incomingUrl = url
             , route = route
             , queryArgs = Nothing
-            , nationalCollection = newSession.restrictedToNationalCollection
-            , searchPreferences = newSession.searchPreferences
             , initialData = Nothing
+            , session = newSession
             }
 
         samePage oldBody =
