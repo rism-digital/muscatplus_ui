@@ -240,6 +240,7 @@ tableHeaderStyles =
     , Border.widthEach { bottom = 1, left = 0, right = 1, top = 0 }
     , Border.color colourScheme.midGrey
     , Background.color colourScheme.lightGrey
+    , height fill
     ]
 
 

@@ -227,6 +227,7 @@ type alias WorkResultFlags =
     , numberOfSources : Maybe Int
     , keyMode : Maybe LanguageMap
     , scoringSummary : Maybe String
+    , secondaryCatalogueIdentifiers : Maybe (List String)
     }
 
 
@@ -898,3 +899,4 @@ workResultFlagDecoder =
         |> optional "numberOfSources" (maybe int) Nothing
         |> optional "keyMode" (maybe languageMapLabelDecoder) Nothing
         |> optional "scoringSummary" (maybe string) Nothing
+        |> optional "secondaryCatalogNumbers" (maybe (list string)) Nothing

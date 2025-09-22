@@ -4,6 +4,7 @@ import Desktop.Record.Facets exposing (facetRecordMsgConfig)
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Font as Font
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
@@ -415,7 +416,7 @@ viewWorksResultsSection cfg isLoading body =
                 [ indexedTable
                     [ Border.width 1, Border.color colourScheme.midGrey ]
                     { columns =
-                        [ { header = el tableHeaderStyles (text "Catalog number")
+                        [ { header = column (tableHeaderStyles ++ [ spacing 6 ]) [ el [] (text "Catalog number"), el [ Font.italic, Font.regular ] (text "Alternative numbers") ]
                           , width = fillPortion 1
                           , view = \i w -> viewCatalogNumberCell language i w
                           }
@@ -459,12 +460,34 @@ viewCatalogNumberCell language rowNum body =
         catalogNum =
             case .catalogueIdentifier body.flags of
                 Just ident ->
-                    paragraph [ centerY ] [ text ident ]
+                    paragraph [ centerY, Font.bold ] [ text ident ]
+
+                Nothing ->
+                    none
+
+        alternateNums =
+            case .secondaryCatalogueIdentifiers body.flags of
+                Just idents ->
+                    paragraph
+                        [ centerY
+                        , Font.italic
+                        , Font.regular
+                        ]
+                        [ text (String.join "; " idents) ]
 
                 Nothing ->
                     none
     in
-    el [ cellBg, padding tableCellPadding, width shrink, height fill ] catalogNum
+    column
+        [ cellBg
+        , padding tableCellPadding
+        , width shrink
+        , height fill
+        , spacing 6
+        ]
+        [ catalogNum
+        , alternateNums
+        ]
 
 
 viewWorkTitleCell : Language -> Int -> WorkResultBody -> Element msg
