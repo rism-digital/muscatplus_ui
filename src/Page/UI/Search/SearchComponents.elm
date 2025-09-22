@@ -97,7 +97,12 @@ viewProbeResponseNumbers language probeResponse =
                 [ width (px 25)
                 , height (px 25)
                 ]
-                (animatedLoader [ width (px 25), height (px 25) ] (spinnerSvg colourScheme.midGrey))
+                (animatedLoader
+                    [ width (px 25)
+                    , height (px 25)
+                    ]
+                    (spinnerSvg colourScheme.midGrey)
+                )
 
         ProbeSuccess data ->
             let

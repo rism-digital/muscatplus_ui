@@ -44,6 +44,7 @@ viewRelatedWorksSearchResultsLoadingTmpl _ =
     row
         [ width fill
         , height fill
+        , blurredBackground
         ]
         [ column
             [ width fill
@@ -92,7 +93,6 @@ viewSearchResultsLoadingTmpl _ =
     row
         [ width fill
         , height fill
-        , blurredBackground
         ]
         [ column
             [ width (px 550)
