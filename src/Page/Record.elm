@@ -177,14 +177,14 @@ load cfg oldBody =
             routeToResultMode cfg.route
 
         initActiveSearch =
-            toNextQuery activeSearchInit
-                |> setNationalCollection session.restrictedToNationalCollection
-                |> setMode resultMode
-                |> flip setNextQuery activeSearchInit
+            ME.unpack (\() -> activeSearchInit) (\qa -> setNextQuery qa activeSearchInit) cfg.queryArgs
+
 
         activeSearch =
-            cfg.queryArgs
-                |> ME.unpack (\() -> initActiveSearch) (\qa -> setNextQuery qa initActiveSearch)
+            toNextQuery initActiveSearch
+                |> setNationalCollection session.restrictedToNationalCollection
+                |> setMode resultMode
+                |> flip setNextQuery initActiveSearch
 
         ( previewResp, selectedResult ) =
             .fragment cfg.incomingUrl

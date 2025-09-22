@@ -23,7 +23,7 @@ type ResultMode
 {-|
 
     Takes a string and parses it to a result mode type. If one is not found
-    then it assumes 'everything' is the default.
+    then it assumes 'empty' is the default.
 
 -}
 parseStringToResultMode : String -> ResultMode
