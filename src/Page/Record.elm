@@ -63,9 +63,6 @@ type alias RecordConfig =
     { incomingUrl : Url
     , route : Route
     , queryArgs : Maybe QueryArgs
-
-    --, nationalCollection : Maybe CountryCode
-    --, searchPreferences : Maybe SearchPreferences
     , initialData : Maybe Value
     , session : Session
     }
@@ -77,7 +74,12 @@ init cfg =
         session =
             cfg.session
 
-        ( recordInitialData, searchInitialData ) =
+        incomingData :
+            { recordData : Response ServerData
+            , searchData : Response ServerData
+            , probeData : ProbeStatus
+            }
+        incomingData =
             case cfg.initialData of
                 Just d ->
                     let
@@ -86,35 +88,53 @@ init cfg =
                     in
                     case dval of
                         Ok (SearchData sd) ->
-                            ( Loading Nothing, Response (SearchData sd) )
+                            { recordData = Loading Nothing
+                            , searchData = Response (SearchData sd)
+                            , probeData =
+                                ProbeSuccess
+                                    { totalItems = sd.totalItems
+                                    , queryStatus = NotCheckedQuery
+                                    , pagination = sd.pagination
+                                    }
+                            }
 
                         Ok rd ->
-                            ( Response rd, NoResponseToShow )
+                            { recordData = Response rd
+                            , searchData = NoResponseToShow
+                            , probeData = NotChecked
+                            }
 
                         Err _ ->
                             case Decode.decodeValue apiErrorDecoder d of
                                 Ok o ->
-                                    ( Error
-                                        (BadBodyEncodedResponse
-                                            { label = toLanguageMap "Unexpected response"
-                                            , errorMessage = o
-                                            }
-                                        )
-                                    , NoResponseToShow
-                                    )
+                                    { recordData =
+                                        Error
+                                            (BadBodyEncodedResponse
+                                                { label = toLanguageMap "Unexpected response"
+                                                , errorMessage = o
+                                                }
+                                            )
+                                    , searchData = NoResponseToShow
+                                    , probeData = NotChecked
+                                    }
 
                                 Err er ->
-                                    ( Error
-                                        (BadBodyResponse
-                                            { label = toLanguageMap "Unexpected response"
-                                            , description = Decode.errorToString er
-                                            }
-                                        )
-                                    , NoResponseToShow
-                                    )
+                                    { recordData =
+                                        Error
+                                            (BadBodyResponse
+                                                { label = toLanguageMap "Unexpected response"
+                                                , description = Decode.errorToString er
+                                                }
+                                            )
+                                    , searchData = NoResponseToShow
+                                    , probeData = NotChecked
+                                    }
 
                 Nothing ->
-                    ( Loading Nothing, NoResponseToShow )
+                    { recordData = Loading Nothing
+                    , searchData = NoResponseToShow
+                    , probeData = NotChecked
+                    }
 
         numRows =
             ME.unwrap C.defaultRows .resultsPerPage session.searchPreferences
@@ -148,16 +168,16 @@ init cfg =
             Url.toString cfg.incomingUrl
                 |> routeToCurrentRecordViewTab cfg.route
     in
-    { response = recordInitialData
+    { response = incomingData.recordData
     , currentTab = tabView
-    , searchResults = searchInitialData
+    , searchResults = incomingData.searchData
     , preview = NoResponseToShow
     , sourceItemsExpanded = False
     , incipitInfoExpanded = Set.empty
     , digitizedCopiesCalloutExpanded = False
     , selectedResult = selectedResult
     , activeSearch = activeSearch
-    , probeResponse = NotChecked
+    , probeResponse = incomingData.probeData
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     , previewAnimationStatus = NoAnimation
@@ -178,7 +198,6 @@ load cfg oldBody =
 
         initActiveSearch =
             ME.unpack (\() -> activeSearchInit) (\qa -> setNextQuery qa activeSearchInit) cfg.queryArgs
-
 
         activeSearch =
             toNextQuery initActiveSearch
