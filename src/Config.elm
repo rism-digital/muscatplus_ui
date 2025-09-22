@@ -3,7 +3,7 @@ module Config exposing (csvDownloadMaximumRecords, defaultRows, flagsPath, minim
 
 defaultRows : Int
 defaultRows =
-    20
+    40
 
 
 csvDownloadMaximumRecords : Int
