@@ -558,8 +558,16 @@ update session msg model =
             )
 
         UserClickedSearchResultsPagination pageUrl ->
+            let
+                searchResultsStatus =
+                    if pageUrl == Url.toString session.url then
+                        model.searchResults
+
+                    else
+                        Loading (chooseResponse model.searchResults)
+            in
             ( { model
-                | searchResults = Loading (chooseResponse model.searchResults)
+                | searchResults = searchResultsStatus
                 , preview = NoResponseToShow
               }
             , Cmd.batch

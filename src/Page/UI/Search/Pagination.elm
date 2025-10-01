@@ -1,6 +1,6 @@
 module Page.UI.Search.Pagination exposing (viewPagination, viewTablePagination)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, none, padding, pointer, px, row, shrink, text, width)
+import Element exposing (Color, Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, none, padding, pointer, px, row, shrink, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -9,22 +9,47 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
-import Page.UI.Attributes exposing (headingMD, headingSM, minimalDropShadow)
+import Page.UI.Attributes exposing (emptyAttribute, headingMD, headingSM, minimalDropShadow)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 import Page.UI.Style exposing (colourScheme)
 
 
-paginationLink : Element a -> (String -> a) -> String -> Element a
+paginationLink : (Color -> Element a) -> (String -> a) -> Maybe String -> Element a
 paginationLink icon clickFn url =
+    let
+        thisIcon =
+            case url of
+                Just _ ->
+                    icon colourScheme.darkBlue
+
+                Nothing ->
+                    icon colourScheme.midGrey
+
+        thisPointer =
+            case url of
+                Just _ ->
+                    pointer
+
+                Nothing ->
+                    htmlAttribute (HA.style "cursor" "not-allowed")
+
+        clickAttr =
+            case url of
+                Just u ->
+                    onClick (clickFn u)
+
+                Nothing ->
+                    emptyAttribute
+    in
     el
         [ padding 5
         , height (px 30)
         , width (px 30)
-        , onClick (clickFn url)
-        , pointer
+        , clickAttr
+        , thisPointer
         ]
-        icon
+        thisIcon
 
 
 viewTablePagination : Language -> SearchPagination -> (String -> msg) -> Element msg
@@ -64,6 +89,13 @@ viewPaginationImpl { language, pagination, clickMsg, rowStyle } =
 
         pageInfo =
             pageLabel ++ " " ++ thisPage ++ " / " ++ totalPages
+
+        firstLink =
+            if pagination.thisPage /= 1 && pagination.totalPages > 1 then
+                Just pagination.first
+
+            else
+                Nothing
     in
     rowStyle
         [ column
@@ -74,8 +106,8 @@ viewPaginationImpl { language, pagination, clickMsg, rowStyle } =
                 [ width shrink
                 , alignLeft
                 ]
-                [ viewMaybe (paginationLink (chevronDoubleLeftSvg colourScheme.darkBlue) clickMsg) (Just pagination.first)
-                , viewMaybe (paginationLink (chevronLeftSvg colourScheme.darkBlue) clickMsg) pagination.previous
+                [ paginationLink chevronDoubleLeftSvg clickMsg firstLink
+                , paginationLink chevronLeftSvg clickMsg pagination.previous
                 ]
             ]
         , column
@@ -103,8 +135,8 @@ viewPaginationImpl { language, pagination, clickMsg, rowStyle } =
                 [ width shrink
                 , alignRight
                 ]
-                [ viewMaybe (paginationLink (chevronRightSvg colourScheme.darkBlue) clickMsg) pagination.next
-                , viewMaybe (paginationLink (chevronDoubleRightSvg colourScheme.darkBlue) clickMsg) pagination.last
+                [ paginationLink chevronRightSvg clickMsg pagination.next
+                , paginationLink chevronDoubleRightSvg clickMsg pagination.last
                 ]
             ]
         ]
