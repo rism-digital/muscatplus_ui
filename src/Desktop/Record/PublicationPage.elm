@@ -312,6 +312,7 @@ viewRelatedWorksListTabBody session model =
             [ width fill
             , height fill
             , alignTop
+            , htmlAttribute (HA.id "search-results-list")
             ]
             [ viewRelatedWorksSectionRouter session model ]
         ]
