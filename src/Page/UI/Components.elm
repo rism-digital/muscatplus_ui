@@ -55,7 +55,7 @@ import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceReco
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingHero, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
-import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, circleSvg, closeWindowSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
+import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, circleSvg, closeWindowSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, landmarkMagnifyingGlass, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (choose, toLinkedHtml)
@@ -775,6 +775,9 @@ contentTypeIconChooser contentType =
 
         MixedContent ->
             shapesSvg
+
+        InventoryContent ->
+            landmarkMagnifyingGlass
 
         OtherContent ->
             ellipsesSvg

@@ -36,6 +36,7 @@ type SourceContentType
     | TreatiseContent
     | MusicalContent
     | MixedContent
+    | InventoryContent
     | OtherContent
 
 
@@ -122,6 +123,7 @@ sourceContentTypeOptions =
     , ( "rism:TreatiseContent", TreatiseContent )
     , ( "rism:MusicalContent", MusicalContent )
     , ( "rism:MixedContent", MixedContent )
+    , ( "rism:InventoryContent", InventoryContent )
     , ( "rism:OtherContent", OtherContent )
     ]
 

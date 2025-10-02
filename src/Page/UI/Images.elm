@@ -1,4 +1,4 @@
-module Page.UI.Images exposing (altSvg, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, booksSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, externalLinkSvg, fileDownloadSvg, fileMusicSvg, folderMusicSvg, globeSvg, graduationCapSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, languagesSvg, layerGroupSvg, linkSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, printingPressSvg, rectanglesMixedSvg, rismLogo, searchSvg, shapesSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, userCircleSvg, userMusicSvg)
+module Page.UI.Images exposing (altSvg, assistanceSvg, audioMutedSvg, audioUnmutedSvg, bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, booksSvg, briefcaseSvg, calendarSvg, caretCircleDownSvg, caretCircleRightSvg, chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg, circleSvg, closeWindowSvg, commentsSvg, digitizedImagesSvg, ellipsesSvg, externalLinkSvg, fileDownloadSvg, fileMusicSvg, folderMusicSvg, globeSvg, graduationCapSvg, iiifLogo, infoCircleSvg, institutionSvg, intersectionSvg, landmarkMagnifyingGlass, languagesSvg, layerGroupSvg, linkSvg, mapMarkerSvg, musicListSvg, musicNotationSvg, onlineTextSvg, penNibSvg, peopleSvg, printingPressSvg, rectanglesMixedSvg, rismLogo, searchSvg, shapesSvg, sortAlphaDescSvg, sortNumericDescSvg, sourcesSvg, spinnerSvg, textIconSvg, unionSvg, userCircleSvg, userMusicSvg)
 
 import Color exposing (toCssString)
 import Element exposing (Element, html)
@@ -297,6 +297,14 @@ intersectionSvg color =
     makeSvgIcon color
         { path = "M 510 456 C 620.5 456 710 366.5 710 256 C 710 145.5 620.5 56 510 56 C 479.72 56 451.017 62.721 425.3 74.752 C 473.732 120.01 504 184.46 504 256 C 504 327.54 473.732 391.99 425.3 437.248 C 451.017 449.279 479.72 456 510 456 Z M 758 256 C 758 393 647 504 510 504 C 463.579 504 420.144 491.256 383 469.075 C 345.856 491.256 302.421 504 256 504 C 119 504 8 393 8 256 C 8 119 119 8 256 8 C 302.421 8 345.856 20.744 383 42.925 C 420.144 20.744 463.579 8 510 8 C 647 8 758 119 758 256 Z M 262 256 C 262 184.46 292.268 120.01 340.7 74.752 C 314.983 62.721 286.28 56 256 56 C 145.5 56 56 145.5 56 256 C 56 366.5 145.5 456 256 456 C 286.28 456 314.983 449.279 340.7 437.248 C 292.268 391.99 262 327.54 262 256 Z"
         , viewBox = "0 0 768 512"
+        }
+
+
+landmarkMagnifyingGlass : Element.Color -> Element msg
+landmarkMagnifyingGlass color =
+    makeSvgIcon color
+        { viewBox = "0 0 640 512"
+        , path = "M448 288c-22.8 0-44.4-4.8-64-13.3V416H344V249.6c-8.9-7.6-17-16.2-24-25.6H280V416H232V224H168V416H128V224H64V420.3c-.6 .3-1.2 .7-1.8 1.1l-48 32c-11.7 7.8-17 22.4-12.9 35.9S17.9 512 32 512H480c14.1 0 26.5-9.2 30.6-22.7s-1.1-28.1-12.9-35.9l-48-32c-.6-.4-1.2-.7-1.8-1.1V288zM32 192H301.3c-8.6-19.6-13.3-41.2-13.3-64c0-36.1 12-69.4 32.1-96.2L271.9 4.2c-9.8-5.6-21.9-5.6-31.8 0L68.4 102.4 64 104v.9L16.1 132.2c-12.6 7.2-18.8 22-15.1 36S17.5 192 32 192zM448 48.1a80 80 0 1 1 0 160 80 80 0 1 1 0-160zm0 208c26.7 0 51.4-8.2 71.9-22.1L599 313.1c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-79.1-79.1c14-20.5 22.1-45.3 22.1-71.9c0-70.7-57.3-128-128-128s-128 57.3-128 128s57.3 128 128 128z"
         }
 
 
