@@ -5,7 +5,7 @@ import Element exposing (Color, Element, alignRight, column, el, fill, link, max
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, PartOfType(..), extractUrlAndLabelFromPartOf)
+import Page.RecordTypes.PartOf exposing (PartOfSectionBody, PartOfType(..), extractUrlAndLabelFromPartOf)
 import Page.RecordTypes.Search exposing (SourceResultBody, SourceResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentTypeRecordBody)

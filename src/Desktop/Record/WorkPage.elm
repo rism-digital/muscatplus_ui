@@ -57,9 +57,9 @@ viewFullWorkPage session model body =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
                     ( viewDescriptionTab
-                        { language = language
-                        , expandedIncipits = model.incipitInfoExpanded
+                        { expandedIncipits = model.incipitInfoExpanded
                         , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                        , language = language
                         }
                         body
                     , True
@@ -118,13 +118,13 @@ viewFormOfWorkSection { language, preRenderedFormatter } formOfWorkSection =
 
 
 viewDescriptionTab :
-    { language : Language
-    , expandedIncipits : Set String
+    { expandedIncipits : Set String
     , incipitInfoToggleMsg : String -> msg
+    , language : Language
     }
     -> WorkBody
     -> Element RecordMsg
-viewDescriptionTab { language, expandedIncipits, incipitInfoToggleMsg } body =
+viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language } body =
     let
         pageBody =
             pageBodyOrEmpty

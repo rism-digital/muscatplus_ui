@@ -3,7 +3,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toActiveSearch, toResultsNotInCurrentMode)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, moveDown, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -42,7 +42,6 @@ import Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
-import Page.UI.Search.Results.WorkResult exposing (viewWorkSearchResult)
 import Page.UI.Search.SearchComponents exposing (queryValidationState, viewSearchButtons)
 import Page.UI.Search.SearchTemplate exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
@@ -605,5 +604,9 @@ viewSearchResultRouter cfg =
         IncipitResult body ->
             viewIncipitSearchResult resultConfig body
 
-        WorkResult body ->
-            viewWorkSearchResult resultConfig body
+        WorkResult _ ->
+            none
+
+
+
+--viewWorkSearchResult resultConfig body

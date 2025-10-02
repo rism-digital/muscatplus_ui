@@ -7,9 +7,8 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, viewKeywordQuer
 -}
 
 import Color exposing (toCssString)
-import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, paddingXY, pointer, row, spacing, text, toRgb, width)
+import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, pointer, row, spacing, text, toRgb, width)
 import Element.Background as Background
-import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input
@@ -18,7 +17,7 @@ import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (QueryValidation(..))
-import Page.UI.Attributes exposing (emptyHtmlAttribute, headingLG, headingMD, headingXXL, lineSpacing, linkColour, minimalInsetShadow)
+import Page.UI.Attributes exposing (emptyHtmlAttribute, headingMD, lineSpacing, linkColour, minimalInsetShadow)
 import Page.UI.Events exposing (onEnter)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Style exposing (colourScheme)

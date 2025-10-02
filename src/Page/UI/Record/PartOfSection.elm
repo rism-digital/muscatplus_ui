@@ -7,7 +7,7 @@ import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, PartOfType(..), RelatedBlock, extractUrlAndLabelFromPartOf)
-import Page.RecordTypes.Publication exposing (BasicPublicationBody, WorkCatalogueStatus(..))
+import Page.RecordTypes.Publication exposing (BasicPublicationBody)
 import Page.UI.Attributes exposing (headingMD, headingSM, linkColour)
 import Page.UI.Components exposing (formatPublicationStatusBadge)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -121,8 +121,8 @@ viewWorkCataloguePrimaryTitle language relBlock partOf =
                         , headingMD
                         , Font.semiBold
                         ]
-                        { url = partOf.id
-                        , label = text (extractLabelFromLanguageMap language partOf.label)
+                        { label = text (extractLabelFromLanguageMap language partOf.label)
+                        , url = partOf.id
                         }
                     ]
                 ]
@@ -143,8 +143,8 @@ viewPartOfPrimaryTitle language primaryUrl primaryLabel =
                 , headingMD
                 , Font.semiBold
                 ]
-                { url = primaryUrl
-                , label = text (extractLabelFromLanguageMap language primaryLabel)
+                { label = text (extractLabelFromLanguageMap language primaryLabel)
+                , url = primaryUrl
                 }
             ]
         ]
@@ -153,11 +153,11 @@ viewPartOfPrimaryTitle language primaryUrl primaryLabel =
 viewOtherPartRouter : Language -> RelatedBlock -> Element msg
 viewOtherPartRouter language relBlock =
     case relBlock.relatedTo of
-        PublicationPart p ->
-            viewPartOfSecondaryWorkCatalogue language relBlock p
-
         SourcePart s ->
             viewPartOfTitle language s
+
+        PublicationPart p ->
+            viewPartOfSecondaryWorkCatalogue language relBlock p
 
         WorkPart w ->
             viewPartOfTitle language w
@@ -174,7 +174,7 @@ viewPartOfSecondaryWorkCatalogue language relBlock partOf =
     in
     row
         [ width fill
-        , Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+        , Border.widthEach { bottom = 0, left = 0, right = 0, top = 1 }
         , Border.color colourScheme.midGrey
         ]
         [ column
@@ -197,8 +197,8 @@ viewPartOfSecondaryWorkCatalogue language relBlock partOf =
                         [ linkColour
                         , headingSM
                         ]
-                        { url = partOf.id
-                        , label = text label
+                        { label = text label
+                        , url = partOf.id
                         }
                     ]
                 ]
@@ -217,8 +217,8 @@ viewPartOfTitle language { id, label } =
             [ link
                 [ linkColour
                 ]
-                { url = id
-                , label = text (extractLabelFromLanguageMap language label)
+                { label = text (extractLabelFromLanguageMap language label)
+                , url = id
                 }
             ]
         ]

@@ -75,9 +75,9 @@ init cfg =
             cfg.session
 
         incomingData :
-            { recordData : Response ServerData
+            { probeData : ProbeStatus
+            , recordData : Response ServerData
             , searchData : Response ServerData
-            , probeData : ProbeStatus
             }
         incomingData =
             case cfg.initialData of
@@ -88,26 +88,27 @@ init cfg =
                     in
                     case dval of
                         Ok (SearchData sd) ->
-                            { recordData = Loading Nothing
-                            , searchData = Response (SearchData sd)
-                            , probeData =
+                            { probeData =
                                 ProbeSuccess
                                     { totalItems = sd.totalItems
                                     , queryStatus = NotCheckedQuery
                                     , pagination = sd.pagination
                                     }
+                            , recordData = Loading Nothing
+                            , searchData = Response (SearchData sd)
                             }
 
                         Ok rd ->
-                            { recordData = Response rd
+                            { probeData = NotChecked
+                            , recordData = Response rd
                             , searchData = NoResponseToShow
-                            , probeData = NotChecked
                             }
 
                         Err _ ->
                             case Decode.decodeValue apiErrorDecoder d of
                                 Ok o ->
-                                    { recordData =
+                                    { probeData = NotChecked
+                                    , recordData =
                                         Error
                                             (BadBodyEncodedResponse
                                                 { label = toLanguageMap "Unexpected response"
@@ -115,11 +116,11 @@ init cfg =
                                                 }
                                             )
                                     , searchData = NoResponseToShow
-                                    , probeData = NotChecked
                                     }
 
                                 Err er ->
-                                    { recordData =
+                                    { probeData = NotChecked
+                                    , recordData =
                                         Error
                                             (BadBodyResponse
                                                 { label = toLanguageMap "Unexpected response"
@@ -127,13 +128,12 @@ init cfg =
                                                 }
                                             )
                                     , searchData = NoResponseToShow
-                                    , probeData = NotChecked
                                     }
 
                 Nothing ->
-                    { recordData = Loading Nothing
+                    { probeData = NotChecked
+                    , recordData = Loading Nothing
                     , searchData = NoResponseToShow
-                    , probeData = NotChecked
                     }
 
         numRows =
@@ -328,8 +328,8 @@ update session msg model =
                             model.response
             in
             ( { model
-                | searchResults = searchResults
-                , response = recordResponse
+                | response = recordResponse
+                , searchResults = searchResults
                 , activeSearch = newActiveSearch
                 , probeResponse = probeState
                 , applyFilterPrompt = False

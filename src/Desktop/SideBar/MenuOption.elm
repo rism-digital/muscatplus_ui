@@ -29,8 +29,8 @@ sidebarChooserAnimations =
 menuOption :
     { icon : Color -> Element SideBarMsg
     , isCurrent : Bool
-    , isHovered : Bool
     , isExpanded : Bool
+    , isHovered : Bool
     , label : Element SideBarMsg
     , showLabel : Bool
     }

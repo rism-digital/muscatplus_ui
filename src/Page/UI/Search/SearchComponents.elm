@@ -1,7 +1,7 @@
 module Page.UI.Search.SearchComponents exposing (SearchButtonConfig, hasActionableProbeResponse, hasActionableQueryValidation, queryValidationState, viewProbeResponseNumbers, viewSearchButtons)
 
 import Config as C
-import Element exposing (Attribute, Element, above, alignRight, alignTop, centerY, column, el, fill, height, htmlAttribute, none, onLeft, padding, paddingXY, pointer, px, row, shrink, spacing, text, width)
+import Element exposing (Element, above, alignRight, column, el, fill, height, htmlAttribute, none, onLeft, pointer, px, row, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -11,7 +11,7 @@ import Language exposing (Language, LanguageMap, LanguageMapReplacementVariable(
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (buttonBaseStyles, headingLG, headingSM, minimalDropShadow)
+import Page.UI.Attributes exposing (buttonBaseStyles, headingSM)
 import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
@@ -178,12 +178,11 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
             [ width shrink
             ]
             [ Input.button
-                ([ Border.color submitButtonColours
-                 , Background.color submitButtonColours
-                 , Font.color colourScheme.white
-                 , submitPointerStyle
-                 ]
-                    ++ buttonBaseStyles
+                (Border.color submitButtonColours
+                    :: Background.color submitButtonColours
+                    :: Font.color colourScheme.white
+                    :: submitPointerStyle
+                    :: buttonBaseStyles
                 )
                 { label = text (extractLabelFromLanguageMap language submitLabel)
                 , onPress = submitButtonMsg
@@ -192,11 +191,10 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
         , column
             [ width shrink ]
             [ Input.button
-                ([ Border.color colourScheme.turquoise
-                 , Background.color colourScheme.turquoise
-                 , Font.color colourScheme.white
-                 ]
-                    ++ buttonBaseStyles
+                (Border.color colourScheme.turquoise
+                    :: Background.color colourScheme.turquoise
+                    :: Font.color colourScheme.white
+                    :: buttonBaseStyles
                 )
                 { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
                 , onPress = Just resetMsg
@@ -224,10 +222,9 @@ viewUpdateMessage : Maybe msg -> Language -> Bool -> Bool -> Element msg
 viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
     viewIf
         (Input.button
-            ([ Background.color colourScheme.lightOrange
-             , Font.color colourScheme.white
-             ]
-                ++ buttonBaseStyles
+            (Background.color colourScheme.lightOrange
+                :: Font.color colourScheme.white
+                :: buttonBaseStyles
             )
             { label = text (extractLabelFromLanguageMap language localTranslations.applyFiltersToUpdateResults)
             , onPress = submitMsg
@@ -297,14 +294,13 @@ viewDownloadButton { language, model, userClickedOpenDownloaderMsg } =
                     }
     in
     Input.button
-        ([ Border.color buttonTheme.borderColour
-         , Border.width 1
-         , Background.color buttonTheme.background
-         , Font.color buttonTheme.fontColour
-         , buttonTheme.cursor
-         , buttonTheme.helpTooltip
-         ]
-            ++ buttonBaseStyles
+        (Border.color buttonTheme.borderColour
+            :: Border.width 1
+            :: Background.color buttonTheme.background
+            :: Font.color buttonTheme.fontColour
+            :: buttonTheme.cursor
+            :: buttonTheme.helpTooltip
+            :: buttonBaseStyles
         )
         { label = text (extractLabelFromLanguageMap language localTranslations.downloadResults)
         , onPress = downloadButtonMsg

@@ -137,22 +137,20 @@ viewWindowContent { language, model } =
                 , spacing 10
                 ]
                 [ Input.button
-                    ([ Background.color downloadColour
-                     , Font.color downloadFontColour
-                     , pointer
-                     , alignRight
-                     ]
-                        ++ buttonBaseStyles
+                    (Background.color downloadColour
+                        :: Font.color downloadFontColour
+                        :: pointer
+                        :: alignRight
+                        :: buttonBaseStyles
                     )
                     { label = text "Download", onPress = downloadMsg }
                 , Input.button
-                    ([ Background.color cancelButtonCfg.colour
-                     , Font.color cancelButtonCfg.fontColour
-                     , Font.center
-                     , cancelButtonCfg.pointer
-                     , alignRight
-                     ]
-                        ++ buttonBaseStyles
+                    (Background.color cancelButtonCfg.colour
+                        :: Font.color cancelButtonCfg.fontColour
+                        :: Font.center
+                        :: cancelButtonCfg.pointer
+                        :: alignRight
+                        :: buttonBaseStyles
                     )
                     { label = text "Cancel Download", onPress = cancelButtonCfg.msg }
                 ]

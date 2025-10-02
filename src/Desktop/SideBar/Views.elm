@@ -100,8 +100,8 @@ view session options =
             menuOption
                 { icon = musicNotationSvg
                 , isCurrent = checkSelected IncipitSearchOption
-                , isHovered = checkHover IncipitSearchOption
                 , isExpanded = isExpanded
+                , isHovered = checkHover IncipitSearchOption
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.incipits)
                 , showLabel = showLabels
                 }
@@ -114,8 +114,8 @@ view session options =
             menuOption
                 { icon = institutionSvg
                 , isCurrent = checkSelected InstitutionSearchOption
-                , isHovered = checkHover InstitutionSearchOption
                 , isExpanded = isExpanded
+                , isHovered = checkHover InstitutionSearchOption
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.institutions)
                 , showLabel = showLabels
                 }
@@ -129,8 +129,8 @@ view session options =
                 (lazy2 menuOption
                     { icon = peopleSvg
                     , isCurrent = checkSelected PeopleSearchOption
-                    , isHovered = checkHover PeopleSearchOption
                     , isExpanded = isExpanded
+                    , isHovered = checkHover PeopleSearchOption
                     , label = text (extractLabelFromLanguageMap session.language localTranslations.people)
                     , showLabel = showLabels
                     }
@@ -195,8 +195,8 @@ view session options =
             menuOption
                 { icon = sourcesSvg
                 , isCurrent = checkSelected SourceSearchOption
-                , isHovered = checkHover SourceSearchOption
                 , isExpanded = isExpanded
+                , isHovered = checkHover SourceSearchOption
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.sources)
                 , showLabel = showLabels
                 }
@@ -206,8 +206,8 @@ view session options =
             menuOption
                 { icon = folderMusicSvg
                 , isCurrent = checkSelected WorkCatalogueNavigateOption
-                , isHovered = checkHover WorkCatalogueNavigateOption
                 , isExpanded = isExpanded
+                , isHovered = checkHover WorkCatalogueNavigateOption
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.workCatalogues)
                 , showLabel = showLabels
                 }

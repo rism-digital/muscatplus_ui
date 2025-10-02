@@ -40,11 +40,11 @@ extractUrlAndLabelFromPartOf partOf =
         SourcePart s ->
             ( s.id, s.label )
 
-        WorkPart w ->
-            ( w.id, w.label )
-
         PublicationPart p ->
             ( p.id, p.label )
+
+        WorkPart w ->
+            ( w.id, w.label )
 
 
 partOfSectionBodyDecoder : Decoder PartOfSectionBody
@@ -81,11 +81,11 @@ recordTypePartOfDecoder rt =
         Source ->
             basicSourceBodyDecoder |> map SourcePart
 
-        Work ->
-            basicWorkBodyDecoder |> map WorkPart
-
         Publication ->
             basicPublicationBodyDecoder |> map PublicationPart
+
+        Work ->
+            basicWorkBodyDecoder |> map WorkPart
 
         _ ->
             Decode.fail "Record type is not valid in a part of context."

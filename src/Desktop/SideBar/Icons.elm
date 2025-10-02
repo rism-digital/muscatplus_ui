@@ -9,11 +9,10 @@ import Page.UI.Style exposing (colourScheme)
 sidebarIcon : List (Attribute msg) -> Element msg -> Element msg
 sidebarIcon extraAttrs icon =
     column
-        ([ width (px 35)
-         , padding 2
-         , alignLeft
-         ]
-            ++ extraAttrs
+        (width (px 35)
+            :: padding 2
+            :: alignLeft
+            :: extraAttrs
         )
         [ el
             [ width (px 20)

@@ -103,14 +103,14 @@ workCatalogueStatusDecoder =
 stringToWorkCatalogueStatus : LabelStringValue -> Decoder WorkCatalogueStatus
 stringToWorkCatalogueStatus { label, value } =
     case value of
+        "alternate" ->
+            succeed (Alternate label)
+
         "completed" ->
             succeed (Completed label)
 
         "partial" ->
             succeed (Partial label)
-
-        "alternate" ->
-            succeed (Alternate label)
 
         _ ->
             fail ("Could not determine work catalogue status: " ++ value)

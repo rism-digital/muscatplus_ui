@@ -1,6 +1,6 @@
 module Page.UI.Search.Pagination exposing (viewPagination, viewTablePagination)
 
-import Element exposing (Color, Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, none, padding, pointer, px, row, shrink, text, width)
+import Element exposing (Color, Element, alignBottom, alignLeft, alignRight, centerX, centerY, column, el, fill, height, htmlAttribute, padding, pointer, px, row, shrink, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -9,8 +9,7 @@ import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Search exposing (SearchPagination)
-import Page.UI.Attributes exposing (emptyAttribute, headingMD, headingSM, minimalDropShadow)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Attributes exposing (emptyAttribute, headingMD, minimalDropShadow)
 import Page.UI.Images exposing (chevronDoubleLeftSvg, chevronDoubleRightSvg, chevronLeftSvg, chevronRightSvg)
 import Page.UI.Style exposing (colourScheme)
 
@@ -62,21 +61,21 @@ viewTablePagination language pagination clickMsg =
                 ]
     in
     viewPaginationImpl
-        { language = language
+        { clickMsg = clickMsg
+        , language = language
         , pagination = pagination
-        , clickMsg = clickMsg
         , rowStyle = rowStyle
         }
 
 
 viewPaginationImpl :
-    { language : Language
+    { clickMsg : String -> msg
+    , language : Language
     , pagination : SearchPagination
-    , clickMsg : String -> msg
     , rowStyle : List (Element msg) -> Element msg
     }
     -> Element msg
-viewPaginationImpl { language, pagination, clickMsg, rowStyle } =
+viewPaginationImpl { clickMsg, language, pagination, rowStyle } =
     let
         pageLabel =
             extractLabelFromLanguageMap language localTranslations.page
@@ -157,4 +156,4 @@ viewPagination language pagination clickMsg =
                 , htmlAttribute (HA.style "z-index" "10")
                 ]
     in
-    viewPaginationImpl { language = language, pagination = pagination, clickMsg = clickMsg, rowStyle = rowStyle }
+    viewPaginationImpl { clickMsg = clickMsg, language = language, pagination = pagination, rowStyle = rowStyle }

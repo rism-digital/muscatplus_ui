@@ -179,7 +179,7 @@ viewRecordDescriptionTab { language, model, recordId } =
 
 
 viewRecordSourceSearchTabBar :
-    { body : Maybe { a | url : String, totalItems : Int }
+    { body : Maybe { a | totalItems : Int, url : String }
     , language : Language
     , model : RecordPageModel RecordMsg
     , recordId : String
@@ -194,10 +194,10 @@ viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
                     let
                         ( searchUrl, itemCount ) =
                             case model.searchResults of
-                                Response (SearchData d) ->
+                                Loading (Just (SearchData d)) ->
                                     ( d.id, d.totalItems )
 
-                                Loading (Just (SearchData d)) ->
+                                Response (SearchData d) ->
                                     ( d.id, d.totalItems )
 
                                 _ ->

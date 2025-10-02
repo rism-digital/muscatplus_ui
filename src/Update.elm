@@ -565,11 +565,7 @@ changeRecordPageHelper { model, newSession, previousRoute, previousUrl, route, u
 
     else
         ( newPageBody
-        , Cmd.batch
-            [ RecordPage.recordPageRequest newSession.cacheBuster url
-
-            --, sourceFetchCmd newPageBody url route
-            ]
+        , RecordPage.recordPageRequest newSession.cacheBuster url
             |> Cmd.map Msg.UserInteractedWithRecordPage
         )
 
