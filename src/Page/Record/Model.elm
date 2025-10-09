@@ -1,4 +1,4 @@
-module Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
+module Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, TabRecordTypeContents(..), routeToCurrentRecordViewTab)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
@@ -9,13 +9,16 @@ import Response exposing (Response, ServerData)
 import Set exposing (Set)
 
 
-
-{- | PrintHoldingsTab String -}
+type TabRecordTypeContents
+    = SourceContents
+    | HoldingContents
+    | WorksContents
+    | InventoryItemsContents
 
 
 type CurrentRecordViewTab
     = DefaultRecordViewTab String
-    | ContentsSearchDisplayTab String
+    | ContentsSearchDisplayTab TabRecordTypeContents String
 
 
 type alias RecordPageModel msg =
@@ -39,19 +42,22 @@ routeToCurrentRecordViewTab : Route -> (String -> CurrentRecordViewTab)
 routeToCurrentRecordViewTab route =
     case route of
         SourceContentsPageRoute _ _ ->
-            ContentsSearchDisplayTab
+            ContentsSearchDisplayTab SourceContents
+
+        SourceInventoryItemsPageRoute _ _ ->
+            ContentsSearchDisplayTab InventoryItemsContents
 
         PersonSourcePageRoute _ _ ->
-            ContentsSearchDisplayTab
+            ContentsSearchDisplayTab SourceContents
 
         InstitutionSourcePageRoute _ _ ->
-            ContentsSearchDisplayTab
+            ContentsSearchDisplayTab SourceContents
 
         PublicationWorksPageRoute _ _ ->
-            ContentsSearchDisplayTab
+            ContentsSearchDisplayTab SourceContents
 
         WorkSourcePageRoute _ _ ->
-            ContentsSearchDisplayTab
+            ContentsSearchDisplayTab SourceContents
 
         _ ->
             DefaultRecordViewTab

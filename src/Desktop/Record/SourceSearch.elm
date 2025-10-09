@@ -7,7 +7,7 @@ import Desktop.Record.Facets exposing (facetRecordMsgConfig)
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, clipY, column, fill, height, none, px, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, TabRecordTypeContents(..))
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.UI.Components exposing (Tab(..), tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Errors exposing (errorMessageString)
@@ -117,7 +117,7 @@ viewSourceSearchTab { language, model, searchUrl, tabLabel, totalItems } =
     let
         isSelected =
             case model.currentTab of
-                ContentsSearchDisplayTab _ ->
+                ContentsSearchDisplayTab SourceContents _ ->
                     True
 
                 _ ->
@@ -129,7 +129,7 @@ viewSourceSearchTab { language, model, searchUrl, tabLabel, totalItems } =
                 NothingHappened
 
             else
-                UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
+                UserClickedRecordViewTab (ContentsSearchDisplayTab SourceContents searchUrl)
 
         thisTab =
             CountTab tabLabel (Just totalItems)

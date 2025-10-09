@@ -197,6 +197,22 @@ changePage url model =
             , refreshCmds
             )
 
+        Route.SourceInventoryItemsPageRoute _ qargs ->
+            let
+                ( newPageBody, refreshCmds ) =
+                    changeRecordContentsPageHelper
+                        { model = model
+                        , newSession = newSession
+                        , previousUrl = previousUrl
+                        , qargs = qargs
+                        , route = route
+                        , url = url
+                        }
+            in
+            ( SourcePage newSession newPageBody
+            , refreshCmds
+            )
+
         Route.PersonPageRoute _ ->
             let
                 ( newPageBody, refreshCmds ) =
@@ -602,6 +618,9 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
         ( newPageBody, isSameRecordPage ) =
             case ( route, model ) of
                 ( Route.SourceContentsPageRoute _ _, SourcePage _ oldPageBody ) ->
+                    samePage oldPageBody
+
+                ( Route.SourceInventoryItemsPageRoute _ _, SourcePage _ oldPageBody ) ->
                     samePage oldPageBody
 
                 ( Route.PersonSourcePageRoute _ _, PersonPage _ oldPageBody ) ->

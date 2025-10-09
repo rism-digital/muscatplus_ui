@@ -65,7 +65,7 @@ viewFullWorkPage session model body =
                     , True
                     )
 
-                ContentsSearchDisplayTab _ ->
+                ContentsSearchDisplayTab _ _ ->
                     ( viewSourceSearchTabBody session model, False )
 
         tabBar =

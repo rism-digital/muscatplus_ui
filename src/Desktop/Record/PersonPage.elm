@@ -105,7 +105,7 @@ viewFullPersonPage session model body =
                 DefaultRecordViewTab _ ->
                     ( viewDescriptionTab session.language body, True )
 
-                ContentsSearchDisplayTab _ ->
+                ContentsSearchDisplayTab _ _ ->
                     ( viewSourceSearchTabBody session model, False )
 
         icon =

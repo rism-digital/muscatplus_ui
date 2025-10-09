@@ -110,7 +110,7 @@ viewFullInstitutionPage session model body =
                 DefaultRecordViewTab _ ->
                     ( viewDescriptionTab session.language session.window body, True )
 
-                ContentsSearchDisplayTab _ ->
+                ContentsSearchDisplayTab _ _ ->
                     ( viewSourceSearchTabBody session model, False )
 
         icon =

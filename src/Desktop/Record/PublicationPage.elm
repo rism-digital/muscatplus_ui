@@ -9,7 +9,7 @@ import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, TabRecordTypeContents(..))
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
 import Page.RecordTypes.Incipit exposing (IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Publication exposing (PublicationBody, WorkCatalogueStatus)
@@ -43,7 +43,7 @@ viewFullPublicationPage session model body =
                 DefaultRecordViewTab _ ->
                     viewDescriptionTab session.language body
 
-                ContentsSearchDisplayTab _ ->
+                ContentsSearchDisplayTab _ _ ->
                     viewRelatedWorksListTabBody session model
 
         icon =
@@ -253,7 +253,7 @@ viewWorksDisplayTab { language, model, searchUrl, tabLabel, worksCount } =
     let
         isSelected =
             case model.currentTab of
-                ContentsSearchDisplayTab _ ->
+                ContentsSearchDisplayTab WorksContents _ ->
                     True
 
                 _ ->
@@ -263,7 +263,7 @@ viewWorksDisplayTab { language, model, searchUrl, tabLabel, worksCount } =
             CountTab tabLabel (Just worksCount)
     in
     tabView
-        { clickMsg = UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
+        { clickMsg = UserClickedRecordViewTab (ContentsSearchDisplayTab WorksContents searchUrl)
         , icon = none
         , isSelected = isSelected
         , language = language

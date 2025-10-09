@@ -2,12 +2,12 @@ module Desktop.Record.SourcePage exposing (viewFullSourcePage)
 
 import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Dict
-import Element exposing (Element, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, text, width)
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, TabRecordTypeContents(..))
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (sectionSpacing)
@@ -50,7 +50,10 @@ viewFullSourcePage session model body =
                     , True
                     )
 
-                ContentsSearchDisplayTab _ ->
+                ContentsSearchDisplayTab InventoryItemsContents _ ->
+                    ( el [] (text "Hello inventory items"), False )
+
+                ContentsSearchDisplayTab _ _ ->
                     ( viewSourceSearchTabBody session model, False )
 
         sourceIcon =

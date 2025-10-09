@@ -27,7 +27,7 @@ import Page.Downloader.Model as Downloader
 import Page.Downloader.Msg as DownloaderMsg
 import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, setFilters, setMode, setNationalCollection, setNextQuery, setRows, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
+import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, TabRecordTypeContents(..), routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.ApiError exposing (apiErrorDecoder)
@@ -610,7 +610,7 @@ update session msg model =
                         DefaultRecordViewTab recordUrl ->
                             Nav.pushUrl session.key recordUrl
 
-                        ContentsSearchDisplayTab searchUrl ->
+                        ContentsSearchDisplayTab _ searchUrl ->
                             case model.searchResults of
                                 -- if there is already a response, then don't refresh it when we switch tabs
                                 Response _ ->
