@@ -1,4 +1,4 @@
-module Page.RecordTypes.Tombstone exposing (Tombstone, messageToTombstone)
+module Page.RecordTypes.Tombstone exposing (Tombstone, messageToTombstone, tombstoneDecoder)
 
 import Json.Decode as Decode exposing (Decoder, Error, decodeString, map, string)
 import Json.Decode.Extra exposing (datetime)

@@ -14,7 +14,7 @@ import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.QueryBuilder
 import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (lineSpacing, minimalDropShadow)
+import Page.UI.Attributes exposing (lineSpacing, minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (h1)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -372,6 +372,7 @@ viewFacetPanels cfg =
         [ column
             [ width fill
             , alignTop
+            , spacing sectionSpacing
             ]
             [ mainTitle
             , mainSearchField

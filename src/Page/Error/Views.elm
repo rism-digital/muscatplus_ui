@@ -141,6 +141,7 @@ viewGoneResponse { label, language, tombstone } =
         [ textColumn
             [ centerX
             , width fill
+            , spacing lineSpacing
             ]
             [ paragraph
                 [ Font.center ]
@@ -150,8 +151,7 @@ viewGoneResponse { label, language, tombstone } =
                 ]
             , paragraph
                 [ Font.center ]
-                [ text "It may have been a duplicate of another record, or removed for another reason."
-                , text "If you have any concerns please "
+                [ text "It may have been a duplicate of another record, or removed for another reason. If you have any concerns please "
                 , link
                     [ linkColour ]
                     { label = text "send us a message."

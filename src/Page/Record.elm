@@ -19,6 +19,7 @@ import Debouncer.Messages as Debouncer exposing (debounce, fromSeconds, provideI
 import Dict
 import Json.Decode as Decode exposing (Value)
 import Language exposing (Language(..), extractLabelFromLanguageMap, toLanguageMap)
+import Language.LocalTranslations exposing (errorMessages)
 import Maybe.Extra as ME
 import Murmur3
 import Page.Decoders exposing (recordResponseDecoder)
@@ -33,6 +34,7 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.ApiError exposing (apiErrorDecoder)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.Search exposing (toFacetLabel)
+import Page.RecordTypes.Tombstone exposing (tombstoneDecoder)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route(..), routeToResultMode)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
@@ -41,6 +43,7 @@ import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, p
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
+import Result.Extra as RE
 import SearchPreferences exposing (SearchPreferences)
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
@@ -105,28 +108,34 @@ init cfg =
                             }
 
                         Err _ ->
-                            case Decode.decodeValue apiErrorDecoder d of
+                            let
+                                errorResponse =
+                                    Decode.decodeValue tombstoneDecoder d
+                                        |> Result.map (\t -> Error (GoneResponse { label = errorMessages.recordDeleted, tombstone = t }))
+                                        |> RE.orElse
+                                            (Decode.decodeValue apiErrorDecoder d
+                                                |> Result.map (\o -> Error (BadBodyEncodedResponse { label = toLanguageMap "Unexpected response", errorMessage = o }))
+                                            )
+                                        |> Result.mapError
+                                            (\er ->
+                                                Error
+                                                    (BadBodyResponse
+                                                        { label = toLanguageMap "Unexpected response"
+                                                        , description = Decode.errorToString er
+                                                        }
+                                                    )
+                                            )
+                            in
+                            case errorResponse of
                                 Ok o ->
                                     { probeData = NotChecked
-                                    , recordData =
-                                        Error
-                                            (BadBodyEncodedResponse
-                                                { label = toLanguageMap "Unexpected response"
-                                                , errorMessage = o
-                                                }
-                                            )
+                                    , recordData = o
                                     , searchData = NoResponseToShow
                                     }
 
                                 Err er ->
                                     { probeData = NotChecked
-                                    , recordData =
-                                        Error
-                                            (BadBodyResponse
-                                                { label = toLanguageMap "Unexpected response"
-                                                , description = Decode.errorToString er
-                                                }
-                                            )
+                                    , recordData = er
                                     , searchData = NoResponseToShow
                                     }
 
