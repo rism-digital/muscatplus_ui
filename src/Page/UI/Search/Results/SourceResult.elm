@@ -117,7 +117,7 @@ viewSourceFlags language flags =
                 (iconType ++ ": " ++ iconLabel)
 
         contentTypesFlags =
-            viewIf (assembleContentTypeFlags language flags.contentTypes) (List.length flags.contentTypes > 0)
+            viewIf (assembleContentTypeFlags language flags.contentTypes) (not (List.isEmpty flags.contentTypes))
     in
     row
         [ width fill

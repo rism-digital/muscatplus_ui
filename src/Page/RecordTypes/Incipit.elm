@@ -2,8 +2,6 @@ module Page.RecordTypes.Incipit exposing
     ( EncodedIncipit(..)
     , IncipitBody
     , IncipitFormat(..)
-    , IncipitParentSourceBody
-    , IncipitParentWorkBody
     , IncipitsSectionBody
     , PAEEncodedData
     , RenderedIncipit(..)

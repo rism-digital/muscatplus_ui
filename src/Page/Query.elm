@@ -32,7 +32,6 @@ import Dict exposing (Dict)
 import Language exposing (LanguageMap, toLanguageMap)
 import Maybe.Extra as ME
 import Page.RecordTypes.Countries exposing (CountryCode)
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToModeString)
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode, resultModeOptions)
 import Page.RecordTypes.Search
     exposing
@@ -43,6 +42,7 @@ import Page.RecordTypes.Search
         , parseStringToFacetBehaviour
         , parseStringToFacetSort
         )
+import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..), resultModeToSearchControlOption, searchControlOptionToModeString)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Request exposing (serverUrl)
 import SearchPreferences exposing (SearchPreferences)
@@ -375,8 +375,8 @@ modeParamParser =
 
 modeQueryStringToResultMode : List String -> ResultMode
 modeQueryStringToResultMode modeList =
-    List.map parseStringToResultMode modeList
-        |> List.head
+    List.head modeList
+        |> Maybe.map parseStringToResultMode
         |> Maybe.withDefault EmptyMode
 
 
@@ -414,16 +414,17 @@ stringSplitToList str =
             Nothing
 
 
-buildFrontPageUrl : NavigationBarOption -> Maybe CountryCode -> String
-buildFrontPageUrl sidebarOption countryCode =
-    case sidebarOption of
-        WorkCatalogueNavigateOption ->
+buildFrontPageUrl : ResultMode -> Maybe CountryCode -> String
+buildFrontPageUrl resultMode countryCode =
+    case resultMode of
+        WorkCatalogueMode ->
             serverUrl [ "/publications" ] []
 
         _ ->
             let
                 modeParameter =
-                    navigationBarOptionToModeString sidebarOption
+                    resultModeToSearchControlOption resultMode
+                        |> searchControlOptionToModeString
                         |> Url.Builder.string "mode"
 
                 -- Omits the parameter if the country code is Nothing.

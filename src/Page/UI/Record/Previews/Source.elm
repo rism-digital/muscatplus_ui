@@ -95,7 +95,7 @@ viewSourcePreview cfg body =
                             }
                             allExternals
                         )
-                        (Dict.size allExternals > 0)
+                        (not (Dict.isEmpty allExternals))
                     , viewMaybe
                         (viewContentsSection
                             { creator = body.creator

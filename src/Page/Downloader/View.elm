@@ -90,8 +90,6 @@ viewWindowContent { language, model } =
             , height fill
             , padding 20
             , spacing lineSpacing
-
-            --, explain Debug.todo
             ]
             [ row
                 [ width fill ]

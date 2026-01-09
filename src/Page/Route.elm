@@ -179,5 +179,11 @@ routeToResultMode route =
         WorkSourcePageRoute _ _ ->
             SourcesMode
 
+        FrontPageRoute qargs ->
+            qargs.mode
+
+        SearchPageRoute qargs _ ->
+            qargs.mode
+
         _ ->
             EmptyMode

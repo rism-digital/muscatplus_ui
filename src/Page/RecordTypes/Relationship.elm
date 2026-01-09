@@ -3,8 +3,8 @@ module Page.RecordTypes.Relationship exposing
     , RelatedTo(..)
     , RelatedToBody
     , RelationshipBody
-    , RelationshipQualifier(..)
-    , RelationshipRole(..)
+    , RelationshipQualifier
+    , RelationshipRole
     , RelationshipsSectionBody
     , RoleBody
     , qualifierBodyDecoder

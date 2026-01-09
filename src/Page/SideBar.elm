@@ -4,8 +4,8 @@ import Browser.Navigation as Nav
 import Debouncer.Messages as Debouncer exposing (UpdateConfig)
 import Page.NavigationBar exposing (NavigationBar(..))
 import Page.Query exposing (buildFrontPageUrl)
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
 import Page.Request exposing (createCountryCodeRequestWithDecoder)
+import Page.Route exposing (routeToResultMode)
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..))
 import Page.SideBar.Options exposing (SideBarOptions, updateCurrentlyHoveredAboutMenuSidebarOption, updateCurrentlyHoveredLanguageChooserSidebarOption, updateCurrentlyHoveredNationalCollectionSidebarOption, updateCurrentlyHoveredNationalCollectionStatus, updateCurrentlyHoveredStatus, updateExpansionStatus, updateNationalCollectionChooserDebouncer, updateSideBarExpansionDebouncer)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
@@ -19,10 +19,6 @@ type alias Msg =
 countryListRequest : Cmd SideBarMsg
 countryListRequest =
     createCountryCodeRequestWithDecoder ServerRespondedWithCountryCodeList
-
-
-
---update : (msg -> model -> ( model, Cmd msg )) -> UpdateConfig msg model -> Msg msg -> model -> ( model, Cmd msg )
 
 
 update : SideBarMsg -> Session -> ( Session, Cmd SideBarMsg )
@@ -74,11 +70,9 @@ update msg session =
             , Cmd.none
             )
 
-        UserClickedSideBarOptionForFrontPage sidebarOption ->
-            ( { session
-                | showFrontSearchInterface = sidebarOption
-              }
-            , buildFrontPageUrl sidebarOption session.restrictedToNationalCollection
+        UserClickedSideBarOptionForFrontPage resultMode ->
+            ( session
+            , buildFrontPageUrl resultMode session.restrictedToNationalCollection
                 |> Nav.pushUrl session.key
             )
 
@@ -145,16 +139,12 @@ update msg session =
         UserChoseNationalCollection countryCode ->
             ( { session
                 | restrictedToNationalCollection = countryCode
-
-                -- reset the user interface to the source search option to avoid getting stuck on the
-                -- people or incipits interface when a national collection is chosen.
-                , showFrontSearchInterface = SourceSearchOption
               }
             , Cmd.batch
                 [ PortSendSetNationalCollectionSelection countryCode
                     |> encodeMessageForPortSend
                     |> sendOutgoingMessageOnPort
-                , buildFrontPageUrl session.showFrontSearchInterface countryCode
+                , buildFrontPageUrl (routeToResultMode session.route) countryCode
                     |> Nav.pushUrl session.key
                 ]
             )

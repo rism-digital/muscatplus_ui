@@ -3,6 +3,7 @@ module Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, ro
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
 import Page.RecordTypes.Probe exposing (ProbeStatus)
+import Page.RecordTypes.SearchControl exposing (SearchControlOptions)
 import Page.Route exposing (Route(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Response exposing (Response, ServerData)
@@ -32,6 +33,7 @@ type alias RecordPageModel msg =
     , probeDebouncer : Debouncer msg
     , applyFilterPrompt : Bool
     , previewAnimationStatus : PreviewAnimationStatus
+    , showSearchControls : SearchControlOptions
     }
 
 

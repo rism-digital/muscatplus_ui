@@ -20,21 +20,21 @@ import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
-searchModeSelectorRouter : Language -> SearchPageModel SearchMsg -> Element SearchMsg
-searchModeSelectorRouter language model =
+searchModeSelectorRouter : Session -> SearchPageModel SearchMsg -> Element SearchMsg
+searchModeSelectorRouter session model =
     case model.response of
         Loading (Just (SearchData oldData)) ->
-            searchModeSelectorView language model oldData.modes
+            searchModeSelectorView session model oldData.modes
 
         Response (SearchData data) ->
-            searchModeSelectorView language model data.modes
+            searchModeSelectorView session model data.modes
 
         _ ->
             none
 
 
-searchModeSelectorView : Language -> SearchPageModel SearchMsg -> Maybe ModeFacet -> Element SearchMsg
-searchModeSelectorView lang model modeFacet =
+searchModeSelectorView : Session -> SearchPageModel SearchMsg -> Maybe ModeFacet -> Element SearchMsg
+searchModeSelectorView session model modeFacet =
     let
         currentMode =
             toActiveSearch model
@@ -51,7 +51,7 @@ searchModeSelectorView lang model modeFacet =
             , height fill
             , alignTop
             ]
-            [ viewMaybe (viewModeItems currentMode lang) modeFacet
+            [ viewMaybe (viewModeItems currentMode session) modeFacet
             ]
         ]
 
@@ -131,7 +131,7 @@ view session model =
             , height fill
             , alignTop
             ]
-            [ viewTopBar session.language model
+            [ viewTopBar session model
             , viewSearchBody session model
             ]
         ]
@@ -154,8 +154,8 @@ viewSearchBody session model =
         ]
 
 
-viewTopBar : Language -> SearchPageModel SearchMsg -> Element SearchMsg
-viewTopBar lang model =
+viewTopBar : Session -> SearchPageModel SearchMsg -> Element SearchMsg
+viewTopBar session model =
     recordHeaderTemplate False
-        [ searchModeSelectorRouter lang model
+        [ searchModeSelectorRouter session model
         ]

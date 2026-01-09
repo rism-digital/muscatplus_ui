@@ -34,6 +34,7 @@ import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.ApiError exposing (apiErrorDecoder)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.Search exposing (toFacetLabel)
+import Page.RecordTypes.SearchControl exposing (resultModeToSearchControlOption)
 import Page.RecordTypes.Tombstone exposing (tombstoneDecoder)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route(..), routeToResultMode)
@@ -44,7 +45,7 @@ import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, s
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Result.Extra as RE
-import SearchPreferences exposing (SearchPreferences)
+import SearchPreferences
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
 import Set
@@ -151,6 +152,9 @@ init cfg =
         resultMode =
             routeToResultMode cfg.route
 
+        searchInterface =
+            resultModeToSearchControlOption resultMode
+
         activeSearchInit =
             cfg.queryArgs
                 |> ME.unpack (\() -> ActiveSearch.empty session.searchPreferences)
@@ -190,6 +194,7 @@ init cfg =
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
     , previewAnimationStatus = NoAnimation
+    , showSearchControls = searchInterface
     }
 
 

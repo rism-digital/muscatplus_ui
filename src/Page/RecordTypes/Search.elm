@@ -6,7 +6,7 @@ module Page.RecordTypes.Search exposing
     , FacetNotationOptions
     , FacetOptionsLabelValue
     , FacetSorts(..)
-    , FacetType(..)
+    , FacetType
     , Facets
     , IncipitResultBody
     , InstitutionResultBody

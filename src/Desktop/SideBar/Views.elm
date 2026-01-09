@@ -10,7 +10,6 @@ import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column,
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
-import Element.Font as Font
 import Element.Lazy exposing (lazy2)
 import Element.Region as Region
 import Html.Attributes as HA
@@ -18,7 +17,7 @@ import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME
 import Page.NavigationBar exposing (NavigationBar(..))
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.Route exposing (Route(..))
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg(..), showSideBarLabels)
 import Page.SideBar.Options exposing (SideBarOptions)
@@ -49,7 +48,7 @@ dividingLine =
         ]
 
 
-isCurrentlyHovered : Maybe NavigationBarOption -> NavigationBarOption -> Bool
+isCurrentlyHovered : Maybe ResultMode -> ResultMode -> Bool
 isCurrentlyHovered hoveredOption thisOption =
     ME.unwrap False (\opt -> opt == thisOption) hoveredOption
 
@@ -73,13 +72,10 @@ view session options =
         checkHover opt =
             isCurrentlyHovered currentlyHoveredOption opt
 
-        currentlySelectedOption =
-            session.showFrontSearchInterface
-
         checkSelected opt =
             case session.route of
-                FrontPageRoute _ ->
-                    opt == currentlySelectedOption
+                FrontPageRoute qargs ->
+                    opt == qargs.mode
 
                 _ ->
                     False
@@ -99,13 +95,13 @@ view session options =
         incipitsInterfaceMenuOption =
             menuOption
                 { icon = musicNotationSvg
-                , isCurrent = checkSelected IncipitSearchOption
+                , isCurrent = checkSelected IncipitsMode
                 , isExpanded = isExpanded
-                , isHovered = checkHover IncipitSearchOption
+                , isHovered = checkHover IncipitsMode
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.incipits)
                 , showLabel = showLabels
                 }
-                IncipitSearchOption
+                IncipitsMode
 
         -- If a national collection is chosen this will return
         -- false, indicating that the menu option should not
@@ -113,13 +109,13 @@ view session options =
         institutionInterfaceMenuOption =
             menuOption
                 { icon = institutionSvg
-                , isCurrent = checkSelected InstitutionSearchOption
+                , isCurrent = checkSelected InstitutionsMode
                 , isExpanded = isExpanded
-                , isHovered = checkHover InstitutionSearchOption
+                , isHovered = checkHover InstitutionsMode
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.institutions)
                 , showLabel = showLabels
                 }
-                InstitutionSearchOption
+                InstitutionsMode
 
         showWhenChoosingNationalCollection =
             ME.isNothing session.restrictedToNationalCollection
@@ -128,13 +124,13 @@ view session options =
             viewIf
                 (lazy2 menuOption
                     { icon = peopleSvg
-                    , isCurrent = checkSelected PeopleSearchOption
+                    , isCurrent = checkSelected PeopleMode
                     , isExpanded = isExpanded
-                    , isHovered = checkHover PeopleSearchOption
+                    , isHovered = checkHover PeopleMode
                     , label = text (extractLabelFromLanguageMap session.language localTranslations.people)
                     , showLabel = showLabels
                     }
-                    PeopleSearchOption
+                    PeopleMode
                 )
                 showWhenChoosingNationalCollection
 
@@ -194,24 +190,24 @@ view session options =
         sourcesInterfaceMenuOption =
             menuOption
                 { icon = sourcesSvg
-                , isCurrent = checkSelected SourceSearchOption
+                , isCurrent = checkSelected SourcesMode
                 , isExpanded = isExpanded
-                , isHovered = checkHover SourceSearchOption
+                , isHovered = checkHover SourcesMode
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.sources)
                 , showLabel = showLabels
                 }
-                SourceSearchOption
+                SourcesMode
 
         workCataloguesInterfaceMenuOption =
             menuOption
                 { icon = folderMusicSvg
-                , isCurrent = checkSelected WorkCatalogueNavigateOption
+                , isCurrent = checkSelected WorkCatalogueMode
                 , isExpanded = isExpanded
-                , isHovered = checkHover WorkCatalogueNavigateOption
+                , isHovered = checkHover WorkCatalogueMode
                 , label = text (extractLabelFromLanguageMap session.language localTranslations.workCatalogues)
                 , showLabel = showLabels
                 }
-                WorkCatalogueNavigateOption
+                WorkCatalogueMode
     in
     animatedColumn
         sideAnimation
@@ -243,7 +239,7 @@ view session options =
                         [ alignTop
                         , width fill
                         , pointer
-                        , onClick (UserClickedSideBarOptionForFrontPage SourceSearchOption)
+                        , onClick (UserClickedSideBarOptionForFrontPage SourcesMode)
                         ]
                         (rismLogo colourScheme.white (headerHeight - 10))
                     , viewIf
@@ -254,7 +250,7 @@ view session options =
                             , centerY
                             , moveUp 0.5
                             , pointer
-                            , onClick (UserClickedSideBarOptionForFrontPage SourceSearchOption)
+                            , onClick (UserClickedSideBarOptionForFrontPage SourcesMode)
                             ]
                             (onlineTextSvg colourScheme.white)
                         )

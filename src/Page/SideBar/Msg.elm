@@ -6,7 +6,7 @@ import Http
 import Http.Detailed
 import Language exposing (Language, LanguageMap)
 import Page.RecordTypes.Countries exposing (CountryCode)
-import Page.RecordTypes.Navigation exposing (NavigationBarOption)
+import Page.RecordTypes.ResultMode exposing (ResultMode)
 import SearchPreferences exposing (SearchPreferences)
 
 
@@ -23,8 +23,8 @@ type SideBarMsg
     | ClientSetSearchPreferencesThroughPort SearchPreferences
     | UserMouseEnteredSideBar
     | UserMouseExitedSideBar
-    | UserClickedSideBarOptionForFrontPage NavigationBarOption
-    | UserMouseEnteredSideBarOption NavigationBarOption
+    | UserClickedSideBarOptionForFrontPage ResultMode
+    | UserMouseEnteredSideBarOption ResultMode
     | UserMouseExitedSideBarOption
     | UserMouseEnteredCountryChooser
     | UserMouseExitedCountryChooser

@@ -50,15 +50,13 @@ viewSingleChoiceFacet cfg =
         chosenOption =
             Dict.get (.alias cfg.singleChoiceFacet) nextQuery.filters
                 |> Maybe.withDefault []
-                |> List.map (\( val, _ ) -> percentDecode val |> Maybe.withDefault val)
                 |> List.head
+                |> Maybe.map (\( val, _ ) -> percentDecode val |> Maybe.withDefault val)
 
         changeMsg opt =
-            let
-                label =
-                    labelForValue opt (.items cfg.singleChoiceFacet)
-            in
-            cfg.userSelectedSingleChoiceMsg (.alias cfg.singleChoiceFacet) opt label
+            .items cfg.singleChoiceFacet
+                |> labelForValue opt
+                |> cfg.userSelectedSingleChoiceMsg (.alias cfg.singleChoiceFacet) opt
     in
     row
         [ width fill

@@ -14,9 +14,7 @@ update : BottomBarMsg -> Session -> ( Session, Cmd BottomBarMsg )
 update msg session =
     case msg of
         UserTouchedBottomBarOptionForFrontPage bottomBarOption ->
-            ( { session
-                | showFrontSearchInterface = bottomBarOption
-              }
+            ( session
             , buildFrontPageUrl bottomBarOption session.restrictedToNationalCollection
                 |> Nav.pushUrl session.key
             )

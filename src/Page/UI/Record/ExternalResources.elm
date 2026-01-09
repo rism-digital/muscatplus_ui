@@ -221,22 +221,25 @@ gatherExternalResourcesFromSection :
             }
     -> Dict String (List ExternalResourceBody)
 gatherExternalResourcesFromSection language extResources =
-    List.map (\{ label, externalResources } -> ( externalResources, label )) extResources
-        |> List.filterMap
-            (\( f, l ) ->
-                Maybe.map
-                    (\v ->
+    let
+        filtResources =
+            List.map (\{ label, externalResources } -> ( externalResources, label )) extResources
+                |> List.filterMap
+                    (\( f, l ) ->
                         Maybe.map
-                            (\exR ->
-                                List.filter (\r -> filtTypes r.type_) exR
-                                    |> List.map (\exRb -> ( extractLabelFromLanguageMap language l, [ exRb ] ))
+                            (\v ->
+                                Maybe.map
+                                    (\exR ->
+                                        List.filter (\r -> filtTypes r.type_) exR
+                                            |> List.map (\exRb -> ( extractLabelFromLanguageMap language l, [ exRb ] ))
+                                    )
+                                    v.items
                             )
-                            v.items
+                            f
                     )
-                    f
-            )
-        |> List.filterMap identity
-        |> List.foldr (++) []
+    in
+    List.filterMap identity filtResources
+        |> List.concat
         |> DE.fromListCombining (++)
 
 

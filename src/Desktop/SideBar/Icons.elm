@@ -1,4 +1,4 @@
-module Desktop.SideBar.Icons exposing (..)
+module Desktop.SideBar.Icons exposing (sidebarIcon, sidebarRowBaseOptions, sidebarRowColumnBaseOptions)
 
 import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, shrink, spacing, width)
 import Element.Background as Background

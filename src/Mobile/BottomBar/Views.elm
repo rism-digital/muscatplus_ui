@@ -7,7 +7,7 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
 import Page.BottomBar.Msg exposing (BottomBarMsg(..))
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
+import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.UI.Images exposing (institutionSvg, musicNotationSvg, peopleSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
@@ -36,7 +36,7 @@ view session =
                     [ height fill
                     , centerY
                     , centerX
-                    , onClick (UserTouchedBottomBarOptionForFrontPage SourceSearchOption)
+                    , onClick (UserTouchedBottomBarOptionForFrontPage SourcesMode)
                     ]
                     [ el
                         [ width (px 24)
@@ -51,7 +51,7 @@ view session =
                     [ height fill
                     , centerY
                     , centerX
-                    , onClick (UserTouchedBottomBarOptionForFrontPage InstitutionSearchOption)
+                    , onClick (UserTouchedBottomBarOptionForFrontPage InstitutionsMode)
                     ]
                     [ el
                         [ width (px 24)
@@ -66,7 +66,7 @@ view session =
                     [ height fill
                     , centerY
                     , centerX
-                    , onClick (UserTouchedBottomBarOptionForFrontPage PeopleSearchOption)
+                    , onClick (UserTouchedBottomBarOptionForFrontPage PeopleMode)
                     ]
                     [ el
                         [ width (px 24)
@@ -81,7 +81,7 @@ view session =
                     [ height fill
                     , centerY
                     , centerX
-                    , onClick (UserTouchedBottomBarOptionForFrontPage IncipitSearchOption)
+                    , onClick (UserTouchedBottomBarOptionForFrontPage IncipitsMode)
                     ]
                     [ el
                         [ width (px 24)

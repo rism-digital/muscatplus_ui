@@ -3,6 +3,7 @@ module Page.Search.Model exposing (SearchPageModel)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
 import Page.RecordTypes.Probe exposing (ProbeStatus)
+import Page.RecordTypes.SearchControl exposing (SearchControlOptions)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Response exposing (Response, ServerData)
 import Set exposing (Set)
@@ -26,4 +27,5 @@ type alias SearchPageModel msg =
     , applyFilterPrompt : Bool
     , digitizedCopiesCalloutExpanded : Bool
     , previewAnimationStatus : PreviewAnimationStatus
+    , showSearchControls : SearchControlOptions
     }

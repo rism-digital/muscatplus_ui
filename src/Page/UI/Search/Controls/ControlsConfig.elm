@@ -4,6 +4,7 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Language exposing (Language, LanguageMap)
 import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.RecordTypes.Search exposing (Facets)
+import Page.RecordTypes.SearchControl exposing (SearchControlOptions)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Response exposing (Response, ServerData)
 import Session exposing (Session)
@@ -28,6 +29,7 @@ type alias SearchControlsConfig a b msg =
             , probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
             , response : Response ServerData
+            , showSearchControls : SearchControlOptions
         }
     , body : { b | facets : Facets }
     , facetMsgConfig : FacetMsgConfig msg

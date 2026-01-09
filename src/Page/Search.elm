@@ -28,8 +28,9 @@ import Page.QueryBuilder.Msg as QueryBuilderMsg
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
 import Page.RecordTypes.Search exposing (FacetItem(..), toFacetLabel)
+import Page.RecordTypes.SearchControl exposing (resultModeToSearchControlOption)
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
-import Page.Route exposing (Route)
+import Page.Route exposing (Route, routeToResultMode)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
@@ -77,6 +78,10 @@ init cfg =
         selectedResult =
             .fragment cfg.incomingUrl
                 |> Maybe.map (\frg -> C.serverUrl ++ "/" ++ convertNodeIdToPath frg)
+
+        searchInterface =
+            routeToResultMode cfg.route
+                |> resultModeToSearchControlOption
     in
     { response = Loading Nothing
     , activeSearch =
@@ -95,6 +100,7 @@ init cfg =
     , applyFilterPrompt = False
     , digitizedCopiesCalloutExpanded = False
     , previewAnimationStatus = NoAnimation
+    , showSearchControls = searchInterface
     }
 
 
@@ -362,12 +368,21 @@ update session msg model =
 
         UserClickedModeItem item ->
             let
+                resultMode =
+                    convertFacetToResultMode item
+
+                searchInterface =
+                    resultModeToSearchControlOption resultMode
+
+                newModel =
+                    { model | showSearchControls = searchInterface }
+
                 newQuery =
-                    toNextQuery model.activeSearch
-                        |> setMode (convertFacetToResultMode item)
+                    toNextQuery newModel.activeSearch
+                        |> setMode resultMode
             in
-            setNextQuery newQuery model.activeSearch
-                |> flip setActiveSearch model
+            setNextQuery newQuery newModel.activeSearch
+                |> flip setActiveSearch newModel
                 |> searchSubmit session
 
         UserClickedFacetPanelToggle panelAlias expandedPanels ->

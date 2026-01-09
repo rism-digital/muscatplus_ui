@@ -23,9 +23,10 @@ import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToResultMode)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..))
+import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..), navigationBarOptionToResultMode, resultModeToSearchControlOption)
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
+import Page.Route exposing (Route, routeToResultMode)
 import Page.UI.Errors exposing (createErrorMessage)
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Request exposing (serverUrl)
@@ -59,7 +60,7 @@ frontProbeSubmit : Session -> FrontPageModel FrontMsg -> ( FrontPageModel FrontM
 frontProbeSubmit session model =
     let
         resultMode =
-            navigationBarOptionToResultMode session.showFrontSearchInterface
+            navigationBarOptionToResultMode model.showSearchControls
     in
     toNextQuery model.activeSearch
         |> setMode resultMode
@@ -80,6 +81,12 @@ init cfg =
 
         searchPreferences =
             .searchPreferences cfg.session
+
+        resultMode =
+            routeToResultMode (.route cfg.session)
+
+        searchInterface =
+            resultModeToSearchControlOption resultMode
     in
     { response = frontData
     , activeSearch =
@@ -91,6 +98,7 @@ init cfg =
     , probeResponse = Probing
     , probeDebouncer = debounce (fromSeconds 0.5) |> toDebouncer
     , applyFilterPrompt = False
+    , showSearchControls = searchInterface
     }
 
 
@@ -124,7 +132,7 @@ searchSubmit session model =
                 (toKeyboard pageResetModel.activeSearch)
 
         resultMode =
-            navigationBarOptionToResultMode session.showFrontSearchInterface
+            navigationBarOptionToResultMode model.showSearchControls
 
         textQueryParameters =
             toNextQuery newModel.activeSearch
@@ -146,7 +154,7 @@ update session msg model =
         ServerRespondedWithFrontData (Ok ( _, response )) ->
             let
                 notationRenderCmd =
-                    case session.showFrontSearchInterface of
+                    case model.showSearchControls of
                         IncipitSearchOption ->
                             ME.unwrap Cmd.none
                                 (\kq ->
@@ -343,7 +351,7 @@ update session msg model =
                             if keyboardModel.needsProbe then
                                 let
                                     resultMode =
-                                        navigationBarOptionToResultMode session.showFrontSearchInterface
+                                        navigationBarOptionToResultMode model.showSearchControls
 
                                     probeUrl =
                                         toNextQuery probeModel.activeSearch
@@ -393,7 +401,7 @@ update session msg model =
                         |> frontProbeSubmit session
 
                 notationRenderCmd =
-                    case session.showFrontSearchInterface of
+                    case model.showSearchControls of
                         IncipitSearchOption ->
                             ME.unwrap Cmd.none
                                 (\kq ->

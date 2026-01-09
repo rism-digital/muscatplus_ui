@@ -20,8 +20,8 @@ import Page.QueryBuilder
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
-import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
+import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Page.UI.Attributes exposing (blurredBackground, bodyRegular, lineSpacing, minimalDropShadow)
@@ -63,6 +63,7 @@ type alias SearchResultsSectionConfig a msg =
             , probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
             , response : Response ServerData
+            , showSearchControls : SearchControlOptions
         }
     , searchResponse : Response ServerData
     , expandedIncipitInfoSections : Set String
@@ -355,6 +356,9 @@ viewSearchControls cfg =
                 |> toNextQuery
                 |> toMode
 
+        searchInterface =
+            .showSearchControls cfg.model
+
         language =
             .language cfg.session
 
@@ -396,17 +400,17 @@ viewSearchControls cfg =
                 ]
 
         ( mainSearchField, secondaryQueryField ) =
-            case currentMode of
-                SourcesMode ->
+            case searchInterface of
+                SourceSearchOption ->
                     ( keywordInputField, none )
 
-                PeopleMode ->
+                PeopleSearchOption ->
                     ( keywordInputField, none )
 
-                InstitutionsMode ->
+                InstitutionSearchOption ->
                     ( keywordInputField, none )
 
-                IncipitsMode ->
+                IncipitSearchOption ->
                     ( viewFacet
                         { alias = "notation"
                         , language = language
@@ -437,26 +441,20 @@ viewSearchControls cfg =
             }
 
         facetLayout =
-            case currentMode of
-                SourcesMode ->
+            case searchInterface of
+                SourceSearchOption ->
                     viewFacetsForSourcesMode facetConfig
 
-                PeopleMode ->
+                PeopleSearchOption ->
                     viewFacetsForPeopleMode facetConfig
 
-                InstitutionsMode ->
+                InstitutionSearchOption ->
                     viewFacetsForInstitutionsMode facetConfig
 
-                IncipitsMode ->
+                IncipitSearchOption ->
                     viewFacetsForIncipitsMode facetConfig
 
-                WorkCatalogueMode ->
-                    []
-
-                WorkMode ->
-                    []
-
-                EmptyMode ->
+                _ ->
                     []
     in
     row

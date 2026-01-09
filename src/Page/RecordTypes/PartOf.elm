@@ -1,6 +1,6 @@
-module Page.RecordTypes.PartOf exposing (..)
+module Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, PartOfType(..), RelatedBlock, extractUrlAndLabelFromPartOf, partOfSectionBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, andThen, field, list, map, maybe, string, succeed)
+import Json.Decode as Decode exposing (Decoder, andThen, field, list, map, maybe, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes exposing (RecordType(..), recordTypeFromJsonType)
@@ -66,10 +66,10 @@ partOfTypeDecoder : String -> Decoder PartOfType
 partOfTypeDecoder partOfType =
     case partOfType of
         "rism:PrimaryPartOf" ->
-            succeed PrimaryPartOf
+            Decode.succeed PrimaryPartOf
 
         "rism:SecondaryPartOf" ->
-            succeed SecondaryPartOf
+            Decode.succeed SecondaryPartOf
 
         _ ->
             Decode.fail "could not determine part of type"

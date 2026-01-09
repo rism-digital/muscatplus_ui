@@ -12,9 +12,9 @@ import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
 import Page.QueryBuilder
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
+import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (lineSpacing, minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (h1)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
@@ -59,7 +59,7 @@ view : Session -> FrontPageModel FrontMsg -> Element FrontMsg
 view session model =
     let
         backgroundImage =
-            case session.showFrontSearchInterface of
+            case model.showSearchControls of
                 SourceSearchOption ->
                     Background.image "/static/images/sources.jpg"
 
@@ -218,7 +218,7 @@ viewFacetPanels cfg =
             .language cfg.session
 
         headingHeroText =
-            case .showFrontSearchInterface cfg.session of
+            case .showSearchControls cfg.model of
                 SourceSearchOption ->
                     localTranslations.sources
 
@@ -288,7 +288,7 @@ viewFacetPanels cfg =
                 |> Maybe.withDefault ""
 
         frontSearchInterface =
-            .showFrontSearchInterface cfg.session
+            .showSearchControls cfg.model
 
         ( mainSearchField, secondaryQueryField ) =
             case frontSearchInterface of
@@ -345,7 +345,7 @@ viewFacetPanels cfg =
             }
 
         facetLayout =
-            case .showFrontSearchInterface cfg.session of
+            case .showSearchControls cfg.model of
                 SourceSearchOption ->
                     viewFacetsForSourcesMode facetConfig
 

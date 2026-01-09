@@ -11,7 +11,7 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg as FrontMsg exposing (FrontMsg)
 import Page.Query exposing (toKeywordQuery, toNextQuery)
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..))
+import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..))
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (headingMD, headingSM, lineSpacing, minimalDropShadow)
 import Page.UI.Facets.Facets exposing (viewFacet)
@@ -50,7 +50,7 @@ view : Session -> FrontPageModel FrontMsg -> Element FrontMsg
 view session model =
     let
         backgroundImage =
-            case session.showFrontSearchInterface of
+            case model.showSearchControls of
                 SourceSearchOption ->
                     Background.image "/static/images/sources.jpg"
 
@@ -166,7 +166,7 @@ viewFacetPanels cfg =
                 FrontMsg.NothingHappened
 
         ( mainSearchField, secondaryQueryField ) =
-            case .showFrontSearchInterface cfg.session of
+            case .showSearchControls cfg.model of
                 IncipitSearchOption ->
                     ( viewFacet
                         { alias = "notation"

@@ -617,7 +617,7 @@ userEnteredTextInQueryFacet alias query model =
             setQueryFacetValues newQueryFacetValue model.activeSearch
                 |> flip setActiveSearch model
     in
-    if String.length query == 0 then
+    if String.isEmpty query then
         setActiveSuggestion Nothing newModel.activeSearch
             |> flip setActiveSearch newModel
 

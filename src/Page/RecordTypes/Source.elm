@@ -17,7 +17,7 @@ import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digi
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Holding exposing (HoldingBody, holdingBodyDecoder)
-import Page.RecordTypes.Incipit exposing (IncipitBody, IncipitsSectionBody, incipitsSectionBodyDecoder)
+import Page.RecordTypes.Incipit exposing (IncipitsSectionBody, incipitsSectionBodyDecoder)
 import Page.RecordTypes.PartOf exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)

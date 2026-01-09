@@ -1,7 +1,7 @@
 module Page.SideBar.Options exposing (SideBarOptions, init, updateCurrentlyHoveredAboutMenuSidebarOption, updateCurrentlyHoveredLanguageChooserSidebarOption, updateCurrentlyHoveredNationalCollectionSidebarOption, updateCurrentlyHoveredNationalCollectionStatus, updateCurrentlyHoveredStatus, updateExpansionStatus, updateNationalCollectionChooserDebouncer, updateSideBarExpansionDebouncer)
 
 import Debouncer.Messages as Debouncer exposing (Debouncer, fromSeconds)
-import Page.RecordTypes.Navigation exposing (NavigationBarOption)
+import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.SideBar.Msg exposing (SideBarAnimationStatus(..), SideBarMsg, sideBarExpandDelay)
 
 
@@ -9,7 +9,7 @@ type alias SideBarOptions =
     { expandedSideBar : SideBarAnimationStatus
     , sideBarExpansionDebouncer : Debouncer SideBarMsg
     , nationalCollectionChooserDebouncer : Debouncer SideBarMsg
-    , currentlyHoveredOption : Maybe NavigationBarOption
+    , currentlyHoveredOption : Maybe ResultMode
     , currentlyHoveredNationalCollectionChooser : Bool
     , currentlyHoveredNationalCollectionSidebarOption : Bool
     , currentlyHoveredAboutMenuSidebarOption : Bool
@@ -39,7 +39,7 @@ updateExpansionStatus status options =
     { options | expandedSideBar = status }
 
 
-updateCurrentlyHoveredStatus : Maybe NavigationBarOption -> SideBarOptions -> SideBarOptions
+updateCurrentlyHoveredStatus : Maybe ResultMode -> SideBarOptions -> SideBarOptions
 updateCurrentlyHoveredStatus status options =
     { options | currentlyHoveredOption = status }
 

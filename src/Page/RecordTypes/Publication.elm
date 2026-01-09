@@ -1,6 +1,6 @@
 module Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody, PublicationProperties, WorkCatalogueStatus(..), WorksSectionBody, basicPublicationBodyDecoder, publicationBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, andThen, fail, int, list, maybe, string, succeed)
+import Json.Decode as Decode exposing (Decoder, andThen, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
@@ -104,13 +104,13 @@ stringToWorkCatalogueStatus : LabelStringValue -> Decoder WorkCatalogueStatus
 stringToWorkCatalogueStatus { label, value } =
     case value of
         "alternate" ->
-            succeed (Alternate label)
+            Decode.succeed (Alternate label)
 
         "completed" ->
-            succeed (Completed label)
+            Decode.succeed (Completed label)
 
         "partial" ->
-            succeed (Partial label)
+            Decode.succeed (Partial label)
 
         _ ->
-            fail ("Could not determine work catalogue status: " ++ value)
+            Decode.fail ("Could not determine work catalogue status: " ++ value)

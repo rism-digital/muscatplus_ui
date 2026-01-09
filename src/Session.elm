@@ -24,7 +24,6 @@ import Maybe.Extra as ME
 import Page.BottomBar.Options as BottomBarOptions
 import Page.NavigationBar exposing (NavigationBar(..))
 import Page.RecordTypes.Countries exposing (CountryCode, countryCodeDecoder)
-import Page.RecordTypes.Navigation exposing (NavigationBarOption(..), resultModeToNavigationBarOption)
 import Page.Route exposing (Route(..), parseUrl)
 import Page.SideBar.Options as SideBarOptions
 import SearchPreferences exposing (SearchPreferences, searchPreferencesDecoder)
@@ -45,7 +44,6 @@ type alias Session =
     , allNationalCollections : Dict CountryCode LanguageMap
     , searchPreferences : Maybe SearchPreferences
     , cacheBuster : Bool
-    , showFrontSearchInterface : NavigationBarOption
     }
 
 
@@ -72,14 +70,16 @@ init flags url key =
             else
                 SideBar SideBarOptions.init
 
-        initialMode =
-            case route of
-                FrontPageRoute qargs ->
-                    resultModeToNavigationBarOption qargs.mode
-
-                _ ->
-                    SourceSearchOption
-
+        --initialMode =
+        --    case route of
+        --        FrontPageRoute qargs ->
+        --            resultModeTSearchControlOption qargs.mode
+        --
+        --        SearchPageRoute qargs _ ->
+        --            resultModeTSearchControlOption qargs.mode
+        --
+        --        _ ->
+        --            SourceSearchOption
         language =
             parseLocaleToLanguage flags.locale
 
@@ -136,5 +136,4 @@ init flags url key =
     , allNationalCollections = countryList
     , searchPreferences = searchPreferences
     , cacheBuster = flags.cacheBuster
-    , showFrontSearchInterface = initialMode
     }

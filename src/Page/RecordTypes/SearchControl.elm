@@ -1,9 +1,9 @@
-module Page.RecordTypes.Navigation exposing (NavigationBarOption(..), navigationBarOptionToModeString, navigationBarOptionToResultMode, resultModeToNavigationBarOption)
+module Page.RecordTypes.SearchControl exposing (SearchControlOptions(..), navigationBarOptionToResultMode, resultModeToSearchControlOption, searchControlOptionToModeString)
 
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
 
 
-type NavigationBarOption
+type SearchControlOptions
     = SourceSearchOption
     | PeopleSearchOption
     | InstitutionSearchOption
@@ -12,8 +12,8 @@ type NavigationBarOption
     | EmptyOption
 
 
-resultModeToNavigationBarOption : ResultMode -> NavigationBarOption
-resultModeToNavigationBarOption mode =
+resultModeToSearchControlOption : ResultMode -> SearchControlOptions
+resultModeToSearchControlOption mode =
     case mode of
         SourcesMode ->
             SourceSearchOption
@@ -34,8 +34,8 @@ resultModeToNavigationBarOption mode =
             SourceSearchOption
 
 
-navigationBarOptionToModeString : NavigationBarOption -> String
-navigationBarOptionToModeString option =
+searchControlOptionToModeString : SearchControlOptions -> String
+searchControlOptionToModeString option =
     case option of
         SourceSearchOption ->
             "sources"
@@ -56,7 +56,7 @@ navigationBarOptionToModeString option =
             ""
 
 
-navigationBarOptionToResultMode : NavigationBarOption -> ResultMode
+navigationBarOptionToResultMode : SearchControlOptions -> ResultMode
 navigationBarOptionToResultMode option =
     case option of
         SourceSearchOption ->

@@ -18,8 +18,8 @@ viewCreatorImpl :
     -> Element msg
 viewCreatorImpl formatter language creator =
     gatherRelationshipItems [ creator ]
-        |> List.map (\( label, items ) -> formatter language label items)
         |> List.head
+        |> Maybe.map (\( label, items ) -> formatter language label items)
         |> Maybe.withDefault none
 
 

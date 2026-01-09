@@ -1,11 +1,11 @@
 module Desktop.SideBar.MenuOption exposing (menuOption, sidebarChooserAnimations)
 
 import Desktop.SideBar.Icons exposing (sidebarIcon)
-import Element exposing (Color, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, moveRight, padding, paddingXY, pointer, px, row, shrink, spacing, width)
+import Element exposing (Color, Element, alignLeft, alignTop, centerX, column, el, fill, height, moveRight, pointer, px, row, shrink, spacing, width)
 import Element.Background as Background
 import Element.Events exposing (onClick, onMouseEnter, onMouseLeave)
 import Element.Font as Font
-import Page.RecordTypes.Navigation exposing (NavigationBarOption)
+import Page.RecordTypes.ResultMode exposing (ResultMode)
 import Page.SideBar.Msg exposing (SideBarMsg(..))
 import Page.UI.Animations exposing (animatedLabel)
 import Page.UI.Attributes exposing (emptyAttribute)
@@ -34,7 +34,7 @@ menuOption :
     , label : Element SideBarMsg
     , showLabel : Bool
     }
-    -> NavigationBarOption
+    -> ResultMode
     -> Element SideBarMsg
 menuOption cfg option =
     let

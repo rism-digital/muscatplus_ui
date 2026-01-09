@@ -1,7 +1,7 @@
 module Page.BottomBar.Msg exposing (BottomBarMsg(..))
 
-import Page.RecordTypes.Navigation exposing (NavigationBarOption)
+import Page.RecordTypes.ResultMode exposing (ResultMode)
 
 
 type BottomBarMsg
-    = UserTouchedBottomBarOptionForFrontPage NavigationBarOption
+    = UserTouchedBottomBarOptionForFrontPage ResultMode

@@ -11,7 +11,6 @@ module Page.UI.Attributes exposing
     , emptyAttribute
     , emptyHtmlAttribute
     , fontBaseSize
-    , headingHero
     , headingLG
     , headingMD
     , headingSM
@@ -29,7 +28,7 @@ module Page.UI.Attributes exposing
     , valueFieldColumnAttributes
     )
 
-import Element exposing (Attr, Attribute, alignTop, centerY, fill, height, htmlAttribute, maximum, modular, padding, paddingEach, paddingXY, pointer, px, shrink, spacing, width)
+import Element exposing (Attr, Attribute, alignTop, centerY, fill, height, htmlAttribute, maximum, modular, padding, paddingEach, paddingXY, px, shrink, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
