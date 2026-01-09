@@ -96,9 +96,15 @@ viewRelationshipValue language body =
     in
     row
         [ alignLeft
+        , width fill
         ]
-        [ relatedToView
-        , note
+        [ column
+            [ width fill
+            , spacing lineSpacing
+            ]
+            [ row [ width fill ] [ relatedToView ]
+            , row [ width fill, paddingXY 20 0 ] [ note ]
+            ]
         ]
 
 
