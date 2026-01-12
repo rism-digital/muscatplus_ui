@@ -46,11 +46,13 @@ viewLocation : Language -> RelatedToBody -> Element msg
 viewLocation language body =
     row
         [ width fill ]
-        [ link
-            [ linkColour ]
-            { label = extractLabelFromLanguageMap language body.label |> text
-            , url = body.id
-            }
+        [ extractLabelFromLanguageMap language body.label |> text
+
+        --, link
+        --   [ linkColour ]
+        --   { label = extractLabelFromLanguageMap language body.label |> text
+        --   , url = body.id
+        --   }
         ]
 
 
