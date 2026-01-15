@@ -84,6 +84,22 @@ regex =
         >> Maybe.withDefault Regex.never
 
 
+splitTimes : Int -> String -> String -> List String
+splitTimes numTimes delimiter inp =
+    let
+        splitInput =
+            String.split delimiter inp
+
+        ( head, tail ) =
+            ( List.take numTimes splitInput
+            , List.drop numTimes splitInput
+            )
+    in
+    String.join delimiter tail
+        |> List.singleton
+        |> List.append head
+
+
 {-| Utility functions to work with html.
 
 @docs mapHrefRecursive
@@ -101,7 +117,7 @@ toLinkedHtml htmlString =
         -- then wrap it in an anchor tag prior to passing it to the HTML parser.
         wrappedUrlString =
             Regex.replace
-                (regex "(?<!href=[\"'])(https?:\\/\\/[^<]*)")
+                (regex "(?<!href=[\"'])(https?:\\/\\/[^<\\s(]*)")
                 (\match ->
                     "<a href=\"" ++ match.match ++ "\">" ++ match.match ++ "</a>"
                 )
@@ -128,19 +144,3 @@ toElementList htmlNodes =
         |> List.map Element.html
         |> Element.paragraph []
         |> List.singleton
-
-
-splitTimes : Int -> String -> String -> List String
-splitTimes numTimes delimiter inp =
-    let
-        splitInput =
-            String.split delimiter inp
-
-        ( head, tail ) =
-            ( List.take numTimes splitInput
-            , List.drop numTimes splitInput
-            )
-    in
-    String.join delimiter tail
-        |> List.singleton
-        |> List.append head
