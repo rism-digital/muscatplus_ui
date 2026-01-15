@@ -1,6 +1,6 @@
 module Desktop.SideBar.Icons exposing (sidebarIcon, sidebarRowBaseOptions, sidebarRowColumnBaseOptions)
 
-import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, shrink, spacing, width)
+import Element exposing (Attribute, Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, padding, paddingXY, px, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Page.UI.Style exposing (colourScheme)

@@ -1,6 +1,6 @@
 module Page.Downloader.View exposing (view)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, shrink, spacing, text, textColumn, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, htmlAttribute, padding, paragraph, pointer, px, row, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -10,7 +10,7 @@ import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
-import Page.UI.Attributes exposing (bodySM, buttonBaseStyles, headingMD, lineSpacing, minimalDropShadow)
+import Page.UI.Attributes exposing (bodySM, buttonBaseStyles, lineSpacing, minimalDropShadow)
 import Page.UI.Components exposing (viewWindowTitleBar)
 import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Style exposing (colourScheme)

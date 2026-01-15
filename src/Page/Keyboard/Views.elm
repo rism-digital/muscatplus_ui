@@ -29,6 +29,9 @@ view :
     -> Element KeyboardMsg
 view { language, model, notationFacet, searchPreferences, suppressInMobileUi } =
     let
+        paeHelp =
+            viewIf (viewPaeHelp language model) (not suppressInMobileUi)
+
         queryModeOptions =
             .options notationFacet.queryModes
                 |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))
@@ -81,9 +84,6 @@ view { language, model, notationFacet, searchPreferences, suppressInMobileUi } =
                     (viewRenderControls language notationFacet model)
                 )
                 (not suppressInMobileUi)
-
-        paeHelp =
-            viewIf (viewPaeHelp language model) (not suppressInMobileUi)
     in
     row
         [ width fill

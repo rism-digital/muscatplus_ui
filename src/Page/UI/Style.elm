@@ -1,6 +1,5 @@
 module Page.UI.Style exposing
     ( colourScheme
-    , determineOptimalTextColorForBackground
     , headerHeight
     , printMediaQuery
     , tabBarHeight

@@ -3,7 +3,7 @@ module Desktop.Search.Views exposing (view)
 import ActiveSearch exposing (toActiveSearch)
 import Desktop.Error.Views
 import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, none, row, text, width)
-import Language exposing (Language, extractLabelFromLanguageMap)
+import Language exposing (extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Query exposing (toMode, toNextQuery)
 import Page.RecordTypes.Search exposing (ModeFacet)

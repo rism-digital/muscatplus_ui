@@ -26,7 +26,7 @@ import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer, debounce, fromSeconds, toDebouncer)
 import Dict exposing (Dict)
 import Language exposing (LanguageMap)
-import Page.Downloader.Model as Downloader exposing (DownloaderModel)
+import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Keyboard as Keyboard
 import Page.Keyboard.Model exposing (KeyboardQuery, setKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)

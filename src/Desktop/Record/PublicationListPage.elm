@@ -4,11 +4,11 @@ import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el,
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationBody, WorkCatalogueStatus)
+import Page.RecordTypes.Publication exposing (BasicPublicationBody, WorkCatalogueStatus)
 import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, sectionSpacing, tableHeaderStyles)

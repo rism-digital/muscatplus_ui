@@ -13,7 +13,7 @@ import Page.Downloader.CsvHelpers exposing (convertResult, createSearchUrlRecord
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
 import Page.Downloader.View
-import Page.Query exposing (QueryArgs, setPage, setRows)
+import Page.Query exposing (setPage, setRows)
 import Page.RecordTypes.Search exposing (ResultsBody, SearchResult, resultsBodyDecoder)
 import Page.Request exposing (createProbeRequestWithDecoder)
 import Page.UpdateHelpers exposing (createProbeUrl, createSearchUrl)

@@ -48,9 +48,6 @@ menuOption cfg option =
             else
                 colourScheme.white
 
-        icon =
-            cfg.icon fontColour
-
         hoverStyles =
             choose cfg.isHovered
                 (\() -> Background.color colourScheme.white)
@@ -63,6 +60,9 @@ menuOption cfg option =
 
         optionLabel =
             el [ Font.alignLeft, alignLeft ] cfg.label
+
+        icon =
+            cfg.icon fontColour
 
         menuOptionIcon =
             sidebarIcon [] icon

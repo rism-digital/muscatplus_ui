@@ -152,6 +152,12 @@ baseRecordPathFromRoute route =
 routeToResultMode : Route -> ResultMode
 routeToResultMode route =
     case route of
+        FrontPageRoute qargs ->
+            qargs.mode
+
+        SearchPageRoute qargs _ ->
+            qargs.mode
+
         SourcePageRoute _ ->
             SourcesMode
 
@@ -178,12 +184,6 @@ routeToResultMode route =
 
         WorkSourcePageRoute _ _ ->
             SourcesMode
-
-        FrontPageRoute qargs ->
-            qargs.mode
-
-        SearchPageRoute qargs _ ->
-            qargs.mode
 
         _ ->
             EmptyMode

@@ -42,7 +42,7 @@ import Page.RecordTypes.Search
         , parseStringToFacetBehaviour
         , parseStringToFacetSort
         )
-import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..), resultModeToSearchControlOption, searchControlOptionToModeString)
+import Page.RecordTypes.SearchControl exposing (resultModeToSearchControlOption, searchControlOptionToModeString)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Request exposing (serverUrl)
 import SearchPreferences exposing (SearchPreferences)

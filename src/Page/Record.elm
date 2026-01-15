@@ -45,7 +45,6 @@ import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, s
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Result.Extra as RE
-import SearchPreferences
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
 import Session exposing (Session)
 import Set
@@ -77,6 +76,9 @@ init cfg =
     let
         session =
             cfg.session
+
+        resultMode =
+            routeToResultMode cfg.route
 
         incomingData :
             { probeData : ProbeStatus
@@ -146,14 +148,11 @@ init cfg =
                     , searchData = NoResponseToShow
                     }
 
-        numRows =
-            ME.unwrap C.defaultRows .resultsPerPage session.searchPreferences
-
-        resultMode =
-            routeToResultMode cfg.route
-
         searchInterface =
             resultModeToSearchControlOption resultMode
+
+        numRows =
+            ME.unwrap C.defaultRows .resultsPerPage session.searchPreferences
 
         activeSearchInit =
             cfg.queryArgs
@@ -204,11 +203,11 @@ load cfg oldBody =
         session =
             cfg.session
 
-        activeSearchInit =
-            ActiveSearch.load oldBody.activeSearch
-
         resultMode =
             routeToResultMode cfg.route
+
+        activeSearchInit =
+            ActiveSearch.load oldBody.activeSearch
 
         initActiveSearch =
             ME.unpack (\() -> activeSearchInit) (\qa -> setNextQuery qa activeSearchInit) cfg.queryArgs
