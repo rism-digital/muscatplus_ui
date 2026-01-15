@@ -1,12 +1,12 @@
 module Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 
-import Element exposing (Element, alignTop, column, el, fill, height, link, row, spacing, text, width)
+import Element exposing (Element, alignTop, column, el, fill, height, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
+import Page.RecordTypes.ReferencesNotes exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
-import Page.RecordTypes.Source exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
-import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles)
+import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 

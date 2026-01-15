@@ -1,9 +1,8 @@
 module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 
 import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
-import Element.Border as Border
 import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
@@ -11,8 +10,8 @@ import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Work exposing (FormOfWorkSectionBody, WorkBody)
-import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
-import Page.UI.Components exposing (pageBodyOrEmpty, viewPreRenderedSummaryField, viewSummaryField)
+import Page.UI.Attributes exposing (sectionSpacing)
+import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (userMusicSvg)
 import Page.UI.Record.ContentsSection exposing (viewCreator)
@@ -21,6 +20,7 @@ import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewWorkPartOfCatalogueSection)
+import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
@@ -163,6 +163,14 @@ viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language } body =
                         }
                     )
                     body.incipits
+                , viewMaybe
+                    (viewReferencesNotesSection
+                        { language = language
+                        , paragraphFormatter = viewParagraphField
+                        , preRenderedFormatter = viewPreRenderedSummaryField
+                        }
+                    )
+                    body.referencesNotes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 ]
