@@ -76,9 +76,9 @@ viewRelationshipValue language body =
                 (\() ->
                     viewMaybe
                         (\nm ->
-                            el
+                            row
                                 [ width fill ]
-                                (text (extractLabelFromLanguageMap language nm))
+                                [ paragraph [] [ text (extractLabelFromLanguageMap language nm) ] ]
                         )
                         body.name
                 )
@@ -88,9 +88,14 @@ viewRelationshipValue language body =
         note =
             viewMaybe
                 (\noteText ->
-                    paragraph
-                        [ width fill ]
-                        [ text (extractLabelFromLanguageMap language noteText) ]
+                    row
+                        [ width fill
+                        , paddingXY 20 0
+                        ]
+                        [ paragraph
+                            [ width fill ]
+                            [ text (extractLabelFromLanguageMap language noteText) ]
+                        ]
                 )
                 body.note
     in
@@ -102,8 +107,8 @@ viewRelationshipValue language body =
             [ width fill
             , spacing lineSpacing
             ]
-            [ row [ width fill ] [ relatedToView ]
-            , row [ width fill, paddingXY 20 0 ] [ note ]
+            [ relatedToView
+            , note
             ]
         ]
 
@@ -154,8 +159,10 @@ viewRelatedToBody language qualifier body =
         linkRelated label =
             link
                 [ linkColour
+                , height fill
+                , alignTop
                 ]
-                { label = paragraph [] [ text (extractLabelFromLanguageMap language label) ]
+                { label = paragraph [ alignTop, height fill ] [ text (extractLabelFromLanguageMap language label) ]
                 , url = body.id
                 }
 
@@ -168,7 +175,9 @@ viewRelatedToBody language qualifier body =
                     linkRelated body.label
 
                 PlaceRelationship ->
-                    el [ centerY ] (text (extractLabelFromLanguageMap language body.label))
+                    el
+                        [ height fill, width fill, alignTop ]
+                        (paragraph [ alignTop, height fill ] [ text (extractLabelFromLanguageMap language body.label) ])
 
                 SourceRelationship ->
                     linkRelated body.label
@@ -182,25 +191,18 @@ viewRelatedToBody language qualifier body =
         qualifierLabel =
             viewMaybe
                 (\qual ->
-                    el [ centerY ] (text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]"))
+                    paragraph [ alignTop, height fill ] [ text (" [" ++ extractLabelFromLanguageMap language qual.label ++ "]") ]
                 )
                 qualifier
     in
-    paragraph
-        [ width fill
-        , height fill
+    row
+        [ height fill
+        , width fill
+        , spacing 5
         ]
-        [ el
-            [ paddingEach
-                { bottom = 0
-                , left = 0
-                , right = 5
-                , top = 0
-                }
-            , centerY
-            ]
+        [ el [ width (px 14) ]
             (el
-                [ width (px 16)
+                [ width fill
                 , relationshipTooltip |> tooltip above
                 ]
                 relIcon
