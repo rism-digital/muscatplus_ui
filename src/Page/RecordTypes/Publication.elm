@@ -3,7 +3,8 @@ module Page.RecordTypes.Publication exposing (BasicPublicationBody, PublicationB
 import Json.Decode as Decode exposing (Decoder, andThen, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
+import Page.RecordTypes.ReferencesNotes exposing (NotesSectionBody, notesSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody, RelationshipsSectionBody, relatedToBodyDecoder, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelStringValue, LabelValue, RecordHistory, labelStringValueDecoder, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 
@@ -32,7 +33,8 @@ type alias PublicationBody =
     , summary : Maybe (List LabelValue)
     , status : WorkCatalogueStatus
     , relationships : Maybe RelationshipsSectionBody
-    , referencesNotes : Maybe NotesSectionBody
+    , notes : Maybe NotesSectionBody
+    , externalResources : Maybe ExternalResourcesSectionBody
     , works : Maybe WorksSectionBody
     , recordHistory : RecordHistory
     , properties : Maybe PublicationProperties
@@ -63,6 +65,7 @@ publicationBodyDecoder =
         |> required "status" workCatalogueStatusDecoder
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "notes" (maybe notesSectionBodyDecoder) Nothing
+        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "works" (maybe worksSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
         |> optional "properties" (maybe publicationPropertiesDecoder) Nothing

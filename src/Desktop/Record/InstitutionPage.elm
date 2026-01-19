@@ -14,13 +14,14 @@ import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
+import Page.UI.Record.ContributionsSection exposing (viewContributionsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.LocationSection exposing (viewLocationAddressSection, viewLocationMapSection)
-import Page.UI.Record.Notes exposing (viewNotesSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
@@ -70,6 +71,7 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
                     body.notes
                 , viewMaybe (viewExternalResourcesSection language) body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
+                , viewMaybe (viewContributionsSection { language = language }) body.contributions
                 , viewMaybe
                     (viewLocationMapSection
                         { language = language

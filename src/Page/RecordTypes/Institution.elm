@@ -1,5 +1,7 @@
 module Page.RecordTypes.Institution exposing
     ( BasicInstitutionBody
+    , Contributions
+    , ContributionsSectionBody
     , CoordinatesSection
     , InstitutionAddressBody
     , InstitutionBody
@@ -9,13 +11,13 @@ module Page.RecordTypes.Institution exposing
     , institutionBodyDecoder
     )
 
-import Json.Decode as Decode exposing (Decoder, float, list, string)
+import Json.Decode as Decode exposing (Decoder, float, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required, requiredAt)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
 import Page.RecordTypes.ExternalAuthorities exposing (ExternalAuthoritiesSectionBody, externalAuthoritiesSectionBodyDecoder)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
-import Page.RecordTypes.Notes exposing (NotesSectionBody, notesSectionBodyDecoder)
+import Page.RecordTypes.ReferencesNotes exposing (NotesSectionBody, notesSectionBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipsSectionBody, relationshipsSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, RecordHistory, labelValueDecoder, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceRelationships exposing (SourceRelationshipsSectionBody, sourceRelationshipsSectionBodyDecoder)
@@ -56,6 +58,7 @@ type alias InstitutionBody =
     , location : Maybe LocationAddressSectionBody
     , sources : Maybe SourceRelationshipsSectionBody
     , digitalObjects : Maybe DigitalObjectsSectionBody
+    , contributions : Maybe ContributionsSectionBody
     , recordHistory : RecordHistory
     }
 
@@ -77,6 +80,20 @@ type alias InstitutionAddressBody =
     , country : Maybe LabelValue
     , postcode : Maybe LabelValue
     , note : Maybe LabelValue
+    }
+
+
+type alias Contributions =
+    { search : String
+    , count : Int
+    }
+
+
+type alias ContributionsSectionBody =
+    { label : LanguageMap
+    , sectionToc : String
+    , people : Maybe Contributions
+    , sources : Maybe Contributions
     }
 
 
@@ -120,26 +137,43 @@ institutionBodyDecoder =
         |> optional "location" (Decode.maybe locationAddressSectionBodyDecoder) Nothing
         |> optional "sources" (Decode.maybe sourceRelationshipsSectionBodyDecoder) Nothing
         |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
+        |> optional "contributions" (maybe contributionsSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
 
 locationAddressSectionBodyDecoder : Decoder LocationAddressSectionBody
 locationAddressSectionBodyDecoder =
-    Decode.succeed LocationAddressSectionBody
+    succeed LocationAddressSectionBody
         |> hardcoded "institution-location-address-section"
         |> required "label" languageMapLabelDecoder
-        |> optional "addresses" (Decode.maybe (list institutionAddressBodyDecoder)) Nothing
-        |> optional "coordinates" (Decode.maybe coordinatesSectionDecoder) Nothing
-        |> optional "website" (Decode.maybe labelValueDecoder) Nothing
-        |> optional "email" (Decode.maybe labelValueDecoder) Nothing
+        |> optional "addresses" (maybe (list institutionAddressBodyDecoder)) Nothing
+        |> optional "coordinates" (maybe coordinatesSectionDecoder) Nothing
+        |> optional "website" (maybe labelValueDecoder) Nothing
+        |> optional "email" (maybe labelValueDecoder) Nothing
 
 
 institutionAddressBodyDecoder : Decoder InstitutionAddressBody
 institutionAddressBodyDecoder =
-    Decode.succeed InstitutionAddressBody
-        |> optional "street" (Decode.maybe labelValueDecoder) Nothing
-        |> optional "city" (Decode.maybe labelValueDecoder) Nothing
-        |> optional "county" (Decode.maybe labelValueDecoder) Nothing
-        |> optional "country" (Decode.maybe labelValueDecoder) Nothing
-        |> optional "postcode" (Decode.maybe labelValueDecoder) Nothing
-        |> optional "note" (Decode.maybe labelValueDecoder) Nothing
+    succeed InstitutionAddressBody
+        |> optional "street" (maybe labelValueDecoder) Nothing
+        |> optional "city" (maybe labelValueDecoder) Nothing
+        |> optional "county" (maybe labelValueDecoder) Nothing
+        |> optional "country" (maybe labelValueDecoder) Nothing
+        |> optional "postcode" (maybe labelValueDecoder) Nothing
+        |> optional "note" (maybe labelValueDecoder) Nothing
+
+
+contributionsSectionBodyDecoder : Decoder ContributionsSectionBody
+contributionsSectionBodyDecoder =
+    succeed ContributionsSectionBody
+        |> required "label" languageMapLabelDecoder
+        |> hardcoded "institution-rism-contributions"
+        |> optional "people" (maybe contributionsDecoder) Nothing
+        |> optional "sources" (maybe contributionsDecoder) Nothing
+
+
+contributionsDecoder : Decoder Contributions
+contributionsDecoder =
+    succeed Contributions
+        |> required "search" string
+        |> required "count" int

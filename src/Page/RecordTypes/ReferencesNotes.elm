@@ -1,4 +1,4 @@
-module Page.RecordTypes.ReferencesNotes exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody, referencesNotesSectionBodyDecoder)
+module Page.RecordTypes.ReferencesNotes exposing (LiturgicalFestivalsSectionBody, NotesSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody, notesSectionBodyDecoder, referencesNotesSectionBodyDecoder)
 
 import Json.Decode exposing (Decoder, list, maybe, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
@@ -6,6 +6,13 @@ import Language exposing (LanguageMap)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody, liturgicalFestivalBodyDecoder)
 import Page.RecordTypes.Relationship exposing (RelationshipBody, relationshipBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
+
+
+type alias NotesSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , notes : List LabelValue
+    }
 
 
 type alias PerformanceLocationsSectionBody =
@@ -51,3 +58,11 @@ referencesNotesSectionBodyDecoder =
         |> optional "notes" (maybe (list labelValueDecoder)) Nothing
         |> optional "performanceLocations" (maybe performanceLocationsSectionBodyDecoder) Nothing
         |> optional "liturgicalFestivals" (maybe liturgicalFestivalsSectionBodyDecoder) Nothing
+
+
+notesSectionBodyDecoder : Decoder NotesSectionBody
+notesSectionBodyDecoder =
+    succeed NotesSectionBody
+        |> hardcoded "record-notes-section"
+        |> required "label" languageMapLabelDecoder
+        |> required "notes" (list labelValueDecoder)

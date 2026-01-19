@@ -1,14 +1,42 @@
-module Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
+module Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection, viewReferencesNotesSection)
 
 import Element exposing (Element, alignTop, column, el, fill, height, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Page.RecordTypes.Festival exposing (LiturgicalFestivalBody)
-import Page.RecordTypes.ReferencesNotes exposing (LiturgicalFestivalsSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
+import Page.RecordTypes.ReferencesNotes exposing (LiturgicalFestivalsSectionBody, NotesSectionBody, PerformanceLocationsSectionBody, ReferencesNotesSectionBody)
 import Page.RecordTypes.Relationship exposing (RelatedToBody, RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionBorderStyles)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
+
+
+viewNotesSection :
+    { language : Language
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    }
+    -> NotesSectionBody
+    -> Element msg
+viewNotesSection { language, paragraphFormatter } notesSection =
+    sectionTemplate
+        language
+        notesSection
+        [ row
+            (width fill
+                :: height fill
+                :: alignTop
+                :: sectionBorderStyles
+            )
+            [ column
+                [ spacing lineSpacing
+                , width fill
+                , height fill
+                , alignTop
+                ]
+                [ paragraphFormatter language notesSection.notes
+                ]
+            ]
+        ]
 
 
 viewLiturgicalFestival : Language -> LiturgicalFestivalBody -> Element msg

@@ -21,7 +21,9 @@ import Page.UI.Components exposing (Tab(..), formatPublicationStatusBadge, pageB
 import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg)
+import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection, viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Search.Pagination exposing (viewTablePagination)
 import Page.UI.Search.SearchTemplate exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl)
@@ -138,6 +140,14 @@ viewPublicationBody { language, paragraphFormatter, preRenderedFormatter, relati
                         }
                     )
                     publicationBody.relationships
+                , viewMaybe
+                    (viewNotesSection
+                        { language = language
+                        , paragraphFormatter = viewParagraphField
+                        }
+                    )
+                    publicationBody.notes
+                , viewMaybe (viewExternalResourcesSection language) publicationBody.externalResources
 
                 -- WIP
                 ]
