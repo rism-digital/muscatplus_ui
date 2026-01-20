@@ -485,6 +485,89 @@ helpTextSourceDatabases =
     ]
 
 
+helpTextApiDocumentationEnglish : String
+helpTextApiDocumentationEnglish =
+    """## Documentation
+
+[The RISM Online Documentation site](https://rism.online/docs) provides detailed information about some of
+the advanced features of RISM Online, including how to build queries using our Query Builder feature, how
+to use the RISM Online API, and how to use our OpenRefine Reconciliation Service.
+    """
+
+
+helpTextApiDocumentationGerman : String
+helpTextApiDocumentationGerman =
+    """## Dokumentation
+
+[Die RISM-Online-Dokumentationsseite](https://rism.online/docs) bietet detaillierte Informationen zu einigen
+der erweiterten Funktionen von RISM Online, darunter das Erstellen von Abfragen mit dem Query Builder,
+die Nutzung der RISM-Online-API sowie die Verwendung unseres OpenRefine-Reconciliation-Services.
+"""
+
+
+helpTextApiDocumentationFrench : String
+helpTextApiDocumentationFrench =
+    """## Documentation
+
+[Le site de documentation RISM Online](https://rism.online/docs) fournit des informations détaillées sur
+certaines des fonctionnalités avancées de RISM Online, notamment la création de requêtes à l’aide du
+Query Builder, l’utilisation de l’API RISM Online et l’utilisation de notre service de réconciliation
+OpenRefine.
+"""
+
+
+helpTextApiDocumentationItalian : String
+helpTextApiDocumentationItalian =
+    """## Documentazione
+
+[Il sito di documentazione di RISM Online](https://rism.online/docs) fornisce informazioni dettagliate su
+alcune delle funzionalità avanzate di RISM Online, tra cui la creazione di query tramite il Query Builder,
+l’utilizzo dell’API di RISM Online e l’uso del nostro servizio di riconciliazione OpenRefine.
+"""
+
+
+helpTextApiDocumentationSpanish : String
+helpTextApiDocumentationSpanish =
+    """## Documentación
+
+[El sitio de documentación de RISM Online](https://rism.online/docs) ofrece información detallada sobre
+algunas de las funciones avanzadas de RISM Online, incluido cómo crear consultas utilizando el Query
+Builder, cómo usar la API de RISM Online y cómo utilizar nuestro servicio de reconciliación OpenRefine.
+"""
+
+
+helpTextApiDocumentationPortuguese : String
+helpTextApiDocumentationPortuguese =
+    """## Documentação
+
+[O site de documentação do RISM Online](https://rism.online/docs) fornece informações detalhadas sobre
+alguns dos recursos avançados do RISM Online, incluindo como criar consultas usando o Query Builder,
+como utilizar a API do RISM Online e como usar nosso serviço de reconciliação OpenRefine.
+"""
+
+
+helpTextApiDocumentationPolish : String
+helpTextApiDocumentationPolish =
+    """## Dokumentacja
+
+[Strona dokumentacji RISM Online](https://rism.online/docs) zawiera szczegółowe informacje na temat
+niektórych zaawansowanych funkcji RISM Online, w tym tworzenia zapytań za pomocą kreatora zapytań,
+korzystania z API RISM Online oraz używania usługi uzgadniania OpenRefine.
+"""
+
+
+helpTextApiDocumentation : LanguageMap
+helpTextApiDocumentation =
+    [ LanguageValue English [ helpTextApiDocumentationEnglish ]
+    , LanguageValue German [ helpTextApiDocumentationGerman ]
+    , LanguageValue French [ helpTextApiDocumentationFrench ]
+    , LanguageValue Italian [ helpTextApiDocumentationItalian ]
+    , LanguageValue Spanish [ helpTextApiDocumentationSpanish ]
+    , LanguageValue Portuguese [ helpTextApiDocumentationPortuguese ]
+    , LanguageValue Polish [ helpTextApiDocumentationPolish ]
+    ]
+
+
 view : Session -> Element msg
 view session =
     row
@@ -599,5 +682,8 @@ view session =
                         ]
                     }
                 ]
+            , row
+                [ width fill ]
+                [ Markdown.view session.language helpTextApiDocumentation ]
             ]
         ]
