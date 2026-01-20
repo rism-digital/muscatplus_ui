@@ -1,9 +1,9 @@
 module Page.UI.Record.ContributionsSection exposing (..)
 
-import Element exposing (Element, fill, link, none, paragraph, row, text, width)
+import Element exposing (Element, alignTop, fill, height, link, none, paddingXY, paragraph, row, text, width)
 import Language exposing (Language)
 import Page.RecordTypes.Institution exposing (Contributions, ContributionsSectionBody)
-import Page.UI.Attributes exposing (linkColour)
+import Page.UI.Attributes exposing (lineSpacing, linkColour)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
@@ -20,7 +20,11 @@ viewContributionsSection cfg body =
 viewContribution : Language -> String -> Contributions -> Element msg
 viewContribution language descr contribution =
     row
-        [ width fill ]
+        [ width fill
+        , height fill
+        , alignTop
+        , paddingXY lineSpacing 0
+        ]
         [ link
             [ linkColour ]
             { url = contribution.search
