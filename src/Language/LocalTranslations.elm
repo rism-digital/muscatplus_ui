@@ -94,6 +94,7 @@ localTranslations :
     , sources : LanguageMap
     , unknownError : LanguageMap
     , updateResults : LanguageMap
+    , viewContributedRecords : LanguageMap
     , viewImages : LanguageMap
     , wordsAnywhere : LanguageMap
     , workCatalogues : LanguageMap
@@ -1005,6 +1006,22 @@ localTranslations =
         , LanguageValue Spanish [ "Aplicar filtros" ]
         , LanguageValue Portuguese [ "Aplicar filtros" ]
         , LanguageValue Polish [ "Zastosuj filtry" ]
+        ]
+    , viewContributedRecords =
+        [ LanguageValue English
+            [ "View {{ numItems }} {{ recordType }} records contributed by this project." ]
+        , LanguageValue German
+            [ "Zeige {{ numItems }} {{ recordType }}-Datensätze, die von diesem Projekt beigetragen wurden." ]
+        , LanguageValue French
+            [ "Afficher {{ numItems }} enregistrements {{ recordType }} contribué(s) par ce projet." ]
+        , LanguageValue Italian
+            [ "Visualizza {{ numItems }} record {{ recordType }} contribuiti da questo progetto." ]
+        , LanguageValue Spanish
+            [ "Ver {{ numItems }} registros de {{ recordType }} aportados por este proyecto." ]
+        , LanguageValue Portuguese
+            [ "Ver {{ numItems }} registros de {{ recordType }} contribuídos por este projeto." ]
+        , LanguageValue Polish
+            [ "Zobacz {{ numItems }} rekordów typu {{ recordType }} dodanych przez ten projekt." ]
         ]
     , viewImages =
         [ LanguageValue English [ "View images" ]

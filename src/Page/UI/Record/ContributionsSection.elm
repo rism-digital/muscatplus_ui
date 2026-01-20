@@ -1,7 +1,8 @@
 module Page.UI.Record.ContributionsSection exposing (..)
 
 import Element exposing (Element, alignTop, fill, height, link, none, paddingXY, paragraph, row, text, width)
-import Language exposing (Language)
+import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMapWithVariables)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Institution exposing (Contributions, ContributionsSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour)
 import Page.UI.Helpers exposing (viewMaybe)
@@ -19,6 +20,17 @@ viewContributionsSection cfg body =
 
 viewContribution : Language -> String -> Contributions -> Element msg
 viewContribution language descr contribution =
+    let
+        numItems =
+            String.fromInt contribution.count
+
+        linkLabel =
+            extractLabelFromLanguageMapWithVariables language
+                [ LanguageMapReplacementVariable "numItems" numItems
+                , LanguageMapReplacementVariable "recordType" descr
+                ]
+                localTranslations.viewContributedRecords
+    in
     row
         [ width fill
         , height fill
@@ -27,10 +39,10 @@ viewContribution language descr contribution =
         ]
         [ link
             [ linkColour ]
-            { url = contribution.search
+            { url = contribution.url
             , label =
                 paragraph
                     []
-                    [ text ("View " ++ String.fromInt contribution.count ++ " " ++ descr ++ " records contributed by this project.") ]
+                    [ text linkLabel ]
             }
         ]

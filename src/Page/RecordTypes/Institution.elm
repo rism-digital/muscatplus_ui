@@ -84,7 +84,7 @@ type alias InstitutionAddressBody =
 
 
 type alias Contributions =
-    { search : String
+    { url : String
     , count : Int
     }
 
@@ -175,5 +175,5 @@ contributionsSectionBodyDecoder =
 contributionsDecoder : Decoder Contributions
 contributionsDecoder =
     succeed Contributions
-        |> required "search" string
+        |> required "url" string
         |> required "count" int
