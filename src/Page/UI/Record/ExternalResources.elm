@@ -112,7 +112,10 @@ viewExternalResourcePlainLink language body =
         [ resourceLink body.url
             [ linkColour
             ]
-            { label = paragraph [] [ text (extractLabelFromLanguageMap language body.label) ]
+            { label =
+                paragraph
+                    []
+                    [ text (extractLabelFromLanguageMap language body.label) ]
             , url = body.url
             }
         , externalLinkTemplate body.url
