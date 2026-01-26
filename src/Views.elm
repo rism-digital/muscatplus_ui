@@ -88,6 +88,30 @@ view model =
                         _ ->
                             defaultTitle
 
+                WorkPage session pageModel ->
+                    case pageModel.response of
+                        Response (WorkData body) ->
+                            extractLabelFromLanguageMap session.language body.label
+
+                        _ ->
+                            defaultTitle
+
+                PublicationPage session pageModel ->
+                    case pageModel.response of
+                        Response (PublicationData body) ->
+                            extractLabelFromLanguageMap session.language body.label
+
+                        _ ->
+                            defaultTitle
+
+                HoldingPage session pageModel ->
+                    case pageModel.response of
+                        Response (HoldingData body) ->
+                            extractLabelFromLanguageMap session.language body.label
+
+                        _ ->
+                            defaultTitle
+
                 _ ->
                     defaultTitle
     in
