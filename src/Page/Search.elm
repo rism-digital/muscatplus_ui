@@ -358,11 +358,11 @@ update session msg model =
                         |> DebouncerCapturedProbeRequest
             in
             applyKeywordInputWithProbe
-                { updateFn = update session
+                { applyInput = userEnteredTextInKeywordQueryBox
                 , debounceMsg = debounceMsg
-                , queryText = queryText
                 , model = model
-                , applyInput = userEnteredTextInKeywordQueryBox
+                , queryText = queryText
+                , updateFn = update session
                 }
 
         UserClickedToggleFacet alias ->
@@ -432,19 +432,19 @@ update session msg model =
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
             applyKeyboardUpdateWithProbe
-                { updateKeyboard = Keyboard.update
-                , maybeKeyboard = toKeyboard model.activeSearch
-                , keyboardMsg = keyboardMsg
-                , setKeyboard = setKeyboard
-                , setActiveSearch = setActiveSearch
-                , activeSearch = model.activeSearch
-                , model = model
-                , mapKeyboardCmd = Cmd.map UserInteractedWithPianoKeyboard
+                { activeSearch = model.activeSearch
                 , createProbeCmd =
                     \activeSearch ->
                         createProbeUrl session activeSearch
                             |> createProbeRequestWithDecoder ServerRespondedWithProbeData
+                , keyboardMsg = keyboardMsg
+                , mapKeyboardCmd = Cmd.map UserInteractedWithPianoKeyboard
+                , maybeKeyboard = toKeyboard model.activeSearch
+                , model = model
                 , needsProbe = .needsProbe
+                , setActiveSearch = setActiveSearch
+                , setKeyboard = setKeyboard
+                , updateKeyboard = Keyboard.update
                 , updateModelForProbe = identity
                 }
 
@@ -458,11 +458,11 @@ update session msg model =
                         |> DebouncerCapturedProbeRequest
             in
             applyKeywordInputWithProbe
-                { updateFn = update session
+                { applyInput = userEnteredTextInKeywordQueryBox
                 , debounceMsg = debounceMsg
-                , queryText = queryText
                 , model = model
-                , applyInput = userEnteredTextInKeywordQueryBox
+                , queryText = queryText
+                , updateFn = update session
                 }
 
         UserInteractedWithQueryBuilder QueryBuilderMsg.UserClickedSearchButton ->

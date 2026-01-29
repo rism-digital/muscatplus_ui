@@ -438,11 +438,11 @@ update session msg model =
                         |> DebouncerCapturedProbeRequest
             in
             applyKeywordInputWithProbe
-                { updateFn = update session
+                { applyInput = userEnteredTextInKeywordQueryBox
                 , debounceMsg = debounceMsg
-                , queryText = queryText
                 , model = model
-                , applyInput = userEnteredTextInKeywordQueryBox
+                , queryText = queryText
+                , updateFn = update session
                 }
 
         UserClickedToggleFacet alias ->

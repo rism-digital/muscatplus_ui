@@ -166,11 +166,11 @@ applyPreviewResponse result model =
 
 
 applyKeywordInputWithProbe :
-    { updateFn : msg -> model -> ( model, Cmd msg )
+    { applyInput : String -> model -> model
     , debounceMsg : msg
-    , queryText : String
     , model : model
-    , applyInput : String -> model -> model
+    , queryText : String
+    , updateFn : msg -> model -> ( model, Cmd msg )
     }
     -> ( model, Cmd msg )
 applyKeywordInputWithProbe cfg =
@@ -179,16 +179,16 @@ applyKeywordInputWithProbe cfg =
 
 
 applyKeyboardUpdateWithProbe :
-    { updateKeyboard : KeyboardMsg -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
-    , maybeKeyboard : Maybe (KeyboardModel KeyboardMsg)
-    , keyboardMsg : KeyboardMsg
-    , setKeyboard : Maybe (KeyboardModel KeyboardMsg) -> activeSearch -> activeSearch
-    , setActiveSearch : activeSearch -> model -> model
-    , activeSearch : activeSearch
-    , model : model
-    , mapKeyboardCmd : Cmd KeyboardMsg -> Cmd msg
+    { activeSearch : activeSearch
     , createProbeCmd : activeSearch -> Cmd msg
+    , keyboardMsg : KeyboardMsg
+    , mapKeyboardCmd : Cmd KeyboardMsg -> Cmd msg
+    , maybeKeyboard : Maybe (KeyboardModel KeyboardMsg)
+    , model : model
     , needsProbe : KeyboardModel KeyboardMsg -> Bool
+    , setActiveSearch : activeSearch -> model -> model
+    , setKeyboard : Maybe (KeyboardModel KeyboardMsg) -> activeSearch -> activeSearch
+    , updateKeyboard : KeyboardMsg -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
     , updateModelForProbe : model -> model
     }
     -> ( model, Cmd msg )
@@ -196,11 +196,11 @@ applyKeyboardUpdateWithProbe cfg =
     case cfg.maybeKeyboard of
         Just keyboardModel ->
             let
-                ( updatedKeyboard, keyboardCmd ) =
-                    cfg.updateKeyboard cfg.keyboardMsg keyboardModel
-
                 updatedActiveSearch =
                     cfg.setKeyboard (Just updatedKeyboard) cfg.activeSearch
+
+                ( updatedKeyboard, keyboardCmd ) =
+                    cfg.updateKeyboard cfg.keyboardMsg keyboardModel
 
                 updatedModel =
                     cfg.setActiveSearch updatedActiveSearch cfg.model
