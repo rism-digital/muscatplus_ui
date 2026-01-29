@@ -27,7 +27,7 @@ import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..), naviga
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (routeToResultMode)
 import Page.UI.Errors exposing (createErrorMessage)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, applyKeywordInputWithProbe, buildSearchUrl, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, applyKeyboardUpdateWithProbe, applyKeywordInputWithProbe, buildSearchUrl, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -306,51 +306,31 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
-            case toKeyboard model.activeSearch of
-                Just oldKeyboardModel ->
-                    let
-                        ( keyboardModel, keyboardCmd ) =
-                            Keyboard.update keyboardMsg oldKeyboardModel
+            applyKeyboardUpdateWithProbe
+                { updateKeyboard = Keyboard.update
+                , maybeKeyboard = toKeyboard model.activeSearch
+                , keyboardMsg = keyboardMsg
+                , setKeyboard = setKeyboard
+                , setActiveSearch = setActiveSearch
+                , activeSearch = model.activeSearch
+                , model = model
+                , mapKeyboardCmd = Cmd.map UserInteractedWithPianoKeyboard
+                , createProbeCmd =
+                    \activeSearch ->
+                        let
+                            resultMode =
+                                navigationBarOptionToResultMode model.showSearchControls
 
-                        newModel =
-                            setKeyboard (Just keyboardModel) model.activeSearch
-                                |> flip setActiveSearch model
-
-                        probeModel =
-                            if keyboardModel.needsProbe then
-                                { newModel
-                                    | probeResponse = Probing
-                                }
-
-                            else
-                                newModel
-
-                        probeCmd =
-                            if keyboardModel.needsProbe then
-                                let
-                                    resultMode =
-                                        navigationBarOptionToResultMode model.showSearchControls
-
-                                    probeUrl =
-                                        toNextQuery probeModel.activeSearch
-                                            |> setMode resultMode
-                                            |> flip setNextQuery probeModel.activeSearch
-                                            |> createProbeUrl session
-                                in
-                                createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
-
-                            else
-                                Cmd.none
-                    in
-                    ( probeModel
-                    , Cmd.batch
-                        [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
-                        , probeCmd
-                        ]
-                    )
-
-                Nothing ->
-                    ( model, Cmd.none )
+                            probeUrl =
+                                toNextQuery activeSearch
+                                    |> setMode resultMode
+                                    |> flip setNextQuery activeSearch
+                                    |> createProbeUrl session
+                        in
+                        createProbeRequestWithDecoder ServerRespondedWithProbeData probeUrl
+                , needsProbe = .needsProbe
+                , updateModelForProbe = \m -> { m | probeResponse = Probing }
+                }
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model

@@ -1,6 +1,7 @@
 module Page.UpdateHelpers exposing
     ( addNationalCollectionFilter
     , addNationalCollectionQueryParameter
+    , applyKeyboardUpdateWithProbe
     , applyKeywordInputWithProbe
     , applyPreviewResponse
     , buildSearchUrl
@@ -175,6 +176,53 @@ applyKeywordInputWithProbe :
 applyKeywordInputWithProbe cfg =
     cfg.applyInput cfg.queryText cfg.model
         |> cfg.updateFn cfg.debounceMsg
+
+
+applyKeyboardUpdateWithProbe :
+    { updateKeyboard : KeyboardMsg -> KeyboardModel KeyboardMsg -> ( KeyboardModel KeyboardMsg, Cmd KeyboardMsg )
+    , maybeKeyboard : Maybe (KeyboardModel KeyboardMsg)
+    , keyboardMsg : KeyboardMsg
+    , setKeyboard : Maybe (KeyboardModel KeyboardMsg) -> activeSearch -> activeSearch
+    , setActiveSearch : activeSearch -> model -> model
+    , activeSearch : activeSearch
+    , model : model
+    , mapKeyboardCmd : Cmd KeyboardMsg -> Cmd msg
+    , createProbeCmd : activeSearch -> Cmd msg
+    , needsProbe : KeyboardModel KeyboardMsg -> Bool
+    , updateModelForProbe : model -> model
+    }
+    -> ( model, Cmd msg )
+applyKeyboardUpdateWithProbe cfg =
+    case cfg.maybeKeyboard of
+        Just keyboardModel ->
+            let
+                ( updatedKeyboard, keyboardCmd ) =
+                    cfg.updateKeyboard cfg.keyboardMsg keyboardModel
+
+                updatedActiveSearch =
+                    cfg.setKeyboard (Just updatedKeyboard) cfg.activeSearch
+
+                updatedModel =
+                    cfg.setActiveSearch updatedActiveSearch cfg.model
+
+                ( finalModel, probeCmd ) =
+                    if cfg.needsProbe updatedKeyboard then
+                        ( cfg.updateModelForProbe updatedModel
+                        , cfg.createProbeCmd updatedActiveSearch
+                        )
+
+                    else
+                        ( updatedModel, Cmd.none )
+            in
+            ( finalModel
+            , Cmd.batch
+                [ cfg.mapKeyboardCmd keyboardCmd
+                , probeCmd
+                ]
+            )
+
+        Nothing ->
+            ( cfg.model, Cmd.none )
 
 
 extractSearchResponseData :

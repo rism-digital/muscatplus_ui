@@ -34,7 +34,7 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UI.Errors exposing (createErrorMessage)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, applyKeywordInputWithProbe, applyPreviewResponse, buildSearchUrl, chooseResponse, createProbeUrl, extractSearchResponseData, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, applyKeyboardUpdateWithProbe, applyKeywordInputWithProbe, applyPreviewResponse, buildSearchUrl, chooseResponse, createProbeUrl, extractSearchResponseData, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -431,33 +431,22 @@ update session msg model =
                 |> probeSubmit ServerRespondedWithProbeData session
 
         UserInteractedWithPianoKeyboard keyboardMsg ->
-            case toKeyboard model.activeSearch of
-                Just kq ->
-                    let
-                        ( keyboardModel, keyboardCmd ) =
-                            Keyboard.update keyboardMsg kq
-
-                        newModel =
-                            setKeyboard (Just keyboardModel) model.activeSearch
-                                |> flip setActiveSearch model
-
-                        probeCmd =
-                            if keyboardModel.needsProbe then
-                                createProbeUrl session newModel.activeSearch
-                                    |> createProbeRequestWithDecoder ServerRespondedWithProbeData
-
-                            else
-                                Cmd.none
-                    in
-                    ( newModel
-                    , Cmd.batch
-                        [ Cmd.map UserInteractedWithPianoKeyboard keyboardCmd
-                        , probeCmd
-                        ]
-                    )
-
-                Nothing ->
-                    ( model, Cmd.none )
+            applyKeyboardUpdateWithProbe
+                { updateKeyboard = Keyboard.update
+                , maybeKeyboard = toKeyboard model.activeSearch
+                , keyboardMsg = keyboardMsg
+                , setKeyboard = setKeyboard
+                , setActiveSearch = setActiveSearch
+                , activeSearch = model.activeSearch
+                , model = model
+                , mapKeyboardCmd = Cmd.map UserInteractedWithPianoKeyboard
+                , createProbeCmd =
+                    \activeSearch ->
+                        createProbeUrl session activeSearch
+                            |> createProbeRequestWithDecoder ServerRespondedWithProbeData
+                , needsProbe = .needsProbe
+                , updateModelForProbe = identity
+                }
 
         UserInteractedWithQueryBuilder (QueryBuilderMsg.UserEnteredTextInQueryBuilder queryText) ->
             let
