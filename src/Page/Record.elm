@@ -33,14 +33,13 @@ import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.ApiError exposing (apiErrorDecoder)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
-import Page.RecordTypes.Search exposing (toFacetLabel)
 import Page.RecordTypes.SearchControl exposing (resultModeToSearchControlOption)
 import Page.RecordTypes.Tombstone exposing (tombstoneDecoder)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route(..), routeToResultMode)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UI.Errors exposing (ErrorResponse(..), createErrorMessage)
-import Page.UpdateHelpers exposing (chooseResponse, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
+import Page.UpdateHelpers exposing (applyPreviewResponse, chooseResponse, extractSearchResponseData, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
 import Response exposing (Response(..), ServerData(..))
@@ -285,21 +284,20 @@ update session msg model =
                     .fragment session.url
                         |> ME.unwrap Cmd.none (jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list")
 
-                aliasLabelMap =
+                ( aliasLabelMap, updatedFiltersWithCorrectLanguageMaps, probeState ) =
                     case response of
                         SearchData body ->
-                            Dict.map (\_ v -> toFacetLabel v) body.facets
+                            let
+                                searchData =
+                                    extractSearchResponseData nextQuery.filters body
+                            in
+                            ( searchData.aliasLabelMap
+                            , searchData.updatedFilters
+                            , searchData.probeStatus
+                            )
 
                         _ ->
-                            Dict.empty
-
-                updatedFiltersWithCorrectLanguageMaps =
-                    case response of
-                        SearchData body ->
-                            updateActiveFiltersWithLangMapResultsFromServer nextQuery.filters body.facets
-
-                        _ ->
-                            nextQuery.filters
+                            ( Dict.empty, nextQuery.filters, NotChecked )
 
                 newNextQuery =
                     setFilters updatedFiltersWithCorrectLanguageMaps nextQuery
@@ -308,18 +306,6 @@ update session msg model =
                 newActiveSearch =
                     setAliasLabelMap aliasLabelMap model.activeSearch
                         |> setNextQuery newNextQuery
-
-                probeState =
-                    case response of
-                        SearchData body ->
-                            ProbeSuccess
-                                { totalItems = body.totalItems
-                                , queryStatus = NotCheckedQuery
-                                , pagination = body.pagination
-                                }
-
-                        _ ->
-                            NotChecked
 
                 searchResults =
                     case response of
@@ -396,19 +382,8 @@ update session msg model =
             , Cmd.none
             )
 
-        ServerRespondedWithRecordPreview (Ok ( _, response )) ->
-            ( { model
-                | preview = Response response
-                , sourceItemsExpanded = False
-              }
-            , Cmd.none
-            )
-
-        ServerRespondedWithRecordPreview (Err error) ->
-            ( { model
-                | preview = Error (createErrorMessage error)
-                , sourceItemsExpanded = False
-              }
+        ServerRespondedWithRecordPreview result ->
+            ( applyPreviewResponse result model
             , Cmd.none
             )
 

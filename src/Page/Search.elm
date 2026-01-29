@@ -24,9 +24,9 @@ import Page.Keyboard.Model exposing (KeyboardQuery, toKeyboardQuery)
 import Page.Query exposing (QueryArgs, defaultQueryArgs, resetPage, setFilters, setMode, setNextQuery, toMode, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
 import Page.QueryBuilder.Msg as QueryBuilderMsg
-import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
+import Page.RecordTypes.Probe exposing (ProbeStatus(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..), parseStringToResultMode)
-import Page.RecordTypes.Search exposing (FacetItem(..), toFacetLabel)
+import Page.RecordTypes.Search exposing (FacetItem(..))
 import Page.RecordTypes.SearchControl exposing (resultModeToSearchControlOption)
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (Route, routeToResultMode)
@@ -34,7 +34,7 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UI.Errors exposing (createErrorMessage)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, buildSearchUrl, chooseResponse, createProbeUrl, probeSubmit, textQuerySuggestionSubmit, updateActiveFiltersWithLangMapResultsFromServer, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, applyPreviewResponse, buildSearchUrl, chooseResponse, createProbeUrl, extractSearchResponseData, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -202,13 +202,24 @@ update session msg model =
                         _ ->
                             Cmd.none
 
-                aliasLabelMap =
+                activeFilters =
+                    toNextQuery model.activeSearch
+                        |> .filters
+
+                ( aliasLabelMap, updatedFiltersWithCorrectLanguageMaps, totalItems ) =
                     case response of
                         SearchData body ->
-                            Dict.map (\_ v -> toFacetLabel v) body.facets
+                            let
+                                searchData =
+                                    extractSearchResponseData activeFilters body
+                            in
+                            ( searchData.aliasLabelMap
+                            , searchData.updatedFilters
+                            , searchData.probeStatus
+                            )
 
                         _ ->
-                            Dict.empty
+                            ( Dict.empty, activeFilters, NotChecked )
 
                 resultsNotInCurrentMode =
                     case response of
@@ -223,18 +234,6 @@ update session msg model =
                         _ ->
                             []
 
-                activeFilters =
-                    toNextQuery model.activeSearch
-                        |> .filters
-
-                updatedFiltersWithCorrectLanguageMaps =
-                    case response of
-                        SearchData body ->
-                            updateActiveFiltersWithLangMapResultsFromServer activeFilters body.facets
-
-                        _ ->
-                            activeFilters
-
                 newNextQuery =
                     toNextQuery model.activeSearch
                         |> setFilters updatedFiltersWithCorrectLanguageMaps
@@ -244,18 +243,6 @@ update session msg model =
                         |> setAliasLabelMap aliasLabelMap
                         |> setNextQuery newNextQuery
                         |> setResultsNotInCurrentMode resultsNotInCurrentMode
-
-                totalItems =
-                    case response of
-                        SearchData body ->
-                            ProbeSuccess
-                                { totalItems = body.totalItems
-                                , queryStatus = NotCheckedQuery
-                                , pagination = body.pagination
-                                }
-
-                        _ ->
-                            NotChecked
             in
             ( { model
                 | response = Response response
@@ -294,19 +281,8 @@ update session msg model =
         ServerRespondedWithProbeData (Err _) ->
             ( model, Cmd.none )
 
-        ServerRespondedWithSearchPreview (Ok ( _, response )) ->
-            ( { model
-                | preview = Response response
-                , sourceItemsExpanded = False
-              }
-            , Cmd.none
-            )
-
-        ServerRespondedWithSearchPreview (Err error) ->
-            ( { model
-                | preview = Error (createErrorMessage error)
-                , sourceItemsExpanded = False
-              }
+        ServerRespondedWithSearchPreview result ->
+            ( applyPreviewResponse result model
             , Cmd.none
             )
 

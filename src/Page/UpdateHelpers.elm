@@ -1,17 +1,18 @@
 module Page.UpdateHelpers exposing
     ( addNationalCollectionFilter
     , addNationalCollectionQueryParameter
+    , applyPreviewResponse
     , buildSearchUrl
     , chooseResponse
     , createProbeUrl
     , createSearchUrl
+    , extractSearchResponseData
     , hasNonZeroSourcesAttached
     , joinQueryParams
     , probeSubmit
     , selectAppropriateRangeFacetValues
     , setProbeResponse
     , textQuerySuggestionSubmit
-    , updateActiveFiltersWithLangMapResultsFromServer
     , updateQueryFacetFilters
     , userChangedFacetBehaviour
     , userChangedResultSorting
@@ -51,13 +52,14 @@ import Page.Keyboard.Model exposing (KeyboardModel, toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setRows, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
-import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..))
-import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts, RangeFacetValue(..), extractIdFromSearchResult)
+import Page.RecordTypes.Probe exposing (ProbeData, ProbeStatus(..), QueryValidation(..))
+import Page.RecordTypes.Search exposing (FacetBehaviours, FacetData(..), FacetItem(..), FacetSorts, RangeFacetValue(..), SearchBody, extractIdFromSearchResult, toFacetLabel)
 import Page.RecordTypes.Shared exposing (FacetAlias)
 import Page.RecordTypes.Suggestion exposing (ActiveSuggestion)
 import Page.Request exposing (createProbeRequestWithDecoder, createSuggestRequestWithDecoder)
 import Page.Route exposing (Route(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
+import Page.UI.Errors exposing (createErrorMessage)
 import Parser as P exposing ((|.), (|=), Parser)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (serverUrl)
@@ -140,6 +142,47 @@ createSearchUrl session { nextQuery, keyboard } =
                 |> buildQueryParameters
     in
     buildQueryUrl session searchPathForRoute (textQueryParameters ++ keyboardQueryParameters keyboard)
+
+
+applyPreviewResponse :
+    Result (Http.Detailed.Error String) ( Http.Metadata, ServerData )
+    -> { a | preview : Response ServerData, sourceItemsExpanded : Bool }
+    -> { a | preview : Response ServerData, sourceItemsExpanded : Bool }
+applyPreviewResponse result model =
+    case result of
+        Ok ( _, response ) ->
+            { model
+                | preview = Response response
+                , sourceItemsExpanded = False
+            }
+
+        Err error ->
+            { model
+                | preview = Error (createErrorMessage error)
+                , sourceItemsExpanded = False
+            }
+
+
+extractSearchResponseData :
+    Dict String (List ( String, LanguageMap ))
+    -> SearchBody
+    ->
+        { aliasLabelMap : Dict String LanguageMap
+        , probeStatus : ProbeStatus
+        , updatedFilters : Dict String (List ( String, LanguageMap ))
+        }
+extractSearchResponseData activeFilters body =
+    { aliasLabelMap =
+        Dict.map (\_ v -> toFacetLabel v) body.facets
+    , probeStatus =
+        ProbeSuccess
+            { totalItems = body.totalItems
+            , queryStatus = NotCheckedQuery
+            , pagination = body.pagination
+            }
+    , updatedFilters =
+        updateActiveFiltersWithLangMapResultsFromServer activeFilters body.facets
+    }
 
 
 keyboardQueryParameters : Maybe (KeyboardModel msg) -> List QueryParameter
