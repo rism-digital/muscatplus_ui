@@ -435,33 +435,8 @@ update msg model =
             SearchPage.update session searchMsg pageModel
                 |> updateWith (SearchPage session) Msg.UserInteractedWithSearchPage model
 
-        ( Msg.UserInteractedWithRecordPage recordMsg, SourcePage session pageModel ) ->
-            RecordPage.update session recordMsg pageModel
-                |> updateWith (SourcePage session) Msg.UserInteractedWithRecordPage model
-
-        ( Msg.UserInteractedWithRecordPage recordMsg, PersonPage session pageModel ) ->
-            RecordPage.update session recordMsg pageModel
-                |> updateWith (PersonPage session) Msg.UserInteractedWithRecordPage model
-
-        ( Msg.UserInteractedWithRecordPage recordMsg, HoldingPage session pageModel ) ->
-            RecordPage.update session recordMsg pageModel
-                |> updateWith (HoldingPage session) Msg.UserInteractedWithRecordPage model
-
-        ( Msg.UserInteractedWithRecordPage recordMsg, InstitutionPage session pageModel ) ->
-            RecordPage.update session recordMsg pageModel
-                |> updateWith (InstitutionPage session) Msg.UserInteractedWithRecordPage model
-
-        ( Msg.UserInteractedWithRecordPage recordMsg, PublicationPage session pageModel ) ->
-            RecordPage.update session recordMsg pageModel
-                |> updateWith (PublicationPage session) Msg.UserInteractedWithRecordPage model
-
-        ( Msg.UserInteractedWithRecordPage recordMsg, PublicationListPage session pageModel ) ->
-            RecordPage.update session recordMsg pageModel
-                |> updateWith (PublicationListPage session) Msg.UserInteractedWithRecordPage model
-
-        ( Msg.UserInteractedWithRecordPage recordMsg, WorkPage session pageModel ) ->
-            RecordPage.update session recordMsg pageModel
-                |> updateWith (WorkPage session) Msg.UserInteractedWithRecordPage model
+        ( Msg.UserInteractedWithRecordPage recordMsg, recordModel ) ->
+            updateRecordPage recordMsg recordModel
 
         ( Msg.UserInteractedWithNotFoundPage notFoundMsg, NotFoundPage session pageModel ) ->
             NotFoundPage.update session notFoundMsg pageModel
@@ -507,6 +482,39 @@ updateWith toModel toMsg _ ( subModel, subCmd ) =
     ( toModel subModel
     , Cmd.map toMsg subCmd
     )
+
+
+updateRecordPage : RecordMsg -> Model -> ( Model, Cmd Msg )
+updateRecordPage recordMsg model =
+    let
+        toRecordResult session toModel pageModel =
+            RecordPage.update session recordMsg pageModel
+                |> updateWith (toModel session) Msg.UserInteractedWithRecordPage model
+    in
+    case model of
+        SourcePage session pageModel ->
+            toRecordResult session SourcePage pageModel
+
+        PersonPage session pageModel ->
+            toRecordResult session PersonPage pageModel
+
+        HoldingPage session pageModel ->
+            toRecordResult session HoldingPage pageModel
+
+        InstitutionPage session pageModel ->
+            toRecordResult session InstitutionPage pageModel
+
+        PublicationPage session pageModel ->
+            toRecordResult session PublicationPage pageModel
+
+        PublicationListPage session pageModel ->
+            toRecordResult session PublicationListPage pageModel
+
+        WorkPage session pageModel ->
+            toRecordResult session WorkPage pageModel
+
+        _ ->
+            ( model, Cmd.none )
 
 
 changeRecordPageHelper :
