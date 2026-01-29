@@ -1,5 +1,6 @@
 module Page.UI.Attributes exposing
-    ( blurredBackground
+    ( backdropBlur
+    , blurredBackground
     , bodyFont
     , bodyFontColour
     , bodyMonospaceFont
@@ -108,13 +109,6 @@ emptyHtmlAttribute =
 fontBaseSize : Attr decorative msg
 fontBaseSize =
     scaled 1
-        |> round
-        |> Font.size
-
-
-headingHero : Attr decorative msg
-headingHero =
-    scaled 6
         |> round
         |> Font.size
 
@@ -245,7 +239,37 @@ tableHeaderStyles =
 
 blurredBackground : Attribute msg
 blurredBackground =
-    htmlAttribute (HA.attribute "style" "background: rgba(255, 255, 255, 0); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index:200;")
+    htmlAttribute (HA.attribute "style" ("background: " ++ rgbaString colourScheme.translucentGrey ++ "; " ++ backdropBlurStyle 4))
+
+
+backdropBlur : Int -> Attribute msg
+backdropBlur blurPx =
+    htmlAttribute (HA.attribute "style" (backdropBlurStyle blurPx))
+
+
+backdropBlurStyle : Int -> String
+backdropBlurStyle blurPx =
+    "backdrop-filter: blur(" ++ String.fromInt blurPx ++ "px); -webkit-backdrop-filter: blur(" ++ String.fromInt blurPx ++ "px); z-index:200;"
+
+
+rgbaString : Element.Color -> String
+rgbaString colour =
+    let
+        { alpha, blue, green, red } =
+            Element.toRgb colour
+
+        to255 v =
+            round (v * 255)
+    in
+    "rgba("
+        ++ String.fromInt (to255 red)
+        ++ ", "
+        ++ String.fromInt (to255 green)
+        ++ ", "
+        ++ String.fromInt (to255 blue)
+        ++ ", "
+        ++ String.fromFloat alpha
+        ++ ")"
 
 
 buttonBaseStyles : List (Attribute msg)

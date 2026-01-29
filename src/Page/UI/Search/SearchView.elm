@@ -1,6 +1,6 @@
-module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResultsListPanelConfig, SearchResultsSectionConfig, viewSearchResultRouter, viewSearchResultsSection)
+module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResultsHandlers, SearchResultsListPanelConfig, SearchResultsSectionConfig, buildSearchResultsConfig, viewSearchResultRouter, viewSearchResultsSection)
 
-import ActiveSearch exposing (toActiveSearch, toResultsNotInCurrentMode)
+import ActiveSearch exposing (toResultsNotInCurrentMode)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
 import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
@@ -15,7 +15,7 @@ import List.Extra as LE
 import Maybe.Extra as ME
 import Page.Downloader
 import Page.Downloader.Msg exposing (DownloaderMsg)
-import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
+import Page.Query exposing (toKeywordQuery)
 import Page.QueryBuilder
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.RecordTypes.Probe exposing (ProbeStatus)
@@ -24,25 +24,27 @@ import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..))
 import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
-import Page.UI.Attributes exposing (blurredBackground, bodyRegular, lineSpacing, minimalDropShadow)
+import Page.UI.Attributes exposing (blurredBackground, bodyRegular, lineSpacing, minimalDropShadow, sidebarWidth)
 import Page.UI.Components exposing (h3)
 import Page.UI.Facets.Facets exposing (viewFacet)
 import Page.UI.Facets.FacetsConfig exposing (FacetMsgConfig)
 import Page.UI.Facets.KeywordQuery exposing (viewKeywordQueryInput)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (closeWindowSvg)
+import Page.UI.Layout as Layout
 import Page.UI.Record.Previews exposing (viewPreviewError, viewPreviewRouter)
 import Page.UI.Search.Controls.ControlsConfig exposing (ActiveFiltersCfg, SearchControlsConfig)
 import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsMode)
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
+import Page.UI.Search.ControlsPanel exposing (viewSearchControlsPanel)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 import Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 import Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 import Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
-import Page.UI.Search.SearchComponents exposing (queryValidationState, viewSearchButtons)
+import Page.UI.Search.SearchComponents exposing (queryValidationState)
 import Page.UI.Search.SearchTemplate exposing (viewResultsListLoadingScreenTmpl, viewSearchResultsNotFoundTmpl)
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
 import Page.UI.Style exposing (colourScheme)
@@ -97,9 +99,101 @@ type alias SearchResultsSectionConfig a msg =
     }
 
 
+type alias SearchResultsHandlers msg =
+    { userInteractedWithQueryBuilderMsg : QueryBuilderMsg -> msg
+    , userClickedOpenQueryBuilderMsg : msg
+    , userClickedCloseQueryBuilderMsg : msg
+    , userInteractedWithDownloaderMsg : DownloaderMsg -> msg
+    , userClickedOpenDownloaderMsg : msg
+    , userClickedCloseDownloaderMsg : msg
+    , userClosedPreviewWindowMsg : msg
+    , userClickedSourceItemsExpandMsg : msg
+    , userClickedResultForPreviewMsg : String -> msg
+    , userChangedResultSortingMsg : String -> msg
+    , userChangedResultsPerPageMsg : String -> msg
+    , userClickedResultsPaginationMsg : String -> msg
+    , userTriggeredSearchSubmitMsg : msg
+    , userEnteredTextInKeywordQueryBoxMsg : String -> msg
+    , userResetAllFiltersMsg : msg
+    , userRemovedActiveFilterMsg : String -> String -> msg
+    , userToggledIncipitInfo : String -> msg
+    , panelToggleMsg : String -> Set String -> msg
+    , facetMsgConfig : FacetMsgConfig msg
+    , expandedDigitizedCopiesMsg : msg
+    , expandedDigitizedCopiesCallout : Bool
+    , clientStartedAnimatingPreviewWindowClose : msg
+    , clientFinishedAnimatingPreviewWindowShow : msg
+    , summaryFormatter : Language -> List LabelValue -> Element msg
+    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
+    , paragraphFormatter : Language -> List LabelValue -> Element msg
+    }
+
+
+buildSearchResultsConfig :
+    { expandedIncipitInfoSections : Set String
+    , model :
+        { a
+            | activeSearch : ActiveSearch msg
+            , applyFilterPrompt : Bool
+            , preview : Response ServerData
+            , previewAnimationStatus : PreviewAnimationStatus
+            , probeResponse : ProbeStatus
+            , response : Response ServerData
+            , selectedResult : Maybe String
+            , showSearchControls : SearchControlOptions
+            , sourceItemsExpanded : Bool
+        }
+    , searchResponse : Response ServerData
+    , session : Session
+    }
+    -> SearchResultsHandlers msg
+    -> SearchResultsSectionConfig a msg
+buildSearchResultsConfig base handlers =
+    { session = base.session
+    , model = base.model
+    , searchResponse = base.searchResponse
+    , expandedIncipitInfoSections = base.expandedIncipitInfoSections
+    , userInteractedWithQueryBuilderMsg = handlers.userInteractedWithQueryBuilderMsg
+    , userClickedOpenQueryBuilderMsg = handlers.userClickedOpenQueryBuilderMsg
+    , userClickedCloseQueryBuilderMsg = handlers.userClickedCloseQueryBuilderMsg
+    , userInteractedWithDownloaderMsg = handlers.userInteractedWithDownloaderMsg
+    , userClickedOpenDownloaderMsg = handlers.userClickedOpenDownloaderMsg
+    , userClickedCloseDownloaderMsg = handlers.userClickedCloseDownloaderMsg
+    , userClosedPreviewWindowMsg = handlers.userClosedPreviewWindowMsg
+    , userClickedSourceItemsExpandMsg = handlers.userClickedSourceItemsExpandMsg
+    , userClickedResultForPreviewMsg = handlers.userClickedResultForPreviewMsg
+    , userChangedResultSortingMsg = handlers.userChangedResultSortingMsg
+    , userChangedResultsPerPageMsg = handlers.userChangedResultsPerPageMsg
+    , userClickedResultsPaginationMsg = handlers.userClickedResultsPaginationMsg
+    , userTriggeredSearchSubmitMsg = handlers.userTriggeredSearchSubmitMsg
+    , userEnteredTextInKeywordQueryBoxMsg = handlers.userEnteredTextInKeywordQueryBoxMsg
+    , userResetAllFiltersMsg = handlers.userResetAllFiltersMsg
+    , userRemovedActiveFilterMsg = handlers.userRemovedActiveFilterMsg
+    , userToggledIncipitInfo = handlers.userToggledIncipitInfo
+    , panelToggleMsg = handlers.panelToggleMsg
+    , facetMsgConfig = handlers.facetMsgConfig
+    , expandedDigitizedCopiesMsg = handlers.expandedDigitizedCopiesMsg
+    , expandedDigitizedCopiesCallout = handlers.expandedDigitizedCopiesCallout
+    , clientStartedAnimatingPreviewWindowClose = handlers.clientStartedAnimatingPreviewWindowClose
+    , clientFinishedAnimatingPreviewWindowShow = handlers.clientFinishedAnimatingPreviewWindowShow
+    , summaryFormatter = handlers.summaryFormatter
+    , preRenderedFormatter = handlers.preRenderedFormatter
+    , relationshipFormatter = handlers.relationshipFormatter
+    , paragraphFormatter = handlers.paragraphFormatter
+    }
+
+
 viewSearchResultsSection : SearchResultsSectionConfig a msg -> Bool -> SearchBody -> Element msg
 viewSearchResultsSection cfg resultsLoading body =
     let
+        windowWidth =
+            cfg.session.window
+                |> Tuple.first
+
+        resultsPanelWidth =
+            Layout.resultsPanelWidth windowWidth sidebarWidth
+
         background =
             el
                 [ width fill
@@ -222,7 +316,7 @@ viewSearchResultsSection cfg resultsLoading body =
         , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
         ]
         [ column
-            [ width (px 550)
+            [ width (px resultsPanelWidth)
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
@@ -254,26 +348,29 @@ viewSearchResultsSection cfg resultsLoading body =
             , minimalDropShadow
             , inFront renderedPreview
             ]
-            [ viewSearchButtons
-                { language = language
-                , model = cfg.model
-                , isFrontPage = False
-                , submitLabel = localTranslations.showResults
-                , submitMsg = cfg.userTriggeredSearchSubmitMsg
-                , resetMsg = cfg.userResetAllFiltersMsg
-                , userClickedOpenDownloaderMsg = cfg.userClickedOpenDownloaderMsg
-                , userClickedCloseDownloaderMsg = cfg.userClickedCloseDownloaderMsg
-                }
-            , activeFilters
-            , viewSearchControls
-                { session = cfg.session
-                , model = cfg.model
-                , body = body
-                , facetMsgConfig = cfg.facetMsgConfig
-                , panelToggleMsg = cfg.panelToggleMsg
-                , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
-                , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
-                , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
+            [ viewSearchControlsPanel
+                { activeFilters = activeFilters
+                , body =
+                    viewSearchControls
+                        { session = cfg.session
+                        , model = cfg.model
+                        , body = body
+                        , facetMsgConfig = cfg.facetMsgConfig
+                        , panelToggleMsg = cfg.panelToggleMsg
+                        , userTriggeredSearchSubmitMsg = cfg.userTriggeredSearchSubmitMsg
+                        , userEnteredTextInKeywordQueryBoxMsg = cfg.userEnteredTextInKeywordQueryBoxMsg
+                        , userClickedOpenQueryBuilderMsg = cfg.userClickedOpenQueryBuilderMsg
+                        }
+                , buttonsConfig =
+                    { language = language
+                    , model = cfg.model
+                    , isFrontPage = False
+                    , submitLabel = localTranslations.showResults
+                    , submitMsg = cfg.userTriggeredSearchSubmitMsg
+                    , resetMsg = cfg.userResetAllFiltersMsg
+                    , userClickedOpenDownloaderMsg = cfg.userClickedOpenDownloaderMsg
+                    , userClickedCloseDownloaderMsg = cfg.userClickedCloseDownloaderMsg
+                    }
                 }
             ]
         ]
@@ -351,11 +448,6 @@ viewActiveFilters { session, model, userRemovedActiveFilterMsg } =
 viewSearchControls : SearchControlsConfig a b msg -> Element msg
 viewSearchControls cfg =
     let
-        currentMode =
-            toActiveSearch cfg.model
-                |> toNextQuery
-                |> toMode
-
         searchInterface =
             .showSearchControls cfg.model
 

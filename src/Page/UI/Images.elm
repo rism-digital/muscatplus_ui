@@ -219,14 +219,6 @@ graduationCapSvg color =
         }
 
 
-holdingSvg : Element.Color -> Element msg
-holdingSvg color =
-    makeSvgIcon color
-        { path = "M 280 80 L 280 232 L 464 232 L 464 96 C 464 87.2 456.8 80 448 80 L 280 80 Z M 48 280 L 48 416 C 48 424.8 55.2 432 64 432 L 232 432 L 232 280 L 48 280 Z M 280 432 L 448 432 C 456.8 432 464 424.8 464 416 L 464 280 L 280 280 L 280 432 Z M 0 96 C 0 60.7 28.7 32 64 32 L 448 32 C 483.3 32 512 60.7 512 96 L 512 416 C 512 451.3 483.3 480 448 480 L 64 480 C 28.7 480 0 451.3 0 416 L 0 96 Z"
-        , viewBox = "0 0 512 512"
-        }
-
-
 iiifLogo : Element msg
 iiifLogo =
     html

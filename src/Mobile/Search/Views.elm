@@ -1,7 +1,7 @@
 module Mobile.Search.Views exposing (view)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, none, row, scrollbarY, text, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, row, scrollbarY, text, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -13,11 +13,11 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
 import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Page.UI.Components exposing (viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
-import Page.UI.Record.Previews exposing (viewMobilePreviewRouter)
+import Page.UI.Record.Previews exposing (viewMobilePreviewForResponse)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
 import Page.UI.Search.Pagination exposing (viewPagination)
-import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingTmpl)
-import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultRouter)
+import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingForWindow)
+import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, buildSearchResultsConfig, viewSearchResultRouter)
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
@@ -27,54 +27,25 @@ view : Session -> SearchPageModel SearchMsg -> Element SearchMsg
 view session model =
     let
         renderedPreview =
-            case .preview model of
-                Loading oldData ->
-                    viewMobilePreviewRouter
-                        { language = session.language
-                        , windowSize = session.window
-                        , closeMsg = SearchMsg.UserClickedClosePreviewWindow
-                        , hideAnimationStartedMsg = SearchMsg.ClientStartedAnimatingPreviewWindowClose
-                        , showAnimationFinishedMsg = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
-                        , animationStatus = model.previewAnimationStatus
-                        , sourceItemExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
-                        , sourceItemsExpanded = model.sourceItemsExpanded
-                        , incipitInfoSectionsExpanded = model.incipitInfoExpanded
-                        , incipitInfoToggleMsg = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
-                        , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
-                        , summaryFormatter = viewMobileSummaryField
-                        , preRenderedFormatter = viewPreRenderedMobileSummaryField
-                        , relationshipFormatter = viewMobileRelationshipBody
-                        , paragraphFormatter = viewMobileParagraphField
-                        }
-                        oldData
-
-                Response resp ->
-                    viewMobilePreviewRouter
-                        { language = session.language
-                        , windowSize = session.window
-                        , closeMsg = SearchMsg.UserClickedClosePreviewWindow
-                        , hideAnimationStartedMsg = SearchMsg.ClientStartedAnimatingPreviewWindowClose
-                        , showAnimationFinishedMsg = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
-                        , animationStatus = model.previewAnimationStatus
-                        , sourceItemExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
-                        , sourceItemsExpanded = model.sourceItemsExpanded
-                        , incipitInfoSectionsExpanded = model.incipitInfoExpanded
-                        , incipitInfoToggleMsg = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
-                        , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
-                        , summaryFormatter = viewMobileSummaryField
-                        , preRenderedFormatter = viewPreRenderedMobileSummaryField
-                        , relationshipFormatter = viewMobileRelationshipBody
-                        , paragraphFormatter = viewMobileParagraphField
-                        }
-                        (Just resp)
-
-                Error _ ->
-                    none
-
-                NoResponseToShow ->
-                    none
+            viewMobilePreviewForResponse
+                { language = session.language
+                , windowSize = session.window
+                , closeMsg = SearchMsg.UserClickedClosePreviewWindow
+                , hideAnimationStartedMsg = SearchMsg.ClientStartedAnimatingPreviewWindowClose
+                , showAnimationFinishedMsg = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
+                , animationStatus = model.previewAnimationStatus
+                , sourceItemExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
+                , sourceItemsExpanded = model.sourceItemsExpanded
+                , incipitInfoSectionsExpanded = model.incipitInfoExpanded
+                , incipitInfoToggleMsg = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
+                , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
+                , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                , summaryFormatter = viewMobileSummaryField
+                , preRenderedFormatter = viewPreRenderedMobileSummaryField
+                , relationshipFormatter = viewMobileRelationshipBody
+                , paragraphFormatter = viewMobileParagraphField
+                }
+                (.preview model)
     in
     row
         [ width fill
@@ -100,47 +71,48 @@ view session model =
 searchResultsViewRouter : Session -> SearchPageModel SearchMsg -> Element SearchMsg
 searchResultsViewRouter session model =
     let
-        resultsConfig : SearchResultsSectionConfig (SearchPageModel SearchMsg) SearchMsg
         resultsConfig =
-            { session = session
-            , model = model
-            , searchResponse = model.response
-            , expandedIncipitInfoSections = model.incipitInfoExpanded
-            , userInteractedWithQueryBuilderMsg = SearchMsg.UserInteractedWithQueryBuilder
-            , userClickedOpenQueryBuilderMsg = SearchMsg.NothingHappened
-            , userClickedCloseQueryBuilderMsg = SearchMsg.NothingHappened
-            , userInteractedWithDownloaderMsg = \_ -> SearchMsg.NothingHappened
-            , userClickedOpenDownloaderMsg = SearchMsg.NothingHappened
-            , userClickedCloseDownloaderMsg = SearchMsg.NothingHappened
-            , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
-            , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
-            , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
-            , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
-            , userChangedResultsPerPageMsg = SearchMsg.UserChangedResultsPerPage
-            , userClickedResultsPaginationMsg = SearchMsg.UserClickedSearchResultsPagination
-            , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
-            , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
-            , userRemovedActiveFilterMsg = SearchMsg.UserRemovedActiveFilter
-            , userToggledIncipitInfo = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
-            , panelToggleMsg = SearchMsg.UserClickedFacetPanelToggle
-            , facetMsgConfig = facetSearchMsgConfig
-            , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
-            , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
-            , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
-            , clientFinishedAnimatingPreviewWindowShow = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
-            , summaryFormatter = viewMobileSummaryField
-            , preRenderedFormatter = viewPreRenderedMobileSummaryField
-            , relationshipFormatter = viewMobileRelationshipBody
-            , paragraphFormatter = viewMobileParagraphField
-            }
+            buildSearchResultsConfig
+                { expandedIncipitInfoSections = model.incipitInfoExpanded
+                , model = model
+                , searchResponse = model.response
+                , session = session
+                }
+                { userInteractedWithQueryBuilderMsg = SearchMsg.UserInteractedWithQueryBuilder
+                , userClickedOpenQueryBuilderMsg = SearchMsg.NothingHappened
+                , userClickedCloseQueryBuilderMsg = SearchMsg.NothingHappened
+                , userInteractedWithDownloaderMsg = \_ -> SearchMsg.NothingHappened
+                , userClickedOpenDownloaderMsg = SearchMsg.NothingHappened
+                , userClickedCloseDownloaderMsg = SearchMsg.NothingHappened
+                , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
+                , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
+                , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
+                , userChangedResultsPerPageMsg = SearchMsg.UserChangedResultsPerPage
+                , userClickedResultsPaginationMsg = SearchMsg.UserClickedSearchResultsPagination
+                , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
+                , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
+                , userRemovedActiveFilterMsg = SearchMsg.UserRemovedActiveFilter
+                , userToggledIncipitInfo = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
+                , panelToggleMsg = SearchMsg.UserClickedFacetPanelToggle
+                , facetMsgConfig = facetSearchMsgConfig
+                , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
+                , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
+                , clientFinishedAnimatingPreviewWindowShow = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
+                , summaryFormatter = viewMobileSummaryField
+                , preRenderedFormatter = viewPreRenderedMobileSummaryField
+                , relationshipFormatter = viewMobileRelationshipBody
+                , paragraphFormatter = viewMobileParagraphField
+                }
     in
     case model.response of
         Loading (Just (SearchData oldData)) ->
             viewMobileSearchResultsSection resultsConfig True oldData
 
         Loading _ ->
-            viewSearchResultsLoadingTmpl session.language
+            viewSearchResultsLoadingForWindow session.window 0 session.language
 
         Response (SearchData body) ->
             viewMobileSearchResultsSection resultsConfig False body
@@ -149,7 +121,7 @@ searchResultsViewRouter session model =
             Mobile.Error.Views.view session model
 
         NoResponseToShow ->
-            viewSearchResultsLoadingTmpl session.language
+            viewSearchResultsLoadingForWindow session.window 0 session.language
 
         _ ->
             extractLabelFromLanguageMap session.language localTranslations.unknownError

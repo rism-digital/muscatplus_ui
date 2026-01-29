@@ -11,7 +11,7 @@ module Page.RecordTypes.Institution exposing
     , institutionBodyDecoder
     )
 
-import Json.Decode as Decode exposing (Decoder, float, int, list, maybe, string, succeed)
+import Json.Decode exposing (Decoder, float, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required, requiredAt)
 import Language exposing (LanguageMap)
 import Page.RecordTypes.DigitalObjects exposing (DigitalObjectsSectionBody, digitalObjectsSectionBodyDecoder)
@@ -99,14 +99,14 @@ type alias ContributionsSectionBody =
 
 basicInstitutionBodyDecoder : Decoder BasicInstitutionBody
 basicInstitutionBodyDecoder =
-    Decode.succeed BasicInstitutionBody
+    succeed BasicInstitutionBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
 
 
 organizationDetailsSectionBodyDecoder : Decoder OrganizationDetailsSectionBody
 organizationDetailsSectionBodyDecoder =
-    Decode.succeed OrganizationDetailsSectionBody
+    succeed OrganizationDetailsSectionBody
         |> hardcoded "institution-summary-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "summary" (list labelValueDecoder)
@@ -114,7 +114,7 @@ organizationDetailsSectionBodyDecoder =
 
 coordinatesSectionDecoder : Decoder CoordinatesSection
 coordinatesSectionDecoder =
-    Decode.succeed CoordinatesSection
+    succeed CoordinatesSection
         |> hardcoded "institution-coordinates-section"
         |> required "id" string
         |> required "sectionLabel" languageMapLabelDecoder
@@ -124,19 +124,19 @@ coordinatesSectionDecoder =
 
 institutionBodyDecoder : Decoder InstitutionBody
 institutionBodyDecoder =
-    Decode.succeed InstitutionBody
+    succeed InstitutionBody
         |> hardcoded "institution-record-top"
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
-        |> optional "organizationDetails" (Decode.maybe organizationDetailsSectionBodyDecoder) Nothing
-        |> optional "relationships" (Decode.maybe relationshipsSectionBodyDecoder) Nothing
-        |> optional "notes" (Decode.maybe notesSectionBodyDecoder) Nothing
-        |> optional "externalAuthorities" (Decode.maybe externalAuthoritiesSectionBodyDecoder) Nothing
-        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
-        |> optional "location" (Decode.maybe locationAddressSectionBodyDecoder) Nothing
-        |> optional "sources" (Decode.maybe sourceRelationshipsSectionBodyDecoder) Nothing
-        |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
+        |> optional "organizationDetails" (maybe organizationDetailsSectionBodyDecoder) Nothing
+        |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
+        |> optional "notes" (maybe notesSectionBodyDecoder) Nothing
+        |> optional "externalAuthorities" (maybe externalAuthoritiesSectionBodyDecoder) Nothing
+        |> optional "externalResources" (maybe externalResourcesSectionBodyDecoder) Nothing
+        |> optional "location" (maybe locationAddressSectionBodyDecoder) Nothing
+        |> optional "sources" (maybe sourceRelationshipsSectionBodyDecoder) Nothing
+        |> optional "digitalObjects" (maybe digitalObjectsSectionBodyDecoder) Nothing
         |> optional "contributions" (maybe contributionsSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 

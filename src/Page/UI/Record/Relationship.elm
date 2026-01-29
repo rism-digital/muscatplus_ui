@@ -2,7 +2,7 @@ module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewMobile
 
 import Dict
 import Dict.Extra as DE
-import Element exposing (Element, above, alignLeft, alignTop, centerY, column, el, fill, height, link, none, paddingEach, paddingXY, paragraph, px, row, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, column, el, fill, height, link, none, paddingXY, paragraph, px, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Maybe.Extra as ME

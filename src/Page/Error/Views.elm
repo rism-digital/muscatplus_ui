@@ -65,7 +65,7 @@ errorMessageView language err =
                         , language = language
                         }
 
-                OtherBadStatusResponse { label, description, statusCode } ->
+                OtherBadStatusResponse { label, description } ->
                     viewDescriptionErrorResponse
                         { description = description
                         , label = label

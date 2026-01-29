@@ -9,7 +9,6 @@ import Page.Keyboard.Msg exposing (KeyboardMsg(..))
 import Page.Keyboard.Query exposing (queryModeStrToQueryMode)
 import Page.Keyboard.Views.FormInput exposing (viewPaeInput, viewRenderControls)
 import Page.Keyboard.Views.FullKeyboard exposing (fullKeyboard)
-import Page.Keyboard.Views.PaeHelp exposing (viewPaeHelp)
 import Page.RecordTypes.Search exposing (NotationFacet)
 import Page.UI.Attributes exposing (lineSpacing)
 import Page.UI.Components exposing (dropdownSelect)
@@ -29,9 +28,6 @@ view :
     -> Element KeyboardMsg
 view { language, model, notationFacet, searchPreferences, suppressInMobileUi } =
     let
-        paeHelp =
-            viewIf (viewPaeHelp language model) (not suppressInMobileUi)
-
         queryModeOptions =
             .options notationFacet.queryModes
                 |> List.map (\{ label, value } -> ( value, extractLabelFromLanguageMap language label ))

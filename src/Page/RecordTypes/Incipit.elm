@@ -17,8 +17,6 @@ import Language exposing (LanguageMap)
 import List.Extra as LE
 import Page.RecordTypes.PartOf exposing (PartOfSectionBody, partOfSectionBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
-import Page.RecordTypes.SourceBasic exposing (BasicSourceBody)
-import Page.RecordTypes.WorkBasic exposing (BasicWorkBody)
 
 
 type EncodedIncipit
@@ -58,18 +56,6 @@ type IncipitFormat
     | RenderedMIDI
     | RenderedPNG
     | UnknownFormat
-
-
-type alias IncipitParentSourceBody =
-    { label : LanguageMap
-    , source : BasicSourceBody
-    }
-
-
-type alias IncipitParentWorkBody =
-    { label : LanguageMap
-    , work : BasicWorkBody
-    }
 
 
 type RenderedIncipit

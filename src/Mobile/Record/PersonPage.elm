@@ -7,7 +7,7 @@ import Maybe.Extra as ME
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Person exposing (PersonBody)
-import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (pageBodyOrEmpty, viewMobileParagraphField, viewMobileSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)

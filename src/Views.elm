@@ -80,17 +80,17 @@ view model =
                         _ ->
                             defaultTitle
 
-                InstitutionPage session pageModel ->
+                HoldingPage session pageModel ->
                     case pageModel.response of
-                        Response (InstitutionData body) ->
+                        Response (HoldingData body) ->
                             extractLabelFromLanguageMap session.language body.label
 
                         _ ->
                             defaultTitle
 
-                WorkPage session pageModel ->
+                InstitutionPage session pageModel ->
                     case pageModel.response of
-                        Response (WorkData body) ->
+                        Response (InstitutionData body) ->
                             extractLabelFromLanguageMap session.language body.label
 
                         _ ->
@@ -104,9 +104,9 @@ view model =
                         _ ->
                             defaultTitle
 
-                HoldingPage session pageModel ->
+                WorkPage session pageModel ->
                     case pageModel.response of
-                        Response (HoldingData body) ->
+                        Response (WorkData body) ->
                             extractLabelFromLanguageMap session.language body.label
 
                         _ ->

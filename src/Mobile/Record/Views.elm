@@ -23,7 +23,7 @@ viewChooser session model dataType =
         InstitutionData body ->
             viewFullMobileInstitutionPage session model body
 
-        PublicationData body ->
+        PublicationData _ ->
             el [] (text "Publications.")
 
         _ ->

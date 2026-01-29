@@ -65,7 +65,7 @@ publicationBodyDecoder =
         |> required "status" workCatalogueStatusDecoder
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
         |> optional "notes" (maybe notesSectionBodyDecoder) Nothing
-        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
+        |> optional "externalResources" (maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "works" (maybe worksSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
         |> optional "properties" (maybe publicationPropertiesDecoder) Nothing

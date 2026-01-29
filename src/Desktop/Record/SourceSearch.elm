@@ -4,17 +4,18 @@ module Desktop.Record.SourceSearch exposing
     )
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerY, clipY, column, fill, height, none, px, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, fill, height, none, px, row, spacing, text, width)
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
+import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Components exposing (Tab(..), tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
-import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingTmpl)
-import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
+import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingForWindow)
+import Page.UI.Search.SearchView exposing (buildSearchResultsConfig, viewSearchResultsSection)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -45,47 +46,48 @@ searchResultsViewRouter :
     -> Element RecordMsg
 searchResultsViewRouter session model =
     let
-        resultsConfig : SearchResultsSectionConfig (RecordPageModel RecordMsg) RecordMsg
         resultsConfig =
-            { session = session
-            , model = model
-            , searchResponse = model.searchResults
-            , expandedIncipitInfoSections = model.incipitInfoExpanded
-            , userInteractedWithQueryBuilderMsg = RecordMsg.UserInteractedWithQueryBuilder
-            , userClickedOpenQueryBuilderMsg = RecordMsg.UserClickedOpenQueryBuilder
-            , userClickedCloseQueryBuilderMsg = RecordMsg.UserClickedCloseQueryBuilder
-            , userInteractedWithDownloaderMsg = RecordMsg.UserInteractedWithDownloader
-            , userClickedOpenDownloaderMsg = RecordMsg.UserClickedOpenDownloader
-            , userClickedCloseDownloaderMsg = RecordMsg.UserClickedCloseDownloader
-            , userClosedPreviewWindowMsg = RecordMsg.UserClickedClosePreviewWindow
-            , userClickedSourceItemsExpandMsg = RecordMsg.UserClickedExpandSourceItemsSectionInPreview
-            , userClickedResultForPreviewMsg = RecordMsg.UserClickedSearchResultForPreview
-            , userChangedResultSortingMsg = RecordMsg.UserChangedResultSorting
-            , userChangedResultsPerPageMsg = RecordMsg.UserChangedResultsPerPage
-            , userClickedResultsPaginationMsg = RecordMsg.UserClickedSearchResultsPagination
-            , userTriggeredSearchSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
-            , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
-            , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
-            , userRemovedActiveFilterMsg = RecordMsg.UserRemovedActiveFilter
-            , userToggledIncipitInfo = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-            , panelToggleMsg = RecordMsg.UserClickedFacetPanelToggle
-            , facetMsgConfig = facetRecordMsgConfig
-            , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
-            , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
-            , clientStartedAnimatingPreviewWindowClose = RecordMsg.ClientStartedAnimatingPreviewWindowClose
-            , clientFinishedAnimatingPreviewWindowShow = RecordMsg.ClientFinishedAnimatingPreviewWindowShow
-            , summaryFormatter = viewSummaryField
-            , preRenderedFormatter = viewPreRenderedSummaryField
-            , relationshipFormatter = viewRelationshipBody
-            , paragraphFormatter = viewParagraphField
-            }
+            buildSearchResultsConfig
+                { expandedIncipitInfoSections = model.incipitInfoExpanded
+                , model = model
+                , searchResponse = model.searchResults
+                , session = session
+                }
+                { userInteractedWithQueryBuilderMsg = RecordMsg.UserInteractedWithQueryBuilder
+                , userClickedOpenQueryBuilderMsg = RecordMsg.UserClickedOpenQueryBuilder
+                , userClickedCloseQueryBuilderMsg = RecordMsg.UserClickedCloseQueryBuilder
+                , userInteractedWithDownloaderMsg = RecordMsg.UserInteractedWithDownloader
+                , userClickedOpenDownloaderMsg = RecordMsg.UserClickedOpenDownloader
+                , userClickedCloseDownloaderMsg = RecordMsg.UserClickedCloseDownloader
+                , userClosedPreviewWindowMsg = RecordMsg.UserClickedClosePreviewWindow
+                , userClickedSourceItemsExpandMsg = RecordMsg.UserClickedExpandSourceItemsSectionInPreview
+                , userClickedResultForPreviewMsg = RecordMsg.UserClickedSearchResultForPreview
+                , userChangedResultSortingMsg = RecordMsg.UserChangedResultSorting
+                , userChangedResultsPerPageMsg = RecordMsg.UserChangedResultsPerPage
+                , userClickedResultsPaginationMsg = RecordMsg.UserClickedSearchResultsPagination
+                , userTriggeredSearchSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
+                , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
+                , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
+                , userRemovedActiveFilterMsg = RecordMsg.UserRemovedActiveFilter
+                , userToggledIncipitInfo = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                , panelToggleMsg = RecordMsg.UserClickedFacetPanelToggle
+                , facetMsgConfig = facetRecordMsgConfig
+                , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
+                , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                , clientStartedAnimatingPreviewWindowClose = RecordMsg.ClientStartedAnimatingPreviewWindowClose
+                , clientFinishedAnimatingPreviewWindowShow = RecordMsg.ClientFinishedAnimatingPreviewWindowShow
+                , summaryFormatter = viewSummaryField
+                , preRenderedFormatter = viewPreRenderedSummaryField
+                , relationshipFormatter = viewRelationshipBody
+                , paragraphFormatter = viewParagraphField
+                }
     in
     case model.searchResults of
         Loading (Just (SearchData oldData)) ->
             viewSearchResultsSection resultsConfig True oldData
 
         Loading _ ->
-            viewSearchResultsLoadingTmpl session.language
+            viewSearchResultsLoadingForWindow session.window sidebarWidth session.language
 
         Response (SearchData body) ->
             viewSearchResultsSection resultsConfig False body
@@ -97,7 +99,7 @@ searchResultsViewRouter session model =
         NoResponseToShow ->
             -- In case we're just booting the app up, show
             -- the loading message.
-            viewSearchResultsLoadingTmpl session.language
+            viewSearchResultsLoadingForWindow session.window sidebarWidth session.language
 
         _ ->
             extractLabelFromLanguageMap session.language localTranslations.unknownError

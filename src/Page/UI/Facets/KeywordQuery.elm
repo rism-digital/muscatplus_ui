@@ -8,7 +8,6 @@ module Page.UI.Facets.KeywordQuery exposing (KeywordInputConfig, viewKeywordQuer
 
 import Color exposing (toCssString)
 import Element exposing (Element, alignLeft, alignRight, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, padding, pointer, row, spacing, text, toRgb, width)
-import Element.Background as Background
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Element.Input as Input

@@ -1,6 +1,6 @@
-module Page.UI.Record.ContributionsSection exposing (..)
+module Page.UI.Record.ContributionsSection exposing (viewContributionsSection)
 
-import Element exposing (Element, alignTop, fill, height, link, none, paddingXY, paragraph, row, text, width)
+import Element exposing (Element, alignTop, fill, height, link, paddingXY, paragraph, row, text, width)
 import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMapWithVariables)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Institution exposing (Contributions, ContributionsSectionBody)
@@ -39,10 +39,10 @@ viewContribution language descr contribution =
         ]
         [ link
             [ linkColour ]
-            { url = contribution.url
-            , label =
+            { label =
                 paragraph
                     []
                     [ text linkLabel ]
+            , url = contribution.url
             }
         ]

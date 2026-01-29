@@ -1,7 +1,7 @@
 module Desktop.Front.Views exposing (view)
 
 import Desktop.Error.Views
-import Element exposing (Element, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, none, padding, paragraph, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignLeft, alignTop, below, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, maximum, none, padding, paragraph, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Region as Region
@@ -26,7 +26,8 @@ import Page.UI.Search.Controls.IncipitsControls exposing (viewFacetsForIncipitsM
 import Page.UI.Search.Controls.InstitutionsControls exposing (viewFacetsForInstitutionsMode)
 import Page.UI.Search.Controls.PeopleControls exposing (viewFacetsForPeopleMode)
 import Page.UI.Search.Controls.SourcesControls exposing (viewFacetsForSourcesMode)
-import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, queryValidationState, viewSearchButtons)
+import Page.UI.Search.ControlsPanel exposing (viewSearchControlsPanel)
+import Page.UI.Search.SearchComponents exposing (hasActionableProbeResponse, queryValidationState)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (facetHelp)
 import Response exposing (Response(..), ServerData(..))
@@ -103,7 +104,7 @@ view session model =
         , Region.mainContent
         ]
         [ column
-            [ width (px 1100)
+            [ width (fill |> maximum 1100)
             , height fill
             , Background.color colourScheme.white
             ]
@@ -146,28 +147,32 @@ viewFrontSearchControls cfg =
             , height fill
             , alignTop
             ]
-            [ viewSearchButtons
-                { language = .language cfg.session
-                , model = cfg.model
-                , isFrontPage = True
-                , submitLabel = localTranslations.showResults
-                , submitMsg = FrontMsg.UserTriggeredSearchSubmit
-                , resetMsg = FrontMsg.UserResetAllFilters
-                , userClickedOpenDownloaderMsg = FrontMsg.NothingHappened
-                , userClickedCloseDownloaderMsg = FrontMsg.NothingHappened
+            [ viewSearchControlsPanel
+                { activeFilters = none
+                , body =
+                    row
+                        [ width fill
+                        , height fill
+                        , scrollbarY
+                        , htmlAttribute (HA.style "min-height" "unset")
+                        ]
+                        [ column
+                            [ width fill
+                            , height fill
+                            ]
+                            [ viewFacetPanels cfg ]
+                        ]
+                , buttonsConfig =
+                    { language = .language cfg.session
+                    , model = cfg.model
+                    , isFrontPage = True
+                    , submitLabel = localTranslations.showResults
+                    , submitMsg = FrontMsg.UserTriggeredSearchSubmit
+                    , resetMsg = FrontMsg.UserResetAllFilters
+                    , userClickedOpenDownloaderMsg = FrontMsg.NothingHappened
+                    , userClickedCloseDownloaderMsg = FrontMsg.NothingHappened
+                    }
                 }
-            , row
-                [ width fill
-                , height fill
-                , scrollbarY
-                , htmlAttribute (HA.style "min-height" "unset")
-                ]
-                [ column
-                    [ width fill
-                    , height fill
-                    ]
-                    [ viewFacetPanels cfg ]
-                ]
             ]
         ]
 

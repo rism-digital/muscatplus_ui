@@ -10,12 +10,13 @@ import Page.RecordTypes.Search exposing (ModeFacet)
 import Page.Search.Facets exposing (facetSearchMsgConfig, viewModeItems)
 import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg as SearchMsg exposing (SearchMsg)
+import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.PageTemplate exposing (recordHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
-import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingTmpl)
-import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, viewSearchResultsSection)
+import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingForWindow)
+import Page.UI.Search.SearchView exposing (buildSearchResultsConfig, viewSearchResultsSection)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
@@ -59,47 +60,48 @@ searchModeSelectorView session model modeFacet =
 searchResultsViewRouter : Session -> SearchPageModel SearchMsg -> Element SearchMsg
 searchResultsViewRouter session model =
     let
-        resultsConfig : SearchResultsSectionConfig (SearchPageModel SearchMsg) SearchMsg
         resultsConfig =
-            { session = session
-            , model = model
-            , searchResponse = model.response
-            , expandedIncipitInfoSections = model.incipitInfoExpanded
-            , userInteractedWithQueryBuilderMsg = SearchMsg.UserInteractedWithQueryBuilder
-            , userClickedOpenQueryBuilderMsg = SearchMsg.UserClickedOpenQueryBuilder
-            , userClickedCloseQueryBuilderMsg = SearchMsg.UserClickedCloseQueryBuilder
-            , userInteractedWithDownloaderMsg = SearchMsg.UserInteractedWithDownloader
-            , userClickedOpenDownloaderMsg = SearchMsg.UserClickedOpenDownloader
-            , userClickedCloseDownloaderMsg = SearchMsg.UserClickedCloseDownloader
-            , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
-            , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
-            , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
-            , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
-            , userChangedResultsPerPageMsg = SearchMsg.UserChangedResultsPerPage
-            , userClickedResultsPaginationMsg = SearchMsg.UserClickedSearchResultsPagination
-            , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
-            , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
-            , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
-            , userRemovedActiveFilterMsg = SearchMsg.UserRemovedActiveFilter
-            , userToggledIncipitInfo = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
-            , panelToggleMsg = SearchMsg.UserClickedFacetPanelToggle
-            , facetMsgConfig = facetSearchMsgConfig
-            , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
-            , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
-            , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
-            , clientFinishedAnimatingPreviewWindowShow = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
-            , summaryFormatter = viewSummaryField
-            , preRenderedFormatter = viewPreRenderedSummaryField
-            , relationshipFormatter = viewRelationshipBody
-            , paragraphFormatter = viewParagraphField
-            }
+            buildSearchResultsConfig
+                { expandedIncipitInfoSections = model.incipitInfoExpanded
+                , model = model
+                , searchResponse = model.response
+                , session = session
+                }
+                { userInteractedWithQueryBuilderMsg = SearchMsg.UserInteractedWithQueryBuilder
+                , userClickedOpenQueryBuilderMsg = SearchMsg.UserClickedOpenQueryBuilder
+                , userClickedCloseQueryBuilderMsg = SearchMsg.UserClickedCloseQueryBuilder
+                , userInteractedWithDownloaderMsg = SearchMsg.UserInteractedWithDownloader
+                , userClickedOpenDownloaderMsg = SearchMsg.UserClickedOpenDownloader
+                , userClickedCloseDownloaderMsg = SearchMsg.UserClickedCloseDownloader
+                , userClosedPreviewWindowMsg = SearchMsg.UserClickedClosePreviewWindow
+                , userClickedSourceItemsExpandMsg = SearchMsg.UserClickedExpandSourceItemsSectionInPreview
+                , userClickedResultForPreviewMsg = SearchMsg.UserClickedSearchResultForPreview
+                , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
+                , userChangedResultsPerPageMsg = SearchMsg.UserChangedResultsPerPage
+                , userClickedResultsPaginationMsg = SearchMsg.UserClickedSearchResultsPagination
+                , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
+                , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
+                , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
+                , userRemovedActiveFilterMsg = SearchMsg.UserRemovedActiveFilter
+                , userToggledIncipitInfo = SearchMsg.UserClickedExpandIncipitInfoSectionInPreview
+                , panelToggleMsg = SearchMsg.UserClickedFacetPanelToggle
+                , facetMsgConfig = facetSearchMsgConfig
+                , expandedDigitizedCopiesMsg = SearchMsg.UserClickedExpandDigitalCopiesCallout
+                , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                , clientStartedAnimatingPreviewWindowClose = SearchMsg.ClientStartedAnimatingPreviewWindowClose
+                , clientFinishedAnimatingPreviewWindowShow = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
+                , summaryFormatter = viewSummaryField
+                , preRenderedFormatter = viewPreRenderedSummaryField
+                , relationshipFormatter = viewRelationshipBody
+                , paragraphFormatter = viewParagraphField
+                }
     in
     case model.response of
         Loading (Just (SearchData oldData)) ->
             viewSearchResultsSection resultsConfig True oldData
 
         Loading _ ->
-            viewSearchResultsLoadingTmpl session.language
+            viewSearchResultsLoadingForWindow session.window sidebarWidth session.language
 
         Response (SearchData body) ->
             viewSearchResultsSection resultsConfig False body
@@ -110,7 +112,7 @@ searchResultsViewRouter session model =
         NoResponseToShow ->
             -- In case we're just booting the app up, show
             -- the loading message.
-            viewSearchResultsLoadingTmpl session.language
+            viewSearchResultsLoadingForWindow session.window sidebarWidth session.language
 
         _ ->
             -- For any other responses, show the error.

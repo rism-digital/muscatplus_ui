@@ -23,7 +23,7 @@ import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
-import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection, viewReferencesNotesSection)
+import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Search.Pagination exposing (viewTablePagination)
 import Page.UI.Search.SearchTemplate exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl)
@@ -557,18 +557,6 @@ viewNumberOfSourcesCell language rowNum result =
         cellBg =
             cycleTableBackground rowNum
 
-        numSourcesFlagValue =
-            Maybe.map String.fromInt (.numberOfSources result.flags)
-                |> Maybe.andThen
-                    (\t ->
-                        if t == "0" then
-                            Nothing
-
-                        else
-                            Just t
-                    )
-                |> Maybe.withDefault "-"
-
         viewSourcesLink =
             case result.sources of
                 Just v ->
@@ -580,6 +568,19 @@ viewNumberOfSourcesCell language rowNum result =
                         { label = text (extractLabelFromLanguageMap language v.label), url = v.url }
 
                 Nothing ->
+                    let
+                        numSourcesFlagValue =
+                            Maybe.map String.fromInt (.numberOfSources result.flags)
+                                |> Maybe.andThen
+                                    (\t ->
+                                        if t == "0" then
+                                            Nothing
+
+                                        else
+                                            Just t
+                                    )
+                                |> Maybe.withDefault "-"
+                    in
                     text numSourcesFlagValue
     in
     row

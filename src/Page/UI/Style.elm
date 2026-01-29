@@ -225,22 +225,6 @@ toCssColors colour =
     Css.rgb red green blue
 
 
-determineOptimalTextColorForBackground : Element.Color -> Element.Color
-determineOptimalTextColorForBackground backgroundColor =
-    let
-        { blue, green, red } =
-            Element.toRgb backgroundColor
-
-        threshold =
-            (0.2126 * (red ^ 2.2)) + (0.7152 * (green ^ 2.2)) + (0.0722 * (blue ^ 2.2))
-    in
-    if threshold > 0.5 then
-        colourScheme.black
-
-    else
-        colourScheme.white
-
-
 headerHeight : Int
 headerHeight =
     60

@@ -1,6 +1,6 @@
 module Page.Downloader.View exposing (view)
 
-import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, htmlAttribute, padding, paragraph, pointer, px, row, spacing, text, textColumn, width)
+import Element exposing (Element, alignBottom, alignLeft, alignRight, centerX, centerY, clip, column, el, fill, height, htmlAttribute, maximum, padding, paragraph, pointer, px, row, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -10,8 +10,8 @@ import Language exposing (Language, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Downloader.Model exposing (DownloaderModel)
 import Page.Downloader.Msg exposing (DownloadProgressTracker(..), DownloadState(..), DownloaderMsg(..))
-import Page.UI.Attributes exposing (bodySM, buttonBaseStyles, lineSpacing, minimalDropShadow)
-import Page.UI.Components exposing (viewWindowTitleBar)
+import Page.UI.Attributes exposing (bodySM, buttonBaseStyles, lineSpacing)
+import Page.UI.Components exposing (viewModalOverlay)
 import Page.UI.Errors exposing (createErrorMessage, errorMessageString)
 import Page.UI.Style exposing (colourScheme)
 
@@ -24,30 +24,20 @@ view :
     }
     -> Element msg
 view cfg =
-    row
-        [ width fill
-        , height fill
-        , Background.color colourScheme.translucentGrey
-        , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
-        ]
-        [ column
-            [ centerX
-            , centerY
-            , width (px 900)
-            , Background.color colourScheme.white
-            , Border.color colourScheme.darkBlue
-            , Border.width 3
-            , htmlAttribute (HA.style "z-index" "10")
-            , minimalDropShadow
-            ]
-            [ viewWindowTitleBar cfg.language (toLanguageMap "Download Search Results") cfg.closeMsg
-            , viewWindowContent
+    viewModalOverlay
+        { body =
+            viewWindowContent
                 { language = cfg.language
                 , model = cfg.model
                 }
                 |> Element.map cfg.userInteractedWithDownloaderMsg
+        , cardAttributes =
+            [ width (fill |> maximum 900)
             ]
-        ]
+        , closeMsg = cfg.closeMsg
+        , language = cfg.language
+        , title = toLanguageMap "Download Search Results"
+        }
 
 
 viewWindowContent :

@@ -426,25 +426,6 @@ extractIdFromSearchResult searchResult =
             wi.id
 
 
-extractLabelFromSearchResult : SearchResult -> LanguageMap
-extractLabelFromSearchResult searchResult =
-    case searchResult of
-        SourceResult d ->
-            d.label
-
-        PersonResult p ->
-            p.label
-
-        InstitutionResult i ->
-            i.label
-
-        IncipitResult ic ->
-            ic.label
-
-        WorkResult wi ->
-            wi.label
-
-
 facetBehaviourOptions : List ( String, FacetBehaviours )
 facetBehaviourOptions =
     [ ( "union", FacetBehaviourUnion )

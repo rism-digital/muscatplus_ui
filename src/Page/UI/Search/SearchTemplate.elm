@@ -1,4 +1,4 @@
-module Page.UI.Search.SearchTemplate exposing (controlsTmpl, viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingTmpl, viewSearchResultsNotFoundTmpl)
+module Page.UI.Search.SearchTemplate exposing (controlsTmpl, viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingForWindow, viewSearchResultsNotFoundTmpl)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, link, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
@@ -15,6 +15,7 @@ import Page.UI.Attributes exposing (blurredBackground, lineSpacing, linkColour, 
 import Page.UI.Components exposing (h3)
 import Page.UI.Helpers exposing (viewIf)
 import Page.UI.Images exposing (spinnerSvg)
+import Page.UI.Layout as Layout
 import Page.UI.Style exposing (colourScheme)
 import Request exposing (serverUrl)
 
@@ -88,14 +89,18 @@ controlsTmpl contents =
         contents
 
 
-viewSearchResultsLoadingTmpl : Language -> Element msg
-viewSearchResultsLoadingTmpl _ =
+viewSearchResultsLoadingTmpl : Int -> Int -> Language -> Element msg
+viewSearchResultsLoadingTmpl windowWidth sidebarWidth _ =
+    let
+        resultsPanelWidth =
+            Layout.resultsPanelWidth windowWidth sidebarWidth
+    in
     row
         [ width fill
         , height fill
         ]
         [ column
-            [ width (px 550)
+            [ width (px resultsPanelWidth)
             , height fill
             , alignTop
             , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
@@ -138,6 +143,11 @@ viewSearchResultsLoadingTmpl _ =
                 ]
             ]
         ]
+
+
+viewSearchResultsLoadingForWindow : ( Int, Int ) -> Int -> Language -> Element msg
+viewSearchResultsLoadingForWindow window sidebarWidth language =
+    viewSearchResultsLoadingTmpl (Tuple.first window) sidebarWidth language
 
 
 viewSearchResultsNotFoundTmpl :

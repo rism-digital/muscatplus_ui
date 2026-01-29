@@ -27,13 +27,14 @@ module Page.UI.Components exposing
     , viewMobileParagraphField
     , viewMobileSummaryField
     , viewMobileWindowTitleBar
+    , viewModalOverlay
     , viewParagraphField
     , viewPreRenderedLabelValueField
     , viewPreRenderedMobileLabelValueField
     , viewPreRenderedMobileSummaryField
     , viewPreRenderedSummaryField
     , viewSummaryField
-    , viewWindowTitleBar
+    , viewWindowShell
     )
 
 import Element exposing (Attribute, Color, Element, above, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, inFront, link, maximum, moveDown, moveUp, newTabLink, none, padding, paddingEach, paddingXY, paragraph, pointer, px, rgb, rgba, rotate, row, shrink, spacing, text, transparent, width, wrappedRow)
@@ -53,7 +54,7 @@ import Page.RecordTypes.Publication exposing (WorkCatalogueStatus(..))
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.SourceShared exposing (SourceContentType(..), SourceRecordType(..), SourceType(..))
 import Page.UI.Animations exposing (animatedLoader)
-import Page.UI.Attributes exposing (bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (backdropBlur, bodyRegular, bodySM, bodySerifFont, emptyHtmlAttribute, headingLG, headingMD, headingSM, headingXL, headingXXL, labelFieldColumnAttributes, lineSpacing, linkColour, minimalDropShadow, sectionSpacing, valueFieldColumnAttributes)
 import Page.UI.Helpers exposing (isExternalLink, viewIf, viewMaybe)
 import Page.UI.Images exposing (bookCopySvg, bookOpenCoverSvg, bookOpenSvg, bookSvg, circleSvg, closeWindowSvg, commentsSvg, ellipsesSvg, externalLinkSvg, fileMusicSvg, graduationCapSvg, landmarkMagnifyingGlass, penNibSvg, printingPressSvg, rectanglesMixedSvg, shapesSvg, spinnerSvg)
 import Page.UI.Style exposing (colourScheme)
@@ -955,6 +956,67 @@ viewWindowTitleBar language title closeMsg =
             , width fill
             ]
             (h4 language title)
+        ]
+
+
+viewModalOverlay :
+    { body : Element msg
+    , cardAttributes : List (Attribute msg)
+    , closeMsg : msg
+    , language : Language
+    , title : LanguageMap
+    }
+    -> Element msg
+viewModalOverlay cfg =
+    row
+        [ width fill
+        , height fill
+        , Background.color colourScheme.translucentGrey
+        , backdropBlur 4
+        ]
+        [ column
+            (centerX
+                :: centerY
+                :: Background.color colourScheme.white
+                :: Border.color colourScheme.darkBlue
+                :: Border.width 3
+                :: htmlAttribute (HA.style "z-index" "10")
+                :: minimalDropShadow
+                :: cfg.cardAttributes
+            )
+            [ viewWindowTitleBar cfg.language cfg.title cfg.closeMsg
+            , cfg.body
+            ]
+        ]
+
+
+viewWindowShell :
+    { body : Element msg
+    , closeMsg : msg
+    , containerAttributes : List (Attribute msg)
+    , language : Language
+    , title : LanguageMap
+    }
+    -> Element msg
+viewWindowShell cfg =
+    row
+        (Background.color colourScheme.white
+            :: Border.color colourScheme.darkBlue
+            :: Border.width 3
+            :: htmlAttribute (HA.style "z-index" "10")
+            :: minimalDropShadow
+            :: cfg.containerAttributes
+        )
+        [ column
+            [ width fill
+            , height fill
+            , alignTop
+            , Background.color colourScheme.white
+            , htmlAttribute (HA.style "z-index" "10")
+            ]
+            [ viewWindowTitleBar cfg.language cfg.title cfg.closeMsg
+            , cfg.body
+            ]
         ]
 
 

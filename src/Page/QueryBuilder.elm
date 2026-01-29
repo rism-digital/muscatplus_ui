@@ -2,20 +2,15 @@ module Page.QueryBuilder exposing (Model, init, update, view)
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Cmd.Extra as CE
-import Element exposing (Element, centerX, centerY, column, fill, height, htmlAttribute, px, row, width)
-import Element.Background as Background
-import Element.Border as Border
-import Html.Attributes as HA
+import Element exposing (Element, fill, height, maximum, width)
 import Language exposing (Language, toLanguageMap)
 import Page.Query exposing (toKeywordQuery, toMode, toNextQuery)
 import Page.QueryBuilder.Model exposing (QueryBuilderModel, queryBuilderOperatorToLabel)
 import Page.QueryBuilder.Msg as QueryBuilderMsg exposing (QueryBuilderMsg(..))
 import Page.QueryBuilder.View
 import Page.RecordTypes.Probe exposing (ProbeStatus)
-import Page.UI.Attributes exposing (minimalDropShadow)
-import Page.UI.Components exposing (viewWindowTitleBar)
+import Page.UI.Components exposing (viewModalOverlay)
 import Page.UI.Search.SearchComponents exposing (queryValidationState)
-import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 
 
@@ -107,25 +102,9 @@ view cfg =
             .probeResponse cfg.model
                 |> queryValidationState
     in
-    row
-        [ width fill
-        , height fill
-        , Background.color colourScheme.translucentGrey
-        , htmlAttribute (HA.attribute "style" "backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index:200;")
-        ]
-        [ column
-            [ centerX
-            , centerY
-            , width (px 900)
-            , height (px 600)
-            , Background.color colourScheme.white
-            , Border.color colourScheme.darkBlue
-            , Border.width 3
-            , htmlAttribute (HA.style "z-index" "10")
-            , minimalDropShadow
-            ]
-            [ viewWindowTitleBar cfg.language title cfg.closeMsg
-            , Page.QueryBuilder.View.view
+    viewModalOverlay
+        { body =
+            Page.QueryBuilder.View.view
                 { changeMsg = QueryBuilderMsg.UserEnteredTextInQueryBuilder
                 , currentMode = currentMode
                 , language = cfg.language
@@ -136,5 +115,11 @@ view cfg =
                 , submitMsg = QueryBuilderMsg.UserClickedSearchButton
                 }
                 |> Element.map cfg.userInteractedWithQueryBuilderMsg
+        , cardAttributes =
+            [ width (fill |> maximum 900)
+            , height (fill |> maximum 600)
             ]
-        ]
+        , closeMsg = cfg.closeMsg
+        , language = cfg.language
+        , title = title
+        }

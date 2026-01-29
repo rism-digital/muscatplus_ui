@@ -1,8 +1,7 @@
-module Page.UI.Record.Previews exposing (PreviewConfig, viewMobilePreviewRouter, viewPreviewError, viewPreviewRouter)
+module Page.UI.Record.Previews exposing (PreviewConfig, viewMobilePreviewForResponse, viewPreviewError, viewPreviewRouter)
 
 import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, maximum, minimum, moveDown, moveRight, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
-import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -12,10 +11,11 @@ import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
 import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, sectionSpacing, sidebarWidth)
-import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowTitleBar)
+import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowShell)
 import Page.UI.Errors exposing (ErrorResponse)
 import Page.UI.Events exposing (onComplete)
 import Page.UI.Images exposing (spinnerSvg)
+import Page.UI.Layout as Layout
 import Page.UI.Record.Previews.ExternalInstitution exposing (viewExternalInstitutionPreview)
 import Page.UI.Record.Previews.ExternalPerson exposing (viewExternalPersonPreview)
 import Page.UI.Record.Previews.ExternalSource exposing (viewExternalSourcePreview)
@@ -24,7 +24,7 @@ import Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Page.UI.Record.Previews.Person exposing (viewPersonPreview)
 import Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 import Page.UI.Style exposing (colourScheme)
-import Response exposing (ServerData(..))
+import Response exposing (Response(..), ServerData(..))
 import Set exposing (Set)
 import Simple.Animation as Animation
 import Simple.Animation.Property as P
@@ -68,25 +68,9 @@ viewPreviewError cfg =
         previewHeight =
             round (toFloat windowHeight * 0.6)
     in
-    row
-        [ width (fill |> minimum 600 |> maximum 800)
-        , height (fill |> maximum previewHeight)
-        , clipY
-        , Background.color colourScheme.white
-        , Border.color colourScheme.darkBlue
-        , Border.width 3
-        , htmlAttribute (HA.style "z-index" "10")
-        , minimalDropShadow
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , Background.color colourScheme.white
-            , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
-            ]
-            [ viewWindowTitleBar cfg.language localTranslations.recordPreview cfg.closeMsg
-            , row
+    viewWindowShell
+        { body =
+            row
                 [ width fill
                 , height fill
                 , scrollbarY
@@ -100,8 +84,15 @@ viewPreviewError cfg =
                     [ messageDetails
                     ]
                 ]
+        , closeMsg = cfg.closeMsg
+        , containerAttributes =
+            [ width (fill |> minimum 320 |> maximum 800)
+            , height (fill |> maximum previewHeight)
+            , clipY
             ]
-        ]
+        , language = cfg.language
+        , title = localTranslations.recordPreview
+        }
 
 
 viewPreviewLoading : Element msg
@@ -228,42 +219,35 @@ viewPreviewRouter cfg previewData =
             round (toFloat windowHeight * 0.75)
 
         previewWidth =
-            round (toFloat (windowWidth - (sidebarWidth + 600)) * 0.8)
+            Layout.previewWidth windowWidth sidebarWidth
 
         moveDownAmount =
             (toFloat windowHeight * 0.01)
                 |> clamp 10 20
 
+        availableRight =
+            Layout.previewAvailableRightWidth windowWidth sidebarWidth
+
         moveRightAmount =
-            (toFloat (windowWidth - (sidebarWidth + 600)) * 0.02)
-                |> clamp 20 40
+            (toFloat availableRight * 0.02)
+                |> clamp 12 32
 
         preview =
             choosePreview cfg previewData
     in
-    row
-        [ width (px previewWidth |> minimum 800 |> maximum 1100)
-        , height (fill |> maximum previewHeight)
-        , moveDown moveDownAmount
-        , moveRight moveRightAmount
-        , clipY
-        , Background.color colourScheme.white
-        , Border.color colourScheme.darkBlue
-        , Border.width 3
-        , htmlAttribute (HA.style "z-index" "10")
-        , minimalDropShadow
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , Background.color colourScheme.white
-            , htmlAttribute (HA.style "z-index" "10") -- the incipit piano keyboard sits on top without this.
+    viewWindowShell
+        { body = preview
+        , closeMsg = cfg.closeMsg
+        , containerAttributes =
+            [ width (px previewWidth)
+            , height (fill |> maximum previewHeight)
+            , moveDown moveDownAmount
+            , moveRight moveRightAmount
+            , clipY
             ]
-            [ viewWindowTitleBar cfg.language localTranslations.recordPreview cfg.closeMsg
-            , preview
-            ]
-        ]
+        , language = cfg.language
+        , title = localTranslations.recordPreview
+        }
 
 
 viewMobilePreviewRouter : PreviewConfig msg -> Maybe ServerData -> Element msg
@@ -340,3 +324,16 @@ viewMobilePreviewRouter cfg previewData =
             , preview
             ]
         ]
+
+
+viewMobilePreviewForResponse : PreviewConfig msg -> Response ServerData -> Element msg
+viewMobilePreviewForResponse cfg response =
+    case response of
+        Loading oldData ->
+            viewMobilePreviewRouter cfg oldData
+
+        Response resp ->
+            viewMobilePreviewRouter cfg (Just resp)
+
+        _ ->
+            none

@@ -31,7 +31,6 @@ import Page.UI.Errors exposing (createErrorMessage)
 import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
-import SearchPreferences
 import Session exposing (Session)
 import Url exposing (Url)
 
