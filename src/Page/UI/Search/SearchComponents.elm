@@ -189,22 +189,10 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 }
             ]
         , column
-            [ width shrink ]
-            [ Input.button
-                (Border.color colourScheme.turquoise
-                    :: Background.color colourScheme.turquoise
-                    :: Font.color colourScheme.white
-                    :: buttonBaseStyles
-                )
-                { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
-                , onPress = Just resetMsg
-                }
-            ]
-        , column
             [ width fill ]
             [ row
                 [ width fill
-                , spacing 5
+                , spacing 8
                 ]
                 [ el
                     [ Font.medium
@@ -215,6 +203,17 @@ viewSearchButtons { language, model, isFrontPage, submitLabel, submitMsg, resetM
                 ]
             ]
         , downloadButton
+        , column
+            [ width shrink
+            , alignRight
+            ]
+            [ Input.button
+                [ Font.color colourScheme.lightBlue
+                ]
+                { label = text (extractLabelFromLanguageMap language localTranslations.resetAll)
+                , onPress = Just resetMsg
+                }
+            ]
         ]
 
 
@@ -222,7 +221,7 @@ viewUpdateMessage : Maybe msg -> Language -> Bool -> Bool -> Element msg
 viewUpdateMessage submitMsg language applyFilterPrompt actionableProbResponse =
     viewIf
         (Input.button
-            (Background.color colourScheme.lightOrange
+            (Background.color colourScheme.turquoise
                 :: Font.color colourScheme.white
                 :: buttonBaseStyles
             )
@@ -284,10 +283,10 @@ viewDownloadButton { language, model, userClickedOpenDownloaderMsg } =
                                 localTranslations.downloadsLimited
                                 |> text
                     in
-                    { background = colourScheme.lightGrey
+                    { background = colourScheme.midGrey
                     , borderColour = colourScheme.darkGrey
                     , cursor = htmlAttribute (HA.style "cursor" "not-allowed")
-                    , fontColour = colourScheme.darkGrey
+                    , fontColour = colourScheme.white
                     , helpTooltip =
                         el tooltipStyle tooltipMessage
                             |> tooltip onLeft
