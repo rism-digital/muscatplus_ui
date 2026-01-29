@@ -364,8 +364,6 @@ changePage url model =
             )
 
 
-
-
 treatUrlAsExternal : Url -> Bool
 treatUrlAsExternal requestedUrl =
     List.any identity
@@ -533,35 +531,20 @@ changeRecordPageHelper { model, newSession, previousRoute, previousUrl, route, u
         previousRecordPath =
             baseRecordPathFromRoute previousRoute
 
-        samePage oldBody =
-            if url.path == previousUrl.path || url.path == previousRecordPath then
-                ( RecordPage.load recordCfg oldBody, True )
-
-            else
-                ( RecordPage.init recordCfg, False )
-
         ( newPageBody, isSameRecordPage ) =
-            case ( route, model ) of
-                ( Route.SourcePageRoute _, SourcePage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.PersonPageRoute _, PersonPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.InstitutionPageRoute _, InstitutionPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.PublicationPageRoute _, PublicationPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.PublicationsListPageRoute, PublicationListPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.WorkPageRoute _, WorkPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                _ ->
-                    ( RecordPage.init recordCfg, False )
+            reuseRecordPageBody
+                { recordCfg = recordCfg
+                , previousUrl = previousUrl
+                , route = route
+                , model = model
+                , reuseIf =
+                    \incoming ->
+                        incoming.path
+                            == previousUrl.path
+                            || incoming.path
+                            == previousRecordPath
+                , getOldBody = getRecordBodyForRoute
+                }
     in
     if isSameRecordPage then
         ( newPageBody, Cmd.none )
@@ -595,32 +578,17 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
         recordPath =
             baseRecordPathFromRoute route
 
-        samePage oldBody =
-            if url.path == previousUrl.path || previousUrl.path == recordPath then
-                ( RecordPage.load recordCfg oldBody, True )
-
-            else
-                ( RecordPage.init recordCfg, False )
-
         ( newPageBody, isSameRecordPage ) =
-            case ( route, model ) of
-                ( Route.SourceContentsPageRoute _ _, SourcePage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.PersonSourcePageRoute _ _, PersonPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.InstitutionSourcePageRoute _ _, InstitutionPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.PublicationWorksPageRoute _ _, PublicationPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                ( Route.WorkSourcePageRoute _ _, WorkPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                _ ->
-                    ( RecordPage.init recordCfg, False )
+            reuseRecordPageBody
+                { recordCfg = recordCfg
+                , previousUrl = previousUrl
+                , route = route
+                , model = model
+                , reuseIf =
+                    \incoming ->
+                        incoming.path == previousUrl.path || previousUrl.path == recordPath
+                , getOldBody = getRecordBodyForRoute
+                }
 
         newQparams =
             toNextQuery newPageBody.activeSearch
@@ -679,20 +647,15 @@ changeRecordHoldingPageHelper { model, newSession, previousUrl, route, url } =
             , session = newSession
             }
 
-        samePage oldBody =
-            if url.path == previousUrl.path then
-                ( RecordPage.load recordCfg oldBody, True )
-
-            else
-                ( RecordPage.init recordCfg, False )
-
         ( newPageBody, isSameRecordPage ) =
-            case ( route, model ) of
-                ( Route.SourceHoldingsPageRoute _ _, HoldingPage _ oldPageBody ) ->
-                    samePage oldPageBody
-
-                _ ->
-                    ( RecordPage.init recordCfg, False )
+            reuseRecordPageBody
+                { recordCfg = recordCfg
+                , previousUrl = previousUrl
+                , route = route
+                , model = model
+                , reuseIf = \incoming -> incoming.path == previousUrl.path
+                , getOldBody = getRecordBodyForRoute
+                }
     in
     if isSameRecordPage then
         ( newPageBody, Cmd.none )
@@ -702,3 +665,68 @@ changeRecordHoldingPageHelper { model, newSession, previousUrl, route, url } =
         , RecordPage.recordPageRequest newSession.cacheBuster url
             |> Cmd.map Msg.UserInteractedWithRecordPage
         )
+
+
+reuseRecordPageBody :
+    { recordCfg : RecordPage.RecordConfig
+    , previousUrl : Url
+    , route : Route
+    , model : Model
+    , reuseIf : Url -> Bool
+    , getOldBody : Route -> Model -> Maybe (RecordPageModel RecordMsg)
+    }
+    -> ( RecordPageModel RecordMsg, Bool )
+reuseRecordPageBody cfg =
+    case cfg.getOldBody cfg.route cfg.model of
+        Just oldBody ->
+            if cfg.reuseIf cfg.recordCfg.incomingUrl then
+                ( RecordPage.load cfg.recordCfg oldBody, True )
+
+            else
+                ( RecordPage.init cfg.recordCfg, False )
+
+        Nothing ->
+            ( RecordPage.init cfg.recordCfg, False )
+
+
+getRecordBodyForRoute : Route -> Model -> Maybe (RecordPageModel RecordMsg)
+getRecordBodyForRoute route model =
+    case ( route, model ) of
+        ( Route.SourceContentsPageRoute _ _, SourcePage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.PersonSourcePageRoute _ _, PersonPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.InstitutionSourcePageRoute _ _, InstitutionPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.PublicationWorksPageRoute _ _, PublicationPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.WorkSourcePageRoute _ _, WorkPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.SourcePageRoute _, SourcePage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.PersonPageRoute _, PersonPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.InstitutionPageRoute _, InstitutionPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.PublicationPageRoute _, PublicationPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.PublicationsListPageRoute, PublicationListPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.WorkPageRoute _, WorkPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        ( Route.SourceHoldingsPageRoute _ _, HoldingPage _ oldPageBody ) ->
+            Just oldPageBody
+
+        _ ->
+            Nothing
