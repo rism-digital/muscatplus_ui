@@ -34,7 +34,7 @@ import Page.Search.Model exposing (SearchPageModel)
 import Page.Search.Msg exposing (SearchMsg(..))
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UI.Errors exposing (createErrorMessage)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, applyPreviewResponse, buildSearchUrl, chooseResponse, createProbeUrl, extractSearchResponseData, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, applyKeywordInputWithProbe, applyPreviewResponse, buildSearchUrl, chooseResponse, createProbeUrl, extractSearchResponseData, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Response exposing (Response(..), ServerData(..))
 import SearchPreferences exposing (SearchPreferences)
@@ -357,8 +357,13 @@ update session msg model =
                     provideInput DebouncerSettledToSendProbeRequest
                         |> DebouncerCapturedProbeRequest
             in
-            userEnteredTextInKeywordQueryBox queryText model
-                |> update session debounceMsg
+            applyKeywordInputWithProbe
+                { updateFn = update session
+                , debounceMsg = debounceMsg
+                , queryText = queryText
+                , model = model
+                , applyInput = userEnteredTextInKeywordQueryBox
+                }
 
         UserClickedToggleFacet alias ->
             userClickedToggleFacet alias model
@@ -463,8 +468,13 @@ update session msg model =
                     provideInput DebouncerSettledToSendProbeRequest
                         |> DebouncerCapturedProbeRequest
             in
-            userEnteredTextInKeywordQueryBox queryText model
-                |> update session debounceMsg
+            applyKeywordInputWithProbe
+                { updateFn = update session
+                , debounceMsg = debounceMsg
+                , queryText = queryText
+                , model = model
+                , applyInput = userEnteredTextInKeywordQueryBox
+                }
 
         UserInteractedWithQueryBuilder QueryBuilderMsg.UserClickedSearchButton ->
             -- submit the search and close the query builder

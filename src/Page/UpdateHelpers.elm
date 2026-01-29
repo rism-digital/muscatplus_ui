@@ -1,6 +1,7 @@
 module Page.UpdateHelpers exposing
     ( addNationalCollectionFilter
     , addNationalCollectionQueryParameter
+    , applyKeywordInputWithProbe
     , applyPreviewResponse
     , buildSearchUrl
     , chooseResponse
@@ -161,6 +162,19 @@ applyPreviewResponse result model =
                 | preview = Error (createErrorMessage error)
                 , sourceItemsExpanded = False
             }
+
+
+applyKeywordInputWithProbe :
+    { updateFn : msg -> model -> ( model, Cmd msg )
+    , debounceMsg : msg
+    , queryText : String
+    , model : model
+    , applyInput : String -> model -> model
+    }
+    -> ( model, Cmd msg )
+applyKeywordInputWithProbe cfg =
+    cfg.applyInput cfg.queryText cfg.model
+        |> cfg.updateFn cfg.debounceMsg
 
 
 extractSearchResponseData :

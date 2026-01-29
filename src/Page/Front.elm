@@ -19,7 +19,7 @@ import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (toKeyboardQuery)
-import Page.Query exposing (FrontQueryArgs, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
+import Page.Query exposing (FrontQueryArgs, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setMode, setNextQuery, toMode, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus(..))
@@ -27,7 +27,7 @@ import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..), naviga
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (routeToResultMode)
 import Page.UI.Errors exposing (createErrorMessage)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, buildSearchUrl, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, applyKeywordInputWithProbe, buildSearchUrl, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -235,21 +235,14 @@ update session msg model =
                 debounceMsg =
                     provideInput DebouncerSettledToSendProbeRequest
                         |> DebouncerCapturedProbeRequest
-
-                newText =
-                    if String.isEmpty queryText then
-                        Nothing
-
-                    else
-                        Just queryText
-
-                newQueryArgs =
-                    toNextQuery model.activeSearch
-                        |> setKeywordQuery newText
             in
-            setNextQuery newQueryArgs model.activeSearch
-                |> flip setActiveSearch model
-                |> update session debounceMsg
+            applyKeywordInputWithProbe
+                { updateFn = update session
+                , debounceMsg = debounceMsg
+                , queryText = queryText
+                , model = model
+                , applyInput = userEnteredTextInKeywordQueryBox
+                }
 
         UserClickedToggleFacet facetAlias ->
             userClickedToggleFacet facetAlias model
@@ -437,8 +430,13 @@ update session msg model =
                     provideInput DebouncerSettledToSendProbeRequest
                         |> DebouncerCapturedProbeRequest
             in
-            userEnteredTextInKeywordQueryBox queryText model
-                |> update session debounceMsg
+            applyKeywordInputWithProbe
+                { updateFn = update session
+                , debounceMsg = debounceMsg
+                , queryText = queryText
+                , model = model
+                , applyInput = userEnteredTextInKeywordQueryBox
+                }
 
         UserInteractedWithQueryBuilder UserClickedSearchButton ->
             -- submit the search and close the query builder
