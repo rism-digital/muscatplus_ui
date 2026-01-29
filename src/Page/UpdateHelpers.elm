@@ -1,10 +1,12 @@
 module Page.UpdateHelpers exposing
     ( addNationalCollectionFilter
     , addNationalCollectionQueryParameter
+    , buildSearchUrl
     , chooseResponse
     , createProbeUrl
     , createSearchUrl
     , hasNonZeroSourcesAttached
+    , joinQueryParams
     , probeSubmit
     , selectAppropriateRangeFacetValues
     , setProbeResponse
@@ -45,7 +47,7 @@ import Language exposing (LanguageMap, toLanguageMap)
 import List.Extra as LE
 import Maybe.Extra as ME
 import Page.Keyboard as Keyboard
-import Page.Keyboard.Model exposing (toKeyboardQuery)
+import Page.Keyboard.Model exposing (KeyboardModel, toKeyboardQuery)
 import Page.Keyboard.Msg exposing (KeyboardMsg)
 import Page.Keyboard.Query exposing (buildNotationQueryParameters)
 import Page.Query exposing (QueryArgs, buildQueryParameters, setFacetBehaviours, setFacetSorts, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setRows, setSort, toFacetBehaviours, toFacetSorts, toFilters, toMode, toNextQuery)
@@ -65,7 +67,7 @@ import Session exposing (Session)
 import Set exposing (Set)
 import Set.Extra as SE
 import Url exposing (percentDecode)
-import Url.Builder exposing (toQuery)
+import Url.Builder exposing (QueryParameter, toQuery)
 import Utilities exposing (choose, convertPathToNodeId)
 
 
@@ -140,7 +142,7 @@ createSearchUrl session { nextQuery, keyboard } =
     buildQueryUrl session searchPathForRoute (textQueryParameters ++ keyboardQueryParameters keyboard)
 
 
-keyboardQueryParameters : Maybe (Keyboard.Model KeyboardMsg) -> List ( String, String )
+keyboardQueryParameters : Maybe (KeyboardModel msg) -> List QueryParameter
 keyboardQueryParameters keyboard =
     ME.unwrap []
         (\p ->
@@ -150,7 +152,16 @@ keyboardQueryParameters keyboard =
         keyboard
 
 
-buildQueryUrl : Session -> (Route -> List String) -> List ( String, String ) -> String
+buildSearchUrl : QueryArgs -> Maybe (KeyboardModel msg) -> String
+buildSearchUrl queryArgs keyboard =
+    let
+        textQueryParameters =
+            buildQueryParameters queryArgs
+    in
+    serverUrl [ "search" ] (textQueryParameters ++ keyboardQueryParameters keyboard)
+
+
+buildQueryUrl : Session -> (Route -> List String) -> List QueryParameter -> String
 buildQueryUrl session pathForRoute queryParameters =
     serverUrl (pathForRoute session.route) queryParameters
 
@@ -191,6 +202,12 @@ searchPathForRoute route =
 
         _ ->
             [ "search" ]
+
+
+joinQueryParams : List String -> String
+joinQueryParams parts =
+    List.filter (\p -> not (String.isEmpty p)) parts
+        |> String.join "&"
 
 
 createRangeString : String -> String -> String

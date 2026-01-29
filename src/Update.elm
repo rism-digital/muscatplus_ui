@@ -22,6 +22,7 @@ import Page.Route as Route exposing (Route, baseRecordPathFromRoute, isMEIDownlo
 import Page.Search as SearchPage
 import Page.SideBar as SideBar
 import Page.SideBar.Options as SideBarOptions
+import Page.UpdateHelpers exposing (joinQueryParams)
 import Request exposing (serverUrl)
 import Response exposing (Response(..))
 import Session exposing (Session)
@@ -132,7 +133,7 @@ changePage url model =
                                     |> String.dropLeft 1
 
                             fullQueryParams =
-                                newQparams ++ "&" ++ newKeyboardParams
+                                joinQueryParams [ newQparams, newKeyboardParams ]
 
                             searchUrl =
                                 { url | query = Just fullQueryParams }
@@ -361,6 +362,8 @@ changePage url model =
             ( NotFoundPage newSession NotFoundPage.init
             , Cmd.none
             )
+
+
 
 
 treatUrlAsExternal : Url -> Bool

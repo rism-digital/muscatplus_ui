@@ -19,8 +19,7 @@ import Page.Front.Model exposing (FrontPageModel)
 import Page.Front.Msg exposing (FrontMsg(..))
 import Page.Keyboard as Keyboard exposing (buildNotationRequestQuery)
 import Page.Keyboard.Model exposing (toKeyboardQuery)
-import Page.Keyboard.Query exposing (buildNotationQueryParameters)
-import Page.Query exposing (FrontQueryArgs, buildQueryParameters, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
+import Page.Query exposing (FrontQueryArgs, defaultQueryArgs, frontQueryArgsToQueryArgs, resetPage, setKeywordQuery, setMode, setNextQuery, toMode, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg(..))
 import Page.RecordTypes.Probe exposing (ProbeStatus(..))
@@ -28,8 +27,7 @@ import Page.RecordTypes.SearchControl exposing (SearchControlOptions(..), naviga
 import Page.Request exposing (createProbeRequestWithDecoder, createRequestWithDecoder)
 import Page.Route exposing (routeToResultMode)
 import Page.UI.Errors exposing (createErrorMessage)
-import Page.UpdateHelpers exposing (addNationalCollectionFilter, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
-import Request exposing (serverUrl)
+import Page.UpdateHelpers exposing (addNationalCollectionFilter, buildSearchUrl, createProbeUrl, probeSubmit, setProbeResponse, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedSelectFacetSort, userClickedFacetPanelToggle, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Response exposing (Response(..))
 import Session exposing (Session)
 import Url exposing (Url)
@@ -122,25 +120,13 @@ searchSubmit session model =
         newModel =
             addNationalCollectionFilter session.restrictedToNationalCollection pageResetModel
 
-        notationQueryParameters =
-            ME.unwrap []
-                (\kq ->
-                    toKeyboardQuery kq
-                        |> buildNotationQueryParameters
-                )
-                (toKeyboard pageResetModel.activeSearch)
-
         resultMode =
             navigationBarOptionToResultMode model.showSearchControls
 
-        textQueryParameters =
-            toNextQuery newModel.activeSearch
-                |> setMode resultMode
-                |> buildQueryParameters
-
         searchUrl =
-            List.append textQueryParameters notationQueryParameters
-                |> serverUrl [ "search" ]
+            buildSearchUrl
+                (toNextQuery newModel.activeSearch |> setMode resultMode)
+                (toKeyboard pageResetModel.activeSearch)
     in
     ( newModel
     , Nav.pushUrl session.key searchUrl
