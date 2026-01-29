@@ -13,6 +13,7 @@ when inside the directory containing this file.
 
 --import NoMissingTypeAnnotationInLetIn
 --import CognitiveComplexity
+
 import NoDebug.Log
 import NoDebug.TodoOrToString
 import NoDeprecated
@@ -28,6 +29,7 @@ import NoRedundantConcat
 import NoRedundantCons
 import NoSimpleLetBody
 import NoSinglePatternCase
+import NoUnoptimizedRecursion
 import NoUnsortedCases
 import NoUnsortedLetDeclarations
 import NoUnsortedRecords
@@ -60,7 +62,8 @@ config =
     , NoUnused.Dependencies.rule
     , NoUnused.Exports.rule
     , NoUnused.Variables.rule
-    , NoUnused.Parameters.rule
+
+    --, NoUnused.Parameters.rule
     , NoUnused.Patterns.rule
     , Simplify.rule Simplify.defaults
     , NoRedundantConcat.rule
@@ -82,5 +85,6 @@ config =
          --|> NoUnsortedLetDeclarations.alphabetically
         )
     , NoUnsortedCases.rule NoUnsortedCases.defaults
-    --, CognitiveComplexity.rule 15
+
+    --, NoUnoptimizedRecursion.rule (NoUnoptimizedRecursion.optOutWithComment "IGNORE TCO")
     ]
