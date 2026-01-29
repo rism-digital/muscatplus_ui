@@ -116,40 +116,11 @@ createProbeUrl :
     -> String
 createProbeUrl session { nextQuery, keyboard } =
     let
-        notationQueryParameters =
-            ME.unwrap []
-                (\p ->
-                    toKeyboardQuery p
-                        |> buildNotationQueryParameters
-                )
-                keyboard
-
-        probeUrl =
-            case session.route of
-                SourceContentsPageRoute id _ ->
-                    serverUrl [ "sources", String.fromInt id, "probe" ]
-
-                PersonSourcePageRoute id _ ->
-                    serverUrl [ "people", String.fromInt id, "probe" ]
-
-                InstitutionSourcePageRoute id _ ->
-                    serverUrl [ "institutions", String.fromInt id, "probe" ]
-
-                WorkSourcePageRoute id _ ->
-                    serverUrl [ "works", String.fromInt id, "probe" ]
-
-                _ ->
-                    serverUrl [ "probe" ]
-
-        resultMode =
-            toMode nextQuery
-
         textQueryParameters =
-            setMode resultMode nextQuery
+            setMode (toMode nextQuery) nextQuery
                 |> buildQueryParameters
     in
-    List.append textQueryParameters notationQueryParameters
-        |> probeUrl
+    buildQueryUrl session probePathForRoute (textQueryParameters ++ keyboardQueryParameters keyboard)
 
 
 createSearchUrl :
@@ -162,40 +133,64 @@ createSearchUrl :
     -> String
 createSearchUrl session { nextQuery, keyboard } =
     let
-        notationQueryParameters =
-            ME.unwrap []
-                (\p ->
-                    toKeyboardQuery p
-                        |> buildNotationQueryParameters
-                )
-                keyboard
-
-        searchUrl =
-            case session.route of
-                SourceContentsPageRoute id _ ->
-                    serverUrl [ "sources", String.fromInt id, "contents" ]
-
-                PersonSourcePageRoute id _ ->
-                    serverUrl [ "people", String.fromInt id, "sources" ]
-
-                InstitutionSourcePageRoute id _ ->
-                    serverUrl [ "institutions", String.fromInt id, "sources" ]
-
-                WorkSourcePageRoute id _ ->
-                    serverUrl [ "works", String.fromInt id, "sources" ]
-
-                _ ->
-                    serverUrl [ "search" ]
-
-        resultMode =
-            toMode nextQuery
-
         textQueryParameters =
-            setMode resultMode nextQuery
+            setMode (toMode nextQuery) nextQuery
                 |> buildQueryParameters
     in
-    List.append textQueryParameters notationQueryParameters
-        |> searchUrl
+    buildQueryUrl session searchPathForRoute (textQueryParameters ++ keyboardQueryParameters keyboard)
+
+
+keyboardQueryParameters : Maybe (Keyboard.Model KeyboardMsg) -> List ( String, String )
+keyboardQueryParameters keyboard =
+    ME.unwrap []
+        (\p ->
+            toKeyboardQuery p
+                |> buildNotationQueryParameters
+        )
+        keyboard
+
+
+buildQueryUrl : Session -> (Route -> List String) -> List ( String, String ) -> String
+buildQueryUrl session pathForRoute queryParameters =
+    serverUrl (pathForRoute session.route) queryParameters
+
+
+probePathForRoute : Route -> List String
+probePathForRoute route =
+    case route of
+        SourceContentsPageRoute id _ ->
+            [ "sources", String.fromInt id, "probe" ]
+
+        PersonSourcePageRoute id _ ->
+            [ "people", String.fromInt id, "probe" ]
+
+        InstitutionSourcePageRoute id _ ->
+            [ "institutions", String.fromInt id, "probe" ]
+
+        WorkSourcePageRoute id _ ->
+            [ "works", String.fromInt id, "probe" ]
+
+        _ ->
+            [ "probe" ]
+
+
+searchPathForRoute : Route -> List String
+searchPathForRoute route =
+    case route of
+        SourceContentsPageRoute id _ ->
+            [ "sources", String.fromInt id, "contents" ]
+
+        PersonSourcePageRoute id _ ->
+            [ "people", String.fromInt id, "sources" ]
+
+        InstitutionSourcePageRoute id _ ->
+            [ "institutions", String.fromInt id, "sources" ]
+
+        WorkSourcePageRoute id _ ->
+            [ "works", String.fromInt id, "sources" ]
+
+        _ ->
+            [ "search" ]
 
 
 createRangeString : String -> String -> String
