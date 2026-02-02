@@ -104,6 +104,7 @@ viewWorkCataloguePrimaryTitle language relBlock partOf =
         [ column
             [ width (fillPortion 1)
             , padding 10
+            , spacing 6
             ]
             [ viewMaybe text relBlock.workInfo
             , statusBadge
