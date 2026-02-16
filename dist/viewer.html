@@ -4,37 +4,44 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="icon" href="https://cdn.jsdelivr.net/npm/universalviewer@4.2.1/dist/favicon.ico" />
     <title>RISM Online: Viewing IIIF Images</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/universalviewer@4.2.1/dist/uv.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/5.0.1/openseadragon.min.js"></script>
     <script type="application/javascript"
-            src="https://cdn.jsdelivr.net/npm/universalviewer@4.2.1/dist/umd/UV.js"></script>
+            src="/static/diva.js"></script>
     <style>
         body {
             padding: 0;
             margin: 0;
+            font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
         }
-        #uv {
+        #diva-wrapper {
+            display: flex;
             width: 100vw;
             height: 100vh;
         }
     </style>
 </head>
 <body>
-<div class="uv" id="uv"></div>
+<div id="diva-wrapper"></div>
 
 <script>
-    const urlAdaptor = new UV.IIIFURLAdaptor();
-    const manifestFromUrl = urlAdaptor.get("manifest");
+    const searchParams = new URLSearchParams(window.location.search);
 
-    if (manifestFromUrl !== undefined)
+    const hash = window.location.hash || "";
+    const hashQuery = hash.startsWith("#?") ? hash.slice(2)
+            : hash.includes("?")
+                ? hash.slice(hash.indexOf("?") + 1)
+                : "";
+    const hashParams = new URLSearchParams(hashQuery);
+
+    const manifestParam = searchParams.get("manifest") || hashParams.get("manifest");
+    const objectData = manifestParam && manifestParam.trim() ? manifestParam.trim() : null;
+
+    if (objectData)
     {
-        const data = urlAdaptor.getInitialData({
-            manifest: manifestFromUrl,
+        new Diva("diva-wrapper", {
+            objectData,
         });
-
-        uv = UV.init("uv", data);
-        urlAdaptor.bindTo(uv);
     }
 </script>
 </body>
