@@ -31,6 +31,7 @@ import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
 import Page.UI.Style exposing (colourScheme, tableCellPadding)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
+import Url
 
 
 viewFullPublicationPage :
@@ -43,7 +44,11 @@ viewFullPublicationPage session model body =
         pageBodyView =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    viewDescriptionTab session.language body
+                    viewDescriptionTab
+                        { language = session.language
+                        , currentUrl = Url.toString session.url
+                        }
+                        body
 
                 ContentsSearchDisplayTab _ ->
                     viewRelatedWorksListTabBody session model
@@ -93,10 +98,11 @@ viewFullPublicationPage session model body =
         ]
 
 
-viewDescriptionTab : Language -> PublicationBody -> Element msg
-viewDescriptionTab language body =
+viewDescriptionTab : { language : Language, currentUrl : String } -> PublicationBody -> Element msg
+viewDescriptionTab { language, currentUrl } body =
     viewPublicationBody
         { language = language
+        , currentUrl = currentUrl
         , paragraphFormatter = viewParagraphField
         , preRenderedFormatter = viewPreRenderedSummaryField
         , relationshipFormatter = viewRelationshipBody
@@ -107,6 +113,7 @@ viewDescriptionTab language body =
 
 viewPublicationBody :
     { language : Language
+    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
@@ -114,7 +121,7 @@ viewPublicationBody :
     }
     -> PublicationBody
     -> Element msg
-viewPublicationBody { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } publicationBody =
+viewPublicationBody { language, currentUrl, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } publicationBody =
     let
         pageBody =
             pageBodyOrEmpty language
@@ -147,7 +154,13 @@ viewPublicationBody { language, paragraphFormatter, preRenderedFormatter, relati
                         }
                     )
                     publicationBody.notes
-                , viewMaybe (viewExternalResourcesSection language) publicationBody.externalResources
+                , viewMaybe
+                    (viewExternalResourcesSection
+                        { language = language
+                        , currentUrl = currentUrl
+                        }
+                    )
+                    publicationBody.externalResources
 
                 -- WIP
                 ]

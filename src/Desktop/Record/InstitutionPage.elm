@@ -25,10 +25,11 @@ import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
+import Url
 
 
-viewDescriptionTab : Language -> ( Int, Int ) -> InstitutionBody -> Element msg
-viewDescriptionTab language ( windowWidth, windowHeight ) body =
+viewDescriptionTab : { language : Language, currentUrl : String } -> ( Int, Int ) -> InstitutionBody -> Element msg
+viewDescriptionTab { language, currentUrl } ( windowWidth, windowHeight ) body =
     let
         isEmpty =
             ME.isNothing body.organizationDetails
@@ -69,7 +70,13 @@ viewDescriptionTab language ( windowWidth, windowHeight ) body =
                         }
                     )
                     body.notes
-                , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                , viewMaybe
+                    (viewExternalResourcesSection
+                        { language = language
+                        , currentUrl = currentUrl
+                        }
+                    )
+                    body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 , viewMaybe (viewContributionsSection { language = language }) body.contributions
                 , viewMaybe
@@ -110,7 +117,14 @@ viewFullInstitutionPage session model body =
         ( pageBodyView, showBottomShadow ) =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    ( viewDescriptionTab session.language session.window body, True )
+                    ( viewDescriptionTab
+                        { language = session.language
+                        , currentUrl = Url.toString session.url
+                        }
+                        session.window
+                        body
+                    , True
+                    )
 
                 ContentsSearchDisplayTab _ ->
                     ( viewSourceSearchTabBody session model, False )

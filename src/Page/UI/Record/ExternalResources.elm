@@ -19,6 +19,7 @@ import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Images exposing (iiifLogo)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
+import Url.Builder as QB
 
 
 viewExternalRecord : Language -> ExternalRecordBody -> Element msg
@@ -65,8 +66,23 @@ viewExternalRecordOnSiteLink language project body =
         ]
 
 
-viewExternalResourceIiifManifest : Language -> ExternalResourceBody -> Element msg
-viewExternalResourceIiifManifest language body =
+iiifViewerUrl : String -> String -> String
+iiifViewerUrl manifestUrl currentUrl =
+    C.serverUrl
+        ++ "/viewer.html#"
+        ++ QB.toQuery
+            [ QB.string "manifest" manifestUrl
+            , QB.string "record" currentUrl
+            ]
+
+
+viewExternalResourceIiifManifest :
+    { language : Language
+    , currentUrl : String
+    }
+    -> ExternalResourceBody
+    -> Element msg
+viewExternalResourceIiifManifest { language, currentUrl } body =
     row
         [ width fill
         , alignLeft
@@ -86,7 +102,7 @@ viewExternalResourceIiifManifest language body =
             , alignLeft
             ]
             { label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
-            , url = C.serverUrl ++ "/viewer.html#?manifest=" ++ body.url
+            , url = iiifViewerUrl body.url currentUrl
             }
         , text "|"
         , newTabLink
@@ -125,12 +141,17 @@ viewExternalResourcePlainLink language body =
 viewExternalResource :
     { body : ExternalResourceBody
     , language : Language
+    , currentUrl : String
     }
     -> Element msg
-viewExternalResource { body, language } =
+viewExternalResource { body, language, currentUrl } =
     case body.type_ of
         IIIFManifestResourceType ->
-            viewExternalResourceIiifManifest language body
+            viewExternalResourceIiifManifest
+                { language = language
+                , currentUrl = currentUrl
+                }
+                body
 
         _ ->
             viewExternalResourcePlainLink language body
@@ -153,8 +174,13 @@ viewExternalRecords language itms =
         ]
 
 
-viewExternalResources : Language -> List ExternalResourceBody -> Element msg
-viewExternalResources language itms =
+viewExternalResources :
+    { language : Language
+    , currentUrl : String
+    }
+    -> List ExternalResourceBody
+    -> Element msg
+viewExternalResources { language, currentUrl } itms =
     wrappedRow
         [ width fill
         , height fill
@@ -171,6 +197,7 @@ viewExternalResources language itms =
                     viewExternalResource
                         { body = it
                         , language = language
+                        , currentUrl = currentUrl
                         }
                 )
                 itms
@@ -178,8 +205,13 @@ viewExternalResources language itms =
         ]
 
 
-viewExternalResourcesSection : Language -> ExternalResourcesSectionBody -> Element msg
-viewExternalResourcesSection language extSection =
+viewExternalResourcesSection :
+    { language : Language
+    , currentUrl : String
+    }
+    -> ExternalResourcesSectionBody
+    -> Element msg
+viewExternalResourcesSection { language, currentUrl } extSection =
     sectionTemplate language
         extSection
         [ row
@@ -194,7 +226,13 @@ viewExternalResourcesSection language extSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewExternalResources language) extSection.items
+                [ viewMaybe
+                    (viewExternalResources
+                        { language = language
+                        , currentUrl = currentUrl
+                        }
+                    )
+                    extSection.items
                 , viewMaybe (viewExternalRecords language) extSection.externalRecords
                 ]
             ]
@@ -274,10 +312,11 @@ viewDigitizedCopiesCalloutSection :
     { expandMsg : msg
     , expanded : Bool
     , language : Language
+    , currentUrl : String
     }
     -> Dict String (List ExternalResourceBody)
     -> Element msg
-viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalResourceLinks =
+viewDigitizedCopiesCalloutSection { expandMsg, expanded, language, currentUrl } externalResourceLinks =
     row
         [ Border.color colourScheme.puce
         , width (fill |> maximum 800)
@@ -315,13 +354,18 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language } externalReso
                         text "Show"
                     )
                 ]
-            , viewIf (viewCalloutBody language externalResourceLinks) expanded
+            , viewIf (viewCalloutBody { language = language, currentUrl = currentUrl } externalResourceLinks) expanded
             ]
         ]
 
 
-viewCalloutBody : Language -> Dict String (List ExternalResourceBody) -> Element msg
-viewCalloutBody language externalResourceLinks =
+viewCalloutBody :
+    { language : Language
+    , currentUrl : String
+    }
+    -> Dict String (List ExternalResourceBody)
+    -> Element msg
+viewCalloutBody { language, currentUrl } externalResourceLinks =
     row
         [ width fill
         , padding 8
@@ -346,7 +390,14 @@ viewCalloutBody language externalResourceLinks =
                                 [ row
                                     [ width fill ]
                                     [ el [ Font.semiBold, headingMD ] (text instName) ]
-                                , el [ paddingXY 20 0 ] (viewExternalResources language links)
+                                , el
+                                    [ paddingXY 20 0 ]
+                                    (viewExternalResources
+                                        { language = language
+                                        , currentUrl = currentUrl
+                                        }
+                                        links
+                                    )
                                 ]
                             ]
                     )

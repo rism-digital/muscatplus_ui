@@ -22,6 +22,7 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 viewExemplarsSection :
     { language : Language
+    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
@@ -29,10 +30,11 @@ viewExemplarsSection :
     }
     -> ExemplarsSectionBody
     -> Element msg
-viewExemplarsSection { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplarSection =
+viewExemplarsSection { language, currentUrl, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplarSection =
     List.map
         (viewExemplar
             { language = language
+            , currentUrl = currentUrl
             , paragraphFormatter = paragraphFormatter
             , preRenderedFormatter = preRenderedFormatter
             , relationshipFormatter = relationshipFormatter
@@ -45,6 +47,7 @@ viewExemplarsSection { language, paragraphFormatter, preRenderedFormatter, relat
 
 viewExemplar :
     { language : Language
+    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
@@ -52,7 +55,7 @@ viewExemplar :
     }
     -> HoldingBody
     -> Element msg
-viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplar =
+viewExemplar { language, currentUrl, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplar =
     let
         -- used below when we have agreement to publish.
         pagelink =
@@ -111,6 +114,7 @@ viewExemplar { language, paragraphFormatter, preRenderedFormatter, relationshipF
                     , viewMaybe
                         (viewExemplarExternalResourcesSection
                             { language = language
+                            , currentUrl = currentUrl
                             , preRenderedFormatter = preRenderedFormatter
                             }
                         )
@@ -183,14 +187,21 @@ viewHeldBy language body =
 
 viewExemplarExternalResourcesSection :
     { language : Language
+    , currentUrl : String
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     }
     -> ExternalResourcesSectionBody
     -> Element msg
-viewExemplarExternalResourcesSection { language, preRenderedFormatter } extSection =
+viewExemplarExternalResourcesSection { language, currentUrl, preRenderedFormatter } extSection =
     let
         externalResourcesList =
-            Maybe.map (viewExternalResources language) extSection.items
+            Maybe.map
+                (viewExternalResources
+                    { language = language
+                    , currentUrl = currentUrl
+                    }
+                )
+                extSection.items
                 |> Maybe.map List.singleton
                 |> Maybe.withDefault []
 

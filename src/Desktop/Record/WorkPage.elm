@@ -25,6 +25,7 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelations
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
+import Url
 
 
 viewFullWorkPage :
@@ -60,6 +61,7 @@ viewFullWorkPage session model body =
                         { expandedIncipits = model.incipitInfoExpanded
                         , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
                         , language = language
+                        , currentUrl = Url.toString session.url
                         }
                         body
                     , True
@@ -121,10 +123,11 @@ viewDescriptionTab :
     { expandedIncipits : Set String
     , incipitInfoToggleMsg : String -> msg
     , language : Language
+    , currentUrl : String
     }
     -> WorkBody
     -> Element RecordMsg
-viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language } body =
+viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language, currentUrl } body =
     let
         pageBody =
             pageBodyOrEmpty
@@ -171,7 +174,13 @@ viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language } body =
                         }
                     )
                     body.referencesNotes
-                , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                , viewMaybe
+                    (viewExternalResourcesSection
+                        { language = language
+                        , currentUrl = currentUrl
+                        }
+                    )
+                    body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 ]
     in

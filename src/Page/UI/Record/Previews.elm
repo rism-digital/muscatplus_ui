@@ -32,6 +32,7 @@ import Simple.Animation.Property as P
 
 type alias PreviewConfig msg =
     { language : Language
+    , currentUrl : String
     , windowSize : ( Int, Int )
     , closeMsg : msg
     , hideAnimationStartedMsg : msg
@@ -140,6 +141,7 @@ choosePreview cfg previewData =
                 , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
                 , itemsExpanded = cfg.sourceItemsExpanded
                 , language = cfg.language
+                , currentUrl = cfg.currentUrl
                 , paragraphFormatter = cfg.paragraphFormatter
                 , preRenderedFormatter = cfg.preRenderedFormatter
                 , relationshipFormatter = cfg.relationshipFormatter
@@ -150,6 +152,7 @@ choosePreview cfg previewData =
         Just (PersonData body) ->
             viewPersonPreview
                 { language = cfg.language
+                , currentUrl = cfg.currentUrl
                 , paragraphFormatter = cfg.paragraphFormatter
                 , relationshipFormatter = cfg.relationshipFormatter
                 , summaryFormatter = cfg.summaryFormatter
@@ -159,6 +162,7 @@ choosePreview cfg previewData =
         Just (InstitutionData body) ->
             viewInstitutionPreview
                 { language = cfg.language
+                , currentUrl = cfg.currentUrl
                 , paragraphFormatter = cfg.paragraphFormatter
                 , relationshipFormatter = cfg.relationshipFormatter
                 , summaryFormatter = cfg.summaryFormatter

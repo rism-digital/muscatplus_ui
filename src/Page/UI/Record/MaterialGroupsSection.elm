@@ -15,16 +15,18 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 viewMaterialGroupsSection :
     { language : Language
+    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> MaterialGroupsSectionBody
     -> Element msg
-viewMaterialGroupsSection { language, paragraphFormatter, relationshipFormatter, summaryFormatter } mgSection =
+viewMaterialGroupsSection { language, currentUrl, paragraphFormatter, relationshipFormatter, summaryFormatter } mgSection =
     List.map
         (viewMaterialGroup
             { language = language
+            , currentUrl = currentUrl
             , paragraphFormatter = paragraphFormatter
             , relationshipFormatter = relationshipFormatter
             , summaryFormatter = summaryFormatter
@@ -36,13 +38,14 @@ viewMaterialGroupsSection { language, paragraphFormatter, relationshipFormatter,
 
 viewMaterialGroup :
     { language : Language
+    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> MaterialGroupBody
     -> Element msg
-viewMaterialGroup { language, paragraphFormatter, relationshipFormatter, summaryFormatter } mg =
+viewMaterialGroup { language, currentUrl, paragraphFormatter, relationshipFormatter, summaryFormatter } mg =
     row
         (width fill :: sectionBorderStyles)
         [ column
@@ -75,7 +78,13 @@ viewMaterialGroup { language, paragraphFormatter, relationshipFormatter, summary
                             }
                         )
                         mg.relationships
-                    , viewMaybe (viewExternalResourcesSection language) mg.externalResources
+                    , viewMaybe
+                        (viewExternalResourcesSection
+                            { language = language
+                            , currentUrl = currentUrl
+                            }
+                        )
+                        mg.externalResources
                     ]
                 ]
             ]

@@ -24,6 +24,7 @@ import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
+import Url
 
 
 viewFullMobileSourcePage :
@@ -33,6 +34,9 @@ viewFullMobileSourcePage :
     -> Element RecordMsg
 viewFullMobileSourcePage session model body =
     let
+        currentUrl =
+            Url.toString session.url
+
         sourceIcon =
             .recordType body.sourceTypes
                 |> .type_
@@ -87,6 +91,7 @@ viewFullMobileSourcePage session model body =
                             { expandMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
                             , expanded = model.digitizedCopiesCalloutExpanded
                             , language = session.language
+                            , currentUrl = currentUrl
                             }
                             allExternals
                         )
@@ -113,6 +118,7 @@ viewFullMobileSourcePage session model body =
                     , viewMaybe
                         (viewMaterialGroupsSection
                             { language = session.language
+                            , currentUrl = currentUrl
                             , paragraphFormatter = viewMobileParagraphField
                             , relationshipFormatter = viewMobileRelationshipBody
                             , summaryFormatter = viewMobileSummaryField
@@ -150,10 +156,17 @@ viewFullMobileSourcePage session model body =
                             }
                         )
                         body.sourceItems
-                    , viewMaybe (viewExternalResourcesSection session.language) body.externalResources
+                    , viewMaybe
+                        (viewExternalResourcesSection
+                            { language = session.language
+                            , currentUrl = currentUrl
+                            }
+                        )
+                        body.externalResources
                     , viewMaybe
                         (viewExemplarsSection
                             { language = session.language
+                            , currentUrl = currentUrl
                             , paragraphFormatter = viewMobileParagraphField
                             , preRenderedFormatter = viewPreRenderedMobileSummaryField
                             , relationshipFormatter = viewMobileRelationshipBody

@@ -32,6 +32,7 @@ viewSourcePreview :
     , incipitInfoToggleMsg : String -> msg
     , itemsExpanded : Bool
     , language : Language
+    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
@@ -92,6 +93,7 @@ viewSourcePreview cfg body =
                             { expandMsg = cfg.expandedDigitizedCopiesMsg
                             , expanded = cfg.expandedDigitizedCopiesCallout
                             , language = cfg.language
+                            , currentUrl = cfg.currentUrl
                             }
                             allExternals
                         )
@@ -118,6 +120,7 @@ viewSourcePreview cfg body =
                     , viewMaybe
                         (viewMaterialGroupsSection
                             { language = cfg.language
+                            , currentUrl = cfg.currentUrl
                             , paragraphFormatter = cfg.paragraphFormatter
                             , relationshipFormatter = cfg.relationshipFormatter
                             , summaryFormatter = cfg.summaryFormatter
@@ -155,10 +158,17 @@ viewSourcePreview cfg body =
                             }
                         )
                         body.sourceItems
-                    , viewMaybe (viewExternalResourcesSection cfg.language) body.externalResources
+                    , viewMaybe
+                        (viewExternalResourcesSection
+                            { language = cfg.language
+                            , currentUrl = cfg.currentUrl
+                            }
+                        )
+                        body.externalResources
                     , viewMaybe
                         (viewExemplarsSection
                             { language = cfg.language
+                            , currentUrl = cfg.currentUrl
                             , paragraphFormatter = cfg.paragraphFormatter
                             , preRenderedFormatter = cfg.preRenderedFormatter
                             , relationshipFormatter = cfg.relationshipFormatter

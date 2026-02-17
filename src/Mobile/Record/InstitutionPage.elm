@@ -20,6 +20,7 @@ import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
+import Url
 
 
 viewFullMobileInstitutionPage :
@@ -29,6 +30,9 @@ viewFullMobileInstitutionPage :
     -> Element RecordMsg
 viewFullMobileInstitutionPage session _ body =
     let
+        currentUrl =
+            Url.toString session.url
+
         icon =
             el
                 [ width (px 25)
@@ -112,7 +116,13 @@ viewFullMobileInstitutionPage session _ body =
                                 }
                             )
                             body.notes
-                        , viewMaybe (viewExternalResourcesSection session.language) body.externalResources
+                        , viewMaybe
+                            (viewExternalResourcesSection
+                                { language = session.language
+                                , currentUrl = currentUrl
+                                }
+                            )
+                            body.externalResources
                         , viewMaybe (viewExternalAuthoritiesSection session.language) body.externalAuthorities
                         , viewMaybe
                             (viewLocationMapSection

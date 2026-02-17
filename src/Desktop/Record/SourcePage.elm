@@ -27,6 +27,7 @@ import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
+import Url
 
 
 viewFullSourcePage :
@@ -45,6 +46,7 @@ viewFullSourcePage session model body =
                         , expandedIncipits = model.incipitInfoExpanded
                         , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
                         , language = session.language
+                        , currentUrl = Url.toString session.url
                         }
                         body
                     , True
@@ -107,10 +109,11 @@ viewDescriptionTab :
     , expandedIncipits : Set String
     , incipitInfoToggleMsg : String -> msg
     , language : Language
+    , currentUrl : String
     }
     -> FullSourceBody
     -> Element msg
-viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg, expandedIncipits, incipitInfoToggleMsg, language } body =
+viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg, expandedIncipits, incipitInfoToggleMsg, language, currentUrl } body =
     let
         allExternals =
             gatherAllDigitizationLinksForCallout language body
@@ -134,6 +137,7 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                     { expandMsg = expandedDigitizedCopiesMsg
                     , expanded = expandedDigitizedCopiesCallout
                     , language = language
+                    , currentUrl = currentUrl
                     }
                     allExternals
                 )
@@ -160,6 +164,7 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
             , viewMaybe
                 (viewMaterialGroupsSection
                     { language = language
+                    , currentUrl = currentUrl
                     , paragraphFormatter = viewParagraphField
                     , relationshipFormatter = viewRelationshipBody
                     , summaryFormatter = viewSummaryField
@@ -188,10 +193,17 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                     }
                 )
                 body.referencesNotes
-            , viewMaybe (viewExternalResourcesSection language) body.externalResources
+            , viewMaybe
+                (viewExternalResourcesSection
+                    { language = language
+                    , currentUrl = currentUrl
+                    }
+                )
+                body.externalResources
             , viewMaybe
                 (viewExemplarsSection
                     { language = language
+                    , currentUrl = currentUrl
                     , paragraphFormatter = viewParagraphField
                     , preRenderedFormatter = viewPreRenderedSummaryField
                     , relationshipFormatter = viewRelationshipBody

@@ -25,10 +25,11 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelations
 import Page.UI.Record.WorksSection exposing (viewPersonWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
+import Url
 
 
-viewDescriptionTab : Language -> PersonBody -> Element msg
-viewDescriptionTab language body =
+viewDescriptionTab : { language : Language, currentUrl : String } -> PersonBody -> Element msg
+viewDescriptionTab { language, currentUrl } body =
     let
         isEmpty =
             ME.isNothing body.biographicalDetails
@@ -70,7 +71,13 @@ viewDescriptionTab language body =
                         }
                     )
                     body.notes
-                , viewMaybe (viewExternalResourcesSection language) body.externalResources
+                , viewMaybe
+                    (viewExternalResourcesSection
+                        { language = language
+                        , currentUrl = currentUrl
+                        }
+                    )
+                    body.externalResources
                 , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
                 , viewMaybe (viewPersonWorksSection language) body.works
                 , viewMaybe (viewDigitalObjectsSection language) body.digitalObjects
@@ -103,7 +110,13 @@ viewFullPersonPage session model body =
         ( pageBodyView, showBottomShadow ) =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
-                    ( viewDescriptionTab session.language body, True )
+                    ( viewDescriptionTab
+                        { language = session.language
+                        , currentUrl = Url.toString session.url
+                        }
+                        body
+                    , True
+                    )
 
                 ContentsSearchDisplayTab _ ->
                     ( viewSourceSearchTabBody session model, False )

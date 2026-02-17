@@ -20,6 +20,7 @@ import Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
+import Url
 
 
 viewFullHoldingPage :
@@ -61,6 +62,7 @@ viewFullHoldingPage session _ body =
                 ]
             , viewHoldingBody
                 { language = session.language
+                , currentUrl = Url.toString session.url
                 , paragraphFormatter = viewParagraphField
                 , preRenderedFormatter = viewPreRenderedSummaryField
                 , relationshipFormatter = viewRelationshipBody
@@ -79,6 +81,7 @@ viewFullHoldingPage session _ body =
 
 viewHoldingBody :
     { language : Language
+    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
@@ -86,7 +89,7 @@ viewHoldingBody :
     }
     -> HoldingBody
     -> Element msg
-viewHoldingBody { language, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } body =
+viewHoldingBody { language, currentUrl, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } body =
     let
         pageBody =
             pageBodyOrEmpty language
@@ -112,6 +115,7 @@ viewHoldingBody { language, paragraphFormatter, preRenderedFormatter, relationsh
                 , viewMaybe
                     (viewExemplarExternalResourcesSection
                         { language = language
+                        , currentUrl = currentUrl
                         , preRenderedFormatter = preRenderedFormatter
                         }
                     )
