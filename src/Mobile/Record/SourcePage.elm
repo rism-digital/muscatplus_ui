@@ -24,7 +24,6 @@ import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
-import Url
 
 
 viewFullMobileSourcePage :
@@ -34,9 +33,6 @@ viewFullMobileSourcePage :
     -> Element RecordMsg
 viewFullMobileSourcePage session model body =
     let
-        currentUrl =
-            Url.toString session.url
-
         sourceIcon =
             .recordType body.sourceTypes
                 |> .type_
@@ -91,7 +87,7 @@ viewFullMobileSourcePage session model body =
                             { expandMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
                             , expanded = model.digitizedCopiesCalloutExpanded
                             , language = session.language
-                            , currentUrl = currentUrl
+                            , recordId = body.id
                             }
                             allExternals
                         )
@@ -108,9 +104,9 @@ viewFullMobileSourcePage session model body =
                         body.contents
                     , viewMaybe
                         (viewIncipitsSection
-                            { language = session.language
+                            { expandedIncipits = model.incipitInfoExpanded
                             , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                            , expandedIncipits = model.incipitInfoExpanded
+                            , language = session.language
                             , summaryFormatter = viewMobileSummaryField
                             }
                         )
@@ -118,8 +114,8 @@ viewFullMobileSourcePage session model body =
                     , viewMaybe
                         (viewMaterialGroupsSection
                             { language = session.language
-                            , currentUrl = currentUrl
                             , paragraphFormatter = viewMobileParagraphField
+                            , recordId = body.id
                             , relationshipFormatter = viewMobileRelationshipBody
                             , summaryFormatter = viewMobileSummaryField
                             }
@@ -159,16 +155,16 @@ viewFullMobileSourcePage session model body =
                     , viewMaybe
                         (viewExternalResourcesSection
                             { language = session.language
-                            , currentUrl = currentUrl
+                            , recordId = body.id
                             }
                         )
                         body.externalResources
                     , viewMaybe
                         (viewExemplarsSection
                             { language = session.language
-                            , currentUrl = currentUrl
                             , paragraphFormatter = viewMobileParagraphField
                             , preRenderedFormatter = viewPreRenderedMobileSummaryField
+                            , recordId = body.id
                             , relationshipFormatter = viewMobileRelationshipBody
                             , summaryFormatter = viewMobileSummaryField
                             }

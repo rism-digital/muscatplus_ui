@@ -51,7 +51,6 @@ import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 import Set exposing (Set)
-import Url
 
 
 type alias SearchResultsSectionConfig a msg =
@@ -207,7 +206,6 @@ viewSearchResultsSection cfg resultsLoading body =
                 Loading oldData ->
                     viewPreviewRouter
                         { language = .language cfg.session
-                        , currentUrl = Url.toString cfg.session.url
                         , windowSize = .window cfg.session
                         , closeMsg = cfg.userClosedPreviewWindowMsg
                         , hideAnimationStartedMsg = cfg.clientStartedAnimatingPreviewWindowClose
@@ -230,7 +228,6 @@ viewSearchResultsSection cfg resultsLoading body =
                 Response resp ->
                     viewPreviewRouter
                         { language = .language cfg.session
-                        , currentUrl = Url.toString cfg.session.url
                         , windowSize = .window cfg.session
                         , closeMsg = cfg.userClosedPreviewWindowMsg
                         , hideAnimationStartedMsg = cfg.clientStartedAnimatingPreviewWindowClose

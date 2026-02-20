@@ -9,7 +9,6 @@ type SearchControlOptions
     | InstitutionSearchOption
     | IncipitSearchOption
     | WorkCatalogueNavigateOption
-    | EmptyOption
 
 
 resultModeToSearchControlOption : ResultMode -> SearchControlOptions
@@ -52,9 +51,6 @@ searchControlOptionToModeString option =
         WorkCatalogueNavigateOption ->
             "publications"
 
-        EmptyOption ->
-            ""
-
 
 navigationBarOptionToResultMode : SearchControlOptions -> ResultMode
 navigationBarOptionToResultMode option =
@@ -73,6 +69,3 @@ navigationBarOptionToResultMode option =
 
         WorkCatalogueNavigateOption ->
             WorkCatalogueMode
-
-        EmptyOption ->
-            EmptyMode

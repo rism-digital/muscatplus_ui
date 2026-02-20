@@ -21,7 +21,6 @@ import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRel
 import Page.UI.Record.WorksSection exposing (viewPersonWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
-import Url
 
 
 viewFullMobilePersonPage :
@@ -31,9 +30,6 @@ viewFullMobilePersonPage :
     -> Element RecordMsg
 viewFullMobilePersonPage session _ body =
     let
-        currentUrl =
-            Url.toString session.url
-
         icon =
             el
                 [ width (px 25)
@@ -116,7 +112,7 @@ viewFullMobilePersonPage session _ body =
                         , viewMaybe
                             (viewExternalResourcesSection
                                 { language = session.language
-                                , currentUrl = currentUrl
+                                , recordId = body.id
                                 }
                             )
                             body.externalResources

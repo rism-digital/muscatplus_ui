@@ -294,9 +294,6 @@ update msg model =
             , Cmd.none
             )
 
-        NothingHappenedWithTheDownloader ->
-            ( model, Cmd.none )
-
 
 view :
     { closeMsg : msg

@@ -22,21 +22,21 @@ import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 
 viewExemplarsSection :
     { language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , recordId : String
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> ExemplarsSectionBody
     -> Element msg
-viewExemplarsSection { language, currentUrl, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplarSection =
+viewExemplarsSection { language, paragraphFormatter, preRenderedFormatter, recordId, relationshipFormatter, summaryFormatter } exemplarSection =
     List.map
         (viewExemplar
             { language = language
-            , currentUrl = currentUrl
             , paragraphFormatter = paragraphFormatter
             , preRenderedFormatter = preRenderedFormatter
+            , recordId = recordId
             , relationshipFormatter = relationshipFormatter
             , summaryFormatter = summaryFormatter
             }
@@ -47,15 +47,15 @@ viewExemplarsSection { language, currentUrl, paragraphFormatter, preRenderedForm
 
 viewExemplar :
     { language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , recordId : String
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> HoldingBody
     -> Element msg
-viewExemplar { language, currentUrl, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } exemplar =
+viewExemplar { language, paragraphFormatter, preRenderedFormatter, recordId, relationshipFormatter, summaryFormatter } exemplar =
     let
         -- used below when we have agreement to publish.
         pagelink =
@@ -114,8 +114,8 @@ viewExemplar { language, currentUrl, paragraphFormatter, preRenderedFormatter, r
                     , viewMaybe
                         (viewExemplarExternalResourcesSection
                             { language = language
-                            , currentUrl = currentUrl
                             , preRenderedFormatter = preRenderedFormatter
+                            , recordId = recordId
                             }
                         )
                         exemplar.externalResources
@@ -137,7 +137,8 @@ viewBoundWithSection :
 viewBoundWithSection { language, relationshipFormatter } boundWithSection =
     relationshipFormatter language
         boundWithSection.sectionLabel
-        [ { role = Nothing
+        [ { name = Nothing
+          , note = Nothing
           , qualifier = Nothing
           , relatedTo =
                 Just
@@ -145,8 +146,7 @@ viewBoundWithSection { language, relationshipFormatter } boundWithSection =
                     , label = .label boundWithSection.source
                     , type_ = SourceRelationship
                     }
-          , name = Nothing
-          , note = Nothing
+          , role = Nothing
           }
         ]
 
@@ -187,18 +187,18 @@ viewHeldBy language body =
 
 viewExemplarExternalResourcesSection :
     { language : Language
-    , currentUrl : String
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , recordId : String
     }
     -> ExternalResourcesSectionBody
     -> Element msg
-viewExemplarExternalResourcesSection { language, currentUrl, preRenderedFormatter } extSection =
+viewExemplarExternalResourcesSection { language, preRenderedFormatter, recordId } extSection =
     let
         externalResourcesList =
             Maybe.map
                 (viewExternalResources
                     { language = language
-                    , currentUrl = currentUrl
+                    , recordId = recordId
                     }
                 )
                 extSection.items

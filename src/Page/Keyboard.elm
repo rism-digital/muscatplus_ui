@@ -275,13 +275,6 @@ update msg model =
             , buildNotationRequestQuery newModel.query
             )
 
-        UserToggledPAEHelpText ->
-            ( { model
-                | paeHelpExpanded = not model.paeHelpExpanded
-              }
-            , Cmd.none
-            )
-
 
 updateDebouncerPAESearchConfig : Debouncer.UpdateConfig KeyboardMsg (KeyboardModel KeyboardMsg)
 updateDebouncerPAESearchConfig =

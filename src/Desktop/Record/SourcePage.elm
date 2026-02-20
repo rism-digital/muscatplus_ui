@@ -27,7 +27,6 @@ import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
-import Url
 
 
 viewFullSourcePage :
@@ -46,7 +45,6 @@ viewFullSourcePage session model body =
                         , expandedIncipits = model.incipitInfoExpanded
                         , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
                         , language = session.language
-                        , currentUrl = Url.toString session.url
                         }
                         body
                     , True
@@ -109,11 +107,10 @@ viewDescriptionTab :
     , expandedIncipits : Set String
     , incipitInfoToggleMsg : String -> msg
     , language : Language
-    , currentUrl : String
     }
     -> FullSourceBody
     -> Element msg
-viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg, expandedIncipits, incipitInfoToggleMsg, language, currentUrl } body =
+viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg, expandedIncipits, incipitInfoToggleMsg, language } body =
     let
         allExternals =
             gatherAllDigitizationLinksForCallout language body
@@ -137,7 +134,7 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                     { expandMsg = expandedDigitizedCopiesMsg
                     , expanded = expandedDigitizedCopiesCallout
                     , language = language
-                    , currentUrl = currentUrl
+                    , recordId = body.id
                     }
                     allExternals
                 )
@@ -154,9 +151,9 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                 body.contents
             , viewMaybe
                 (viewIncipitsSection
-                    { language = language
+                    { expandedIncipits = expandedIncipits
                     , infoToggleMsg = incipitInfoToggleMsg
-                    , expandedIncipits = expandedIncipits
+                    , language = language
                     , summaryFormatter = viewSummaryField
                     }
                 )
@@ -164,8 +161,8 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
             , viewMaybe
                 (viewMaterialGroupsSection
                     { language = language
-                    , currentUrl = currentUrl
                     , paragraphFormatter = viewParagraphField
+                    , recordId = body.id
                     , relationshipFormatter = viewRelationshipBody
                     , summaryFormatter = viewSummaryField
                     }
@@ -196,16 +193,16 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
             , viewMaybe
                 (viewExternalResourcesSection
                     { language = language
-                    , currentUrl = currentUrl
+                    , recordId = body.id
                     }
                 )
                 body.externalResources
             , viewMaybe
                 (viewExemplarsSection
                     { language = language
-                    , currentUrl = currentUrl
                     , paragraphFormatter = viewParagraphField
                     , preRenderedFormatter = viewPreRenderedSummaryField
+                    , recordId = body.id
                     , relationshipFormatter = viewRelationshipBody
                     , summaryFormatter = viewSummaryField
                     }

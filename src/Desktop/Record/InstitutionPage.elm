@@ -25,11 +25,10 @@ import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
-import Url
 
 
-viewDescriptionTab : { language : Language, currentUrl : String } -> ( Int, Int ) -> InstitutionBody -> Element msg
-viewDescriptionTab { language, currentUrl } ( windowWidth, windowHeight ) body =
+viewDescriptionTab : { language : Language } -> ( Int, Int ) -> InstitutionBody -> Element msg
+viewDescriptionTab { language } ( windowWidth, windowHeight ) body =
     let
         isEmpty =
             ME.isNothing body.organizationDetails
@@ -73,7 +72,7 @@ viewDescriptionTab { language, currentUrl } ( windowWidth, windowHeight ) body =
                 , viewMaybe
                     (viewExternalResourcesSection
                         { language = language
-                        , currentUrl = currentUrl
+                        , recordId = body.id
                         }
                     )
                     body.externalResources
@@ -118,9 +117,7 @@ viewFullInstitutionPage session model body =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
                     ( viewDescriptionTab
-                        { language = session.language
-                        , currentUrl = Url.toString session.url
-                        }
+                        { language = session.language }
                         session.window
                         body
                     , True

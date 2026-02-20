@@ -23,14 +23,13 @@ import Page.UI.Style exposing (colourScheme)
 
 viewInstitutionPreview :
     { language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> InstitutionBody
     -> Element msg
-viewInstitutionPreview { language, currentUrl, paragraphFormatter, relationshipFormatter, summaryFormatter } body =
+viewInstitutionPreview { language, paragraphFormatter, relationshipFormatter, summaryFormatter } body =
     let
         isEmpty =
             ME.isNothing body.organizationDetails
@@ -74,7 +73,7 @@ viewInstitutionPreview { language, currentUrl, paragraphFormatter, relationshipF
                 , viewMaybe
                     (viewExternalResourcesSection
                         { language = language
-                        , currentUrl = currentUrl
+                        , recordId = body.id
                         }
                     )
                     body.externalResources

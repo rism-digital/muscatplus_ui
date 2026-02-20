@@ -25,7 +25,6 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelations
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
-import Url
 
 
 viewFullWorkPage :
@@ -61,7 +60,6 @@ viewFullWorkPage session model body =
                         { expandedIncipits = model.incipitInfoExpanded
                         , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
                         , language = language
-                        , currentUrl = Url.toString session.url
                         }
                         body
                     , True
@@ -123,11 +121,10 @@ viewDescriptionTab :
     { expandedIncipits : Set String
     , incipitInfoToggleMsg : String -> msg
     , language : Language
-    , currentUrl : String
     }
     -> WorkBody
     -> Element RecordMsg
-viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language, currentUrl } body =
+viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language } body =
     let
         pageBody =
             pageBodyOrEmpty
@@ -159,9 +156,9 @@ viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language, currentUr
                     body.relationships
                 , viewMaybe
                     (viewIncipitsSection
-                        { language = language
+                        { expandedIncipits = expandedIncipits
                         , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , expandedIncipits = expandedIncipits
+                        , language = language
                         , summaryFormatter = viewSummaryField
                         }
                     )
@@ -177,7 +174,7 @@ viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language, currentUr
                 , viewMaybe
                     (viewExternalResourcesSection
                         { language = language
-                        , currentUrl = currentUrl
+                        , recordId = body.id
                         }
                     )
                     body.externalResources

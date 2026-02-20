@@ -20,7 +20,6 @@ import Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
-import Url
 
 
 viewFullHoldingPage :
@@ -62,9 +61,9 @@ viewFullHoldingPage session _ body =
                 ]
             , viewHoldingBody
                 { language = session.language
-                , currentUrl = Url.toString session.url
                 , paragraphFormatter = viewParagraphField
                 , preRenderedFormatter = viewPreRenderedSummaryField
+                , recordId = body.id
                 , relationshipFormatter = viewRelationshipBody
                 , summaryFormatter = viewSummaryField
                 }
@@ -81,15 +80,15 @@ viewFullHoldingPage session _ body =
 
 viewHoldingBody :
     { language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , recordId : String
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> HoldingBody
     -> Element msg
-viewHoldingBody { language, currentUrl, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } body =
+viewHoldingBody { language, paragraphFormatter, preRenderedFormatter, recordId, relationshipFormatter, summaryFormatter } body =
     let
         pageBody =
             pageBodyOrEmpty language
@@ -115,8 +114,8 @@ viewHoldingBody { language, currentUrl, paragraphFormatter, preRenderedFormatter
                 , viewMaybe
                     (viewExemplarExternalResourcesSection
                         { language = language
-                        , currentUrl = currentUrl
                         , preRenderedFormatter = preRenderedFormatter
+                        , recordId = recordId
                         }
                     )
                     body.externalResources

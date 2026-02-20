@@ -2,6 +2,7 @@ module Page.RecordTypes.ExternalResource exposing
     ( ExternalResourceBody
     , ExternalResourceType(..)
     , ExternalResourcesSectionBody
+    , externalResourceBodyDecoder
     , externalResourcesSectionBodyDecoder
     )
 

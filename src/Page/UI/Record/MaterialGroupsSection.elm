@@ -15,19 +15,19 @@ import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 
 viewMaterialGroupsSection :
     { language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , recordId : String
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> MaterialGroupsSectionBody
     -> Element msg
-viewMaterialGroupsSection { language, currentUrl, paragraphFormatter, relationshipFormatter, summaryFormatter } mgSection =
+viewMaterialGroupsSection { language, paragraphFormatter, recordId, relationshipFormatter, summaryFormatter } mgSection =
     List.map
         (viewMaterialGroup
             { language = language
-            , currentUrl = currentUrl
             , paragraphFormatter = paragraphFormatter
+            , recordId = recordId
             , relationshipFormatter = relationshipFormatter
             , summaryFormatter = summaryFormatter
             }
@@ -38,14 +38,14 @@ viewMaterialGroupsSection { language, currentUrl, paragraphFormatter, relationsh
 
 viewMaterialGroup :
     { language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
+    , recordId : String
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> MaterialGroupBody
     -> Element msg
-viewMaterialGroup { language, currentUrl, paragraphFormatter, relationshipFormatter, summaryFormatter } mg =
+viewMaterialGroup { language, paragraphFormatter, recordId, relationshipFormatter, summaryFormatter } mg =
     row
         (width fill :: sectionBorderStyles)
         [ column
@@ -81,7 +81,7 @@ viewMaterialGroup { language, currentUrl, paragraphFormatter, relationshipFormat
                     , viewMaybe
                         (viewExternalResourcesSection
                             { language = language
-                            , currentUrl = currentUrl
+                            , recordId = recordId
                             }
                         )
                         mg.externalResources

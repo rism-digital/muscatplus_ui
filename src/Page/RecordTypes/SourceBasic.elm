@@ -1,8 +1,9 @@
 module Page.RecordTypes.SourceBasic exposing (BasicSourceBody, basicSourceBodyDecoder)
 
-import Json.Decode as Decode exposing (Decoder, list, string)
+import Json.Decode exposing (Decoder, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, externalResourceBodyDecoder)
 import Page.RecordTypes.Shared exposing (LabelValue, labelValueDecoder, languageMapLabelDecoder)
 import Page.RecordTypes.SourceShared exposing (SourceRecordDescriptors, sourceRecordDescriptorsDecoder)
 
@@ -13,14 +14,16 @@ type alias BasicSourceBody =
     , typeLabel : LanguageMap
     , sourceTypes : SourceRecordDescriptors
     , summary : Maybe (List LabelValue)
+    , externalResources : Maybe (List ExternalResourceBody)
     }
 
 
 basicSourceBodyDecoder : Decoder BasicSourceBody
 basicSourceBodyDecoder =
-    Decode.succeed BasicSourceBody
+    succeed BasicSourceBody
         |> required "id" string
         |> required "label" languageMapLabelDecoder
         |> required "typeLabel" languageMapLabelDecoder
         |> required "sourceTypes" sourceRecordDescriptorsDecoder
-        |> optional "summary" (Decode.maybe (list labelValueDecoder)) Nothing
+        |> optional "summary" (maybe (list labelValueDecoder)) Nothing
+        |> optional "externalResources" (maybe (list externalResourceBodyDecoder)) Nothing

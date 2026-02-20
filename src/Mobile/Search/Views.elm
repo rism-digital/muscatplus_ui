@@ -21,7 +21,6 @@ import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, buildSear
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
-import Url
 
 
 view : Session -> SearchPageModel SearchMsg -> Element SearchMsg
@@ -30,7 +29,6 @@ view session model =
         renderedPreview =
             viewMobilePreviewForResponse
                 { language = session.language
-                , currentUrl = Url.toString session.url
                 , windowSize = session.window
                 , closeMsg = SearchMsg.UserClickedClosePreviewWindow
                 , hideAnimationStartedMsg = SearchMsg.ClientStartedAnimatingPreviewWindowClose

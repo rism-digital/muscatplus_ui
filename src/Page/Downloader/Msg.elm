@@ -30,4 +30,3 @@ type DownloaderMsg
     | UserClickedDownloadButton
     | UserClickedCancelDownloadButton
     | UserChangedIncludeSearchUrl Bool
-    | NothingHappenedWithTheDownloader

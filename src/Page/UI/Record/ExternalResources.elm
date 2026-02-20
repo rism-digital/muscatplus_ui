@@ -1,4 +1,4 @@
-module Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalRecords, viewExternalResources, viewExternalResourcesSection)
+module Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalRecords, viewExternalResource, viewExternalResources, viewExternalResourcesSection)
 
 import Config as C
 import Dict exposing (Dict)
@@ -67,22 +67,22 @@ viewExternalRecordOnSiteLink language project body =
 
 
 iiifViewerUrl : String -> String -> String
-iiifViewerUrl manifestUrl currentUrl =
+iiifViewerUrl manifestUrl recordId =
     C.serverUrl
         ++ "/viewer.html#"
         ++ QB.toQuery
             [ QB.string "manifest" manifestUrl
-            , QB.string "record" currentUrl
+            , QB.string "record" recordId
             ]
 
 
 viewExternalResourceIiifManifest :
     { language : Language
-    , currentUrl : String
+    , recordId : String
     }
     -> ExternalResourceBody
     -> Element msg
-viewExternalResourceIiifManifest { language, currentUrl } body =
+viewExternalResourceIiifManifest { language, recordId } body =
     row
         [ width fill
         , alignLeft
@@ -102,7 +102,7 @@ viewExternalResourceIiifManifest { language, currentUrl } body =
             , alignLeft
             ]
             { label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
-            , url = iiifViewerUrl body.url currentUrl
+            , url = iiifViewerUrl body.url recordId
             }
         , text "|"
         , newTabLink
@@ -141,15 +141,15 @@ viewExternalResourcePlainLink language body =
 viewExternalResource :
     { body : ExternalResourceBody
     , language : Language
-    , currentUrl : String
+    , recordId : String
     }
     -> Element msg
-viewExternalResource { body, language, currentUrl } =
+viewExternalResource { body, language, recordId } =
     case body.type_ of
         IIIFManifestResourceType ->
             viewExternalResourceIiifManifest
                 { language = language
-                , currentUrl = currentUrl
+                , recordId = recordId
                 }
                 body
 
@@ -176,11 +176,11 @@ viewExternalRecords language itms =
 
 viewExternalResources :
     { language : Language
-    , currentUrl : String
+    , recordId : String
     }
     -> List ExternalResourceBody
     -> Element msg
-viewExternalResources { language, currentUrl } itms =
+viewExternalResources { language, recordId } itms =
     wrappedRow
         [ width fill
         , height fill
@@ -197,7 +197,7 @@ viewExternalResources { language, currentUrl } itms =
                     viewExternalResource
                         { body = it
                         , language = language
-                        , currentUrl = currentUrl
+                        , recordId = recordId
                         }
                 )
                 itms
@@ -207,11 +207,11 @@ viewExternalResources { language, currentUrl } itms =
 
 viewExternalResourcesSection :
     { language : Language
-    , currentUrl : String
+    , recordId : String
     }
     -> ExternalResourcesSectionBody
     -> Element msg
-viewExternalResourcesSection { language, currentUrl } extSection =
+viewExternalResourcesSection { language, recordId } extSection =
     sectionTemplate language
         extSection
         [ row
@@ -229,7 +229,7 @@ viewExternalResourcesSection { language, currentUrl } extSection =
                 [ viewMaybe
                     (viewExternalResources
                         { language = language
-                        , currentUrl = currentUrl
+                        , recordId = recordId
                         }
                     )
                     extSection.items
@@ -257,14 +257,14 @@ gatherExternalResourcesFromSection :
     ->
         List
             { a
-                | label : LanguageMap
-                , externalResources : Maybe ExternalResourcesSectionBody
+                | externalResources : Maybe ExternalResourcesSectionBody
+                , label : LanguageMap
             }
     -> Dict String (List ExternalResourceBody)
 gatherExternalResourcesFromSection language extResources =
     let
         filtResources =
-            List.map (\{ label, externalResources } -> ( externalResources, label )) extResources
+            List.map (\{ externalResources, label } -> ( externalResources, label )) extResources
                 |> List.filterMap
                     (\( f, l ) ->
                         Maybe.map
@@ -312,11 +312,11 @@ viewDigitizedCopiesCalloutSection :
     { expandMsg : msg
     , expanded : Bool
     , language : Language
-    , currentUrl : String
+    , recordId : String
     }
     -> Dict String (List ExternalResourceBody)
     -> Element msg
-viewDigitizedCopiesCalloutSection { expandMsg, expanded, language, currentUrl } externalResourceLinks =
+viewDigitizedCopiesCalloutSection { expandMsg, expanded, language, recordId } externalResourceLinks =
     row
         [ Border.color colourScheme.puce
         , width (fill |> maximum 800)
@@ -354,18 +354,18 @@ viewDigitizedCopiesCalloutSection { expandMsg, expanded, language, currentUrl } 
                         text "Show"
                     )
                 ]
-            , viewIf (viewCalloutBody { language = language, currentUrl = currentUrl } externalResourceLinks) expanded
+            , viewIf (viewCalloutBody { language = language, recordId = recordId } externalResourceLinks) expanded
             ]
         ]
 
 
 viewCalloutBody :
     { language : Language
-    , currentUrl : String
+    , recordId : String
     }
     -> Dict String (List ExternalResourceBody)
     -> Element msg
-viewCalloutBody { language, currentUrl } externalResourceLinks =
+viewCalloutBody { language, recordId } externalResourceLinks =
     row
         [ width fill
         , padding 8
@@ -394,7 +394,7 @@ viewCalloutBody { language, currentUrl } externalResourceLinks =
                                     [ paddingXY 20 0 ]
                                     (viewExternalResources
                                         { language = language
-                                        , currentUrl = currentUrl
+                                        , recordId = recordId
                                         }
                                         links
                                     )

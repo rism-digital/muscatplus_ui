@@ -25,11 +25,10 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelations
 import Page.UI.Record.WorksSection exposing (viewPersonWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
-import Url
 
 
-viewDescriptionTab : { language : Language, currentUrl : String } -> PersonBody -> Element msg
-viewDescriptionTab { language, currentUrl } body =
+viewDescriptionTab : { language : Language } -> PersonBody -> Element msg
+viewDescriptionTab { language } body =
     let
         isEmpty =
             ME.isNothing body.biographicalDetails
@@ -74,7 +73,7 @@ viewDescriptionTab { language, currentUrl } body =
                 , viewMaybe
                     (viewExternalResourcesSection
                         { language = language
-                        , currentUrl = currentUrl
+                        , recordId = body.id
                         }
                     )
                     body.externalResources
@@ -111,9 +110,7 @@ viewFullPersonPage session model body =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
                     ( viewDescriptionTab
-                        { language = session.language
-                        , currentUrl = Url.toString session.url
-                        }
+                        { language = session.language }
                         body
                     , True
                     )

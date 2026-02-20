@@ -32,7 +32,6 @@ viewSourcePreview :
     , incipitInfoToggleMsg : String -> msg
     , itemsExpanded : Bool
     , language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
@@ -93,7 +92,7 @@ viewSourcePreview cfg body =
                             { expandMsg = cfg.expandedDigitizedCopiesMsg
                             , expanded = cfg.expandedDigitizedCopiesCallout
                             , language = cfg.language
-                            , currentUrl = cfg.currentUrl
+                            , recordId = body.id
                             }
                             allExternals
                         )
@@ -110,9 +109,9 @@ viewSourcePreview cfg body =
                         body.contents
                     , viewMaybe
                         (viewIncipitsSection
-                            { language = cfg.language
+                            { expandedIncipits = cfg.incipitInfoExpanded
                             , infoToggleMsg = cfg.incipitInfoToggleMsg
-                            , expandedIncipits = cfg.incipitInfoExpanded
+                            , language = cfg.language
                             , summaryFormatter = cfg.summaryFormatter
                             }
                         )
@@ -120,8 +119,8 @@ viewSourcePreview cfg body =
                     , viewMaybe
                         (viewMaterialGroupsSection
                             { language = cfg.language
-                            , currentUrl = cfg.currentUrl
                             , paragraphFormatter = cfg.paragraphFormatter
+                            , recordId = body.id
                             , relationshipFormatter = cfg.relationshipFormatter
                             , summaryFormatter = cfg.summaryFormatter
                             }
@@ -161,16 +160,16 @@ viewSourcePreview cfg body =
                     , viewMaybe
                         (viewExternalResourcesSection
                             { language = cfg.language
-                            , currentUrl = cfg.currentUrl
+                            , recordId = body.id
                             }
                         )
                         body.externalResources
                     , viewMaybe
                         (viewExemplarsSection
                             { language = cfg.language
-                            , currentUrl = cfg.currentUrl
                             , paragraphFormatter = cfg.paragraphFormatter
                             , preRenderedFormatter = cfg.preRenderedFormatter
+                            , recordId = body.id
                             , relationshipFormatter = cfg.relationshipFormatter
                             , summaryFormatter = cfg.summaryFormatter
                             }

@@ -31,7 +31,6 @@ import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
 import Page.UI.Style exposing (colourScheme, tableCellPadding)
 import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
-import Url
 
 
 viewFullPublicationPage :
@@ -45,9 +44,7 @@ viewFullPublicationPage session model body =
             case model.currentTab of
                 DefaultRecordViewTab _ ->
                     viewDescriptionTab
-                        { language = session.language
-                        , currentUrl = Url.toString session.url
-                        }
+                        { language = session.language }
                         body
 
                 ContentsSearchDisplayTab _ ->
@@ -98,13 +95,13 @@ viewFullPublicationPage session model body =
         ]
 
 
-viewDescriptionTab : { language : Language, currentUrl : String } -> PublicationBody -> Element msg
-viewDescriptionTab { language, currentUrl } body =
+viewDescriptionTab : { language : Language } -> PublicationBody -> Element msg
+viewDescriptionTab { language } body =
     viewPublicationBody
         { language = language
-        , currentUrl = currentUrl
         , paragraphFormatter = viewParagraphField
         , preRenderedFormatter = viewPreRenderedSummaryField
+        , recordId = body.id
         , relationshipFormatter = viewRelationshipBody
         , summaryFormatter = viewSummaryField
         }
@@ -113,15 +110,15 @@ viewDescriptionTab { language, currentUrl } body =
 
 viewPublicationBody :
     { language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
+    , recordId : String
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> PublicationBody
     -> Element msg
-viewPublicationBody { language, currentUrl, paragraphFormatter, preRenderedFormatter, relationshipFormatter, summaryFormatter } publicationBody =
+viewPublicationBody { language, paragraphFormatter, preRenderedFormatter, recordId, relationshipFormatter, summaryFormatter } publicationBody =
     let
         pageBody =
             pageBodyOrEmpty language
@@ -157,7 +154,7 @@ viewPublicationBody { language, currentUrl, paragraphFormatter, preRenderedForma
                 , viewMaybe
                     (viewExternalResourcesSection
                         { language = language
-                        , currentUrl = currentUrl
+                        , recordId = recordId
                         }
                     )
                     publicationBody.externalResources
@@ -346,37 +343,37 @@ viewRelatedWorksSectionRouter session model =
     let
         resultsConfig : SearchResultsSectionConfig (RecordPageModel RecordMsg) RecordMsg
         resultsConfig =
-            { session = session
-            , model = model
-            , searchResponse = model.searchResults
-            , expandedIncipitInfoSections = model.incipitInfoExpanded
-            , userInteractedWithQueryBuilderMsg = RecordMsg.UserInteractedWithQueryBuilder
-            , userClickedOpenQueryBuilderMsg = RecordMsg.UserClickedOpenQueryBuilder
-            , userClickedCloseQueryBuilderMsg = RecordMsg.UserClickedCloseQueryBuilder
-            , userInteractedWithDownloaderMsg = RecordMsg.UserInteractedWithDownloader
-            , userClickedOpenDownloaderMsg = RecordMsg.UserClickedOpenDownloader
-            , userClickedCloseDownloaderMsg = RecordMsg.UserClickedCloseDownloader
-            , userClosedPreviewWindowMsg = RecordMsg.UserClickedClosePreviewWindow
-            , userClickedSourceItemsExpandMsg = RecordMsg.UserClickedExpandSourceItemsSectionInPreview
-            , userClickedResultForPreviewMsg = RecordMsg.UserClickedSearchResultForPreview
-            , userChangedResultSortingMsg = RecordMsg.UserChangedResultSorting
-            , userChangedResultsPerPageMsg = RecordMsg.UserChangedResultsPerPage
-            , userClickedResultsPaginationMsg = RecordMsg.UserClickedSearchResultsPagination
-            , userTriggeredSearchSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
-            , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
-            , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
-            , userRemovedActiveFilterMsg = RecordMsg.UserRemovedActiveFilter
-            , userToggledIncipitInfo = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-            , panelToggleMsg = RecordMsg.UserClickedFacetPanelToggle
-            , facetMsgConfig = facetRecordMsgConfig
-            , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
-            , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+            { clientFinishedAnimatingPreviewWindowShow = RecordMsg.ClientFinishedAnimatingPreviewWindowShow
             , clientStartedAnimatingPreviewWindowClose = RecordMsg.ClientStartedAnimatingPreviewWindowClose
-            , clientFinishedAnimatingPreviewWindowShow = RecordMsg.ClientFinishedAnimatingPreviewWindowShow
-            , summaryFormatter = viewSummaryField
+            , expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+            , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
+            , expandedIncipitInfoSections = model.incipitInfoExpanded
+            , facetMsgConfig = facetRecordMsgConfig
+            , model = model
+            , panelToggleMsg = RecordMsg.UserClickedFacetPanelToggle
+            , paragraphFormatter = viewParagraphField
             , preRenderedFormatter = viewPreRenderedSummaryField
             , relationshipFormatter = viewRelationshipBody
-            , paragraphFormatter = viewParagraphField
+            , searchResponse = model.searchResults
+            , session = session
+            , summaryFormatter = viewSummaryField
+            , userChangedResultSortingMsg = RecordMsg.UserChangedResultSorting
+            , userChangedResultsPerPageMsg = RecordMsg.UserChangedResultsPerPage
+            , userClickedCloseDownloaderMsg = RecordMsg.UserClickedCloseDownloader
+            , userClickedCloseQueryBuilderMsg = RecordMsg.UserClickedCloseQueryBuilder
+            , userClickedOpenDownloaderMsg = RecordMsg.UserClickedOpenDownloader
+            , userClickedOpenQueryBuilderMsg = RecordMsg.UserClickedOpenQueryBuilder
+            , userClickedResultForPreviewMsg = RecordMsg.UserClickedSearchResultForPreview
+            , userClickedResultsPaginationMsg = RecordMsg.UserClickedSearchResultsPagination
+            , userClickedSourceItemsExpandMsg = RecordMsg.UserClickedExpandSourceItemsSectionInPreview
+            , userClosedPreviewWindowMsg = RecordMsg.UserClickedClosePreviewWindow
+            , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
+            , userInteractedWithDownloaderMsg = RecordMsg.UserInteractedWithDownloader
+            , userInteractedWithQueryBuilderMsg = RecordMsg.UserInteractedWithQueryBuilder
+            , userRemovedActiveFilterMsg = RecordMsg.UserRemovedActiveFilter
+            , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
+            , userToggledIncipitInfo = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+            , userTriggeredSearchSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
             }
     in
     case model.searchResults of

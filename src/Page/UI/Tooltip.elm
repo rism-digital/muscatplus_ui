@@ -51,13 +51,12 @@ tooltip position tooltip_ =
             , height fill
             , transparent True
             , mouseOver [ transparent False ]
-            , position <|
-                Element.map never
-                    (el
-                        [ htmlAttribute (HA.style "pointerEvents" "none")
-                        ]
+            , position
+                (Element.map never
+                    (el [ htmlAttribute (HA.style "pointerEvents" "none") ]
                         tooltip_
                     )
+                )
             ]
             none
         )

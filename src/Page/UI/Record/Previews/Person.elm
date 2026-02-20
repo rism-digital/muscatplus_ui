@@ -24,14 +24,13 @@ import Page.UI.Style exposing (colourScheme)
 
 viewPersonPreview :
     { language : Language
-    , currentUrl : String
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
     }
     -> PersonBody
     -> Element msg
-viewPersonPreview { language, currentUrl, paragraphFormatter, relationshipFormatter, summaryFormatter } body =
+viewPersonPreview { language, paragraphFormatter, relationshipFormatter, summaryFormatter } body =
     let
         isEmpty =
             ME.isNothing body.biographicalDetails
@@ -74,7 +73,7 @@ viewPersonPreview { language, currentUrl, paragraphFormatter, relationshipFormat
                 , viewMaybe
                     (viewExternalResourcesSection
                         { language = language
-                        , currentUrl = currentUrl
+                        , recordId = body.id
                         }
                     )
                     body.externalResources

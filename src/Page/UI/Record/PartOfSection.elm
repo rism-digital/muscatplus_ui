@@ -1,36 +1,61 @@
 module Page.UI.Record.PartOfSection exposing (viewHoldingPartOfSection, viewPartOfSection, viewWorkPartOfCatalogueSection)
 
-import Element exposing (Element, column, el, fill, fillPortion, height, link, maximum, padding, paragraph, row, spacing, text, width)
+import Dict exposing (toList)
+import Dict.Extra as DE
+import Element exposing (Element, column, el, fill, fillPortion, height, link, maximum, padding, paddingEach, paragraph, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody)
 import Page.RecordTypes.PartOf exposing (PartOf(..), PartOfSectionBody, PartOfType(..), RelatedBlock, extractUrlAndLabelFromPartOf)
 import Page.RecordTypes.Publication exposing (BasicPublicationBody)
 import Page.UI.Attributes exposing (headingMD, headingSM, linkColour)
 import Page.UI.Components exposing (formatPublicationStatusBadge)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.ExternalResources exposing (viewExternalResource)
 import Page.UI.Style exposing (colourScheme)
 
 
 viewPartOfSection : Language -> PartOfSectionBody -> Element msg
 viewPartOfSection language partOf =
-    viewPartOfSectionImpl language localTranslations.partOfCollection partOf
+    viewPartOfSectionImpl
+        { includeSourceExternalResources = False
+        , language = language
+        , title = localTranslations.partOfCollection
+        }
+        partOf
 
 
 viewHoldingPartOfSection : Language -> PartOfSectionBody -> Element msg
 viewHoldingPartOfSection language partOf =
-    viewPartOfSectionImpl language localTranslations.source partOf
+    viewPartOfSectionImpl
+        { includeSourceExternalResources = True
+        , language = language
+        , title = localTranslations.source
+        }
+        partOf
 
 
 viewWorkPartOfCatalogueSection : Language -> PartOfSectionBody -> Element msg
 viewWorkPartOfCatalogueSection language partOf =
-    viewPartOfSectionImpl language localTranslations.workCatalogues partOf
+    viewPartOfSectionImpl
+        { includeSourceExternalResources = True
+        , language = language
+        , title = localTranslations.workCatalogues
+        }
+        partOf
 
 
-viewPartOfSectionImpl : Language -> LanguageMap -> PartOfSectionBody -> Element msg
-viewPartOfSectionImpl language title partOf =
+viewPartOfSectionImpl :
+    { includeSourceExternalResources : Bool
+    , language : Language
+    , title : LanguageMap
+    }
+    -> PartOfSectionBody
+    -> Element msg
+viewPartOfSectionImpl { includeSourceExternalResources, language, title } partOf =
     row
         [ Border.color colourScheme.darkGrey
         , Border.width 1
@@ -52,19 +77,35 @@ viewPartOfSectionImpl language title partOf =
                     ]
                     (text (extractLabelFromLanguageMap language title))
                 ]
-            , viewPartOfBoxBody language partOf
+            , viewPartOfBoxBody
+                { includeSourceExternalResources = includeSourceExternalResources
+                , language = language
+                }
+                partOf
             ]
         ]
 
 
-viewPartOfBoxBody : Language -> PartOfSectionBody -> Element msg
-viewPartOfBoxBody language partOf =
+viewPartOfBoxBody :
+    { includeSourceExternalResources : Bool
+    , language : Language
+    }
+    -> PartOfSectionBody
+    -> Element msg
+viewPartOfBoxBody { includeSourceExternalResources, language } partOf =
     let
         primaryParts =
             List.filter (\p -> p.relationshipType == PrimaryPartOf) partOf.items
                 |> List.map
                     (\b ->
                         case b.relatedTo of
+                            SourcePart sourceBody ->
+                                if includeSourceExternalResources then
+                                    viewPartOfPrimarySourceWithExternalResources language sourceBody
+
+                                else
+                                    viewPartOfPrimaryTitle language sourceBody.id sourceBody.label
+
                             PublicationPart publicationBody ->
                                 viewWorkCataloguePrimaryTitle language b publicationBody
 
@@ -79,7 +120,7 @@ viewPartOfBoxBody language partOf =
         secondaryParts : List (Element msg)
         secondaryParts =
             List.filter (\p -> p.relationshipType == SecondaryPartOf) partOf.items
-                |> List.map (\s -> viewOtherPartRouter language s)
+                |> List.map (\s -> viewOtherPartRouter includeSourceExternalResources language s)
     in
     row
         [ width fill
@@ -151,17 +192,116 @@ viewPartOfPrimaryTitle language primaryUrl primaryLabel =
         ]
 
 
-viewOtherPartRouter : Language -> RelatedBlock -> Element msg
-viewOtherPartRouter language relBlock =
+viewOtherPartRouter : Bool -> Language -> RelatedBlock -> Element msg
+viewOtherPartRouter includeSourceExternalResources language relBlock =
     case relBlock.relatedTo of
         SourcePart s ->
-            viewPartOfTitle language s
+            if includeSourceExternalResources then
+                viewPartOfSourceWithExternalResources language s
+
+            else
+                viewPartOfTitle language s
 
         PublicationPart p ->
             viewPartOfSecondaryWorkCatalogue language relBlock p
 
         WorkPart w ->
             viewPartOfTitle language w
+
+
+viewPartOfSourceWithExternalResources :
+    Language
+    ->
+        { a
+            | externalResources : Maybe (List ExternalResourceBody)
+            , id : String
+            , label : LanguageMap
+        }
+    -> Element msg
+viewPartOfSourceWithExternalResources language sourcePart =
+    column
+        [ width fill ]
+        [ viewPartOfTitle language sourcePart
+        , viewGroupedExternalResources
+            { language = language
+            , recordId = sourcePart.id
+            }
+            (groupExternalResourcesByLabel language sourcePart.externalResources)
+        ]
+
+
+viewPartOfPrimarySourceWithExternalResources :
+    Language
+    ->
+        { a
+            | externalResources : Maybe (List ExternalResourceBody)
+            , id : String
+            , label : LanguageMap
+        }
+    -> Element msg
+viewPartOfPrimarySourceWithExternalResources language sourcePart =
+    column
+        [ width fill ]
+        [ viewPartOfPrimaryTitle language sourcePart.id sourcePart.label
+        , viewGroupedExternalResources
+            { language = language
+            , recordId = sourcePart.id
+            }
+            (groupExternalResourcesByLabel language sourcePart.externalResources)
+        ]
+
+
+viewGroupedExternalResources :
+    { language : Language
+    , recordId : String
+    }
+    -> List ( String, List ExternalResourceBody )
+    -> Element msg
+viewGroupedExternalResources cfg groupedExternalResources =
+    groupedExternalResources
+        |> List.map
+            (\( resourceLabel, resources ) ->
+                column
+                    [ width fill
+                    , paddingEach { bottom = 10, left = 25, right = 10, top = 0 }
+                    , spacing 8
+                    ]
+                    [ el
+                        [ Font.bold ]
+                        (text resourceLabel)
+                    , column
+                        [ width fill ]
+                        (resources
+                            |> List.map
+                                (\resource ->
+                                    row
+                                        [ width fill
+                                        , spacing 8
+                                        ]
+                                        [ text "-"
+                                        , viewExternalResource
+                                            { body = resource
+                                            , language = cfg.language
+                                            , recordId = cfg.recordId
+                                            }
+                                        ]
+                                )
+                        )
+                    ]
+            )
+        |> column [ width fill ]
+
+
+groupExternalResourcesByLabel :
+    Language
+    -> Maybe (List ExternalResourceBody)
+    -> List ( String, List ExternalResourceBody )
+groupExternalResourcesByLabel language maybeResources =
+    maybeResources
+        |> Maybe.withDefault []
+        |> List.map (\resource -> ( extractLabelFromLanguageMap language resource.label, [ resource ] ))
+        |> DE.fromListCombining (++)
+        |> toList
 
 
 viewPartOfSecondaryWorkCatalogue : Language -> RelatedBlock -> BasicPublicationBody -> Element msg
