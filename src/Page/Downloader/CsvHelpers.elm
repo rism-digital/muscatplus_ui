@@ -37,6 +37,8 @@ type alias SourceCsvEntry =
     , creatorAuthor : String
     , otherContributors : String
     , catalogSource : String
+    , hasIncipits : String
+    , hasDigitization : String
     }
 
 
@@ -72,6 +74,8 @@ createSearchUrlRecord resultMode url =
                 , creatorAuthor = ""
                 , otherContributors = ""
                 , catalogSource = ""
+                , hasDigitization = ""
+                , hasIncipits = ""
                 }
 
         PeopleMode ->
@@ -122,6 +126,8 @@ sourceCsvEntryToFieldString entry =
     , ( "creator_author", entry.creatorAuthor )
     , ( "other_contributors", entry.otherContributors )
     , ( "catalogue_source", entry.catalogSource )
+    , ( "has_incipits", entry.hasIncipits )
+    , ( "has_digitization", entry.hasDigitization )
     ]
 
 
@@ -243,6 +249,28 @@ convertSourceResultBody body =
             else
                 "RISM"
 
+        hasIncipits =
+            Maybe.map .hasIncipits body.flags
+                |> Maybe.withDefault False
+
+        csvHasIncipits =
+            if hasIncipits then
+                "Yes"
+
+            else
+                "No"
+
+        hasDigitization =
+            Maybe.map .hasDigitization body.flags
+                |> Maybe.withDefault False
+
+        csvHasDigitization =
+            if hasDigitization then
+                "Yes"
+
+            else
+                "No"
+
         csvRecordUrl =
             if isDIAMMRecord || isCantusRecord then
                 Maybe.map .externalProjectURL body.flags
@@ -280,6 +308,8 @@ convertSourceResultBody body =
         , creatorAuthor = sourceComposer
         , otherContributors = resultComposers
         , catalogSource = catalogSource
+        , hasIncipits = csvHasIncipits
+        , hasDigitization = csvHasDigitization
         }
 
 
