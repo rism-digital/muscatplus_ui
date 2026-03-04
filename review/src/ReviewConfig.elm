@@ -77,7 +77,8 @@ config =
         |> NoInconsistentAliases.noMissingAliases
         |> NoInconsistentAliases.rule
     , NoModuleOnExposedNames.rule
-    , NoUnsortedRecords.rule NoUnsortedRecords.defaults
+
+    --, NoUnsortedRecords.rule NoUnsortedRecords.defaults
     , NoUnsortedLetDeclarations.rule
         (NoUnsortedLetDeclarations.sortLetDeclarations
             |> NoUnsortedLetDeclarations.usedInExpressionLast
