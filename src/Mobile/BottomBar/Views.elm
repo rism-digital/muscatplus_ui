@@ -1,14 +1,16 @@
 module Mobile.BottomBar.Views exposing (view)
 
-import Element exposing (Element, alignBottom, alignLeft, centerX, centerY, column, el, fill, height, htmlAttribute, px, row, spacing, text, width)
+import Element exposing (Element, alignBottom, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, px, row, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
+import Language exposing (extractLabelFromLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.BottomBar.Msg exposing (BottomBarMsg(..))
 import Page.RecordTypes.ResultMode exposing (ResultMode(..))
-import Page.UI.Images exposing (institutionSvg, musicNotationSvg, peopleSvg, sourcesSvg)
+import Page.UI.Images exposing (folderMusicSvg, institutionSvg, musicNotationSvg, peopleSvg, sourcesSvg)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
@@ -30,70 +32,67 @@ view session =
             [ row
                 [ centerX
                 , centerY
-                , spacing 20
+                , width fill
                 ]
-                [ column
-                    [ height fill
-                    , centerY
-                    , centerX
-                    , onClick (UserTouchedBottomBarOptionForFrontPage SourcesMode)
-                    ]
-                    [ el
-                        [ width (px 24)
-                        , alignLeft
-                        , centerY
-                        , centerX
-                        ]
-                        (sourcesSvg colourScheme.white)
-                    , el [ Font.color colourScheme.white ] (text "Sources")
-                    ]
-                , column
-                    [ height fill
-                    , centerY
-                    , centerX
-                    , onClick (UserTouchedBottomBarOptionForFrontPage InstitutionsMode)
-                    ]
-                    [ el
-                        [ width (px 24)
-                        , alignLeft
-                        , centerY
-                        , centerX
-                        ]
-                        (institutionSvg colourScheme.white)
-                    , el [ Font.color colourScheme.white ] (text "Institutions")
-                    ]
-                , column
-                    [ height fill
-                    , centerY
-                    , centerX
-                    , onClick (UserTouchedBottomBarOptionForFrontPage PeopleMode)
-                    ]
-                    [ el
-                        [ width (px 24)
-                        , alignLeft
-                        , centerY
-                        , centerX
-                        ]
-                        (peopleSvg colourScheme.white)
-                    , el [ Font.color colourScheme.white ] (text "People")
-                    ]
-                , column
-                    [ height fill
-                    , centerY
-                    , centerX
-                    , onClick (UserTouchedBottomBarOptionForFrontPage IncipitsMode)
-                    ]
-                    [ el
-                        [ width (px 24)
-                        , alignLeft
-                        , centerY
-                        , centerX
-                        ]
-                        (musicNotationSvg colourScheme.white)
-                    , el
-                        [ Font.color colourScheme.white ]
-                        (text "Incipits")
-                    ]
+                [ viewBottomBarOption
+                    { clickMsg = UserTouchedBottomBarOptionForFrontPage SourcesMode
+                    , icon = sourcesSvg colourScheme.white
+                    , label = "Sources"
+                    }
+                , viewBottomBarOption
+                    { clickMsg = UserTouchedBottomBarOptionForFrontPage InstitutionsMode
+                    , icon = institutionSvg colourScheme.white
+                    , label = "Institutions"
+                    }
+                , viewBottomBarOption
+                    { clickMsg = UserTouchedBottomBarOptionForFrontPage PeopleMode
+                    , icon = peopleSvg colourScheme.white
+                    , label = "People"
+                    }
+                , viewBottomBarOption
+                    { clickMsg = UserTouchedBottomBarOptionForFrontPage IncipitsMode
+                    , icon = musicNotationSvg colourScheme.white
+                    , label = "Incipits"
+                    }
+                , viewBottomBarOption
+                    { clickMsg = UserTouchedBottomBarOptionForFrontPage WorkCatalogueMode
+                    , icon = folderMusicSvg colourScheme.white
+                    , label = extractLabelFromLanguageMap session.language localTranslations.workCatalogues
+                    }
                 ]
             ]
+        ]
+
+
+viewBottomBarOption :
+    { clickMsg : BottomBarMsg
+    , icon : Element BottomBarMsg
+    , label : String
+    }
+    -> Element BottomBarMsg
+viewBottomBarOption cfg =
+    column
+        [ width (fillPortion 1)
+        , height fill
+        , centerY
+        , centerX
+        , onClick cfg.clickMsg
+        ]
+        [ el
+            [ width (px 24)
+            , height (px 24)
+            , centerY
+            , centerX
+            ]
+            cfg.icon
+        , el
+            [ Font.color colourScheme.white
+            , Font.size 11
+            , Font.center
+            , width fill
+            , htmlAttribute (HA.style "overflow" "hidden")
+            , htmlAttribute (HA.style "text-overflow" "ellipsis")
+            , htmlAttribute (HA.style "white-space" "nowrap")
+            ]
+            (text cfg.label)
         ]

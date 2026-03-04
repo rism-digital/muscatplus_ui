@@ -1,10 +1,13 @@
 module Mobile.Record.Views exposing (view)
 
-import Element exposing (Element, el, none, text)
+import Element exposing (Element, none)
 import Mobile.Error.Views
 import Mobile.Record.InstitutionPage exposing (viewFullMobileInstitutionPage)
 import Mobile.Record.PersonPage exposing (viewFullMobilePersonPage)
+import Mobile.Record.PublicationListPage exposing (viewMobilePublicationListPage)
+import Mobile.Record.PublicationPage exposing (viewFullMobilePublicationPage)
 import Mobile.Record.SourcePage exposing (viewFullMobileSourcePage)
+import Mobile.Record.WorkPage exposing (viewFullMobileWorkPage)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Response exposing (Response(..), ServerData(..))
@@ -23,8 +26,14 @@ viewChooser session model dataType =
         InstitutionData body ->
             viewFullMobileInstitutionPage session model body
 
-        PublicationData _ ->
-            el [] (text "Publications.")
+        PublicationData body ->
+            viewFullMobilePublicationPage session model body
+
+        PublicationListData body ->
+            viewMobilePublicationListPage session model body
+
+        WorkData body ->
+            viewFullMobileWorkPage session model body
 
         _ ->
             none
