@@ -12,6 +12,7 @@ import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.ExternalRecord exposing (ExternalProject, ExternalRecord(..), ExternalRecordBody, externalProjectToString)
 import Page.RecordTypes.ExternalResource exposing (ExternalResourceBody, ExternalResourceType(..), ExternalResourcesSectionBody)
+import Page.RecordTypes.PartOf exposing (PartOf(..))
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (headingMD, lineSpacing, linkColour, sectionBorderStyles)
 import Page.UI.Components exposing (externalLinkTemplate, resourceLink)
@@ -86,35 +87,39 @@ viewExternalResourceIiifManifest { language, recordId } body =
     row
         [ width fill
         , alignLeft
-        , spacing 5
         ]
-        [ el
-            [ alignLeft ]
-            (text (extractLabelFromLanguageMap language body.label ++ ": "))
-        , el
-            [ width (px 18)
-            , height (px 19)
-            , alignLeft
+        [ paragraph
+            [ alignLeft
+            , width fill
             ]
-            iiifLogo
-        , newTabLink
-            [ linkColour
-            , alignLeft
-            ]
-            { label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
-            , url = iiifViewerUrl body.url recordId
-            }
-        , text "|"
-        , newTabLink
-            [ linkColour
-            , alignLeft
-            ]
-            { label = text "Manifest"
+            [ el [] (text (extractLabelFromLanguageMap language body.label ++ ":"))
+            , text " "
+            , el [ width (px 18) ] iiifLogo
+            , text " "
+            , el []
+                (newTabLink
+                    [ linkColour
+                    ]
+                    { label = text (extractLabelFromLanguageMap language localTranslations.viewImages)
+                    , url = iiifViewerUrl body.url recordId
+                    }
+                )
+            , text " "
+            , el [] (text "|")
+            , text " "
+            , el []
+                (newTabLink
+                    [ linkColour
+                    ]
+                    { label = text "Manifest"
 
-            -- TODO: Translate
-            , url = body.url
-            }
-        , externalLinkTemplate body.url
+                    -- TODO: Translate
+                    , url = body.url
+                    }
+                )
+            , text " "
+            , externalLinkTemplate body.url
+            ]
         ]
 
 
@@ -286,26 +291,53 @@ gatherExternalResourcesFromSection language extResources =
 
 gatherAllDigitizationLinksForCallout : Language -> FullSourceBody -> Dict String (List ExternalResourceBody)
 gatherAllDigitizationLinksForCallout language body =
-    let
-        gatherExternalResources =
-            Maybe.map (\{ items } -> Maybe.withDefault [] items) body.externalResources
-                |> Maybe.withDefault []
-                |> List.filter (\r -> filtTypes r.type_)
-                |> List.map (\v -> ( extractLabelFromLanguageMap language body.label, [ v ] ))
+    case body.partOf of
+        Just partOf ->
+            partOf.items
+                |> List.filterMap
+                    (\{ relatedTo } ->
+                        case relatedTo of
+                            SourcePart sourcePart ->
+                                sourcePart.externalResources
+                                    |> Maybe.map
+                                        (\resources ->
+                                            resources
+                                                |> List.filter (\r -> filtTypes r.type_)
+                                                |> List.map
+                                                    (\resource ->
+                                                        ( extractLabelFromLanguageMap language sourcePart.label
+                                                        , [ resource ]
+                                                        )
+                                                    )
+                                        )
+
+                            _ ->
+                                Nothing
+                    )
+                |> List.concat
                 |> DE.fromListCombining (++)
 
-        gatherExternalResourcesFromExemplars =
-            Maybe.map .items body.exemplars
-                |> Maybe.withDefault []
-                |> gatherExternalResourcesFromSection language
+        Nothing ->
+            let
+                gatherExternalResourcesFromTopLevel =
+                    Maybe.map (\{ items } -> Maybe.withDefault [] items) body.externalResources
+                        |> Maybe.withDefault []
+                        |> List.filter (\r -> filtTypes r.type_)
+                        |> List.map (\v -> ( extractLabelFromLanguageMap language body.label, [ v ] ))
+                        |> DE.fromListCombining (++)
 
-        gatherExternalResourcesFromMaterialGroups =
-            Maybe.map .items body.materialGroups
-                |> Maybe.withDefault []
-                |> gatherExternalResourcesFromSection language
-    in
-    DE.unionWith (\_ v1 v2 -> v1 ++ v2) gatherExternalResources gatherExternalResourcesFromExemplars
-        |> DE.unionWith (\_ v3 v4 -> v3 ++ v4) gatherExternalResourcesFromMaterialGroups
+                gatherExternalResourcesFromExemplars =
+                    Maybe.map .items body.exemplars
+                        |> Maybe.withDefault []
+                        |> gatherExternalResourcesFromSection language
+
+                gatherExternalResourcesFromMaterialGroups =
+                    Maybe.map .items body.materialGroups
+                        |> Maybe.withDefault []
+                        |> gatherExternalResourcesFromSection language
+            in
+            DE.unionWith (\_ v1 v2 -> v1 ++ v2) gatherExternalResourcesFromTopLevel gatherExternalResourcesFromExemplars
+                |> DE.unionWith (\_ v3 v4 -> v3 ++ v4) gatherExternalResourcesFromMaterialGroups
 
 
 viewDigitizedCopiesCalloutSection :
@@ -389,7 +421,7 @@ viewCalloutBody { language, recordId } externalResourceLinks =
                                 ]
                                 [ row
                                     [ width fill ]
-                                    [ el [ Font.semiBold, headingMD ] (text instName) ]
+                                    [ paragraph [ Font.semiBold, headingMD ] [ text instName ] ]
                                 , el
                                     [ paddingXY 20 0 ]
                                     (viewExternalResources
