@@ -151,9 +151,9 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
                 body.contents
             , viewMaybe
                 (viewIncipitsSection
-                    { expandedIncipits = expandedIncipits
+                    { language = language
                     , infoToggleMsg = incipitInfoToggleMsg
-                    , language = language
+                    , expandedIncipits = expandedIncipits
                     , summaryFormatter = viewSummaryField
                     }
                 )

@@ -20,7 +20,7 @@ viewIncipitSearchResult :
     SearchResultConfig msg
     -> IncipitResultBody
     -> Element msg
-viewIncipitSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
+viewIncipitSearchResult { clickForPreviewMsg, language, resultIdx, selectedResult } body =
     let
         isSelected =
             ME.unwrap False ((==) body.id) selectedResult

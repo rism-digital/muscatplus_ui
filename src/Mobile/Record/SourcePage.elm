@@ -104,9 +104,9 @@ viewFullMobileSourcePage session model body =
                         body.contents
                     , viewMaybe
                         (viewIncipitsSection
-                            { expandedIncipits = model.incipitInfoExpanded
+                            { language = session.language
                             , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                            , language = session.language
+                            , expandedIncipits = model.incipitInfoExpanded
                             , summaryFormatter = viewMobileSummaryField
                             }
                         )

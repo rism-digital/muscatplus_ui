@@ -109,9 +109,9 @@ viewSourcePreview cfg body =
                         body.contents
                     , viewMaybe
                         (viewIncipitsSection
-                            { expandedIncipits = cfg.incipitInfoExpanded
+                            { language = cfg.language
                             , infoToggleMsg = cfg.incipitInfoToggleMsg
-                            , language = cfg.language
+                            , expandedIncipits = cfg.incipitInfoExpanded
                             , summaryFormatter = cfg.summaryFormatter
                             }
                         )

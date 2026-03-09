@@ -60,7 +60,7 @@ viewMobilePublicationListPage session _ body =
                     [ width fill
                     , height fill
                     , alignTop
-                    , paddingEach { top = 20, right = 20, bottom = 90, left = 20 }
+                    , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
                     , spacing sectionSpacing
                     ]
                     (List.map (viewPublicationCard session.language) body.items)

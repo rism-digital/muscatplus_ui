@@ -181,7 +181,7 @@ viewRecordDescriptionTab { language, model, recordId } =
 
 
 viewRecordSourceSearchTabBar :
-    { body : Maybe { a | totalItems : Int, url : String }
+    { body : Maybe { a | url : String, totalItems : Int }
     , language : Language
     , model : RecordPageModel RecordMsg
     , recordId : String

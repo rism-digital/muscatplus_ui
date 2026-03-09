@@ -262,14 +262,14 @@ gatherExternalResourcesFromSection :
     ->
         List
             { a
-                | externalResources : Maybe ExternalResourcesSectionBody
-                , label : LanguageMap
+                | label : LanguageMap
+                , externalResources : Maybe ExternalResourcesSectionBody
             }
     -> Dict String (List ExternalResourceBody)
 gatherExternalResourcesFromSection language extResources =
     let
         filtResources =
-            List.map (\{ externalResources, label } -> ( externalResources, label )) extResources
+            List.map (\{ label, externalResources } -> ( externalResources, label )) extResources
                 |> List.filterMap
                     (\( f, l ) ->
                         Maybe.map

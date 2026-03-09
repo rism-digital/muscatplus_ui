@@ -39,10 +39,10 @@ type alias ResultConfig msg =
 
 
 type alias SearchResultConfig msg =
-    { language : Language
-    , selectedResult : Maybe String
-    , clickForPreviewMsg : String -> msg
+    { clickForPreviewMsg : String -> msg
+    , language : Language
     , resultIdx : Int
+    , selectedResult : Maybe String
     }
 
 

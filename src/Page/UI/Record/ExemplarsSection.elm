@@ -137,8 +137,7 @@ viewBoundWithSection :
 viewBoundWithSection { language, relationshipFormatter } boundWithSection =
     relationshipFormatter language
         boundWithSection.sectionLabel
-        [ { name = Nothing
-          , note = Nothing
+        [ { role = Nothing
           , qualifier = Nothing
           , relatedTo =
                 Just
@@ -146,7 +145,8 @@ viewBoundWithSection { language, relationshipFormatter } boundWithSection =
                     , label = .label boundWithSection.source
                     , type_ = SourceRelationship
                     }
-          , role = Nothing
+          , name = Nothing
+          , note = Nothing
           }
         ]
 

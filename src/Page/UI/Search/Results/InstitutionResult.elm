@@ -20,7 +20,7 @@ viewInstitutionSearchResult :
     SearchResultConfig msg
     -> InstitutionResultBody
     -> Element msg
-viewInstitutionSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
+viewInstitutionSearchResult { clickForPreviewMsg, language, resultIdx, selectedResult } body =
     let
         resultBody =
             [ viewMaybe (viewInstitutionSummary language resultColours.iconColour) body.summary

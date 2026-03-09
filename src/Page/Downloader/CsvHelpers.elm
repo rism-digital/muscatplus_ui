@@ -74,8 +74,8 @@ createSearchUrlRecord resultMode url =
                 , creatorAuthor = ""
                 , otherContributors = ""
                 , catalogSource = ""
-                , hasDigitization = ""
                 , hasIncipits = ""
+                , hasDigitization = ""
                 }
 
         PeopleMode ->

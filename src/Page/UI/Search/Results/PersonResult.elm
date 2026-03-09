@@ -19,7 +19,7 @@ viewPersonSearchResult :
     SearchResultConfig msg
     -> PersonResultBody
     -> Element msg
-viewPersonSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
+viewPersonSearchResult { clickForPreviewMsg, language, resultIdx, selectedResult } body =
     let
         resultBody =
             [ viewMaybe (viewPersonSummary language resultColours.iconColour) body.summary

@@ -197,7 +197,7 @@ viewSourceSearchResult :
     SearchResultConfig msg
     -> SourceResultBody
     -> Element msg
-viewSourceSearchResult { language, selectedResult, clickForPreviewMsg, resultIdx } body =
+viewSourceSearchResult { clickForPreviewMsg, language, resultIdx, selectedResult } body =
     let
         resultColours =
             setResultColours resultIdx selectedResult body.id

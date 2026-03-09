@@ -89,7 +89,7 @@ viewDescriptionTab session model body =
             [ width fill
             , height fill
             , alignTop
-            , paddingEach { top = 20, right = 20, bottom = 90, left = 20 }
+            , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
             , spacing sectionSpacing
             ]
             (pageBodyOrEmpty
@@ -121,9 +121,9 @@ viewDescriptionTab session model body =
                     body.relationships
                 , viewMaybe
                     (viewIncipitsSection
-                        { expandedIncipits = model.incipitInfoExpanded
+                        { language = session.language
                         , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , language = session.language
+                        , expandedIncipits = model.incipitInfoExpanded
                         , summaryFormatter = viewMobileSummaryField
                         }
                     )
@@ -349,7 +349,7 @@ viewSourcesSearchResultsSection session body =
                 [ column
                     [ width fill
                     , alignTop
-                    , paddingEach { top = 20, right = 20, bottom = 90, left = 20 }
+                    , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
                     , spacing sectionSpacing
                     ]
                     cards

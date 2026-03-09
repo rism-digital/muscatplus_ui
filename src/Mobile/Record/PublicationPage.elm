@@ -85,7 +85,7 @@ viewDescriptionTab session body =
             [ width fill
             , height fill
             , alignTop
-            , paddingEach { top = 20, right = 20, bottom = 90, left = 20 }
+            , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
             , spacing sectionSpacing
             ]
             (pageBodyOrEmpty
@@ -330,7 +330,7 @@ viewWorksSearchResultsSection session body =
                 [ column
                     [ width fill
                     , alignTop
-                    , paddingEach { top = 20, right = 20, bottom = 90, left = 20 }
+                    , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
                     , spacing sectionSpacing
                     ]
                     cards

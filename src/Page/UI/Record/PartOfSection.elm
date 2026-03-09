@@ -213,9 +213,9 @@ viewPartOfSourceWithExternalResources :
     Language
     ->
         { a
-            | externalResources : Maybe (List ExternalResourceBody)
-            , id : String
+            | id : String
             , label : LanguageMap
+            , externalResources : Maybe (List ExternalResourceBody)
         }
     -> Element msg
 viewPartOfSourceWithExternalResources language sourcePart =
@@ -234,9 +234,9 @@ viewPartOfPrimarySourceWithExternalResources :
     Language
     ->
         { a
-            | externalResources : Maybe (List ExternalResourceBody)
-            , id : String
+            | id : String
             , label : LanguageMap
+            , externalResources : Maybe (List ExternalResourceBody)
         }
     -> Element msg
 viewPartOfPrimarySourceWithExternalResources language sourcePart =

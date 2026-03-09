@@ -156,9 +156,9 @@ viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language } body =
                     body.relationships
                 , viewMaybe
                     (viewIncipitsSection
-                        { expandedIncipits = expandedIncipits
+                        { language = language
                         , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , language = language
+                        , expandedIncipits = expandedIncipits
                         , summaryFormatter = viewSummaryField
                         }
                     )
