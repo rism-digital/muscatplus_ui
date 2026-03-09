@@ -32,6 +32,7 @@ type alias SourceWorksSectionBody =
     { sectionToc : String
     , label : LanguageMap
     , workReference : Maybe WorkReference
+    , worksCatalogs : Maybe WorksCatalogueSectionBody
     }
 
 
@@ -95,6 +96,7 @@ sourceWorksSectionBodyDecoder =
         |> hardcoded "record-works-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> optional "workReference" (maybe workReferenceDecoder) Nothing
+        |> optional "worksCatalogs" (maybe worksCatalogueSectionBodyDecoder) Nothing
 
 
 personWorksSectionBodyDecoder : Decoder PersonWorksSectionBody

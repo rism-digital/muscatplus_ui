@@ -4,7 +4,7 @@ import Element exposing (Element, alignLeft, alignTop, column, el, fill, height,
 import Element.Border as Border
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody)
-import Page.UI.Attributes exposing (cycleTableBackground, lineSpacing, linkColour, sectionBorderStyles, tableHeaderStyles, valueFieldColumnAttributes)
+import Page.UI.Attributes exposing (cycleTableBackground, lineSpacing, linkColour, sectionBorderStyles, tableHeaderStyles)
 import Page.UI.Components exposing (externalLinkTemplate, viewPreRenderedSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
@@ -34,7 +34,8 @@ viewSourceWorksSection { language, preRenderedFormatter } worksSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewSourceWorkReferenceSection { language = language, preRenderedFormatter = preRenderedFormatter }) worksSection.workReference
+                [ viewMaybe (viewWorksCatalogueSection language) worksSection.worksCatalogs
+                , viewMaybe (viewSourceWorkReferenceSection { language = language, preRenderedFormatter = preRenderedFormatter }) worksSection.workReference
                 ]
             ]
         ]
@@ -90,7 +91,7 @@ viewPersonWorksSection language worksSection =
                 , alignTop
                 , spacing lineSpacing
                 ]
-                [ viewMaybe (viewPersonWorksCatalogueSection language) worksSection.worksCatalogs
+                [ viewMaybe (viewWorksCatalogueSection language) worksSection.worksCatalogs
                 , viewMaybe (viewPersonExternalWorkReferencesSection language) worksSection.workReferences
                 ]
             ]
@@ -164,26 +165,12 @@ viewPersonExternalWorkReferencesSection language workReferences =
         ]
 
 
-viewPersonWorksCatalogueSection : Language -> WorksCatalogueSectionBody -> Element msg
-viewPersonWorksCatalogueSection language catalogues =
-    sectionTemplate language
-        catalogues
-        [ row
-            (width fill :: sectionBorderStyles)
-            [ column
-                [ spacing lineSpacing
-                , width fill
-                , height fill
-                , alignTop
-                ]
-                [ row
-                    [ width fill ]
-                    [ column
-                        (spacing lineSpacing :: valueFieldColumnAttributes)
-                        (List.map (viewWorksCatalogue language) catalogues.items)
-                    ]
-                ]
-            ]
+viewWorksCatalogueSection : Language -> WorksCatalogueSectionBody -> Element msg
+viewWorksCatalogueSection language catalogues =
+    viewPreRenderedSummaryField language
+        [ { label = catalogues.label
+          , value = List.map (viewWorksCatalogue language) catalogues.items
+          }
         ]
 
 
