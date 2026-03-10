@@ -35,7 +35,7 @@ viewSourceWorksSection { language, preRenderedFormatter } worksSection =
                 , alignTop
                 , spacing sectionSpacing
                 ]
-                [ viewMaybe (viewWorksCatalogueSection language) worksSection.worksCatalogs
+                [ viewMaybe (viewWorksCatalogueSection language) worksSection.works
                 , viewMaybe (viewSourceWorkReferenceSection { language = language, preRenderedFormatter = preRenderedFormatter }) worksSection.workReference
                 ]
             ]
