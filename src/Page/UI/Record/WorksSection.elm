@@ -1,14 +1,15 @@
 module Page.UI.Record.WorksSection exposing (viewPersonWorksSection, viewSourceWorksSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, newTabLink, padding, paddingXY, paragraph, row, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, maximum, newTabLink, padding, paddingXY, paragraph, row, spacing, text, width)
 import Element.Border as Border
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
-import Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody)
-import Page.UI.Attributes exposing (cycleTableBackground, lineSpacing, linkColour, sectionBorderStyles, tableHeaderStyles)
+import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, toLanguageMap)
+import Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonWorksCatalogueEntry, PersonWorksSectionBody, SourceWorksSectionBody, WorkCatalogueEntry, WorkReference, WorksCatalogueSectionBody, WorksListSectionBody)
+import Page.UI.Attributes exposing (cycleTableBackground, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (externalLinkTemplate, viewPreRenderedSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
+import Utilities exposing (toLinkedHtml)
 
 
 viewSourceWorksSection :
@@ -32,7 +33,7 @@ viewSourceWorksSection { language, preRenderedFormatter } worksSection =
                 [ width fill
                 , height fill
                 , alignTop
-                , spacing lineSpacing
+                , spacing sectionSpacing
                 ]
                 [ viewMaybe (viewWorksCatalogueSection language) worksSection.worksCatalogs
                 , viewMaybe (viewSourceWorkReferenceSection { language = language, preRenderedFormatter = preRenderedFormatter }) worksSection.workReference
@@ -89,9 +90,9 @@ viewPersonWorksSection language worksSection =
                 [ width fill
                 , height fill
                 , alignTop
-                , spacing lineSpacing
+                , spacing sectionSpacing
                 ]
-                [ viewMaybe (viewWorksCatalogueSection language) worksSection.worksCatalogs
+                [ viewMaybe (viewPersonWorksCatalogueSection language) worksSection.worksCatalogs
                 , viewMaybe (viewPersonExternalWorkReferencesSection language) worksSection.workReferences
                 ]
             ]
@@ -165,7 +166,7 @@ viewPersonExternalWorkReferencesSection language workReferences =
         ]
 
 
-viewWorksCatalogueSection : Language -> WorksCatalogueSectionBody -> Element msg
+viewWorksCatalogueSection : Language -> WorksListSectionBody -> Element msg
 viewWorksCatalogueSection language catalogues =
     viewPreRenderedSummaryField language
         [ { label = catalogues.label
@@ -174,7 +175,47 @@ viewWorksCatalogueSection language catalogues =
         ]
 
 
-viewWorksCatalogue : Language -> WorksCatalogue -> Element msg
+viewPersonWorksCatalogueSection : Language -> WorksCatalogueSectionBody -> Element msg
+viewPersonWorksCatalogueSection language catalogues =
+    viewPreRenderedSummaryField language
+        (List.map (viewPersonWorksCatalogue language) catalogues.items)
+
+
+viewPersonWorksCatalogue :
+    Language
+    -> PersonWorksCatalogueEntry
+    -> { label : LanguageMap, value : List (Element msg) }
+viewPersonWorksCatalogue language catalogue =
+    { label = catalogue.label
+    , value = [ viewPersonWorksCatalogueValue language catalogue ]
+    }
+
+
+viewPersonWorksCatalogueValue : Language -> PersonWorksCatalogueEntry -> Element msg
+viewPersonWorksCatalogueValue language catalogue =
+    column
+        [ width (fill |> maximum 800)
+        , alignLeft
+        , spacing lineSpacing
+        ]
+        (List.map
+            (\item -> el [ width fill ] item)
+            (List.concatMap toLinkedHtml (extractTextFromLanguageMap language catalogue.value))
+            ++ [ row
+                    [ width fill
+                    , alignLeft
+                    ]
+                    [ link
+                        [ linkColour ]
+                        { label = text (extractLabelFromLanguageMap language catalogue.relatedTo.label)
+                        , url = catalogue.relatedTo.id
+                        }
+                    ]
+               ]
+        )
+
+
+viewWorksCatalogue : Language -> WorkCatalogueEntry -> Element msg
 viewWorksCatalogue language catalogue =
     row
         [ width fill

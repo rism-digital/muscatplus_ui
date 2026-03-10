@@ -1,4 +1,4 @@
-module Page.RecordTypes.Work exposing (FormOfWork, FormOfWorkSectionBody, PersonExternalWorkReferencesBody, PersonWorksSectionBody, SourceWorksSectionBody, WorkBody, WorkReference, WorksCatalogue, WorksCatalogueSectionBody, personWorksSectionBodyDecoder, sourceWorksSectionBodyDecoder, workBodyDecoder)
+module Page.RecordTypes.Work exposing (FormOfWork, FormOfWorkSectionBody, PersonExternalWorkReferencesBody, PersonWorksCatalogueEntry, PersonWorksSectionBody, SourceWorksSectionBody, WorkBody, WorkCatalogueEntry, WorkReference, WorksCatalogueSectionBody, WorksListSectionBody, personWorksSectionBodyDecoder, sourceWorksSectionBodyDecoder, workBodyDecoder)
 
 import Json.Decode exposing (Decoder, int, list, maybe, string, succeed)
 import Json.Decode.Pipeline exposing (hardcoded, optional, required)
@@ -32,7 +32,14 @@ type alias SourceWorksSectionBody =
     { sectionToc : String
     , label : LanguageMap
     , workReference : Maybe WorkReference
-    , worksCatalogs : Maybe WorksCatalogueSectionBody
+    , worksCatalogs : Maybe WorksListSectionBody
+    }
+
+
+type alias WorksCatalogueSectionBody =
+    { sectionToc : String
+    , label : LanguageMap
+    , items : List PersonWorksCatalogueEntry
     }
 
 
@@ -47,14 +54,21 @@ type alias WorkReference =
     }
 
 
-type alias WorksCatalogueSectionBody =
+type alias WorksListSectionBody =
     { sectionToc : String
     , label : LanguageMap
-    , items : List WorksCatalogue
+    , items : List WorkCatalogueEntry
     }
 
 
-type alias WorksCatalogue =
+type alias PersonWorksCatalogueEntry =
+    { label : LanguageMap
+    , value : LanguageMap
+    , relatedTo : RelatedToBody
+    }
+
+
+type alias WorkCatalogueEntry =
     { id : String
     , label : LanguageMap
     }
@@ -96,7 +110,7 @@ sourceWorksSectionBodyDecoder =
         |> hardcoded "record-works-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> optional "workReference" (maybe workReferenceDecoder) Nothing
-        |> optional "worksCatalogs" (maybe worksCatalogueSectionBodyDecoder) Nothing
+        |> optional "worksCatalogs" (maybe worksListSectionBodyDecoder) Nothing
 
 
 personWorksSectionBodyDecoder : Decoder PersonWorksSectionBody
@@ -105,7 +119,7 @@ personWorksSectionBodyDecoder =
         |> hardcoded "record-works-section"
         |> required "sectionLabel" languageMapLabelDecoder
         |> optional "workReferences" (maybe personExternalWorkReferencesSectionDecoder) Nothing
-        |> optional "worksCatalogs" (maybe worksCatalogueSectionBodyDecoder) Nothing
+        |> optional "worksCatalogs" (maybe worksCatalogueSectionDecoder) Nothing
 
 
 personExternalWorkReferencesSectionDecoder : Decoder PersonExternalWorkReferencesBody
@@ -128,17 +142,33 @@ workReferenceDecoder =
         |> required "sourceCount" int
 
 
-worksCatalogueSectionBodyDecoder : Decoder WorksCatalogueSectionBody
-worksCatalogueSectionBodyDecoder =
+worksCatalogueSectionDecoder : Decoder WorksCatalogueSectionBody
+worksCatalogueSectionDecoder =
     succeed WorksCatalogueSectionBody
         |> hardcoded "works-catalogue-section-body"
         |> required "sectionLabel" languageMapLabelDecoder
-        |> required "items" (list worksCatalogueDecoder)
+        |> required "items" (list personWorksCatalogueEntryDecoder)
 
 
-worksCatalogueDecoder : Decoder WorksCatalogue
-worksCatalogueDecoder =
-    succeed WorksCatalogue
+personWorksCatalogueEntryDecoder : Decoder PersonWorksCatalogueEntry
+personWorksCatalogueEntryDecoder =
+    succeed PersonWorksCatalogueEntry
+        |> required "label" languageMapLabelDecoder
+        |> required "value" languageMapLabelDecoder
+        |> required "relatedTo" relatedToBodyDecoder
+
+
+worksListSectionBodyDecoder : Decoder WorksListSectionBody
+worksListSectionBodyDecoder =
+    succeed WorksListSectionBody
+        |> hardcoded "works-list-section-body"
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "items" (list workCatalogueEntryDecoder)
+
+
+workCatalogueEntryDecoder : Decoder WorkCatalogueEntry
+workCatalogueEntryDecoder =
+    succeed WorkCatalogueEntry
         |> required "id" string
         |> required "label" languageMapLabelDecoder
 
