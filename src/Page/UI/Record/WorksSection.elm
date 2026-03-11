@@ -114,7 +114,7 @@ viewPersonExternalWorkReferencesSection language workReferences =
                 [ row
                     [ width fill ]
                     [ column
-                        [ width fill
+                        [ width (fill |> maximum 1000)
                         , height fill
                         , alignTop
                         , spacing lineSpacing
@@ -130,14 +130,14 @@ viewPersonExternalWorkReferencesSection language workReferences =
                                             tableHeaderStyles
                                             (text "Work title")
                                   , width = fill
-                                  , view = \i w -> el [ cycleTableBackground i, padding 10 ] (text w.value)
+                                  , view = \i w -> paragraph [ cycleTableBackground i, padding 10 ] [ el [] (text w.value) ]
                                   }
                                 , { header = el tableHeaderStyles (text "Source count")
                                   , width = fill
                                   , view =
                                         \i w ->
                                             el
-                                                [ cycleTableBackground i, padding 10 ]
+                                                [ cycleTableBackground i, padding 10, height fill ]
                                                 (text (String.fromInt w.sourceCount))
                                   }
                                 , { header = el tableHeaderStyles (text "Sources")
@@ -145,7 +145,7 @@ viewPersonExternalWorkReferencesSection language workReferences =
                                   , view =
                                         \i w ->
                                             link
-                                                [ cycleTableBackground i, padding 10, linkColour ]
+                                                [ cycleTableBackground i, padding 10, linkColour, height fill ]
                                                 { label = text ("Sources linked to " ++ w.externalIdentifier), url = w.searchUrl }
                                   }
                                 , { header = el tableHeaderStyles (text "External authority")
@@ -153,7 +153,7 @@ viewPersonExternalWorkReferencesSection language workReferences =
                                   , view =
                                         \i w ->
                                             newTabLink
-                                                [ cycleTableBackground i, padding 10, linkColour ]
+                                                [ cycleTableBackground i, padding 10, linkColour, height fill ]
                                                 { label = text w.externalIdentifier, url = w.authorityUrl }
                                   }
                                 ]
