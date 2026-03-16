@@ -1,4 +1,4 @@
-module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewMobileRelationshipBody, viewRelationshipBody, viewRelationshipsSection)
+module Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewMobileRelationshipBody, viewRelatedToBody, viewRelationshipBody, viewRelationshipsSection)
 
 import Dict
 import Dict.Extra as DE
@@ -10,7 +10,7 @@ import Page.RecordTypes.Relationship exposing (QualifierBody, RelatedTo(..), Rel
 import Page.UI.Attributes exposing (lineSpacing, linkColour)
 import Page.UI.Components exposing (viewPreRenderedLabelValueField, viewPreRenderedMobileLabelValueField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg, userMusicSvg)
+import Page.UI.Images exposing (folderMusicSvg, institutionSvg, mapMarkerSvg, sourcesSvg, userCircleSvg, userMusicSvg)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
@@ -152,6 +152,12 @@ viewRelatedToBody language qualifier body =
                         (text (extractLabelFromLanguageMap language localTranslations.works))
                     )
 
+                PublicationRelationship ->
+                    ( folderMusicSvg colourScheme.midGrey
+                    , el tooltipStyle
+                        (text (extractLabelFromLanguageMap language localTranslations.workCatalogues))
+                    )
+
                 UnknownRelationship ->
                     ( none, none )
 
@@ -183,6 +189,9 @@ viewRelatedToBody language qualifier body =
                     linkRelated body.label
 
                 WorkRelationship ->
+                    linkRelated body.label
+
+                PublicationRelationship ->
                     linkRelated body.label
 
                 UnknownRelationship ->
@@ -227,7 +236,35 @@ gatherRelationshipItems rels =
                 |> Maybe.andThen (\a -> a.role)
                 |> Maybe.map (\b -> b.label)
                 |> Maybe.withDefault (toLanguageMap "[No Role]")
+
+        relationshipTypeSortOrder : List RelationshipBody -> Int
+        relationshipTypeSortOrder lrels =
+            case List.head lrels |> Maybe.andThen .relatedTo |> Maybe.map .type_ of
+                Just PersonRelationship ->
+                    0
+
+                Just InstitutionRelationship ->
+                    1
+
+                Just PlaceRelationship ->
+                    2
+
+                Just SourceRelationship ->
+                    3
+
+                Just WorkRelationship ->
+                    4
+
+                Just PublicationRelationship ->
+                    6
+
+                Just UnknownRelationship ->
+                    5
+
+                Nothing ->
+                    7
     in
     DE.groupBy (\i -> Maybe.map (\j -> j.value) i.role |> Maybe.withDefault "") rels
         |> Dict.toList
+        |> List.sortBy (\( roleValue, rl ) -> ( relationshipTypeSortOrder rl, roleValue ))
         |> List.map (\( _, rl ) -> ( helper rl, rl ))

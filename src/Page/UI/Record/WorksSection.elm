@@ -1,14 +1,18 @@
 module Page.UI.Record.WorksSection exposing (viewPersonWorksSection, viewSourceWorksSection)
 
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, indexedTable, link, maximum, newTabLink, padding, paddingXY, paragraph, row, spacing, text, width)
+import Element exposing (Element, above, alignLeft, alignTop, column, el, fill, height, indexedTable, link, maximum, newTabLink, padding, paddingXY, paragraph, px, row, spacing, text, width)
 import Element.Border as Border
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, extractTextFromLanguageMap, toLanguageMap)
+import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Work exposing (PersonExternalWorkReferencesBody, PersonWorksCatalogueEntry, PersonWorksSectionBody, SourceWorksSectionBody, WorkCatalogueEntry, WorkReference, WorksCatalogueSectionBody, WorksListSectionBody)
 import Page.UI.Attributes exposing (cycleTableBackground, lineSpacing, linkColour, sectionBorderStyles, sectionSpacing, tableHeaderStyles)
 import Page.UI.Components exposing (externalLinkTemplate, viewPreRenderedSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Images exposing (userMusicSvg)
+import Page.UI.Record.Relationship exposing (viewRelatedToBody)
 import Page.UI.Record.SectionTemplate exposing (sectionTemplate)
 import Page.UI.Style exposing (colourScheme)
+import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import Utilities exposing (toLinkedHtml)
 
 
@@ -201,17 +205,7 @@ viewPersonWorksCatalogueValue language catalogue =
         (List.map
             (\item -> el [ width fill ] item)
             (List.concatMap toLinkedHtml (extractTextFromLanguageMap language catalogue.value))
-            ++ [ row
-                    [ width fill
-                    , alignLeft
-                    ]
-                    [ link
-                        [ linkColour ]
-                        { label = text (extractLabelFromLanguageMap language catalogue.relatedTo.label)
-                        , url = catalogue.relatedTo.id
-                        }
-                    ]
-               ]
+            ++ [ viewRelatedToBody language Nothing catalogue.relatedTo ]
         )
 
 
@@ -222,7 +216,16 @@ viewWorksCatalogue language catalogue =
         , alignLeft
         , spacing 5
         ]
-        [ link
+        [ el [ width (px 14) ]
+            (el
+                [ width fill
+                , el tooltipStyle
+                    (text (extractLabelFromLanguageMap language localTranslations.works))
+                    |> tooltip above
+                ]
+                (userMusicSvg colourScheme.midGrey)
+            )
+        , link
             [ linkColour ]
             { label = paragraph [] [ text (extractLabelFromLanguageMap language catalogue.label) ]
             , url = catalogue.id
