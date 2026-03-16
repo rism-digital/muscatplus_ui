@@ -433,7 +433,7 @@ containsHtml txt =
     -- If there is no open bracket, there is no HTML.
     -- If there is an open bracket, there might be HTML
     -- If there is a link inline, also render as HTML
-    String.contains "<" txt || String.contains "http" txt
+    (String.contains "<" txt && not (String.contains "<<" txt)) || String.contains "http" txt
 
 
 isHttpUrl : String -> Bool
