@@ -191,14 +191,14 @@ relatedToConverter typeString =
         "rism:Place" ->
             Decode.succeed PlaceRelationship
 
+        "rism:Publication" ->
+            Decode.succeed PublicationRelationship
+
         "rism:Source" ->
             Decode.succeed SourceRelationship
 
         "rism:Work" ->
             Decode.succeed WorkRelationship
-
-        "rism:Publication" ->
-            Decode.succeed PublicationRelationship
 
         _ ->
             Decode.succeed UnknownRelationship
