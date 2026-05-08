@@ -42,9 +42,13 @@ localTranslations :
     , incipitSearchHelpHide : LanguageMap
     , incipitSearchHelpShow : LanguageMap
     , incipits : LanguageMap
+    , creator : LanguageMap
     , institution : LanguageMap
     , institutions : LanguageMap
+    , inventory : LanguageMap
+    , inventoryItems : LanguageMap
     , keywordQuery : LanguageMap
+    , label : LanguageMap
     , last : LanguageMap
     , liturgicalFeasts : LanguageMap
     , location : LanguageMap
@@ -478,6 +482,15 @@ localTranslations =
         , LanguageValue English [ "Incipits" ]
         , LanguageValue French [ "Incipits" ]
         ]
+    , creator =
+        [ LanguageValue English [ "Creator" ]
+        , LanguageValue German [ "Urheber" ]
+        , LanguageValue French [ "Créateur" ]
+        , LanguageValue Italian [ "Autore" ]
+        , LanguageValue Spanish [ "Creador" ]
+        , LanguageValue Portuguese [ "Criador" ]
+        , LanguageValue Polish [ "Twórca" ]
+        ]
     , institution =
         [ LanguageValue English [ "Institution" ]
         , LanguageValue German [ "Institution" ]
@@ -496,6 +509,24 @@ localTranslations =
         , LanguageValue English [ "Institutions" ]
         , LanguageValue French [ "Institutions" ]
         ]
+    , inventory =
+        [ LanguageValue English [ "Inventory" ]
+        , LanguageValue German [ "Inventar" ]
+        , LanguageValue French [ "Inventaire" ]
+        , LanguageValue Italian [ "Inventario" ]
+        , LanguageValue Spanish [ "Inventario" ]
+        , LanguageValue Portuguese [ "Inventário" ]
+        , LanguageValue Polish [ "Inwentarz" ]
+        ]
+    , inventoryItems =
+        [ LanguageValue English [ "Inventory items" ]
+        , LanguageValue German [ "Inventareinträge" ]
+        , LanguageValue French [ "Notices d'inventaire" ]
+        , LanguageValue Italian [ "Elementi dell'inventario" ]
+        , LanguageValue Spanish [ "Ítems del inventario" ]
+        , LanguageValue Portuguese [ "Itens do inventário" ]
+        , LanguageValue Polish [ "Pozycje inwentarza" ]
+        ]
     , keywordQuery =
         [ LanguageValue English [ "Keyword query" ]
         , LanguageValue Portuguese [ "Consulta por palavra-chave" ]
@@ -504,6 +535,15 @@ localTranslations =
         , LanguageValue Polish [ "Zapytanie o słowo kluczowe" ]
         , LanguageValue French [ "Recherche par mot-clé" ]
         , LanguageValue Spanish [ "Consulta de palabra clave" ]
+        ]
+    , label =
+        [ LanguageValue English [ "Label" ]
+        , LanguageValue German [ "Bezeichnung" ]
+        , LanguageValue French [ "Libellé" ]
+        , LanguageValue Italian [ "Etichetta" ]
+        , LanguageValue Spanish [ "Etiqueta" ]
+        , LanguageValue Portuguese [ "Rótulo" ]
+        , LanguageValue Polish [ "Etykieta" ]
         ]
     , last =
         [ LanguageValue English [ "Last" ]

@@ -32,6 +32,7 @@ import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, ro
 import Page.Record.Msg exposing (RecordMsg(..))
 import Page.Record.Search exposing (searchSubmit)
 import Page.RecordTypes.ApiError exposing (apiErrorDecoder)
+import Page.RecordTypes.Inventory exposing (InventoryItemsBody, inventoryItemBodyDecoder, inventoryItemsBodyDecoder)
 import Page.RecordTypes.Probe exposing (ProbeStatus(..), QueryValidation(..))
 import Page.RecordTypes.SearchControl exposing (resultModeToSearchControlOption)
 import Page.RecordTypes.Tombstone exposing (tombstoneDecoder)
@@ -41,7 +42,7 @@ import Page.UI.Animations exposing (PreviewAnimationStatus(..))
 import Page.UI.Errors exposing (ErrorResponse(..), createErrorMessage)
 import Page.UpdateHelpers exposing (applyKeywordInputWithProbe, applyPreviewResponse, chooseResponse, extractSearchResponseData, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
-import Request exposing (serverUrl)
+import Request exposing (createRequest, serverUrl)
 import Response exposing (Response(..), ServerData(..))
 import Result.Extra as RE
 import SearchPreferences.SetPreferences exposing (SearchPreferenceVariant(..))
@@ -182,8 +183,10 @@ init cfg =
     { response = incomingData.recordData
     , currentTab = tabView
     , searchResults = incomingData.searchData
+    , inventoryItems = NoResponseToShow
     , preview = NoResponseToShow
     , sourceItemsExpanded = False
+    , inventoryItemsExpanded = False
     , incipitInfoExpanded = Set.empty
     , digitizedCopiesCalloutExpanded = True
     , selectedResult = selectedResult
@@ -236,6 +239,16 @@ load cfg oldBody =
 recordPagePreviewRequest : String -> Cmd RecordMsg
 recordPagePreviewRequest previewUrl =
     createRequestWithDecoder ServerRespondedWithRecordPreview previewUrl
+
+
+inventoryItemsRequest : String -> Cmd RecordMsg
+inventoryItemsRequest inventoryUrl =
+    createRequest ServerRespondedWithInventoryItems inventoryItemsBodyDecoder inventoryUrl
+
+
+inventoryItemDetailRequest : String -> Cmd RecordMsg
+inventoryItemDetailRequest inventoryUrl =
+    createRequest ServerRespondedWithInventoryItemDetail inventoryItemBodyDecoder inventoryUrl
 
 
 recordPageRequest : Bool -> Url -> Cmd RecordMsg
@@ -343,6 +356,34 @@ update session msg model =
             , Cmd.none
             )
 
+        ServerRespondedWithInventoryItems (Ok ( _, response )) ->
+            ( { model
+                | inventoryItems = Response response
+              }
+            , Cmd.none
+            )
+
+        ServerRespondedWithInventoryItems (Err error) ->
+            ( { model
+                | inventoryItems = Error (createErrorMessage error)
+              }
+            , Cmd.none
+            )
+
+        ServerRespondedWithInventoryItemDetail (Ok ( _, response )) ->
+            ( { model
+                | response = Response (InventoryItemData response)
+              }
+            , Cmd.none
+            )
+
+        ServerRespondedWithInventoryItemDetail (Err error) ->
+            ( { model
+                | response = Error (createErrorMessage error)
+              }
+            , Cmd.none
+            )
+
         ServerRespondedWithProbeData (Ok ( _, response )) ->
             ( { model
                 | probeResponse = ProbeSuccess response
@@ -367,12 +408,32 @@ update session msg model =
 
                         _ ->
                             model.searchResults
+
+                inventoryCmd =
+                    case response of
+                        SourceData body ->
+                            body.inventoryItems
+                                |> Maybe.map
+                                    (\inventoryItems ->
+                                        if shouldFetchInventoryItems model.inventoryItems then
+                                            inventoryItemsRequest inventoryItems.id
+
+                                        else
+                                            Cmd.none
+                                    )
+                                |> Maybe.withDefault Cmd.none
+
+                        _ ->
+                            Cmd.none
             in
             ( { model
                 | response = Response response
                 , searchResults = resultsStatus
               }
-            , updatePageMetadata response
+            , Cmd.batch
+                [ updatePageMetadata response
+                , inventoryCmd
+                ]
             )
 
         ServerRespondedWithRecordData (Err error) ->
@@ -579,6 +640,13 @@ update session msg model =
             , Cmd.none
             )
 
+        UserClickedExpandInventoryItemsSection ->
+            ( { model
+                | inventoryItemsExpanded = not model.inventoryItemsExpanded
+              }
+            , Cmd.none
+            )
+
         UserClickedExpandIncipitInfoSectionInPreview incipitIdent ->
             ( { model
                 | incipitInfoExpanded = SE.toggle incipitIdent model.incipitInfoExpanded
@@ -613,6 +681,17 @@ update session msg model =
                                     Cmd.batch
                                         [ recordSearchRequest searchUrl
                                         , Nav.pushUrl session.key searchUrl
+                                        ]
+
+                        InventoryItemsDisplayTab inventoryUrl ->
+                            case model.inventoryItems of
+                                Response _ ->
+                                    Nav.pushUrl session.key inventoryUrl
+
+                                _ ->
+                                    Cmd.batch
+                                        [ inventoryItemsRequest inventoryUrl
+                                        , Nav.pushUrl session.key inventoryUrl
                                         ]
             in
             ( { model
@@ -749,64 +828,89 @@ updatePageMetadata incomingData =
 
 sourceFetchCmd : RecordPageModel RecordMsg -> Url -> Route -> Cmd RecordMsg
 sourceFetchCmd body initialUrl route =
-    let
-        shouldFetchSources =
-            case route of
-                SourcePageRoute _ ->
-                    Just "/contents"
+    case route of
+        SourceInventoryItemsPageRoute _ ->
+            inventoryItemsUrlFromPath initialUrl.path
+                |> inventoryItemsRequest
 
-                SourceContentsPageRoute _ _ ->
-                    Just ""
+        SourceInventoryItemPageRoute _ _ ->
+            inventoryItemsUrlFromPath initialUrl.path
+                |> inventoryItemDetailRequest
 
-                PersonPageRoute _ ->
-                    Just "/sources"
-
-                PersonSourcePageRoute _ _ ->
-                    Just ""
-
-                InstitutionPageRoute _ ->
-                    Just "/sources"
-
-                InstitutionSourcePageRoute _ _ ->
-                    Just ""
-
-                PublicationPageRoute _ ->
-                    Just "/works"
-
-                PublicationWorksPageRoute _ _ ->
-                    Just ""
-
-                WorkPageRoute _ ->
-                    Just "/sources"
-
-                WorkSourcePageRoute _ _ ->
-                    Just ""
-
-                _ ->
-                    Nothing
-    in
-    case shouldFetchSources of
-        Just contentsUrlSuffix ->
+        _ ->
             let
-                resultMode =
-                    routeToResultMode route
+                maybeSearchUrl =
+                    case route of
+                        SourcePageRoute _ ->
+                            Just "/contents"
 
-                qps =
-                    toNextQuery body.activeSearch
-                        |> setMode resultMode
-                        |> buildQueryParameters
+                        SourceContentsPageRoute _ _ ->
+                            Just ""
 
-                sourceContentsPath =
-                    if String.endsWith "/" initialUrl.path then
-                        initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
+                        PersonPageRoute _ ->
+                            Just "/sources"
 
-                    else
-                        initialUrl.path ++ contentsUrlSuffix
+                        PersonSourcePageRoute _ _ ->
+                            Just ""
 
-                sourcesUrl =
-                    serverUrl [ sourceContentsPath ] qps
+                        InstitutionPageRoute _ ->
+                            Just "/sources"
+
+                        InstitutionSourcePageRoute _ _ ->
+                            Just ""
+
+                        PublicationPageRoute _ ->
+                            Just "/works"
+
+                        PublicationWorksPageRoute _ _ ->
+                            Just ""
+
+                        WorkPageRoute _ ->
+                            Just "/sources"
+
+                        WorkSourcePageRoute _ _ ->
+                            Just ""
+
+                        _ ->
+                            Nothing
             in
-            recordSearchRequest sourcesUrl
+            case maybeSearchUrl of
+                Just contentsUrlSuffix ->
+                    let
+                        resultMode =
+                            routeToResultMode route
 
-        Nothing ->
-            Cmd.none
+                        qps =
+                            toNextQuery body.activeSearch
+                                |> setMode resultMode
+                                |> buildQueryParameters
+
+                        sourceContentsPath =
+                            if String.endsWith "/" initialUrl.path then
+                                initialUrl.path ++ String.dropLeft 1 contentsUrlSuffix
+
+                            else
+                                initialUrl.path ++ contentsUrlSuffix
+
+                        sourcesUrl =
+                            serverUrl [ sourceContentsPath ] qps
+                    in
+                    recordSearchRequest sourcesUrl
+
+                Nothing ->
+                    Cmd.none
+
+
+shouldFetchInventoryItems : Response InventoryItemsBody -> Bool
+shouldFetchInventoryItems inventoryResponse =
+    case inventoryResponse of
+        NoResponseToShow ->
+            True
+
+        _ ->
+            False
+
+
+inventoryItemsUrlFromPath : String -> String
+inventoryItemsUrlFromPath path =
+    serverUrl [ path ] []

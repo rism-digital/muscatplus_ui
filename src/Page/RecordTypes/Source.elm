@@ -1,6 +1,7 @@
 module Page.RecordTypes.Source exposing
     ( ExemplarsSectionBody
     , FullSourceBody
+    , InventoryItemsSectionBody
     , MaterialGroupBody
     , MaterialGroupsSectionBody
     , SourceItemsSectionBody
@@ -38,6 +39,7 @@ type alias FullSourceBody =
     , referencesNotes : Maybe ReferencesNotesSectionBody
     , exemplars : Maybe ExemplarsSectionBody
     , sourceItems : Maybe SourceItemsSectionBody
+    , inventoryItems : Maybe InventoryItemsSectionBody
     , externalResources : Maybe ExternalResourcesSectionBody
     , digitalObjects : Maybe DigitalObjectsSectionBody
     , works : Maybe SourceWorksSectionBody
@@ -74,6 +76,14 @@ type alias SourceItemsSectionBody =
     , url : String
     , totalItems : Int
     , items : Maybe (List BasicSourceBody)
+    }
+
+
+type alias InventoryItemsSectionBody =
+    { sectionToc : String
+    , id : String
+    , label : LanguageMap
+    , totalItems : Int
     }
 
 
@@ -120,6 +130,7 @@ sourceBodyDecoder =
         |> optional "referencesNotes" (Decode.maybe referencesNotesSectionBodyDecoder) Nothing
         |> optional "exemplars" (Decode.maybe exemplarsSectionBodyDecoder) Nothing
         |> optional "sourceItems" (Decode.maybe sourceItemsSectionBodyDecoder) Nothing
+        |> optional "inventoryItems" (Decode.maybe inventoryItemsSectionBodyDecoder) Nothing
         |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
         |> optional "digitalObjects" (Decode.maybe digitalObjectsSectionBodyDecoder) Nothing
         |> optional "works" (Decode.maybe sourceWorksSectionBodyDecoder) Nothing
@@ -134,3 +145,12 @@ sourceItemsSectionBodyDecoder =
         |> required "url" string
         |> required "totalItems" int
         |> optional "items" (Decode.maybe (list basicSourceBodyDecoder)) Nothing
+
+
+inventoryItemsSectionBodyDecoder : Decoder InventoryItemsSectionBody
+inventoryItemsSectionBodyDecoder =
+    Decode.succeed InventoryItemsSectionBody
+        |> hardcoded "source-record-inventory-items-section"
+        |> required "id" string
+        |> required "sectionLabel" languageMapLabelDecoder
+        |> required "totalItems" int

@@ -2,6 +2,7 @@ module Mobile.Record.Views exposing (view)
 
 import Element exposing (Element, none)
 import Mobile.Error.Views
+import Mobile.Record.InventoryItemPage exposing (viewMobileInventoryItemPage)
 import Mobile.Record.InstitutionPage exposing (viewFullMobileInstitutionPage)
 import Mobile.Record.PersonPage exposing (viewFullMobilePersonPage)
 import Mobile.Record.PublicationListPage exposing (viewMobilePublicationListPage)
@@ -34,6 +35,9 @@ viewChooser session model dataType =
 
         WorkData body ->
             viewFullMobileWorkPage session model body
+
+        InventoryItemData body ->
+            viewMobileInventoryItemPage session model body
 
         _ ->
             none

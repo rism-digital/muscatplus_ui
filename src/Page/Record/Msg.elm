@@ -8,6 +8,7 @@ import Language exposing (LanguageMap)
 import Page.Downloader.Msg exposing (DownloaderMsg)
 import Page.QueryBuilder.Msg exposing (QueryBuilderMsg)
 import Page.Record.Model exposing (CurrentRecordViewTab)
+import Page.RecordTypes.Inventory exposing (InventoryItemBody, InventoryItemsBody)
 import Page.RecordTypes.Probe exposing (ProbeData)
 import Page.RecordTypes.Search exposing (FacetBehaviours, FacetSorts, RangeFacetValue)
 import Page.RecordTypes.Shared exposing (FacetAlias)
@@ -18,6 +19,8 @@ import Set exposing (Set)
 
 type RecordMsg
     = ServerRespondedWithPageSearch (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
+    | ServerRespondedWithInventoryItems (Result (Http.Detailed.Error String) ( Http.Metadata, InventoryItemsBody ))
+    | ServerRespondedWithInventoryItemDetail (Result (Http.Detailed.Error String) ( Http.Metadata, InventoryItemBody ))
     | ServerRespondedWithProbeData (Result (Http.Detailed.Error String) ( Http.Metadata, ProbeData ))
     | ServerRespondedWithRecordData (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
     | ServerRespondedWithRecordPreview (Result (Http.Detailed.Error String) ( Http.Metadata, ServerData ))
@@ -53,6 +56,7 @@ type RecordMsg
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
     | UserClickedExpandSourceItemsSectionInPreview
+    | UserClickedExpandInventoryItemsSection
     | UserClickedExpandIncipitInfoSectionInPreview String
     | UserClickedExpandDigitalCopiesCallout
     | UserClickedClosePreviewWindow

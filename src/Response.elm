@@ -4,6 +4,7 @@ import Page.RecordTypes.About exposing (AboutBody)
 import Page.RecordTypes.ExternalRecord exposing (ExternalRecordBody)
 import Page.RecordTypes.Front exposing (FrontBody)
 import Page.RecordTypes.Holding exposing (HoldingBody)
+import Page.RecordTypes.Inventory exposing (InventoryItemBody)
 import Page.RecordTypes.Incipit exposing (IncipitBody)
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.RecordTypes.Person exposing (PersonBody)
@@ -42,3 +43,4 @@ type ServerData
     | PublicationData PublicationBody
     | PublicationListData PublicationListBody
     | WorkData WorkBody
+    | InventoryItemData InventoryItemBody

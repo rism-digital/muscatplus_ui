@@ -13,6 +13,8 @@ type Route
     | SearchPageRoute QueryArgs KeyboardQuery
     | SourcePageRoute Int
     | SourceContentsPageRoute Int QueryArgs
+    | SourceInventoryItemsPageRoute Int
+    | SourceInventoryItemPageRoute Int Int
     | SourceHoldingsPageRoute Int Int
     | PersonPageRoute Int
     | PersonSourcePageRoute Int QueryArgs
@@ -53,6 +55,8 @@ routeParser =
         , P.map SearchPageRoute (s "search" <?> queryParamsParser <?> notationParamParser)
         , P.map SourcePageRoute (s "sources" </> P.int)
         , P.map SourceContentsPageRoute (s "sources" </> P.int </> s "contents" <?> queryParamsParser)
+        , P.map SourceInventoryItemsPageRoute (s "sources" </> P.int </> s "inventory-items")
+        , P.map SourceInventoryItemPageRoute (s "sources" </> P.int </> s "inventory-items" </> P.int)
         , P.map SourceHoldingsPageRoute (s "sources" </> P.int </> s "holdings" </> P.int)
         , P.map PersonPageRoute (s "people" </> P.int)
         , P.map PersonSourcePageRoute (s "people" </> P.int </> s "sources" <?> queryParamsParser)
@@ -104,6 +108,12 @@ baseRecordPathFromRoute route =
             "/sources/" ++ String.fromInt rid
 
         SourceContentsPageRoute rid _ ->
+            "/sources/" ++ String.fromInt rid
+
+        SourceInventoryItemsPageRoute rid ->
+            "/sources/" ++ String.fromInt rid
+
+        SourceInventoryItemPageRoute rid _ ->
             "/sources/" ++ String.fromInt rid
 
         SourceHoldingsPageRoute rid _ ->
@@ -162,6 +172,12 @@ routeToResultMode route =
             SourcesMode
 
         SourceContentsPageRoute _ _ ->
+            SourcesMode
+
+        SourceInventoryItemsPageRoute _ ->
+            SourcesMode
+
+        SourceInventoryItemPageRoute _ _ ->
             SourcesMode
 
         SourceHoldingsPageRoute _ _ ->

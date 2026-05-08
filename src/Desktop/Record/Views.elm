@@ -2,6 +2,7 @@ module Desktop.Record.Views exposing (view)
 
 import Desktop.Error.Views
 import Desktop.Record.HoldingPage exposing (viewFullHoldingPage)
+import Desktop.Record.InventoryItemPage exposing (viewInventoryItemPage)
 import Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 import Desktop.Record.PersonPage exposing (viewFullPersonPage)
 import Desktop.Record.PublicationListPage exposing (viewPublicationListPage)
@@ -38,6 +39,9 @@ viewChooser session model dataType =
 
         WorkData body ->
             viewFullWorkPage session model body
+
+        InventoryItemData body ->
+            viewInventoryItemPage session model body
 
         _ ->
             none

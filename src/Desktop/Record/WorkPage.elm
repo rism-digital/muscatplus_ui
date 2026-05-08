@@ -68,6 +68,16 @@ viewFullWorkPage session model body =
                 ContentsSearchDisplayTab _ ->
                     ( viewSourceSearchTabBody session model, False )
 
+                _ ->
+                    ( viewDescriptionTab
+                        { expandedIncipits = model.incipitInfoExpanded
+                        , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                        , language = language
+                        }
+                        body
+                    , True
+                    )
+
         tabBar =
             if session.isFramed then
                 none

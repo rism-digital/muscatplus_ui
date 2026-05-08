@@ -2,6 +2,7 @@ module Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, ro
 
 import ActiveSearch.Model exposing (ActiveSearch)
 import Debouncer.Messages exposing (Debouncer)
+import Page.RecordTypes.Inventory exposing (InventoryItemsBody)
 import Page.RecordTypes.Probe exposing (ProbeStatus)
 import Page.RecordTypes.SearchControl exposing (SearchControlOptions)
 import Page.Route exposing (Route(..))
@@ -17,14 +18,17 @@ import Set exposing (Set)
 type CurrentRecordViewTab
     = DefaultRecordViewTab String
     | ContentsSearchDisplayTab String
+    | InventoryItemsDisplayTab String
 
 
 type alias RecordPageModel msg =
     { response : Response ServerData
     , currentTab : CurrentRecordViewTab
     , searchResults : Response ServerData
+    , inventoryItems : Response InventoryItemsBody
     , preview : Response ServerData
     , sourceItemsExpanded : Bool
+    , inventoryItemsExpanded : Bool
     , incipitInfoExpanded : Set String
     , digitizedCopiesCalloutExpanded : Bool
     , selectedResult : Maybe String
@@ -42,6 +46,12 @@ routeToCurrentRecordViewTab route =
     case route of
         SourceContentsPageRoute _ _ ->
             ContentsSearchDisplayTab
+
+        SourceInventoryItemsPageRoute _ ->
+            InventoryItemsDisplayTab
+
+        SourceInventoryItemPageRoute _ _ ->
+            DefaultRecordViewTab
 
         PersonSourcePageRoute _ _ ->
             ContentsSearchDisplayTab

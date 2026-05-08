@@ -69,6 +69,9 @@ view model =
                         Response (SourceData body) ->
                             extractLabelFromLanguageMap session.language body.label
 
+                        Response (InventoryItemData body) ->
+                            extractLabelFromLanguageMap session.language body.label
+
                         _ ->
                             defaultTitle
 

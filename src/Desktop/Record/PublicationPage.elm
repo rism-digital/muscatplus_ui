@@ -50,6 +50,11 @@ viewFullPublicationPage session model body =
                 ContentsSearchDisplayTab _ ->
                     viewRelatedWorksListTabBody session model
 
+                _ ->
+                    viewDescriptionTab
+                        { language = session.language }
+                        body
+
         icon =
             el
                 [ width (px 25)

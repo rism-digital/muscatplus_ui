@@ -1,5 +1,6 @@
 module Desktop.Record.SourceSearch exposing
     ( viewRecordSourceSearchTabBar
+    , viewSourceSearchTab
     , viewSourceSearchTabBody
     )
 

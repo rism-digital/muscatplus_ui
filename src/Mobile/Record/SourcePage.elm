@@ -1,7 +1,7 @@
 module Mobile.Record.SourcePage exposing (viewFullMobileSourcePage)
 
 import Dict
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
+import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, none, padding, paddingXY, px, row, scrollbarY, spacing, width)
 import Element.Background as Background
 import Html.Attributes as HA
 import Page.Record.Model exposing (RecordPageModel)
@@ -14,6 +14,7 @@ import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
 import Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalResourcesSection)
+import Page.UI.Record.InventoryItemsSection exposing (viewInventoryItemsSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
 import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
 import Page.UI.Record.PageTemplate exposing (mobilePageHeaderTemplate)
@@ -23,6 +24,7 @@ import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRel
 import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme)
+import Response exposing (Response(..))
 import Session exposing (Session)
 
 
@@ -152,6 +154,9 @@ viewFullMobileSourcePage session model body =
                             }
                         )
                         body.sourceItems
+                    , viewIf
+                        (viewInventoryItemsSectionRouter session model body)
+                        (Maybe.withDefault False (Maybe.map (\_ -> True) body.inventoryItems))
                     , viewMaybe
                         (viewExternalResourcesSection
                             { language = session.language
@@ -175,3 +180,18 @@ viewFullMobileSourcePage session model body =
                 ]
             ]
         ]
+
+
+viewInventoryItemsSectionRouter : Session -> RecordPageModel RecordMsg -> FullSourceBody -> Element RecordMsg
+viewInventoryItemsSectionRouter session model _ =
+    case model.inventoryItems of
+        Response inventoryItems ->
+            viewInventoryItemsSection
+                { expandMsg = RecordMsg.UserClickedExpandInventoryItemsSection
+                , expanded = model.inventoryItemsExpanded
+                , language = session.language
+                }
+                inventoryItems
+
+        _ ->
+            none

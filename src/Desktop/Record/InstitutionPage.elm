@@ -126,6 +126,14 @@ viewFullInstitutionPage session model body =
                 ContentsSearchDisplayTab _ ->
                     ( viewSourceSearchTabBody session model, False )
 
+                _ ->
+                    ( viewDescriptionTab
+                        { language = session.language }
+                        session.window
+                        body
+                    , True
+                    )
+
         icon =
             el
                 [ width (px 25)

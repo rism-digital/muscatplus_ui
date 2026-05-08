@@ -1,6 +1,7 @@
 module Desktop.Record.SourcePage exposing (viewFullSourcePage)
 
-import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Desktop.Record.InventoryItemsTable exposing (viewInventoryItemsTabBody)
+import Desktop.Record.SourceSearch exposing (viewSourceSearchTab, viewSourceSearchTabBody)
 import Dict
 import Element exposing (Element, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
 import Element.Region as Region
@@ -9,9 +10,9 @@ import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
-import Page.RecordTypes.Source exposing (FullSourceBody)
+import Page.RecordTypes.Source exposing (FullSourceBody, InventoryItemsSectionBody)
 import Page.UI.Attributes exposing (sectionSpacing)
-import Page.UI.Components exposing (sourceIconChooser, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
+import Page.UI.Components exposing (Tab(..), sourceIconChooser, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewIf, viewMaybe)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
@@ -52,6 +53,9 @@ viewFullSourcePage session model body =
 
                 ContentsSearchDisplayTab _ ->
                     ( viewSourceSearchTabBody session model, False )
+
+                InventoryItemsDisplayTab _ ->
+                    ( viewInventoryItemsTabBody session model.inventoryItems, False )
 
         sourceIcon =
             .recordType body.sourceTypes
@@ -219,10 +223,80 @@ viewRecordTopBarRouter :
     -> FullSourceBody
     -> Element RecordMsg
 viewRecordTopBarRouter language model body =
-    viewRecordSourceSearchTabBar
-        { body = body.sourceItems
+    let
+        inventoryTab =
+            viewMaybe (viewInventoryItemsTab language model) body.inventoryItems
+    in
+    row
+        [ width fill
+        , height (px 35)
+        , spacing 10
+        ]
+        [ viewRecordDescriptionTab language model body.id
+        , viewMaybe
+            (\s ->
+                viewSourceSearchTab
+                    { language = language
+                    , model = model
+                    , recordId = body.id
+                    , searchUrl = s.url
+                    , tabLabel = localTranslations.sourceContents
+                    , totalItems = s.totalItems
+                    }
+            )
+            body.sourceItems
+        , inventoryTab
+        ]
+
+
+viewRecordDescriptionTab : Language -> RecordPageModel RecordMsg -> String -> Element RecordMsg
+viewRecordDescriptionTab language model recordId =
+    let
+        isSelected =
+            case model.currentTab of
+                DefaultRecordViewTab _ ->
+                    True
+
+                _ ->
+                    False
+    in
+    tabView
+        { clickMsg =
+            if isSelected then
+                RecordMsg.NothingHappened
+
+            else
+                RecordMsg.UserClickedRecordViewTab (DefaultRecordViewTab recordId)
+        , icon = none
+        , isSelected = isSelected
         , language = language
-        , model = model
-        , recordId = body.id
-        , tabLabel = localTranslations.sourceContents
+        , tab = BareTab localTranslations.description
+        }
+
+
+viewInventoryItemsTab : Language -> RecordPageModel RecordMsg -> InventoryItemsSectionBody -> Element RecordMsg
+viewInventoryItemsTab language model inventoryItems =
+    let
+        isSelected =
+            case model.currentTab of
+                InventoryItemsDisplayTab _ ->
+                    True
+
+                _ ->
+                    False
+
+        count =
+            Just inventoryItems.totalItems
+    in
+    tabView
+        { clickMsg =
+            if isSelected then
+                RecordMsg.NothingHappened
+
+            else
+                RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.id)
+        , icon = none
+        , isSelected = isSelected
+        , language = language
+        , tab = CountTab localTranslations.inventoryItems count
         }
