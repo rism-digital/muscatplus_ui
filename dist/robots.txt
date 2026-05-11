@@ -5,6 +5,8 @@ Disallow: /auth/
 Disallow: /private/
 Disallow: /tmp/
 Disallow: /search?
+Disallow: /places/*
+Disallow: /subjects/*
 Disallow: /*?utm_
 Disallow: /*?ref=
 Allow: /sources/
