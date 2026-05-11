@@ -10,8 +10,10 @@ module Page.RecordTypes.Inventory exposing
 import Json.Decode as Decode exposing (Decoder, list, maybe, string)
 import Json.Decode.Pipeline exposing (optional, required)
 import Language exposing (LanguageMap)
-import Page.RecordTypes.Relationship exposing (RelationshipBody, relationshipBodyDecoder)
-import Page.RecordTypes.Shared exposing (languageMapLabelDecoder)
+import Page.RecordTypes.ExternalResource exposing (ExternalResourcesSectionBody, externalResourcesSectionBodyDecoder)
+import Page.RecordTypes.ReferencesNotes exposing (ReferencesNotesSectionBody, referencesNotesSectionBodyDecoder)
+import Page.RecordTypes.Relationship exposing (RelationshipBody, RelationshipsSectionBody, relationshipBodyDecoder, relationshipsSectionBodyDecoder)
+import Page.RecordTypes.Shared exposing (RecordHistory, languageMapLabelDecoder, recordHistoryDecoder)
 import Page.RecordTypes.SourceShared exposing (ContentsSectionBody, contentsSectionBodyDecoder)
 
 
@@ -42,7 +44,11 @@ type alias InventoryItemBody =
     , label : LanguageMap
     , creator : Maybe RelationshipBody
     , contents : Maybe ContentsSectionBody
+    , relationships : Maybe RelationshipsSectionBody
+    , referencesNotes : Maybe ReferencesNotesSectionBody
     , inventory : Maybe InventoryInfoBody
+    , externalResources : Maybe ExternalResourcesSectionBody
+    , recordHistory : RecordHistory
     }
 
 
@@ -70,7 +76,11 @@ inventoryItemBodyDecoder =
         |> required "label" languageMapLabelDecoder
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
         |> optional "contents" (maybe contentsSectionBodyDecoder) Nothing
+        |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
+        |> optional "referencesNotes" (Decode.maybe referencesNotesSectionBodyDecoder) Nothing
         |> optional "inventory" (maybe inventoryInfoBodyDecoder) Nothing
+        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
+        |> required "recordHistory" recordHistoryDecoder
 
 
 inventoryInfoBodyDecoder : Decoder InventoryInfoBody

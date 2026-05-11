@@ -341,6 +341,9 @@ viewMuscatLinks session =
         SourceContentsPageRoute id _ ->
             linkTmpl (C.muscatLinkBase ++ "sources/" ++ String.fromInt id)
 
+        SourceInventoryItemPageRoute _ iid ->
+            linkTmpl (C.muscatLinkBase ++ "inventory_items/" ++ String.fromInt iid)
+
         SourceHoldingsPageRoute sourceId _ ->
             linkTmpl (C.muscatLinkBase ++ "sources/" ++ String.fromInt sourceId)
 
