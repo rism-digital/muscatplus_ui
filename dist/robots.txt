@@ -12,8 +12,11 @@ Disallow: /*?ref=
 Allow: /sources/
 Allow: /works/
 Disallow: /sources/*/material-groups/*
+Disallow: /sources/*/digital-objects/*
+Disallow: /sources/*/holdings/*/digital-objects/*
 Disallow: /sources/*/incipits/*
 Disallow: /works/*/incipits/*
+
 Crawl-delay: 5
 
 User-agent: SemrushBot
