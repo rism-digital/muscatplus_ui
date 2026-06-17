@@ -2,24 +2,18 @@ module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 
 import Desktop.Record.PageShell exposing (TabBody, viewDesktopRecordPage)
 import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
-import Page.RecordTypes.Work exposing (FormOfWorkSectionBody, WorkBody)
+import Page.RecordTypes.Work exposing (WorkBody)
 import Page.UI.Attributes exposing (sectionSpacing)
-import Page.UI.Components exposing (pageBodyOrEmpty, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Images exposing (userMusicSvg)
-import Page.UI.Record.ContentsSection exposing (viewCreator)
-import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
-import Page.UI.Record.Incipits exposing (viewIncipitsSection)
-import Page.UI.Record.PartOfSection exposing (viewWorkPartOfCatalogueSection)
-import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
-import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.Bodies.Work exposing (viewWorkSections)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
@@ -91,85 +85,14 @@ chooseBody session model body currentTab =
             , showBottomShadow = True
             }
 
-
-viewFormOfWorkSection :
-    { language : Language
-    , preRenderedFormatter : Language -> List { label : LanguageMap, value : List (Element msg) } -> Element msg
-    }
-    -> FormOfWorkSectionBody
-    -> Element msg
-viewFormOfWorkSection { language, preRenderedFormatter } formOfWorkSection =
-    preRenderedFormatter language
-        [ { label = formOfWorkSection.label
-          , value = List.map (\it -> text (extractLabelFromLanguageMap language it.label)) formOfWorkSection.items
-          }
-        ]
-
-
 viewDescriptionTab :
     { expandedIncipits : Set String
-    , incipitInfoToggleMsg : String -> msg
+    , incipitInfoToggleMsg : String -> RecordMsg
     , language : Language
     }
     -> WorkBody
     -> Element RecordMsg
 viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language } body =
-    let
-        pageBody =
-            pageBodyOrEmpty
-                language
-                False
-                [ viewMaybe (viewWorkPartOfCatalogueSection language) body.partOf
-                , viewMaybe
-                    (viewCreator
-                        { language = language
-                        , relationshipFormatter = viewRelationshipBody
-                        }
-                    )
-                    body.creator
-                , Maybe.withDefault [] body.summary
-                    |> viewSummaryField language
-                , viewMaybe
-                    (viewFormOfWorkSection
-                        { language = language
-                        , preRenderedFormatter = viewPreRenderedSummaryField
-                        }
-                    )
-                    body.formOfWork
-                , viewMaybe
-                    (viewRelationshipsSection
-                        { language = language
-                        , relationshipFormatter = viewRelationshipBody
-                        }
-                    )
-                    body.relationships
-                , viewMaybe
-                    (viewIncipitsSection
-                        { language = language
-                        , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , expandedIncipits = expandedIncipits
-                        , summaryFormatter = viewSummaryField
-                        }
-                    )
-                    body.incipits
-                , viewMaybe
-                    (viewReferencesNotesSection
-                        { language = language
-                        , paragraphFormatter = viewParagraphField
-                        , preRenderedFormatter = viewPreRenderedSummaryField
-                        }
-                    )
-                    body.referencesNotes
-                , viewMaybe
-                    (viewExternalResourcesSection
-                        { language = language
-                        , recordId = body.id
-                        }
-                    )
-                    body.externalResources
-                , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-                ]
-    in
     row
         [ width fill
         , height fill
@@ -183,5 +106,16 @@ viewDescriptionTab { expandedIncipits, incipitInfoToggleMsg, language } body =
             , alignTop
             , padding 20
             ]
-            pageBody
+            (viewWorkSections
+                { expandedIncipits = expandedIncipits
+                , incipitInfoToggleMsg = incipitInfoToggleMsg
+                , language = language
+                , paragraphFormatter = viewParagraphField
+                , preRenderedFormatter = viewPreRenderedSummaryField
+                , recordId = body.id
+                , relationshipFormatter = viewRelationshipBody
+                , summaryFormatter = viewSummaryField
+                }
+                body
+            )
         ]

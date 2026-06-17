@@ -1,52 +1,35 @@
 module Mobile.Record.SourceSearch exposing
-    ( viewRecordDescriptionTab
-    , viewRecordSourceSearchTabBar
+    ( viewRecordSourceSearchTabBar
     , viewSourceSearchTabBody
     )
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, none, padding, paddingEach, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, padding, paddingEach, px, row, scrollbarY, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.PartOf exposing (extractUrlAndLabelFromPartOf)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), SourceResultBody)
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
-import Page.UI.Components exposing (Tab(..), tabView)
-import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (spinnerSvg)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Style exposing (colourScheme)
-import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
 viewSourceSearchTabBody : Session -> RecordPageModel RecordMsg -> Element RecordMsg
 viewSourceSearchTabBody session model =
-    case model.searchResults of
-        Loading (Just (SearchData oldData)) ->
-            viewSourcesSearchResultsSection session oldData
-
-        Loading _ ->
-            viewMobileSourcesLoading
-
-        Response (SearchData body) ->
-            viewSourcesSearchResultsSection session body
-
-        Error err ->
-            errorMessageString session.language err
-                |> text
-
-        NoResponseToShow ->
-            viewMobileSourcesLoading
-
-        _ ->
-            extractLabelFromLanguageMap session.language localTranslations.unknownError
-                |> text
+    viewRecordSearchResults
+        { language = session.language
+        , loadingView = viewMobileSourcesLoading
+        , loadedView = viewSourcesSearchResultsSection session
+        , response = model.searchResults
+        }
 
 
 viewRecordSourceSearchTabBar :
@@ -68,99 +51,21 @@ viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
         ]
         [ viewRecordDescriptionTab
             { language = language
-            , model = model
+            , currentTab = model.currentTab
             , recordId = recordId
             }
         , viewMaybe
-            (\s ->
-                let
-                    ( searchUrl, sourceCount ) =
-                        case model.searchResults of
-                            Loading (Just (SearchData data)) ->
-                                ( data.id, data.totalItems )
-
-                            Response (SearchData data) ->
-                                ( data.id, data.totalItems )
-
-                            _ ->
-                                ( s.url, s.totalItems )
-                in
-                viewSourcesDisplayTab
+            (\searchInfo ->
+                viewRecordSearchTab
                     { language = language
-                    , model = model
-                    , searchUrl = searchUrl
+                    , currentTab = model.currentTab
+                    , searchUrl = searchInfo.searchUrl
                     , tabLabel = tabLabel
-                    , sourcesCount = sourceCount
+                    , totalItems = searchInfo.totalItems
                     }
             )
-            body
+            (resolveSearchTabInfo model.searchResults body)
         ]
-
-
-viewSourcesDisplayTab :
-    { language : Language
-    , model : RecordPageModel RecordMsg
-    , searchUrl : String
-    , tabLabel : LanguageMap
-    , sourcesCount : Int
-    }
-    -> Element RecordMsg
-viewSourcesDisplayTab { language, model, searchUrl, tabLabel, sourcesCount } =
-    let
-        isSelected =
-            case model.currentTab of
-                ContentsSearchDisplayTab _ ->
-                    True
-
-                _ ->
-                    False
-
-        tabMsg =
-            if isSelected then
-                RecordMsg.NothingHappened
-
-            else
-                RecordMsg.UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
-    in
-    tabView
-        { clickMsg = tabMsg
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = CountTab tabLabel (Just sourcesCount)
-        }
-
-
-viewRecordDescriptionTab :
-    { language : Language
-    , model : RecordPageModel RecordMsg
-    , recordId : String
-    }
-    -> Element RecordMsg
-viewRecordDescriptionTab { language, model, recordId } =
-    let
-        isSelected =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    True
-
-                _ ->
-                    False
-
-        tabMsg =
-            if isSelected then
-                RecordMsg.NothingHappened
-
-            else
-                RecordMsg.UserClickedRecordViewTab (DefaultRecordViewTab recordId)
-    in
-    tabView
-        { clickMsg = tabMsg
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = BareTab localTranslations.description
-        }
 
 
 viewMobileSourcesLoading : Element msg

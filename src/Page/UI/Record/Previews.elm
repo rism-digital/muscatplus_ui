@@ -162,6 +162,7 @@ choosePreview cfg previewData =
                 , paragraphFormatter = cfg.paragraphFormatter
                 , relationshipFormatter = cfg.relationshipFormatter
                 , summaryFormatter = cfg.summaryFormatter
+                , window = cfg.windowSize
                 }
                 body
 

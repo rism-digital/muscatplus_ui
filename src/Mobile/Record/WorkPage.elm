@@ -1,25 +1,18 @@
 module Mobile.Record.WorkPage exposing (viewFullMobileWorkPage)
 
-import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, paddingEach, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, paddingEach, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
-import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Mobile.Record.PageShell exposing (viewMobileRecordPage)
 import Mobile.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
-import Page.RecordTypes.Work exposing (FormOfWorkSectionBody, WorkBody)
+import Page.RecordTypes.Work exposing (WorkBody)
 import Page.UI.Attributes exposing (sectionSpacing)
-import Page.UI.Components exposing (pageBodyOrEmpty, viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
-import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Components exposing (viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Images exposing (userMusicSvg)
-import Page.UI.Record.ContentsSection exposing (viewCreator)
-import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
-import Page.UI.Record.Incipits exposing (viewIncipitsSection)
-import Page.UI.Record.PartOfSection exposing (viewWorkPartOfCatalogueSection)
-import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
-import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.Bodies.Work exposing (viewWorkSections)
+import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
@@ -80,72 +73,16 @@ viewDescriptionTab session model body =
             , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
             , spacing sectionSpacing
             ]
-            (pageBodyOrEmpty
-                session.language
-                False
-                [ viewMaybe (viewWorkPartOfCatalogueSection session.language) body.partOf
-                , viewMaybe
-                    (viewCreator
-                        { language = session.language
-                        , relationshipFormatter = viewMobileRelationshipBody
-                        }
-                    )
-                    body.creator
-                , Maybe.withDefault [] body.summary
-                    |> viewMobileSummaryField session.language
-                , viewMaybe
-                    (viewFormOfWorkSection
-                        { language = session.language
-                        , preRenderedFormatter = viewPreRenderedMobileSummaryField
-                        }
-                    )
-                    body.formOfWork
-                , viewMaybe
-                    (viewRelationshipsSection
-                        { language = session.language
-                        , relationshipFormatter = viewMobileRelationshipBody
-                        }
-                    )
-                    body.relationships
-                , viewMaybe
-                    (viewIncipitsSection
-                        { language = session.language
-                        , infoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , expandedIncipits = model.incipitInfoExpanded
-                        , summaryFormatter = viewMobileSummaryField
-                        }
-                    )
-                    body.incipits
-                , viewMaybe
-                    (viewReferencesNotesSection
-                        { language = session.language
-                        , paragraphFormatter = viewMobileParagraphField
-                        , preRenderedFormatter = viewPreRenderedMobileSummaryField
-                        }
-                    )
-                    body.referencesNotes
-                , viewMaybe
-                    (viewExternalResourcesSection
-                        { language = session.language
-                        , recordId = body.id
-                        }
-                    )
-                    body.externalResources
-                , viewMaybe (viewExternalAuthoritiesSection session.language) body.externalAuthorities
-                ]
+            (viewWorkSections
+                { expandedIncipits = model.incipitInfoExpanded
+                , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                , language = session.language
+                , paragraphFormatter = viewMobileParagraphField
+                , preRenderedFormatter = viewPreRenderedMobileSummaryField
+                , recordId = body.id
+                , relationshipFormatter = viewMobileRelationshipBody
+                , summaryFormatter = viewMobileSummaryField
+                }
+                body
             )
-        ]
-
-
-viewFormOfWorkSection :
-    { language : Language
-    , preRenderedFormatter : Language -> List { label : Language.LanguageMap, value : List (Element msg) } -> Element msg
-    }
-    -> FormOfWorkSectionBody
-    -> Element msg
-viewFormOfWorkSection { language, preRenderedFormatter } formOfWorkSection =
-    preRenderedFormatter language
-        [ { label = formOfWorkSection.label
-          , value = List.map (\it -> text (extractLabelFromLanguageMap language it.label)) formOfWorkSection.items
-          }
         ]

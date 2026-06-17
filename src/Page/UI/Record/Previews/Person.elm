@@ -3,22 +3,13 @@ module Page.UI.Record.Previews.Person exposing (viewPersonPreview)
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
-import Maybe.Extra as ME
 import Page.RecordTypes.Person exposing (PersonBody)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (pageBodyOrEmpty)
-import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (peopleSvg)
-import Page.UI.Record.BiographicalDetailsSection exposing (viewBiographicalDetailsSection)
-import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
-import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
+import Page.UI.Record.Bodies.Person exposing (viewPersonSections)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
-import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
-import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
-import Page.UI.Record.WorksSection exposing (viewPersonWorksSection)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -32,54 +23,16 @@ viewPersonPreview :
     -> Element msg
 viewPersonPreview { language, paragraphFormatter, relationshipFormatter, summaryFormatter } body =
     let
-        isEmpty =
-            ME.isNothing body.biographicalDetails
-                && ME.isNothing body.nameVariants
-                && ME.isNothing body.relationships
-                && ME.isNothing body.notes
-                && ME.isNothing body.externalResources
-
         previewBody =
-            pageBodyOrEmpty language
-                isEmpty
-                [ viewMaybe
-                    (viewBiographicalDetailsSection
-                        { language = language
-                        , summaryFormatter = summaryFormatter
-                        }
-                    )
-                    body.biographicalDetails
-                , viewMaybe
-                    (viewNameVariantsSection
-                        { language = language
-                        , summaryFormatter = summaryFormatter
-                        }
-                    )
-                    body.nameVariants
-                , viewMaybe
-                    (viewRelationshipsSection
-                        { language = language
-                        , relationshipFormatter = relationshipFormatter
-                        }
-                    )
-                    body.relationships
-                , viewMaybe
-                    (viewNotesSection
-                        { language = language
-                        , paragraphFormatter = paragraphFormatter
-                        }
-                    )
-                    body.notes
-                , viewMaybe
-                    (viewExternalResourcesSection
-                        { language = language
-                        , recordId = body.id
-                        }
-                    )
-                    body.externalResources
-                , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-                , viewMaybe (viewPersonWorksSection language) body.works
-                ]
+            viewPersonSections
+                { language = language
+                , includeDigitalObjects = False
+                , paragraphFormatter = paragraphFormatter
+                , recordId = body.id
+                , relationshipFormatter = relationshipFormatter
+                , summaryFormatter = summaryFormatter
+                }
+                body
 
         recordIcon =
             el

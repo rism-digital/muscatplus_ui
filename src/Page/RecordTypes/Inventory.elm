@@ -77,9 +77,9 @@ inventoryItemBodyDecoder =
         |> optional "creator" (maybe relationshipBodyDecoder) Nothing
         |> optional "contents" (maybe contentsSectionBodyDecoder) Nothing
         |> optional "relationships" (maybe relationshipsSectionBodyDecoder) Nothing
-        |> optional "referencesNotes" (Decode.maybe referencesNotesSectionBodyDecoder) Nothing
+        |> optional "referencesNotes" (maybe referencesNotesSectionBodyDecoder) Nothing
         |> optional "inventory" (maybe inventoryInfoBodyDecoder) Nothing
-        |> optional "externalResources" (Decode.maybe externalResourcesSectionBodyDecoder) Nothing
+        |> optional "externalResources" (maybe externalResourcesSectionBodyDecoder) Nothing
         |> required "recordHistory" recordHistoryDecoder
 
 

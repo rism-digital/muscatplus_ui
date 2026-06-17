@@ -1,7 +1,7 @@
 module Desktop.Record.SourcePage exposing (viewFullSourcePage)
 
 import Desktop.Record.InventoryItemsTable exposing (viewInventoryItemsTabBody)
-import Desktop.Record.SourceSearch exposing (viewSourceSearchTab, viewSourceSearchTabBody)
+import Desktop.Record.SourceSearch exposing (viewSourceSearchTabBody)
 import Dict
 import Element exposing (Element, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
 import Element.Region as Region
@@ -24,6 +24,7 @@ import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeade
 import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchTab)
 import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
@@ -232,46 +233,24 @@ viewRecordTopBarRouter language model body =
         , height (px 35)
         , spacing 10
         ]
-        [ viewRecordDescriptionTab language model body.id
+        [ viewRecordDescriptionTab
+            { language = language
+            , currentTab = model.currentTab
+            , recordId = body.id
+            }
         , viewMaybe
-            (\s ->
-                viewSourceSearchTab
+            (\searchInfo ->
+                viewRecordSearchTab
                     { language = language
-                    , model = model
-                    , recordId = body.id
-                    , searchUrl = s.url
+                    , currentTab = model.currentTab
+                    , searchUrl = searchInfo.searchUrl
                     , tabLabel = localTranslations.sourceContents
-                    , totalItems = s.totalItems
+                    , totalItems = searchInfo.totalItems
                     }
             )
-            body.sourceItems
+            (resolveSearchTabInfo model.searchResults body.sourceItems)
         , inventoryTab
         ]
-
-
-viewRecordDescriptionTab : Language -> RecordPageModel RecordMsg -> String -> Element RecordMsg
-viewRecordDescriptionTab language model recordId =
-    let
-        isSelected =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    True
-
-                _ ->
-                    False
-    in
-    tabView
-        { clickMsg =
-            if isSelected then
-                RecordMsg.NothingHappened
-
-            else
-                RecordMsg.UserClickedRecordViewTab (DefaultRecordViewTab recordId)
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = BareTab localTranslations.description
-        }
 
 
 viewInventoryItemsTab : Language -> RecordPageModel RecordMsg -> InventoryItemsSectionBody -> Element RecordMsg

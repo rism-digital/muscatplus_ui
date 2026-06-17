@@ -10,21 +10,21 @@ import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
-import Page.Record.Msg as RecordMsg exposing (RecordMsg(..))
+import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Incipit exposing (IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Publication exposing (PublicationBody, WorkCatalogueStatus)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, sectionSpacing, tableHeaderStyles)
-import Page.UI.Components exposing (Tab(..), formatPublicationStatusBadge, pageBodyOrEmpty, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
-import Page.UI.Errors exposing (errorMessageString)
+import Page.UI.Components exposing (formatPublicationStatusBadge, pageBodyOrEmpty, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
 import Page.UI.Search.Pagination exposing (viewTablePagination)
 import Page.UI.Search.SearchTemplate exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
@@ -236,21 +236,21 @@ viewRecordTopBar language model body =
     let
         worksDisplayTab =
             viewMaybe
-                (\s ->
-                    viewWorksDisplayTab
+                (\searchInfo ->
+                    viewRecordSearchTab
                         { language = language
-                        , model = model
-                        , searchUrl = s.url
+                        , currentTab = model.currentTab
+                        , searchUrl = searchInfo.searchUrl
                         , tabLabel = localTranslations.works
-                        , worksCount = s.totalItems
+                        , totalItems = searchInfo.totalItems
                         }
                 )
-                body.works
+                (resolveSearchTabInfo model.searchResults body.works)
 
         publicationDescriptionTab =
-            viewPublicationDescriptionTab
+            viewRecordDescriptionTab
                 { language = language
-                , model = model
+                , currentTab = model.currentTab
                 , recordId = body.id
                 }
     in
@@ -264,64 +264,6 @@ viewRecordTopBar language model body =
         [ publicationDescriptionTab
         , worksDisplayTab
         ]
-
-
-viewWorksDisplayTab :
-    { language : Language
-    , model : RecordPageModel RecordMsg
-    , searchUrl : String
-    , tabLabel : LanguageMap
-    , worksCount : Int
-    }
-    -> Element RecordMsg
-viewWorksDisplayTab { language, model, searchUrl, tabLabel, worksCount } =
-    let
-        isSelected =
-            case model.currentTab of
-                ContentsSearchDisplayTab _ ->
-                    True
-
-                _ ->
-                    False
-
-        thisTab =
-            CountTab tabLabel (Just worksCount)
-    in
-    tabView
-        { clickMsg = UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = thisTab
-        }
-
-
-viewPublicationDescriptionTab :
-    { language : Language
-    , model : RecordPageModel RecordMsg
-    , recordId : String
-    }
-    -> Element RecordMsg
-viewPublicationDescriptionTab { language, model, recordId } =
-    let
-        isSelected =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    True
-
-                _ ->
-                    False
-
-        thisTab =
-            BareTab localTranslations.description
-    in
-    tabView
-        { clickMsg = UserClickedRecordViewTab (DefaultRecordViewTab recordId)
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = thisTab
-        }
 
 
 viewRelatedWorksListTabBody : Session -> RecordPageModel RecordMsg -> Element RecordMsg
@@ -381,26 +323,19 @@ viewRelatedWorksSectionRouter session model =
             , paragraphFormatter = viewParagraphField
             }
     in
-    case model.searchResults of
-        Loading (Just (SearchData oldData)) ->
-            viewWorksResultsSection resultsConfig True oldData
+    viewRecordSearchResults
+        { language = session.language
+        , loadingView = viewRelatedWorksSearchResultsLoadingTmpl session.language
+        , loadedView =
+            \body ->
+                case model.searchResults of
+                    Loading (Just (SearchData _)) ->
+                        viewWorksResultsSection resultsConfig True body
 
-        Loading _ ->
-            viewRelatedWorksSearchResultsLoadingTmpl session.language
-
-        Response (SearchData body) ->
-            viewWorksResultsSection resultsConfig False body
-
-        Error err ->
-            errorMessageString session.language err
-                |> text
-
-        NoResponseToShow ->
-            viewRelatedWorksSearchResultsLoadingTmpl session.language
-
-        _ ->
-            extractLabelFromLanguageMap session.language localTranslations.unknownError
-                |> text
+                    _ ->
+                        viewWorksResultsSection resultsConfig False body
+        , response = model.searchResults
+        }
 
 
 viewWorksResultsSection : SearchResultsSectionConfig a msg -> Bool -> SearchBody -> Element msg

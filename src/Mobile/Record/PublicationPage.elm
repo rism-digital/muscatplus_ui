@@ -1,6 +1,6 @@
 module Mobile.Record.PublicationPage exposing (viewFullMobilePublicationPage)
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, link, none, padding, paddingEach, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, link, padding, paddingEach, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
@@ -12,8 +12,7 @@ import Page.RecordTypes.Publication exposing (PublicationBody, WorkCatalogueStat
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody)
 import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
-import Page.UI.Components exposing (Tab(..), formatPublicationStatusBadge, pageBodyOrEmpty, tabView, viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
-import Page.UI.Errors exposing (errorMessageString)
+import Page.UI.Components exposing (formatPublicationStatusBadge, pageBodyOrEmpty, viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (folderMusicSvg, spinnerSvg)
 import Page.UI.Record.ContentsSection exposing (viewCreator)
@@ -21,9 +20,9 @@ import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (mobilePageHeaderTemplate)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Style exposing (colourScheme)
-import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
@@ -130,62 +129,36 @@ viewDescriptionTab session body =
 
 viewWorksTabBody : Session -> RecordPageModel RecordMsg -> Element RecordMsg
 viewWorksTabBody session model =
-    case model.searchResults of
-        Loading (Just (SearchData oldData)) ->
-            viewWorksSearchResultsSection session oldData
-
-        Loading _ ->
-            viewMobileWorksLoading
-
-        Response (SearchData body) ->
-            viewWorksSearchResultsSection session body
-
-        Error err ->
-            errorMessageString session.language err
-                |> text
-
-        NoResponseToShow ->
-            viewMobileWorksLoading
-
-        _ ->
-            extractLabelFromLanguageMap session.language localTranslations.unknownError
-                |> text
+    viewRecordSearchResults
+        { language = session.language
+        , loadingView = viewMobileWorksLoading
+        , loadedView = viewWorksSearchResultsSection session
+        , response = model.searchResults
+        }
 
 
 viewRecordTopBar : Language -> RecordPageModel RecordMsg -> PublicationBody -> Element RecordMsg
 viewRecordTopBar language model body =
     let
         publicationDescriptionTab =
-            viewPublicationDescriptionTab
+            viewRecordDescriptionTab
                 { language = language
-                , model = model
+                , currentTab = model.currentTab
                 , recordId = body.id
                 }
 
         worksDisplayTab =
             viewMaybe
-                (\s ->
-                    let
-                        ( searchUrl, worksCount ) =
-                            case model.searchResults of
-                                Loading (Just (SearchData data)) ->
-                                    ( data.id, data.totalItems )
-
-                                Response (SearchData data) ->
-                                    ( data.id, data.totalItems )
-
-                                _ ->
-                                    ( s.url, s.totalItems )
-                    in
-                    viewWorksDisplayTab
+                (\searchInfo ->
+                    viewRecordSearchTab
                         { language = language
-                        , model = model
-                        , searchUrl = searchUrl
+                        , currentTab = model.currentTab
+                        , searchUrl = searchInfo.searchUrl
                         , tabLabel = localTranslations.works
-                        , worksCount = worksCount
+                        , totalItems = searchInfo.totalItems
                         }
                 )
-                body.works
+                (resolveSearchTabInfo model.searchResults body.works)
     in
     row
         [ width fill
@@ -198,72 +171,6 @@ viewRecordTopBar language model body =
         [ publicationDescriptionTab
         , worksDisplayTab
         ]
-
-
-viewWorksDisplayTab :
-    { language : Language
-    , model : RecordPageModel RecordMsg
-    , searchUrl : String
-    , tabLabel : Language.LanguageMap
-    , worksCount : Int
-    }
-    -> Element RecordMsg
-viewWorksDisplayTab { language, model, searchUrl, tabLabel, worksCount } =
-    let
-        isSelected =
-            case model.currentTab of
-                ContentsSearchDisplayTab _ ->
-                    True
-
-                _ ->
-                    False
-
-        tabMsg =
-            if isSelected then
-                RecordMsg.NothingHappened
-
-            else
-                RecordMsg.UserClickedRecordViewTab (ContentsSearchDisplayTab searchUrl)
-    in
-    tabView
-        { clickMsg = tabMsg
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = CountTab tabLabel (Just worksCount)
-        }
-
-
-viewPublicationDescriptionTab :
-    { language : Language
-    , model : RecordPageModel RecordMsg
-    , recordId : String
-    }
-    -> Element RecordMsg
-viewPublicationDescriptionTab { language, model, recordId } =
-    let
-        isSelected =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    True
-
-                _ ->
-                    False
-
-        tabMsg =
-            if isSelected then
-                RecordMsg.NothingHappened
-
-            else
-                RecordMsg.UserClickedRecordViewTab (DefaultRecordViewTab recordId)
-    in
-    tabView
-        { clickMsg = tabMsg
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = BareTab localTranslations.description
-        }
 
 
 viewMobileWorksLoading : Element msg

@@ -3,21 +3,13 @@ module Page.UI.Record.Previews.Institution exposing (viewInstitutionPreview)
 import Element exposing (Element, alignTop, centerY, column, el, fill, height, htmlAttribute, paddingXY, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
-import Maybe.Extra as ME
 import Page.RecordTypes.Institution exposing (InstitutionBody)
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
-import Page.UI.Components exposing (pageBodyOrEmpty)
-import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (institutionSvg)
-import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
-import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
-import Page.UI.Record.LocationSection exposing (viewLocationAddressSection)
-import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
+import Page.UI.Record.Bodies.Institution exposing (viewInstitutionSections)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
-import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
-import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
 
 
@@ -26,59 +18,25 @@ viewInstitutionPreview :
     , paragraphFormatter : Language -> List LabelValue -> Element msg
     , relationshipFormatter : Language -> LanguageMap -> List RelationshipBody -> Element msg
     , summaryFormatter : Language -> List LabelValue -> Element msg
+    , window : ( Int, Int )
     }
     -> InstitutionBody
     -> Element msg
-viewInstitutionPreview { language, paragraphFormatter, relationshipFormatter, summaryFormatter } body =
+viewInstitutionPreview { language, paragraphFormatter, relationshipFormatter, summaryFormatter, window } body =
     let
-        isEmpty =
-            ME.isNothing body.organizationDetails
-                && ME.isNothing body.location
-                && ME.isNothing body.relationships
-                && ME.isNothing body.notes
-                && ME.isNothing body.externalResources
-                && ME.isNothing body.externalAuthorities
-
         previewBody =
-            pageBodyOrEmpty language
-                isEmpty
-                [ viewMaybe
-                    (viewOrganizationDetailsSection
-                        { language = language
-                        , summaryFormatter = summaryFormatter
-                        }
-                    )
-                    body.organizationDetails
-                , viewMaybe
-                    (viewLocationAddressSection
-                        { language = language
-                        , summaryFormatter = summaryFormatter
-                        }
-                    )
-                    body.location
-                , viewMaybe
-                    (viewRelationshipsSection
-                        { language = language
-                        , relationshipFormatter = relationshipFormatter
-                        }
-                    )
-                    body.relationships
-                , viewMaybe
-                    (viewNotesSection
-                        { language = language
-                        , paragraphFormatter = paragraphFormatter
-                        }
-                    )
-                    body.notes
-                , viewMaybe
-                    (viewExternalResourcesSection
-                        { language = language
-                        , recordId = body.id
-                        }
-                    )
-                    body.externalResources
-                , viewMaybe (viewExternalAuthoritiesSection language) body.externalAuthorities
-                ]
+            viewInstitutionSections
+                { includeContributions = True
+                , includeDigitalObjects = False
+                , includeLocationMap = True
+                , language = language
+                , paragraphFormatter = paragraphFormatter
+                , recordId = body.id
+                , relationshipFormatter = relationshipFormatter
+                , summaryFormatter = summaryFormatter
+                , window = window
+                }
+                body
 
         recordIcon =
             el
