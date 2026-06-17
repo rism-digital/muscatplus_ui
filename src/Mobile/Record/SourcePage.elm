@@ -15,7 +15,8 @@ import Page.UI.Components exposing (Tab(..), h3s, sourceIconChooser, tabView, vi
 import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Record.Bodies.Source exposing (viewSourceSections)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
-import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchTab)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo)
+import Page.UI.Record.TabShell exposing (TabSpec, descriptionTab, searchTab, selectBody, viewMobileTabBar)
 import Page.UI.Search.SearchTemplate exposing (viewMobileSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme)
 import Response exposing (Response(..))
@@ -29,6 +30,12 @@ viewFullMobileSourcePage :
     -> Element RecordMsg
 viewFullMobileSourcePage session model body =
     let
+        descriptionBody =
+            viewDescriptionTab session model body
+
+        tabs =
+            viewRecordTabs session model body descriptionBody
+
         sourceIcon =
             .recordType body.sourceTypes
                 |> .type_
@@ -46,22 +53,9 @@ viewFullMobileSourcePage session model body =
         { session = session
         , body = body
         , icon = sourceIconView
-        , topBar = viewRecordTopBar session.language model body
-        , bodyView = chooseBody session model body
+        , topBar = viewMobileTabBar tabs
+        , bodyView = (selectBody { bodyView = descriptionBody, showBottomShadow = True } tabs).bodyView
         }
-
-
-chooseBody : Session -> RecordPageModel RecordMsg -> FullSourceBody -> Element RecordMsg
-chooseBody session model body =
-    case model.currentTab of
-        ContentsSearchDisplayTab _ ->
-            viewSourceSearchTabBody session model
-
-        InventoryItemsDisplayTab _ ->
-            viewMobileInventoryItemsTabBody session model.inventoryItems
-
-        _ ->
-            viewDescriptionTab session model body
 
 
 viewDescriptionTab : Session -> RecordPageModel RecordMsg -> FullSourceBody -> Element RecordMsg
@@ -99,51 +93,57 @@ viewDescriptionTab session model body =
         ]
 
 
-viewRecordTopBar : Language -> RecordPageModel RecordMsg -> FullSourceBody -> Element RecordMsg
-viewRecordTopBar language model body =
-    row
-        [ width fill
-        , height (px 35)
-        , alignLeft
-        , alignBottom
-        , spacing 10
-        , Element.paddingXY 10 0
-        ]
-        (viewRecordDescriptionTab
-            { language = language
-            , currentTab = model.currentTab
-            , recordId = body.id
-            }
-            :: (resolveSearchTabInfo model.searchResults body.sourceItems
-                    |> Maybe.andThen
-                        (\searchInfo ->
-                            if searchInfo.totalItems > 0 then
-                                Just
-                                    (viewRecordSearchTab
-                                        { language = language
-                                        , currentTab = model.currentTab
-                                        , searchUrl = searchInfo.searchUrl
-                                        , tabLabel = localTranslations.sourceContents
-                                        , totalItems = searchInfo.totalItems
-                                        }
-                                    )
+viewRecordTabs :
+    Session
+    -> RecordPageModel RecordMsg
+    -> FullSourceBody
+    -> Element RecordMsg
+    -> List (TabSpec RecordMsg)
+viewRecordTabs session model body descriptionBody =
+    descriptionTab
+        { bodyView = descriptionBody
+        , currentTab = model.currentTab
+        , language = session.language
+        , recordId = body.id
+        , showBottomShadow = True
+        }
+        :: (resolveSearchTabInfo model.searchResults body.sourceItems
+                |> Maybe.andThen
+                    (\searchInfo ->
+                        if searchInfo.totalItems > 0 then
+                            Just
+                                (searchTab
+                                    { bodyView = viewSourceSearchTabBody session model
+                                    , currentTab = model.currentTab
+                                    , language = session.language
+                                    , searchUrl = searchInfo.searchUrl
+                                    , showBottomShadow = False
+                                    , tabLabel = localTranslations.sourceContents
+                                    , totalItems = searchInfo.totalItems
+                                    }
+                                )
 
-                            else
-                                Nothing
-                        )
-                    |> Maybe.map List.singleton
-                    |> Maybe.withDefault []
-               )
-            ++ (body.inventoryItems
-                    |> Maybe.map (viewInventoryItemsTab language model)
-                    |> Maybe.map List.singleton
-                    |> Maybe.withDefault []
-               )
-        )
+                        else
+                            Nothing
+                    )
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+           )
+        ++ (body.inventoryItems
+                |> Maybe.map (viewInventoryItemsTab session session.language model.inventoryItems model)
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+           )
 
 
-viewInventoryItemsTab : Language -> RecordPageModel RecordMsg -> InventoryItemsSectionBody -> Element RecordMsg
-viewInventoryItemsTab language model inventoryItems =
+viewInventoryItemsTab :
+    Session
+    -> Language
+    -> Response InventoryItemsBody
+    -> RecordPageModel RecordMsg
+    -> InventoryItemsSectionBody
+    -> TabSpec RecordMsg
+viewInventoryItemsTab session language inventoryItemsResponse model inventoryItems =
     let
         isSelected =
             case model.currentTab of
@@ -153,18 +153,26 @@ viewInventoryItemsTab language model inventoryItems =
                 _ ->
                     False
     in
-    tabView
-        { clickMsg =
-            if isSelected then
-                RecordMsg.NothingHappened
+    { body =
+        Just
+            { bodyView = viewMobileInventoryItemsTabBody session inventoryItemsResponse
+            , showBottomShadow = False
+            }
+    , isSelected = isSelected
+    , view =
+        tabView
+            { clickMsg =
+                if isSelected then
+                    RecordMsg.NothingHappened
 
-            else
-                RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.id)
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = CountTab localTranslations.inventoryItems (Just inventoryItems.totalItems)
-        }
+                else
+                    RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.id)
+            , icon = none
+            , isSelected = isSelected
+            , language = language
+            , tab = CountTab localTranslations.inventoryItems (Just inventoryItems.totalItems)
+            }
+    }
 
 
 viewMobileInventoryItemsTabBody : Session -> Response InventoryItemsBody -> Element RecordMsg

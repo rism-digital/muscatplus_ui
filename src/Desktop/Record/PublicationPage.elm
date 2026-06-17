@@ -1,7 +1,7 @@
 module Desktop.Record.PublicationPage exposing (viewFullPublicationPage)
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, none, padding, paragraph, px, row, scrollbarY, shrink, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -24,7 +24,8 @@ import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
-import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordSearchResults)
+import Page.UI.Record.TabShell exposing (TabSpec, descriptionTab, searchTab, selectBody, viewDesktopTabBar)
 import Page.UI.Search.Pagination exposing (viewTablePagination)
 import Page.UI.Search.SearchTemplate exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig)
@@ -40,20 +41,20 @@ viewFullPublicationPage :
     -> Element RecordMsg
 viewFullPublicationPage session model body =
     let
-        pageBodyView =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    viewDescriptionTab
-                        { language = session.language }
-                        body
+        descriptionBody =
+            viewDescriptionTab
+                { language = session.language }
+                body
 
-                ContentsSearchDisplayTab _ ->
-                    viewRelatedWorksListTabBody session model
+        tabs =
+            viewRecordTabs session model body descriptionBody
 
-                _ ->
-                    viewDescriptionTab
-                        { language = session.language }
-                        body
+        selectedBody =
+            selectBody
+                { bodyView = descriptionBody
+                , showBottomShadow = True
+                }
+                tabs
 
         icon =
             el
@@ -76,7 +77,7 @@ viewFullPublicationPage session model body =
                 none
 
             else
-                viewRecordTopBar session.language model body
+                viewDesktopTabBar tabs
     in
     row
         [ width fill
@@ -90,14 +91,46 @@ viewFullPublicationPage session model body =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ recordHeaderTemplate True
+            [ recordHeaderTemplate selectedBody.showBottomShadow
                 [ pageHeader
                 , tabBar
                 ]
-            , pageBodyView
+            , selectedBody.bodyView
             , pageFooterTemplateRouter session session.language body
             ]
         ]
+
+
+viewRecordTabs :
+    Session
+    -> RecordPageModel RecordMsg
+    -> PublicationBody
+    -> Element RecordMsg
+    -> List (TabSpec RecordMsg)
+viewRecordTabs session model body descriptionBody =
+    descriptionTab
+        { bodyView = descriptionBody
+        , currentTab = model.currentTab
+        , language = session.language
+        , recordId = body.id
+        , showBottomShadow = True
+        }
+        :: (resolveSearchTabInfo model.searchResults body.works
+                |> Maybe.map
+                    (\searchInfo ->
+                        searchTab
+                            { bodyView = viewRelatedWorksListTabBody session model
+                            , currentTab = model.currentTab
+                            , language = session.language
+                            , searchUrl = searchInfo.searchUrl
+                            , showBottomShadow = False
+                            , tabLabel = localTranslations.works
+                            , totalItems = searchInfo.totalItems
+                            }
+                    )
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+           )
 
 
 viewDescriptionTab : { language : Language } -> PublicationBody -> Element msg
@@ -225,45 +258,6 @@ viewCreator :
     -> Element msg
 viewCreator { language, relationshipFormatter } creator =
     viewCreatorImpl relationshipFormatter language creator
-
-
-viewRecordTopBar :
-    Language
-    -> RecordPageModel RecordMsg
-    -> PublicationBody
-    -> Element RecordMsg
-viewRecordTopBar language model body =
-    let
-        worksDisplayTab =
-            viewMaybe
-                (\searchInfo ->
-                    viewRecordSearchTab
-                        { language = language
-                        , currentTab = model.currentTab
-                        , searchUrl = searchInfo.searchUrl
-                        , tabLabel = localTranslations.works
-                        , totalItems = searchInfo.totalItems
-                        }
-                )
-                (resolveSearchTabInfo model.searchResults body.works)
-
-        publicationDescriptionTab =
-            viewRecordDescriptionTab
-                { language = language
-                , currentTab = model.currentTab
-                , recordId = body.id
-                }
-    in
-    row
-        [ width fill
-        , height (px 30)
-        , alignLeft
-        , alignBottom
-        , spacing 10
-        ]
-        [ publicationDescriptionTab
-        , worksDisplayTab
-        ]
 
 
 viewRelatedWorksListTabBody : Session -> RecordPageModel RecordMsg -> Element RecordMsg

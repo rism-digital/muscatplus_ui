@@ -9,15 +9,17 @@ import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
+import Page.RecordTypes.Inventory exposing (InventoryItemsBody)
 import Page.RecordTypes.Source exposing (FullSourceBody, InventoryItemsSectionBody)
 import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (Tab(..), sourceIconChooser, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
-import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Bodies.Source exposing (viewSourceSections)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
-import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchTab)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo)
+import Page.UI.Record.TabShell exposing (TabSpec, descriptionTab, searchTab, selectBody, viewDesktopTabBar)
 import Page.UI.Style exposing (colourScheme)
+import Response exposing (Response)
 import Session exposing (Session)
 import Set exposing (Set)
 
@@ -29,25 +31,25 @@ viewFullSourcePage :
     -> Element RecordMsg
 viewFullSourcePage session model body =
     let
-        ( pageBodyView, showBottomShadow ) =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    ( viewDescriptionTab
-                        { expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
-                        , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
-                        , expandedIncipits = model.incipitInfoExpanded
-                        , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , language = session.language
-                        }
-                        body
-                    , True
-                    )
+        descriptionBody =
+            viewDescriptionTab
+                { expandedDigitizedCopiesCallout = model.digitizedCopiesCalloutExpanded
+                , expandedDigitizedCopiesMsg = RecordMsg.UserClickedExpandDigitalCopiesCallout
+                , expandedIncipits = model.incipitInfoExpanded
+                , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                , language = session.language
+                }
+                body
 
-                ContentsSearchDisplayTab _ ->
-                    ( viewSourceSearchTabBody session model, False )
+        tabs =
+            viewRecordTabs session model body descriptionBody
 
-                InventoryItemsDisplayTab _ ->
-                    ( viewInventoryItemsTabBody session model.inventoryItems, False )
+        selectedBody =
+            selectBody
+                { bodyView = descriptionBody
+                , showBottomShadow = True
+                }
+                tabs
 
         sourceIcon =
             .recordType body.sourceTypes
@@ -74,7 +76,7 @@ viewFullSourcePage session model body =
                 none
 
             else
-                viewRecordTopBarRouter session.language model body
+                viewDesktopTabBar tabs
     in
     row
         [ width fill
@@ -87,11 +89,11 @@ viewFullSourcePage session model body =
             , alignTop
             , clipY
             ]
-            [ recordHeaderTemplate showBottomShadow
+            [ recordHeaderTemplate selectedBody.showBottomShadow
                 [ pageHeader
                 , tabBar
                 ]
-            , pageBodyView
+            , selectedBody.bodyView
             , pageFooterTemplateRouter session session.language body
             ]
         ]
@@ -139,52 +141,57 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
         ]
 
 
-viewRecordTopBarRouter :
-    Language
+viewRecordTabs :
+    Session
     -> RecordPageModel RecordMsg
     -> FullSourceBody
     -> Element RecordMsg
-viewRecordTopBarRouter language model body =
-    let
-        inventoryTab =
-            viewMaybe (viewInventoryItemsTab language model) body.inventoryItems
-    in
-    row
-        [ width fill
-        , height (px 35)
-        , spacing 10
-        ]
-        [ viewRecordDescriptionTab
-            { language = language
-            , currentTab = model.currentTab
-            , recordId = body.id
-            }
-        , viewMaybe
-            (\searchInfo ->
-                viewRecordSearchTab
-                    { language = language
-                    , currentTab = model.currentTab
-                    , searchUrl = searchInfo.searchUrl
-                    , tabLabel = localTranslations.sourceContents
-                    , totalItems = searchInfo.totalItems
-                    }
-            )
-            (resolveSearchTabInfo model.searchResults body.sourceItems
+    -> List (TabSpec RecordMsg)
+viewRecordTabs session model body descriptionBody =
+    descriptionTab
+        { bodyView = descriptionBody
+        , currentTab = model.currentTab
+        , language = session.language
+        , recordId = body.id
+        , showBottomShadow = True
+        }
+        :: (resolveSearchTabInfo model.searchResults body.sourceItems
                 |> Maybe.andThen
                     (\searchInfo ->
                         if searchInfo.totalItems > 0 then
-                            Just searchInfo
+                            Just
+                                (searchTab
+                                    { bodyView = viewSourceSearchTabBody session model
+                                    , currentTab = model.currentTab
+                                    , language = session.language
+                                    , searchUrl = searchInfo.searchUrl
+                                    , showBottomShadow = False
+                                    , tabLabel = localTranslations.sourceContents
+                                    , totalItems = searchInfo.totalItems
+                                    }
+                                )
 
                         else
                             Nothing
                     )
-            )
-        , inventoryTab
-        ]
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+           )
+        ++ (body.inventoryItems
+                |> Maybe.map (viewInventoryItemsTab session session.language model.inventoryItems model)
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+           )
 
 
-viewInventoryItemsTab : Language -> RecordPageModel RecordMsg -> InventoryItemsSectionBody -> Element RecordMsg
-viewInventoryItemsTab language model inventoryItems =
+viewInventoryItemsTab :
+    Session
+    -> Language
+    -> Response InventoryItemsBody
+    -> RecordPageModel RecordMsg
+    -> InventoryItemsSectionBody
+    -> TabSpec RecordMsg
+viewInventoryItemsTab session language inventoryItemsResponse model inventoryItems =
     let
         isSelected =
             case model.currentTab of
@@ -197,15 +204,23 @@ viewInventoryItemsTab language model inventoryItems =
         count =
             Just inventoryItems.totalItems
     in
-    tabView
-        { clickMsg =
-            if isSelected then
-                RecordMsg.NothingHappened
+    { body =
+        Just
+            { bodyView = viewInventoryItemsTabBody session inventoryItemsResponse
+            , showBottomShadow = False
+            }
+    , isSelected = isSelected
+    , view =
+        tabView
+            { clickMsg =
+                if isSelected then
+                    RecordMsg.NothingHappened
 
-            else
-                RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.id)
-        , icon = none
-        , isSelected = isSelected
-        , language = language
-        , tab = CountTab localTranslations.inventoryItems count
-        }
+                else
+                    RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.id)
+            , icon = none
+            , isSelected = isSelected
+            , language = language
+            , tab = CountTab localTranslations.inventoryItems count
+            }
+    }

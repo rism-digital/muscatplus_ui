@@ -4,8 +4,8 @@ import Element exposing (Element, alignTop, centerX, column, el, fill, height, h
 import Html.Attributes as HA
 import Language.LocalTranslations exposing (localTranslations)
 import Mobile.Record.PageShell exposing (viewMobileRecordPage)
-import Mobile.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Mobile.Record.SourceSearch exposing (viewSourceSearchTabBody)
+import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Work exposing (WorkBody)
 import Page.UI.Attributes exposing (sectionSpacing)
@@ -13,6 +13,7 @@ import Page.UI.Components exposing (viewMobileParagraphField, viewMobileSummaryF
 import Page.UI.Images exposing (userMusicSvg)
 import Page.UI.Record.Bodies.Work exposing (viewWorkSections)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
+import Page.UI.Record.TabShell exposing (selectBody, sourceSearchTabs, viewMobileTabBar)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
@@ -24,6 +25,23 @@ viewFullMobileWorkPage :
     -> Element RecordMsg
 viewFullMobileWorkPage session model body =
     let
+        descriptionBody =
+            viewDescriptionTab session model body
+
+        tabs =
+            sourceSearchTabs
+                { bodyView = viewSourceSearchTabBody session model
+                , currentTab = model.currentTab
+                , descriptionBodyView = descriptionBody
+                , descriptionShowBottomShadow = True
+                , fallbackBody = body.sources
+                , language = session.language
+                , recordId = body.id
+                , searchResults = model.searchResults
+                , searchShowBottomShadow = False
+                , tabLabel = localTranslations.sources
+                }
+
         icon =
             el
                 [ width (px 25)
@@ -36,26 +54,9 @@ viewFullMobileWorkPage session model body =
         { session = session
         , body = body
         , icon = icon
-        , topBar =
-            viewRecordSourceSearchTabBar
-                { body = body.sources
-                , language = session.language
-                , model = model
-                , recordId = body.id
-                , tabLabel = localTranslations.sources
-                }
-        , bodyView = chooseBody session model body
+        , topBar = viewMobileTabBar tabs
+        , bodyView = (selectBody { bodyView = descriptionBody, showBottomShadow = True } tabs).bodyView
         }
-
-
-chooseBody : Session -> RecordPageModel RecordMsg -> WorkBody -> Element RecordMsg
-chooseBody session model body =
-    case model.currentTab of
-        ContentsSearchDisplayTab _ ->
-            viewSourceSearchTabBody session model
-
-        _ ->
-            viewDescriptionTab session model body
 
 
 viewDescriptionTab : Session -> RecordPageModel RecordMsg -> WorkBody -> Element RecordMsg

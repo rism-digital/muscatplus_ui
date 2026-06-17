@@ -1,6 +1,6 @@
 module Mobile.Record.PublicationPage exposing (viewFullMobilePublicationPage)
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, column, el, fill, height, htmlAttribute, link, padding, paddingEach, paddingXY, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, link, padding, paddingEach, px, row, scrollbarY, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables, toLanguageMap)
@@ -18,7 +18,8 @@ import Page.UI.Record.ContentsSection exposing (viewCreator)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRelationshipsSection)
-import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordSearchResults)
+import Page.UI.Record.TabShell exposing (TabSpec, descriptionTab, searchTab, selectBody, viewMobileTabBar)
 import Page.UI.Search.MobileResults exposing (viewMobilePagedResults)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchTemplate exposing (viewMobileSearchResultsLoadingTmpl)
@@ -33,6 +34,12 @@ viewFullMobilePublicationPage :
     -> Element RecordMsg
 viewFullMobilePublicationPage session model body =
     let
+        descriptionBody =
+            viewDescriptionTab session body
+
+        tabs =
+            viewRecordTabs session model body descriptionBody
+
         icon =
             el
                 [ width (px 25)
@@ -40,21 +47,13 @@ viewFullMobilePublicationPage session model body =
                 , centerX
                 ]
                 (folderMusicSvg colourScheme.darkBlue)
-
-        pageBodyView =
-            case model.currentTab of
-                ContentsSearchDisplayTab _ ->
-                    viewWorksTabBody session model
-
-                _ ->
-                    viewDescriptionTab session body
     in
     viewMobileRecordPage
         { session = session
         , body = body
         , icon = icon
-        , topBar = viewRecordTopBar session.language model body
-        , bodyView = pageBodyView
+        , topBar = viewMobileTabBar tabs
+        , bodyView = (selectBody { bodyView = descriptionBody, showBottomShadow = True } tabs).bodyView
         }
 
 
@@ -123,40 +122,36 @@ viewWorksTabBody session model =
         }
 
 
-viewRecordTopBar : Language -> RecordPageModel RecordMsg -> PublicationBody -> Element RecordMsg
-viewRecordTopBar language model body =
-    let
-        publicationDescriptionTab =
-            viewRecordDescriptionTab
-                { language = language
-                , currentTab = model.currentTab
-                , recordId = body.id
-                }
-
-        worksDisplayTab =
-            viewMaybe
-                (\searchInfo ->
-                    viewRecordSearchTab
-                        { language = language
-                        , currentTab = model.currentTab
-                        , searchUrl = searchInfo.searchUrl
-                        , tabLabel = localTranslations.works
-                        , totalItems = searchInfo.totalItems
-                        }
-                )
-                (resolveSearchTabInfo model.searchResults body.works)
-    in
-    row
-        [ width fill
-        , height (px 35)
-        , alignLeft
-        , alignBottom
-        , spacing 10
-        , paddingXY 10 0
-        ]
-        [ publicationDescriptionTab
-        , worksDisplayTab
-        ]
+viewRecordTabs :
+    Session
+    -> RecordPageModel RecordMsg
+    -> PublicationBody
+    -> Element RecordMsg
+    -> List (TabSpec RecordMsg)
+viewRecordTabs session model body descriptionBody =
+    descriptionTab
+        { bodyView = descriptionBody
+        , currentTab = model.currentTab
+        , language = session.language
+        , recordId = body.id
+        , showBottomShadow = True
+        }
+        :: (resolveSearchTabInfo model.searchResults body.works
+                |> Maybe.map
+                    (\searchInfo ->
+                        searchTab
+                            { bodyView = viewWorksTabBody session model
+                            , currentTab = model.currentTab
+                            , language = session.language
+                            , searchUrl = searchInfo.searchUrl
+                            , showBottomShadow = False
+                            , tabLabel = localTranslations.works
+                            , totalItems = searchInfo.totalItems
+                            }
+                    )
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+           )
 
 viewWorksSearchResultsSection : Session -> SearchBody -> Element RecordMsg
 viewWorksSearchResultsSection session body =

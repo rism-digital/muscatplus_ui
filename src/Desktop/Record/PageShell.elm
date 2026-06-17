@@ -1,35 +1,26 @@
-module Desktop.Record.PageShell exposing (TabBody, viewDesktopRecordPage)
+module Desktop.Record.PageShell exposing (viewDesktopRecordPage)
 
 import Element exposing (Element, alignTop, clipY, column, fill, height, row, width)
 import Element.Background as Background
 import Element.Region as Region
 import Language exposing (LanguageMap)
 import Page.RecordTypes.Shared exposing (RecordHistory)
+import Page.UI.Record.TabShell exposing (TabBody)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplateNoToc, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
-
-
-type alias TabBody msg =
-    { bodyView : Element msg
-    , showBottomShadow : Bool
-    }
 
 
 viewDesktopRecordPage :
     { session : Session
     , body : { a | id : String, label : LanguageMap, recordHistory : RecordHistory }
     , icon : Element msg
-    , chooseBody : currentTab -> TabBody msg
-    , currentTab : currentTab
+    , selectedBody : TabBody msg
     , tabBar : Element msg
     }
     -> Element msg
-viewDesktopRecordPage { session, body, icon, chooseBody, currentTab, tabBar } =
+viewDesktopRecordPage { session, body, icon, selectedBody, tabBar } =
     let
-        selectedBody =
-            chooseBody currentTab
-
         pageHeader =
             if session.isFramed then
                 subHeaderTemplate session.language (Just icon) body

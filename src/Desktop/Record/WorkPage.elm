@@ -1,7 +1,7 @@
 module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 
-import Desktop.Record.PageShell exposing (TabBody, viewDesktopRecordPage)
-import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
+import Desktop.Record.PageShell exposing (viewDesktopRecordPage)
+import Desktop.Record.SourceSearch exposing (viewSourceSearchTabBody)
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language)
@@ -14,6 +14,7 @@ import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryFi
 import Page.UI.Images exposing (userMusicSvg)
 import Page.UI.Record.Bodies.Work exposing (viewWorkSections)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
+import Page.UI.Record.TabShell exposing (selectBody, sourceSearchTabs, viewDesktopTabBar)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
@@ -29,6 +30,28 @@ viewFullWorkPage session model body =
         language =
             session.language
 
+        descriptionBody =
+            viewDescriptionTab
+                { expandedIncipits = model.incipitInfoExpanded
+                , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                , language = language
+                }
+                body
+
+        tabs =
+            sourceSearchTabs
+                { bodyView = viewSourceSearchTabBody session model
+                , currentTab = model.currentTab
+                , descriptionBodyView = descriptionBody
+                , descriptionShowBottomShadow = True
+                , fallbackBody = body.sources
+                , language = language
+                , recordId = body.id
+                , searchResults = model.searchResults
+                , searchShowBottomShadow = False
+                , tabLabel = localTranslations.sources
+                }
+
         icon =
             el
                 [ width (px 25)
@@ -42,48 +65,14 @@ viewFullWorkPage session model body =
         { session = session
         , body = body
         , icon = icon
-        , chooseBody = chooseBody session model body
-        , currentTab = model.currentTab
-        , tabBar =
-            viewRecordSourceSearchTabBar
-                { body = body.sources
-                , language = language
-                , model = model
-                , recordId = body.id
-                , tabLabel = localTranslations.sources
+        , selectedBody =
+            selectBody
+                { bodyView = descriptionBody
+                , showBottomShadow = True
                 }
+                tabs
+        , tabBar = viewDesktopTabBar tabs
         }
-
-
-chooseBody : Session -> RecordPageModel RecordMsg -> WorkBody -> CurrentRecordViewTab -> TabBody RecordMsg
-chooseBody session model body currentTab =
-    case currentTab of
-        DefaultRecordViewTab _ ->
-            { bodyView =
-                viewDescriptionTab
-                    { expandedIncipits = model.incipitInfoExpanded
-                    , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                    , language = session.language
-                    }
-                    body
-            , showBottomShadow = True
-            }
-
-        ContentsSearchDisplayTab _ ->
-            { bodyView = viewSourceSearchTabBody session model
-            , showBottomShadow = False
-            }
-
-        _ ->
-            { bodyView =
-                viewDescriptionTab
-                    { expandedIncipits = model.incipitInfoExpanded
-                    , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                    , language = session.language
-                    }
-                    body
-            , showBottomShadow = True
-            }
 
 viewDescriptionTab :
     { expandedIncipits : Set String
