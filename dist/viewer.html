@@ -15,10 +15,28 @@
             font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
             overflow: hidden;
         }
-        #viewer-layout {
-            position: relative;
+        #page-layout {
             width: 100vw;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #top-bar {
+            flex: 0 0 56px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            padding: 0 16px;
+            border-bottom: 1px solid #d9d9d9;
+            background: rgba(255, 255, 255, 0.98);
+        }
+        #viewer-layout {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 56px);
+            flex: 1 1 auto;
             overflow: hidden;
         }
         #diva-wrapper {
@@ -49,21 +67,6 @@
             transform: translateX(0);
             pointer-events: auto;
         }
-        #record-header {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 8px;
-            padding: 16px;
-            border-bottom: 1px solid #d9d9d9;
-            background: rgba(255, 255, 255, 0.96);
-        }
-        #record-toggle {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            z-index: 3;
-        }
         #record-toggle[hidden] {
             display: none;
         }
@@ -90,7 +93,7 @@
         }
         #record-frame {
             width: 100%;
-            height: calc(100% - 52px);
+            height: 100%;
             border: 0;
             flex: 1 1 auto;
         }
@@ -103,14 +106,16 @@
     </style>
 </head>
 <body>
-<div id="viewer-layout">
-    <div id="diva-wrapper"></div>
-    <button id="record-toggle" class="viewer-button" type="button" hidden>Show record</button>
-    <div id="record-wrapper">
-        <div id="record-header">
-            <button id="record-close" class="viewer-button" type="button">Hide record</button>
+<div id="page-layout">
+    <div id="top-bar">
+        <button id="viewer-close" class="viewer-button" type="button">Close Viewer</button>
+        <button id="record-toggle" class="viewer-button" type="button" hidden>Show record</button>
+    </div>
+    <div id="viewer-layout">
+        <div id="diva-wrapper"></div>
+        <div id="record-wrapper">
+            <iframe id="record-frame" title="Record"></iframe>
         </div>
-        <iframe id="record-frame" title="Record"></iframe>
     </div>
 </div>
 
@@ -135,7 +140,7 @@
     const recordWrapper = document.getElementById("record-wrapper");
     const recordFrame = document.getElementById("record-frame");
     const recordToggle = document.getElementById("record-toggle");
-    const recordClose = document.getElementById("record-close");
+    const viewerClose = document.getElementById("viewer-close");
     const viewerLayout = document.getElementById("viewer-layout");
 
     function syncRecordPanelWidth()
@@ -148,9 +153,23 @@
         syncRecordPanelWidth();
         viewerLayout.classList.toggle("record-open", isOpen);
         recordWrapper.classList.toggle("is-open", isOpen);
-        recordToggle.hidden = isOpen;
         recordToggle.setAttribute("aria-expanded", String(isOpen));
+        recordToggle.textContent = isOpen ? "Hide record" : "Show record";
     }
+
+    function closeViewer()
+    {
+        window.close();
+
+        window.setTimeout(() => {
+            if (!window.closed)
+            {
+                window.location.replace("about:blank");
+            }
+        }, 100);
+    }
+
+    viewerClose.addEventListener("click", closeViewer);
 
     if (objectData)
     {
@@ -163,8 +182,7 @@
     {
         recordFrame.src = recordUrl;
         recordToggle.hidden = false;
-        recordToggle.addEventListener("click", () => setRecordPanelOpen(true));
-        recordClose.addEventListener("click", () => setRecordPanelOpen(false));
+        recordToggle.addEventListener("click", () => setRecordPanelOpen(!recordWrapper.classList.contains("is-open")));
         window.addEventListener("resize", syncRecordPanelWidth);
         setRecordPanelOpen(true);
     }
