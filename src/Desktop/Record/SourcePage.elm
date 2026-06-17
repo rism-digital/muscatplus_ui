@@ -2,7 +2,6 @@ module Desktop.Record.SourcePage exposing (viewFullSourcePage)
 
 import Desktop.Record.InventoryItemsTable exposing (viewInventoryItemsTabBody)
 import Desktop.Record.SourceSearch exposing (viewSourceSearchTabBody)
-import Dict
 import Element exposing (Element, alignTop, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
 import Element.Region as Region
 import Html.Attributes as HA
@@ -13,19 +12,11 @@ import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Source exposing (FullSourceBody, InventoryItemsSectionBody)
 import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (Tab(..), sourceIconChooser, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Record.ContentsSection exposing (viewContentsSection)
-import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
-import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
-import Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalResourcesSection)
-import Page.UI.Record.Incipits exposing (viewIncipitsSection)
-import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.Bodies.Source exposing (viewSourceSections)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
-import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
-import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
-import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
+import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchTab)
-import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 import Set exposing (Set)
@@ -116,10 +107,6 @@ viewDescriptionTab :
     -> FullSourceBody
     -> Element msg
 viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg, expandedIncipits, incipitInfoToggleMsg, language } body =
-    let
-        allExternals =
-            gatherAllDigitizationLinksForCallout language body
-    in
     row
         [ width fill
         , height fill
@@ -133,88 +120,22 @@ viewDescriptionTab { expandedDigitizedCopiesCallout, expandedDigitizedCopiesMsg,
             , alignTop
             , padding 20
             ]
-            [ viewMaybe (viewPartOfSection language) body.partOf
-            , viewIf
-                (viewDigitizedCopiesCalloutSection
-                    { expandMsg = expandedDigitizedCopiesMsg
-                    , expanded = expandedDigitizedCopiesCallout
-                    , language = language
-                    , recordId = body.id
-                    }
-                    allExternals
-                )
-                (not (Dict.isEmpty allExternals))
-            , viewMaybe
-                (viewContentsSection
-                    { creator = body.creator
-                    , language = language
-                    , preRenderedFormatter = viewPreRenderedSummaryField
-                    , relationshipFormatter = viewRelationshipBody
-                    , summaryFormatter = viewSummaryField
-                    }
-                )
-                body.contents
-            , viewMaybe
-                (viewIncipitsSection
-                    { language = language
-                    , infoToggleMsg = incipitInfoToggleMsg
-                    , expandedIncipits = expandedIncipits
-                    , summaryFormatter = viewSummaryField
-                    }
-                )
-                body.incipits
-            , viewMaybe
-                (viewMaterialGroupsSection
-                    { language = language
-                    , paragraphFormatter = viewParagraphField
-                    , recordId = body.id
-                    , relationshipFormatter = viewRelationshipBody
-                    , summaryFormatter = viewSummaryField
-                    }
-                )
-                body.materialGroups
-            , viewMaybe
-                (viewRelationshipsSection
-                    { language = language
-                    , relationshipFormatter = viewRelationshipBody
-                    }
-                )
-                body.relationships
-            , viewMaybe
-                (viewSourceWorksSection
-                    { language = language
-                    , preRenderedFormatter = viewPreRenderedSummaryField
-                    }
-                )
-                body.works
-            , viewMaybe
-                (viewReferencesNotesSection
-                    { language = language
-                    , paragraphFormatter = viewParagraphField
-                    , preRenderedFormatter = viewPreRenderedSummaryField
-                    }
-                )
-                body.referencesNotes
-            , viewMaybe
-                (viewExternalResourcesSection
-                    { language = language
-                    , recordId = body.id
-                    }
-                )
-                body.externalResources
-            , viewMaybe
-                (viewExemplarsSection
-                    { language = language
-                    , paragraphFormatter = viewParagraphField
-                    , preRenderedFormatter = viewPreRenderedSummaryField
-                    , recordId = body.id
-                    , relationshipFormatter = viewRelationshipBody
-                    , summaryFormatter = viewSummaryField
-                    }
-                )
-                body.exemplars
-            , viewMaybe (viewDigitalObjectsSection language) body.digitalObjects
-            ]
+            (viewSourceSections
+                { expandedDigitizedCopiesCallout = expandedDigitizedCopiesCallout
+                , expandedDigitizedCopiesMsg = expandedDigitizedCopiesMsg
+                , expandedIncipits = expandedIncipits
+                , extraSectionsAfterReferencesNotes = []
+                , includeDigitalObjects = True
+                , incipitInfoToggleMsg = incipitInfoToggleMsg
+                , language = language
+                , paragraphFormatter = viewParagraphField
+                , preRenderedFormatter = viewPreRenderedSummaryField
+                , recordId = body.id
+                , relationshipFormatter = viewRelationshipBody
+                , summaryFormatter = viewSummaryField
+                }
+                body
+            )
         ]
 
 

@@ -1,6 +1,5 @@
 module Page.UI.Record.Previews.Source exposing (viewSourcePreview)
 
-import Dict
 import Element exposing (Element, alignTop, column, fill, height, htmlAttribute, paddingXY, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap)
@@ -9,18 +8,10 @@ import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (FullSourceBody)
 import Page.UI.Attributes exposing (lineSpacing, sectionSpacing)
 import Page.UI.Components exposing (sourceIconView)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
-import Page.UI.Record.ContentsSection exposing (viewContentsSection)
-import Page.UI.Record.ExemplarsSection exposing (viewExemplarsSection)
-import Page.UI.Record.ExternalResources exposing (gatherAllDigitizationLinksForCallout, viewDigitizedCopiesCalloutSection, viewExternalResourcesSection)
-import Page.UI.Record.Incipits exposing (viewIncipitsSection)
-import Page.UI.Record.MaterialGroupsSection exposing (viewMaterialGroupsSection)
+import Page.UI.Helpers exposing (viewMaybe)
+import Page.UI.Record.Bodies.Source exposing (viewSourceSections)
 import Page.UI.Record.PageTemplate exposing (pageFullRecordTemplate, pageHeaderTemplate)
-import Page.UI.Record.PartOfSection exposing (viewPartOfSection)
-import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
-import Page.UI.Record.Relationship exposing (viewRelationshipsSection)
 import Page.UI.Record.SourceItemsSection exposing (viewSourceItemsSection)
-import Page.UI.Record.WorksSection exposing (viewSourceWorksSection)
 import Set exposing (Set)
 
 
@@ -46,8 +37,16 @@ viewSourcePreview cfg body =
                 |> .type_
                 |> sourceIconView
 
-        allExternals =
-            gatherAllDigitizationLinksForCallout cfg.language body
+        sourceItemsSection =
+            viewMaybe
+                (viewSourceItemsSection
+                    { expandMsg = cfg.expandMsg
+                    , expanded = cfg.itemsExpanded
+                    , language = cfg.language
+                    , summaryFormatter = cfg.summaryFormatter
+                    }
+                )
+                body.sourceItems
     in
     row
         [ width fill
@@ -86,96 +85,22 @@ viewSourcePreview cfg body =
                     [ width fill
                     , spacing sectionSpacing
                     ]
-                    [ viewMaybe (viewPartOfSection cfg.language) body.partOf
-                    , viewIf
-                        (viewDigitizedCopiesCalloutSection
-                            { expandMsg = cfg.expandedDigitizedCopiesMsg
-                            , expanded = cfg.expandedDigitizedCopiesCallout
-                            , language = cfg.language
-                            , recordId = body.id
-                            }
-                            allExternals
-                        )
-                        (not (Dict.isEmpty allExternals))
-                    , viewMaybe
-                        (viewContentsSection
-                            { creator = body.creator
-                            , language = cfg.language
-                            , preRenderedFormatter = cfg.preRenderedFormatter
-                            , relationshipFormatter = cfg.relationshipFormatter
-                            , summaryFormatter = cfg.summaryFormatter
-                            }
-                        )
-                        body.contents
-                    , viewMaybe
-                        (viewIncipitsSection
-                            { language = cfg.language
-                            , infoToggleMsg = cfg.incipitInfoToggleMsg
-                            , expandedIncipits = cfg.incipitInfoExpanded
-                            , summaryFormatter = cfg.summaryFormatter
-                            }
-                        )
-                        body.incipits
-                    , viewMaybe
-                        (viewMaterialGroupsSection
-                            { language = cfg.language
-                            , paragraphFormatter = cfg.paragraphFormatter
-                            , recordId = body.id
-                            , relationshipFormatter = cfg.relationshipFormatter
-                            , summaryFormatter = cfg.summaryFormatter
-                            }
-                        )
-                        body.materialGroups
-                    , viewMaybe
-                        (viewRelationshipsSection
-                            { language = cfg.language
-                            , relationshipFormatter = cfg.relationshipFormatter
-                            }
-                        )
-                        body.relationships
-                    , viewMaybe
-                        (viewSourceWorksSection
-                            { language = cfg.language
-                            , preRenderedFormatter = cfg.preRenderedFormatter
-                            }
-                        )
-                        body.works
-                    , viewMaybe
-                        (viewReferencesNotesSection
-                            { language = cfg.language
-                            , paragraphFormatter = cfg.paragraphFormatter
-                            , preRenderedFormatter = cfg.preRenderedFormatter
-                            }
-                        )
-                        body.referencesNotes
-                    , viewMaybe
-                        (viewSourceItemsSection
-                            { expandMsg = cfg.expandMsg
-                            , expanded = cfg.itemsExpanded
-                            , language = cfg.language
-                            , summaryFormatter = cfg.summaryFormatter
-                            }
-                        )
-                        body.sourceItems
-                    , viewMaybe
-                        (viewExternalResourcesSection
-                            { language = cfg.language
-                            , recordId = body.id
-                            }
-                        )
-                        body.externalResources
-                    , viewMaybe
-                        (viewExemplarsSection
-                            { language = cfg.language
-                            , paragraphFormatter = cfg.paragraphFormatter
-                            , preRenderedFormatter = cfg.preRenderedFormatter
-                            , recordId = body.id
-                            , relationshipFormatter = cfg.relationshipFormatter
-                            , summaryFormatter = cfg.summaryFormatter
-                            }
-                        )
-                        body.exemplars
-                    ]
+                    (viewSourceSections
+                        { expandedDigitizedCopiesCallout = cfg.expandedDigitizedCopiesCallout
+                        , expandedDigitizedCopiesMsg = cfg.expandedDigitizedCopiesMsg
+                        , expandedIncipits = cfg.incipitInfoExpanded
+                        , extraSectionsAfterReferencesNotes = [ sourceItemsSection ]
+                        , includeDigitalObjects = False
+                        , incipitInfoToggleMsg = cfg.incipitInfoToggleMsg
+                        , language = cfg.language
+                        , paragraphFormatter = cfg.paragraphFormatter
+                        , preRenderedFormatter = cfg.preRenderedFormatter
+                        , recordId = body.id
+                        , relationshipFormatter = cfg.relationshipFormatter
+                        , summaryFormatter = cfg.summaryFormatter
+                        }
+                        body
+                    )
                 ]
             ]
         ]
