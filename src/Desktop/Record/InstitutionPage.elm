@@ -1,8 +1,8 @@
 module Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
 
+import Desktop.Record.PageShell exposing (TabBody, viewDesktopRecordPage)
 import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
-import Element.Background as Background
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -20,7 +20,6 @@ import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSecti
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.LocationSection exposing (viewLocationAddressSection, viewLocationMapSection)
 import Page.UI.Record.OrganizationDetailsSection exposing (viewOrganizationDetailsSection)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Style exposing (colourScheme)
@@ -113,27 +112,6 @@ viewFullInstitutionPage :
     -> Element RecordMsg
 viewFullInstitutionPage session model body =
     let
-        ( pageBodyView, showBottomShadow ) =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    ( viewDescriptionTab
-                        { language = session.language }
-                        session.window
-                        body
-                    , True
-                    )
-
-                ContentsSearchDisplayTab _ ->
-                    ( viewSourceSearchTabBody session model, False )
-
-                _ ->
-                    ( viewDescriptionTab
-                        { language = session.language }
-                        session.window
-                        body
-                    , True
-                    )
-
         icon =
             el
                 [ width (px 25)
@@ -142,40 +120,42 @@ viewFullInstitutionPage session model body =
                 , centerY
                 ]
                 (institutionSvg colourScheme.darkBlue)
-
-        pageHeader =
-            if session.isFramed then
-                subHeaderTemplate session.language (Just icon) body
-
-            else
-                pageHeaderTemplate session.language (Just icon) body
-
-        tabBar =
-            if session.isFramed then
-                none
-
-            else
-                viewRecordTopBar session.language model body
     in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , clipY
-            , Background.color colourScheme.white
-            ]
-            [ recordHeaderTemplate showBottomShadow
-                [ pageHeader
-                , tabBar
-                ]
-            , pageBodyView
-            , pageFooterTemplateRouter session session.language body
-            ]
-        ]
+    viewDesktopRecordPage
+        { session = session
+        , body = body
+        , icon = icon
+        , chooseBody = chooseBody session model body
+        , currentTab = model.currentTab
+        , tabBar = viewRecordTopBar session.language model body
+        }
+
+
+chooseBody : Session -> RecordPageModel RecordMsg -> InstitutionBody -> CurrentRecordViewTab -> TabBody RecordMsg
+chooseBody session model body currentTab =
+    case currentTab of
+        DefaultRecordViewTab _ ->
+            { bodyView =
+                viewDescriptionTab
+                    { language = session.language }
+                    session.window
+                    body
+            , showBottomShadow = True
+            }
+
+        ContentsSearchDisplayTab _ ->
+            { bodyView = viewSourceSearchTabBody session model
+            , showBottomShadow = False
+            }
+
+        _ ->
+            { bodyView =
+                viewDescriptionTab
+                    { language = session.language }
+                    session.window
+                    body
+            , showBottomShadow = True
+            }
 
 
 viewRecordTopBar :

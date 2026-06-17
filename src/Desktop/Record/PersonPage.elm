@@ -1,8 +1,8 @@
 module Desktop.Record.PersonPage exposing (viewFullPersonPage)
 
+import Desktop.Record.PageShell exposing (TabBody, viewDesktopRecordPage)
 import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
-import Element.Background as Background
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
@@ -19,7 +19,6 @@ import Page.UI.Record.DigitalObjectsSection exposing (viewDigitalObjectsSection)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.NameVariantsSection exposing (viewNameVariantsSection)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.WorksSection exposing (viewPersonWorksSection)
@@ -106,25 +105,6 @@ viewFullPersonPage :
     -> Element RecordMsg
 viewFullPersonPage session model body =
     let
-        ( pageBodyView, showBottomShadow ) =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    ( viewDescriptionTab
-                        { language = session.language }
-                        body
-                    , True
-                    )
-
-                ContentsSearchDisplayTab _ ->
-                    ( viewSourceSearchTabBody session model, False )
-
-                _ ->
-                    ( viewDescriptionTab
-                        { language = session.language }
-                        body
-                    , True
-                    )
-
         icon =
             el
                 [ width (px 25)
@@ -133,40 +113,40 @@ viewFullPersonPage session model body =
                 , centerY
                 ]
                 (peopleSvg colourScheme.darkBlue)
-
-        pageHeader =
-            if session.isFramed then
-                subHeaderTemplate session.language (Just icon) body
-
-            else
-                pageHeaderTemplate session.language (Just icon) body
-
-        tabBar =
-            if session.isFramed then
-                none
-
-            else
-                viewRecordTopBarRouter session.language model body
     in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , clipY
-            , Background.color colourScheme.white
-            ]
-            [ recordHeaderTemplate showBottomShadow
-                [ pageHeader
-                , tabBar
-                ]
-            , pageBodyView
-            , pageFooterTemplateRouter session session.language body
-            ]
-        ]
+    viewDesktopRecordPage
+        { session = session
+        , body = body
+        , icon = icon
+        , chooseBody = chooseBody session model body
+        , currentTab = model.currentTab
+        , tabBar = viewRecordTopBarRouter session.language model body
+        }
+
+
+chooseBody : Session -> RecordPageModel RecordMsg -> PersonBody -> CurrentRecordViewTab -> TabBody RecordMsg
+chooseBody session model body currentTab =
+    case currentTab of
+        DefaultRecordViewTab _ ->
+            { bodyView =
+                viewDescriptionTab
+                    { language = session.language }
+                    body
+            , showBottomShadow = True
+            }
+
+        ContentsSearchDisplayTab _ ->
+            { bodyView = viewSourceSearchTabBody session model
+            , showBottomShadow = False
+            }
+
+        _ ->
+            { bodyView =
+                viewDescriptionTab
+                    { language = session.language }
+                    body
+            , showBottomShadow = True
+            }
 
 
 viewRecordTopBarRouter : Language -> RecordPageModel RecordMsg -> PersonBody -> Element RecordMsg

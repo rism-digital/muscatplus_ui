@@ -1,9 +1,8 @@
 module Desktop.Record.WorkPage exposing (viewFullWorkPage)
 
+import Desktop.Record.PageShell exposing (TabBody, viewDesktopRecordPage)
 import Desktop.Record.SourceSearch exposing (viewRecordSourceSearchTabBar, viewSourceSearchTabBody)
-import Element exposing (Element, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, text, width)
-import Element.Background as Background
-import Element.Region as Region
+import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, padding, px, row, scrollbarY, spacing, text, width)
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -18,7 +17,6 @@ import Page.UI.Record.ContentsSection exposing (viewCreator)
 import Page.UI.Record.ExternalAuthorities exposing (viewExternalAuthoritiesSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.Incipits exposing (viewIncipitsSection)
-import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
 import Page.UI.Record.PartOfSection exposing (viewWorkPartOfCatalogueSection)
 import Page.UI.Record.ReferencesNotesSection exposing (viewReferencesNotesSection)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody, viewRelationshipsSection)
@@ -45,72 +43,53 @@ viewFullWorkPage session model body =
                 , centerY
                 ]
                 (userMusicSvg colourScheme.darkBlue)
-
-        pageHeader =
-            if session.isFramed then
-                subHeaderTemplate language (Just icon) body
-
-            else
-                pageHeaderTemplate language (Just icon) body
-
-        ( pageBodyView, showBottomShadow ) =
-            case model.currentTab of
-                DefaultRecordViewTab _ ->
-                    ( viewDescriptionTab
-                        { expandedIncipits = model.incipitInfoExpanded
-                        , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , language = language
-                        }
-                        body
-                    , True
-                    )
-
-                ContentsSearchDisplayTab _ ->
-                    ( viewSourceSearchTabBody session model, False )
-
-                _ ->
-                    ( viewDescriptionTab
-                        { expandedIncipits = model.incipitInfoExpanded
-                        , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
-                        , language = language
-                        }
-                        body
-                    , True
-                    )
-
-        tabBar =
-            if session.isFramed then
-                none
-
-            else
-                viewRecordSourceSearchTabBar
-                    { body = body.sources
-                    , language = language
-                    , model = model
-                    , recordId = body.id
-                    , tabLabel = localTranslations.sources
-                    }
     in
-    row
-        [ width fill
-        , height fill
-        , Region.mainContent
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , clipY
-            , Background.color colourScheme.white
-            ]
-            [ recordHeaderTemplate showBottomShadow
-                [ pageHeader
-                , tabBar
-                ]
-            , pageBodyView
-            , pageFooterTemplateRouter session session.language body
-            ]
-        ]
+    viewDesktopRecordPage
+        { session = session
+        , body = body
+        , icon = icon
+        , chooseBody = chooseBody session model body
+        , currentTab = model.currentTab
+        , tabBar =
+            viewRecordSourceSearchTabBar
+                { body = body.sources
+                , language = language
+                , model = model
+                , recordId = body.id
+                , tabLabel = localTranslations.sources
+                }
+        }
+
+
+chooseBody : Session -> RecordPageModel RecordMsg -> WorkBody -> CurrentRecordViewTab -> TabBody RecordMsg
+chooseBody session model body currentTab =
+    case currentTab of
+        DefaultRecordViewTab _ ->
+            { bodyView =
+                viewDescriptionTab
+                    { expandedIncipits = model.incipitInfoExpanded
+                    , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                    , language = session.language
+                    }
+                    body
+            , showBottomShadow = True
+            }
+
+        ContentsSearchDisplayTab _ ->
+            { bodyView = viewSourceSearchTabBody session model
+            , showBottomShadow = False
+            }
+
+        _ ->
+            { bodyView =
+                viewDescriptionTab
+                    { expandedIncipits = model.incipitInfoExpanded
+                    , incipitInfoToggleMsg = RecordMsg.UserClickedExpandIncipitInfoSectionInPreview
+                    , language = session.language
+                    }
+                    body
+            , showBottomShadow = True
+            }
 
 
 viewFormOfWorkSection :
