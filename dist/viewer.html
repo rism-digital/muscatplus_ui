@@ -13,33 +13,103 @@
             padding: 0;
             margin: 0;
             font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+            overflow: hidden;
         }
         #viewer-layout {
-            display: flex;
+            position: relative;
             width: 100vw;
             height: 100vh;
+            overflow: hidden;
         }
         #diva-wrapper {
-            flex: 1 1 auto;
-            min-width: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #viewer-layout.record-open #diva-wrapper {
+            clip-path: inset(0 var(--record-panel-width, 0px) 0 0);
         }
         #record-wrapper {
-            width: 38vw;
-            min-width: 320px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(44vw, 680px);
+            min-width: 360px;
             border-left: 1px solid #d9d9d9;
+            background: #ffffff;
+            box-shadow: -10px 0 24px rgba(0, 0, 0, 0.14);
+            transform: translateX(100%);
+            transition: transform 220ms ease;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+        }
+        #record-wrapper.is-open {
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+        #record-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            border-bottom: 1px solid #d9d9d9;
+            background: rgba(255, 255, 255, 0.96);
+        }
+        #record-toggle {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 3;
+        }
+        #record-toggle[hidden] {
             display: none;
+        }
+        .viewer-button {
+            appearance: none;
+            border: 1px solid #1e3b6f;
+            background: #ffffff;
+            color: #1e3b6f;
+            border-radius: 999px;
+            min-width: 112px;
+            padding: 9px 14px;
+            font: inherit;
+            line-height: 1;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+        }
+        .viewer-button:hover {
+            background: #f5f8ff;
+        }
+        .viewer-button:focus-visible {
+            outline: 2px solid #1e3b6f;
+            outline-offset: 2px;
         }
         #record-frame {
             width: 100%;
-            height: 100%;
+            height: calc(100% - 52px);
             border: 0;
+            flex: 1 1 auto;
+        }
+        @media (max-width: 900px) {
+            #record-wrapper {
+                width: min(100vw, 420px);
+                min-width: 0;
+            }
         }
     </style>
 </head>
 <body>
 <div id="viewer-layout">
     <div id="diva-wrapper"></div>
+    <button id="record-toggle" class="viewer-button" type="button" hidden>Show record</button>
     <div id="record-wrapper">
+        <div id="record-header">
+            <button id="record-close" class="viewer-button" type="button">Hide record</button>
+        </div>
         <iframe id="record-frame" title="Record"></iframe>
     </div>
 </div>
@@ -62,6 +132,25 @@
 
     const objectData = getParamValue("manifest");
     const recordUrl = getParamValue("record");
+    const recordWrapper = document.getElementById("record-wrapper");
+    const recordFrame = document.getElementById("record-frame");
+    const recordToggle = document.getElementById("record-toggle");
+    const recordClose = document.getElementById("record-close");
+    const viewerLayout = document.getElementById("viewer-layout");
+
+    function syncRecordPanelWidth()
+    {
+        viewerLayout.style.setProperty("--record-panel-width", `${recordWrapper.getBoundingClientRect().width}px`);
+    }
+
+    function setRecordPanelOpen(isOpen)
+    {
+        syncRecordPanelWidth();
+        viewerLayout.classList.toggle("record-open", isOpen);
+        recordWrapper.classList.toggle("is-open", isOpen);
+        recordToggle.hidden = isOpen;
+        recordToggle.setAttribute("aria-expanded", String(isOpen));
+    }
 
     if (objectData)
     {
@@ -72,11 +161,17 @@
 
     if (recordUrl)
     {
-        const recordWrapper = document.getElementById("record-wrapper");
-        const recordFrame = document.getElementById("record-frame");
-
         recordFrame.src = recordUrl;
-        recordWrapper.style.display = "block";
+        recordToggle.hidden = false;
+        recordToggle.addEventListener("click", () => setRecordPanelOpen(true));
+        recordClose.addEventListener("click", () => setRecordPanelOpen(false));
+        window.addEventListener("resize", syncRecordPanelWidth);
+        setRecordPanelOpen(true);
+    }
+    else
+    {
+        recordWrapper.hidden = true;
+        recordToggle.hidden = true;
     }
 </script>
 </body>
