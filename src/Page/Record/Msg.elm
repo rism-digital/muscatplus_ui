@@ -56,7 +56,6 @@ type RecordMsg
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
     | UserClickedExpandSourceItemsSectionInPreview
-    | UserClickedExpandInventoryItemsSection
     | UserClickedExpandIncipitInfoSectionInPreview String
     | UserClickedExpandDigitalCopiesCallout
     | UserClickedClosePreviewWindow

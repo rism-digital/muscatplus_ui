@@ -3,7 +3,7 @@ module Mobile.Record.SourceSearch exposing
     , viewSourceSearchTabBody
     )
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, link, padding, paddingEach, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignBottom, alignLeft, column, fill, height, htmlAttribute, link, padding, paddingEach, px, row, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
@@ -12,12 +12,12 @@ import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.PartOf exposing (extractUrlAndLabelFromPartOf)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), SourceResultBody)
-import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (spinnerSvg)
 import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
+import Page.UI.Search.MobileResults exposing (viewMobilePagedResults)
 import Page.UI.Search.Pagination exposing (viewPagination)
+import Page.UI.Search.SearchTemplate exposing (viewMobileSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
@@ -26,7 +26,7 @@ viewSourceSearchTabBody : Session -> RecordPageModel RecordMsg -> Element Record
 viewSourceSearchTabBody session model =
     viewRecordSearchResults
         { language = session.language
-        , loadingView = viewMobileSourcesLoading
+        , loadingView = viewMobileSearchResultsLoadingTmpl
         , loadedView = viewSourcesSearchResultsSection session
         , response = model.searchResults
         }
@@ -68,28 +68,6 @@ viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
         ]
 
 
-viewMobileSourcesLoading : Element msg
-viewMobileSourcesLoading =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ el
-            [ width (px 50)
-            , height (px 50)
-            , centerX
-            , centerY
-            ]
-            (animatedLoader
-                [ width (px 50)
-                , height (px 50)
-                ]
-                (spinnerSvg colourScheme.lightBlue)
-            )
-        ]
-
-
 viewSourcesSearchResultsSection : Session -> SearchBody -> Element RecordMsg
 viewSourcesSearchResultsSection session body =
     let
@@ -112,34 +90,14 @@ viewSourcesSearchResultsSection session body =
             else
                 List.map (viewSourceSearchResultCard session.language) sources
     in
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
+    viewMobilePagedResults
+        { bodyAttributes =
+            [ paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
+            , spacing sectionSpacing
             ]
-            [ row
-                [ width fill
-                , height fill
-                , alignTop
-                , scrollbarY
-                , htmlAttribute (HA.style "min-height" "unset")
-                ]
-                [ column
-                    [ width fill
-                    , alignTop
-                    , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
-                    , spacing sectionSpacing
-                    ]
-                    cards
-                ]
-            , viewPagination session.language body.pagination RecordMsg.UserClickedSearchResultsPagination
-            ]
-        ]
+        , cards = cards
+        , pagination = viewPagination session.language body.pagination RecordMsg.UserClickedSearchResultsPagination
+        }
 
 
 viewSourceSearchResultCard : Language -> SourceResultBody -> Element msg

@@ -1,18 +1,17 @@
 module Mobile.Record.InventoryItemPage exposing (viewMobileInventoryItemPage)
 
-import Element exposing (Element, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, padding, paddingXY, px, row, scrollbarY, spacing, width)
-import Element.Background as Background
+import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, none, padding, px, row, scrollbarY, spacing, width)
 import Html.Attributes as HA
 import Language exposing (Language)
+import Mobile.Record.PageShell exposing (viewMobileRecordPage)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Inventory exposing (InventoryItemBody)
-import Page.UI.Attributes exposing (minimalDropShadow, sectionSpacing)
+import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (sourcesSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
-import Page.UI.Record.PageTemplate exposing (mobilePageHeaderTemplate)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
@@ -26,30 +25,16 @@ viewMobileInventoryItemPage session _ body =
                 [ width (px 25)
                 , height (px 25)
                 , centerX
-                , alignTop
                 ]
                 (sourcesSvg colourScheme.darkBlue)
     in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , clipY
-            , Background.color colourScheme.white
-            ]
-            [ row
-                [ width fill
-                , paddingXY 10 10
-                , minimalDropShadow
-                ]
-                [ mobilePageHeaderTemplate session.language (Just icon) body ]
-            , viewMobileInventoryItemBody session.language body
-            ]
-        ]
+    viewMobileRecordPage
+        { session = session
+        , body = body
+        , icon = icon
+        , topBar = none
+        , bodyView = viewMobileInventoryItemBody session.language body
+        }
 
 
 viewMobileInventoryItemBody : Language -> InventoryItemBody -> Element RecordMsg

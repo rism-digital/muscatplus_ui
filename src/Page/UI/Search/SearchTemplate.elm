@@ -1,4 +1,4 @@
-module Page.UI.Search.SearchTemplate exposing (controlsTmpl, viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingForWindow, viewSearchResultsNotFoundTmpl)
+module Page.UI.Search.SearchTemplate exposing (controlsTmpl, viewMobileSearchResultsLoadingTmpl, viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl, viewSearchResultsLoadingForWindow, viewSearchResultsNotFoundTmpl)
 
 import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, height, html, htmlAttribute, link, none, padding, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Background as Background
@@ -40,12 +40,12 @@ viewResultsListLoadingScreenTmpl isLoading =
         isLoading
 
 
-viewRelatedWorksSearchResultsLoadingTmpl : Language -> Element msg
-viewRelatedWorksSearchResultsLoadingTmpl _ =
+viewMobileSearchResultsLoadingTmpl : Element msg
+viewMobileSearchResultsLoadingTmpl =
     row
         [ width fill
         , height fill
-        , blurredBackground
+        , alignTop
         ]
         [ column
             [ width fill
@@ -68,6 +68,11 @@ viewRelatedWorksSearchResultsLoadingTmpl _ =
                 )
             ]
         ]
+
+
+viewRelatedWorksSearchResultsLoadingTmpl : Language -> Element msg
+viewRelatedWorksSearchResultsLoadingTmpl _ =
+    viewMobileSearchResultsLoadingTmpl
 
 
 controlsTmpl : List (Element msg) -> Element msg

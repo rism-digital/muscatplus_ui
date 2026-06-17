@@ -1,7 +1,7 @@
 module Mobile.Search.Views exposing (view)
 
 import ActiveSearch.Model exposing (ActiveSearch)
-import Element exposing (Element, alignTop, centerX, clipY, column, fill, height, htmlAttribute, inFront, row, scrollbarY, text, width)
+import Element exposing (Element, alignTop, centerX, column, fill, height, htmlAttribute, inFront, row, text, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -15,8 +15,9 @@ import Page.UI.Animations exposing (PreviewAnimationStatus)
 import Page.UI.Components exposing (viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Record.Previews exposing (viewMobilePreviewForResponse)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
+import Page.UI.Search.MobileResults exposing (viewMobileScrollableResults)
 import Page.UI.Search.Pagination exposing (viewPagination)
-import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingForWindow)
+import Page.UI.Search.SearchTemplate exposing (viewMobileSearchResultsLoadingTmpl)
 import Page.UI.Search.SearchView exposing (SearchResultsSectionConfig, buildSearchResultsConfig, viewSearchResultRouter)
 import Page.UI.Search.SortAndRows exposing (viewSearchPageSort)
 import Response exposing (Response(..), ServerData(..))
@@ -112,7 +113,7 @@ searchResultsViewRouter session model =
             viewMobileSearchResultsSection resultsConfig True oldData
 
         Loading _ ->
-            viewSearchResultsLoadingForWindow session.window 0 session.language
+            viewMobileSearchResultsLoadingTmpl
 
         Response (SearchData body) ->
             viewMobileSearchResultsSection resultsConfig False body
@@ -121,7 +122,7 @@ searchResultsViewRouter session model =
             Mobile.Error.Views.view session model
 
         NoResponseToShow ->
-            viewSearchResultsLoadingForWindow session.window 0 session.language
+            viewMobileSearchResultsLoadingTmpl
 
         _ ->
             extractLabelFromLanguageMap session.language localTranslations.unknownError
@@ -197,33 +198,22 @@ viewMobileSearchResultsList cfg =
                 , isMobile = True
                 }
                 cfg.searchResponse
-            , row
-                [ alignTop
-                , width fill
-                , height fill
-                , clipY
+            , viewMobileScrollableResults
+                [ height fill
+                , htmlAttribute (HA.id "search-results-list")
                 ]
-                [ column
-                    [ alignTop
-                    , width fill
-                    , height fill
-                    , scrollbarY
-                    , htmlAttribute (HA.style "min-height" "unset")
-                    , htmlAttribute (HA.id "search-results-list")
-                    ]
-                    (List.indexedMap
-                        (\idx result ->
-                            viewSearchResultRouter
-                                { language = cfg.language
-                                , selectedResult = cfg.selectedResult
-                                , searchResult = result
-                                , clickForPreviewMsg = cfg.clickMsg
-                                , resultIdx = idx
-                                }
-                        )
-                        (.items cfg.body)
+                (List.indexedMap
+                    (\idx result ->
+                        viewSearchResultRouter
+                            { language = cfg.language
+                            , selectedResult = cfg.selectedResult
+                            , searchResult = result
+                            , clickForPreviewMsg = cfg.clickMsg
+                            , resultIdx = idx
+                            }
                     )
-                ]
+                    (.items cfg.body)
+                )
             , viewPagination cfg.language (.pagination cfg.body) cfg.userClickedResultsPaginationMsg
             ]
         ]

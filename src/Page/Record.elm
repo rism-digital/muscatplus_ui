@@ -640,13 +640,6 @@ update session msg model =
             , Cmd.none
             )
 
-        UserClickedExpandInventoryItemsSection ->
-            ( { model
-                | inventoryItemsExpanded = not model.inventoryItemsExpanded
-              }
-            , Cmd.none
-            )
-
         UserClickedExpandIncipitInfoSectionInPreview incipitIdent ->
             ( { model
                 | incipitInfoExpanded = SE.toggle incipitIdent model.incipitInfoExpanded

@@ -1,27 +1,27 @@
 module Mobile.Record.PublicationPage exposing (viewFullMobilePublicationPage)
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, clipY, column, el, fill, height, htmlAttribute, link, padding, paddingEach, paddingXY, px, row, scrollbarY, spacing, text, width)
-import Element.Background as Background
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, column, el, fill, height, htmlAttribute, link, padding, paddingEach, paddingXY, px, row, scrollbarY, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
+import Mobile.Record.PageShell exposing (viewMobileRecordPage)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Publication exposing (PublicationBody, WorkCatalogueStatus, WorksSectionBody)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody)
-import Page.UI.Animations exposing (animatedLoader)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (formatPublicationStatusBadge, pageBodyOrEmpty, viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (folderMusicSvg, spinnerSvg)
+import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.ContentsSection exposing (viewCreator)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
-import Page.UI.Record.PageTemplate exposing (mobilePageHeaderTemplate)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
+import Page.UI.Search.MobileResults exposing (viewMobilePagedResults)
 import Page.UI.Search.Pagination exposing (viewPagination)
+import Page.UI.Search.SearchTemplate exposing (viewMobileSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
@@ -38,7 +38,6 @@ viewFullMobilePublicationPage session model body =
                 [ width (px 25)
                 , height (px 25)
                 , centerX
-                , alignTop
                 ]
                 (folderMusicSvg colourScheme.darkBlue)
 
@@ -50,26 +49,13 @@ viewFullMobilePublicationPage session model body =
                 _ ->
                     viewDescriptionTab session body
     in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , clipY
-            , Background.color colourScheme.white
-            ]
-            [ row
-                [ width fill
-                , paddingXY 10 10
-                ]
-                [ mobilePageHeaderTemplate session.language (Just icon) body ]
-            , viewRecordTopBar session.language model body
-            , pageBodyView
-            ]
-        ]
+    viewMobileRecordPage
+        { session = session
+        , body = body
+        , icon = icon
+        , topBar = viewRecordTopBar session.language model body
+        , bodyView = pageBodyView
+        }
 
 
 viewDescriptionTab : Session -> PublicationBody -> Element RecordMsg
@@ -131,7 +117,7 @@ viewWorksTabBody : Session -> RecordPageModel RecordMsg -> Element RecordMsg
 viewWorksTabBody session model =
     viewRecordSearchResults
         { language = session.language
-        , loadingView = viewMobileWorksLoading
+        , loadingView = viewMobileSearchResultsLoadingTmpl
         , loadedView = viewWorksSearchResultsSection session
         , response = model.searchResults
         }
@@ -172,29 +158,6 @@ viewRecordTopBar language model body =
         , worksDisplayTab
         ]
 
-
-viewMobileWorksLoading : Element msg
-viewMobileWorksLoading =
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ el
-            [ width (px 50)
-            , height (px 50)
-            , centerX
-            , centerY
-            ]
-            (animatedLoader
-                [ width (px 50)
-                , height (px 50)
-                ]
-                (spinnerSvg colourScheme.lightBlue)
-            )
-        ]
-
-
 viewWorksSearchResultsSection : Session -> SearchBody -> Element RecordMsg
 viewWorksSearchResultsSection session body =
     let
@@ -217,34 +180,14 @@ viewWorksSearchResultsSection session body =
             else
                 List.map (viewWorkSearchResultCard session.language) works
     in
-    row
-        [ width fill
-        , height fill
-        , alignTop
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
+    viewMobilePagedResults
+        { bodyAttributes =
+            [ paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
+            , spacing sectionSpacing
             ]
-            [ row
-                [ width fill
-                , height fill
-                , alignTop
-                , scrollbarY
-                , htmlAttribute (HA.style "min-height" "unset")
-                ]
-                [ column
-                    [ width fill
-                    , alignTop
-                    , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
-                    , spacing sectionSpacing
-                    ]
-                    cards
-                ]
-            , viewPagination session.language body.pagination RecordMsg.UserClickedSearchResultsPagination
-            ]
-        ]
+        , cards = cards
+        , pagination = viewPagination session.language body.pagination RecordMsg.UserClickedSearchResultsPagination
+        }
 
 
 viewWorkSearchResultCard : Language -> WorkResultBody -> Element msg

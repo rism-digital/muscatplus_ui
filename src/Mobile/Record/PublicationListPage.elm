@@ -1,11 +1,11 @@
 module Mobile.Record.PublicationListPage exposing (viewMobilePublicationListPage)
 
-import Element exposing (Element, alignLeft, alignTop, centerX, clipY, column, el, fill, height, htmlAttribute, link, padding, paddingEach, paddingXY, paragraph, px, row, scrollbarY, spacing, text, width)
-import Element.Background as Background
+import Element exposing (Element, alignLeft, centerX, column, el, fill, height, htmlAttribute, link, none, padding, paddingEach, paragraph, px, row, scrollbarY, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Maybe.Extra as ME
+import Mobile.Record.PageShell exposing (viewMobileRecordPage)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg exposing (RecordMsg)
 import Page.RecordTypes.Publication exposing (BasicPublicationBody)
@@ -13,7 +13,6 @@ import Page.RecordTypes.PublicationList exposing (PublicationListBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
 import Page.UI.Components exposing (formatPublicationStatusBadge)
 import Page.UI.Images exposing (folderMusicSvg)
-import Page.UI.Record.PageTemplate exposing (mobilePageHeaderTemplate)
 import Page.UI.Style exposing (colourScheme)
 import Session exposing (Session)
 
@@ -30,27 +29,16 @@ viewMobilePublicationListPage session _ body =
                 [ width (px 25)
                 , height (px 25)
                 , centerX
-                , alignTop
                 ]
                 (folderMusicSvg colourScheme.darkBlue)
     in
-    row
-        [ width fill
-        , height fill
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , clipY
-            , Background.color colourScheme.white
-            ]
-            [ row
-                [ width fill
-                , paddingXY 10 10
-                ]
-                [ mobilePageHeaderTemplate session.language (Just icon) body ]
-            , row
+    viewMobileRecordPage
+        { session = session
+        , body = body
+        , icon = icon
+        , topBar = none
+        , bodyView =
+            row
                 [ width fill
                 , height fill
                 , scrollbarY
@@ -59,14 +47,12 @@ viewMobilePublicationListPage session _ body =
                 [ column
                     [ width fill
                     , height fill
-                    , alignTop
                     , paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
                     , spacing sectionSpacing
                     ]
                     (List.map (viewPublicationCard session.language) body.items)
                 ]
-            ]
-        ]
+        }
 
 
 viewPublicationCard : Language -> BasicPublicationBody -> Element RecordMsg

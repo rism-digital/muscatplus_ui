@@ -2,8 +2,8 @@ module Desktop.Record.Views exposing (view)
 
 import Desktop.Error.Views
 import Desktop.Record.HoldingPage exposing (viewFullHoldingPage)
-import Desktop.Record.InventoryItemPage exposing (viewInventoryItemPage)
 import Desktop.Record.InstitutionPage exposing (viewFullInstitutionPage)
+import Desktop.Record.InventoryItemPage exposing (viewInventoryItemPage)
 import Desktop.Record.PersonPage exposing (viewFullPersonPage)
 import Desktop.Record.PublicationListPage exposing (viewPublicationListPage)
 import Desktop.Record.PublicationPage exposing (viewFullPublicationPage)

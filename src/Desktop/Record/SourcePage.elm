@@ -169,7 +169,16 @@ viewRecordTopBarRouter language model body =
                     , totalItems = searchInfo.totalItems
                     }
             )
-            (resolveSearchTabInfo model.searchResults body.sourceItems)
+            (resolveSearchTabInfo model.searchResults body.sourceItems
+                |> Maybe.andThen
+                    (\searchInfo ->
+                        if searchInfo.totalItems > 0 then
+                            Just searchInfo
+
+                        else
+                            Nothing
+                    )
+            )
         , inventoryTab
         ]
 
