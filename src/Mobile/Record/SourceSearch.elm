@@ -1,20 +1,16 @@
-module Mobile.Record.SourceSearch exposing
-    ( viewRecordSourceSearchTabBar
-    , viewSourceSearchTabBody
-    )
+module Mobile.Record.SourceSearch exposing (viewSourceSearchTabBody)
 
-import Element exposing (Element, alignBottom, alignLeft, column, fill, height, htmlAttribute, link, padding, paddingEach, px, row, spacing, text, width)
+import Element exposing (Element, column, fill, htmlAttribute, link, padding, paddingEach, row, spacing, text, width)
 import Element.Border as Border
 import Html.Attributes as HA
-import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap)
+import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.PartOf exposing (extractUrlAndLabelFromPartOf)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), SourceResultBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionSpacing)
-import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
+import Page.UI.Record.SearchTabs exposing (viewRecordSearchResults)
 import Page.UI.Search.MobileResults exposing (viewMobilePagedResults)
 import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchTemplate exposing (viewMobileSearchResultsLoadingTmpl)
@@ -30,42 +26,6 @@ viewSourceSearchTabBody session model =
         , loadedView = viewSourcesSearchResultsSection session
         , response = model.searchResults
         }
-
-
-viewRecordSourceSearchTabBar :
-    { body : Maybe { a | url : String, totalItems : Int }
-    , language : Language
-    , model : RecordPageModel RecordMsg
-    , recordId : String
-    , tabLabel : LanguageMap
-    }
-    -> Element RecordMsg
-viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
-    row
-        [ width fill
-        , height (px 35)
-        , alignLeft
-        , alignBottom
-        , spacing 10
-        , Element.paddingXY 10 0
-        ]
-        [ viewRecordDescriptionTab
-            { language = language
-            , currentTab = model.currentTab
-            , recordId = recordId
-            }
-        , viewMaybe
-            (\searchInfo ->
-                viewRecordSearchTab
-                    { language = language
-                    , currentTab = model.currentTab
-                    , searchUrl = searchInfo.searchUrl
-                    , tabLabel = tabLabel
-                    , totalItems = searchInfo.totalItems
-                    }
-            )
-            (resolveSearchTabInfo model.searchResults body)
-        ]
 
 
 viewSourcesSearchResultsSection : Session -> SearchBody -> Element RecordMsg

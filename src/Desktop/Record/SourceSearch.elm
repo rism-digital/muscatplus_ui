@@ -1,18 +1,13 @@
-module Desktop.Record.SourceSearch exposing
-    ( viewRecordSourceSearchTabBar
-    , viewSourceSearchTabBody
-    )
+module Desktop.Record.SourceSearch exposing (viewSourceSearchTabBody)
 
 import Desktop.Record.Facets exposing (facetRecordMsgConfig)
-import Element exposing (Element, alignLeft, alignTop, centerY, clipY, column, fill, height, px, row, spacing, width)
-import Language exposing (Language, LanguageMap)
+import Element exposing (Element, alignTop, clipY, column, fill, height, row, width)
 import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
-import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Record.Relationship exposing (viewRelationshipBody)
-import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordDescriptionTab, viewRecordSearchResults, viewRecordSearchTab)
+import Page.UI.Record.SearchTabs exposing (viewRecordSearchResults)
 import Page.UI.Search.SearchTemplate exposing (viewSearchResultsLoadingForWindow)
 import Page.UI.Search.SearchView exposing (buildSearchResultsConfig, viewSearchResultsSection)
 import Response exposing (Response(..), ServerData(..))
@@ -94,45 +89,3 @@ searchResultsViewRouter session model =
                         viewSearchResultsSection resultsConfig False body
         , response = model.searchResults
         }
-
-
-viewRecordSourceSearchTabBar :
-    { body : Maybe { a | url : String, totalItems : Int }
-    , language : Language
-    , model : RecordPageModel RecordMsg
-    , recordId : String
-    , tabLabel : LanguageMap
-    }
-    -> Element RecordMsg
-viewRecordSourceSearchTabBar { body, language, model, recordId, tabLabel } =
-    let
-        sourceSearchTab =
-            viewMaybe
-                (\searchInfo ->
-                    viewRecordSearchTab
-                        { language = language
-                        , currentTab = model.currentTab
-                        , searchUrl = searchInfo.searchUrl
-                        , tabLabel = tabLabel
-                        , totalItems = searchInfo.totalItems
-                        }
-                )
-                (resolveSearchTabInfo model.searchResults body)
-
-        recordDescriptionTab =
-            viewRecordDescriptionTab
-                { language = language
-                , currentTab = model.currentTab
-                , recordId = recordId
-                }
-    in
-    row
-        [ width fill
-        , height (px 35)
-        , alignLeft
-        , centerY
-        , spacing 10
-        ]
-        [ recordDescriptionTab
-        , sourceSearchTab
-        ]

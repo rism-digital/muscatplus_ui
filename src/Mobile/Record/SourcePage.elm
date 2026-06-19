@@ -1,6 +1,6 @@
 module Mobile.Record.SourcePage exposing (viewFullMobileSourcePage)
 
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, column, el, fill, height, htmlAttribute, link, none, padding, paragraph, px, row, scrollbarY, spacing, text, width)
+import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, link, none, padding, paragraph, px, row, scrollbarY, spacing, text, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)

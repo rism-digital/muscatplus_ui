@@ -6,7 +6,7 @@ import Element exposing (Element, alignTop, centerX, centerY, column, el, fill, 
 import Html.Attributes as HA
 import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Work exposing (WorkBody)
 import Page.UI.Attributes exposing (sectionSpacing)
@@ -73,6 +73,7 @@ viewFullWorkPage session model body =
                 tabs
         , tabBar = viewDesktopTabBar tabs
         }
+
 
 viewDescriptionTab :
     { expandedIncipits : Set String
