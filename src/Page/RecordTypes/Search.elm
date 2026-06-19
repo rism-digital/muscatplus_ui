@@ -11,6 +11,8 @@ module Page.RecordTypes.Search exposing
     , IncipitResultBody
     , InstitutionResultBody
     , InstitutionResultFlags
+    , InventoryItemResultBody
+    , InventoryItemResultFlags
     , ModeFacet
     , NotationFacet
     , NotationQueryOptions
@@ -231,6 +233,19 @@ type alias WorkResultFlags =
     }
 
 
+type alias InventoryItemResultBody =
+    { id : String
+    , label : LanguageMap
+    , summary : Maybe (Dict String LabelValue)
+    , flags : Maybe InventoryItemResultFlags
+    }
+
+
+type alias InventoryItemResultFlags =
+    { inventorySection : Maybe String
+    }
+
+
 type alias ModeFacet =
     { alias : String
     , label : LanguageMap
@@ -339,6 +354,7 @@ type SearchResult
     | InstitutionResult InstitutionResultBody
     | IncipitResult IncipitResultBody
     | WorkResult WorkResultBody
+    | InventoryItemResult InventoryItemResultBody
 
 
 type alias SelectFacet =
@@ -424,6 +440,9 @@ extractIdFromSearchResult searchResult =
 
         WorkResult wi ->
             wi.id
+
+        InventoryItemResult ii ->
+            ii.id
 
 
 facetBehaviourOptions : List ( String, FacetBehaviours )
@@ -750,6 +769,9 @@ searchResultTypeDecoder restype =
         "rism:Institution" ->
             Decode.map InstitutionResult institutionResultBodyDecoder
 
+        "rism:InventoryItem" ->
+            Decode.map InventoryItemResult inventoryItemResultBodyDecoder
+
         "rism:Person" ->
             Decode.map PersonResult personResultBodyDecoder
 
@@ -881,3 +903,18 @@ workResultFlagDecoder =
         |> optional "keyMode" (maybe languageMapLabelDecoder) Nothing
         |> optional "scoringSummary" (maybe string) Nothing
         |> optional "secondaryCatalogNumbers" (maybe (list string)) Nothing
+
+
+inventoryItemResultBodyDecoder : Decoder InventoryItemResultBody
+inventoryItemResultBodyDecoder =
+    Decode.succeed InventoryItemResultBody
+        |> required "id" string
+        |> required "label" languageMapLabelDecoder
+        |> optional "summary" (maybe (dict labelValueDecoder)) Nothing
+        |> optional "flags" (maybe inventoryItemResultFlagsDecoder) Nothing
+
+
+inventoryItemResultFlagsDecoder : Decoder InventoryItemResultFlags
+inventoryItemResultFlagsDecoder =
+    Decode.succeed InventoryItemResultFlags
+        |> optional "inventorySection" (maybe string) Nothing

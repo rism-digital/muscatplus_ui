@@ -416,7 +416,7 @@ update session msg model =
                                 |> Maybe.map
                                     (\inventoryItems ->
                                         if shouldFetchInventoryItems model.inventoryItems then
-                                            inventoryItemsRequest inventoryItems.id
+                                            inventoryItemsRequest inventoryItems.url
 
                                         else
                                             Cmd.none
@@ -674,27 +674,24 @@ update session msg model =
                             Nav.pushUrl session.key recordUrl
 
                         ContentsSearchDisplayTab searchUrl ->
-                            case model.searchResults of
-                                -- if there is already a response, then don't refresh it when we switch tabs
-                                Response _ ->
-                                    Nav.pushUrl session.key searchUrl
+                            if searchResponseMatchesUrl searchUrl model.searchResults then
+                                Nav.pushUrl session.key searchUrl
 
-                                _ ->
-                                    Cmd.batch
-                                        [ recordSearchRequest searchUrl
-                                        , Nav.pushUrl session.key searchUrl
-                                        ]
+                            else
+                                Cmd.batch
+                                    [ recordSearchRequest searchUrl
+                                    , Nav.pushUrl session.key searchUrl
+                                    ]
 
                         InventoryItemsDisplayTab inventoryUrl ->
-                            case model.inventoryItems of
-                                Response _ ->
-                                    Nav.pushUrl session.key inventoryUrl
+                            if searchResponseMatchesUrl inventoryUrl model.searchResults then
+                                Nav.pushUrl session.key inventoryUrl
 
-                                _ ->
-                                    Cmd.batch
-                                        [ inventoryItemsRequest inventoryUrl
-                                        , Nav.pushUrl session.key inventoryUrl
-                                        ]
+                            else
+                                Cmd.batch
+                                    [ recordSearchRequest inventoryUrl
+                                    , Nav.pushUrl session.key inventoryUrl
+                                    ]
             in
             ( { model
                 | currentTab = recordTab
@@ -831,9 +828,15 @@ updatePageMetadata incomingData =
 sourceFetchCmd : RecordPageModel RecordMsg -> Url -> Route -> Cmd RecordMsg
 sourceFetchCmd body initialUrl route =
     case route of
-        SourceInventoryItemsPageRoute _ ->
-            inventoryItemsUrlFromPath initialUrl.path
-                |> inventoryItemsRequest
+        SourceInventoryItemsPageRoute _ _ ->
+            let
+                qps =
+                    toNextQuery body.activeSearch
+                        |> setMode (routeToResultMode route)
+                        |> buildQueryParameters
+            in
+            serverUrl [ initialUrl.path ] qps
+                |> recordSearchRequest
 
         SourceInventoryItemPageRoute _ _ ->
             inventoryItemsUrlFromPath initialUrl.path
@@ -916,3 +919,16 @@ shouldFetchInventoryItems inventoryResponse =
 inventoryItemsUrlFromPath : String -> String
 inventoryItemsUrlFromPath path =
     serverUrl [ path ] []
+
+
+searchResponseMatchesUrl : String -> Response ServerData -> Bool
+searchResponseMatchesUrl searchUrl searchResponse =
+    case searchResponse of
+        Loading (Just (SearchData body)) ->
+            body.id == searchUrl
+
+        Response (SearchData body) ->
+            body.id == searchUrl
+
+        _ ->
+            False

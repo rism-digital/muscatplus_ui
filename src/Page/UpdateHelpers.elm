@@ -277,6 +277,9 @@ probePathForRoute route =
         SourceContentsPageRoute id _ ->
             [ "sources", String.fromInt id, "probe" ]
 
+        SourceInventoryItemsPageRoute id _ ->
+            [ "sources", String.fromInt id, "inventory-items", "probe" ]
+
         PersonSourcePageRoute id _ ->
             [ "people", String.fromInt id, "probe" ]
 
@@ -298,6 +301,9 @@ searchPathForRoute route =
     case route of
         SourceContentsPageRoute id _ ->
             [ "sources", String.fromInt id, "contents" ]
+
+        SourceInventoryItemsPageRoute id _ ->
+            [ "sources", String.fromInt id, "inventory-items" ]
 
         PersonSourcePageRoute id _ ->
             [ "people", String.fromInt id, "sources" ]

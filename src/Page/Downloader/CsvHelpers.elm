@@ -207,6 +207,9 @@ convertResult res =
         WorkResult _ ->
             UnsupportedRecordType
 
+        InventoryItemResult _ ->
+            UnsupportedRecordType
+
 
 extractFromSummaryDict : String -> Maybe (Dict String LabelValue) -> String
 extractFromSummaryDict dictKey summaryDict =

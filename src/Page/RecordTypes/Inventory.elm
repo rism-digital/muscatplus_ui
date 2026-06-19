@@ -36,6 +36,7 @@ type alias InventoryInfoBody =
     { source : Maybe String
     , section : Maybe String
     , number : Maybe String
+    , composer : Maybe String
     }
 
 
@@ -89,3 +90,4 @@ inventoryInfoBodyDecoder =
         |> optional "inventorySource" (maybe string) Nothing
         |> optional "inventorySection" (maybe string) Nothing
         |> optional "inventoryNumber" (maybe string) Nothing
+        |> optional "inventoryComposer" (maybe string) Nothing

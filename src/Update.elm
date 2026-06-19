@@ -183,13 +183,14 @@ changePage url model =
             , refreshCmds
             )
 
-        Route.SourceInventoryItemsPageRoute _ ->
+        Route.SourceInventoryItemsPageRoute _ qargs ->
             let
                 ( newPageBody, refreshCmds ) =
-                    changeRecordInventoryPageHelper
+                    changeRecordContentsPageHelper
                         { model = model
                         , newSession = newSession
                         , previousUrl = previousUrl
+                        , qargs = qargs
                         , route = route
                         , url = url
                         }
@@ -668,71 +669,6 @@ changeRecordContentsPageHelper { model, newSession, previousUrl, qargs, route, u
         )
 
 
-changeRecordInventoryPageHelper :
-    { model : Model
-    , newSession : Session
-    , previousUrl : Url
-    , route : Route
-    , url : Url
-    }
-    -> ( RecordPageModel RecordMsg, Cmd Msg )
-changeRecordInventoryPageHelper { model, newSession, previousUrl, route, url } =
-    let
-        recordPath =
-            baseRecordPathFromRoute route
-
-        recordCfg =
-            { incomingUrl = url
-            , route = route
-            , queryArgs = Nothing
-            , initialData = Nothing
-            , session = newSession
-            }
-
-        ( newPageBody, isSameRecordPage ) =
-            reuseRecordPageBody
-                { getOldBody = getRecordBodyForRoute
-                , model = model
-                , previousUrl = previousUrl
-                , recordCfg = recordCfg
-                , reuseIf =
-                    \incoming ->
-                        incoming.path == previousUrl.path || previousUrl.path == recordPath
-                , route = route
-                }
-
-        inventoryFetchCmd =
-            case newPageBody.inventoryItems of
-                Response _ ->
-                    Cmd.none
-
-                _ ->
-                    RecordPage.sourceFetchCmd newPageBody url route
-    in
-    if isSameRecordPage then
-        ( newPageBody
-        , Cmd.batch
-            [ RecordPage.requestPreviewIfSelected newPageBody.selectedResult
-            , inventoryFetchCmd
-            ]
-            |> Cmd.map Msg.UserInteractedWithRecordPage
-        )
-
-    else
-        let
-            recordUrl =
-                { url | path = recordPath }
-        in
-        ( newPageBody
-        , Cmd.batch
-            [ RecordPage.recordPageRequest newSession.cacheBuster recordUrl
-            , inventoryFetchCmd
-            , RecordPage.requestPreviewIfSelected newPageBody.selectedResult
-            ]
-            |> Cmd.map Msg.UserInteractedWithRecordPage
-        )
-
-
 changeRecordInventoryItemPageHelper :
     { model : Model
     , newSession : Session
@@ -849,7 +785,7 @@ getRecordBodyForRoute route model =
         ( Route.SourceContentsPageRoute _ _, SourcePage _ oldPageBody ) ->
             Just oldPageBody
 
-        ( Route.SourceInventoryItemsPageRoute _, SourcePage _ oldPageBody ) ->
+        ( Route.SourceInventoryItemsPageRoute _ _, SourcePage _ oldPageBody ) ->
             Just oldPageBody
 
         ( Route.SourceInventoryItemPageRoute _ _, SourcePage _ oldPageBody ) ->

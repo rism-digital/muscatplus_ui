@@ -697,6 +697,9 @@ viewSearchResultRouter cfg =
         WorkResult _ ->
             none
 
+        InventoryItemResult _ ->
+            none
+
 
 
 --viewWorkSearchResult resultConfig body

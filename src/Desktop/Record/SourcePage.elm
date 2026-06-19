@@ -9,7 +9,6 @@ import Language exposing (Language)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
-import Page.RecordTypes.Inventory exposing (InventoryItemsBody)
 import Page.RecordTypes.Source exposing (FullSourceBody, InventoryItemsSectionBody)
 import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (Tab(..), sourceIconChooser, tabView, viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
@@ -19,7 +18,6 @@ import Page.UI.Record.Relationship exposing (viewRelationshipBody)
 import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo)
 import Page.UI.Record.TabShell exposing (TabSpec, descriptionTab, searchTab, selectBody, viewDesktopTabBar)
 import Page.UI.Style exposing (colourScheme)
-import Response exposing (Response)
 import Session exposing (Session)
 import Set exposing (Set)
 
@@ -178,7 +176,7 @@ viewRecordTabs session model body descriptionBody =
                 |> Maybe.withDefault []
            )
         ++ (body.inventoryItems
-                |> Maybe.map (viewInventoryItemsTab session session.language model.inventoryItems model)
+                |> Maybe.map (viewInventoryItemsTab session session.language model)
                 |> Maybe.map List.singleton
                 |> Maybe.withDefault []
            )
@@ -187,11 +185,10 @@ viewRecordTabs session model body descriptionBody =
 viewInventoryItemsTab :
     Session
     -> Language
-    -> Response InventoryItemsBody
     -> RecordPageModel RecordMsg
     -> InventoryItemsSectionBody
     -> TabSpec RecordMsg
-viewInventoryItemsTab session language inventoryItemsResponse model inventoryItems =
+viewInventoryItemsTab session language model inventoryItems =
     let
         isSelected =
             case model.currentTab of
@@ -206,7 +203,7 @@ viewInventoryItemsTab session language inventoryItemsResponse model inventoryIte
     in
     { body =
         Just
-            { bodyView = viewInventoryItemsTabBody session inventoryItemsResponse
+            { bodyView = viewInventoryItemsTabBody session model
             , showBottomShadow = False
             }
     , isSelected = isSelected
@@ -217,7 +214,7 @@ viewInventoryItemsTab session language inventoryItemsResponse model inventoryIte
                     RecordMsg.NothingHappened
 
                 else
-                    RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.id)
+                    RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.url)
             , icon = none
             , isSelected = isSelected
             , language = language

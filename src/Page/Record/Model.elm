@@ -47,7 +47,7 @@ routeToCurrentRecordViewTab route =
         SourceContentsPageRoute _ _ ->
             ContentsSearchDisplayTab
 
-        SourceInventoryItemsPageRoute _ ->
+        SourceInventoryItemsPageRoute _ _ ->
             InventoryItemsDisplayTab
 
         SourceInventoryItemPageRoute _ _ ->

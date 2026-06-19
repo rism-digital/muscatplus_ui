@@ -81,7 +81,7 @@ type alias SourceItemsSectionBody =
 
 type alias InventoryItemsSectionBody =
     { sectionToc : String
-    , id : String
+    , url : String
     , label : LanguageMap
     , totalItems : Int
     }
@@ -151,6 +151,6 @@ inventoryItemsSectionBodyDecoder : Decoder InventoryItemsSectionBody
 inventoryItemsSectionBodyDecoder =
     Decode.succeed InventoryItemsSectionBody
         |> hardcoded "source-record-inventory-items-section"
-        |> required "id" string
+        |> required "url" string
         |> required "sectionLabel" languageMapLabelDecoder
         |> required "totalItems" int

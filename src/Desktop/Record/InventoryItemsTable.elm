@@ -1,21 +1,28 @@
 module Desktop.Record.InventoryItemsTable exposing (viewInventoryItemsTabBody)
 
-import Element exposing (Element, alignTop, column, el, fill, fillPortion, height, htmlAttribute, indexedTable, link, none, padding, paragraph, row, scrollbarY, text, width)
+import Dict exposing (Dict)
+import Element exposing (Element, alignTop, centerY, column, el, fill, fillPortion, height, htmlAttribute, inFront, indexedTable, link, padding, paragraph, row, scrollbarY, spacing, text, width)
+import Element.Background as Background
 import Element.Border as Border
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Record.Msg exposing (RecordMsg)
-import Page.RecordTypes.Inventory exposing (InventoryItemSummary, InventoryItemsBody)
+import Page.Record.Model exposing (RecordPageModel)
+import Page.Record.Msg as RecordMsg exposing (RecordMsg)
+import Page.RecordTypes.Search exposing (InventoryItemResultBody, SearchBody, SearchResult(..))
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (cycleTableBackground, linkColour, tableHeaderStyles)
-import Page.UI.Errors exposing (errorMessageString)
+import Page.UI.Record.PublicationWorksSearch exposing (Layout(..), viewPublicationWorksSearchControls)
+import Page.UI.Record.SearchTabs exposing (viewRecordSearchResults)
+import Page.UI.Search.Pagination exposing (viewTablePagination)
+import Page.UI.Search.SearchTemplate exposing (viewRelatedWorksSearchResultsLoadingTmpl, viewResultsListLoadingScreenTmpl)
 import Page.UI.Style exposing (colourScheme, tableCellPadding)
-import Response exposing (Response(..))
+import Response exposing (Response(..), ServerData(..))
 import Session exposing (Session)
 
 
-viewInventoryItemsTabBody : Session -> Response InventoryItemsBody -> Element RecordMsg
-viewInventoryItemsTabBody session inventoryItems =
+viewInventoryItemsTabBody : Session -> RecordPageModel RecordMsg -> Element RecordMsg
+viewInventoryItemsTabBody session model =
     row
         [ width fill
         , height fill
@@ -27,110 +34,169 @@ viewInventoryItemsTabBody session inventoryItems =
             [ width fill
             , height fill
             , alignTop
+            , htmlAttribute (HA.id "search-results-list")
             , padding 20
+            , spacing 20
             ]
-            [ inventoryItemsBodyView session inventoryItems ]
+            [ viewPublicationWorksSearchControls
+                { activeSearch = model.activeSearch
+                , clearMsg = RecordMsg.UserClickedClearKeywordSearch
+                , changeMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
+                , disabledSubmitMsg = RecordMsg.NothingHappened
+                , enabledSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
+                , language = session.language
+                , layout = Inline
+                , probeResponse = model.probeResponse
+                , userClickedOpenQueryBuilderMsg = RecordMsg.UserClickedOpenQueryBuilder
+                }
+            , viewInventoryItemsSearchResults session model
+            ]
         ]
 
 
-inventoryItemsBodyView : Session -> Response InventoryItemsBody -> Element RecordMsg
-inventoryItemsBodyView session inventoryItems =
-    case inventoryItems of
-        Loading _ ->
-            none
+viewInventoryItemsSearchResults : Session -> RecordPageModel RecordMsg -> Element RecordMsg
+viewInventoryItemsSearchResults session model =
+    viewRecordSearchResults
+        { language = session.language
+        , loadingView = viewRelatedWorksSearchResultsLoadingTmpl session.language
+        , loadedView =
+            \body ->
+                case model.searchResults of
+                    Loading (Just (SearchData _)) ->
+                        viewInventoryItemsResultsSection True session.language body
 
-        Response body ->
-            indexedTable
-                [ Border.width 1
-                , Border.color colourScheme.midGrey
-                ]
-                { columns =
-                    [ { header = el tableHeaderStyles (text "Inventory section")
-                      , width = fillPortion 1
-                      , view = \rowNum item -> viewInventorySectionCell session.language rowNum item
-                      }
-                    , { header = el tableHeaderStyles (text "Inventory number")
-                      , width = fillPortion 1
-                      , view = \rowNum item -> viewInventoryCell session.language rowNum item
-                      }
-                    , { header = el tableHeaderStyles (text (extractLabelFromLanguageMap session.language localTranslations.label))
-                      , width = fillPortion 3
-                      , view = \rowNum item -> viewLabelCell session.language rowNum item
-                      }
-                    , { header = el tableHeaderStyles (text (extractLabelFromLanguageMap session.language localTranslations.creator))
-                      , width = fillPortion 2
-                      , view = \rowNum item -> viewCreatorCell session.language rowNum item
-                      }
-                    ]
-                , data = body.items
-                }
-
-        Error err ->
-            text (errorMessageString session.language err)
-
-        NoResponseToShow ->
-            none
+                    _ ->
+                        viewInventoryItemsResultsSection False session.language body
+        , response = model.searchResults
+        }
 
 
-viewLabelCell : Language -> Int -> InventoryItemSummary -> Element RecordMsg
-viewLabelCell language rowNum item =
+viewInventoryItemsResultsSection : Bool -> Language -> SearchBody -> Element RecordMsg
+viewInventoryItemsResultsSection isLoading language body =
     let
-        cellBg =
-            cycleTableBackground rowNum
+        items =
+            List.filterMap
+                (\result ->
+                    case result of
+                        InventoryItemResult item ->
+                            Just item
+
+                        _ ->
+                            Nothing
+                )
+                body.items
     in
+    row
+        [ width fill
+        , height fill
+        , Background.color colourScheme.white
+        ]
+        [ column
+            [ width fill
+            , height fill
+            , alignTop
+            ]
+            [ row
+                [ width fill ]
+                [ viewTablePagination language body.pagination RecordMsg.UserClickedSearchResultsPagination ]
+            , row
+                [ width fill
+                , inFront (viewResultsListLoadingScreenTmpl isLoading)
+                ]
+                [ indexedTable
+                    [ Border.width 1
+                    , Border.color colourScheme.midGrey
+                    ]
+                    { columns =
+                        [ { header = el tableHeaderStyles (text "Inventory section")
+                          , width = fillPortion 1
+                          , view = \rowNum item -> viewInventorySectionCell rowNum item
+                          }
+                        , { header = el tableHeaderStyles (text "Inventory number")
+                          , width = fillPortion 1
+                          , view = \rowNum item -> viewInventoryNumberCell language rowNum item
+                          }
+                        , { header = el tableHeaderStyles (text (extractLabelFromLanguageMap language localTranslations.label))
+                          , width = fillPortion 3
+                          , view = \rowNum item -> viewLabelCell language rowNum item
+                          }
+                        , { header = el tableHeaderStyles (text (extractLabelFromLanguageMap language localTranslations.creator))
+                          , width = fillPortion 2
+                          , view = \rowNum item -> viewCreatorCell language rowNum item
+                          }
+                        ]
+                    , data = items
+                    }
+                ]
+            , row
+                [ width fill ]
+                [ viewTablePagination language body.pagination RecordMsg.UserClickedSearchResultsPagination ]
+            ]
+        ]
+
+
+viewInventorySectionCell : Int -> InventoryItemResultBody -> Element RecordMsg
+viewInventorySectionCell rowNum item =
+    el
+        [ cycleTableBackground rowNum
+        , padding tableCellPadding
+        , height fill
+        ]
+        (paragraph []
+            [ item.flags
+                |> Maybe.andThen .inventorySection
+                |> Maybe.withDefault ""
+                |> text
+            ]
+        )
+
+
+viewInventoryNumberCell : Language -> Int -> InventoryItemResultBody -> Element RecordMsg
+viewInventoryNumberCell language rowNum item =
+    el
+        [ cycleTableBackground rowNum
+        , padding tableCellPadding
+        , height fill
+        ]
+        (paragraph []
+            [ extractSummaryValue language "inventoryNumber" item.summary
+                |> text
+            ]
+        )
+
+
+viewLabelCell : Language -> Int -> InventoryItemResultBody -> Element RecordMsg
+viewLabelCell language rowNum item =
     link
-        [ cellBg, linkColour, padding tableCellPadding, height fill ]
+        [ cycleTableBackground rowNum
+        , linkColour
+        , padding tableCellPadding
+        , height fill
+        ]
         { label =
-            paragraph []
+            paragraph [ centerY ]
                 [ text (extractLabelFromLanguageMap language item.label) ]
         , url = item.id
         }
 
 
-viewCreatorCell : Language -> Int -> InventoryItemSummary -> Element RecordMsg
+viewCreatorCell : Language -> Int -> InventoryItemResultBody -> Element RecordMsg
 viewCreatorCell language rowNum item =
-    let
-        cellBg =
-            cycleTableBackground rowNum
-
-        creatorLabel =
-            item.creator
-                |> Maybe.andThen .relatedTo
-                |> Maybe.map (.label >> extractLabelFromLanguageMap language)
-                |> Maybe.withDefault ""
-    in
     el
-        [ cellBg, padding tableCellPadding, height fill ]
-        (paragraph [] [ text creatorLabel ])
+        [ cycleTableBackground rowNum
+        , padding tableCellPadding
+        , height fill
+        ]
+        (paragraph []
+            [ extractSummaryValue language "inventoryComposer" item.summary
+                |> text
+            ]
+        )
 
 
-viewInventoryCell : Language -> Int -> InventoryItemSummary -> Element RecordMsg
-viewInventoryCell language rowNum item =
-    let
-        cellBg =
-            cycleTableBackground rowNum
-
-        inventoryLabel =
-            item.inventory
-                |> Maybe.andThen .number
-                |> Maybe.withDefault ""
-    in
-    el
-        [ cellBg, padding tableCellPadding, height fill ]
-        (paragraph [] [ text inventoryLabel ])
-
-
-viewInventorySectionCell : Language -> Int -> InventoryItemSummary -> Element RecordMsg
-viewInventorySectionCell language rowNum item =
-    let
-        cellBg =
-            cycleTableBackground rowNum
-
-        inventoryLabel =
-            item.inventory
-                |> Maybe.andThen .section
-                |> Maybe.withDefault ""
-    in
-    el
-        [ cellBg, padding tableCellPadding, height fill ]
-        (paragraph [] [ text inventoryLabel ])
+extractSummaryValue : Language -> String -> Maybe (Dict String LabelValue) -> String
+extractSummaryValue language summaryKey summary =
+    summary
+        |> Maybe.andThen (Dict.get summaryKey)
+        |> Maybe.map (.value >> extractLabelFromLanguageMap language)
+        |> Maybe.withDefault ""

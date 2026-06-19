@@ -1,6 +1,7 @@
 module Mobile.Record.SourcePage exposing (viewFullMobileSourcePage)
 
-import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, link, none, padding, paragraph, px, row, scrollbarY, spacing, text, width)
+import Dict exposing (Dict)
+import Element exposing (Element, alignTop, centerX, column, el, fill, height, htmlAttribute, link, none, padding, paddingEach, paragraph, px, row, scrollbarY, spacing, text, width)
 import Html.Attributes as HA
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -8,18 +9,20 @@ import Mobile.Record.PageShell exposing (viewMobileRecordPage)
 import Mobile.Record.SourceSearch exposing (viewSourceSearchTabBody)
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
-import Page.RecordTypes.Inventory exposing (InventoryItemSummary, InventoryItemsBody)
+import Page.RecordTypes.Search exposing (InventoryItemResultBody, SearchBody, SearchResult(..))
+import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.RecordTypes.Source exposing (FullSourceBody, InventoryItemsSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour, sectionBorderStyles, sectionSpacing)
 import Page.UI.Components exposing (Tab(..), h3s, sourceIconChooser, tabView, viewMobileParagraphField, viewMobileSummaryField, viewPreRenderedMobileSummaryField)
-import Page.UI.Errors exposing (errorMessageString)
 import Page.UI.Record.Bodies.Source exposing (viewSourceSections)
+import Page.UI.Record.PublicationWorksSearch exposing (Layout(..), viewPublicationWorksSearchControls)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody)
-import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo)
+import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordSearchResults)
 import Page.UI.Record.TabShell exposing (TabSpec, descriptionTab, searchTab, selectBody, viewMobileTabBar)
+import Page.UI.Search.MobileResults exposing (viewMobilePagedResults)
+import Page.UI.Search.Pagination exposing (viewPagination)
 import Page.UI.Search.SearchTemplate exposing (viewMobileSearchResultsLoadingTmpl)
 import Page.UI.Style exposing (colourScheme)
-import Response exposing (Response(..))
 import Session exposing (Session)
 
 
@@ -130,7 +133,7 @@ viewRecordTabs session model body descriptionBody =
                 |> Maybe.withDefault []
            )
         ++ (body.inventoryItems
-                |> Maybe.map (viewInventoryItemsTab session session.language model.inventoryItems model)
+                |> Maybe.map (viewInventoryItemsTab session session.language model)
                 |> Maybe.map List.singleton
                 |> Maybe.withDefault []
            )
@@ -139,11 +142,10 @@ viewRecordTabs session model body descriptionBody =
 viewInventoryItemsTab :
     Session
     -> Language
-    -> Response InventoryItemsBody
     -> RecordPageModel RecordMsg
     -> InventoryItemsSectionBody
     -> TabSpec RecordMsg
-viewInventoryItemsTab session language inventoryItemsResponse model inventoryItems =
+viewInventoryItemsTab session language model inventoryItems =
     let
         isSelected =
             case model.currentTab of
@@ -155,7 +157,7 @@ viewInventoryItemsTab session language inventoryItemsResponse model inventoryIte
     in
     { body =
         Just
-            { bodyView = viewMobileInventoryItemsTabBody session inventoryItemsResponse
+            { bodyView = viewMobileInventoryItemsTabBody session model
             , showBottomShadow = False
             }
     , isSelected = isSelected
@@ -166,7 +168,7 @@ viewInventoryItemsTab session language inventoryItemsResponse model inventoryIte
                     RecordMsg.NothingHappened
 
                 else
-                    RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.id)
+                    RecordMsg.UserClickedRecordViewTab (InventoryItemsDisplayTab inventoryItems.url)
             , icon = none
             , isSelected = isSelected
             , language = language
@@ -175,69 +177,88 @@ viewInventoryItemsTab session language inventoryItemsResponse model inventoryIte
     }
 
 
-viewMobileInventoryItemsTabBody : Session -> Response InventoryItemsBody -> Element RecordMsg
-viewMobileInventoryItemsTabBody session inventoryItems =
-    row
+viewMobileInventoryItemsTabBody : Session -> RecordPageModel RecordMsg -> Element RecordMsg
+viewMobileInventoryItemsTabBody session model =
+    column
         [ width fill
         , height fill
         , alignTop
-        , scrollbarY
-        , htmlAttribute (HA.style "min-height" "unset")
-        ]
-        [ column
-            [ width fill
-            , height fill
-            , alignTop
-            , padding 20
-            , spacing sectionSpacing
-            ]
-            [ inventoryItemsBodyView session inventoryItems ]
-        ]
-
-
-inventoryItemsBodyView : Session -> Response InventoryItemsBody -> Element RecordMsg
-inventoryItemsBodyView session inventoryItems =
-    case inventoryItems of
-        Loading _ ->
-            viewMobileSearchResultsLoadingTmpl
-
-        Response inventoryBody ->
-            viewInventoryItemsList session.language inventoryBody
-
-        Error err ->
-            text (errorMessageString session.language err)
-
-        NoResponseToShow ->
-            viewMobileSearchResultsLoadingTmpl
-
-
-viewInventoryItemsList : Language -> InventoryItemsBody -> Element RecordMsg
-viewInventoryItemsList language inventoryBody =
-    column
-        [ width fill
+        , padding 20
         , spacing sectionSpacing
         ]
-        (List.map (viewInventoryItemCard language) inventoryBody.items)
+        [ viewPublicationWorksSearchControls
+            { activeSearch = model.activeSearch
+            , clearMsg = RecordMsg.UserClickedClearKeywordSearch
+            , changeMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
+            , disabledSubmitMsg = RecordMsg.NothingHappened
+            , enabledSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
+            , language = session.language
+            , layout = Stacked
+            , probeResponse = model.probeResponse
+            , userClickedOpenQueryBuilderMsg = RecordMsg.UserClickedOpenQueryBuilder
+            }
+        , el [ width fill, height fill ]
+            (viewRecordSearchResults
+                { language = session.language
+                , loadingView = viewMobileSearchResultsLoadingTmpl
+                , loadedView = viewInventoryItemsResultsSection session.language
+                , response = model.searchResults
+                }
+            )
+        ]
 
 
-viewInventoryItemCard : Language -> InventoryItemSummary -> Element RecordMsg
+viewInventoryItemsResultsSection : Language -> SearchBody -> Element RecordMsg
+viewInventoryItemsResultsSection language body =
+    let
+        items =
+            List.filterMap
+                (\result ->
+                    case result of
+                        InventoryItemResult item ->
+                            Just item
+
+                        _ ->
+                            Nothing
+                )
+                body.items
+
+        cards =
+            if List.isEmpty items then
+                [ text (extractLabelFromLanguageMap language localTranslations.noResultsHeader) ]
+
+            else
+                List.map (viewInventoryItemCard language) items
+    in
+    viewMobilePagedResults
+        { bodyAttributes =
+            [ paddingEach { bottom = 90, left = 0, right = 0, top = 0 }
+            , spacing sectionSpacing
+            ]
+        , cards = cards
+        , pagination = viewPagination language body.pagination RecordMsg.UserClickedSearchResultsPagination
+        }
+
+
+viewInventoryItemCard : Language -> InventoryItemResultBody -> Element RecordMsg
 viewInventoryItemCard language item =
     let
-        creatorLabel =
-            item.creator
-                |> Maybe.andThen .relatedTo
-                |> Maybe.map (.label >> extractLabelFromLanguageMap language)
-                |> Maybe.withDefault ""
-
         inventoryLabel =
-            item.inventory
-                |> Maybe.map
-                    (\inventory ->
-                        [ inventory.section, inventory.number ]
-                            |> List.filterMap identity
-                            |> String.join " "
-                    )
-                |> Maybe.withDefault ""
+            [ item.flags |> Maybe.andThen .inventorySection
+            , extractSummaryValue language "inventoryNumber" item.summary
+                |> (\value ->
+                        if String.isEmpty value then
+                            Nothing
+
+                        else
+                            Just value
+                   )
+            ]
+                |> List.filterMap identity
+                |> String.join " "
+
+        creatorLabel =
+            extractSummaryValue language "creator" item.summary
     in
     row
         (width fill :: sectionBorderStyles)
@@ -264,3 +285,11 @@ viewInventoryItemCard language item =
                 paragraph [] [ text inventoryLabel ]
             ]
         ]
+
+
+extractSummaryValue : Language -> String -> Maybe (Dict String LabelValue) -> String
+extractSummaryValue language summaryKey summary =
+    summary
+        |> Maybe.andThen (Dict.get summaryKey)
+        |> Maybe.map (.value >> extractLabelFromLanguageMap language)
+        |> Maybe.withDefault ""

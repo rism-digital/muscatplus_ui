@@ -187,12 +187,13 @@ init flags initialUrl key =
                 ]
             )
 
-        SourceInventoryItemsPageRoute _ ->
+        SourceInventoryItemsPageRoute _ qargs ->
             let
                 ( initialBody, initialCmds ) =
-                    recordInventoryRouteHelper
-                        { initialData = Nothing
+                    recordContentsRouteHelper
+                        { initialData = flags.initialData
                         , initialUrl = initialUrl
+                        , qargs = qargs
                         , route = route
                         , session = session
                         }
@@ -534,48 +535,6 @@ recordInventoryItemRouteHelper { initialData, initialUrl, route, session } =
     in
     ( initialBody
     , fetchInitialInventoryItemCmd
-        |> Cmd.map Msg.UserInteractedWithRecordPage
-    )
-
-
-recordInventoryRouteHelper :
-    { initialData : Maybe Value
-    , initialUrl : Url
-    , route : Route
-    , session : Session
-    }
-    -> ( RecordPageModel RecordMsg, Cmd Msg )
-recordInventoryRouteHelper { initialData, initialUrl, route, session } =
-    let
-        recordCfg =
-            { incomingUrl = initialUrl
-            , route = route
-            , queryArgs = Nothing
-            , initialData = initialData
-            , session = session
-            }
-
-        initialBody =
-            Record.init recordCfg
-                |> addNationalCollectionFilter session.restrictedToNationalCollection
-
-        fetchInitialInventoryCmd =
-            sourceFetchCmd initialBody initialUrl route
-
-        fetchInitialRecordBodyCmd =
-            case initialData of
-                Just _ ->
-                    Cmd.none
-
-                Nothing ->
-                    { initialUrl | path = baseRecordPathFromRoute route }
-                        |> Record.recordPageRequest session.cacheBuster
-    in
-    ( initialBody
-    , Cmd.batch
-        [ fetchInitialRecordBodyCmd
-        , fetchInitialInventoryCmd
-        ]
         |> Cmd.map Msg.UserInteractedWithRecordPage
     )
 

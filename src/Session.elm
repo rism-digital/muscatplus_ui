@@ -94,6 +94,9 @@ init flags url key =
                 SourceContentsPageRoute _ qargs ->
                     qargs.nationalCollection
 
+                SourceInventoryItemsPageRoute _ qargs ->
+                    qargs.nationalCollection
+
                 InstitutionSourcePageRoute _ qargs ->
                     qargs.nationalCollection
 
