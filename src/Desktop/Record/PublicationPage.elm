@@ -9,7 +9,7 @@ import Element.Region as Region
 import Html.Attributes as HA
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Incipit exposing (IncipitFormat(..), RenderedIncipit(..))
 import Page.RecordTypes.Publication exposing (PublicationBody, WorkCatalogueStatus)
@@ -22,6 +22,7 @@ import Page.UI.Helpers exposing (viewMaybe, viewSVGRenderedIncipit)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplate, recordHeaderTemplate, subHeaderTemplate)
+import Page.UI.Record.PublicationWorksSearch exposing (Layout(..), viewPublicationWorksSearchControls)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (gatherRelationshipItems, viewRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordSearchResults)
@@ -274,8 +275,22 @@ viewRelatedWorksListTabBody session model =
             , height fill
             , alignTop
             , htmlAttribute (HA.id "search-results-list")
+            , padding 20
+            , spacing 20
             ]
-            [ viewRelatedWorksSectionRouter session model ]
+            [ viewPublicationWorksSearchControls
+                { activeSearch = model.activeSearch
+                , clearMsg = RecordMsg.UserClickedClearKeywordSearch
+                , changeMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
+                , disabledSubmitMsg = RecordMsg.NothingHappened
+                , enabledSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
+                , language = session.language
+                , layout = Inline
+                , probeResponse = model.probeResponse
+                , userClickedOpenQueryBuilderMsg = RecordMsg.UserClickedOpenQueryBuilder
+                }
+            , viewRelatedWorksSectionRouter session model
+            ]
         ]
 
 
@@ -359,7 +374,6 @@ viewWorksResultsSection cfg isLoading body =
             [ width fill
             , height fill
             , alignTop
-            , padding 20
             ]
             [ row
                 [ width fill ]

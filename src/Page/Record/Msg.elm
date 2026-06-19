@@ -49,6 +49,7 @@ type RecordMsg
     | UserClickedSingleChoiceFacetItem FacetAlias String LanguageMap
     | UsersClickedSingleChoiceReset FacetAlias
     | UserTriggeredSearchSubmit
+    | UserClickedClearKeywordSearch
     | UserRemovedActiveFilter FacetAlias String
     | UserResetAllFilters
     | UserChangedResultSorting String

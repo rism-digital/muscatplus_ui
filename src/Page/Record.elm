@@ -26,7 +26,7 @@ import Page.Decoders exposing (recordResponseDecoder)
 import Page.Downloader as Downloader
 import Page.Downloader.Model as Downloader
 import Page.Downloader.Msg as DownloaderMsg
-import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, setFilters, setMode, setNationalCollection, setNextQuery, setRows, toNextQuery)
+import Page.Query exposing (QueryArgs, buildQueryParameters, defaultQueryArgs, setFilters, setKeywordQuery, setMode, setNationalCollection, setNextQuery, setRows, toNextQuery)
 import Page.QueryBuilder as QueryBuilder
 import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel, routeToCurrentRecordViewTab)
 import Page.Record.Msg exposing (RecordMsg(..))
@@ -569,6 +569,15 @@ update session msg model =
 
         UserTriggeredSearchSubmit ->
             searchSubmit session model
+
+        UserClickedClearKeywordSearch ->
+            setNextQuery
+                (toNextQuery model.activeSearch
+                    |> setKeywordQuery Nothing
+                )
+                model.activeSearch
+                |> flip setActiveSearch model
+                |> searchSubmit session
 
         UserRemovedActiveFilter alias value ->
             userRemovedItemFromActiveFilters alias value model

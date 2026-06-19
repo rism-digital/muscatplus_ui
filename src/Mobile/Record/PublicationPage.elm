@@ -6,7 +6,7 @@ import Html.Attributes as HA
 import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMap, extractLabelFromLanguageMapWithVariables, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import Mobile.Record.PageShell exposing (viewMobileRecordPage)
-import Page.Record.Model exposing (CurrentRecordViewTab(..), RecordPageModel)
+import Page.Record.Model exposing (RecordPageModel)
 import Page.Record.Msg as RecordMsg exposing (RecordMsg)
 import Page.RecordTypes.Publication exposing (PublicationBody, WorkCatalogueStatus, WorksSectionBody)
 import Page.RecordTypes.Search exposing (SearchBody, SearchResult(..), WorkResultBody)
@@ -16,6 +16,7 @@ import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Images exposing (folderMusicSvg)
 import Page.UI.Record.ContentsSection exposing (viewCreator)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
+import Page.UI.Record.PublicationWorksSearch exposing (Layout(..), viewPublicationWorksSearchControls)
 import Page.UI.Record.ReferencesNotesSection exposing (viewNotesSection)
 import Page.UI.Record.Relationship exposing (viewMobileRelationshipBody, viewRelationshipsSection)
 import Page.UI.Record.SearchTabs exposing (resolveSearchTabInfo, viewRecordSearchResults)
@@ -114,12 +115,33 @@ viewDescriptionTab session body =
 
 viewWorksTabBody : Session -> RecordPageModel RecordMsg -> Element RecordMsg
 viewWorksTabBody session model =
-    viewRecordSearchResults
-        { language = session.language
-        , loadingView = viewMobileSearchResultsLoadingTmpl
-        , loadedView = viewWorksSearchResultsSection session
-        , response = model.searchResults
-        }
+    column
+        [ width fill
+        , height fill
+        , alignTop
+        , paddingEach { bottom = 0, left = 20, right = 20, top = 20 }
+        , spacing sectionSpacing
+        ]
+        [ viewPublicationWorksSearchControls
+            { activeSearch = model.activeSearch
+            , clearMsg = RecordMsg.UserClickedClearKeywordSearch
+            , changeMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
+            , disabledSubmitMsg = RecordMsg.NothingHappened
+            , enabledSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
+            , language = session.language
+            , layout = Stacked
+            , probeResponse = model.probeResponse
+            , userClickedOpenQueryBuilderMsg = RecordMsg.UserClickedOpenQueryBuilder
+            }
+        , el [ width fill, height fill ]
+            (viewRecordSearchResults
+                { language = session.language
+                , loadingView = viewMobileSearchResultsLoadingTmpl
+                , loadedView = viewWorksSearchResultsSection session
+                , response = model.searchResults
+                }
+            )
+        ]
 
 
 viewRecordTabs :
@@ -153,6 +175,7 @@ viewRecordTabs session model body descriptionBody =
                 |> Maybe.withDefault []
            )
 
+
 viewWorksSearchResultsSection : Session -> SearchBody -> Element RecordMsg
 viewWorksSearchResultsSection session body =
     let
@@ -177,7 +200,7 @@ viewWorksSearchResultsSection session body =
     in
     viewMobilePagedResults
         { bodyAttributes =
-            [ paddingEach { bottom = 90, left = 20, right = 20, top = 20 }
+            [ paddingEach { bottom = 90, left = 0, right = 0, top = 0 }
             , spacing sectionSpacing
             ]
         , cards = cards

@@ -283,6 +283,9 @@ probePathForRoute route =
         InstitutionSourcePageRoute id _ ->
             [ "institutions", String.fromInt id, "probe" ]
 
+        PublicationWorksPageRoute id _ ->
+            [ "publications", String.fromInt id, "works", "probe" ]
+
         WorkSourcePageRoute id _ ->
             [ "works", String.fromInt id, "probe" ]
 
