@@ -21,20 +21,8 @@ resolveSearchTabInfo :
     -> Maybe { a | url : String, totalItems : Int }
     -> Maybe { searchUrl : String, totalItems : Int }
 resolveSearchTabInfo searchResults fallbackBody =
-    case searchResults of
-        Loading (Just (SearchData data)) ->
-            Just
-                { searchUrl = data.id
-                , totalItems = data.totalItems
-                }
-
-        Response (SearchData data) ->
-            Just
-                { searchUrl = data.id
-                , totalItems = data.totalItems
-                }
-
-        _ ->
+    let
+        fallbackInfo =
             Maybe.map
                 (\body ->
                     { searchUrl = body.url
@@ -42,6 +30,40 @@ resolveSearchTabInfo searchResults fallbackBody =
                     }
                 )
                 fallbackBody
+
+        matchingSearchInfo data =
+            fallbackBody
+                |> Maybe.andThen
+                    (\body ->
+                        if data.id == body.url then
+                            Just
+                                { searchUrl = data.id
+                                , totalItems = data.totalItems
+                                }
+
+                        else
+                            Nothing
+                    )
+    in
+    case searchResults of
+        Loading (Just (SearchData data)) ->
+            case matchingSearchInfo data of
+                Just info ->
+                    Just info
+
+                Nothing ->
+                    fallbackInfo
+
+        Response (SearchData data) ->
+            case matchingSearchInfo data of
+                Just info ->
+                    Just info
+
+                Nothing ->
+                    fallbackInfo
+
+        _ ->
+            fallbackInfo
 
 
 viewRecordDescriptionTab :
