@@ -10,7 +10,7 @@ import Page.RecordTypes.Inventory exposing (InventoryItemBody)
 import Page.UI.Attributes exposing (sectionSpacing)
 import Page.UI.Components exposing (viewParagraphField, viewPreRenderedSummaryField, viewSummaryField)
 import Page.UI.Helpers exposing (viewMaybe)
-import Page.UI.Images exposing (sourcesSvg)
+import Page.UI.Images exposing (squareListSvg)
 import Page.UI.Record.ContentsSection exposing (viewContentsSection)
 import Page.UI.Record.ExternalResources exposing (viewExternalResourcesSection)
 import Page.UI.Record.PageTemplate exposing (pageFooterTemplateRouter, pageHeaderTemplateNoToc, recordHeaderTemplate, subHeaderTemplate)
@@ -29,7 +29,7 @@ viewInventoryItemPage session _ body =
                 , height (px 25)
                 , centerY
                 ]
-                (sourcesSvg colourScheme.darkBlue)
+                (squareListSvg colourScheme.darkBlue)
 
         pageHeader =
             if session.isFramed then
