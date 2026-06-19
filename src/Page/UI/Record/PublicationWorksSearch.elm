@@ -139,8 +139,6 @@ centeredInlineControls content =
         , column
             [ width (fillPortion 2)
             , centerX
-
-            --, spacing 12
             ]
             content
         , column
