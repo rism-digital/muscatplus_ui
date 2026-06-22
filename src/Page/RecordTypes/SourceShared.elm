@@ -131,7 +131,7 @@ sourceContentTypeOptions =
 sourceContentTypeRecordBodyDecoder : Decoder SourceContentTypeRecordBody
 sourceContentTypeRecordBodyDecoder =
     Decode.succeed SourceContentTypeRecordBody
-        |> required "label" languageMapLabelDecoder
+        |> required "typeLabel" languageMapLabelDecoder
         |> required "type" sourceContentTypeDecoder
 
 
@@ -171,7 +171,7 @@ sourceRecordTypeOptions =
 sourceRecordTypeRecordBodyDecoder : Decoder SourceRecordTypeRecordBody
 sourceRecordTypeRecordBodyDecoder =
     Decode.succeed SourceRecordTypeRecordBody
-        |> required "label" languageMapLabelDecoder
+        |> required "typeLabel" languageMapLabelDecoder
         |> required "type" sourceRecordTypeDecoder
 
 
@@ -214,5 +214,5 @@ sourceTypeOptions =
 sourceTypeRecordBodyDecoder : Decoder SourceTypeRecordBody
 sourceTypeRecordBodyDecoder =
     Decode.succeed SourceTypeRecordBody
-        |> required "label" languageMapLabelDecoder
+        |> required "typeLabel" languageMapLabelDecoder
         |> required "type" sourceTypeDecoder
