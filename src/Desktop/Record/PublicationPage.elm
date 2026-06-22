@@ -315,6 +315,7 @@ viewRelatedWorksSectionRouter session model =
             , userChangedResultSortingMsg = RecordMsg.UserChangedResultSorting
             , userChangedResultsPerPageMsg = RecordMsg.UserChangedResultsPerPage
             , userClickedResultsPaginationMsg = RecordMsg.UserClickedSearchResultsPagination
+            , userStartedResultsResizeMsg = RecordMsg.UserStartedSearchResultsResize
             , userTriggeredSearchSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
             , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
             , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
@@ -380,7 +381,7 @@ viewWorksResultsSection cfg isLoading body =
                 [ viewTablePagination language body.pagination cfg.userClickedResultsPaginationMsg ]
             , row
                 [ width fill
-                , inFront (viewResultsListLoadingScreenTmpl isLoading)
+                , inFront (viewResultsListLoadingScreenTmpl 0 isLoading)
                 ]
                 [ indexedTable
                     [ Border.width 1, Border.color colourScheme.midGrey ]

@@ -1,7 +1,7 @@
 module Page.UI.Search.Results.InstitutionResult exposing (viewInstitutionSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, alignRight, column, el, fill, maximum, onLeft, px, row, spacing, spacingXY, text, width)
+import Element exposing (Color, Element, alignRight, column, el, fill, maximum, onLeft, px, spacing, spacingXY, text, width, wrappedRow)
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (InstitutionResultBody, InstitutionResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
@@ -42,13 +42,13 @@ viewInstitutionSearchResult { clickForPreviewMsg, language, resultIdx, selectedR
 
 viewInstitutionSummary : Language -> Color -> Dict String LabelValue -> Element msg
 viewInstitutionSummary language iconColour summary =
-    row
+    wrappedRow
         [ width (fill |> maximum 600) ]
         [ column
             [ spacing 5
             , width fill
             ]
-            [ row
+            [ wrappedRow
                 [ width fill
                 , spacing 20
                 ]
@@ -74,7 +74,7 @@ viewInstitutionSummary language iconColour summary =
                     }
                     summary
                 ]
-            , row
+            , wrappedRow
                 [ width fill
                 , spacing 20
                 ]
@@ -130,7 +130,7 @@ viewInstitutionFlags _ flags =
                 )
                 flags.linkedWithExternalRecord
     in
-    row
+    wrappedRow
         [ width fill
         , spacingXY 5 0
         ]

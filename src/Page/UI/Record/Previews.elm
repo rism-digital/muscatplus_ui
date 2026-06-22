@@ -10,7 +10,7 @@ import Page.RecordTypes.ExternalRecord exposing (ExternalRecord(..))
 import Page.RecordTypes.Relationship exposing (RelationshipBody)
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..), animatedLoader, animatedRow)
-import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, sectionSpacing, sidebarWidth)
+import Page.UI.Attributes exposing (emptyAttribute, minimalDropShadow, sectionSpacing)
 import Page.UI.Components exposing (viewMobileWindowTitleBar, viewWindowShell)
 import Page.UI.Errors exposing (ErrorResponse)
 import Page.UI.Events exposing (onComplete)
@@ -33,6 +33,7 @@ import Simple.Animation.Property as P
 type alias PreviewConfig msg =
     { language : Language
     , windowSize : ( Int, Int )
+    , availableRightWidth : Int
     , closeMsg : msg
     , hideAnimationStartedMsg : msg
     , showAnimationFinishedMsg : msg
@@ -213,24 +214,21 @@ choosePreview cfg previewData =
 viewPreviewRouter : PreviewConfig msg -> Maybe ServerData -> Element msg
 viewPreviewRouter cfg previewData =
     let
-        ( windowWidth, windowHeight ) =
+        ( _, windowHeight ) =
             cfg.windowSize
 
         previewHeight =
             round (toFloat windowHeight * 0.75)
 
         previewWidth =
-            Layout.previewWidth windowWidth sidebarWidth
+            Layout.previewWidthFromAvailableRightWidth cfg.availableRightWidth
 
         moveDownAmount =
             (toFloat windowHeight * 0.01)
                 |> clamp 10 20
 
-        availableRight =
-            Layout.previewAvailableRightWidth windowWidth sidebarWidth
-
         moveRightAmount =
-            (toFloat availableRight * 0.02)
+            (toFloat cfg.availableRightWidth * 0.02)
                 |> clamp 12 32
 
         preview =

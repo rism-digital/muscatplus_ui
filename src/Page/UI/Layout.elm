@@ -1,32 +1,57 @@
-module Page.UI.Layout exposing (previewAvailableRightWidth, previewWidth, resultsPanelWidth)
+module Page.UI.Layout exposing (clampResultsPanelWidth, previewAvailableRightWidthFromResultsWidth, previewWidthFromAvailableRightWidth, resultsDividerWidth, resultsPanelWidth)
+
+
+minimumResultsPanelWidth : Int
+minimumResultsPanelWidth =
+    320
+
+
+minimumRightPanelWidth : Int
+minimumRightPanelWidth =
+    360
+
+
+resultsDividerWidth : Int
+resultsDividerWidth =
+    16
+
+
+availableSplitWidth : Int -> Int -> Int
+availableSplitWidth windowWidth sidebarWidth =
+    max 320 (windowWidth - sidebarWidth - resultsDividerWidth)
 
 
 resultsPanelWidth : Int -> Int -> Int
 resultsPanelWidth windowWidth sidebarWidth =
     let
         availableWidth =
-            max 320 (windowWidth - sidebarWidth)
+            availableSplitWidth windowWidth sidebarWidth
     in
     round (toFloat availableWidth * 0.42)
         |> clamp 380 500
         |> min availableWidth
 
 
-previewAvailableRightWidth : Int -> Int -> Int
-previewAvailableRightWidth windowWidth sidebarWidth =
+clampResultsPanelWidth : Int -> Int -> Int -> Int
+clampResultsPanelWidth windowWidth sidebarWidth requestedWidth =
     let
-        resultsWidth =
-            resultsPanelWidth windowWidth sidebarWidth
+        availableWidth =
+            availableSplitWidth windowWidth sidebarWidth
+
+        maximumResultsWidth =
+            max minimumResultsPanelWidth (availableWidth - minimumRightPanelWidth)
     in
-    max 0 (windowWidth - sidebarWidth - resultsWidth)
+    clamp minimumResultsPanelWidth maximumResultsWidth requestedWidth
+        |> min availableWidth
 
 
-previewWidth : Int -> Int -> Int
-previewWidth windowWidth sidebarWidth =
-    let
-        availableRight =
-            previewAvailableRightWidth windowWidth sidebarWidth
-    in
+previewAvailableRightWidthFromResultsWidth : Int -> Int -> Int -> Int
+previewAvailableRightWidthFromResultsWidth windowWidth sidebarWidth resultsWidth =
+    max 0 (availableSplitWidth windowWidth sidebarWidth - clampResultsPanelWidth windowWidth sidebarWidth resultsWidth)
+
+
+previewWidthFromAvailableRightWidth : Int -> Int
+previewWidthFromAvailableRightWidth availableRight =
     round (toFloat availableRight * 0.92)
         |> clamp 260 900
         |> min availableRight

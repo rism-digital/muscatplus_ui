@@ -1,7 +1,7 @@
 module Page.UI.Search.Results.SourceResult exposing (viewSourceSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, alignRight, column, el, fill, link, maximum, onLeft, px, row, spacing, spacingXY, text, width)
+import Element exposing (Color, Element, alignRight, column, el, fill, link, maximum, onLeft, px, row, shrink, spacing, spacingXY, text, width, wrappedRow)
 import Element.Font as Font
 import Language exposing (Language, extractLabelFromLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
@@ -119,7 +119,7 @@ viewSourceFlags language flags =
         contentTypesFlags =
             viewIf (assembleContentTypeFlags language flags.contentTypes) (not (List.isEmpty flags.contentTypes))
     in
-    row
+    wrappedRow
         [ width fill
         , spacingXY 5 0
         ]
@@ -156,7 +156,9 @@ assembleContentTypeFlags language sourceContentTypes =
                 (iconType ++ ": " ++ iconLabel)
     in
     row
-        [ spacing 0 ]
+        [ width shrink
+        , spacing 5
+        ]
         (List.map sourceTypeIcon sourceContentTypes)
 
 
@@ -171,7 +173,7 @@ viewSourcePartOf language fontLinkColour partOfBody =
                             ( url, label ) =
                                 extractUrlAndLabelFromPartOf s.relatedTo
                         in
-                        row
+                        wrappedRow
                             [ width fill ]
                             [ text (extractLabelFromLanguageMap language localTranslations.partOf ++ " ")
                             , link
@@ -182,7 +184,7 @@ viewSourcePartOf language fontLinkColour partOfBody =
                             ]
                     )
     in
-    row
+    wrappedRow
         [ width fill
         , bodyRegular
         ]
@@ -248,19 +250,19 @@ viewSourceSummary language iconColour summary =
                     }
                     summary
     in
-    row
+    wrappedRow
         [ width (fill |> maximum 600) ]
         [ column
             [ spacing 5
             , width fill
             ]
-            [ row
+            [ wrappedRow
                 [ spacing 20
                 , width fill
                 ]
                 [ composerInfo
                 ]
-            , row
+            , wrappedRow
                 [ spacing 20
                 , width fill
                 ]

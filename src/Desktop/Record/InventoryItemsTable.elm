@@ -101,7 +101,7 @@ viewInventoryItemsResultsSection isLoading language body =
                 [ viewTablePagination language body.pagination RecordMsg.UserClickedSearchResultsPagination ]
             , row
                 [ width fill
-                , inFront (viewResultsListLoadingScreenTmpl isLoading)
+                , inFront (viewResultsListLoadingScreenTmpl 0 isLoading)
                 ]
                 [ indexedTable
                     [ Border.width 1

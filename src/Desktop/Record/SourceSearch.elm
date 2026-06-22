@@ -59,6 +59,7 @@ searchResultsViewRouter session model =
                 , userChangedResultSortingMsg = RecordMsg.UserChangedResultSorting
                 , userChangedResultsPerPageMsg = RecordMsg.UserChangedResultsPerPage
                 , userClickedResultsPaginationMsg = RecordMsg.UserClickedSearchResultsPagination
+                , userStartedResultsResizeMsg = RecordMsg.UserStartedSearchResultsResize
                 , userTriggeredSearchSubmitMsg = RecordMsg.UserTriggeredSearchSubmit
                 , userEnteredTextInKeywordQueryBoxMsg = RecordMsg.UserEnteredTextInKeywordQueryBox
                 , userResetAllFiltersMsg = RecordMsg.UserResetAllFilters
@@ -78,7 +79,12 @@ searchResultsViewRouter session model =
     in
     viewRecordSearchResults
         { language = session.language
-        , loadingView = viewSearchResultsLoadingForWindow session.window sidebarWidth session.language
+        , loadingView =
+            viewSearchResultsLoadingForWindow
+                session.window
+                sidebarWidth
+                (session.searchPreferences |> Maybe.andThen .resultsPanelWidth)
+                session.language
         , loadedView =
             \body ->
                 case model.searchResults of

@@ -1,7 +1,7 @@
 module Page.UI.Search.Results.PersonResult exposing (viewPersonSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, alignRight, column, el, fill, maximum, onLeft, px, row, spacing, text, width)
+import Element exposing (Color, Element, alignRight, column, el, fill, maximum, onLeft, px, spacing, text, width, wrappedRow)
 import Language exposing (Language)
 import Page.RecordTypes.Search exposing (PersonResultBody, PersonResultFlags)
 import Page.RecordTypes.Shared exposing (LabelValue)
@@ -42,76 +42,81 @@ viewPersonSearchResult { clickForPreviewMsg, language, resultIdx, selectedResult
 viewPersonFlags : Language -> PersonResultFlags -> Element msg
 viewPersonFlags _ flags =
     let
-        isDIAMMFlag =
-            viewIf
-                (el
-                    [ width (px 60)
-                    , alignRight
-                    , el tooltipStyle (text "Source: DIAMM")
-                        |> tooltip onLeft
-                    ]
-                    diammLogo
-                )
-                flags.isDIAMMRecord
+        activeFlags =
+            (if flags.linkedWithExternalRecord then
+                let
+                    linkedWithExternalRecordFlag =
+                        makeFlagIcon
+                            { background = colourScheme.olive
+                            }
+                            (linkSvg colourScheme.white)
+                            "Linked with DIAMM"
+                in
+                [ linkedWithExternalRecordFlag ]
 
-        linkedWithExternalRecordFlag =
-            viewIf
-                (makeFlagIcon
-                    { background = colourScheme.olive
-                    }
-                    (linkSvg colourScheme.white)
-                    "Linked with DIAMM"
-                )
-                flags.linkedWithExternalRecord
+             else
+                []
+            )
+                ++ (if flags.isDIAMMRecord then
+                        let
+                            isDIAMMFlag =
+                                viewIf
+                                    (el
+                                        [ width (px 60)
+                                        , alignRight
+                                        , el tooltipStyle (text "Source: DIAMM")
+                                            |> tooltip onLeft
+                                        ]
+                                        diammLogo
+                                    )
+                                    flags.isDIAMMRecord
+                        in
+                        [ isDIAMMFlag ]
+
+                    else
+                        []
+                   )
     in
-    row
-        [ width fill
-        , spacing 10
-        ]
-        [ linkedWithExternalRecordFlag
-        , isDIAMMFlag
-        ]
+    if List.isEmpty activeFlags then
+        Element.none
+
+    else
+        wrappedRow
+            [ width fill
+            , spacing 5
+            ]
+            activeFlags
 
 
 viewPersonSummary : Language -> Color -> Dict String LabelValue -> Element msg
 viewPersonSummary language iconColour summary =
-    row
+    wrappedRow
         [ width (fill |> maximum 600) ]
         [ column
             [ spacing 5
             , width fill
             ]
-            [ row
-                [ width fill
-                , spacing 20
-                ]
-                [ viewSearchResultSummaryField
-                    { language = language
-                    , icon = briefcaseSvg iconColour
-                    , iconSize = 20
-                    , includeLabelInValue = False
-                    , fieldName = "roles"
-                    , displayStyles = [ bodyRegular ]
-                    , formatNumbers = False
-                    }
-                    summary
-                ]
-            , row
-                [ width fill
-                , spacing 20
-                ]
-                [ viewSearchResultSummaryField
-                    { language = language
-                    , icon = sourcesSvg iconColour
-                    , iconSize = 18
-                    , includeLabelInValue = True
-                    , fieldName = "numSources"
-                    , displayStyles =
-                        [ bodySM
-                        ]
-                    , formatNumbers = True
-                    }
-                    summary
-                ]
+            [ viewSearchResultSummaryField
+                { language = language
+                , icon = briefcaseSvg iconColour
+                , iconSize = 20
+                , includeLabelInValue = False
+                , fieldName = "roles"
+                , displayStyles = [ bodyRegular ]
+                , formatNumbers = False
+                }
+                summary
+            , viewSearchResultSummaryField
+                { language = language
+                , icon = sourcesSvg iconColour
+                , iconSize = 18
+                , includeLabelInValue = True
+                , fieldName = "numSources"
+                , displayStyles =
+                    [ bodySM
+                    ]
+                , formatNumbers = True
+                }
+                summary
             ]
         ]

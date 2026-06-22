@@ -27,6 +27,9 @@ type alias RecordPageModel msg =
     , searchResults : Response ServerData
     , inventoryItems : Response InventoryItemsBody
     , preview : Response ServerData
+    , resultsPanelWidth : Maybe Int
+    , resultsPanelResize : Maybe { startClientX : Int, startResultsWidth : Int, currentResultsWidth : Int }
+    , pendingResultsScrollReset : Bool
     , sourceItemsExpanded : Bool
     , inventoryItemsExpanded : Bool
     , incipitInfoExpanded : Set String

@@ -56,6 +56,9 @@ type RecordMsg
     | UserChangedResultsPerPage String
     | UserClickedSearchResultsPagination String
     | UserClickedSearchResultForPreview String
+    | UserStartedSearchResultsResize Int
+    | ClientMovedSearchResultsResize Int
+    | ClientStoppedSearchResultsResize
     | UserClickedExpandSourceItemsSectionInPreview
     | UserClickedExpandIncipitInfoSectionInPreview String
     | UserClickedExpandDigitalCopiesCallout

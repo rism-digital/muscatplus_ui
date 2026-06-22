@@ -29,6 +29,7 @@ type alias SearchPreferences =
     { expandedFacetPanels : Set String
     , audioMuted : Bool
     , resultsPerPage : Int
+    , resultsPanelWidth : Maybe Int
     }
 
 
@@ -38,6 +39,7 @@ searchPreferencesDecoder =
         |> required "expandedFacetPanels" (list string |> Decode.andThen expandedFacetPanelDecoder)
         |> optional "audioMuted" bool True
         |> optional "resultsPerPage" int C.defaultRows
+        |> optional "resultsPanelWidth" (Decode.map Just int) Nothing
 
 
 expandedFacetPanelDecoder : List String -> Decoder (Set String)

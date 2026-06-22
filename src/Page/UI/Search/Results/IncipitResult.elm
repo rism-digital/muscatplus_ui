@@ -1,7 +1,7 @@
 module Page.UI.Search.Results.IncipitResult exposing (viewIncipitSearchResult)
 
 import Dict exposing (Dict)
-import Element exposing (Color, Element, column, el, fill, htmlAttribute, maximum, row, spacing, width)
+import Element exposing (Color, Element, column, el, fill, htmlAttribute, maximum, spacing, width, wrappedRow)
 import Element.Font as Font
 import Html.Attributes as HA
 import Language exposing (Language)
@@ -58,13 +58,13 @@ viewSearchResultIncipits isSelected incipits =
 
 viewIncipitSummary : Language -> Color -> Dict String LabelValue -> Element msg
 viewIncipitSummary language iconColour summary =
-    row
+    wrappedRow
         [ width (fill |> maximum 600) ]
         [ column
             [ spacing 5
             , width fill
             ]
-            [ row
+            [ wrappedRow
                 [ spacing 20
                 ]
                 [ viewSearchResultSummaryField
@@ -88,7 +88,7 @@ viewIncipitSummary language iconColour summary =
                     }
                     summary
                 ]
-            , row
+            , wrappedRow
                 [ width fill
                 , spacing 20
                 ]

@@ -20,22 +20,49 @@ import Page.UI.Style exposing (colourScheme)
 import Request exposing (serverUrl)
 
 
-viewResultsListLoadingScreenTmpl : Bool -> Element msg
-viewResultsListLoadingScreenTmpl isLoading =
+viewResultsListLoadingScreenTmpl : Int -> Bool -> Element msg
+viewResultsListLoadingScreenTmpl resultsPanelWidth isLoading =
     viewIf
-        (el
-            [ width fill
-            , height fill
-            , blurredBackground
-            ]
-            (animatedLoader
-                [ width (px 50)
-                , height (px 50)
-                , centerY
-                , centerX
+        (if resultsPanelWidth > 0 then
+            row
+                [ width fill
+                , height fill
+                , blurredBackground
                 ]
-                (spinnerSvg colourScheme.lightBlue)
-            )
+                [ column
+                    [ width (px resultsPanelWidth)
+                    , height fill
+                    ]
+                    [ none ]
+                , passiveResultsDivider
+                , el
+                    [ width fill
+                    , height fill
+                    ]
+                    (animatedLoader
+                        [ width (px 50)
+                        , height (px 50)
+                        , centerY
+                        , centerX
+                        ]
+                        (spinnerSvg colourScheme.lightBlue)
+                    )
+                ]
+
+         else
+            el
+                [ width fill
+                , height fill
+                , blurredBackground
+                ]
+                (animatedLoader
+                    [ width (px 50)
+                    , height (px 50)
+                    , centerY
+                    , centerX
+                    ]
+                    (spinnerSvg colourScheme.lightBlue)
+                )
         )
         isLoading
 
@@ -94,11 +121,13 @@ controlsTmpl contents =
         contents
 
 
-viewSearchResultsLoadingTmpl : Int -> Int -> Language -> Element msg
-viewSearchResultsLoadingTmpl windowWidth sidebarWidth _ =
+viewSearchResultsLoadingTmpl : Int -> Int -> Maybe Int -> Language -> Element msg
+viewSearchResultsLoadingTmpl windowWidth sidebarWidth preferredResultsPanelWidth _ =
     let
         resultsPanelWidth =
-            Layout.resultsPanelWidth windowWidth sidebarWidth
+            preferredResultsPanelWidth
+                |> Maybe.withDefault (Layout.resultsPanelWidth windowWidth sidebarWidth)
+                |> Layout.clampResultsPanelWidth windowWidth sidebarWidth
     in
     row
         [ width fill
@@ -108,8 +137,6 @@ viewSearchResultsLoadingTmpl windowWidth sidebarWidth _ =
             [ width (px resultsPanelWidth)
             , height fill
             , alignTop
-            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.midGrey
             ]
             [ controlsTmpl
                 [ none ]
@@ -119,6 +146,7 @@ viewSearchResultsLoadingTmpl windowWidth sidebarWidth _ =
                 ]
                 [ none ]
             ]
+        , passiveResultsDivider
         , column
             [ width fill
             , height fill
@@ -150,9 +178,42 @@ viewSearchResultsLoadingTmpl windowWidth sidebarWidth _ =
         ]
 
 
-viewSearchResultsLoadingForWindow : ( Int, Int ) -> Int -> Language -> Element msg
-viewSearchResultsLoadingForWindow window sidebarWidth language =
-    viewSearchResultsLoadingTmpl (Tuple.first window) sidebarWidth language
+viewSearchResultsLoadingForWindow : ( Int, Int ) -> Int -> Maybe Int -> Language -> Element msg
+viewSearchResultsLoadingForWindow window sidebarWidth preferredResultsPanelWidth language =
+    viewSearchResultsLoadingTmpl (Tuple.first window) sidebarWidth preferredResultsPanelWidth language
+
+
+passiveResultsDivider : Element msg
+passiveResultsDivider =
+    el
+        [ width (px Layout.resultsDividerWidth)
+        , height fill
+        , alignTop
+        , Background.color colourScheme.lightGrey
+        , Border.widthEach { bottom = 0, left = 1, right = 1, top = 0 }
+        , Border.color colourScheme.midGrey
+        ]
+        (column
+            [ centerX
+            , centerY
+            , spacing 4
+            ]
+            [ gripDot
+            , gripDot
+            , gripDot
+            ]
+        )
+
+
+gripDot : Element msg
+gripDot =
+    el
+        [ width (px 4)
+        , height (px 4)
+        , Background.color colourScheme.midGrey
+        , htmlAttribute (HA.style "border-radius" "999px")
+        ]
+        none
 
 
 viewSearchResultsNotFoundTmpl :

@@ -18,6 +18,9 @@ type alias SearchPageModel msg =
     { response : Response ServerData
     , activeSearch : ActiveSearch msg
     , preview : Response ServerData
+    , resultsPanelWidth : Maybe Int
+    , resultsPanelResize : Maybe { startClientX : Int, startResultsWidth : Int, currentResultsWidth : Int }
+    , pendingResultsScrollReset : Bool
     , sourceItemsExpanded : Bool
     , incipitInfoExpanded : Set String
     , selectedResult : Maybe String

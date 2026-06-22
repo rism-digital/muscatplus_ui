@@ -1,6 +1,6 @@
 module Subscriptions exposing (subscriptions)
 
-import Browser.Events exposing (onKeyUp, onResize)
+import Browser.Events exposing (onKeyUp, onMouseMove, onMouseUp, onResize)
 import Device exposing (detectDevice)
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -24,6 +24,7 @@ subscriptions model =
         [ onResize (\width height -> Msg.UserResizedWindow (detectDevice width height) width height)
         , receiveIncomingMessageFromPort (messageReceiverHelper model)
         , handleKeyboardNavigation model
+        , handleSearchResultsResize model
         ]
 
 
@@ -105,3 +106,108 @@ handleKeyboardNavigation model =
                             Msg.NothingHappened
         )
         (onKeyUp keyDecoder)
+
+
+handleSearchResultsResize : Model -> Sub Msg
+handleSearchResultsResize model =
+    if searchResultsResizeIsActive model then
+        Sub.batch
+            [ onMouseMove (Decode.map (routeSearchResultsResizeMove model) (Decode.field "clientX" Decode.int))
+            , onMouseUp (Decode.succeed (routeSearchResultsResizeStop model))
+            ]
+
+    else
+        Sub.none
+
+
+searchResultsResizeIsActive : Model -> Bool
+searchResultsResizeIsActive model =
+    case model of
+        SearchPage _ pageModel ->
+            pageModel.resultsPanelResize /= Nothing
+
+        SourcePage _ pageModel ->
+            pageModel.resultsPanelResize /= Nothing
+
+        PersonPage _ pageModel ->
+            pageModel.resultsPanelResize /= Nothing
+
+        HoldingPage _ pageModel ->
+            pageModel.resultsPanelResize /= Nothing
+
+        InstitutionPage _ pageModel ->
+            pageModel.resultsPanelResize /= Nothing
+
+        PublicationPage _ pageModel ->
+            pageModel.resultsPanelResize /= Nothing
+
+        PublicationListPage _ pageModel ->
+            pageModel.resultsPanelResize /= Nothing
+
+        WorkPage _ pageModel ->
+            pageModel.resultsPanelResize /= Nothing
+
+        _ ->
+            False
+
+
+routeSearchResultsResizeMove : Model -> Int -> Msg
+routeSearchResultsResizeMove model clientX =
+    case model of
+        SearchPage _ _ ->
+            Msg.UserInteractedWithSearchPage (SearchMsg.ClientMovedSearchResultsResize clientX)
+
+        SourcePage _ _ ->
+            Msg.UserInteractedWithRecordPage (RecordMsg.ClientMovedSearchResultsResize clientX)
+
+        PersonPage _ _ ->
+            Msg.UserInteractedWithRecordPage (RecordMsg.ClientMovedSearchResultsResize clientX)
+
+        HoldingPage _ _ ->
+            Msg.UserInteractedWithRecordPage (RecordMsg.ClientMovedSearchResultsResize clientX)
+
+        InstitutionPage _ _ ->
+            Msg.UserInteractedWithRecordPage (RecordMsg.ClientMovedSearchResultsResize clientX)
+
+        PublicationPage _ _ ->
+            Msg.UserInteractedWithRecordPage (RecordMsg.ClientMovedSearchResultsResize clientX)
+
+        PublicationListPage _ _ ->
+            Msg.UserInteractedWithRecordPage (RecordMsg.ClientMovedSearchResultsResize clientX)
+
+        WorkPage _ _ ->
+            Msg.UserInteractedWithRecordPage (RecordMsg.ClientMovedSearchResultsResize clientX)
+
+        _ ->
+            Msg.NothingHappened
+
+
+routeSearchResultsResizeStop : Model -> Msg
+routeSearchResultsResizeStop model =
+    case model of
+        SearchPage _ _ ->
+            Msg.UserInteractedWithSearchPage SearchMsg.ClientStoppedSearchResultsResize
+
+        SourcePage _ _ ->
+            Msg.UserInteractedWithRecordPage RecordMsg.ClientStoppedSearchResultsResize
+
+        PersonPage _ _ ->
+            Msg.UserInteractedWithRecordPage RecordMsg.ClientStoppedSearchResultsResize
+
+        HoldingPage _ _ ->
+            Msg.UserInteractedWithRecordPage RecordMsg.ClientStoppedSearchResultsResize
+
+        InstitutionPage _ _ ->
+            Msg.UserInteractedWithRecordPage RecordMsg.ClientStoppedSearchResultsResize
+
+        PublicationPage _ _ ->
+            Msg.UserInteractedWithRecordPage RecordMsg.ClientStoppedSearchResultsResize
+
+        PublicationListPage _ _ ->
+            Msg.UserInteractedWithRecordPage RecordMsg.ClientStoppedSearchResultsResize
+
+        WorkPage _ _ ->
+            Msg.UserInteractedWithRecordPage RecordMsg.ClientStoppedSearchResultsResize
+
+        _ ->
+            Msg.NothingHappened

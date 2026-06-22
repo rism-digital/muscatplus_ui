@@ -79,6 +79,7 @@ searchResultsViewRouter session model =
                 , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
                 , userChangedResultsPerPageMsg = SearchMsg.UserChangedResultsPerPage
                 , userClickedResultsPaginationMsg = SearchMsg.UserClickedSearchResultsPagination
+                , userStartedResultsResizeMsg = SearchMsg.UserStartedSearchResultsResize
                 , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
                 , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
                 , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters
@@ -101,7 +102,11 @@ searchResultsViewRouter session model =
             viewSearchResultsSection resultsConfig True oldData
 
         Loading _ ->
-            viewSearchResultsLoadingForWindow session.window sidebarWidth session.language
+            viewSearchResultsLoadingForWindow
+                session.window
+                sidebarWidth
+                (session.searchPreferences |> Maybe.andThen .resultsPanelWidth)
+                session.language
 
         Response (SearchData body) ->
             viewSearchResultsSection resultsConfig False body
@@ -112,7 +117,11 @@ searchResultsViewRouter session model =
         NoResponseToShow ->
             -- In case we're just booting the app up, show
             -- the loading message.
-            viewSearchResultsLoadingForWindow session.window sidebarWidth session.language
+            viewSearchResultsLoadingForWindow
+                session.window
+                sidebarWidth
+                (session.searchPreferences |> Maybe.andThen .resultsPanelWidth)
+                session.language
 
         _ ->
             -- For any other responses, show the error.

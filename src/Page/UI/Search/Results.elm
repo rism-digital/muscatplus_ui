@@ -1,7 +1,7 @@
 module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, onRight, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, clipX, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -12,7 +12,7 @@ import Maybe.Extra as ME
 import Page.RecordTypes.Shared exposing (LabelValue)
 import Page.UI.Attributes exposing (emptyAttribute, lineSpacing)
 import Page.UI.Components exposing (h5)
-import Page.UI.Helpers exposing (viewIf, viewMaybe)
+import Page.UI.Helpers exposing (viewMaybe)
 import Page.UI.Style exposing (colourScheme)
 import Page.UI.Tooltip exposing (tooltip, tooltipStyle)
 import String.Extra as SE
@@ -105,8 +105,9 @@ resultTemplate cfg =
                             |> htmlAttribute
                     )
     in
-    row
+    column
         [ width fill
+        , clipX
         , alignTop
         , alignLeft
         , Background.color (.backgroundColour cfg.colours)
@@ -115,39 +116,27 @@ resultTemplate cfg =
         , Border.color colourScheme.lightestBlueAlt
         , Border.widthEach { bottom = 1, left = 0, right = 0, top = 0 }
         , pointer
-        , paddingXY 20 12
         , resultRowNodeId
         ]
         [ column
             [ width fill
             , alignTop
             , spacing 10
+            , paddingXY 20 12
             ]
-            [ row
+            [ column
+                [ Font.color (.fontLinkColour cfg.colours)
+                , width fill
+                , alignTop
+                ]
+                [ h5 cfg.language cfg.resultTitle ]
+            , column
                 [ width fill
                 , alignLeft
                 , alignTop
+                , spacing lineSpacing
                 ]
-                [ column
-                    [ Font.color (.fontLinkColour cfg.colours)
-                    , width fill
-                    , alignTop
-                    ]
-                    [ h5 cfg.language cfg.resultTitle ]
-                ]
-            , row
-                [ width fill
-                , alignLeft
-                , alignTop
-                ]
-                [ column
-                    [ width fill
-                    , alignLeft
-                    , alignTop
-                    , spacing lineSpacing
-                    ]
-                    cfg.resultBody
-                ]
+                cfg.resultBody
             ]
         ]
 
@@ -160,9 +149,6 @@ summaryFieldTemplate summaryCfg fieldValue =
 
         fVal =
             extractTextFromLanguageMap summaryCfg.language fieldValue.value
-
-        fValueLength =
-            List.length fValueFormatted
 
         fValueFormatted =
             List.map
@@ -180,14 +166,6 @@ summaryFieldTemplate summaryCfg fieldValue =
                 )
                 fVal
 
-        allEntries =
-            viewIf
-                (column
-                    tooltipStyle
-                    (List.map (\t -> el [ width fill ] (text t)) fVal)
-                )
-                (fValueLength > 3)
-
         iconElement =
             el
                 [ width (px summaryCfg.iconSize)
@@ -198,6 +176,9 @@ summaryFieldTemplate summaryCfg fieldValue =
                     |> tooltip above
                 ]
                 summaryCfg.icon
+
+        fValueLength =
+            List.length fValueFormatted
 
         fValueAsString =
             if fValueLength > 3 then
@@ -214,23 +195,24 @@ summaryFieldTemplate summaryCfg fieldValue =
                 (\() -> fValueAsString)
     in
     column
-        [ spacing 5
+        [ width fill
+        , spacing 5
         , alignTop
         , alignLeft
-        , width fill
         ]
         [ row
-            [ spacing 5
+            [ width fill
+            , spacing 5
             , alignTop
             , alignLeft
             ]
             [ iconElement
             , paragraph
                 (List.concat
-                    [ [ centerY
+                    [ [ width fill
+                      , centerY
                       , padding 2
                       , alignLeft
-                      , tooltip onRight allEntries
                       ]
                     , summaryCfg.displayStyles
                     ]

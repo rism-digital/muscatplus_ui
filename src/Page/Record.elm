@@ -39,7 +39,9 @@ import Page.RecordTypes.Tombstone exposing (tombstoneDecoder)
 import Page.Request exposing (createRequestWithDecoder)
 import Page.Route exposing (Route(..), routeToResultMode)
 import Page.UI.Animations exposing (PreviewAnimationStatus(..))
+import Page.UI.Attributes exposing (sidebarWidth)
 import Page.UI.Errors exposing (ErrorResponse(..), createErrorMessage)
+import Page.UI.Layout as Layout
 import Page.UpdateHelpers exposing (applyKeywordInputWithProbe, applyPreviewResponse, chooseResponse, extractSearchResponseData, hasNonZeroSourcesAttached, probeSubmit, textQuerySuggestionSubmit, updateQueryFacetFilters, userChangedFacetBehaviour, userChangedResultSorting, userChangedResultsPerPage, userChangedSelectFacetSort, userClickedClosePreviewWindow, userClickedFacetPanelToggle, userClickedResultForPreview, userClickedSelectFacetExpand, userClickedSelectFacetItem, userClickedSingleChoiceFacetItem, userClickedToggleFacet, userEnteredTextInKeywordQueryBox, userEnteredTextInQueryFacet, userEnteredTextInRangeFacet, userFocusedRangeFacet, userLostFocusOnRangeFacet, userPressedArrowKeysInSearchResultsList, userRemovedItemFromActiveFilters, userResetSingleChoiceFacet)
 import Ports.Outgoing exposing (OutgoingMessage(..), encodeMessageForPortSend, sendOutgoingMessageOnPort)
 import Request exposing (createRequest, serverUrl)
@@ -69,6 +71,32 @@ type alias RecordConfig =
     , initialData : Maybe Value
     , session : Session
     }
+
+
+currentResultsPanelWidth : Session -> RecordPageModel RecordMsg -> Int
+currentResultsPanelWidth session model =
+    let
+        windowWidth =
+            session.window
+                |> Tuple.first
+
+
+    in
+    case model.resultsPanelResize of
+        Just resize ->
+            Layout.clampResultsPanelWidth windowWidth sidebarWidth resize.currentResultsWidth
+
+        Nothing ->
+            let
+                persistedWidth =
+                    model.resultsPanelWidth
+                        |> ME.orElse
+                            (session.searchPreferences
+                                |> Maybe.andThen .resultsPanelWidth
+                            )
+                        |> Maybe.withDefault (Layout.resultsPanelWidth windowWidth sidebarWidth)
+            in
+            Layout.clampResultsPanelWidth windowWidth sidebarWidth persistedWidth
 
 
 init : RecordConfig -> RecordPageModel RecordMsg
@@ -185,6 +213,9 @@ init cfg =
     , searchResults = incomingData.searchData
     , inventoryItems = NoResponseToShow
     , preview = NoResponseToShow
+    , resultsPanelWidth = Nothing
+    , resultsPanelResize = Nothing
+    , pendingResultsScrollReset = False
     , sourceItemsExpanded = False
     , inventoryItemsExpanded = False
     , incipitInfoExpanded = Set.empty
@@ -231,6 +262,8 @@ load cfg oldBody =
     { oldBody
         | currentTab = tabView
         , preview = previewResp
+        , resultsPanelResize = Nothing
+        , pendingResultsScrollReset = False
         , selectedResult = selectedResult
         , activeSearch = activeSearch
     }
@@ -297,6 +330,13 @@ update session msg model =
                     .fragment session.url
                         |> ME.unwrap Cmd.none (jumpToIdIfNotVisible ClientCompletedViewportJump "search-results-list")
 
+                scrollResetCmd =
+                    if model.pendingResultsScrollReset then
+                        resetViewportOf ClientCompletedViewportReset "search-results-list"
+
+                    else
+                        Cmd.none
+
                 ( aliasLabelMap, updatedFiltersWithCorrectLanguageMaps, probeState ) =
                     case response of
                         SearchData body ->
@@ -343,15 +383,20 @@ update session msg model =
                 | response = recordResponse
                 , searchResults = searchResults
                 , activeSearch = newActiveSearch
+                , pendingResultsScrollReset = False
                 , probeResponse = probeState
                 , applyFilterPrompt = False
               }
-            , jumpCmd
+            , Cmd.batch
+                [ scrollResetCmd
+                , jumpCmd
+                ]
             )
 
         ServerRespondedWithPageSearch (Err error) ->
             ( { model
                 | response = Error (createErrorMessage error)
+                , pendingResultsScrollReset = False
               }
             , Cmd.none
             )
@@ -632,15 +677,73 @@ update session msg model =
             ( { model
                 | searchResults = searchResultsStatus
                 , preview = NoResponseToShow
+                , pendingResultsScrollReset = True
               }
-            , Cmd.batch
-                [ Nav.pushUrl session.key pageUrl
-                , resetViewportOf ClientCompletedViewportReset "search-results-list"
-                ]
+            , Nav.pushUrl session.key pageUrl
             )
 
         UserClickedSearchResultForPreview result ->
             userClickedResultForPreview result session model
+
+        UserStartedSearchResultsResize clientX ->
+            let
+                widthAtStart =
+                    currentResultsPanelWidth session model
+            in
+            ( { model
+                | resultsPanelResize =
+                    Just
+                        { startClientX = clientX
+                        , startResultsWidth = widthAtStart
+                        , currentResultsWidth = widthAtStart
+                        }
+              }
+            , Cmd.none
+            )
+
+        ClientMovedSearchResultsResize clientX ->
+            case model.resultsPanelResize of
+                Just resize ->
+                    let
+                        windowWidth =
+                            session.window
+                                |> Tuple.first
+
+                        nextWidth =
+                            resize.startResultsWidth
+                                + (clientX - resize.startClientX)
+                                |> Layout.clampResultsPanelWidth windowWidth sidebarWidth
+                    in
+                    ( { model
+                        | resultsPanelResize =
+                            Just
+                                { resize
+                                    | currentResultsWidth = nextWidth
+                                }
+                      }
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        ClientStoppedSearchResultsResize ->
+            case model.resultsPanelResize of
+                Just resize ->
+                    ( { model
+                        | resultsPanelWidth = Just resize.currentResultsWidth
+                        , resultsPanelResize = Nothing
+                      }
+                    , PortSendSaveSearchPreference
+                        { key = "resultsPanelWidth"
+                        , value = IntPreference resize.currentResultsWidth
+                        }
+                        |> encodeMessageForPortSend
+                        |> sendOutgoingMessageOnPort
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         UserClickedExpandSourceItemsSectionInPreview ->
             ( { model

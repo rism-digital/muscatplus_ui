@@ -31,6 +31,7 @@ view session model =
             viewMobilePreviewForResponse
                 { language = session.language
                 , windowSize = session.window
+                , availableRightWidth = 0
                 , closeMsg = SearchMsg.UserClickedClosePreviewWindow
                 , hideAnimationStartedMsg = SearchMsg.ClientStartedAnimatingPreviewWindowClose
                 , showAnimationFinishedMsg = SearchMsg.ClientFinishedAnimatingPreviewWindowShow
@@ -91,6 +92,7 @@ searchResultsViewRouter session model =
                 , userChangedResultSortingMsg = SearchMsg.UserChangedResultSorting
                 , userChangedResultsPerPageMsg = SearchMsg.UserChangedResultsPerPage
                 , userClickedResultsPaginationMsg = SearchMsg.UserClickedSearchResultsPagination
+                , userStartedResultsResizeMsg = always SearchMsg.NothingHappened
                 , userTriggeredSearchSubmitMsg = SearchMsg.UserTriggeredSearchSubmit
                 , userEnteredTextInKeywordQueryBoxMsg = SearchMsg.UserEnteredTextInKeywordQueryBox
                 , userResetAllFiltersMsg = SearchMsg.UserResetAllFilters

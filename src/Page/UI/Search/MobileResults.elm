@@ -3,7 +3,7 @@ module Page.UI.Search.MobileResults exposing
     , viewMobileScrollableResults
     )
 
-import Element exposing (Attribute, Element, alignTop, column, fill, height, htmlAttribute, row, scrollbarY, width)
+import Element exposing (Attribute, Element, alignTop, clipX, column, fill, height, htmlAttribute, row, scrollbarY, width)
 import Html.Attributes as HA
 
 
@@ -13,6 +13,7 @@ viewMobileScrollableResults attrs content =
         [ width fill
         , height fill
         , alignTop
+        , clipX
         , scrollbarY
         , htmlAttribute (HA.style "min-height" "unset")
         ]

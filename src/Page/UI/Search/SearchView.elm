@@ -3,12 +3,14 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toResultsNotInCurrentMode)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, column, el, fill, height, htmlAttribute, inFront, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipX, column, el, fill, height, htmlAttribute, inFront, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html.Attributes as HA
+import Html.Events as HE
+import Json.Decode as Decode
 import Language exposing (Language, LanguageMap, extractLabelFromLanguageMap, toLanguageMap)
 import Language.LocalTranslations exposing (localTranslations)
 import List.Extra as LE
@@ -61,6 +63,8 @@ type alias SearchResultsSectionConfig a msg =
             , previewAnimationStatus : PreviewAnimationStatus
             , sourceItemsExpanded : Bool
             , activeSearch : ActiveSearch msg
+            , resultsPanelWidth : Maybe Int
+            , resultsPanelResize : Maybe { startClientX : Int, startResultsWidth : Int, currentResultsWidth : Int }
             , selectedResult : Maybe String
             , probeResponse : ProbeStatus
             , applyFilterPrompt : Bool
@@ -81,6 +85,7 @@ type alias SearchResultsSectionConfig a msg =
     , userChangedResultSortingMsg : String -> msg
     , userChangedResultsPerPageMsg : String -> msg
     , userClickedResultsPaginationMsg : String -> msg
+    , userStartedResultsResizeMsg : Int -> msg
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     , userResetAllFiltersMsg : msg
@@ -112,6 +117,7 @@ type alias SearchResultsHandlers msg =
     , userChangedResultSortingMsg : String -> msg
     , userChangedResultsPerPageMsg : String -> msg
     , userClickedResultsPaginationMsg : String -> msg
+    , userStartedResultsResizeMsg : Int -> msg
     , userTriggeredSearchSubmitMsg : msg
     , userEnteredTextInKeywordQueryBoxMsg : String -> msg
     , userResetAllFiltersMsg : msg
@@ -139,6 +145,8 @@ buildSearchResultsConfig :
             , preview : Response ServerData
             , previewAnimationStatus : PreviewAnimationStatus
             , probeResponse : ProbeStatus
+            , resultsPanelWidth : Maybe Int
+            , resultsPanelResize : Maybe { startClientX : Int, startResultsWidth : Int, currentResultsWidth : Int }
             , response : Response ServerData
             , selectedResult : Maybe String
             , showSearchControls : SearchControlOptions
@@ -166,6 +174,7 @@ buildSearchResultsConfig base handlers =
     , userChangedResultSortingMsg = handlers.userChangedResultSortingMsg
     , userChangedResultsPerPageMsg = handlers.userChangedResultsPerPageMsg
     , userClickedResultsPaginationMsg = handlers.userClickedResultsPaginationMsg
+    , userStartedResultsResizeMsg = handlers.userStartedResultsResizeMsg
     , userTriggeredSearchSubmitMsg = handlers.userTriggeredSearchSubmitMsg
     , userEnteredTextInKeywordQueryBoxMsg = handlers.userEnteredTextInKeywordQueryBoxMsg
     , userResetAllFiltersMsg = handlers.userResetAllFiltersMsg
@@ -192,7 +201,21 @@ viewSearchResultsSection cfg resultsLoading body =
                 |> Tuple.first
 
         resultsPanelWidth =
-            Layout.resultsPanelWidth windowWidth sidebarWidth
+            case .resultsPanelResize cfg.model of
+                Just resize ->
+                    Layout.clampResultsPanelWidth windowWidth sidebarWidth resize.currentResultsWidth
+
+                Nothing ->
+                    cfg.model.resultsPanelWidth
+                        |> ME.orElse
+                            (cfg.session.searchPreferences
+                                |> Maybe.andThen .resultsPanelWidth
+                            )
+                        |> Maybe.withDefault (Layout.resultsPanelWidth windowWidth sidebarWidth)
+                        |> Layout.clampResultsPanelWidth windowWidth sidebarWidth
+
+        availableRightWidth =
+            Layout.previewAvailableRightWidthFromResultsWidth windowWidth sidebarWidth resultsPanelWidth
 
         background =
             el
@@ -207,6 +230,7 @@ viewSearchResultsSection cfg resultsLoading body =
                     viewPreviewRouter
                         { language = .language cfg.session
                         , windowSize = .window cfg.session
+                        , availableRightWidth = availableRightWidth
                         , closeMsg = cfg.userClosedPreviewWindowMsg
                         , hideAnimationStartedMsg = cfg.clientStartedAnimatingPreviewWindowClose
                         , showAnimationFinishedMsg = cfg.clientFinishedAnimatingPreviewWindowShow
@@ -229,6 +253,7 @@ viewSearchResultsSection cfg resultsLoading body =
                     viewPreviewRouter
                         { language = .language cfg.session
                         , windowSize = .window cfg.session
+                        , availableRightWidth = availableRightWidth
                         , closeMsg = cfg.userClosedPreviewWindowMsg
                         , hideAnimationStartedMsg = cfg.clientStartedAnimatingPreviewWindowClose
                         , showAnimationFinishedMsg = cfg.clientFinishedAnimatingPreviewWindowShow
@@ -313,14 +338,12 @@ viewSearchResultsSection cfg resultsLoading body =
         , Background.color colourScheme.white
         , inFront queryBuilderWindow
         , inFront downloaderWindow
-        , inFront (viewResultsListLoadingScreenTmpl resultsLoading)
+        , inFront (viewResultsListLoadingScreenTmpl resultsPanelWidth resultsLoading)
         ]
         [ column
             [ width (px resultsPanelWidth)
             , height fill
             , alignTop
-            , Border.widthEach { bottom = 0, left = 0, right = 1, top = 0 }
-            , Border.color colourScheme.midGrey
             ]
             [ viewSearchPageSort
                 { language = language
@@ -341,6 +364,7 @@ viewSearchResultsSection cfg resultsLoading body =
                 }
             , viewPagination language body.pagination cfg.userClickedResultsPaginationMsg
             ]
+        , resizeHandle cfg.userStartedResultsResizeMsg
         , column
             [ width fill
             , height fill
@@ -374,6 +398,45 @@ viewSearchResultsSection cfg resultsLoading body =
                 }
             ]
         ]
+
+
+resizeHandle : (Int -> msg) -> Element msg
+resizeHandle resizeMsg =
+    el
+        [ width (px Layout.resultsDividerWidth)
+        , height fill
+        , alignTop
+        , Background.color colourScheme.lightGrey
+        , Border.widthEach { bottom = 0, left = 1, right = 1, top = 0 }
+        , Border.color colourScheme.midGrey
+        , inFront
+            (column
+                [ centerX
+                , centerY
+                , spacing 4
+                , htmlAttribute (HA.style "pointer-events" "none")
+                ]
+                [ gripDot
+                , gripDot
+                , gripDot
+                ]
+            )
+        , htmlAttribute (HA.style "cursor" "col-resize")
+        , htmlAttribute (HA.style "user-select" "none")
+        , htmlAttribute (HE.on "mousedown" (Decode.map resizeMsg (Decode.field "clientX" Decode.int)))
+        ]
+        none
+
+
+gripDot : Element msg
+gripDot =
+    el
+        [ width (px 4)
+        , height (px 4)
+        , Background.color colourScheme.midGrey
+        , htmlAttribute (HA.style "border-radius" "999px")
+        ]
+        none
 
 
 viewActiveFilters : ActiveFiltersCfg a b msg -> Element msg
@@ -617,14 +680,15 @@ viewSearchResultsListPanel cfg =
             [ width fill
             , height fill
             , alignTop
+            , clipX
             , scrollbarY
             , htmlAttribute (HA.style "min-height" "unset")
             , htmlAttribute (HA.id "search-results-list")
             ]
             [ column
                 [ width fill
-                , height fill
                 , alignTop
+                , clipX
                 ]
                 [ viewSearchResultsList cfg.language (.selectedResult cfg.model) cfg.body cfg.clickForPreviewMsg
                 ]
@@ -638,28 +702,23 @@ viewSearchResultsList :
     -> (String -> msg)
     -> Element msg
 viewSearchResultsList language selectedResult body clickMsg =
-    row
+    column
         [ width fill
-        , height fill
         , alignTop
+        , clipX
         ]
-        [ column
-            [ width fill
-            , alignTop
-            ]
-            (List.indexedMap
-                (\idx result ->
-                    viewSearchResultRouter
-                        { language = language
-                        , selectedResult = selectedResult
-                        , searchResult = result
-                        , clickForPreviewMsg = clickMsg
-                        , resultIdx = idx
-                        }
-                )
-                body.items
+        (List.indexedMap
+            (\idx result ->
+                viewSearchResultRouter
+                    { language = language
+                    , selectedResult = selectedResult
+                    , searchResult = result
+                    , clickForPreviewMsg = clickMsg
+                    , resultIdx = idx
+                    }
             )
-        ]
+            body.items
+        )
 
 
 type alias SearchResultRouterConfig msg =
