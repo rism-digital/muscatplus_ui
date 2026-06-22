@@ -29,13 +29,17 @@ viewMobileRecordPage { session, body, icon, topBar, bodyView } =
             , clipY
             , Background.color colourScheme.white
             ]
-            [ row
+            [ column
                 [ width fill
-                , Element.paddingXY 10 10
                 , minimalDropShadow
                 ]
-                [ mobilePageHeaderTemplate session.language (Just icon) body ]
-            , topBar
+                [ row
+                    [ width fill
+                    , Element.paddingXY 10 10
+                    ]
+                    [ mobilePageHeaderTemplate session.language (Just icon) body ]
+                , topBar
+                ]
             , bodyView
             ]
         ]

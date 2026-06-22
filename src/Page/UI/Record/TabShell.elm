@@ -9,7 +9,7 @@ module Page.UI.Record.TabShell exposing
     , viewMobileTabBar
     )
 
-import Element exposing (Attribute, Element, alignBottom, alignLeft, centerY, fill, height, paddingXY, px, row, spacing, width)
+import Element exposing (Attribute, Element, alignBottom, alignLeft, centerY, fill, height, paddingEach, paddingXY, px, row, spacing, width)
 import Language exposing (Language, LanguageMap)
 import Page.Record.Model exposing (CurrentRecordViewTab(..))
 import Page.Record.Msg exposing (RecordMsg)
@@ -167,7 +167,7 @@ viewMobileTabBar =
         , alignLeft
         , alignBottom
         , spacing 10
-        , paddingXY 10 0
+        , paddingEach { top = 0, right = 10, bottom = 4, left = 10 }
         ]
 
 
