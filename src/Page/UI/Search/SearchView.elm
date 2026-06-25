@@ -3,7 +3,7 @@ module Page.UI.Search.SearchView exposing (SearchResultRouterConfig, SearchResul
 import ActiveSearch exposing (toResultsNotInCurrentMode)
 import ActiveSearch.Model exposing (ActiveSearch)
 import Dict
-import Element exposing (Element, alignLeft, alignTop, centerX, centerY, clipX, column, el, fill, height, htmlAttribute, inFront, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
+import Element exposing (Element, alignLeft, alignTop, centerX, centerY, column, el, fill, height, htmlAttribute, inFront, none, padding, paddingXY, pointer, px, row, scrollbarY, shrink, spacing, text, width, wrappedRow)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -680,7 +680,6 @@ viewSearchResultsListPanel cfg =
             [ width fill
             , height fill
             , alignTop
-            , clipX
             , scrollbarY
             , htmlAttribute (HA.style "min-height" "unset")
             , htmlAttribute (HA.id "search-results-list")
@@ -688,7 +687,6 @@ viewSearchResultsListPanel cfg =
             [ column
                 [ width fill
                 , alignTop
-                , clipX
                 ]
                 [ viewSearchResultsList cfg.language (.selectedResult cfg.model) cfg.body cfg.clickForPreviewMsg
                 ]
@@ -705,7 +703,6 @@ viewSearchResultsList language selectedResult body clickMsg =
     column
         [ width fill
         , alignTop
-        , clipX
         ]
         (List.indexedMap
             (\idx result ->

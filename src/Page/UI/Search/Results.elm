@@ -1,7 +1,7 @@
 module Page.UI.Search.Results exposing (ResultColours, ResultConfig, SearchResultConfig, SearchResultSummaryConfig, resultTemplate, setResultColours, viewSearchResultSummaryField)
 
 import Dict exposing (Dict)
-import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, clipX, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
+import Element exposing (Attribute, Element, above, alignLeft, alignTop, centerY, column, el, fill, height, htmlAttribute, padding, paddingXY, paragraph, pointer, px, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
@@ -107,7 +107,6 @@ resultTemplate cfg =
     in
     column
         [ width fill
-        , clipX
         , alignTop
         , alignLeft
         , Background.color (.backgroundColour cfg.colours)
