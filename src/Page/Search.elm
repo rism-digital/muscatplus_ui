@@ -73,8 +73,6 @@ currentResultsPanelWidth session model =
         windowWidth =
             session.window
                 |> Tuple.first
-
-
     in
     case model.resultsPanelResize of
         Just resize ->
@@ -82,8 +80,6 @@ currentResultsPanelWidth session model =
 
         Nothing ->
             let
-
-
                 persistedWidth =
                     model.resultsPanelWidth
                         |> ME.orElse
@@ -138,6 +134,10 @@ init cfg =
 load : SearchConfig -> SearchPageModel SearchMsg -> SearchPageModel SearchMsg
 load cfg oldModel =
     let
+        searchInterface =
+            routeToResultMode cfg.route
+                |> resultModeToSearchControlOption
+
         newActiveSearch =
             ActiveSearch.load oldModel.activeSearch
                 |> setNextQuery cfg.queryArgs
@@ -159,6 +159,7 @@ load cfg oldModel =
         , pendingResultsScrollReset = False
         , selectedResult = selectedResult
         , applyFilterPrompt = False
+        , showSearchControls = searchInterface
     }
 
 
