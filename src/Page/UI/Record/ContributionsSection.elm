@@ -1,7 +1,7 @@
 module Page.UI.Record.ContributionsSection exposing (viewContributionsSection)
 
 import Element exposing (Element, alignTop, fill, height, link, paddingXY, paragraph, row, text, width)
-import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMapWithVariables)
+import Language exposing (Language, LanguageMapReplacementVariable(..), extractLabelFromLanguageMapWithVariables, formatNumberByLanguage)
 import Language.LocalTranslations exposing (localTranslations)
 import Page.RecordTypes.Institution exposing (Contributions, ContributionsSectionBody)
 import Page.UI.Attributes exposing (lineSpacing, linkColour)
@@ -22,7 +22,8 @@ viewContribution : Language -> String -> Contributions -> Element msg
 viewContribution language descr contribution =
     let
         numItems =
-            String.fromInt contribution.count
+            toFloat contribution.count
+                |> formatNumberByLanguage language
 
         linkLabel =
             extractLabelFromLanguageMapWithVariables language
