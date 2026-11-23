@@ -95,6 +95,7 @@ nationalCollectionPrefixToFlagMap =
         , ( "S", "se.svg" )
         , ( "SI", "si.svg" )
         , ( "SK", "sk.svg" )
+        , ( "TN", "tn.svg" )
         , ( "UA", "ua.svg" )
         , ( "US", "us.svg" )
         , ( "V", "va.svg" )
