@@ -61,6 +61,7 @@ nationalCollectionPrefixToFlagMap =
         , ( "D", "de.svg" )
         , ( "DK", "dk.svg" )
         , ( "E", "es.svg" )
+        , ( "EC", "ec.svg" )
         , ( "EV", "ee.svg" )
         , ( "F", "fr.svg" )
         , ( "FIN", "fi.svg" )
